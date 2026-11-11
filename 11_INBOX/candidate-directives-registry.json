@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:09:53.309Z",
+  "last_updated": "2026-11-11T14:17:01.737Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4983,6 +4983,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A43B15-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-350141",
+      "directive_title": "Ignore empty values for --ignored-suffix",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sharkdp-bat",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-350141-ignore-empty-values-for-ignored-suffix.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AAFE6C",
+      "directive_title": "ohos): align paste truncation to UTF-8 boundary to avoid renderer… (#1857)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tencent-tds-kuiklyui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AAFE6C-ohos-align-paste-truncation-to-utf-8-bou.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-126F9E",
+      "directive_title": "build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "projectcontour-contour",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-126F9E-build-deps-bump-github-com-onsi-ginkgo-v.md",
       "staged_date": "2026-11-11"
     }
   ]

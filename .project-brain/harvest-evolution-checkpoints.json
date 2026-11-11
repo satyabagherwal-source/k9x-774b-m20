@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:09:53.311Z",
+  "last_updated": "2026-11-11T14:17:01.739Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T13:52:34.067Z",
@@ -321,9 +321,24 @@
       "processed_at": "2026-11-11T14:09:53.305Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "sharkdp-bat-learnings.md": {
+      "processed_at": "2026-11-11T14:17:01.731Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tencent-tds-kuiklyui-learnings.md": {
+      "processed_at": "2026-11-11T14:17:01.736Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "projectcontour-contour-learnings.md": {
+      "processed_at": "2026-11-11T14:17:01.738Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 78,
+  "total_dossiers_evaluated": 81,
   "total_canonical_promoted": 16,
-  "total_staged_for_review": 59
+  "total_staged_for_review": 62
 }

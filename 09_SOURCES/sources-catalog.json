@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "6561174a",
+    "sourceVersion": "8cf33bdd",
     "license": "Apache-2.0",
-    "contentHash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
-    "lastHarvestedAt": "2026-11-09T01:38:27.857Z",
+    "contentHash": "e0514c55057f62d119772bf4bcea1f1a888b6b24eca974307ac161b76ee081e4",
+    "lastHarvestedAt": "2026-11-11T14:16:44.401Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "aa861529",
+    "sourceVersion": "bb06ab91",
     "license": "Apache-2.0",
-    "contentHash": "9d22f65d8a6c28812a3391d050c2c1ce654ccc7aefa2e35a75d326ed79e714c8",
-    "lastHarvestedAt": "2026-11-05T19:45:27.232Z",
+    "contentHash": "5921a11e99077fbf2f0a350b66da2d90e6c7ae99ed1c9220d40c4c9c7875cd77",
+    "lastHarvestedAt": "2026-11-11T14:16:55.998Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "eddfda29",
+    "sourceVersion": "d54d2ba1",
     "license": "NOASSERTION",
-    "contentHash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
-    "lastHarvestedAt": "2026-11-07T22:09:36.916Z",
+    "contentHash": "b335030336d8c343480f3e97a750930e5f7771b17e77547f287ab52b71cea325",
+    "lastHarvestedAt": "2026-11-11T14:16:53.847Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {

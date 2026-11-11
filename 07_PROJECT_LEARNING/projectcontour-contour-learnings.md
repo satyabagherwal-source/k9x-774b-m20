@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `aa861529`  
+> **Source Version**: `bb06ab91`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:45:25.409Z  
+> **Timestamp**: 2026-11-11T14:16:45.308Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:45:25.402Z  
+> **Harvest Timestamp**: 2026-11-11T14:16:45.300Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,11 +1592,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7818** (2026-11-05): **internal/dag: reject IP filter policy when any CIDR is invalid**
-  *Symptoms*: Fixes #7817  `toIPFilterRules` stored the result of each `net.ParseCIDR` call in the same `err` variable. When a valid CIDR followed an invalid one, `err` was reset to `nil`. As a result:  - The HTTPProxy status reported an `InvalidCIDR` error. - The virtual host or route was still programmed, with the invalid entry dropped. For `ipDenyPolicy`, this means traffic from the intended range is allowed.  When the invalid CIDR was the last entry, the virtual host or route was rejected. With this change, the parse error is kept, so an invalid CIDR rejects the policy wherever it appears in the list.  ## Changes  - `internal/dag/httpproxy_processor.go`: store the parse error in a variable scoped to the loop, and copy it to `err` only on failure. - `internal/dag/httpproxy_processor_test.go`: add a `TestToIPFilterRule` case with an invalid CIDR followed by a valid one. - `changelogs/unreleased/`: changelog entry.  ## Testing  ``` go test ./internal/dag/ -run TestToIPFilterRule -count=1 -v ```  Without the fix, the new case fails with `An error is expected but got nil`. With the fix, all cases pass. `go test ./internal/dag/ ./internal/featuretests/v3/` and `./hack/golangci-lint run ./internal/dag/...` also pass. 
+- **Issue #7825** (2026-11-09): **build(deps): bump docker/login-action from 4.7.0 to 4.8.0**
+  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
 
-- **Issue #7817** (2026-11-05): **HTTPProxy IP filter policy with an invalid CIDR is still programmed when a valid CIDR follows it**
-  *Symptoms*: **What steps did you take and what happened:**  Create an HTTPProxy whose `ipDenyPolicy` (or `ipAllowPolicy`) has an invalid CIDR followed by a valid one:  ```yaml apiVersion: projectcontour.io/v1 kind: HTTPProxy metadata:   name: example spec:   virtualhost:     fqdn: example.com     ipDenyPolicy:     - source: Remote       cidr: 10.0.0.0/33     - source: Remote       cidr: 192.168.0.0/16   routes:   - services:     - name: s1       port: 80 ```  The HTTPProxy status reports `InvalidCIDR` for `10.0.0.0/33`, but the virtual host is still programmed in Envoy. Its RBAC filter only denies `192.168.0.0/16`, so clients in `10.0.0.0/8` that should be denied are allowed through.  If you swap the two entries so that the invalid CIDR comes last, the virtual host is rejected and not programmed.  The cause is in `toIPFilterRules` in `internal/dag/httpproxy_processor.go`. The same `err` variable receives the result of each `net.ParseCIDR` call, so parsing a valid CIDR after an invalid one sets `err` back to `nil`. The final `if err != nil` check that clears the rules, and the callers that reject the virtual host or route, then don't see the error.  **What did you expect to happen:**  An invalid CIDR anywhere in the list rejects the virtual host or route, no matter where it appears in the list. That already happens when the invalid entry is last.  **Anything else you would like to add:**  The same applies to route-level `ipAllowPolicy` and `ipDenyPolicy`. The CRD has no schema validation 
+- **Issue #7824** (2026-11-09): **build(deps): bump the codeql-action group with 4 updates**
+  *Symptoms*: Bumps the codeql-action group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).  Updates `github/codeql-action/init` from 4.39.1 to 4.39.3 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/init's releases</a>.</em></p> <blockquote> <h2>v4.39.3</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> <h2>v4.39.2</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li> <li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4266">#4266</a></li> <li>Starting
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1613,188 +1613,226 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eda82a2` (2026-11-05)
-**Commit Message**: internal/timeout: reject negative durations (#7799)
+### Incident Patch 1: `27b02e00` (2026-11-09)
+**Commit Message**: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)
 
-* internal/timeout: reject negative durations
+Bumps [github.com/onsi/ginkgo/v2](https://github.com/onsi/ginkgo) from 2.33.1 to 2.34.0.
+- [Release notes](https://github.com/onsi/ginkgo/releases)
+- [Changelog](https://github.com/onsi/ginkgo/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/onsi/ginkgo/compare/v2.33.1...v2.34.0)
 
-timeout.Parse accepted any string that time.ParseDuration accepts,
-including negative durations such as "-1m". Ingress timeout
-annotations (projectcontour.io/response-timeout, the legacy
-projectcontour.io/request-timeout and projectcontour.io/per-try-timeout)
-have no schema validation, so a negative value in one of them was
-turned into a negative route timeout or per-try timeout and sent to
-Envoy.
+---
+updated-dependencies:
+- dependency-name: github.com/onsi/ginkgo/v2
+  dependency-version: 2.34.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Envoy rejects negative durations ("Invalid duration: Expected positive
-duration"), so it NACKed the whole RDS update for the listener. A typo
-in one Ingress annotation blocked route updates for every virtual host
-on that listener, and Contour reported nothing.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Make timeout.Parse return an error for negative durations, the same
-way it does for strings it can't parse. Ingress annotations then fall
-back to the default timeout and the error is logged, as already
-happens for other invalid values. Negative timeouts in the Contour
-configuration file or ContourConfiguration now fail at startup with a
-clear error instead of producing listeners that Envoy rejects. "-0s"
-still parses as zero and so 
-
-**File**: `changelogs/unreleased/7799-NopeCharon-small.md` (added, +1/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+Negative durations in timeout settings are now rejected instead of being passed to Envoy, which rejected them. An Ingress with a negative `projectcontour.io/response-timeout`, `projectcontour.io/request-timeout` or `projectcontour.io/per-try-timeout` annotation now gets the default timeout, and a negative timeout in the Contour configuration is reported as an error at startup.
+@@ -16,7 +16,7 @@ require (
+ 	github.com/google/go-github/v48 v48.2.0
+ 	github.com/google/uuid v1.6.0
+ 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
+-	github.com/onsi/ginkgo/v2 v2.33.1
++	github.com/onsi/ginkgo/v2 v2.34.0
+ 	github.com/onsi/gomega v1.44.0
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/prometheus/client_golang v1.25.0
 ```
 
-**File**: `internal/dag/builder_test.go` (modified, +40/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -6320,6 +6320,28 @@ func TestDAGInsert(t *testing.T) {
- 		},
- 	}
- 
-+	i12gV1 := &networking_v1.Ingress{
-+		ObjectMeta: meta_v1.ObjectMeta{
-+			Name:      "timeout",
-+			Namespace: "default",
-+			Annotations: map[string]string{
-+				"projectcontour.io/response-timeout": "-1m",
-+			},
-+		},
-+		Spec: networking_v1.IngressSpec{
-+			Rules: []networking_v1.IngressRule{{
-+				IngressRuleValue: networking_v1.IngressRuleValue{
-+					HTTP: &networking_v1.HTTPIngressRuleValue{
-+						Paths: []networking_v1.HTTPIngressPath{{
-+							Path:    "/",
-+							Backend: *backendv1("kuard", intstr.FromString("http")),
-+						}},
-+					},
-+				},
-+			}},
-+		},
-+	}
-+
- 	// i13_v1 a and b are a pair of ingressesv1 for the same vhost
- 	// they represent a tricky way over 'overlaying' routes from one
- 	// ingress onto another
-@@ -10287,6 +10309,24 @@ func TestDAGInsert(t *testing.T) {
- 				},
- 			),
- 		},
-+		"ingressv1: insert ingress w/ negative timeout annotation": {
-+			objs: []any{
-+				i12gV1,
-+				s1,
-+			},
-+			want: listeners(
-+				&Listener{
-+					Name: HTTP_LISTENER_NAME,
-+					Port: 8080,
-+					VirtualHosts: virtualhosts(
-+						virtualhost("*", &Route{
-+							PathMatchCondition: prefixString("/"),
-+							Clusters:           clustermap(s1),
-+						}),
-+					),
-+				},
-+			),
-+		},
- 		"insert httpproxy w/ invalid timeoutpolicy": {
- 			objs: []any{
- 				proxyTimeoutPolicyInvalidResponse,
+@@ -166,8 +166,8 @@ github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee h1:W5t00kpgFd
+ github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
+ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
+ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
+-github.com/onsi/ginkgo/v2 v2.33.1 h1:62XfWJbEIjPSCSDYrsCPP/SHcmH7O0M8ne8zfqQ2iz4=
+-github.com/onsi/ginkgo/v2 v2.33.1/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
++github.com/onsi/ginkgo/v2 v2.34.0 h1:aN3Us823mHHTSWMIi8WIQTdYuSPhl2lWY46E/w3SiAk=
++github.com/onsi/ginkgo/v2 v2.34.0/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
+ github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
+ github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
+ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
 ```
 
-**File**: `internal/dag/policy_test.go` (modified, +21/-0)
+---
+
+### Incident Patch 2: `09f6e30a` (2026-11-09)
+**Commit Message**: build(deps): bump github.com/prometheus/common from 0.73.0 to 0.73.1 (#7823)
+
+Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.73.0 to 0.73.1.
+- [Release notes](https://github.com/prometheus/common/releases)
+- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/prometheus/common/compare/v0.73.0...v0.73.1)
+
+---
+updated-dependencies:
+- dependency-name: github.com/prometheus/common
+  dependency-version: 0.73.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +2/-3)
 ```diff
-@@ -111,6 +111,21 @@ func TestRetryPolicyIngress(t *testing.T) {
- 				PerTryTimeout: timeout.DefaultSetting(),
- 			},
- 		},
-+		"negative per try timeout": {
-+			i: &networking_v1.Ingress{
-+				ObjectMeta: meta_v1.ObjectMeta{
-+					Annotations: map[string]string{
-+						"projectcontour.io/retry-on":        "5xx",
-+						"projectcontour.io/per-try-timeout": "-10s",
-+					},
-+				},
-+			},
-+			want: &RetryPolicy{
-+				RetryOn:       "5xx",
-+				NumRetries:    1,
-+				PerTryTimeout: timeout.DefaultSetting(),
-+			},
-+		},
- 	}
- 
- 	for name, tc := range tests {
-@@ -225,6 +240,12 @@ func TestTimeoutPolicy(t *testing.T) {
- 			},
- 			wantErr: true,
- 		},
-+		"negative response timeout": {
-+			tp: &contour_v1.TimeoutPolicy{
-+				Response: "-90s",
-+			},
-+			wantErr: true,
-+		},
- 		"infinite response timeout": {
- 			tp: &contour_v1.TimeoutPolicy{
- 				Response: "infinite",
+@@ -21,7 +21,7 @@ require (
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/prometheus/client_golang v1.25.0
+ 	github.com/prometheus/client_model v0.6.3
+-	github.com/prometheus/common v0.73.0
++	github.com/prometheus/common v0.73.1
+ 	github.com/sirupsen/logrus v1.10.2
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/tsaarni/certyaml v0.13.0
+@@ -83,15 +83,14 @@ require (
+ 	github.com/google/go-querystring v1.1.0 // indirect
+ 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
+-	github.com/hashicorp/go-uuid v1.0.3 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/miekg/dns v1.1.65 // indirect
+ 	github.com/moby/spdystream v0.5.1 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+-	github.com/pandatix/go-abnf v0.5.1 // indirect
++	github.com/pandatix/go-abnf v0.5.3 // indirect
+ 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+ 	github.com/prometheus/procfs v0.22.0 // indirect
 ```
 
-**File**: `internal/timeout/timeout.go` (modified, +7/-1)
+**File**: `go.sum` (modified, +4/-6)
 ```diff
-@@ -67,7 +67,7 @@ func DurationSetting(duration time.Duration) Setting {
- //   - any valid representation of "0" means "use the default".
- //   - a valid Go duration string is used as the specific timeout value.
- //   - "infinity" or "infinite" means "disable the timeout".
--//   - any other value results in an error.
-+//   - any other value, including a negative duration, results in an error.
- func Parse(timeout string) (Setting, error) {
- 	// An empty string is interpreted as no explicit timeout specified, so
- 	// use the Envoy default.
-@@ -86,6 +86,12 @@ func Parse(timeout string) (Setting, error) {
- 		return Setting{}, fmt.Errorf("unable to parse timeout string %q: %w", timeout, err)
- 	}
- 
-+	// Envoy rejects negative durations, which would cause the whole
-+	// configuration update containing the timeout to be rejected.
-+	if d < 0 {
-+		return Setting{}, fmt.Errorf("invalid timeout string %q: duration must not be negative", timeout)
-+	}
-+
- 	if d == 0 {
- 		return DefaultSetting(), nil
- 	}
+@@ -137,8 +137,6 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 h1:JeSE6pjso5T
+ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w70xmWCQKmi1ONH4KIaBptdivuRPyosB9RmPlGEwA=
+ github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 h1:Ovs26xHkKqVztRpIrF/92BcuyuQ/YW4NSIpoGtfXNho=
+ github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
+-github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
+-github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
+ github.com/joshdk/go-junit v1.0.0 h1:S86cUKIdwBHWwA6xCmFlf3RTLfVXYQfvanM5Uh+K6GE=
+ github.com/joshdk/go-junit v1.0.0/go.mod h1:TiiV0PqkaNfFXjEiyjWM3XXrhVyCa1K4Zfga6W52ung=
+ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
+@@ -174,8 +172,8 @@ github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
+ github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
+ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
+ github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
+-github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
+-github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
++github.com/pandatix/go-abnf v0.5.3 h1:LA9AaxAqwzdxfDe7+HIGUB6tzx2N6wYVEAChmfsoPgo=
++github.com/pandatix/go-abnf v0.5.3/go.mod h1:AE0KD3/VNoCjGzc1gqetRKshbI4SYErXQ/8kPenR5mc=
+ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+ github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 h1:GFCKgmp0tecUJ0sJuv4pzYCqS9+RGSn52M3FUwPs+uo=
+@@ -189,8 +187,8 @@ github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKq
+ github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
+ github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
+ github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
+-github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
+-github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
++github.com/prometheus/common v0.73.1 h1:SZWh/j4AvhCdhX8jvYSnxvPxhWlC9QZkjJ+tOrEr7kU=
++github.com/prometheus/common v0.73.1/go.mod h1:I9aA/Ukz9s1olOobh8KtCkU7B1mQPQsB9UvQPsUQ1Dk=
+ github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
+ github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
+ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
 ```
 
-**File**: `internal/timeout/timeout_test.go` (modified, +9/-0)
+---
+
+### Incident Patch 3: `28e66586` (2026-11-09)
+**Commit Message**: build(deps): bump the codeql-action group with 4 updates (#7824)
+
+Bumps the codeql-action group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
+
+
+Updates `github/codeql-action/init` from 4.39.1 to 4.39.3
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...33d7b85da1a04171e211befe2c739303b9a4c066)
+
+Updates `github/codeql-action/autobuild` from 4.39.1 to 4.39.3
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...33d7b85da1a04171e211befe2c739303b9a4c066)
+
+Updates `github/codeql-action/analyze` from 4.39.1 to 4.39.3
+- [Release notes](htt
+
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +5/-5)
 ```diff
-@@ -55,6 +55,15 @@ func TestParse(t *testing.T) {
- 			want:     DefaultSetting(),
- 			wantErr:  true,
- 		},
-+		"negative": {
-+			duration: "-10s",
-+			want:     DefaultSetting(),
-+			wantErr:  true,
-+		},
-+		"negative zero": {
-+			duration: "-0s",
-+			want:     DefaultSetting(),
-+		},
- 	}
+@@ -45,14 +45,14 @@ jobs:
+         cache: false
+     # Initializes the CodeQL tools for scanning.
+     - name: Initialize CodeQL
+-      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++      uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+       with:
+         languages: go
+     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+     - name: Autobuild
+-      uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++      uses: github/codeql-action/autobuild@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+     - name: Perform CodeQL Analysis
+-      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++      uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+       with:
+         category: /language:go
  
- 	for name, tc := range tests {
+@@ -65,10 +65,10 @@ jobs:
+       with:
+         persist-credentials: false
+     - name: Initialize CodeQL
+-      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++      uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+       with:
+         languages: actions
+     - name: Perform CodeQL Analysis
+-      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++      uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+       with:
+         category: /language:actions
+```
+
+**File**: `.github/workflows/openssf-scorecard.yaml` (modified, +1/-1)
+```diff
+@@ -37,6 +37,6 @@ jobs:
+         name: SARIF file
+         path: results.sarif
+     - name: "Upload to code-scanning"
+-      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+       with:
+         sarif_file: results.sarif
+```
+
+**File**: `.github/workflows/trivy-scan.yaml` (modified, +1/-1)
+```diff
+@@ -33,6 +33,6 @@ jobs:
+           output: 'trivy-results.sarif'
+           ignore-unfixed: true
+           severity: 'HIGH,CRITICAL'
+-      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++      - uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           sarif_file: 'trivy-results.sarif'
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7825** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #7824** (2026-11-09): build(deps): bump the codeql-action group with 4 updates (@dependabot[bot])
+- **PR #7823** (2026-11-09): build(deps): bump github.com/prometheus/common from 0.73.0 to 0.73.1 (@dependabot[bot])
+- **PR #7822** (2026-11-09): build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
+- **PR #7821** (2026-11-09): Set alt_stat_name for DNS name clusters (@lbarrosby)
 - **PR #7818** (2026-11-05): internal/dag: reject IP filter policy when any CIDR is invalid (@RaphaelFakhri)
-- **PR #7816** (2026-11-04): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #7815** (2026-11-04): build(deps): bump the k8s-dependencies group with 4 updates (@dependabot[bot])
-- **PR #7814** (2026-11-04): build(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
-- **PR #7813** (2026-11-04): build(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (@dependabot[bot])
-- **PR #7812** (2026-11-04): build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (@dependabot[bot])
 
 ---
 
@@ -1814,28 +1852,28 @@ still parses as zero and so
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. internal/timeout: reject negative durations (#7799)
+## X. build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)
 
 **RULE**:
-When implementing operations in `changelogs/unreleased/7799-NopeCharon-small.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eda82a2`: internal/timeout: reject negative durations (#7799). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27b02e00`: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/unreleased/7799-NopeCharon-small.md`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-Negative durations in timeout settings are now rejected instead of being passed to Envoy, which rejected them. An Ingress with a negative `projectcontour.io/response-timeout`, `projectcontour.io/request-timeout` or `projectcontour.io/per-try-timeout` annotation now gets the default timeout, and a negative timeout in the Contour configuration is reported as an error at startup.
+	github.com/onsi/ginkgo/v2 v2.34.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/onsi/ginkgo/v2 v2.33.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eda82a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27b02e00` are properly handled with clean fallback behavior.

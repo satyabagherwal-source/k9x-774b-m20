@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T14:09:46.901Z",
+  "last_updated": "2026-11-11T14:16:56.018Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
-      "verified_at": "2026-11-09T01:38:27.876Z",
+      "content_hash": "e0514c55057f62d119772bf4bcea1f1a888b6b24eca974307ac161b76ee081e4",
+      "verified_at": "2026-11-11T14:16:44.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:38:27.876Z"
+      "last_updated": "2026-11-11T14:16:44.429Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "9d22f65d8a6c28812a3391d050c2c1ce654ccc7aefa2e35a75d326ed79e714c8",
-      "verified_at": "2026-11-05T19:45:27.242Z",
+      "content_hash": "5921a11e99077fbf2f0a350b66da2d90e6c7ae99ed1c9220d40c4c9c7875cd77",
+      "verified_at": "2026-11-11T14:16:56.017Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:45:27.242Z"
+      "last_updated": "2026-11-11T14:16:56.017Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
-      "verified_at": "2026-11-07T22:09:36.932Z",
+      "content_hash": "b335030336d8c343480f3e97a750930e5f7771b17e77547f287ab52b71cea325",
+      "verified_at": "2026-11-11T14:16:53.857Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:09:36.932Z"
+      "last_updated": "2026-11-11T14:16:53.857Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",

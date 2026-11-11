@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T14:09:46.769Z",
+  "last_updated": "2026-11-11T14:16:55.882Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -52797,14 +52797,19 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "aa861529",
-      "content_hash": "9d22f65d8a6c28812a3391d050c2c1ce654ccc7aefa2e35a75d326ed79e714c8",
+      "source_version": "bb06ab91",
+      "content_hash": "5921a11e99077fbf2f0a350b66da2d90e6c7ae99ed1c9220d40c4c9c7875cd77",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "internal/timeout: reject negative durations (#7799)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52873,7 +52878,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:45:27.112Z",
+      "verified_at": "2026-11-11T14:16:55.859Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57333,8 +57338,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "6561174a",
-      "content_hash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
+      "source_version": "8cf33bdd",
+      "content_hash": "e0514c55057f62d119772bf4bcea1f1a888b6b24eca974307ac161b76ee081e4",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -57346,6 +57351,11 @@
         {
           "number": null,
           "title": "Merge pull request #4119 from FFspiky/test/highlight-color-tty",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Ignore empty values for --ignored-suffix",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -57384,7 +57394,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:38:27.743Z",
+      "verified_at": "2026-11-11T14:16:44.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62126,8 +62136,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "eddfda29",
-      "content_hash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
+      "source_version": "d54d2ba1",
+      "content_hash": "b335030336d8c343480f3e97a750930e5f7771b17e77547f287ab52b71cea325",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -62145,6 +62155,11 @@
           "number": null,
           "title": "Targeted Weak-Reference Observer Ledgers for C++ Destructors",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "ohos): align paste truncation to UTF-8 boundary to avoid renderer… (#1857)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2385,
@@ -62197,7 +62212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:09:36.783Z",
+      "verified_at": "2026-11-11T14:16:53.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

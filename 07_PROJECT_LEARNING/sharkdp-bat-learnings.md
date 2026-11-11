@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
-> **Source Version**: `6561174a`  
+> **Source Version**: `8cf33bdd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:38:26.489Z  
+> **Timestamp**: 2026-11-11T14:16:35.617Z  
 > **Learning ID**: `learn-github-sharkdp-bat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:38:26.482Z  
+> **Harvest Timestamp**: 2026-11-11T14:16:35.438Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 61246 stars
+- **Stars / Engagement**: 61265 stars
 
 ---
 
@@ -607,269 +607,133 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6561174a` (2026-11-08)
-**Commit Message**: Merge pull request #4119 from FFspiky/test/highlight-color-tty
+### Incident Patch 1: `120fa525` (2026-11-07)
+**Commit Message**: Ignore empty values for --ignored-suffix
 
-test: cover automatic highlight colors on pipes and terminals
+Passing an empty --ignored-suffix value caused syntax detection to
+retry the unchanged filename until the process overflowed its stack.
+Ignore empty suffixes so the file is displayed.
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -104,7 +104,7 @@ tempfile = "3.27.0"
- serde = { version = "1.0", features = ["derive"] }
+@@ -32,6 +32,7 @@
+ - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
  
- [target.'cfg(unix)'.dev-dependencies]
--nix = { version = "0.31", default-features = false, features = ["term"] }
-+nix = { version = "0.31", default-features = false, features = ["poll", "term"] }
- 
- [build-dependencies]
- anyhow = "1.0.97"
+ ## Bugfixes
++- Ignore empty `--ignored-suffix` values to avoid a stack overflow, see #4122 (@spicysharkco)
+ - Fix `--number-nonblank` counting empty UTF-16 lines, see #4118 (@pcbeingused333)
+ - Don't emit `--highlight-line` escape sequences (background color or `ansi` theme underline) when colors are disabled with `--color=never`. Closes #4099, see #4100 (@DeviousCardi)
+ - Fix missing colors, pager, and decorations in mintty/MSYS2 and Cygwin terminals on Windows, see #4115 (@rezamuliawijaya)
 ```
 
-**File**: `tests/integration_tests.rs` (modified, +85/-14)
+**File**: `src/syntax_mapping/ignored_suffixes.rs` (modified, +3/-1)
 ```diff
-@@ -3955,20 +3955,91 @@ fn ansi_highlight_underline() {
- fn highlight_line_without_colors() {
-     for wrap in ["--wrap=never", "--wrap=character"] {
-         for theme in ["--theme=Coldark-Dark", "--theme=ansi"] {
--            bat()
--                .arg("--paging=never")
--                .arg("--color=never")
--                .arg("--terminal-width=80")
--                .arg(wrap)
--                .arg(theme)
--                .arg("--decorations=always")
--                .arg("--style=numbers")
--                .arg("--highlight-line=1")
--                .write_stdin("First Line\nSecond Line\n")
--                .assert()
--                .success()
--                .stdout("   1 First Line\n   2 Second Line\n")
--                .stderr("");
-+            for color in ["--color=never", "--color=auto"] {
-+                bat()
-+                    .arg("--paging=never")
-+                    .arg(color)
-+                    .arg("--terminal-width=80")
-+                    .arg(wrap)
-+                    .arg(theme)
-+                    .arg("--decorations=always")
-+                    .arg("--style=numbers")
-+                    .arg("--highlight-line=1")
-+                    .write_stdin("First Line\nSecond Line\n")
-+                    .assert()
-+                    .success()
-+                    .stdout("   1 First Line\n   2 Second Line\n")
-+                    .stderr("");
-+            }
+@@ -39,7 +39,9 @@ impl Default for IgnoredSuffixes<'_> {
+ 
+ impl<'a> IgnoredSuffixes<'a> {
+     pub fn add_suffix(&mut self, suffix: &'a str) {
+-        self.values.push(suffix)
++        if !suffix.is_empty() {
++            self.values.push(suffix)
 +        }
-+    }
+     }
+ 
+     pub fn strip_suffix(&self, file_name: &'a str) -> Option<&'a str> {
+```
+
+**File**: `tests/integration_tests.rs` (modified, +15/-0)
+```diff
+@@ -4194,6 +4194,21 @@ fn ignored_suffix_arg() {
+         .stderr("");
+ }
+ 
++#[test]
++fn ignored_suffix_arg_empty() {
++    bat()
++        .arg("-f")
++        .arg("--theme")
++        .arg("ansi")
++        .arg("-p")
++        .arg("--ignored-suffix=")
++        .arg("test.txt")
++        .assert()
++        .success()
++        .stdout("hello world\n")
++        .stderr("");
 +}
 +
-+#[cfg(unix)]
-+#[test]
-+fn highlight_line_respects_no_color_on_terminal() {
-+    use nix::poll::{poll, PollFd, PollFlags};
-+    use std::io::Read;
-+    use std::os::fd::AsFd;
-+
-+    for wrap in ["--wrap=never", "--wrap=character"] {
-+        for theme in ["--theme=Coldark-Dark", "--theme=ansi"] {
-+            for no_color in ["", "1"] {
-+                let OpenptyResult { master, slave } = openpty(None, None).unwrap();
-+                let mut master = File::from(master);
-+                // Keep a slave open until the output is read: macOS discards unread PTY
-+                // output when the last slave closes.
-+                let slave = File::from(slave);
-+                let mut child = bat_raw_command()
-+                    .args([
-+                        "--paging=never",
-+                        "--color=auto",
-+                        "--terminal-width=80",
-+                        "--decorations=always",
-+                        "--style=numbers",
-+                        "--highlight-line=1",
-+                        wrap,
-+                        theme,
-+                        "test.txt",
-+                    ])
-+                    .env("TERM", "xterm-256color")
-+                    .env("NO_COLOR", no_color)
-+                    .stdin(Stdio::null())
-+                    .stdout(slave.try_clone().unwrap())
-+                    .stderr(Stdio::piped())
-+                    .spawn()
-+                    .unwrap();
-+
-+                // This fixture fits in the PTY buffer, so the child can exit before reading it.
-+                if child.wait_timeout(CHILD_WAIT_TIMEOUT).unwrap().is_none() {
-+                    child.kill().unwrap();
-+                    child.wait().unwrap();
-+                    panic!("bat did not exit");
-+                }
-+                let output = child.wait_with_output().unwrap();
-+                assert!(output.status.success());
-+                assert!(output.stderr.is_empty());
-+
-+                let mut stdout = Vec::new();
-+                loop {
-+                    let mut fds = [PollFd::new(master.as_fd(), PollFlags::POLLIN)];
-+                    if poll(&mut fds, 100u16).unwrap() == 0 {
-+                        break;
-+                    }
-+                    let mut buffer = [0; 1024];
-+                    let count = master.read(&mut buffer).unwrap();
-+                    if count == 0 {
-+                        break;
-+                    }
-+                    stdout.extend_from_slice(&buffer[..count]);
-+                }
-+                if no_color.is_empty() {
-+                    // Prove the PTY enables automatic color detection without NO_COLOR.
-+                    assert!(stdout.contains(&b'\x1b'), "{wrap} {theme}: {stdout:?}");
-+                } else {
-+                    assert_eq!(stdout, b"   1 hello world\r\n", "{wrap} {theme}");
-+                }
-+            }
-         }
-     }
- }
+ fn wrapping_test(wrap_flag: &str, expect_wrap: bool) {
+     let expected = match expect_wrap {
+         true =>
 ```
 
 ---
 
-### Incident Patch 2: `833a1a76` (2026-11-08)
-**Commit Message**: test: cover automatic highlight colors on pipes and terminals
+### Incident Patch 2: `8cf33bdd` (2026-11-10)
+**Commit Message**: Merge pull request #4122 from spicysharkco/fix/empty-ignored-suffix
 
-**File**: `Cargo.toml` (modified, +1/-1)
+Ignore empty values for --ignored-suffix
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -104,7 +104,7 @@ tempfile = "3.27.0"
- serde = { version = "1.0", features = ["derive"] }
+@@ -32,6 +32,7 @@
+ - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
  
- [target.'cfg(unix)'.dev-dependencies]
--nix = { version = "0.31", default-features = false, features = ["term"] }
-+nix = { version = "0.31", default-features = false, features = ["poll", "term"] }
- 
- [build-dependencies]
- anyhow = "1.0.97"
+ ## Bugfixes
++- Ignore empty `--ignored-suffix` values to avoid a stack overflow, see #4122 (@spicysharkco)
+ - Fix `--number-nonblank` counting empty UTF-16 lines, see #4118 (@pcbeingused333)
+ - Don't emit `--highlight-line` escape sequences (background color or `ansi` theme underline) when colors are disabled with `--color=never`. Closes #4099, see #4100 (@DeviousCardi)
+ - Fix missing colors, pager, and decorations in mintty/MSYS2 and Cygwin terminals on Windows, see #4115 (@rezamuliawijaya)
 ```
 
-**File**: `tests/integration_tests.rs` (modified, +85/-14)
+**File**: `src/syntax_mapping/ignored_suffixes.rs` (modified, +3/-1)
 ```diff
-@@ -3955,20 +3955,91 @@ fn ansi_highlight_underline() {
- fn highlight_line_without_colors() {
-     for wrap in ["--wrap=never", "--wrap=character"] {
-         for theme in ["--theme=Coldark-Dark", "--theme=ansi"] {
--            bat()
--                .arg("--paging=never")
--                .arg("--color=never")
--                .arg("--terminal-width=80")
--                .arg(wrap)
--                .arg(theme)
--                .arg("--decorations=always")
--                .arg("--style=numbers")
--                .arg("--highlight-line=1")
--                .write_stdin("First Line\nSecond Line\n")
--                .assert()
--                .success()
--                .stdout("   1 First Line\n   2 Second Line\n")
--                .stderr("");
-+            for color in ["--color=never", "--color=auto"] {
-+                bat()
-+                    .arg("--paging=never")
-+                    .arg(color)
-+                    .arg("--terminal-width=80")
-+                    .arg(wrap)
-+                    .arg(theme)
-+                    .arg("--decorations=always")
-+                    .arg("--style=numbers")
-+                    .arg("--highlight-line=1")
-+                    .write_stdin("First Line\nSecond Line\n")
-+                    .assert()
-+                    .success()
-+                    .stdout("   1 First Line\n   2 Second Line\n")
-+                    .stderr("");
-+            }
+@@ -39,7 +39,9 @@ impl Default for IgnoredSuffixes<'_> {
+ 
+ impl<'a> IgnoredSuffixes<'a> {
+     pub fn add_suffix(&mut self, suffix: &'a str) {
+-        self.values.push(suffix)
++        if !suffix.is_empty() {
++            self.values.push(suffix)
 +        }
-+    }
+     }
+ 
+     pub fn strip_suffix(&self, file_name: &'a str) -> Option<&'a str> {
+```
+
+**File**: `tests/integration_tests.rs` (modified, +15/-0)
+```diff
+@@ -4194,6 +4194,21 @@ fn ignored_suffix_arg() {
+         .stderr("");
+ }
+ 
++#[test]
++fn ignored_suffix_arg_empty() {
++    bat()
++        .arg("-f")
++        .arg("--theme")
++        .arg("ansi")
++        .arg("-p")
++        .arg("--ignored-suffix=")
++        .arg("test.txt")
++        .assert()
++        .success()
++        .stdout("hello world\n")
++        .stderr("");
 +}
 +
-+#[cfg(unix)]
-+#[test]
-+fn highlight_line_respects_no_color_on_terminal() {
-+    use nix::poll::{poll, PollFd, PollFlags};
-+    use std::io::Read;
-+    use std::os::fd::AsFd;
-+
-+    for wrap in ["--wrap=never", "--wrap=character"] {
-+        for theme in ["--theme=Coldark-Dark", "--theme=ansi"] {
-+            for no_color in ["", "1"] {
-+                let OpenptyResult { master, slave } = openpty(None, None).unwrap();
-+                let mut master = File::from(master);
-+                // Keep a slave open until the output is read: macOS discards unread PTY
-+                // output when the last slave closes.
-+                let slave = File::from(slave);
-+                let mut child = bat_raw_command()
-+                    .args([
-+                        "--paging=never",
-+                        "--color=auto",
-+                        "--terminal-width=80",
-+                        "--decorations=always",
-+                        "--style=numbers",
-+                        "--highlight-line=1",
-+                        wrap,
-+                        theme,
-+                        "test.txt",
-+                    ])
-+                    .env("TERM", "xterm-256color")
-+                    .env("NO_COLOR", no_color)
-+                    .stdin(Stdio::null())
-+                    .stdout(slave.try_clone().unwrap())
-+                    .stderr(Stdio::piped())
-+                    .spawn()
-+                    .unwrap();
-+
-+                // This fixture fits in the PTY buffer, so the child can exit before reading it.
-+                if child.wait_timeout(CHILD_WAIT_TIMEOUT).unwrap().is_none() {
-+                    child.kill().unwrap();
-+                    child.wait().unwrap();
-+                    panic!("bat did not exit");
-+                }
-+                let output = child.wait_with_output().unwrap();
-+                assert!(output.status.success());
-+                assert!(output.stderr.is_empty());
-+
-+                let mut stdout = Vec::new();
-+                loop {
-+                    let mut fds = [PollFd::new(master.as_fd(), PollFlags::POLLIN)];
-+                    if poll(&mut fds, 100u16).unwrap() == 0 {
-+                        break;
-+                    }
-+                    let mut buffer = [0; 1024];
-+                    let count = master.read(&mut buffer).unwrap();
-+                    if count == 0 {
-+                        break;
-+                    }
-+                    stdout.extend_from_slice(&buffer[..count]);
-+                }
-+                if no_color.is_empty() {
-+                    // Prove the PTY enables automatic color detection without NO_COLOR.
-+                    assert!(stdout.contains(&b'\x1b'), "{wrap} {theme}: {stdout:?}");
-+                } else {
-+                    assert_eq!(stdout, b"   1 hello world\r\n", "{wrap} {theme}");
-+                }
-+            }
-         }
-     }
- }
+ fn wrapping_test(wrap_flag: &str, expect_wrap: bool) {
+     let expected = match expect_wrap {
+         true =>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4122** (2026-11-10): Ignore empty values for --ignored-suffix (@spicysharkco)
 - **PR #4119** (2026-11-08): test: cover automatic highlight colors on pipes and terminals (@FFspiky)
 - **PR #4118** (2026-11-07): fix: skip empty UTF-16 lines in nonblank numbering (@pcbeingused333)
 - **PR #4117** (2026-11-06): fix wrong merge result in CHANGELOG.md (@keith-hall)
 - **PR #4115** (2026-11-06): fix: detect mintty/MSYS2/Cygwin terminals as interactive output on Windows (@rezamuliawijaya)
 - **PR #4113** (2026-11-05): Make full-path syntax mappings work on Windows (@b84330808)
-- **PR #4112** (2026-11-04): Keep configuration active for option-like filenames (@Marve10s)
 
 ---
 
@@ -889,28 +753,28 @@ test: cover automatic highlight colors on pipes and terminals
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4119 from FFspiky/test/highlight-color-tty
+## X. Ignore empty values for --ignored-suffix
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6561174a`: Merge pull request #4119 from FFspiky/test/highlight-color-tty. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `120fa525`: Ignore empty values for --ignored-suffix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-nix = { version = "0.31", default-features = false, features = ["poll", "term"] }
+- Ignore empty `--ignored-suffix` values to avoid a stack overflow, see #4122 (@spicysharkco)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-nix = { version = "0.31", default-features = false, features = ["term"] }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6561174a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `120fa525` are properly handled with clean fallback behavior.

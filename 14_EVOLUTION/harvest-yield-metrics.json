@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:09:46.897Z",
-  "total_cycles_completed": 8799,
-  "total_learnings_persisted": 8799,
-  "total_rules_promoted": 8659,
+  "last_updated": "2026-11-11T14:16:56.005Z",
+  "total_cycles_completed": 8802,
+  "total_learnings_persisted": 8802,
+  "total_rules_promoted": 8662,
   "history": [
-    {
-      "timestamp": "2026-11-09T16:33:36.196Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:33:38.076Z",
-      "repository": "LiquidAI/LFM3-Omni-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:33:39.729Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T16:40:18.866Z",
       "repository": "Xudong-Huang/may",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T14:09:46.897Z",
       "repository": "JetBrains/kotlinconf-app",
       "learningId": "learn-github-jetbrains-kotlinconf-app",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:16:44.425Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:16:53.854Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:16:56.005Z",
+      "repository": "projectcontour/contour",
+      "learningId": "learn-github-projectcontour-contour",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
