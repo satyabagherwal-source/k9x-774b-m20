@@ -8938,3 +8938,5 @@
 | `CYCLE-20261111-0O3F` | `2026-11-11T11:19:09.819Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8789ab88...`) |
 | `CYCLE-20261111-0PS0` | `2026-11-11T11:19:12.000Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2cb563c2...`) |
 | `CYCLE-20261111-R3Z8` | `2026-11-11T11:39:43.460Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7b4875f...`) |
+| `CYCLE-20261111-LRK1` | `2026-11-11T12:03:33.697Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9127a0f9...`) |
+| `CYCLE-20261111-S7X6` | `2026-11-11T12:08:34.842Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62692211...`) |

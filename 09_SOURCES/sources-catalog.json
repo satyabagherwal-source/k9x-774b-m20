@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "a2e3b24d",
+    "sourceVersion": "e0d1aa05",
     "license": "Apache-2.0",
-    "contentHash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
-    "lastHarvestedAt": "2026-11-07T06:17:49.903Z",
+    "contentHash": "9127a0f987cde3bd4288e223b24111e354ad497c438d4d165461512dd9590375",
+    "lastHarvestedAt": "2026-11-11T12:03:33.700Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {
@@ -7023,10 +7023,10 @@
     "repository": "mikepenz/AboutLibraries",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/AboutLibraries",
-    "sourceVersion": "0eb18c80",
+    "sourceVersion": "b18bd7b2",
     "license": "Apache-2.0",
-    "contentHash": "e694e2bc14ae504b934930ab0484f0308908dcfae0194b554b428ea4fe72a303",
-    "lastHarvestedAt": "2026-11-07T21:10:24.185Z",
+    "contentHash": "62692211442631c769c6bcf67cdbaa5c9cd6eee1535943473c3b4bc7569bba43",
+    "lastHarvestedAt": "2026-11-11T12:08:34.846Z",
     "learningId": "learn-github-mikepenz-aboutlibraries"
   },
   "tursodatabase-turso": {

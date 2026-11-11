@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:39:47.841Z",
+  "last_updated": "2026-11-11T12:08:41.385Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4801,6 +4801,33 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5AF5AE-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-EA6AA5",
+      "directive_title": "deps): update gradle/actions digest to 8da46b5 (#1496)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mikepenz-aboutlibraries",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EA6AA5-deps-update-gradle-actions-digest-to-8da.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C73A98",
+      "directive_title": "Merge pull request #1269 from lbarrosby/fix/webhook-http-status",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "stakater-reloader",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C73A98-merge-pull-request-1269-from-lbarrosby-f.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-DF6EC7",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DF6EC7-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-11"
     }
   ]

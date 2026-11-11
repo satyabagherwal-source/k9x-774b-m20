@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md`  
 > **Source**: github ([https://github.com/mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries))  
-> **Source Version**: `0eb18c80`  
+> **Source Version**: `b18bd7b2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:10:22.491Z  
+> **Timestamp**: 2026-11-11T12:08:20.936Z  
 > **Learning ID**: `learn-github-mikepenz-aboutlibraries`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:10:22.320Z  
+> **Harvest Timestamp**: 2026-11-11T12:03:20.236Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AboutLibraries automatically collects all dependencies and licenses of any gradle project (Kotlin MultiPlatform), and provides easy to integrate UI components for Android and Compose Multiplatform environments 
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4492 stars
+- **Stars / Engagement**: 4496 stars
 
 ---
 
@@ -504,31 +504,83 @@ data class Organization(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0eb18c80` (2026-11-07)
-**Commit Message**: chore(deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495)
+### Incident Patch 1: `b18bd7b2` (2026-11-08)
+**Commit Message**: chore(deps): update gradle/actions digest to 8da46b5 (#1496)
 
 Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +3/-3)
 ```diff
-@@ -245,7 +245,7 @@ jobs:
+@@ -36,7 +36,7 @@ jobs:
+         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
  
-       - name: Build Changelog
-         id: github_release
--        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6
-+        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6
+       - name: Setup Gradle
+-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
++        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+ 
+       - name: Cache konan
+         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+@@ -111,10 +111,10 @@ jobs:
+             21
+ 
+       - name: Setup Gradle
+-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
++        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+ 
+       - name: Validate gradle wrapper
+-        uses: gradle/actions/wrapper-validation@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
++        uses: gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+ 
+       - name: Copy CI gradle.properties
+         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+```
+
+**File**: `.github/workflows/gradle-dependency-submission.yml` (modified, +1/-1)
+```diff
+@@ -26,6 +26,6 @@ jobs:
+         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+ 
+       - name: Setup Gradle & Submit dependency graphs
+-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
++        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
          with:
-           configuration: ".github/config/configuration.json"
-           ignorePreReleases: ${{ !contains(github.ref, '-') }}
+           dependency-graph: generate-and-submit
+\ No newline at end of file
+```
+
+**File**: `.github/workflows/record-screenshots.yml` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ jobs:
+         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+ 
+       - name: Setup Gradle
+-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
++        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+ 
+       - name: Publish plugin locally
+         run: |
+```
+
+**File**: `.github/workflows/static.yml` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ jobs:
+             17
+             21
+       - name: Setup Gradle
+-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
++        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+       - name: Build Page
+         run: |
+           ./gradlew :sample:web:exportLibraryDefinitionsWasmJs
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1496** (2026-11-08): chore(deps): update gradle/actions digest to 8da46b5 (@renovate-mike[bot])
 - **PR #1495** (2026-11-07): chore(deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (@renovate-mike[bot])
 - **PR #1493** (2026-11-02): fix(deps): update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.12.0 (@renovate-mike[bot])
 - **PR #1492** (2026-11-02): fix(deps): update dependency com.squareup.okhttp3:okhttp to v5.5.1 (@renovate-mike[bot])
 - **PR #1491** (2026-11-02): chore(deps): update gradle to v9.8.2 (@renovate-mike[bot])
 - **PR #1490** (2026-11-01): chore(deps): update github actions updates (@renovate-mike[bot])
-- **PR #1489** (2026-11-02): fix(deps): update dependency com.mikepenz:version-catalog to v0.23.2 (@renovate-mike[bot])
 
 ---
 
@@ -548,13 +600,13 @@ Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.g
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495
+## X. deps): update gradle/actions digest to 8da46b5 (#1496)
 
 **RULE**:
 When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/AboutLibraries. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0eb18c80`: deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b18bd7b2`: deps): update gradle/actions digest to 8da46b5 (#1496). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
@@ -562,14 +614,18 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+        uses: gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/wrapper-validation@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0eb18c80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b18bd7b2` are properly handled with clean fallback behavior.

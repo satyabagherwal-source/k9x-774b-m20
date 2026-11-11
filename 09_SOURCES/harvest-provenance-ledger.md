@@ -8947,3 +8947,5 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `51d3b704` | Multi-dimensional audit evidence | 2026-11-11T11:19:09.823Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `cd5af882` | Multi-dimensional audit evidence | 2026-11-11T11:19:12.005Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `49c815a0` | Multi-dimensional audit evidence | 2026-11-11T11:39:43.464Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `e0d1aa05` | Multi-dimensional audit evidence | 2026-11-11T12:03:33.700Z |
+| `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `b18bd7b2` | Multi-dimensional audit evidence | 2026-11-11T12:08:34.846Z |

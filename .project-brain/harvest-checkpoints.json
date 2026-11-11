@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T11:39:43.473Z",
+  "last_updated": "2026-11-11T12:08:34.865Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
-      "verified_at": "2026-11-07T06:17:49.923Z",
+      "content_hash": "9127a0f987cde3bd4288e223b24111e354ad497c438d4d165461512dd9590375",
+      "verified_at": "2026-11-11T12:03:33.722Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T06:17:49.923Z"
+      "last_updated": "2026-11-11T12:03:33.722Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",
@@ -10596,14 +10596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-aboutlibraries",
-      "content_hash": "e694e2bc14ae504b934930ab0484f0308908dcfae0194b554b428ea4fe72a303",
-      "verified_at": "2026-11-07T21:10:24.202Z",
+      "content_hash": "62692211442631c769c6bcf67cdbaa5c9cd6eee1535943473c3b4bc7569bba43",
+      "verified_at": "2026-11-11T12:08:34.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:10:24.202Z"
+      "last_updated": "2026-11-11T12:08:34.865Z"
     },
     "flux-iac/tofu-controller": {
       "repository": "flux-iac/tofu-controller",

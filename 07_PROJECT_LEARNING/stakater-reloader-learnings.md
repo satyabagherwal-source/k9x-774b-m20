@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source**: github ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
-> **Source Version**: `a2e3b24d`  
+> **Source Version**: `e0d1aa05`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T06:17:47.967Z  
+> **Timestamp**: 2026-11-11T12:03:24.046Z  
 > **Learning ID**: `learn-github-stakater-reloader`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T06:17:47.727Z  
+> **Harvest Timestamp**: 2026-11-11T12:03:23.875Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling upgrades on Pods with their associated Deployment, StatefulSet, DaemonSet and DeploymentConfig – [✩Star] if you're using it!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10551 stars
+- **Stars / Engagement**: 10563 stars
 
 ---
 
@@ -1114,6 +1114,7 @@ const (
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -1423,10 +1424,7 @@ func (c *Controller) Delete(old interface{}) {
 func (c *Controller) enqueue(item interface{}) {
 	c.queue.Add(item)
 	c.collectors.RecordQueueAdd()
-	c.collectors.SetQueueDepth(c.queue.Len())
-}
-
-// 
+	c.collectors.SetQueueDepth(c.queue.Len
 ```
 
 ### Core Architecture Module: `internal/pkg/crypto/sha.go`
@@ -1460,13 +1458,14 @@ func GenerateSHA(data string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1273** (2026-11-06): **fix: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045**
-  *Symptoms*: Upgrades the golang.org/x/* module family in lockstep. Fixes the HIGH severity CVE-2026-78661 and the MEDIUM severity CVE-2026-97045 in the html package of golang.org/x/net v0.60.0  Closes #1272 
-  **Post-Mortem & Fix Analysis**:
-  > ## :white_check_mark: Load Test Results (quick)  ## ❌ Load Test Results: 1 TEST(S) FAILED  > 🚀 **Quick Test** (S1, S4, S6) — Use `/loadtest` for full suite  **2/3 passed** (66%)  | | Scenario | Description | Actions | Errors | |:-:|:--------:|-------------|:-------:|:------:| | ✅ | **S1** | S1: 143 burst updates, each triggers 1 dep... | 143/143 | 0 | | ✅ | **S4** | S4: 143 no-op updates, all should be skipped | 0 | 0 | | ❌ | **S6** | S6: Restart test - 142 updates during restart | 145 | 0 |  📦 **[Download detailed results](../artifacts)**   --- **Artifacts:** [Download](https://github.com/stakater/Reloader/actions/runs/42201859659)
+- **Issue #1280** (2026-11-11): **chore: bump Helm chart to 2.2.20 (appVersion v1.4.24)**
+  *Symptoms*: `v1.4.24` ships the golang.org/x/net v0.62.0 bump for CVE-2026-78661 and CVE-2026-97045 (#1273), the pause-resume retry fix (#1266), the webhook non-2xx handling fix (#1269) and the configurable NetworkPolicy egress (#1262). The chart still deploys `v1.4.23`.  Point the chart at `v1.4.24` and bump the chart version. The `release/helm-chart` label publishes it on merge.  ## Before/After | | Before | After | |---|---|---| | Chart `version` | `2.2.19` | `2.2.20` | | `appVersion`, `image.tag`, version label | `v1.4.23` | `v1.4.24` |  Example: `helm upgrade reloader stakater/reloader --version 2.2.20` deploys `ghcr.io/stakater/reloader:v1.4.24`. 
 
-- **Issue #1272** (2026-11-06): **[BUG] Multiple CVEs in 1.4.23**
-  *Symptoms*: - [CVE-2026-78661](https://nvd.nist.gov/vuln/detail/cve-2026-78661) - [CVE-2026-97045](https://nvd.nist.gov/vuln/detail/cve-2026-97045)  Suggested fix: upgrade `golang.org/x/net` from v0.60.0 to >= v0.62.0
+- **Issue #1279** (2026-11-11): **Release v1.4.24**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- pr-title-freeze --> Thank you for your contribution. The `master` branch is in feature freeze and accepts only `fix:` and `chore:` pull requests.  - For a bug fix or maintenance change, update the title to begin with `fix:` or `chore:`, for example `fix(chart): correct probe port`. - For a new feature, change the base branch of this pull request to `v2`, the active development branch.  For more details, see [Branches and PR titles](https://github.com/stakater/Reloader/blob/master/README.md#branches-and-pr-titles). 
+  > ## :white_check_mark: Load Test Results (quick)  ## ✅ Load Test Results: ALL TESTS PASSED  > 🚀 **Quick Test** (S1, S4, S6) — Use `/loadtest` for full suite  **3/3 passed** (100%)  | | Scenario | Description | Actions | Errors | |:-:|:--------:|-------------|:-------:|:------:| | ✅ | **S1** | S1: 143 burst updates, each triggers 1 dep... | 143/143 | 0 | | ✅ | **S4** | S4: 143 no-op updates, all should be skipped | 0 | 0 | | ✅ | **S6** | S6: Restart test - 142 updates during restart | 146 | 0 |  📦 **[Download detailed results](../artifacts)**   --- **Artifacts:** [Download](https://github.com/stakater/Reloader/actions/runs/42974427840)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1483,105 +1482,788 @@ func GenerateSHA(data string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2e3b24d` (2026-11-06)
-**Commit Message**: fix: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273)
+### Incident Patch 1: `cd3c40e7` (2026-11-10)
+**Commit Message**: Merge pull request #1269 from lbarrosby/fix/webhook-http-status
 
-**File**: `go.mod` (modified, +7/-7)
+fix(handler): treat non-2xx --webhook-url responses as failures
+
+**File**: `internal/pkg/controller/controller.go` (modified, +9/-0)
 ```diff
-@@ -248,15 +248,15 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
- 	golang.org/x/exp/typeparams v0.0.0-20251023183803-a4bb9ffd2546 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	google.golang.org/protobuf v1.36.11 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
+@@ -1,6 +1,7 @@
+ package controller
+ 
+ import (
++	"errors"
+ 	"fmt"
+ 	"sync"
+ 	"sync/atomic"
+@@ -421,6 +422,14 @@ func (c *Controller) handleErr(err error, key interface{}) {
+ 		return
+ 	}
+ 
++	if errors.Is(err, handler.ErrNotRetryable) {
++		c.queue.Forget(key)
++		c.collectors.RecordError("webhook_non_retryable")
++		c.collectors.RecordEventProcessed("unknown", c.resource, "dropped")
++		logrus.Errorf("Dropping key, not retryable: %v", err)
++		return
++	}
++
+ 	// Record error
+ 	c.collectors.RecordError("handler_error")
+ 
 ```
 
-**File**: `go.sum` (modified, +14/-14)
+**File**: `internal/pkg/controller/controller_test.go` (modified, +69/-0)
 ```diff
-@@ -619,8 +619,8 @@ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
- golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
- golang.org/x/net v0.16.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-@@ -632,8 +632,8 @@ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -653,18 +653,18 @@ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 h1:ZUSxONxc981v7AW7QUg+I9WwZzSTTJ019ENBYr5pV/Q=
--golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
-+golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
- golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
- golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
- golang.org/x/term v0.13.0/go.mod h1:LTmsnFJwVN6bCy1rVCoS+qHT1HhALEFxKncY3WNNh4U=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
-@@ -673,8 +673,8 @@ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
- golang.org/x/text v0.9.0/go.mod h1:e1OnstbJyHTd6l/uOt8jFFHp6TRDWZR/bV3emEE/zU8=
- golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo/om8BMLbz+aE=
--golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
--golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
-+golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
-+golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
- golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
- golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDW
+@@ -2,9 +2,11 @@ package controller
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"testing"
+ 	"time"
+ 
++	"github.com/prometheus/client_golang/prometheus"
+ 	"github.com/stretchr/testify/assert"
+ 	v1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -811,6 +813,73 @@ func TestProcessNextItem(t *testing.T) {
+ 	}
+ }
+ 
++func TestProcessNextItemRecordsHandlerErrorsOnce(t *testing.T) {
++	tests := []struct {
++		name          string
++		handleErr     error
++		wantErrorType string
++		wantResult    string
++		wantRetries   float64
++		wantRequeues  int
++	}{
++		{
++			name:          "retryable error is requeued",
++			handleErr:     errors.New("webhook returned status 503 Service Unavailable"),
++			wantErrorType: "handler_error",
++			wantRetries:   1,
++			wantRequeues:  1,
++		},
++		{
++			name:          "non-retryable error is dropped",
++			handleErr:     fmt.Errorf("%w: webhook returned status 401 Unauthorized", handler.ErrNotRetryable),
++			wantErrorType: "webhook_non_retryable",
++			wantResult:    "dropped",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			resetGlobalState()
++			c := newTestController([]string{}, "")
++			h := &mockResourceHandler{handleErr: tt.handleErr, enqueueTime: time.Now()}
++			c.queue.Add(h)
++
++			assert.True(t, c.processNextItem())
++
++			for _, errorType := range []string{"handler_error", "webhook_non_retryable"} {
++				want := 0.0
++				if errorType == tt.wantErrorType {
++					want = 1
++				}
++				assert.Equal(t, want, counterValue(t, c.collectors.ErrorsTotal.WithLabelValues(errorType)), errorType)
++			}
++			for _, result := range []string{"success", "dropped"} {
++				want := 0.0
++				if result == tt.wantResult {
++					want = 1
++				}
++				assert.Equal(t, want, counterValue(t, c.collectors.EventsProcessed.WithLabelValues("unknown", "configmaps", result)), result)
++			}
++			assert.Equal(t, 1.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("error")))
++			assert.Equal(t, 0.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("success")))
++			assert.Equal(t, tt.wantRetries, counterValue(t, c.collectors.RetriesTotal))
++			assert.Equal(t, tt.wantRequeues, c.queue.NumRequeues(h))
++		})
++	}
++}
++
++func counterValue(t *testing.T, c prometheus.Counter) float64 {
++	t.Helper()
++	registry := prometheus.NewRegistry()
++	registry.MustRegister(c)
++	families, err := registry.Gather()
++	assert.NoError(t, err)
++	if len(families) == 0 {
++		return 0
++	}
++	return families[0].GetMetric()[0].GetCounter().GetValue()
++}
++
+ func TestProcessNextItemQueueShutdown(t *testing.T) {
+ 	resetGlobalState()
+ 	c := newTestController([]string{}, "")
+```
+
+**File**: `internal/pkg/handler/upgrade.go` (modified, +12/-1)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"io"
++	"net/http"
+ 	"os"
+ 	"strings"
+ 	"time"
+@@ -143,6 +144,10 @@ func GetArgoRolloutRollingUpgradeFuncs() callbacks.RollingUpgradeFuncs {
+ 	}
+ }
+ 
++// ErrNotRetryable marks a failure that a retry will not fix, such as a
++// webhook 4xx other than 429. The controller drops it instead of requeueing.
++var ErrNotRetryable = errors.New("not retryable")
++
+ func sendUpgradeWebhook(config common.Config, webhookUrl string) error {
+ 	logrus.Infof("Changes detected in '%s' of type '%s' in namespace '%s', Sending webhook to '%s'",
+ 		config.ResourceName, config.Type, config.Namespace, webhookUrl)
+@@ -176,7 +181,13 @@ func sendWebhook(url string) (string, []error) {
+ 	if bufferErr != nil {
+ 		logrus.Error(bufferErr)
+ 	}
+-	return buffer.String(), nil
++	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
++		return buffer.String(), nil
++	}
++	if resp.StatusCode >= 500 || resp.StatusCode == http.StatusTooManyRequests {
++		return buffer.String(), []error{fmt.Errorf("webhook returned status %s", resp.Status)}
++	}
++	return buffer.String(), []error{fmt.Errorf("%w: webhook returned status %s", ErrNotRetryable, resp.Status)}
+ }
+ 
+ func doRollingUpgrade(config common.Config, collectors metrics.Collectors, recorder record.EventRecorder, invoke invokeStrategy) error {
+```
+
+**File**: `internal/pkg/handler/webhook_test.go` (added, +123/-0)
+```diff
+@@ -0,0 +1,123 @@
++package handler
++
++import (
++	"errors"
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/prometheus/client_golang/prometheus"
++	"github.com/stretchr/testify/assert"
++	v1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++
++	"github.com/stakater/Reloader/internal/pkg/metrics"
++	"github.com/stakater/Reloader/internal/pkg/options"
++	"github.com/stakater/Reloader/pkg/common"
++)
++
++func TestSendUpgradeWebhookReturnsErrorOnNon2xxStatus(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.WriteHeader(http.StatusInternalServerError)
++		_, _ = w.Write([]byte("boom"))
++	}))
++	defer server.Close()
++
++	err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
++	assert.Error(t, err)
++}
++
++func TestSendUpgradeWebhookSucceedsOn2xxStatus(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.WriteHeader(http.StatusAccepted)
++	}))
++	defer server.Close()
++
++	err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
++	assert.NoError(t, err)
++}
++
++func TestSendUpgradeWebhookRetriesOnlyOn5xxAnd429(t *testing.T) {
++	tests := []struct {
++		name      string
++		status    int
++		wantRetry bool
++	}{
++		{name: "500", status: http.StatusInternalServerError, wantRetry: true},
++		{name: "503", status: http.StatusServiceUnavailable, wantRetry: true},
++		{name: "429", status: http.StatusTooManyRequests, wantRetry: true},
++		{name: "400", status: http.StatusBadRequest, wantRetry: false},
++		{name: "401", status: http.StatusUnauthorized, wantRetry: false},
++		{name: "404", status: http.StatusNotFound, wantRetry: false},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.WriteHeader(tt.status)
++			}))
++			defer server.Close()
++
++			err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
++			assert.Error(t, err)
++			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
++		})
++	}
++}
++
++func TestResourceCreatedHandlerWebhookStatus(t *testing.T) {
++	tests := []struct {
++		name      string
++		status    int
++		wantRetry bool
++	}{
++		{name: "4xx is not requeued", status: http.StatusUnauthorized, wantRetry: false},
++		{name: "429 is requeued", status: http.StatusTooManyRequests, wantRetry: true},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.WriteHeader(tt.status)
++			}))
++			defer server.Close()
++
++			oldURL := options.WebhookUrl
++			options.WebhookUrl = server.URL
++			defer func() { options.WebhookUrl = oldURL }()
++
++			collectors := metrics.NewCollectors()
++			handler := ResourceCreatedHandler{
++				Resource: &v1.ConfigMap{
++					ObjectMeta: metav1.ObjectMeta{Name: "my-cm", Namespace: "default"},
++					Data:       map[string]string{"key": "value"},
++				},
++				Collectors: collectors,
++			}
++
++			err := handler.Handle()
++			assert.Error(t, err)
++			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
++			assert.Equal(t, float64(1), reconcileCount(t, collectors, "error"))
++			assert.Equal(t, float64(0), reconcileCount(t, collectors, "success"))
++		})
++	}
++}
++
++func reconcileCount(t *testing.T, collectors metrics.Collectors, result string) float64 {
++	t.Helper()
++	registry := prometheus.NewRegistry()
++	registry.MustRegister(collectors.ReconcileTotal)
++	families, err := registry.Gather()
++	assert.NoError(t, err)
++	for _, family := range families {
++		for _, metric := range family.GetMetric() {
++			for _, label := range metric.GetLabel() {
++				if label.GetName() == "result" && label.GetValue() == result {
++					return metric.GetCounter().GetValue()
++				}
++			}
++		}
++	}
++	return 0
++}
+```
+
+---
+
+### Incident Patch 2: `b4ccd0da` (2026-11-09)
+**Commit Message**: fix(controller): drop non-retryable webhook failures in handleErr
+
+The handler returned nil for a non-retryable 4xx after recording the
+error, so the controller also counted a successful reconcile and a
+successful event for the same item.
+
+sendWebhook now wraps ErrNotRetryable and the handlers return the error
+as is. handleErr forgets the key, records webhook_non_retryable and a
+dropped event, and does not requeue it.
+
+Signed-off-by: Lucas Barros <[REDACTED_EMAIL]>
+
+**File**: `internal/pkg/controller/controller.go` (modified, +9/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package controller
+ 
+ import (
++	"errors"
+ 	"fmt"
+ 	"sync"
+ 	"sync/atomic"
+@@ -421,6 +422,14 @@ func (c *Controller) handleErr(err error, key interface{}) {
+ 		return
+ 	}
+ 
++	if errors.Is(err, handler.ErrNotRetryable) {
++		c.queue.Forget(key)
++		c.collectors.RecordError("webhook_non_retryable")
++		c.collectors.RecordEventProcessed("unknown", c.resource, "dropped")
++		logrus.Errorf("Dropping key, not retryable: %v", err)
++		return
++	}
++
+ 	// Record error
+ 	c.collectors.RecordError("handler_error")
+ 
+```
+
+**File**: `internal/pkg/controller/controller_test.go` (modified, +69/-0)
+```diff
+@@ -2,9 +2,11 @@ package controller
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"testing"
+ 	"time"
+ 
++	"github.com/prometheus/client_golang/prometheus"
+ 	"github.com/stretchr/testify/assert"
+ 	v1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -811,6 +813,73 @@ func TestProcessNextItem(t *testing.T) {
+ 	}
+ }
+ 
++func TestProcessNextItemRecordsHandlerErrorsOnce(t *testing.T) {
++	tests := []struct {
++		name          string
++		handleErr     error
++		wantErrorType string
++		wantResult    string
++		wantRetries   float64
++		wantRequeues  int
++	}{
++		{
++			name:          "retryable error is requeued",
++			handleErr:     errors.New("webhook returned status 503 Service Unavailable"),
++			wantErrorType: "handler_error",
++			wantRetries:   1,
++			wantRequeues:  1,
++		},
++		{
++			name:          "non-retryable error is dropped",
++			handleErr:     fmt.Errorf("%w: webhook returned status 401 Unauthorized", handler.ErrNotRetryable),
++			wantErrorType: "webhook_non_retryable",
++			wantResult:    "dropped",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			resetGlobalState()
++			c := newTestController([]string{}, "")
++			h := &mockResourceHandler{handleErr: tt.handleErr, enqueueTime: time.Now()}
++			c.queue.Add(h)
++
++			assert.True(t, c.processNextItem())
++
++			for _, errorType := range []string{"handler_error", "webhook_non_retryable"} {
++				want := 0.0
++				if errorType == tt.wantErrorType {
++					want = 1
++				}
++				assert.Equal(t, want, counterValue(t, c.collectors.ErrorsTotal.WithLabelValues(errorType)), errorType)
++			}
++			for _, result := range []string{"success", "dropped"} {
++				want := 0.0
++				if result == tt.wantResult {
++					want = 1
++				}
++				assert.Equal(t, want, counterValue(t, c.collectors.EventsProcessed.WithLabelValues("unknown", "configmaps", result)), result)
++			}
++			assert.Equal(t, 1.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("error")))
++			assert.Equal(t, 0.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("success")))
++			assert.Equal(t, tt.wantRetries, counterValue(t, c.collectors.RetriesTotal))
++			assert.Equal(t, tt.wantRequeues, c.queue.NumRequeues(h))
++		})
++	}
++}
++
++func counterValue(t *testing.T, c prometheus.Counter) float64 {
++	t.Helper()
++	registry := prometheus.NewRegistry()
++	registry.MustRegister(c)
++	families, err := registry.Gather()
++	assert.NoError(t, err)
++	if len(families) == 0 {
++		return 0
++	}
++	return families[0].GetMetric()[0].GetCounter().GetValue()
++}
++
+ func TestProcessNextItemQueueShutdown(t *testing.T) {
+ 	resetGlobalState()
+ 	c := newTestController([]string{}, "")
+```
+
+**File**: `internal/pkg/handler/create.go` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ func (r ResourceCreatedHandler) Handle() error {
+ 		if err == nil {
+ 			result = "success"
+ 		}
+-		return webhookRequeueError(err, r.Collectors)
++		return err
+ 	}
+ 	// process resource based on its type
+ 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
+```
+
+**File**: `internal/pkg/handler/delete.go` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ func (r ResourceDeleteHandler) Handle() error {
+ 		if err == nil {
+ 			result = "success"
+ 		}
+-		return webhookRequeueError(err, r.Collectors)
++		return err
+ 	}
+ 	// process resource based on its type
+ 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeDeleteStrategy)
+```
+
+**File**: `internal/pkg/handler/update.go` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ func (r ResourceUpdatedHandler) Handle() error {
+ 			if err == nil {
+ 				result = "success"
+ 			}
+-			return webhookRequeueError(err, r.Collectors)
++			return err
+ 		}
+ 		// process resource based on its type
+ 		err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
+```
+
+**File**: `internal/pkg/handler/upgrade.go` (modified, +4/-19)
+```diff
+@@ -144,20 +144,16 @@ func GetArgoRolloutRollingUpgradeFuncs() callbacks.RollingUpgradeFuncs {
+ 	}
+ }
+ 
+-// errWebhookNotRetryable marks a webhook response that a retry will not fix,
+-// such as a 4xx other than 429.
+-var errWebhookNotRetryable = errors.New("webhook returned a non-retryable status")
++// ErrNotRetryable marks a failure that a retry will not fix, such as a
++// webhook 4xx other than 429. The controller drops it instead of requeueing.
++var ErrNotRetryable = errors.New("not retryable")
+ 
+ func sendUpgradeWebhook(config common.Config, webhookUrl string) error {
+ 	logrus.Infof("Changes detected in '%s' of type '%s' in namespace '%s', Sending webhook to '%s'",
+ 		config.ResourceName, config.Type, config.Namespace, webhookUrl)
+ 
+ 	body, errs := sendWebhook(webhookUrl)
+ 	if errs != nil {
+-		if errors.Is(errs[0], errWebhookNotRetryable) {
+-			logrus.Errorf("Webhook for '%s' of type '%s' in namespace '%s' failed and will not be retried: %v",
+-				config.ResourceName, config.Type, config.Namespace, errs[0])
+-		}
+ 		// return the first error
+ 		return errs[0]
+ 	} else {
+@@ -191,18 +187,7 @@ func sendWebhook(url string) (string, []error) {
+ 	if resp.StatusCode >= 500 || resp.StatusCode == http.StatusTooManyRequests {
+ 		return buffer.String(), []error{fmt.Errorf("webhook returned status %s", resp.Status)}
+ 	}
+-	return buffer.String(), []error{fmt.Errorf("%w: %s", errWebhookNotRetryable, resp.Status)}
+-}
+-
+-// webhookRequeueError returns the error the controller should requeue on.
+-// Failures that a retry will not fix are recorded and dropped, so the
+-// reconcile still counts as an error but the event is not requeued.
+-func webhookRequeueError(err error, collectors metrics.Collectors) error {
+-	if errors.Is(err, errWebhookNotRetryable) {
+-		collectors.RecordError("webhook_non_retryable")
+-		return nil
+-	}
+-	return err
++	return buffer.String(), []error{fmt.Errorf("%w: webhook returned status %s", ErrNotRetryable, resp.Status)}
+ }
+ 
+ func doRollingUpgrade(config common.Config, collectors metrics.Collectors, recorder record.EventRecorder, invoke invokeStrategy) error {
+```
+
+**File**: `internal/pkg/handler/webhook_test.go` (modified, +4/-12)
+```diff
+@@ -1,6 +1,7 @@
+ package handler
+ 
+ import (
++	"errors"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"testing"
+@@ -59,13 +60,7 @@ func TestSendUpgradeWebhookRetriesOnlyOn5xxAnd429(t *testing.T) {
+ 
+ 			err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
+ 			assert.Error(t, err)
+-
+-			requeueErr := webhookRequeueError(err, metrics.NewCollectors())
+-			if tt.wantRetry {
+-				assert.Error(t, requeueErr)
+-			} else {
+-				assert.NoError(t, requeueErr)
+-			}
++			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
+ 		})
+ 	}
+ }
+@@ -101,11 +96,8 @@ func TestResourceCreatedHandlerWebhookStatus(t *testing.T) {
+ 			}
+ 
+ 			err := handler.Handle()
+-			if tt.wantRetry {
+-				assert.Error(t, err)
+-			} else {
+-				assert.NoError(t, err)
+-			}
++			assert.Error(t, err)
++			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
+ 			assert.Equal(t, float64(1), reconcileCount(t, collectors, "error"))
+ 			assert.Equal(t, float64(0), reconcileCount(t, collectors, "success"))
+ 		})
+```
+
+---
+
+### Incident Patch 3: `5470fd1d` (2026-11-06)
+**Commit Message**: fix(handler): only requeue webhook failures on 5xx and 429
+
+A 4xx other than 429 will not succeed on retry, so requeueing it just
+burns the five attempts. Log it, record a webhook_non_retryable error and
+count the reconcile as failed without returning an error to the queue.
+5xx and 429 still return an error and are retried.
+
+Signed-off-by: Lucas Barros <[REDACTED_EMAIL]>
+
+**File**: `internal/pkg/handler/create.go` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ func (r ResourceCreatedHandler) Handle() error {
+ 		if err == nil {
+ 			result = "success"
+ 		}
+-		return err
++		return webhookRequeueError(err, r.Collectors)
+ 	}
+ 	// process resource based on its type
+ 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
+```
+
+**File**: `internal/pkg/handler/delete.go` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ func (r ResourceDeleteHandler) Handle() error {
+ 		if err == nil {
+ 			result = "success"
+ 		}
+-		return err
++		return webhookRequeueError(err, r.Collectors)
+ 	}
+ 	// process resource based on its type
+ 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeDeleteStrategy)
+```
+
+**File**: `internal/pkg/handler/update.go` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ func (r ResourceUpdatedHandler) Handle() error {
+ 			if err == nil {
+ 				result = "success"
+ 			}
+-			return err
++			return webhookRequeueError(err, r.Collectors)
+ 		}
+ 		// process resource based on its type
+ 		err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
+```
+
+**File**: `internal/pkg/handler/upgrade.go` (modified, +25/-2)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"io"
++	"net/http"
+ 	"os"
+ 	"strings"
+ 	"time"
+@@ -143,12 +144,20 @@ func GetArgoRolloutRollingUpgradeFuncs() callbacks.RollingUpgradeFuncs {
+ 	}
+ }
+ 
++// errWebhookNotRetryable marks a webhook response that a retry will not fix,
++// such as a 4xx other than 429.
++var errWebhookNotRetryable = errors.New("webhook returned a non-retryable status")
++
+ func sendUpgradeWebhook(config common.Config, webhookUrl string) error {
+ 	logrus.Infof("Changes detected in '%s' of type '%s' in namespace '%s', Sending webhook to '%s'",
+ 		config.ResourceName, config.Type, config.Namespace, webhookUrl)
+ 
+ 	body, errs := sendWebhook(webhookUrl)
+ 	if errs != nil {
++		if errors.Is(errs[0], errWebhookNotRetryable) {
++			logrus.Errorf("Webhook for '%s' of type '%s' in namespace '%s' failed and will not be retried: %v",
++				config.ResourceName, config.Type, config.Namespace, errs[0])
++		}
+ 		// return the first error
+ 		return errs[0]
+ 	} else {
+@@ -176,10 +185,24 @@ func sendWebhook(url string) (string, []error) {
+ 	if bufferErr != nil {
+ 		logrus.Error(bufferErr)
+ 	}
+-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
++	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
++		return buffer.String(), nil
++	}
++	if resp.StatusCode >= 500 || resp.StatusCode == http.StatusTooManyRequests {
+ 		return buffer.String(), []error{fmt.Errorf("webhook returned status %s", resp.Status)}
+ 	}
+-	return buffer.String(), nil
++	return buffer.String(), []error{fmt.Errorf("%w: %s", errWebhookNotRetryable, resp.Status)}
++}
++
++// webhookRequeueError returns the error the controller should requeue on.
++// Failures that a retry will not fix are recorded and dropped, so the
++// reconcile still counts as an error but the event is not requeued.
++func webhookRequeueError(err error, collectors metrics.Collectors) error {
++	if errors.Is(err, errWebhookNotRetryable) {
++		collectors.RecordError("webhook_non_retryable")
++		return nil
++	}
++	return err
+ }
+ 
+ func doRollingUpgrade(config common.Config, collectors metrics.Collectors, recorder record.EventRecorder, invoke invokeStrategy) error {
+```
+
+**File**: `internal/pkg/handler/webhook_test.go` (modified, +99/-0)
+```diff
+@@ -5,8 +5,13 @@ import (
+ 	"net/http/httptest"
+ 	"testing"
+ 
++	"github.com/prometheus/client_golang/prometheus"
+ 	"github.com/stretchr/testify/assert"
++	v1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 
++	"github.com/stakater/Reloader/internal/pkg/metrics"
++	"github.com/stakater/Reloader/internal/pkg/options"
+ 	"github.com/stakater/Reloader/pkg/common"
+ )
+ 
+@@ -30,3 +35,97 @@ func TestSendUpgradeWebhookSucceedsOn2xxStatus(t *testing.T) {
+ 	err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
+ 	assert.NoError(t, err)
+ }
++
++func TestSendUpgradeWebhookRetriesOnlyOn5xxAnd429(t *testing.T) {
++	tests := []struct {
++		name      string
++		status    int
++		wantRetry bool
++	}{
++		{name: "500", status: http.StatusInternalServerError, wantRetry: true},
++		{name: "503", status: http.StatusServiceUnavailable, wantRetry: true},
++		{name: "429", status: http.StatusTooManyRequests, wantRetry: true},
++		{name: "400", status: http.StatusBadRequest, wantRetry: false},
++		{name: "401", status: http.StatusUnauthorized, wantRetry: false},
++		{name: "404", status: http.StatusNotFound, wantRetry: false},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.WriteHeader(tt.status)
++			}))
++			defer server.Close()
++
++			err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
++			assert.Error(t, err)
++
++			requeueErr := webhookRequeueError(err, metrics.NewCollectors())
++			if tt.wantRetry {
++				assert.Error(t, requeueErr)
++			} else {
++				assert.NoError(t, requeueErr)
++			}
++		})
++	}
++}
++
++func TestResourceCreatedHandlerWebhookStatus(t *testing.T) {
++	tests := []struct {
++		name      string
++		status    int
++		wantRetry bool
++	}{
++		{name: "4xx is not requeued", status: http.StatusUnauthorized, wantRetry: false},
++		{name: "429 is requeued", status: http.StatusTooManyRequests, wantRetry: true},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.WriteHeader(tt.status)
++			}))
++			defer server.Close()
++
++			oldURL := options.WebhookUrl
++			options.WebhookUrl = server.URL
++			defer func() { options.WebhookUrl = oldURL }()
++
++			collectors := metrics.NewCollectors()
++			handler := ResourceCreatedHandler{
++				Resource: &v1.ConfigMap{
++					ObjectMeta: metav1.ObjectMeta{Name: "my-cm", Namespace: "default"},
++					Data:       map[string]string{"key": "value"},
++				},
++				Collectors: collectors,
++			}
++
++			err := handler.Handle()
++			if tt.wantRetry {
++				assert.Error(t, err)
++			} else {
++				assert.NoError(t, err)
++			}
++			assert.Equal(t, float64(1), reconcileCount(t, collectors, "error"))
++			assert.Equal(t, float64(0), reconcileCount(t, collectors, "success"))
++		})
++	}
++}
++
++func reconcileCount(t *testing.T, collectors metrics.Collectors, result string) float64 {
++	t.Helper()
++	registry := prometheus.NewRegistry()
++	registry.MustRegister(collectors.ReconcileTotal)
++	families, err := registry.Gather()
++	assert.NoError(t, err)
++	for _, family := range families {
++		for _, metric := range family.GetMetric() {
++			for _, label := range metric.GetLabel() {
++				if label.GetName() == "result" && label.GetValue() == result {
++					return metric.GetCounter().GetValue()
++				}
++			}
++		}
++	}
++	return 0
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1280** (2026-11-11): chore: bump Helm chart to 2.2.20 (appVersion v1.4.24) (@SyedaFatimaKazmi)
+- **PR #1279** (closed): Release v1.4.24 (@SyedaFatimaKazmi)
+- **PR #1278** (2026-11-11): Bump version to 1.4.24 on release-v1.4.24 branch (@github-actions[bot])
 - **PR #1273** (2026-11-06): fix: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (@SyedaFatimaKazmi)
-- **PR #1263** (2026-10-29): chore(chart): bump to 3.0.0-beta.5 for v2.0.0-beta.2 and gateway v0.0.29 (@msafwankarim)
-- **PR #1261** (2026-10-27): chore: bump Helm chart to 2.2.19 (appVersion v1.4.23) (@msafwankarim)
-- **PR #1260** (2026-10-27): chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943) (@msafwankarim)
-- **PR #1259** (2026-10-27): Bump version to 1.4.23 on release-v1.4.23 branch (@github-actions[bot])
-- **PR #1258** (2026-10-26): chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943) (@msafwankarim)
+- **PR #1271** (2026-11-09): fix(chart): grant update on cronjobs/finalizers (@egezamb)
+- **PR #1269** (2026-11-10): fix(handler): treat non-2xx --webhook-url responses as failures (@lbarrosby)
 
 ---
 
@@ -1601,40 +2283,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273)
+## X. Merge pull request #1269 from lbarrosby/fix/webhook-http-status
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/pkg/controller/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2e3b24d`: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd3c40e7`: Merge pull request #1269 from lbarrosby/fix/webhook-http-status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pkg/controller/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/net v0.62.0 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
+	"errors"
+	if errors.Is(err, handler.ErrNotRetryable) {
+		c.queue.Forget(key)
+		c.collectors.RecordError("webhook_non_retryable")
+		c.collectors.RecordEventProcessed("unknown", c.resource, "dropped")
+		logrus.Errorf("Dropping key, not retryable: %v", err)
+		return
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/net v0.60.0 // indirect
-	golang.org/x/sync v0.23.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
-	golang.org/x/term v0.46.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2e3b24d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd3c40e7` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T11:39:43.333Z",
+  "last_updated": "2026-11-11T12:08:34.719Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44777,14 +44777,19 @@
       "slug": "mikepenz-aboutlibraries",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/AboutLibraries",
-      "source_version": "0eb18c80",
-      "content_hash": "e694e2bc14ae504b934930ab0484f0308908dcfae0194b554b428ea4fe72a303",
+      "source_version": "b18bd7b2",
+      "content_hash": "62692211442631c769c6bcf67cdbaa5c9cd6eee1535943473c3b4bc7569bba43",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update gradle/actions digest to 8da46b5 (#1496)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44808,7 +44813,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:10:24.085Z",
+      "verified_at": "2026-11-11T12:08:34.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59553,14 +59558,19 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "a2e3b24d",
-      "content_hash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
+      "source_version": "e0d1aa05",
+      "content_hash": "9127a0f987cde3bd4288e223b24111e354ad497c438d4d165461512dd9590375",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #1269 from lbarrosby/fix/webhook-http-status",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -59589,7 +59599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T06:17:49.782Z",
+      "verified_at": "2026-11-11T12:03:33.535Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

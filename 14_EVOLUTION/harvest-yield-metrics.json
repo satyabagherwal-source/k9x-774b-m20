@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:39:43.469Z",
-  "total_cycles_completed": 8785,
-  "total_learnings_persisted": 8785,
-  "total_rules_promoted": 8648,
+  "last_updated": "2026-11-11T12:08:34.851Z",
+  "total_cycles_completed": 8787,
+  "total_learnings_persisted": 8787,
+  "total_rules_promoted": 8650,
   "history": [
-    {
-      "timestamp": "2026-11-09T15:51:36.464Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T15:51:58.563Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T16:04:17.199Z",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T11:39:43.469Z",
       "repository": "prometheus/prometheus",
       "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T12:03:33.706Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T12:08:34.851Z",
+      "repository": "mikepenz/AboutLibraries",
+      "learningId": "learn-github-mikepenz-aboutlibraries",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
