@@ -8888,3 +8888,7 @@
 | `CYCLE-20261111-M7ML` | `2026-11-11T09:15:56.829Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`523f8f27...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:16:22.421Z` | `astral-sh-ruff` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-57AD88EF` [Domain H] | Yes (`809fbba1...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:16:41.360Z` | `open-ani-animeko` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-BF0A22A6` [Domain I] | Yes (`92632747...`) |
+| `CYCLE-20261111-2RVT` | `2026-11-11T09:28:49.577Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5829ab15...`) |
+| `CYCLE-20261111-37CH` | `2026-11-11T09:29:09.617Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`9a4941dc...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:30:20.179Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-232F5AD4` [Domain K] | Yes (`f6081359...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:30:36.892Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-03EB2317` [Domain H] | Yes (`00d2013a...`) |

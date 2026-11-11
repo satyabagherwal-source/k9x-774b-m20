@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:15:56.838Z",
-  "total_cycles_completed": 8741,
-  "total_learnings_persisted": 8741,
-  "total_rules_promoted": 8601,
+  "last_updated": "2026-11-11T09:29:09.641Z",
+  "total_cycles_completed": 8743,
+  "total_learnings_persisted": 8743,
+  "total_rules_promoted": 8607,
   "history": [
-    {
-      "timestamp": "2026-11-09T11:31:31.441Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T11:54:13.201Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T11:56:27.797Z",
       "repository": "speridlabs/iris-3b",
@@ -1403,6 +1389,20 @@
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:28:49.598Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:29:09.641Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

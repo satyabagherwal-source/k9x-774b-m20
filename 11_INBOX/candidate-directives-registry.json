@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T08:28:26.583Z",
+  "last_updated": "2026-11-11T09:30:09.310Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4437,6 +4437,24 @@
       "source_repo": "zed-industries-zed",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8AD331-markdown-keep-the-first-rendered-block-a.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-17BE7F",
+      "directive_title": "Permanent Deadlock in Mutex/BatchSemaphore via Cooperative Budget Stranding (BUG-TOKIO-8772)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tokio-rs-tokio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-17BE7F-permanent-deadlock-in-mutex-batchsemapho.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C0FAF1",
+      "directive_title": "Task Orphanage and Queue Corruption on Worker Spawn Failure (BUG-TOKIO-8752)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tokio-rs-tokio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C0FAF1-task-orphanage-and-queue-corruption-on-w.md",
       "staged_date": "2026-11-11"
     }
   ]

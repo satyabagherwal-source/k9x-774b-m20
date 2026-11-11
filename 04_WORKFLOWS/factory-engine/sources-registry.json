@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T09:16:09.699Z",
-    "lastVerified": "2026-11-11T09:16:09.699Z",
+    "lastChecked": "2026-11-11T09:30:09.217Z",
+    "lastVerified": "2026-11-11T09:30:09.217Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -462,8 +462,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T07:46:10.748Z",
-    "lastVerified": "2026-11-11T07:46:10.748Z",
+    "lastChecked": "2026-11-11T09:27:41.247Z",
+    "lastVerified": "2026-11-11T09:27:41.247Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2009,14 +2009,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T01:41:34.598Z",
-    "lastVerified": "2026-11-10T01:41:34.598Z",
+    "lastChecked": "2026-11-11T09:27:42.629Z",
+    "lastVerified": "2026-11-11T09:27:42.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2127,9 +2127,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-09T02:34:44.721Z",
+    "lastChecked": "2026-11-11T09:27:38.672Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-11-09T02:34:44.721Z"
+    "lastVerified": "2026-11-11T09:27:38.672Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -6665,9 +6665,9 @@
   "komi-store-komi-store": {
     "name": "komi-store",
     "officialUrl": "https://github.com/komi-store/komi-store",
-    "lastChecked": "2026-11-07T19:16:41.593Z",
+    "lastChecked": "2026-11-11T09:27:31.207Z",
     "revisionIdentifier": "19eb7447",
-    "lastVerified": "2026-11-07T19:16:41.593Z"
+    "lastVerified": "2026-11-11T09:27:31.207Z"
   },
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
@@ -6848,9 +6848,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-09T03:42:42.283Z",
+    "lastChecked": "2026-11-11T09:27:33.760Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-09T03:42:42.283Z"
+    "lastVerified": "2026-11-11T09:27:33.760Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -8761,14 +8761,14 @@
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T22:10:38.313Z",
-    "lastVerified": "2026-11-08T22:10:38.313Z",
+    "lastChecked": "2026-11-11T09:27:31.435Z",
+    "lastVerified": "2026-11-11T09:27:31.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "cce2f6637c8d183633d58e70d6434f62f2a523a79e0e09891fa0cbaf5d2e7b41",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "5829ab15b90b34b402f806e599fba41d637d48dffbb2033f598605f777823025",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10241,9 +10241,9 @@
   "kaimodev-trivium": {
     "name": "trivium",
     "officialUrl": "https://github.com/KaiMOdev/trivium",
-    "lastChecked": "2026-11-06T13:58:32.685Z",
+    "lastChecked": "2026-11-11T09:27:28.682Z",
     "revisionIdentifier": "6f50e34a69",
-    "lastVerified": "2026-11-06T13:58:32.685Z"
+    "lastVerified": "2026-11-11T09:27:28.682Z"
   },
   "touchlab-xcode-kotlin": {
     "name": "xcode-kotlin",

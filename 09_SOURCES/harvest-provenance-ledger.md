@@ -8897,3 +8897,7 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `b7839b71` | Multi-dimensional audit evidence | 2026-11-11T09:15:56.833Z |
 | `learn-dom-h-57ad88ef` | `project://astral-sh-ruff` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | 2026-11-11T09:16:22.421Z |
 | `learn-dom-i-bf0a22a6` | `project://open-ani-animeko` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md` | 2026-11-11T09:16:41.360Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `ab0814fc` | Multi-dimensional audit evidence | 2026-11-11T09:28:49.580Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `073bdd96` | Multi-dimensional audit evidence | 2026-11-11T09:29:09.620Z |
+| `learn-dom-k-232f5ad4` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-11T09:30:20.179Z |
+| `learn-dom-h-03eb2317` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-11T09:30:36.892Z |
