@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "cedaeca8",
+    "sourceVersion": "8cd4dbe1",
     "license": "Apache-2.0",
-    "contentHash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
-    "lastHarvestedAt": "2026-11-07T20:23:02.896Z",
+    "contentHash": "119414c4fa5ea2bc0f7fcc382b01e17b50a349e875e54059fafc2b1d5dcf5024",
+    "lastHarvestedAt": "2026-11-11T18:35:49.754Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "288e4a3e",
+    "sourceVersion": "d79d5796",
     "license": "GPL-3.0",
-    "contentHash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
-    "lastHarvestedAt": "2026-11-09T04:10:26.094Z",
+    "contentHash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
+    "lastHarvestedAt": "2026-11-11T18:35:36.790Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "91b650ea",
+    "sourceVersion": "a859dade",
     "license": "NOASSERTION",
-    "contentHash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
-    "lastHarvestedAt": "2026-11-09T11:16:31.660Z",
+    "contentHash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
+    "lastHarvestedAt": "2026-11-11T18:35:55.479Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

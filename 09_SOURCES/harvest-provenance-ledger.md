@@ -9001,3 +9001,6 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `9a1a9e7c` | Multi-dimensional audit evidence | 2026-11-11T18:16:58.932Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `ca4d8fa9` | Multi-dimensional audit evidence | 2026-11-11T18:23:48.997Z |
 | `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `15d06cbe` | Multi-dimensional audit evidence | 2026-11-11T18:28:49.921Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `d79d5796` | Multi-dimensional audit evidence | 2026-11-11T18:35:36.790Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `8cd4dbe1` | Multi-dimensional audit evidence | 2026-11-11T18:35:49.754Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `a859dade` | Multi-dimensional audit evidence | 2026-11-11T18:35:55.479Z |

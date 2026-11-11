@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T18:28:55.809Z",
-    "lastVerified": "2026-11-11T18:28:55.809Z",
+    "lastChecked": "2026-11-11T18:36:00.869Z",
+    "lastVerified": "2026-11-11T18:36:00.870Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -327,12 +327,12 @@
     "lastVerified": "2026-11-11T13:17:04.100Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T10:52:12.701Z",
-    "lastVerified": "2026-11-11T10:52:12.701Z",
+    "lastChecked": "2026-11-11T18:35:38.349Z",
+    "lastVerified": "2026-11-11T18:35:38.349Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -341,7 +341,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "81a399b8"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -457,8 +458,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T17:46:12.204Z",
-    "lastVerified": "2026-11-11T17:46:12.204Z",
+    "lastChecked": "2026-11-11T18:35:43.150Z",
+    "lastVerified": "2026-11-11T18:35:43.150Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2091,22 +2092,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "moby-buildkit": {
-    "name": "buildkit",
+    "name": "moby/buildkit",
     "officialUrl": "https://github.com/moby/buildkit",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T12:42:08.718Z",
-    "lastVerified": "2026-11-09T12:42:08.718Z",
+    "lastChecked": "2026-11-11T18:35:42.235Z",
+    "lastVerified": "2026-11-11T18:35:42.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-moby-buildkit",
-    "contentHash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
+    "contentHash": "119414c4fa5ea2bc0f7fcc382b01e17b50a349e875e54059fafc2b1d5dcf5024",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cedaeca8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
     "name": "nuclei",
@@ -2579,14 +2579,14 @@
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T04:10:23.157Z",
-    "lastVerified": "2026-11-09T04:10:23.157Z",
+    "lastChecked": "2026-11-11T18:35:36.313Z",
+    "lastVerified": "2026-11-11T18:35:36.313Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4672,14 +4672,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T11:16:29.776Z",
-    "lastVerified": "2026-11-09T11:16:29.776Z",
+    "lastChecked": "2026-11-11T18:35:46.894Z",
+    "lastVerified": "2026-11-11T18:35:46.894Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
+    "contentHash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8744,9 +8744,9 @@
   "kotlin-kmp-production-sample": {
     "name": "kmp-production-sample",
     "officialUrl": "https://github.com/Kotlin/kmp-production-sample",
-    "lastChecked": "2026-11-08T00:41:40.110Z",
+    "lastChecked": "2026-11-11T18:35:33.141Z",
     "revisionIdentifier": "b0bed628",
-    "lastVerified": "2026-11-08T00:41:40.110Z"
+    "lastVerified": "2026-11-11T18:35:33.141Z"
   },
   "astral-sh-ruff": {
     "name": "astral-sh/ruff",
@@ -10927,9 +10927,9 @@
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",
     "officialUrl": "https://github.com/santifer/santifer-irepair",
-    "lastChecked": "2026-11-06T22:55:53.049Z",
+    "lastChecked": "2026-11-11T18:35:30.599Z",
     "revisionIdentifier": "5c1ce0b2",
-    "lastVerified": "2026-11-06T22:55:53.049Z"
+    "lastVerified": "2026-11-11T18:35:30.599Z"
   },
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",

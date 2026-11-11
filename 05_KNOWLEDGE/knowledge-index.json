@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T18:28:49.797Z",
+  "last_updated": "2026-11-11T18:35:55.369Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40271,8 +40271,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "288e4a3e",
-      "content_hash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
+      "source_version": "d79d5796",
+      "content_hash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -40317,7 +40317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:10:25.975Z",
+      "verified_at": "2026-11-11T18:35:36.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42718,8 +42718,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "91b650ea",
-      "content_hash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
+      "source_version": "a859dade",
+      "content_hash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -42741,6 +42741,11 @@
         {
           "number": null,
           "title": "deps): update dependency jsdom to v31 (#40576)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "storage: rate limit gauge regression error logs (#40589)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42829,7 +42834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:16:31.505Z",
+      "verified_at": "2026-11-11T18:35:55.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45717,8 +45722,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "cedaeca8",
-      "content_hash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
+      "source_version": "8cd4dbe1",
+      "content_hash": "119414c4fa5ea2bc0f7fcc382b01e17b50a349e875e54059fafc2b1d5dcf5024",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -45730,6 +45735,11 @@
         {
           "number": null,
           "title": "Merge pull request #7374 from crazy-max/fix-gha-close-layer-readers",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #7343 from locker95/fix-scratch-manifest-layers",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45793,7 +45803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:23:02.820Z",
+      "verified_at": "2026-11-11T18:35:49.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

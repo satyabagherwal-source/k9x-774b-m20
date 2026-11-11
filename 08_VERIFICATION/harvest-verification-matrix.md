@@ -8992,3 +8992,6 @@
 | `CYCLE-20261111-XZJK` | `2026-11-11T18:16:58.928Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1a49d37...`) |
 | `CYCLE-20261111-6RY9` | `2026-11-11T18:23:48.993Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`99da69b2...`) |
 | `CYCLE-20261111-D859` | `2026-11-11T18:28:49.917Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d94b7d64...`) |
+| `CYCLE-20261111-LY37` | `2026-11-11T18:35:36.787Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md` | Yes (`43784fc8...`) |
+| `CYCLE-20261111-M83C` | `2026-11-11T18:35:49.752Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`119414c4...`) |
+| `CYCLE-20261111-MCIC` | `2026-11-11T18:35:55.476Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5ec5b172...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `cedaeca8`  
+> **Source Version**: `8cd4dbe1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:23:01.636Z  
+> **Timestamp**: 2026-11-11T18:35:42.239Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:23:01.281Z  
+> **Harvest Timestamp**: 2026-11-11T18:35:42.235Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10378 stars
+- **Stars / Engagement**: 10399 stars
 
 ---
 
@@ -2295,11 +2295,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7377** (2026-11-06): **vendor: golang.org/x/sys f5cb0306ac0e (fix for go1.27)**
-  *Symptoms*: - relates to https://github.com/moby/moby/pull/54138 - relates to https://github.com/moby/moby/issues/54123  includes a fix for https://go.dev/issue/82324  full diff: https://github.com/golang/sys/compare/v0.49.0...f5cb0306ac0e4b93b83ddd53c36d6693af3214e3
+- **Issue #7407** (2026-11-11): **[v0.35] vendor: update policy helpers to 6acab594b423**
+  *Symptoms*: (cherry picked from commit f6ea96500d7dd43bb1093cdba6249120c83be009)
 
-- **Issue #7374** (2026-11-06): **cache(gha): close layer readers after uploading**
-  *Symptoms*: Found this while reviewing https://github.com/moby/buildkit/pull/7369. The GHA cache exporter opens a reader for each uploaded layer but never closes it, and `cache.Save` doesn't take ownership of the reader.  Close each reader immediately after `Save` returns, on both success and failure, so resources are released before processing the next layer.
+- **Issue #7406** (2026-11-11): **vendor: update policy helpers to 6acab594b423**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2316,281 +2316,139 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d510a30` (2026-11-06)
-**Commit Message**: Merge pull request #7374 from crazy-max/fix-gha-close-layer-readers
+### Incident Patch 1: `4e57e04e` (2026-11-10)
+**Commit Message**: Merge pull request #7343 from locker95/fix-scratch-manifest-layers
 
-cache(gha): close layer readers after uploading
+exporter: write empty layers array for layerless images
 
-**File**: `cache/remotecache/gha/gha.go` (modified, +3/-1)
+**File**: `client/client_export_image_test.go` (modified, +61/-0)
 ```diff
-@@ -281,7 +281,9 @@ func (ce *exporter) Finalize(ctx context.Context) (_ map[string]string, err erro
- 			if err != nil {
- 				return nil, layerDone(err)
- 			}
--			if err := ce.cache.Save(ctx, key, ra); err != nil {
-+			err = ce.cache.Save(ctx, key, ra)
-+			ra.Close()
-+			if err != nil {
- 				if !errors.Is(err, os.ErrExist) {
- 					return nil, layerDone(errors.Wrap(err, "error writing layer blob"))
- 				}
+@@ -1329,6 +1329,67 @@ func testLazyImagePush(t *testing.T, sb integration.Sandbox) {
+ 	require.NoError(t, err)
+ }
+ 
++// testOCIExporterScratchLayers verifies that an image without any layers is
++// exported with an empty "layers" array rather than null.
++// https://github.com/moby/buildkit/issues/7341
++func testOCIExporterScratchLayers(t *testing.T, sb integration.Sandbox) {
++	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
++	requiresLinux(t)
++	c, err := New(sb.Context(), sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	frontend := func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
++		def, err := llb.Scratch().Marshal(ctx)
++		if err != nil {
++			return nil, err
++		}
++		r, err := c.Solve(ctx, gateway.SolveRequest{
++			Definition: def.ToPB(),
++		})
++		if err != nil {
++			return nil, err
++		}
++		ref, err := r.SingleRef()
++		if err != nil {
++			return nil, err
++		}
++		res := gateway.NewResult()
++		res.SetRef(ref)
++		return res, nil
++	}
++
++	out := filepath.Join(t.TempDir(), "out.tar")
++	outW, err := os.Create(out)
++	require.NoError(t, err)
++	_, err = c.Build(sb.Context(), SolveOpt{
++		Exports: []ExportEntry{
++			{
++				Type:   ExporterOCI,
++				Output: fixedWriteCloser(outW),
++			},
++		},
++	}, "", frontend, nil)
++	require.NoError(t, err)
++
++	dt, err := os.ReadFile(out)
++	require.NoError(t, err)
++
++	m, err := testutil.ReadTarToMap(dt, false)
++	require.NoError(t, err)
++
++	var index ocispecs.Index
++	err = json.Unmarshal(m[ocispecs.ImageIndexFile].Data, &index)
++	require.NoError(t, err)
++	require.Len(t, index.Manifests, 1)
++
++	var mfst map[string]json.RawMessage
++	err = json.Unmarshal(m[ocispecs.ImageBlobsDir+"/sha256/"+index.Manifests[0].Digest.Hex()].Data, &mfst)
++	require.NoError(t, err)
++	require.Contains(t, mfst, "layers")
++	require.JSONEq(t, `[]`, string(mfst["layers"]))
++}
++
+ func testOCIExporter(t *testing.T, sb integration.Sandbox) {
+ 	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
+ 	requiresLinux(t)
+```
+
+**File**: `client/client_test.go` (modified, +1/-0)
+```diff
+@@ -83,6 +83,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
+ 	testInvalidExporter,
+ 	testLazyImagePush,
+ 	testOCIExporter,
++	testOCIExporterScratchLayers,
+ 	testOCIExporterContentStore,
+ 	testPullWithDigestCheck,
+ 	testPullZstdImage,
+```
+
+**File**: `exporter/containerimage/writer.go` (modified, +3/-0)
+```diff
+@@ -561,6 +561,9 @@ func (ic *ImageWriter) commitDistributionManifest(ctx context.Context, opts *Ima
+ 			Size:      int64(len(config)),
+ 			MediaType: configType,
+ 		},
++		// layers is a required array in the image manifest schema, so keep it
++		// non-nil for images without layers (e.g. FROM scratch).
++		Layers: make([]ocispecs.Descriptor, 0, len(remote.Descriptors)),
+ 	}
+ 
+ 	labels := map[string]string{
 ```
 
 ---
 
-### Incident Patch 2: `50ecb1d4` (2026-11-05)
-**Commit Message**: vendor: golang.org/x/sys f5cb0306ac0e (fix for go1.27)
+### Incident Patch 2: `32845ed9` (2026-11-10)
+**Commit Message**: Merge pull request #7401 from thaJeztah/denoise_debug
 
-includes a fix for https://go.dev/issue/82324
+session: only log healthcheck recovery after a failure
 
-full diff: https://github.com/golang/sys/compare/v0.49.0...f5cb0306ac0e4b93b83ddd53c36d6693af3214e3
-
-Signed-off-by: Sebastiaan van Stijn <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `session/grpc.go` (modified, +2/-3)
 ```diff
-@@ -109,7 +109,7 @@ require (
- 	golang.org/x/mod v0.42.0
- 	golang.org/x/net v0.62.0
- 	golang.org/x/sync v0.24.0
--	golang.org/x/sys v0.49.0
-+	golang.org/x/sys v0.49.1-0.20261022125458-f5cb0306ac0e // includes fix for https://go.dev/issue/82324
- 	golang.org/x/time v0.16.0
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261012220534-4341edf3f941
- 	google.golang.org/grpc v1.85.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -605,8 +605,8 @@ golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.2.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.10.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.1-0.20261022125458-f5cb0306ac0e h1:y3PdhEKVIFYc4c6gNZPEC7qPIoa9uH/2zIQEc0mw4R4=
-+golang.org/x/sys v0.49.1-0.20261022125458-f5cb0306ac0e/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
- golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
-```
-
-**File**: `vendor/golang.org/x/sys/cpu/zcpu_windows.go` (modified, +1/-1)
-```diff
-@@ -43,6 +43,6 @@ var (
- 
- func isProcessorFeaturePresent(ProcessorFeature uint32) (ret bool) {
- 	r0, _, _ := syscall.SyscallN(procIsProcessorFeaturePresent.Addr(), uintptr(ProcessorFeature))
--	ret = r0 != 0
-+	ret = uint32(r0) != 0
- 	return
- }
-```
-
-**File**: `vendor/golang.org/x/sys/unix/asm_linux_ppc64x.s` (modified, +8/-8)
-```diff
-@@ -14,13 +14,13 @@
- // The runtime may know about them.
- 
- TEXT ·Syscall(SB),NOSPLIT,$0-56
--	MOVD	$syscall·Syscall(SB), R31
--	MOVD	R31, CTR
-+	MOVD	$syscall·Syscall(SB), R12
-+	MOVD	R12, CTR
- 	JMP	(CTR)
- 
- TEXT ·Syscall6(SB),NOSPLIT,$0-80
--	MOVD	$syscall·Syscall6(SB), R31
--	MOVD	R31, CTR
-+	MOVD	$syscall·Syscall6(SB), R12
-+	MOVD	R12, CTR
- 	JMP	(CTR)
- 
- TEXT ·SyscallNoError(SB),NOSPLIT,$0-48
-@@ -39,13 +39,13 @@ TEXT ·SyscallNoError(SB),NOSPLIT,$0-48
- 	RET
- 
- TEXT ·RawSyscall(SB),NOSPLIT,$0-56
--	MOVD	$syscall·RawSyscall(SB), R31
--	MOVD	R31, CTR
-+	MOVD	$syscall·RawSyscall(SB), R12
-+	MOVD	R12, CTR
- 	JMP	(CTR)
- 
- TEXT ·RawSyscall6(SB),NOSPLIT,$0-80
--	MOVD	$syscall·RawSyscall6(SB), R31
--	MOVD	R31, CTR
-+	MOVD	$syscall·RawSyscall6(SB), R12
-+	MOVD	R12, CTR
- 	JMP	(CTR)
- 
- TEXT ·RawSyscallNoError(SB),NOSPLIT,$0-48
-```
-
-**File**: `vendor/golang.org/x/sys/windows/memory_windows.go` (modified, +0/-11)
-```diff
-@@ -35,14 +35,3 @@ const (
- 	QUOTA_LIMITS_HARDWS_MAX_DISABLE = 0x00000008
- 	QUOTA_LIMITS_HARDWS_MAX_ENABLE  = 0x00000004
- )
+@@ -176,9 +176,8 @@ func monitorHealth(ctx context.Context, conn net.Conn, cc *grpc.ClientConn, canc
+ 				bklog.G(ctx).WithError(err).WithFields(logFields).Warn("healthcheck failed")
+ 			} else {
+ 				consecutiveSuccessful++
+-				consecutiveFailures = 0
 -
--type MemoryBasicInformation struct {
--	BaseAddress       uintptr
--	AllocationBase    uintptr
--	AllocationProtect uint32
--	PartitionId       uint16
--	RegionSize        uintptr
--	State             uint32
--	Protect           uint32
--	Type              uint32
--}
-```
-
-**File**: `vendor/golang.org/x/sys/windows/registry/zsyscall_windows.go` (modified, +14/-14)
-```diff
-@@ -53,56 +53,56 @@ var (
- 
- func regConnectRegistry(machinename *uint16, key syscall.Handle, result *syscall.Handle) (regerrno error) {
- 	r0, _, _ := syscall.SyscallN(procRegConnectRegistryW.Addr(), uintptr(unsafe.Pointer(machinename)), uintptr(key), uintptr(unsafe.Pointer(result)))
--	if r0 != 0 {
--		regerrno = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		regerrno = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
- 
- func regCreateKeyEx(key syscall.Handle, subkey *uint16, reserved uint32, class *uint16, options uint32, desired uint32, sa *syscall.SecurityAttributes, result *syscall.Handle, disposition *uint32) (regerrno error) {
- 	r0, _, _ := syscall.SyscallN(procRegCreateKeyExW.Addr(), uintptr(key), uintptr(unsafe.Pointer(subkey)), uintptr(reserved), uintptr(unsafe.Pointer(class)), uintptr(options), uintptr(desired), uintptr(unsafe.Pointer(sa)), uintptr(unsafe.Pointer(result)), uintptr(unsafe.Pointer(disposition)))
--	if r0 != 0 {
--		regerrno = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		regerrno = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
- 
- func regDeleteKey(key syscall.Handle, subkey *uint16) (regerrno error) {
- 	r0, _, _ := syscall.SyscallN(procRegDeleteKeyW.Addr(), uintptr(key), uintptr(unsafe.Pointer(subkey)))
--	if r0 != 0 {
--		regerrno = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		regerrno = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
- 
- func regDeleteValue(key syscall.Handle, name *uint16) (regerrno error) {
- 	r0, _, _ := syscall.SyscallN(procRegDeleteValueW.Addr(), uintptr(key), uintptr(unsafe.Pointer(name)))
--	if r0 != 0 {
--		regerrno = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		regerrno = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
- 
- func regEnumValue(key syscall.Handle, index uint32, name *uint16, nameLen *uint32, reserved *uint32, valtype *uint32, buf *byte, buflen *uint32) (regerrno error) {
- 	r0, _, _ := syscall.SyscallN(procRegEnumValueW.Addr(), uintptr(key), uintptr(index), uintptr(unsafe.Pointer(name)), uintptr(unsafe.Pointer(nameLen)), uintptr(unsafe.Pointer(reserved)), uintptr(unsafe.Pointer(valtype)), uintptr(unsafe.Pointer(buf)), uintptr(unsafe.Pointer(buflen)))
--	if r0 != 0 {
--		regerrno = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		regerrno = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
- 
- func regLoadMUIString(key syscall.Handle, name *uint16, buf *uint16, buflen uint32, buflenCopied *uint32, flags uint32, dir *uint16) (regerrno error) {
- 	r0, _, _ := syscall.SyscallN(procRegLoadMUIStringW.Addr(), uintptr(key), uintptr(unsafe.Pointer(name)), uintptr(unsafe.Pointer(buf)), uintptr(buflen), uintptr(unsafe.Pointer(buflenCopied)), uintptr(flags), uintptr(unsafe.Pointer(dir)))
--	if r0 != 0 {
--		regerrno = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		regerrno = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
- 
- func regSetValueEx(key syscall.Handle, valueName *uint16, reserved uint32, vtype uint32, buf *byte, bufsize uint32) (regerrno error) {
- 	r0, _, _ := syscall.SyscallN(procRegSetValueExW.Addr(), uintptr(key), uintptr(unsafe.Pointer(valueName)), uintptr(reserved), uintptr(vtype), uintptr(unsafe.Pointer(buf)), uintptr(bufsize))
--	if r0 != 0 {
--		regerrno = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		regerrno = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
-```
-
-**File**: `vendor/golang.org/x/sys/windows/syscall_windows.go` (modified, +5/-5)
-```diff
-@@ -1805,7 +1805,7 @@ type PSAPI_WORKING_SET_EX_BLOCK uint64
- // Valid returns the validity of this page.
- // If this bit is 1, the subsequent members are valid; otherwise they should be ignored.
- func (b PSAPI_WORKING_SET_EX_BLOCK) Valid() bool {
--	return (b & 1) == 1
-+	return (b & 1) != 0
- }
- 
- // ShareCount is the number of processes that share this page. The maximum value of this member is 7.
-@@ -1822,7 +1822,7 @@ func (b PSAPI_WORKING_SET_EX_BLOCK) Win32Protection() uint64 {
- // Shared returns the shared status of this page.
- // If this bit is 1, the page can be shared.
- func (b PSAPI_WORKING_SET_EX_BLOCK) Shared() bool {
--	return (b & (1 << 15)) == 1
-+	return (b & (1 << 15)) != 0
- }
- 
- // Node is the NUMA node. The maximum value of this member is 63.
-@@ -1833,19 +1833,19 @@ func (b PSAPI_WORKING_SET_EX_BLOCK) Node() uint64 {
- // Locked returns the locked status of this page.
- // If this bit is 1, the virtual page is locked in physical memory.
- func (b PSAPI_WORKING_SET_EX_BLOCK) Locked() bool {
--	return (b & (1 << 22)) == 1
-+	return (b & (1 << 22)) != 0
- }
- 
- // LargePage returns the large page status of this page.
- // If this bit is 1, the page is a large page.
- func (b PSAPI_WORKING_SET_EX_BLOCK) LargePage() bool {
--	return (b & (1 << 23)) == 1
-+	return (b & (1 << 23)) != 0
- }
- 
- // Bad returns the bad status of this page.
- // If this bit is 1, the page is has been reported as bad.
- func (b PSAPI_WORKING_SET_EX_BLOCK) Bad() bool {
--	return (b & (1 << 31)) == 1
-+	return (b & (1 << 31)) != 0
- }
- 
- // intField extracts an integer field in the PSAPI_WORKING_SET_EX_BLOCK union.
-```
-
-**File**: `vendor/golang.org/x/sys/windows/types_windows_386.go` (modified, +10/-0)
-```diff
-@@ -33,3 +33,13 @@ type JOBOBJECT_BASIC_LIMIT_INFORMATION struct {
- 	SchedulingClass         uint32
- 	_                       uint32 // pad to 8 byte boundary
- }
-+
-+type MemoryBasicInformation struct {
-+	BaseAddress       uintptr
-+	AllocationBase    uintptr
-+	AllocationProtect uint32
-+	RegionSize        uintptr
-+	State             uint32
-+	Protect           uint32
-+	Type              uint32
-+}
+-				if consecutiveSuccessful >= cfg.successResetThreshold {
++				if consecutiveFailures > 0 && consecutiveSuccessful >= cfg.successResetThreshold {
++					consecutiveFailures = 0
+ 					bklog.G(ctx).WithFields(logFields).Debug("reset healthcheck failure")
+ 				}
+ 			}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7377** (2026-11-06): vendor: golang.org/x/sys f5cb0306ac0e (fix for go1.27) (@thaJeztah)
-- **PR #7374** (2026-11-06): cache(gha): close layer readers after uploading (@crazy-max)
-- **PR #7373** (2026-11-06): remotecache: centralize compression options (@crazy-max)
-- **PR #7372** (2026-11-05): client: skip testImageCacheRejectsUnverifiedDiffIDs on dockerd graphdriver (@tonistiigi)
-- **PR #7371** (2026-11-05): build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.2 (@dependabot[bot])
-- **PR #7367** (2026-11-04): source/http: add retry jitter and Retry-After handling (@crazy-max)
+- **PR #7407** (2026-11-11): [v0.35] vendor: update policy helpers to 6acab594b423 (@tonistiigi)
+- **PR #7406** (2026-11-11): vendor: update policy helpers to 6acab594b423 (@tonistiigi)
+- **PR #7402** (2026-11-10): vendor: golang.org/x/sys v0.50.0 (@thaJeztah)
+- **PR #7401** (2026-11-10): session: only log healthcheck recovery after a failure (@thaJeztah)
+- **PR #7400** (2026-11-10): [v0.35] cherry-picks for v0.35.0-rc2 (@tonistiigi)
+- **PR #7399** (2026-11-11): dockerfile: update version to 1.30 (@tonistiigi)
 
 ---
 
@@ -2610,30 +2468,74 @@ Signed-off-by: Sebastiaan van Stijn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7374 from crazy-max/fix-gha-close-layer-readers
+## X. Merge pull request #7343 from locker95/fix-scratch-manifest-layers
 
 **RULE**:
-When implementing operations in `cache/remotecache/gha/gha.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/client_export_image_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d510a30`: Merge pull request #7374 from crazy-max/fix-gha-close-layer-readers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e57e04e`: Merge pull request #7343 from locker95/fix-scratch-manifest-layers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cache/remotecache/gha/gha.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_export_image_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			err = ce.cache.Save(ctx, key, ra)
-			ra.Close()
-			if err != nil {
+// testOCIExporterScratchLayers verifies that an image without any layers is
+// exported with an empty "layers" array rather than null.
+// https://github.com/moby/buildkit/issues/7341
+func testOCIExporterScratchLayers(t *testing.T, sb integration.Sandbox) {
+	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
+	requiresLinux(t)
+	c, err := New(sb.Context(), sb.Address())
+	require.NoError(t, err)
+	defer c.Close()
+
+	frontend := func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
+		def, err := llb.Scratch().Marshal(ctx)
+		if err != nil {
+			return nil, err
+		}
+		r, err := c.Solve(ctx, gateway.SolveRequest{
+			Definition: def.ToPB(),
+		})
+		if err != nil {
+			return nil, err
+		}
+		ref, err := r.SingleRef()
+		if err != nil {
+			return nil, err
+		}
+		res := gateway.NewResult()
+		res.SetRef(ref)
+		return res, nil
+	}
+
+	out := filepath.Join(t.TempDir(), "out.tar")
+	outW, err := os.Create(out)
+	require.NoError(t, err)
+	_, err = c.Build(sb.Context(), SolveOpt{
+		Exports: []ExportEntry{
+			{
+				Type:   ExporterOCI,
+				Output: fixedWriteCloser(outW),
+			},
+		},
+	}, "", frontend, nil)
+	require.NoError(t, err)
+
+	dt, err := os.ReadFile(out)
+	require.NoError(t, err)
+
+	m
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			if err := ce.cache.Save(ctx, key, ra); err != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d510a30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e57e04e` are properly handled with clean fallback behavior.
