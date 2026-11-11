@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T13:22:12.667Z",
-  "total_cycles_completed": 8791,
-  "total_learnings_persisted": 8791,
-  "total_rules_promoted": 8653,
+  "last_updated": "2026-11-11T13:29:12.688Z",
+  "total_cycles_completed": 8796,
+  "total_learnings_persisted": 8796,
+  "total_rules_promoted": 8656,
   "history": [
-    {
-      "timestamp": "2026-11-09T16:11:05.816Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:18:30.473Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:18:32.653Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:18:36.354Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:26:05.073Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T16:26:06.762Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-11T13:22:12.667Z",
       "repository": "Automattic/harper",
       "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T13:28:51.001Z",
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T13:29:01.902Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T13:29:07.426Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T13:29:11.311Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T13:29:12.688Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

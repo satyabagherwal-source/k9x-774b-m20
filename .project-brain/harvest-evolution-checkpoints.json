@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T13:22:17.205Z",
+  "last_updated": "2026-11-11T13:29:30.757Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T12:41:25.396Z",
@@ -291,9 +291,24 @@
       "processed_at": "2026-11-11T13:22:17.166Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "max-sixty-worktrunk-learnings.md": {
+      "processed_at": "2026-11-11T13:29:19.484Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-baidu-ernie-5.5-flash-base-learnings.md": {
+      "processed_at": "2026-11-11T13:29:30.753Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "shifthackz-sdai-kmp-learnings.md": {
+      "processed_at": "2026-11-11T13:29:30.756Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 69,
-  "total_canonical_promoted": 15,
-  "total_staged_for_review": 51
+  "total_dossiers_evaluated": 72,
+  "total_canonical_promoted": 16,
+  "total_staged_for_review": 53
 }

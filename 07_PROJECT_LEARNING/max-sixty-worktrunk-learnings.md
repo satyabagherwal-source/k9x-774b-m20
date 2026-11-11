@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `a6ebf8b1`  
+> **Source Version**: `a6cbc294`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:12:33.648Z  
+> **Timestamp**: 2026-11-11T13:28:53.277Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:12:33.100Z  
+> **Harvest Timestamp**: 2026-11-11T13:28:53.272Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12123 stars
+- **Stars / Engagement**: 12435 stars
 
 ---
 
@@ -1404,10 +1404,10 @@ pub struct HookCliArgs<'a> {
 ///   regardless of whether any template references the key.
 ///
 /// The `foreground` parameter controls execution mode for hooks that normally run
-/// in background (post-start, post-switch):
+/// in background (every post-* hook):
 /// - `None` = use default behavior for this hook type
 /// - `Some(true)` = run in foreground (for debugging)
-/// - `Some(false)` = run in background (default for post-start/post-switch)
+/// - `Some(false)` = run in background (the post-* default)
 pub fn run_hook(
     hook_type: HookType,
     yes: bool,
@@ -1448,7 +1448,8 @@ pub fn run_hook(
     // No hooks configured: warn and exit successfully. Running hooks that
     // don't exist is a no-op, so scripts can invoke `wt hook <type>`
     // unconditionally without special-casing empty configuration.
-    if user_config.is_none() && pr
+    if user_config.is_none() && proj_config.is_none() {
+
 ```
 
 ### Core Architecture Module: `src/commands/hook_filter.rs`
@@ -2019,109 +2020,426 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c240303` (2026-11-08)
-**Commit Message**: Correct stale comments in concurrent output, list rendering, and logging (#4731)
+### Incident Patch 1: `8c43d4ec` (2026-11-11)
+**Commit Message**: test: make three picker/list assertions able to fail, and fix two stale comments (#4768)
 
-This PR fixes four comments that no longer match the code. It changes no
-behavior and needs no tests.
+Three test assertions could not fail, and two comments described code
+that has since changed. This PR fixes all five. There are no behavior
+changes. The picker unit tests and clippy pass locally.
 
-- **`src/output/concurrent.rs` module doc:** it said "every admitted
-child runs to completion", but `drain_children` kills and reaps admitted
-children when setting up or reading their output pipes fails. The doc
-now names that exception.
-- **`src/commands/list/render.rs` Upstream cell:** the comment cited
-`Divergence::Special`, which doesn't exist. The in-sync case is
-`Divergence::InSync`, which `Divergence::from_counts_with_remote`
-returns.
-- **`src/logging.rs` `init` doc:** step 3 said all four layers are gated
-on `LogSink::is_active()`. Only the three file layers have a sink. The
-stderr layer is filtered by verbosity and `RUST_LOG` alone. A leftover
-"(unchanged)" in step 1 is also gone.
-- **`src/logging.rs` `wt_trace_fields_visit_records_every_type` doc:**
-it said the test covers `_` arms in `record_u64` and `record_str`.
-`record_u64` is an `if` with no `_` arm, and the `_` arm it does
-exercise is in `record_string`.
+**Assertions that could not fail**
+- `render_preview_tabs_compacts_when_narrow`
+(`src/commands/picker/items.rs`) checked that the compact tab bar drops
+the "HEAD" label. No tab is labeled "HEAD" since tab 3 became
+"committed", so the check always passed. It now checks "committed".
+- `upstream_diff_diverged` accepted either `feat.txt` or `upstream.txt`.
+For a branch that has diverged from its upstream,
+`compute_upstream_diff_preview` diffs merge-base..head only. The test
+now requires `feat.txt` and rejects `upstream.txt`, so a regression that
+shows the upstream side would fail it.
+- `test_list_progressive_vs_buffered_identical_data`
+(`tests/integration_tests/list.rs`) compared `--progressive
+--format=json` against `--no-progressive --format=json`.
+`RenderTarget::detect` sends `OutputFormat::Json` down the JSON path
+whatever `--progressive` says (its unit tests in `progressive.rs` pin
+that), so both ru
 
-Found during the nightly survey.
-
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL
-
-**File**: `src/commands/list/render.rs` (modified, +3/-2)
+**File**: `benches/prune.rs` (modified, +4/-2)
 ```diff
-@@ -586,8 +586,9 @@ impl ColumnLayout {
-                     return StyledLine::new(); // Loaded, no active upstream
-                 };
-                 // Show centered | when in sync instead of ⇡0  ⇣0
--                // Note: This duplicates the InSync check from Divergence::Special, but
--                // checking counts directly is simpler than threading the enum through.
-+                // Note: This duplicates the `Divergence::InSync` check in
-+                // `Divergence::from_counts_with_remote`, but checking counts
-+                // directly is simpler than threading the enum through.
-                 if active.ahead == 0 && active.behind == 0 {
-                     let mut cell = StyledLine::new();
-                     cell.push_styled("|", Style::new().dimmed());
+@@ -8,8 +8,10 @@
+ //      first scan after new commits is cold and later scans are warm.
+ //   2. The removals — each integrated candidate runs the removal chain
+ //      (final clean check, fsmonitor stop, rename-to-trash, branch CAS
+-//      delete) serially under the write side of the scan lock, reusing the
+-//      removal plan its scan check computed.
++//      delete) on a worker pool sized like rayon's, concurrently with the
++//      remaining scan, reusing the removal plan its scan check computed.
++//      Only `--foreground` and current-worktree removals serialize, and the
++//      live variant passes neither.
+ //
+ // The generated base gets a prune overlay: squash-merged candidates
+ // (integrated by content — the expensive probe path, the post-PR-squash shape
 ```
 
-**File**: `src/logging.rs` (modified, +8/-6)
+**File**: `src/commands/picker/items.rs` (modified, +16/-12)
 ```diff
-@@ -446,16 +446,18 @@ where
- ///
- /// Stage-by-stage:
- ///
--/// 1. Set verbosity for downstream styling code (unchanged).
-+/// 1. Set verbosity for downstream styling code.
- /// 2. Open the file sinks before the subscriber registers, so the
- ///    `Repository::current()` rev-parse fired by `try_create` doesn't emit
- ///    records into a half-built pipeline. Pre-tracing-init `log::*` calls
- ///    are dropped by the default no-op `log` logger, which is the right
- ///    behavior — there's nothing meaningful to attribute the call to before
- ///    the subscriber exists.
--/// 3. Build four layered subscribers, each gated by both a verbosity check
--///    and the relevant `LogSink::is_active()` so a failed file open turns
--///    its layer into a no-op rather than silently dropping records.
-+/// 3. Build four layers: stderr, filtered by verbosity (or `RUST_LOG`) with
-+///    no sink to check, and three file layers, each gated by both a
-+///    verbosity check and the relevant
-+///    `LogSink::is_active()` so a failed file open turns its layer into a
-+///    no-op rather than silently dropping records.
- /// 4. Bridge `log::*` into tracing via `LogTracer`. Idempotent on
- ///    re-invocation (init is `.ok()`-discarded).
- /// 5. Announce the file destinations on stderr at `-vv`.
-@@ -836,8 +838,8 @@ mod tests {
-     /// emit one event per field-type variant under [`WT_TRACE_TARGET`],
-     /// capture the visitor output, and assert the field landed in the
-     /// expected slot. Covers `record_debug` (`err = %display`) — the
--    /// production path nothing else exercises — plus the unknown-name `_`
--    /// arms in `record_u64` / `record_str`.
-+    /// production path nothing else exercises — plus the unknown-name paths:
-+    /// a non-`dur_us` field in `record_u64` and the `_` arm in `record_string`.
-     #[test]
-     fn wt_trace_fields_visit_records_every_type() {
-         use std::sync::{Arc, Mutex};
-```
-
-**File**: `src/output/concurrent.rs` (modified, +3/-1)
-```diff
-@@ -20,7 +20,9 @@
- //! own way; wt's receipt of the key cancels the group once they exit, including
- //! any remaining output wait. PID-targeted SIGTERM reaches owned direct children.
- //!
--//! Every admitted child runs to completion. Spawn failures occupy the same
-+//! Every admitted child runs to completion unless output setup or collection
-+//! fails; then the drain kills and reaps the admitted children before
-+//! returning the I/O error. Spawn failures occupy the same
- //! per-command outcome slots as child exits; the pipeline owns identity and
- //! failure policy. Cancellation alone stops admission and drains owned children.
+@@ -394,14 +394,6 @@ enum WorktreeDiffState {
+     Unknown,
+ }
+ 
+-/// Wrapper to implement SkimItem for ListItem.
+-///
+-/// Progressive updates live inside `rendered` — the picker handler rewrites
+-/// the ANSI-colored display string in place as task results arrive. skim 4.x
+-/// renders on demand, so the handler pokes an `Event::Render` after each
+-/// mutation (see `progressive_handler`); skim then re-reads `display()` and the
+-/// new value surfaces — no re-send through the item channel.
+-///
+ /// Append the PR/MR fields a row filters on — reference (`#123`/`!7`), title,
+ /// author — to `text`, space-separated, in the order shared by worktree rows
+ /// and listed `--prs` rows. A PR thus filters identically however it's shown,
+@@ -433,6 +425,14 @@ pub(super) fn push_pr_search_tokens(
+     }
+ }
+ 
++/// Wrapper to implement SkimItem for ListItem.
++///
++/// Progressive updates live inside `rendered` — the picker handler rewrites
++/// the ANSI-colored display string in place as task results arrive. skim 4.x
++/// renders on demand, so the handler pokes an `Event::Render` after each
++/// mutation (see `progressive_handler`); skim then re-reads `display()` and the
++/// new value surfaces — no re-send through the item channel.
++///
+ /// The matcher text (`text()`) is assembled live from `search_base` + the
+ /// `gutter` glyph + the current `pr_status` slot, so a PR's reference, title,
+ /// and author become filterable the moment the CI fetch lands them — the same
+@@ -2416,7 +2416,10 @@ mod tests {
+             !plain.contains("comments"),
+             "inactive label dropped: {plain:?}"
+         );
+-        assert!(!plain.contains("HEAD"), "inactive label dropped: {plain:?}");
++        assert!(
++            !plain.contains("committed"),
++            "inactive label dropped: {plain:?}"
++        );
+         // The compact bar fits a narrow pane where the full bar would not.
+         assert!(visual_width(&plain) <= 40, "fits the pane: {plain:?}");
+ 
+@@ -3719,10 +3722,11 @@ mod tests {
+         repo.run_command(&["checkout", "feature"]).unwrap();
+         let item = item_at(&repo, "feature");
+         let output = PickerRow::compute_upstream_diff_preview(&repo, &item, 80);
+-        // Diverged path runs the diff; symmetric difference includes both files.
++        // Diverged shows this branch's unique changes (merge-base..head), not
++        // upstream's.
+         assert!(
+-            output.contains("feat.txt") || output.contains("upstream.txt"),
+-            "expected diverged diff, got: {output:?}"
++            output.contains("feat.txt") && !output.contains("upstream.txt"),
++            "expected the branch's side of the diverged diff, got: {output:?}"
+         );
+     }
  
 ```
 
+**File**: `tests/integration_tests/list.rs` (modified, +0/-60)
+```diff
+@@ -3094,66 +3094,6 @@ fn test_list_task_dag_ordering_stability(mut repo: TestRepo) {
+     });
+ }
+ 
+-#[rstest]
+-fn test_list_progressive_vs_buffered_identical_data(mut repo: TestRepo) {
+-    // Critical test: Verify that progressive and buffered modes collect identical data
+-    // despite using different rendering strategies (real-time UI vs collect-then-print).
+-    // This ensures consolidation on task DAG data collection works correctly.
+-    //
+-    // Note: We compare JSON output, not table output, because:
+-    // - Progressive mode renders headers before knowing final column widths (uses estimates)
+-    // - Buffered mode renders headers after data collection (uses actual widths)
+-    // - The DATA must be identical, but table formatting may differ slightly
+-
+-    // Create varied worktrees to test multiple data points
+-    repo.add_worktree("feature-a");
+-    repo.add_worktree("feature-b");
+-
+-    // Modify a worktree to have uncommitted changes
+-    let feature_a_path = repo.worktree_path("feature-a");
+-    std::fs::write(feature_a_path.join("changes.txt"), "test").unwrap();
+-
+-    // Run both modes with JSON output to compare data (not formatting)
+-    let progressive_output = {
+-        let mut cmd = list_snapshots::command(&repo, repo.root_path());
+-        cmd.args(["--progressive", "--format=json"]);
+-        cmd.output().unwrap()
+-    };
+-
+-    let buffered_output = {
+-        let mut cmd = list_snapshots::command(&repo, repo.root_path());
+-        cmd.args(["--no-progressive", "--format=json"]);
+-        cmd.output().unwrap()
+-    };
+-
+-    // Both should succeed
+-    assert!(
+-        progressive_output.status.success(),
+-        "Progressive mode failed: {}",
+-        String::from_utf8_lossy(&progressive_output.stderr)
+-    );
+-    assert!(
+-        buffered_output.status.success(),
+-        "Buffered mode failed: {}",
+-        String::from_utf8_lossy(&buffered_output.stderr)
+-    );
+-
+-    // Parse JSON outputs
+-    let progressive_json: serde_json::Value =
+-        serde_json::from_slice(&progressive_output.stdout).unwrap();
+-    let buffered_json: serde_json::Value = serde_json::from_slice(&buffered_output.stdout).unwrap();
+-
+-    // The JSON data should be identical (ignoring display fields which may have formatting differences)
+-    // Compare the structured data to ensure both modes collect the same information
+-    assert_eq!(
+-        progressive_json,
+-        buffered_json,
+-        "Progressive and buffered modes produced different data!\n\nProgressive:\n{}\n\nBuffered:\n{}",
+-        serde_json::to_string_pretty(&progressive_json).unwrap(),
+-        serde_json::to_string_pretty(&buffered_json).unwrap()
+-    );
+-}
+-
+ #[rstest]
+ fn test_list_with_c_flag(mut repo: TestRepo) {
+     // Create some worktrees
+```
+
+---
+
+### Incident Patch 2: `a6cbc294` (2026-11-11)
+**Commit Message**: fix(config): point system-config deprecation hints at the file, not wt config update (#4767)
+
+When the system config (e.g. `/etc/xdg/worktrunk/config.toml`) contains
+a deprecated setting, every command printed the generic hint `To see
+details, run wt config show; to apply updates, run wt config update`.
+Neither command acts on the system config: `wt config update` only
+checks the user and project files and answers "No deprecated settings
+found", and `wt config show` renders no deprecation details for the
+system section. So the hint led nowhere.
+
+The system config now gets its own hint:
+
+```
+▲ System config: [select] is deprecated in favor of [switch.picker]
+↳ wt config update leaves the system config unchanged; to apply updates, edit /etc/xdg/worktrunk/config.toml
+```
+
+The generic hint is shown at most once per process. Previously a
+system-config deprecation could use it up before the user config was
+checked. Now the system hint has its own path, so a user-config
+deprecation in the same run still prints the `wt config update` hint.
+The path reaches users through `UserConfig::load_with_warnings`, which
+runs `check_and_migrate` on the system file with inline warnings on.
+
+The new `te
+
+**File**: `src/config/deprecation.rs` (modified, +20/-9)
+```diff
+@@ -529,8 +529,8 @@ fn detect_deprecations_from_doc(doc: &toml_edit::DocumentMut) -> Deprecations {
+ /// Run every rule in table order against `doc`, appending each rule's warning
+ /// kinds to `kinds` and returning whether the document changed.
+ ///
+-/// The load pass excludes [`DeprecationRule::UpdateOnly`] rewrites (cosmetic
+-/// or still-valid serde fields, so serde doesn't need them applied).
++/// The load pass excludes [`DeprecationRule::UpdateOnly`] rewrites (still-valid
++/// serde fields, so serde doesn't need them applied).
+ /// Detection and [`compute_migrated_content`] run the update pass.
+ fn apply_rules(doc: &mut toml_edit::DocumentMut, pass: RulePass, kinds: &mut Deprecations) -> bool {
+     let mut modified = false;
+@@ -1228,8 +1228,7 @@ fn migrate_negated_bool_doc(
+ /// [`DeprecationRule::Silent`] rule — to a parsed document, in table order.
+ /// Returns true if any modifications were made.
+ ///
+-/// [`DeprecationRule::UpdateOnly`] rules are excluded — template variable
+-/// renaming is cosmetic (would break `--var` overrides), and approved-commands
++/// [`DeprecationRule::UpdateOnly`] rules are excluded — `approved-commands`
+ /// is still a valid serde field. They apply in [`compute_migrated_content`].
+ fn migrate_content_doc(doc: &mut toml_edit::DocumentMut) -> bool {
+     apply_rules(doc, RulePass::Load, &mut Vec::new())
+@@ -1494,8 +1493,10 @@ pub struct CheckAndMigrateResult {
+ /// the main worktree" hint when viewing project config from a linked worktree.
+ ///
+ /// When `emit_inline_warnings` is true, per-kind deprecation warnings are printed to stderr
+-/// with a hint pointing at `wt config show`/`wt config update`. When false, nothing is
+-/// printed and the caller is expected to render via `format_deprecation_details`. Use this for commands other than `config show`.
++/// with a hint pointing at `wt config show`/`wt config update`, or at editing the file for
++/// the system config, which `wt config update` never rewrites. When false, nothing is
++/// printed and the caller is expected to render via `format_deprecation_details`;
++/// `wt config show` and `wt config update` pass false.
+ ///
+ /// Warnings are deduplicated per path per process.
+ ///
+@@ -1570,7 +1571,17 @@ pub fn check_and_migrate(
+     if emit_inline_warnings && !warnings_suppressed() {
+         let warnings = format_warning_lines(info.deprecations.iter(), info.label());
+         eprint!("{warnings}");
+-        if DEPRECATION_HINT_EMITTED.set(()).is_ok() {
++        if kind == ConfigFileKind::System {
++            // `wt config update` never rewrites the system config, and the
++            // per-path dedup above already limits this to once per process.
++            eprintln!(
++                "{}",
++                hint_message(cformat!(
++                    "<underline>wt config update</> leaves the system config unchanged; to apply updates, edit <underline>{}</>",
++                    crate::path::format_path_for_display(path)
++                ))
++            );
++        } else if DEPRECATION_HINT_EMITTED.set(()).is_ok() {
+             eprintln!(
+                 "{}",
+                 hint_message(cformat!(
+@@ -1590,8 +1601,8 @@ pub fn check_and_migrate(
+ /// Apply all deprecation fixes to `content` in memory and return the migrated
+ /// TOML string.
+ ///
+-/// Applies variable renames (cosmetic, string-level), structural section and
+-/// field migrations, and removes `approved-commands` under `[projects]` (which
++/// Applies template variable renames, structural section and field
++/// migrations, and removes `approved-commands` under `[projects]` (which
+ /// `wt config update` copies to `approvals.toml` before overwriting).
+ ///
+ /// Pure function — no filesystem access. Idempotent: feeding its own output
+```
+
+**File**: `tests/integration_tests/config_show.rs` (modified, +51/-0)
+```diff
+@@ -8,6 +8,7 @@ use ansi_str::AnsiStr;
+ use insta_cmd::assert_cmd_snapshot;
+ use rstest::rstest;
+ use std::fs;
++use std::path::Path;
+ use tempfile::TempDir;
+ 
+ #[rstest]
+@@ -682,6 +683,56 @@ pager = "delta --paging=never"
+     );
+ }
+ 
++/// `wt config update` never rewrites the system config, so a system-config
++/// deprecation points at editing the file instead. A user-config deprecation
++/// in the same run still gets the `wt config update` hint.
++#[rstest]
++fn test_system_config_deprecation_hint_points_at_the_file(repo: TestRepo) {
++    let system_config_dir = worktrunk::testing::tempdir().unwrap();
++    let system_config_path = system_config_dir.path().join("config.toml");
++    fs::write(&system_config_path, "[select]\npager = \"less\"\n").unwrap();
++
++    let run = |user_config: Option<&Path>| {
++        let mut cmd = repo.wt_command();
++        cmd.env("WORKTRUNK_SYSTEM_CONFIG_PATH", &system_config_path)
++            .env("NO_COLOR", "1");
++        if let Some(path) = user_config {
++            cmd.env("WORKTRUNK_CONFIG_PATH", path);
++        }
++        cmd.args(["hook", "show"]).current_dir(repo.root_path());
++        let output = cmd.output().unwrap();
++        assert!(
++            output.status.success(),
++            "Command should succeed: {}",
++            String::from_utf8_lossy(&output.stderr)
++        );
++        String::from_utf8_lossy(&output.stderr).into_owned()
++    };
++
++    let stderr = run(None);
++    assert!(
++        stderr.contains("System config: [select] is deprecated"),
++        "system config deprecation should warn, got: {stderr}"
++    );
++    assert!(
++        !stderr.contains("run wt config update"),
++        "wt config update doesn't rewrite the system config, got: {stderr}"
++    );
++    assert!(
++        stderr.contains("to apply updates, edit"),
++        "system config hint should point at the file, got: {stderr}"
++    );
++
++    let user_config_dir = worktrunk::testing::tempdir().unwrap();
++    let user_config_path = user_config_dir.path().join("config.toml");
++    fs::write(&user_config_path, "[select]\npager = \"less\"\n").unwrap();
++    let stderr = run(Some(&user_config_path));
++    assert!(
++        stderr.contains("to apply updates, edit") && stderr.contains("run wt config update"),
++        "both hints should appear when both files are deprecated, got: {stderr}"
++    );
++}
++
+ #[rstest]
+ fn test_config_show_outside_git_repo(mut repo: TestRepo, temp_home: TempDir) {
+     let temp_dir = worktrunk::testing::tempdir().unwrap();
+```
+
+---
+
+### Incident Patch 3: `2271c34b` (2026-11-10)
+**Commit Message**: fix(list): report the tracked remote branch in schema-1 JSON remote.branch (#4756)
+
+`wt list --format=json` (schema 1) and `wt list statusline
+--format=json` reported the **local** branch name in `remote.branch`. So
+a local `feature` tracking `origin/other-name` serialized `"branch":
+"feature"`, even though the field is documented as the remote branch
+name. Schema 2's `upstream.branch` already reports `other-name` for the
+same row, so the two schemas disagreed.
+
+
+[`upstream_to_json`](https://github.com/max-sixty/worktrunk/blob/e864cb9ef685701baad487a5a63c3c2c541b490f/src/commands/list/json_output.rs#L436-L448)
+has a comment saying `UpstreamStatus` only stores the remote name. That
+stopped being true once the field began carrying the upstream's short
+name (`upstream_short`, set in `compute_upstream`). The fix reads
+`ActiveUpstream::branch`, which is the same value schema 2 uses. It
+falls back to the local name only when the upstream short name is
+unknown, so output for rows without one doesn't change.
+
+A new unit test (`test_upstream_to_json_reports_tracked_branch_name`)
+fails on `main` with `left: "feature"`, `right: "other-name"` and passes
+with the fix. The existing `list` and `s
+
+**File**: `src/commands/list/json_output.rs` (modified, +22/-9)
+```diff
+@@ -435,15 +435,13 @@ impl JsonItem {
+ 
+ /// Convert UpstreamStatus to JsonRemote
+ fn upstream_to_json(upstream: &UpstreamStatus, branch: Option<&str>) -> Option<JsonRemote> {
+-    upstream.active().map(|active| {
+-        // Use local branch name since UpstreamStatus only stores the remote name,
+-        // not the full tracking refspec. In most cases these match (e.g., feature -> origin/feature).
+-        JsonRemote {
+-            name: active.remote.to_string(),
+-            branch: branch.unwrap_or_default().to_string(),
+-            ahead: active.ahead,
+-            behind: active.behind,
+-        }
++    upstream.active().map(|active| JsonRemote {
++        name: active.remote.to_string(),
++        // The tracked branch's name on the remote; the local name stands in
++        // only when the upstream's short name isn't known.
++        branch: active.branch.or(branch).unwrap_or_default().to_string(),
++        ahead: active.ahead,
++        behind: active.behind,
+     })
+ }
+ 
+@@ -733,6 +731,21 @@ mod tests {
+         assert_eq!(json.behind, 2);
+     }
+ 
++    #[test]
++    fn test_upstream_to_json_reports_tracked_branch_name() {
++        // A local `feature` tracking `origin/other-name` reports the remote
++        // branch, matching schema 2's `upstream.branch`.
++        let upstream = UpstreamStatus {
++            remote: Some("origin".to_string()),
++            upstream_short: Some("origin/other-name".to_string()),
++            ahead: 1,
++            behind: 0,
++        };
++        let json = upstream_to_json(&upstream, Some("feature")).unwrap();
++        assert_eq!(json.name, "origin");
++        assert_eq!(json.branch, "other-name");
++    }
++
+     #[test]
+     fn test_upstream_to_json_no_remote() {
+         let upstream = UpstreamStatus {
+```
+
 #### Recent Merged Pull Requests:
-- **PR #4733** (2026-11-08): skills(running-tend): flag doc placement and deprecated names when reviewing PRs (@worktrunk-bot)
-- **PR #4732** (2026-11-08): Label wt list diff columns with @ and ^ instead of HEAD and main (@worktrunk-bot)
-- **PR #4731** (2026-11-08): Correct stale comments in concurrent output, list rendering, and logging (@worktrunk-bot)
-- **PR #4730** (2026-11-08): Escape terminal control bytes in wt list's Summary column (@worktrunk-bot)
-- **PR #4729** (2026-11-08): Stop the fsmonitor orphan sweep killing submodule daemons (@worktrunk-bot)
-- **PR #4725** (2026-11-07): skills(writing-user-outputs): fold a second suggestion into the existing hint (@worktrunk-bot)
+- **PR #4768** (2026-11-11): test: make three picker/list assertions able to fail, and fix two stale comments (@worktrunk-bot)
+- **PR #4767** (2026-11-11): fix(config): point system-config deprecation hints at the file, not wt config update (@worktrunk-bot)
+- **PR #4765** (2026-11-11): chore: bump taiki-e/install-action from 2.90.2 to 2.90.3 (@dependabot[bot])
+- **PR #4764** (2026-11-10): fix(forge): read Azure DevOps collection, legacy SSH, and default-repo remotes (@worktrunk-bot)
+- **PR #4761** (closed): feat(config): expose pr_number to the worktree-path template (@robsonpeixoto)
+- **PR #4760** (2026-11-10): ci: bump Nushell pin to 0.117.0 (@worktrunk-bot)
 
 ---
 
@@ -2141,31 +2459,32 @@ Co-authored-by: worktrunk-bot <[REDACTED_EMAIL
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Correct stale comments in concurrent output, list rendering, and logging (#4731)
+## X. test: make three picker/list assertions able to fail, and fix two stale comments
 
 **RULE**:
-When implementing operations in `src/commands/list/render.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benches/prune.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c240303`: Correct stale comments in concurrent output, list rendering, and logging (#4731). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c43d4ec`: test: make three picker/list assertions able to fail, and fix two stale comments (#4768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/list/render.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benches/prune.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // Note: This duplicates the `Divergence::InSync` check in
-                // `Divergence::from_counts_with_remote`, but checking counts
-                // directly is simpler than threading the enum through.
+//      delete) on a worker pool sized like rayon's, concurrently with the
+//      remaining scan, reusing the removal plan its scan check computed.
+//      Only `--foreground` and current-worktree removals serialize, and the
+//      live variant passes neither.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                // Note: This duplicates the InSync check from Divergence::Special, but
-                // checking counts directly is simpler than threading the enum through.
+//      delete) serially under the write side of the scan lock, reusing the
+//      removal plan its scan check computed.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c240303` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c43d4ec` are properly handled with clean fallback behavior.

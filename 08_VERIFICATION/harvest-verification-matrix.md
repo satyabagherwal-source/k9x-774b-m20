@@ -8945,3 +8945,9 @@
 | `CYCLE-20261111-E2S6` | `2026-11-11T12:53:34.230Z` | `aquasecurity/trivy-operator` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d3c6f2e4...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T12:53:53.499Z` | `xerj-org-xerj` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-40589951` [Domain D] | Yes (`8e3570cf...`) |
 | `CYCLE-20261111-EWQA` | `2026-11-11T13:22:12.658Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d28c24d2...`) |
+| `CYCLE-20261111-NG36` | `2026-11-11T13:28:50.994Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | Yes (`12ae8483...`) |
+| `CYCLE-20261111-NOH5` | `2026-11-11T13:29:01.865Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0e4eec8d...`) |
+| `CYCLE-20261111-NSQX` | `2026-11-11T13:29:07.401Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`ec50654c...`) |
+| `CYCLE-20261111-NVRB` | `2026-11-11T13:29:11.303Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e7a4d897...`) |
+| `CYCLE-20261111-NWTL` | `2026-11-11T13:29:12.681Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1589357b...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T13:29:30.753Z` | `hf-baidu-ernie-5.5-flash-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BA155874` [Domain D] | Yes (`a8651b5d...`) |

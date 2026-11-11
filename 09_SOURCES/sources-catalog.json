@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "a6ebf8b1",
+    "sourceVersion": "a6cbc294",
     "license": "NOASSERTION",
-    "contentHash": "2aef9b2fc44b981e7a6d69fba9a80b2a04e0482cdf686b956cc1b5f763a6779b",
-    "lastHarvestedAt": "2026-11-09T01:12:34.597Z",
+    "contentHash": "0e4eec8d8608c79847dd746189a29ee8862cf86e42198c75abe5f5670e21a985",
+    "lastHarvestedAt": "2026-11-11T13:29:01.869Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "6275c121",
+    "sourceVersion": "a8560b0a",
     "license": "NOASSERTION",
-    "contentHash": "cf5359375af0c347b6bd49f7d8f01ba7f78145c8ea04c2cd57846cb033ca5c41",
-    "lastHarvestedAt": "2026-11-09T05:52:50.331Z",
+    "contentHash": "ec50654ceab3fb9f5713ce4a39835f6772378937e1c6613f4f9fce733400661e",
+    "lastHarvestedAt": "2026-11-11T13:29:07.409Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "b8f388c7",
+    "sourceVersion": "59dbb784",
     "license": "Apache-2.0",
-    "contentHash": "c94506bfc8f6de73d781983a54ede7b4a31d1f805c0c060dbe906e12c501eb6c",
-    "lastHarvestedAt": "2026-11-07T17:40:46.335Z",
+    "contentHash": "1589357b742d71f29758d68e60c56ca69b6858b50b625e0ebaaaf4aeaef97df3",
+    "lastHarvestedAt": "2026-11-11T13:29:12.684Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -12085,8 +12085,8 @@
     "sourceUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
     "sourceVersion": "hf-baidu-ernie-5.5-flash-base",
     "license": "Open-Source",
-    "contentHash": "e0706cc37de5e68b07e08e95b36cf9f3bcc31307e7b4083c4c460aeffe1596f4",
-    "lastHarvestedAt": "2026-11-06T20:30:52.832Z",
+    "contentHash": "12ae8483b38672c3dbe340c14f6bd9224caf31bd0c42be7baadc83630a861297",
+    "lastHarvestedAt": "2026-11-11T13:28:50.997Z",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base"
   },
   "github-squad": {
@@ -12163,10 +12163,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/SDAI-KMP",
-    "sourceVersion": "7dd66e74",
+    "sourceVersion": "7431c4b6",
     "license": "AGPL-3.0",
-    "contentHash": "8a1574a7511d269e2f01443a7eae23aa363b9dec51f588fd4f02efc37243a694",
-    "lastHarvestedAt": "2026-11-07T21:44:05.593Z",
+    "contentHash": "e7a4d897012af5179c293ade927ea6f0ce82b4b6393981ef74379213b7b72e99",
+    "lastHarvestedAt": "2026-11-11T13:29:11.306Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "qybaihe-bla": {

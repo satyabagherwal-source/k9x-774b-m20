@@ -8954,3 +8954,9 @@ Every entry in this ledger must capture:
 | `learn-github-aquasecurity-trivy-operator` | `https://github.com/aquasecurity/trivy-operator` | `689215dd` | Multi-dimensional audit evidence | 2026-11-11T12:53:34.234Z |
 | `learn-dom-d-40589951` | `project://xerj-org-xerj` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | 2026-11-11T12:53:53.499Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `2fac72e1` | Multi-dimensional audit evidence | 2026-11-11T13:22:12.661Z |
+| `learn-huggingface-baidu-ernie-5-5-flash-base` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Base` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-11T13:28:50.997Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `a6cbc294` | Multi-dimensional audit evidence | 2026-11-11T13:29:01.869Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a8560b0a` | Multi-dimensional audit evidence | 2026-11-11T13:29:07.409Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `7431c4b6` | Multi-dimensional audit evidence | 2026-11-11T13:29:11.306Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `59dbb784` | Multi-dimensional audit evidence | 2026-11-11T13:29:12.684Z |
+| `learn-dom-d-ba155874` | `project://hf-baidu-ernie-5.5-flash-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | 2026-11-11T13:29:30.753Z |

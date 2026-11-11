@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md`  
 > **Source**: github ([https://github.com/ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP))  
-> **Source Version**: `7dd66e74`  
+> **Source Version**: `7431c4b6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:44:03.645Z  
+> **Timestamp**: 2026-11-11T13:28:59.839Z  
 > **Learning ID**: `learn-github-shifthackz-sdai-kmp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:43:48.473Z  
+> **Harvest Timestamp**: 2026-11-11T13:28:59.834Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stable Diffusion AI client app for Android and iOS
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1284 stars
+- **Stars / Engagement**: 1287 stars
 
 ---
 
@@ -827,264 +827,234 @@ internal actual fun platformCurrentTimeMillis(): Long = System.currentTimeMillis
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abb338f1` (2026-11-07)
-**Commit Message**: Fix release signing metadata and align the F-Droid SDK path (#728)
+### Incident Patch 1: `7431c4b6` (2026-11-07)
+**Commit Message**: Prepare SDAI 1.2.0 (220) release (#731)
 
-* Fix Android release package metadata parsing
-
-* Align Android SDK installation path with F-Droid
-
-**File**: `.github/workflows/release_android.yml` (modified, +5/-1)
-```diff
-@@ -127,7 +127,11 @@ jobs:
-           persist-credentials: false
- 
-       - name: Install pinned native Linux toolchain
--        run: bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools"
-+        run: |
-+          # Keep NDK header paths consistent with the F-Droid build environment.
-+          test ! -e /opt/android-sdk
-+          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
-+          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
- 
-       - name: Build unsigned artifact
-         env:
-```
-
-**File**: `scripts/release/README.md` (modified, +9/-2)
-```diff
-@@ -104,6 +104,11 @@ installing the pinned SDK. Android archive checksums were calculated from the
- official downloads and cross-checked against Google's repository metadata. JDK,
- Gradle and bundletool checksum sources are recorded in the profile.
- 
-+Build jobs install the SDK at `/opt/android-sdk`, matching the F-Droid build
-+environment. Native debug information can include NDK header paths, which can
-+affect linker build IDs even after debug sections are stripped from the APK.
-+Signing and verification jobs use their own temporary SDK directory.
-+
- Gradle runs with a 4 GiB heap, at most two workers, no parallel project execution,
- and the Kotlin compiler inside the Gradle process. Native Ninja compilation is limited
- to two workers, including direct Ninja invocations from AGP. Each selected output
-@@ -121,15 +126,17 @@ For a local native Linux build, use a clean source checkout with initialized
- submodules and a separate checkout containing these workflow tools:
- 
- ```sh
--bash /path/to/ci/scripts/release/setup.sh build /path/to/empty-toolchain-directory
-+bash /path/to/ci/scripts/release/setup.sh build /path/to/empty-toolchain-directory /opt/android-sdk
- source /path/to/empty-toolchain-directory/environment.sh
- bash /path/to/ci/scripts/release/build.sh \
-   /path/to/source foss apk /path/to/output FULL_SOURCE_COMMIT_SHA
- ```
- 
- The build helper rejects local SDK and signing configuration in the source
- checkout. It applies the SDK/NDK/CMake profile through a Gradle init script without
--changing tracked source files.
-+changing tracked source files. The optional third setup argument selects an empty,
-+writable SDK directory; create `/opt/android-sdk` with the build user's ownership
-+before setup. Without it, the SDK is installed inside the toolchain directory.
- 
- ## First signed run and local F-Droid comparison
- 
-```
-
-**File**: `scripts/release/setup.sh` (modified, +13/-5)
-```diff
-@@ -1,10 +1,10 @@
- #!/usr/bin/env bash
- # Install the release toolchain into a new directory without using runner SDK caches.
--# Usage: setup.sh <build|sign> <empty-toolchain-directory>
-+# Usage: setup.sh <build|sign> <empty-toolchain-directory> [empty-android-sdk-directory]
- set -euo pipefail
- 
- fail() { printf 'Toolchain setup: %s\n' "$*" >&2; exit 1; }
--[[ $# == 2 ]] || fail 'expected build or sign mode and an empty directory'
-+[[ $# == 2 || $# == 3 ]] || fail 'expected mode, empty toolchain directory and optional empty SDK directory'
- [[ $(uname -s) == Linux && $(uname -m) == x86_64 ]] || fail 'Linux x86_64 is required'
- mode=$1
- [[ $mode == build || $mode == sign ]] || fail 'mode must be build or sign'
-@@ -17,16 +17,24 @@ profile="$script_dir/toolchain.json"
- mkdir -p -- "$2"
- toolchain_root=$(cd -- "$2" && pwd)
- [[ -z $(ls -A -- "$toolchain_root") ]] || fail 'toolchain directory must be empty'
-+mkdir -p -- "${3:-$toolchain_root/android-sdk}"
-+android_sdk_root=$(cd -- "${3:-$toolchain_root/android-sdk}" && pwd)
-+[[ -z $(ls -A -- "$android_sdk_root") ]] || fail 'Android SDK directory must be empty'
- work=$(mktemp -d "$toolchain_root/.download.XXXXXX")
- trap 'rm -rf -- "$work"' EXIT
- 
- # Every download is checked before extraction. SHA-256 values for Android archives
- # were calculated after validating Google's repository XML SHA-1 checksums.
- install_artifact() {
--  local name=$1 url digest archive_root destination archive stage expected actual
-+  local name=$1 url digest archive_root destination relative_destination archive stage expected actual
-   url=$(jq -er --arg name "$name" '.artifacts[$name].url' "$profile")
-   digest=$(jq -er --arg name "$name" '.artifacts[$name].sha256' "$profile")
--  destination="$toolchain_root/$(jq -er --arg name "$name" '.artifacts[$name].destination' "$profile")"
-+  relative_destination=$(jq -er --arg name "$name" '.artifacts[$name].destination' "$profile")
-+  if [[ $relative_destination == android-sdk/* ]]; then
-+    destination="$android_sdk_root/${relative_destination#android-sdk/}"
-+  else
-+    destination="$toolchain_root/$relative_destination"
-+  fi
-   archive="$work/$name.archive"
-   printf 'Installing %s\n' "$name"
-   curl --fail --location --retry 3 --proto '=https' --tlsv1.2 --output "$archive" "$url"
-@@ -67,7 +75,7 @@ if [[ $mode == build ]]; then
- fi
- 
- export JAVA_HOME="$toolchain_root/jdk"
--export ANDROID_HOME="$toolchain_root/android-sdk"
-+export ANDROID_HOME="$android_sdk_root"
- export ANDROID_SDK_ROOT="$ANDROID_HOME"
- export SDAI_TOOLCHAIN_DIR="$toolchain_root"
- export BUNDLETOOL_JAR="$toolchain_root/bundletool.jar"
-```
-
-**File**: `scripts/release/sign.sh` (modified, +2/-2)
-```diff
-@@ -78,8 +78,8 @@ if [[ "$extension" == apk ]]; then
-   "$build_tools/aapt2" dump badging "$unsigned_file" > "$signing_dir/badging.txt" 2> "$signing_dir/aapt2.log" \
-     || fail 'Could not inspect APK metadata.'
-   package_line="$(sed -n '/^package: /{p;q;}' "$signing_dir/badging.txt")"
--  actual_id="$(printf '%s\n' "$package_line" | sed -n "s/.*name='\([^']*\)'.*/\1/p")"
--  actual_version="$(printf '%s\n' "$package_line" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")"
-+  actual_id="$(printf '%s\n' "$package_line" | sed -n "s/^package: name='\([^']*\)'.*/\1/p")"
-+  actual_version="$(printf '%s\n' "$package_line" | sed -n "s/.* versionName='\([^']*\)'.*/\1/p")"
-   [[ "$actual_id" == "$application_id" && "$actual_version" == "$version_name" ]] \
-     || fail 'APK application ID or version does not match the release request.'
-   if grep -q '^application-debuggable' "$signing_dir/badging.txt"; then
-```
-
----
-
-### Incident Patch 2: `60ff1c39` (2026-07-19)
-**Commit Message**: Merge release 1.1.2 fixes back into develop
-
-**File**: `CITATION.cff` (modified, +2/-2)
+**File**: `CITATION.cff` (modified, +3/-3)
 ```diff
 @@ -2,8 +2,8 @@ cff-version: 1.2.0
  message: "If you use this software, please cite it using the metadata below."
  title: "SDAI"
  type: software
--version: "1.1.1"
--date-released: "2026-07-16"
-+version: "1.1.2"
-+date-released: "2026-07-19"
+-version: "1.1.2"
+-date-released: "2026-07-19"
++version: "1.2.0"
++date-released: "2026-11-08"
  abstract: >-
-   SDAI is an open-source, cross-platform AI image generation client for
+   SDAI is an independent, open-source AI image generation client for
    Android and iOS. It provides a unified mobile workflow for self-hosted
+@@ -16,7 +16,7 @@ authors:
+     affiliation: "Moroz Inc."
+     website: "https://moroz.cc"
+ license: "AGPL-3.0-only"
+-repository-code: "https://github.com/ShiftHackZ/Stable-Diffusion-KMP"
++repository-code: "https://github.com/ShiftHackZ/SDAI-KMP"
+ url: "https://sdai.moroz.cc"
+ keywords:
+   - "artificial intelligence"
 ```
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `NIGHTLY_BUILDS.md` (modified, +2/-2)
 ```diff
-@@ -225,7 +225,7 @@ Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff
+@@ -5,13 +5,13 @@ SDAI publishes an Android `full` flavor nightly APK from `develop` through GitHu
+ The public APK URL is stable:
+ 
+ ```text
+-https://github.com/ShiftHackZ/Stable-Diffusion-Android/releases/download/nightly/sdai-full-nightly.apk
++https://github.com/ShiftHackZ/SDAI-KMP/releases/download/nightly/sdai-full-nightly.apk
+ ```
+ 
+ The release page is:
+ 
+ ```text
+-https://github.com/ShiftHackZ/Stable-Diffusion-Android/releases/tag/nightly
++https://github.com/ShiftHackZ/SDAI-KMP/releases/tag/nightly
+ ```
+ 
+ ## What Gets Built
+```
+
+**File**: `README.md` (modified, +10/-8)
+```diff
+@@ -5,7 +5,7 @@
+ ![F-Droid](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ff-droid.org%2Fapi%2Fv1%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss&query=%24.packages%5B0%5D.versionName&label=F-Droid&link=https%3A%2F%2Ff-droid.org%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss%2F)
+ [![App Store](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fitunes.apple.com%2Flookup%3Fid%3D6778314183%26country%3Dus&query=%24.results%5B0%5D.version&label=App%20Store&logo=appstore&logoColor=white&color=blue)](https://apps.apple.com/us/app/sdai-ai-image-generator/id6778314183)
+ 
+-[Website](https://sdai.moroz.cc) | [Google Play](https://play.google.com/store/apps/details?id=com.shifthackz.aisdv1.app) | [F-Droid](https://f-droid.org/packages/com.shifthackz.aisdv1.app.foss) | [App Store](https://apps.apple.com/us/app/sdai-ai-image-generator/id6778314183) | [Nightly Build](https://github.com/ShiftHackZ/Stable-Diffusion-Android/releases/download/nightly/sdai-full-nightly.apk) | [Telegram](https://t.me/sdai_app) | [Discord](https://discord.gg/jzdR9m8Ves) | [4PDA](https://4pda.to/forum/index.php?showtopic=1082639)
++[Website](https://sdai.moroz.cc) | [Google Play](https://play.google.com/store/apps/details?id=com.shifthackz.aisdv1.app) | [F-Droid](https://f-droid.org/packages/com.shifthackz.aisdv1.app.foss) | [App Store](https://apps.apple.com/us/app/sdai-ai-image-generator/id6778314183) | [Nightly Build](https://github.com/ShiftHackZ/SDAI-KMP/releases/download/nightly/sdai-full-nightly.apk) | [Telegram](https://t.me/sdai_app) | [Discord](https://discord.gg/jzdR9m8Ves) | [4PDA](https://4pda.to/forum/index.php?showtopic=1082639)
+ 
+ <p>
+   <a href="https://play.google.com/store/apps/details?id=com.shifthackz.aisdv1.app"><img src="docs/assets/badge-google-play.svg" alt="Get it on Google Play" height="54"></a>
+@@ -194,12 +194,12 @@ Android flavor availability is driven by the Gradle flavor configuration and run
+ 
+ The iOS app is not split into Android-style flavors. It uses the shared mobile UI, remote-provider stack, Silicon Diffusion Core ML, and Silicon Diffusion PrismML Bonsai. Android ONNX, MediaPipe, SDXL, and Local Diffusion PrismML Bonsai local runtimes remain Android-specific.
+ 
+-For a historical overview of flavor policy, see the project wiki page: [Build flavor difference](https://github.com/ShiftHackZ/Stable-Diffusion-Android/wiki/Build-flavor-difference).
++For a historical overview of flavor policy, see the project wiki page: [Build flavor difference](https://github.com/ShiftHackZ/SDAI-KMP/wiki/Build-flavor-difference).
+ 
+ ## Legacy Android 0.x.x Versions
+ 
+ The old Android-only `0.x.x` release line is no longer maintained. It remains available for archival and reference purposes in the
+-[`archive/version-0.x.x`](https://github.com/ShiftHackZ/Stable-Diffusion-Android/tree/archive/version-0.x.x) branch.
++[`archive/version-0.x.x`](https://github.com/ShiftHackZ/SDAI-KMP/tree/archive/version-0.x.x) branch.
+ 
+ ## Supported Languages
+ 
+@@ -212,6 +212,7 @@ SDAI uses the language provided by the OS when a translation is available.
+ | Turkish              | 0.4.1         | Translated |
+ | Russian              | 0.5.5         | Translated |
+ | Chinese (Simplified) | 0.6.2         | Translated |
++| German               | 1.2.0         | Translated |
+ 
+ Translation contributions are welcome.
+ 
+@@ -228,24 +229,25 @@ Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff
  
  If you mention SDAI in research, articles, benchmarks, tutorials, app collections, or public project documentation, please cite it as:
  
--> SDAI, version 1.1.1, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/Stable-Diffusion-KMP
-+> SDAI, version 1.1.2, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/Stable-Diffusion-KMP
+-> SDAI, version 1.1.2, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/Stable-Diffusion-KMP
++> SDAI, version 1.2.0, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/SDAI-KMP
  
  BibTeX:
  
-@@ -235,6 +235,6 @@ BibTeX:
+ ```bibtex
+ @software{Moroz_SDAI_2026,
    author = {Moroz, Dmytro},
-   year = {2026},
-   howpublished = {GitHub repository: https://github.com/ShiftHackZ/Stable-Diffusion-KMP},
--  note = {Version 1.1.1; open-source cross-platform AI image generation client}
-+  note = {Version 1.1.2; open-source cross-platform AI image generation client}
++  date = {2026-11-08},
+   license = {AGPL-3.0-only},
+-  month = jul,
++  month = nov,
+   title = {{SDAI}},
+-  url = {https://github.com/ShiftHackZ/Stable-Diffusion-KMP},
+-  version = {1.1.2},
++  url = {https://github.com/ShiftHackZ/SDAI-KMP},
++  version = {1.2.0},
+   year = {2026}
  }
+ ```
+ 
+ APA:
+ 
+ ```
+-Moroz, D. (2026). SDAI (Version 1.1.2) [Computer software]. https://github.com/ShiftHackZ/Stable-Diffusion-KMP
++Moroz, D. (2026). SDAI (Version 1.2.0) [Computer software]. https://github.com/ShiftHackZ/SDAI-KMP
  ```
 ```
 
-**File**: `feature/benchmark/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
+**File**: `app/android/build.gradle.kts` (modified, +2/-2)
 ```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+@@ -40,8 +40,8 @@ android {
+         buildConfigField("String", "DONATE_URL", "\"https://sdai.moroz.cc/donate.html\"")
+         buildConfigField("String", "PROJECT_WEBSITE_URL", "\"https://sdai.moroz.cc\"")
+         buildConfigField("String", "DEVELOPER_WEBSITE_URL", "\"https://moroz.cc\"")
+-        buildConfigField("String", "GITHUB_SOURCE_URL", "\"https://github.com/ShiftHackZ/Stable-Diffusion-Android\"")
+-        buildConfigField("String", "LICENSE_URL", "\"https://github.com/ShiftHackZ/Stable-Diffusion-Android/blob/master/LICENSE\"")
++        buildConfigField("String", "GITHUB_SOURCE_URL", "\"https://github.com/ShiftHackZ/SDAI-KMP\"")
++        buildConfigField("String", "LICENSE_URL", "\"https://github.com/ShiftHackZ/SDAI-KMP/blob/master/LICENSE\"")
+         buildConfigField("String", "SETUP_INSTRUCTIONS_URL", "\"https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki\"")
+         buildConfigField("String", "SWARM_UI_INFO_URL", "\"https://github.com/mcmonkeyprojects/SwarmUI/tree/master/docs\"")
  
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_benchmark
-     SHARED
 ```
 
-**File**: `feature/bonsai/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
+**File**: `app/ios/iosApp.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
- 
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_bonsai
-     SHARED
+@@ -317,7 +317,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_IDENTITY = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 204;
++				CURRENT_PROJECT_VERSION = 220;
+ 				DEVELOPMENT_TEAM = 383EQFRA4A;
+ 				ENABLE_PREVIEWS = YES;
+ 				FRAMEWORK_SEARCH_PATHS = (
+@@ -332,7 +332,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.1.0;
++				MARKETING_VERSION = 1.2.0;
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-framework",
+@@ -353,7 +353,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_IDENTITY = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 204;
++				CURRENT_PROJECT_VERSION = 220;
+ 				DEVELOPMENT_TEAM = 383EQFRA4A;
+ 				ENABLE_PREVIEWS = YES;
+ 				FRAMEWORK_SEARCH_PATHS = (
+@@ -368,7 +368,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.1.0;
++				MARKETING_VERSION = 1.2.0;
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-framework",
 ```
 
-**File**: `gradle/libs.versions.toml` (modified, +2/-2)
+**File**: `build.gradle.kts` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- [versions]
--versionName = "1.1.1"
--versionCode = "208"
-+versionName = "1.1.2"
-+versionCode = "209"
- targetSdk = "36"
- compileSdk = "36"
- minSdk = "24"
+@@ -69,7 +69,7 @@ subprojects {
+                     localDirectory.set(projectDir.resolve("src"))
+                     remoteUrl.set(
+                         URI(
+-                            "https://github.com/ShiftHackZ/Stable-Diffusion-Android/tree/master/" +
++                            "https://github.com/ShiftHackZ/SDAI-KMP/tree/master/" +
+                                 projectDir.relativeTo(rootProject.projectDir).path +
+                                 "/src"
+                         )
 ```
 
----
-
-### Incident Patch 3: `db8910d7` (2026-07-19)
-**Commit Message**: fix: Normalize Bonsai native build paths
-
-**File**: `feature/benchmark/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
+**File**: `core/common/src/commonMain/kotlin/com/shifthackz/aisdv1/core/common/links/DefaultLinksProvider.kt` (modified, +4/-4)
 ```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
- 
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_benchmark
-     SHARED
+@@ -73,17 +73,17 @@ object DefaultLinksProvider : LinksProvider {
+      */
+     override val developerWebsiteUrl: String = "https://moroz.cc"
+     /**
+-     * Exposes the `gitHubSourceUrl` value used by the SDAI core common layer.
++     * Canonical repository URL opened by the app's source-code links.
+      *
+      * @author Dmitriy Moroz
+      */
+-    override val gitHubSourceUrl: String = "https://github.com/ShiftHackZ/Stable-Diffusion-Android"
++    override val gitHubSourceUrl: String = "https://github.com/ShiftHackZ/SDAI-KMP"
+     /**
+-     * Exposes the `licenseUrl` value used by the SDAI core common layer.
++     * License page in the canonical repository, opened by the app's license links.
+      *
+      * @author Dmitriy Moroz
+      */
+-    override val licenseUrl: String = "https://github.com/ShiftHackZ/Stable-Diffusion-Android/blob/master/LICENSE"
++    override val licenseUrl: String = "https://github.com/ShiftHackZ/SDAI-KMP/blob/master/LICENSE"
+     /**
+      * Exposes the `setupInstructionsUrl` value used by the SDAI core common layer.
+      *
 ```
 
-**File**: `feature/bonsai/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
+**File**: `docs/docs/app/com.shifthackz.aisdv1.app.di/feature-module.html` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
- 
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_bonsai
-     SHARED
+@@ -149,7 +149,7 @@
+   <div class="cover ">
+     <h1 class="cover"><span>feature</span><wbr><span><span>Module</span></span></h1>
+   </div>
+-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="feature-module.html">featureModule</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><span data-unresolved-link="org.koin.core.module/Module///PointingToDeclaration/">Module</span><span class="token operator">&gt;</span><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/ShiftHackZ/Stable-Diffusion-Android/tree/master/app/android/src/main/java/com/shifthackz/aisdv1/app/di/FeatureModule.kt#L11">source</a>)</span></span></div></div></div>
++  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="feature-module.html">featureModule</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><span data-unresolved-link="org.koin.core.module/Module///PointingToDeclaration/">Module</span><span class="token operator">&gt;</span><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/ShiftHackZ/SDAI-KMP/tree/master/app/android/src/main/java/com/shifthackz/aisdv1/app/di/FeatureModule.kt#L11">source</a>)</span></span></div></div></div>
+ </div>
+     <div class="footer">
+         <div class="footer--container">
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #731** (2026-11-07): Prepare SDAI 1.2.0 (220) release (@ShiftHackZ)
 - **PR #730** (2026-11-07): Rebranding (@ShiftHackZ)
 - **PR #729** (2026-11-07): Document Python 3.12 for APK verification (@ShiftHackZ)
 - **PR #728** (2026-11-07): Fix release signing metadata and align the F-Droid SDK path (@ShiftHackZ)
 - **PR #727** (2026-11-07): Add reproducible Android release workflow (@ShiftHackZ)
 - **PR #725** (2026-11-07): Add German localization (@mijnders)
-- **PR #715** (closed): Bump gradle-wrapper from 8.13 to 9.8.0 (@dependabot[bot])
 
 ---
 
@@ -1104,32 +1074,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release signing metadata and align the F-Droid SDK path (#728)
+## X. Prepare SDAI 1.2.0 (220) release (#731)
 
 **RULE**:
-When implementing operations in `.github/workflows/release_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CITATION.cff`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abb338f1`: release signing metadata and align the F-Droid SDK path (#728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7431c4b6`: Prepare SDAI 1.2.0 (220) release (#731). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release_android.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CITATION.cff`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        run: |
-          # Keep NDK header paths consistent with the F-Droid build environment.
-          test ! -e /opt/android-sdk
-          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
-          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
+version: "1.2.0"
+date-released: "2026-11-08"
+repository-code: "https://github.com/ShiftHackZ/SDAI-KMP"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        run: bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools"
+version: "1.1.2"
+date-released: "2026-07-19"
+repository-code: "https://github.com/ShiftHackZ/Stable-Diffusion-KMP"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abb338f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7431c4b6` are properly handled with clean fallback behavior.

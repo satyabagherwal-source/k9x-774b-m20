@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T13:22:12.492Z",
+  "last_updated": "2026-11-11T13:29:12.582Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41432,8 +41432,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "6275c121",
-      "content_hash": "cf5359375af0c347b6bd49f7d8f01ba7f78145c8ea04c2cd57846cb033ca5c41",
+      "source_version": "a8560b0a",
+      "content_hash": "ec50654ceab3fb9f5713ce4a39835f6772378937e1c6613f4f9fce733400661e",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -41483,7 +41483,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T05:52:50.217Z",
+      "verified_at": "2026-11-11T13:29:07.102Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42927,8 +42927,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "a6ebf8b1",
-      "content_hash": "2aef9b2fc44b981e7a6d69fba9a80b2a04e0482cdf686b956cc1b5f763a6779b",
+      "source_version": "a6cbc294",
+      "content_hash": "0e4eec8d8608c79847dd746189a29ee8862cf86e42198c75abe5f5670e21a985",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -42945,6 +42945,11 @@
         {
           "number": null,
           "title": "Correct stale comments in concurrent output, list rendering, and logging (#4731)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: make three picker/list assertions able to fail, and fix two stale comments",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43023,7 +43028,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:12:34.517Z",
+      "verified_at": "2026-11-11T13:29:01.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47508,11 +47513,16 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "b8f388c7",
-      "content_hash": "c94506bfc8f6de73d781983a54ede7b4a31d1f805c0c060dbe906e12c501eb6c",
+      "source_version": "59dbb784",
+      "content_hash": "1589357b742d71f29758d68e60c56ca69b6858b50b625e0ebaaaf4aeaef97df3",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2241,
           "title": "e2e test stability fixes (#10850)",
@@ -47589,7 +47599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:40:46.189Z",
+      "verified_at": "2026-11-11T13:29:12.560Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189767,7 +189777,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
       "source_version": "hf-baidu-ernie-5.5-flash-base",
-      "content_hash": "e0706cc37de5e68b07e08e95b36cf9f3bcc31307e7b4083c4c460aeffe1596f4",
+      "content_hash": "12ae8483b38672c3dbe340c14f6bd9224caf31bd0c42be7baadc83630a861297",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
       "promoted_rules": [
@@ -189792,7 +189802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:30:52.735Z",
+      "verified_at": "2026-11-11T13:28:50.907Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190055,17 +190065,22 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-stable-diffusion-kmp",
+      "slug": "shifthackz-sdai-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
       "source_version": "7431c4b6",
-      "content_hash": "2468b0562564b2b6df22c66148ebbd5c8ac9f4bf694b242261cba725187f42ff",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "content_hash": "e7a4d897012af5179c293ade927ea6f0ce82b4b6393981ef74379213b7b72e99",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "release signing metadata and align the F-Droid SDK path (#728)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Prepare SDAI 1.2.0 (220) release (#731)",
           "status": "WITHHELD_REJECT"
         }
       ],
@@ -190074,7 +190089,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T15:28:19.270Z",
+      "verified_at": "2026-11-11T13:29:11.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

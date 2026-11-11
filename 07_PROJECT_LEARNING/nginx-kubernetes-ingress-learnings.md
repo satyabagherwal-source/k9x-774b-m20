@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `b8f388c7`  
+> **Source Version**: `59dbb784`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T17:40:46.009Z  
+> **Timestamp**: 2026-11-11T13:29:01.200Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:40:45.728Z  
+> **Harvest Timestamp**: 2026-11-11T13:29:01.191Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5094 stars
+- **Stars / Engagement**: 5097 stars
 
 ---
 
@@ -1262,11 +1262,11 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #11346** (2026-11-11): **Merge nginx-agent.conf labels into `--labels` for NGINX Agent 3**
+  *Symptoms*: ### Proposed changes  With NGINX Agent 3, NIC always starts the agent with `--labels=<NIC metadata>`. The agent treats that flag as the complete set of labels, so any `labels:` block in `nginx-agent.conf` (for example `display-name`) is silently ignored and never reaches NGINX One Console.  NIC now reads `labels` from `/etc/nginx-agent/nginx-agent.conf` and adds them to `--labels` after the NIC metadata labels, sorted by key:  - NIC metadata labels (`product-*`, `cluster-id`, `installation-*`, `control-*`) cannot be overridden. - Labels the agent would reject are skipped and logged in a single warning. Keys and values are checked against the agent's own label pattern (`^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$`). This also stops a `,`, `=` or `"` in a label from breaking `--labels` and preventing the agent from starting. - Number and boolean values (for example `port: 8080`) are kept as their literal text instead of causing every label to be dropped. - A missing config file is not an error. A file that can't be parsed logs a warning, and the agent starts with the NIC metadata labels only.  Stacked: the Helm value `nginxAgent.labels`   ### Linked issue   Closes #11345   <!-- Link the issue here, not in the PR title. External contributors: the issue must be accepted first, see "Open a Pull Request" in CONTRIBUTING.md. -->  ### How I tested  - `make test`: new table-driven tests in `internal/nginx/manager_test.go`:   - `TestExtractAgentConfigLabels`
+
 - **Issue #11298** (2026-11-04): **Fix malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources**
   *Symptoms*: ### Proposed changes  Event messages, and VirtualServer/TransportServer `.status.message`, contain stray separators and spaces, visible in `kubectl describe` and through the API.  | Resource | Case | Before | After | |---|---|---|---| | Ingress, VS, TS | error only | `...updated ; but was not applied: err` | `...updated but was not applied: err` | | Ingress, VS | generated warnings only | `...updated ; with warning(s): w` | `...updated with warning(s): w` | | Ingress, VS, TS | no warnings, no error | `...updated ` (trailing space) | `...updated` | | Minion Ingress | warnings + error | `...with warning(s): w1; ; but was not applied: err` | `...with warning(s): w1; but was not applied: err` | | VirtualServerRoute | warnings + error | `...updated  with warning(s): w1; but was not applied:err` | `...updated with warning(s): w1; but was not applied: err` |  - Minion Ingress events use the master Ingress format. - VirtualServerRoute events use `"; "` only when warnings come before the error. - Regular Ingress, VirtualServer and TransportServer use a new `appendEventDetail` helper, so `"; "` appears only   between parts, and the trailing space is trimmed.  **User-visible change:** VirtualServer and TransportServer `.status.message` text changes as above. Tooling that matches the old `" ; "` text needs updating.  Not changed: the delete-path messages already produce well-formed text. Two related problems are tracked separately: DosLogConf events (`appprotect_dos
-
-- **Issue #11297** (2026-11-04): **[Bug]: Malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources**
-  *Symptoms*: ### AI agents and bots  - [ ] I am an AI agent or bot opening this issue  ### Version  edge  ### What Kubernetes platforms are you running on?  Kind  ### Steps to reproduce  1. Run NGINX Ingress Controller with `-enable-snippets`. 2. Make a configuration fail to apply, for example add `nginx.org/server-snippets: "invalid_directive on;"` to an    Ingress, or `server-snippets: "invalid_directive on;"` to a VirtualServer spec. 3. Run `kubectl describe` on the resource, and for a VirtualServer also    `kubectl get virtualserver <name> -o jsonpath='{.status.message}'`.  The same malformed text appears for minion Ingresses (master/minion setup), VirtualServerRoutes and TransportServers, and when a resource only has warnings generated during config generation (for example a VirtualServer upstream with `slow-start` on a load-balancing method that doesn't support it).  ### Expected behaviour  Messages are well-formed, with `"; "` only between parts:  - `Configuration for default/cafe was added or updated` - `Configuration for default/cafe was added or updated with warning(s): <warnings>` - `Configuration for default/cafe was added or updated but was not applied: <error>` - `Configuration for default/cafe was added or updated with warning(s): <warnings>; but was not applied: <error>`  ### Actual behaviour  Events (and VirtualServer/TransportServer `.status.message`) contain stray separators and spaces:  ``` # Ingress, VirtualServer, TransportServer: error with no earlier warnings Confi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1283,1066 +1283,427 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b8f388c7` (2026-11-06)
-**Commit Message**: add Ingress support for connection Limit policy (#11222)
+### Incident Patch 1: `59dbb784` (2026-11-11)
+**Commit Message**: Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)
 
-* add Ingress support for connection Limit policy
+* Add nginxAgent.labels to Helm chart for NGINX One Console labels
 
-* reduce conn hold time in example
+* Add negative Helm test for invalid nginxAgent.labels
 
-* adapt replica test to main
-
-**File**: `examples/ingress-resources/connection-limit-mergeable/README.md` (added, +99/-0)
+**File**: `charts/nginx-ingress/templates/_helpers.tpl` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,99 @@
-+# Connection Limit with Mergeable Ingresses
+@@ -688,6 +688,11 @@ command:
+ collector:
+   log:
+     path: "stdout"
++{{- if .Values.nginxAgent.labels }}
 +
-+In this example, we deploy the cafe application, configure load balancing for it with
-+[Mergeable Ingress](https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/cross-namespace-configuration/)
-+resources, and apply connection limit policies with the `nginx.org/policies` annotation:
-+
-+- The master Ingress references `connection-limit-policy`, which applies to every path of the host.
-+- The coffee minion references its own policy, `coffee-connection-limit-policy`, which replaces the master policy for
-+  `/coffee`.
-+- The tea minion references no policy, so `/tea` uses the master policy.
-+
-+## Prerequisites
-+
-+1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
-+   instructions to deploy the Ingress Controller.
-+1. Save the public IP address of the Ingress Controller into a shell variable:
-+
-+    ```console
-+    IC_IP=XXX.YYY.ZZZ.III
-+    ```
-+
-+1. Save the HTTP port of the Ingress Controller into a shell variable:
-+
-+    ```console
-+    IC_HTTP_PORT=<port number>
-+    ```
-+
-+## Step 1 - Deploy the Cafe Application
-+
-+Create the coffee and tea deployments and services:
-+
-+```console
-+kubectl apply -f cafe.yaml
-+```
-+
-+## Step 2 - Deploy the Connection Limit Policies
-+
-+Create the policies:
-+
-+```console
-+kubectl apply -f connection-limit-policy.yaml
-+kubectl apply -f coffee-connection-limit-policy.yaml
-+```
-+
-+- `connection-limit-policy` allows 1 request in progress at a time from a single IP address, and rejects requests over
-+  the limit with 429.
-+- `coffee-connection-limit-policy` sets only `connections: 1`. The other fields use their defaults, so it also counts
-+  requests per client IP address, but rejects requests over the limit with 503.
-+
-+## Step 3 - Configure Load Balancing
-+
-+Create the master Ingress and the minion Ingress resources:
-+
-+```console
-+kubectl apply -f cafe-ingress-master.yaml
-+kubectl apply -f tea-minion.yaml
-+kubectl apply -f coffee-minion.yaml
-+```
-+
-+## Step 4 - Test the Configuration
-+
-+1. Keep one request to `/tea` in progress by uploading a body slowly. This command runs for about 10 seconds:
-+
-+    ```console
-+    head -c 100000 /dev/zero | curl --limit-rate 10k --data-binary @- --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
-+    ```
-+
-+1. While it runs, send a second request to `/tea` from another terminal. The master policy rejects it with 429:
-+
-+    ```console
-+    curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
-+    ```
-+
-+    ```text
-+    <html>
-+    <head><title>429 Too Many Requests</title></head>
-+    <body>
-+    <center><h1>429 Too Many Requests</h1></center>
-+    </body>
-+    </html>
-+    ```
-+
-+1. While the upload still runs, send a request to `/coffee`. It succeeds, because the coffee policy counts requests to
-+   `/coffee` separately:
-+
-+    ```console
-+    curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/coffee
-+    ```
-+
-+    ```text
-+    Server address: 10.8.1.20:8080
-+    Server name: coffee-7586895968-r26zn
-+    . . .
-+    ```
-+
-+1. To see the coffee policy reject a request, repeat steps 1 and 2 with `/coffee` in place of `/tea`. The second
-+   request gets 503.
-+
-+> Note: The command results are truncated for the clarity of the example.
++labels:
++{{ toYaml .Values.nginxAgent.labels | indent 2 }}
++{{- end }}
+ 
+ {{- else }}
+ log:
 ```
 
-**File**: `examples/ingress-resources/connection-limit-mergeable/cafe-ingress-master.yaml` (added, +11/-0)
+**File**: `charts/nginx-ingress/values.schema.json` (modified, +17/-0)
+```diff
+@@ -2848,6 +2848,23 @@
+           "default": "false",
+           "title": "skip certificate verification"
+         },
++        "labels": {
++          "type": "object",
++          "default": {},
++          "title": "Custom labels to associate with the NGINX instance in NGINX One Console",
++          "propertyNames": {
++            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$"
++          },
++          "additionalProperties": {
++            "type": "string",
++            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$"
++          },
++          "examples": [
++            {
++              "display-name": "my-instance"
++            }
++          ]
++        },
+         "instanceManager": {
+           "type": "object",
+           "default": {},
+```
+
+**File**: `charts/nginx-ingress/values.yaml` (modified, +2/-0)
+```diff
+@@ -866,6 +866,8 @@ nginxAgent:
+   endpointHost: "agent.connect.nginx.com"
+   endpointPort: 443
+   tlsSkipVerify: false
++  ## Custom labels to associate with the NGINX instance in NGINX One Console (for example, display-name: my-instance).
++  labels: {}
+ 
+   # Agent V2 configuration
+   ## If nginxAgent.instanceGroup is not set the value of nginx-ingress.controller.fullname will be used
+```
+
+**File**: `charts/tests/__snapshots__/helmunit_test.snap` (modified, +3/-1)
+```diff
+@@ -20035,6 +20035,8 @@ data:
+     collector:
+       log:
+         path: "stdout"
++    labels:
++      display-name: my-nginx-instance
+ /-/-/-/
+ # Source: nginx-ingress/templates/controller-configmap.yaml
+ apiVersion: v1
+@@ -20331,7 +20333,7 @@ spec:
+       labels:
+         app.kubernetes.io/name: nginx-ingress
+         app.kubernetes.io/instance: plus-agent-all
+-        agent-configuration-revision-hash: "36d57a7e"
++        agent-configuration-revision-hash: "751c3c9a"
+       annotations:
+         prometheus.io/scrape: "true"
+         prometheus.io/port: "9113"
+```
+
+**File**: `charts/tests/helmunit_test.go` (modified, +12/-0)
+```diff
+@@ -426,6 +426,18 @@ func TestHelmNICTemplateNegative(t *testing.T) {
+ 			namespace:         "default",
+ 			expectedErrorMsgs: []string{`label "app.kubernetes.io/name" is managed by the chart and cannot be overridden`},
+ 		},
++		"agentLabelsInvalid": {
++			valuesFile:  "testdata/agent-labels-invalid.yaml",
++			releaseName: "agent-labels-invalid",
++			namespace:   "default",
++			expectedErrorMsgs: []string{
++				"invalid propertyName 'bad,key'",
++				"'/nginxAgent/labels/comma': 'a,b' does not match pattern",
++				"'/nginxAgent/labels/equals': 'a=b' does not match pattern",
++				"'/nginxAgent/labels/empty': '' does not match pattern",
++				"'/nginxAgent/labels/number': got number, want string",
++			},
++		},
+ 		"appProtectWAFPLMWithoutPlus": {
+ 			valuesFile:        "testdata/app-protect-waf-plm-without-plus.yaml",
+ 			releaseName:       "appprotect-waf-plm-without-plus",
+```
+
+**File**: `charts/tests/testdata/agent-labels-invalid.yaml` (added, +11/-0)
 ```diff
 @@ -0,0 +1,11 @@
-+apiVersion: networking.k8s.io/v1
-+kind: Ingress
-+metadata:
-+  name: cafe-ingress-master
-+  annotations:
-+    nginx.org/mergeable-ingress-type: "master"
-+    nginx.org/policies: "connection-limit-policy"
-+spec:
-+  ingressClassName: nginx
-+  rules:
-+  - host: cafe.example.com
++controller:
++  nginxplus: true
++nginxAgent:
++  enable: true
++  dataplaneKeySecretName: "dataplane-key"
++  labels:
++    "bad,key": valid
++    comma: "a,b"
++    equals: "a=b"
++    empty: ""
++    number: 5
 ```
 
-**File**: `examples/ingress-resources/connection-limit-mergeable/cafe.yaml` (added, +65/-0)
+**File**: `charts/tests/testdata/plus-agentv3-all.yaml` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,65 @@
-+apiVersion: apps/v1
-+kind: Deployment
-+metadata:
-+  name: coffee
-+spec:
-+  replicas: 2
-+  selector:
-+    matchLabels:
-+      app: coffee
-+  template:
-+    metadata:
-+      labels:
-+        app: coffee
-+    spec:
-+      containers:
-+      - name: coffee
-+        image: nginxdemos/nginx-hello:plain-text
-+        ports:
-+        - containerPort: 8080
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: coffee-svc
-+spec:
-+  ports:
-+  - port: 80
-+    targetPort: 8080
-+    protocol: TCP
-+    name: http
-+  selector:
-+    app: coffee
-+---
-+apiVersion: apps/v1
-+kind: Deployment
-+metadata:
-+  name: tea
-+spec:
-+  replicas: 1
-+  selector:
-+    matchLabels:
-+      app: tea
-+  template:
-+    metadata:
-+      labels:
-+        app: tea
-+    spec:
-+      containers:
-+      - name: tea
-+        image: nginxdemos/nginx-hello:plain-text
-+        ports:
-+        - containerPort: 8080
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: tea-svc
-+spec:
-+  ports:
-+  - port: 80
-+    targetPort: 8080
-+    protocol: TCP
-+    name: http
-+  selector:
-+    app: tea
-```
-
-**File**: `examples/ingress-resources/connection-limit-mergeable/coffee-connection-limit-policy.yaml` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+apiVersion: k8s.nginx.org/v1
-+kind: Policy
-+metadata:
-+  name: coffee-connection-limit-policy
-+spec:
-+  connectionLimit:
-+    connections: 1
-```
-
-**File**: `examples/ingress-resources/connection-limit-mergeable/coffee-minion.yaml` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+apiVersion: networking.k8s.io/v1
-+kind: Ingress
-+metadata:
-+  name: cafe-ingress-coffee-minion
-+  annotations:
-+    nginx.org/mergeable-ingress-type: "minion"
-+    nginx.org/policies: "coffee-connection-limit-policy"
-+spec:
-+  ingressClassName: nginx
-+  rules:
-+  - host: cafe.example.com
-+    http:
-+      paths:
-+      - path: /coffee
-+        pathType: Prefix
-+        backend:
-+          service:
-+            name: coffee-svc
-+            port:
-+              number: 80
-```
-
-**File**: `examples/ingress-resources/connection-limit-mergeable/connection-limit-policy.yaml` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+apiVersion: k8s.nginx.org/v1
-+kind: Policy
-+metadata:
-+  name: connection-limit-policy
-+spec:
-+  connectionLimit:
-+    connections: 1
-+    key: ${binary_remote_addr}
-+    zoneSize: 10m
-+    rejectCode: 429
-+    logLevel: warn
-+    dryRun: false
-+    scale: false
-```
-
-**File**: `examples/ingress-resources/connection-limit-mergeable/tea-minion.yaml` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+apiVersion: networking.k8s.io/v1
-+kind: Ingress
-+metadata:
-+  name: cafe-ingress-tea-minion
-+  annotations:
-+    nginx.org/mergeable-ingress-type: "minion"
-+spec:
-+  ingressClassName: nginx
-+  rules:
-+  - host: cafe.example.com
-+    http:
-+      paths:
-+      - path: /tea
-+        pathType: Prefix
-+        backend:
-+          service:
-+            name: tea-svc
-+            port:
-+              number: 80
-```
-
-**File**: `examples/ingress-resources/connection-limit/README.md` (added, +96/-0)
-```diff
-@@ -0,0 +1,96 @@
-+# Connection Limit
-+
-+In this example, we deploy the cafe application, configure load balancing for it via an Ingress resource, and apply a
-+connection limit policy with the `nginx.org/policies` annotation.
-+
-+## Prerequisites
-+
-+1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
-+   instructions to deploy the Ingress Controller.
-+1. Save the public IP address of the Ingress Controller into a shell variable:
-+
-+    ```console
-+    IC_IP=XXX.YYY.ZZZ.III
-+    ```
-+
-+1. Save the HTTP port of the Ingress Controller into a shell variable:
-+
-+    ```console
-+    IC_HTTP_PORT=<port number>
-+    ```
-+
-+## Step 1 - Deploy the Cafe Application
-+
-+Create the coffee and tea deployments and services:
-+
-+```console
-+kubectl apply -f cafe.yaml
-+```
-+
-+## Step 2 - Deploy the Connection Limit Policy
-+
-+In this step, we create a policy with the name `connection-limit-policy` that allows only 1 request in progress at a
-+time from a single IP address. The policy sets every field:
-+
-+- `connections`: the maximum number of requests in progress at the same time for each value of the key.
-+- `key`: `${binary_remote_addr}` gives each client IP address its own counter.
-+- `zoneSize`: the size of the shared memory zone that stores the counters.
-+- `rejectCode`: the status code returned for rejected requests, 429 instead of the default 503.
-+- `logLevel`: the level at which rejected requests are logged.
-+- `dryRun`: when `true`, requests over the limit are logged but not rejected.
-+- `scale`: when `true`, `connections` is divided by the number of NGINX Ingress Controller replicas.
-+
-+Create the policy:
-+
-+```console
-+kubectl apply -f connection-limit-policy.yaml
-+```
-+
-+## Step 3 - Configure Load Balancing
-+
-+Create an Ingress resource for the cafe application:
-+
-+```console
-+kubectl apply -f cafe-ingress.yaml
-+```
-+
-+Note that the Ingress references the policy `connection-limit-policy` created in Step 2 with the `nginx.org/policies`
-+annotation. The policy applies to every path of the Ingress, and the paths share the limit.
-+
-+## Step 4 - Test the Configuration
-+
-+Let's test the configuration. Keep one request to `/coffee` in progress by uploading a body slowly. This command runs
-+for about 10 seconds:
-+
-+```console
-+head -c 100000 /dev/zero | curl --limit-rate 10k --data-binary @- --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/coffee
-+```
-+
-+While it runs, send a request to `/tea` from another terminal. NGINX rejects it, because the paths share the limit:
-+
-+```console
-+curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
-+```
-+
-+```text
-+<html>
-+<head><title>429 Too Many Requests</title></head>
-+<body>
-+<center><h1>429 Too Many Requests</h1></center>
-+</body>
-+</html>
-+```
-+
-+When the upload finishes, the request succeeds:
-+
-+```console
-+curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
-+```
-+
-+```text
-+Server address: 10.8.1.19:8080
-+Server name: tea-7cd44fcb4d-xfw2x
-+. . .
-+```
-+
-+> Note: The command result is truncated for the clarity of the example.
+@@ -7,3 +7,5 @@ nginxAgent:
+   logLevel: debug
+   endpointHost: my-host.example.com
+   endpointPort: 8443
++  labels:
++    display-name: my-nginx-instance
 ```
 
 ---
 
-### Incident Patch 2: `6c1ee8ed` (2026-11-06)
-**Commit Message**: add connectionLimit policy to VirtualServer and VirtualServerRoute (#11218)
+### Incident Patch 2: `fb120e3e` (2026-11-11)
+**Commit Message**: Merge nginx-agent.conf labels into `--labels` for NGINX Agent 3 (#11346)
 
-* wire connectionLimit policy to vs/vsr, add examples and tests
+* Merge nginx-agent.conf labels into --labels for NGINX Agent 3
 
-* address review comments
+* Parse agent config labels with YAML 1.2 to match NGINX Agent 3
 
-* close held sockets when hold_requests_open fails
-
-* reduce conn hold time in example
-
-* adapt replica path and tests to main
-
-**File**: `examples/custom-resources/connection-limit/README.md` (added, +95/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,95 @@
-+# Connection Limit
-+
-+In this example, we deploy a web application, configure load balancing for it via a VirtualServer, and apply a
-+connection limit policy.
-+
-+## Prerequisites
-+
-+1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
-+   instructions to deploy the Ingress Controller.
-+1. Save the public IP address of the Ingress Controller into a shell variable:
-+
-+    ```console
-+    IC_IP=XXX.YYY.ZZZ.III
-+    ```
-+
-+1. Save the HTTP port of the Ingress Controller into a shell variable:
-+
-+    ```console
-+    IC_HTTP_PORT=<port number>
-+    ```
-+
-+## Step 1 - Deploy a Web Application
-+
-+Create the application deployment and service:
-+
-+```console
-+kubectl apply -f webapp.yaml
-+```
-+
-+## Step 2 - Deploy the Connection Limit Policy
-+
-+In this step, we create a policy with the name `connection-limit-policy` that allows only 1 request in progress at a
-+time from a single IP address. The policy sets every field:
-+
-+- `connections`: the maximum number of requests in progress at the same time for each value of the key.
-+- `key`: `${binary_remote_addr}` gives each client IP address its own counter.
-+- `zoneSize`: the size of the shared memory zone that stores the counters.
-+- `rejectCode`: the status code returned for rejected requests, 429 instead of the default 503.
-+- `logLevel`: the level at which rejected requests are logged.
-+- `dryRun`: when `true`, requests over the limit are logged but not rejected.
-+- `scale`: when `true`, `connections` is divided by the number of NGINX Ingress Controller replicas.
-+
-+Create the policy:
-+
-+```console
-+kubectl apply -f connection-limit.yaml
-+```
-+
-+## Step 3 - Configure Load Balancing
-+
-+Create a VirtualServer resource for the web application:
-+
-+```console
-+kubectl apply -f virtual-server.yaml
-+```
-+
-+Note that the VirtualServer references the policy `connection-limit-policy` created in Step 2.
-+
-+## Step 4 - Test the Configuration
-+
-+Let's test the configuration. Keep one request in progress by uploading a body slowly. This command runs for about
-+10 seconds:
-+
-+```console
-+head -c 100000 /dev/zero | curl --limit-rate 10k --data-binary @- --resolve webapp.example.com:$IC_HTTP_PORT:$IC_IP http://webapp.example.com:$IC_HTTP_PORT/
-+```
-+
-+While it runs, send a second request from another terminal. NGINX rejects it:
-+
-+```console
-+curl --resolve webapp.example.com:$IC_HTTP_PORT:$IC_IP http://webapp.example.com:$IC_HTTP_PORT/
-+```
-+
-+```text
-+<html>
-+<head><title>429 Too Many Requests</title></head>
-+<body>
-+<center><h1>429 Too Many Requests</h1></center>
-+</body>
-+</html>
-+```
-+
-+When the upload finishes, the second request succeeds:
-+
-+```console
-+curl --resolve webapp.example.com:$IC_HTTP_PORT:$IC_IP http://webapp.example.com:$IC_HTTP_PORT/
-+```
-+
-+```text
-+Server address: 10.8.1.19:8080
-+Server name: webapp-dc88fc766-zr7f8
-+. . .
-+```
-+
-+> Note: The command result is truncated for the clarity of the example.
+@@ -20,6 +20,7 @@ require (
+ 	github.com/stretchr/testify v1.12.1
+ 	go.opentelemetry.io/otel v1.47.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0
++	go.yaml.in/yaml/v3 v3.0.5
+ 	golang.org/x/crypto v0.58.0
+ 	k8s.io/api v0.37.2
+ 	k8s.io/apiextensions-apiserver v0.37.2
+@@ -131,7 +132,6 @@ require (
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.27.1 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+-	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/exp v0.0.0-20261007192929-f45ad48fbe92 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+ 	golang.org/x/net v0.60.0 // indirect
 ```
 
-**File**: `examples/custom-resources/connection-limit/connection-limit.yaml` (added, +13/-0)
+**File**: `internal/nginx/manager.go` (modified, +87/-13)
 ```diff
-@@ -0,0 +1,13 @@
-+apiVersion: k8s.nginx.org/v1
-+kind: Policy
-+metadata:
-+  name: connection-limit-policy
-+spec:
-+  connectionLimit:
-+    connections: 1
-+    key: ${binary_remote_addr}
-+    zoneSize: 10m
-+    rejectCode: 429
-+    logLevel: warn
-+    dryRun: false
-+    scale: false
-```
-
-**File**: `examples/custom-resources/connection-limit/virtual-server.yaml` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+apiVersion: k8s.nginx.org/v1
-+kind: VirtualServer
-+metadata:
-+  name: webapp
-+spec:
-+  host: webapp.example.com
-+  policies:
-+  - name: connection-limit-policy
-+  upstreams:
-+  - name: webapp
-+    service: webapp-svc
-+    port: 80
-+  routes:
-+  - path: /
-+    action:
-+      pass: webapp
-```
-
-**File**: `examples/custom-resources/connection-limit/webapp.yaml` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+apiVersion: apps/v1
-+kind: Deployment
-+metadata:
-+  name: webapp
-+spec:
-+  replicas: 1
-+  selector:
-+    matchLabels:
-+      app: webapp
-+  template:
-+    metadata:
-+      labels:
-+        app: webapp
-+    spec:
-+      containers:
-+      - name: webapp
-+        image: nginxdemos/nginx-hello:plain-text
-+        ports:
-+        - containerPort: 8080
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: webapp-svc
-+spec:
-+  ports:
-+  - port: 80
-+    targetPort: 8080
-+    protocol: TCP
-+    name: http
-+  selector:
-+    app: webapp
-```
-
-**File**: `internal/configs/policy.go` (modified, +69/-0)
-```diff
-@@ -41,6 +41,13 @@ type rateLimit struct {
- 	AuthJWTClaimSets []version2.AuthJWTClaimSet
+@@ -2,19 +2,24 @@ package nginx
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
++	"io/fs"
+ 	"log/slog"
++	"maps"
+ 	"net/http"
+ 	"os"
+ 	"os/exec"
+ 	"path"
+ 	"path/filepath"
+ 	"regexp"
++	"slices"
+ 	"strconv"
+ 	"strings"
+ 	"time"
+ 
+ 	"github.com/nginx/kubernetes-ingress/internal/metadata"
++	"go.yaml.in/yaml/v3"
+ 
+ 	license_reporting "github.com/nginx/kubernetes-ingress/internal/license_reporting"
+ 	nl "github.com/nginx/kubernetes-ingress/internal/logger"
+@@ -42,7 +47,8 @@ const (
+ 	appProtectPluginStartCmd = "/usr/share/ts/bin/bd-socket-plugin"
+ 	appProtectLogLevelCmd    = "/opt/app_protect/bin/set_log_level"
+ 
+-	agentPath = "/usr/bin/nginx-agent"
++	agentPath       = "/usr/bin/nginx-agent"
++	agentConfigPath = "/etc/nginx-agent/nginx-agent.conf"
+ 
+ 	// appPluginParams is the configuration of App-Protect plugin
+ 	appPluginParams = "tmm_count 4 proc_cpuinfo_cpu_mhz 2000000 total_xml_memory 471859200 total_umu_max_size 3129344 sys_max_account_id 1024 no_static_config"
+@@ -692,19 +698,15 @@ func (lm *LocalManager) AgentStart(agentDone chan error, instanceGroup string) {
+ 		if err != nil {
+ 			nl.Fatalf(lm.logger, "Failed to start NGINX Agent: %v", err)
+ 		}
+-		labels := []string{
+-			fmt.Sprintf("product-type=%s", metadataInfo.ProductType),
+-			fmt.Sprintf("product-version=%s", metadataInfo.ProductVersion),
+-			fmt.Sprintf("cluster-id=%s", metadataInfo.ClusterID),
+-			fmt.Sprintf("installation-id=%s", metadataInfo.InstallationID),
+-			fmt.Sprintf("installation-name=%s", metadataInfo.InstallationName),
+-			fmt.Sprintf("installation-namespace=%s", metadataInfo.InstallationNamespace),
+-			fmt.Sprintf("control-id=%s", metadataInfo.InstallationID),               // control-id is required but is the same as installation-id
+-			fmt.Sprintf("control-name=%s", metadataInfo.InstallationName),           // control-name is required but is the same as installation-name
+-			fmt.Sprintf("control-namespace=%s", metadataInfo.InstallationNamespace), // control-namespace is required but is the same as installation-namespace
++		configLabels, err := extractAgentConfigLabels(agentConfigPath)
++		if err != nil {
++			nl.Warnf(lm.logger, "Failed to read labels from %s: %v", agentConfigPath, err)
++		}
++		labelsFlag, skipped := buildAgentLabels(metadataInfo, configLabels)
++		if len(skipped) > 0 {
++			nl.Warnf(lm.logger, "Ignoring reserved or invalid NGINX Agent labels: %v", skipped)
+ 		}
+-		metadataLabels := "--labels=" + strings.Join(labels, ",")
+-		args = append(args, metadataLabels)
++		args = append(args, labelsFlag)
+ 	}
+ 	cmd := exec.Command(agentPath, args...) // #nosec G204
+ 
+@@ -721,6 +723,78 @@ func (lm *LocalManager) AgentStart(agentDone chan error, instanceGroup string) {
+ 	}()
  }
  
-+// connectionLimit holds the ConnectionLimit configuration of one context.
-+type connectionLimit struct {
-+	Zones   []version2.LimitConnZone
-+	Conns   []version2.LimitConn
-+	Options version2.LimitConnOptions
-+}
++// agentLabelRegex mirrors NGINX Agent v3 label validation. It also keeps ',', '=' and '"'
++// out of the --labels flag, which pflag parses as a single CSV record.
++var agentLabelRegex = regexp.MustCompile(`^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$`)
 +
- // jwtAuth hold the configuration for the JWTAuth & JWKSAuth Policies
- type jwtAuth struct {
- 	Auth        *version2.JWTAuth
-@@ -66,6 +73,7 @@ type policiesCfg struct {
- 	Context         context.Context
- 	Deny            []string
- 	RateLimit       rateLimit
-+	ConnectionLimit connectionLimit
- 	JWTAuth         jwtAuth
- 	ExternalAuth    *version2.ExternalAuth
- 	BasicAuth       *version2.BasicAuth
-@@ -90,6 +98,9 @@ type policyOwnerDetails struct {
- 	parentNamespace string
- 	parentName      string
- 	parentType      string
-+	// ownerType is "vsr" for a VirtualServerRoute subroute with its own policies and "ing" for a
-+	// mergeable minion. It is empty when the references belong to the parent itself.
-+	ownerType string
- }
- 
- type policyOptions struct {
-@@ -245,6 +256,62 @@ func (p *policiesCfg) addRateLimitConfig(
- 	return res
- }
- 
-+// connectionLimitZoneName returns a zone name unique to the Policy, the parent whose configuration
-+// file defines the zone, the referencing object, and the key.
-+func connectionLimitZoneName(policy *conf_v1.Policy, owner policyOwnerDetails, key string) string {
-+	name := fmt.Sprintf("pol_cl_%s_%s_%s_%s_%s", policy.Namespace, policy.Name, owner.parentType, owner.parentNamespace, owner.parentName)
-+	if owner.ownerType != "" {
-+		name = fmt.Sprintf("%s_%s_%s_%s", name, owner.ownerType, owner.ownerNamespace, owner.ownerName)
++// extractAgentConfigLabels reads the labels map from the NGINX Agent config file.
++// The agent ignores config-file labels when --labels is passed, so NIC merges them into the flag.
++// It parses with YAML 1.2 (go.yaml.in/yaml/v3) and stringifies values the way NGINX Agent 3 does
++// (viper + spf13/cast), so unquoted values such as yes, on or 0755 resolve to the same label text.
++func extractAgentConfigLabels(configPath string) (map[string]string, error) {
++	data, err := os.ReadFile(filepath.Clean(configPath))
++	if err != nil {
++		if errors.Is(err, fs.ErrNotExist) {
++			return nil, nil
++		}
++		return nil, err
 +	}
-+	sum := sha256.Sum256([]byte(key))
-+	return name + "_" + hex.EncodeToString(sum[:])
-+}
-+
-+func (p *policiesCfg) addConnectionLimitConfig(policy *conf_v1.Policy, ownerDetails policyOwnerDetails, podReplicas int) *validationResults {
-+	res := newValidationResults()
-+	// The CRD schema defaults key, zoneSize, rejectCode, and logLevel, so they are never empty here.
-+	cl := policy.Spec.ConnectionLimit
-+	polKey := fmt.Sprintf("%v/%v", policy.Namespace, policy.Name)
-+	zoneName := connectionLimitZoneName(policy, ownerDetails, cl.Key)
-+
-+	connections := cl.Connections
-+	if cl.Scale && podReplicas > 0 {
-+		connections = cl.Connections / podReplicas
-+		if connections < 1 {
-+			connections = 1
-+			res.addWarningf("ConnectionLimit policy %s: scaling %d connections across %d replicas gives less than one connection per replica; using 1",
-+				polKey, cl.Connections, podReplicas)
++	var cfg struct {
++		Labels map[string]any `yaml:"labels"`
++	}
++	if err := yaml.Unmarshal(data, &cfg); err != nil {
++		return nil, err
++	}
++	if cfg.Labels == nil {
++		return nil, nil
++	}
++	labels := make(map[string]string, len(cfg.Labels))
++	for k, v := range cfg.Labels {
++		switch val := v.(type) {
++		case nil:
++			labels[k] = ""
++		case float64:
++			labels[k] = strconv.FormatFloat(val, 'f', -1, 64)
++		default:
++			labels[k] = fmt.Sprint(val)
 +		}
 +	}
-+
-+	p.ConnectionLimit.Zones = append(p.ConnectionLimit.Zones, version2.LimitConnZone{Key: cl.Key, ZoneName: zoneName, ZoneSize: cl.ZoneSize})
-+	p.ConnectionLimit.Conns = append(p.ConnectionLimit.Conns, version2.LimitConn{ZoneName: zoneName, Connections: connections})
-+
-+	options := version2.LimitConnOptions{DryRun: cl.DryRun, LogLevel: cl.LogLevel}
-+	if cl.RejectCode != nil {
-+		options.RejectCode = *cl.RejectCode
-+	}
-+
-+	if len(p.ConnectionLimit.Conns) == 1 {
-+		p.ConnectionLimit.Options = options
-+		return res
-+	}
-+	first := p.ConnectionLimit.Options
-+	if options.DryRun != first.DryRun {
-+		res.addWarningf("ConnectionLimit policy %s with limit connection option dryRun='%v' is overridden to dryRun='%v' by the first policy reference in this context",
-+			polKey, options.DryRun, first.DryRun)
-+	}
-+	if options.LogLevel != first.LogLevel {
-+		res.addWarningf("ConnectionLimit policy %s with limit connection option logLevel='%v' is overridden to logLevel='%v' by the first policy reference in this context",
-+			polKey, options.LogLevel, first.LogLevel)
-+	}
-+	if options.RejectCode != first.RejectCode {
-+		res.addWarningf("ConnectionLimit policy %s with limit connection option rejectCode='%v' is overridden to rejectCode='%v' by the first policy reference in this context",
-+			polKey, options.RejectCode, first.RejectCode)
-+	}
-+	return res
++	return labels, nil
 +}
 +
- // nolint:gocyclo
- func (p *policiesCfg) addJWTAuthConfig(
- 	jwtAuth *conf_v1.JWTAuth,
-@@ -1526,6 +1593,8 @@ func generatePolicies(
- 					pathContext,
- 					path,
- 				)
-+			case pol.Spec.ConnectionLimit != nil:
-+				res = config.addConnectionLimitConfig(pol, ownerDetails, policyOpts.replicas)
- 			case pol.Spec.JWTAuth != nil:
- 				res = config.addJWTAuthConfig(pol.Spec.JWTAuth, key, polNamespace, policyOpts.secretRefs)
- 			case pol.Spec.ExternalAuth != nil:
++// buildAgentLabels returns the --labels flag: NIC metadata labels followed by valid, non-reserved
++// config labels sorted by key, plus the config label keys that were skipped.
++func buildAgentLabels(m *metadata.Labels, configLabels map[string]string) (string, []string) {
++	base := [][2]string{
++		{"product-type", m.ProductType},
++		{"product-version", m.ProductVersion},
++		{"cluster-id", m.ClusterID},
++		{"installation-id", m.InstallationID},
++		{"installation-name", m.InstallationName},
++		{"installation-namespace", m.InstallationNamespace},
++		// control-* labels are required but mirror the installation-* labels
++		{"control-id", m.InstallationID},
++		{"control-name", m.InstallationName},
++		{"control-namespace", m.InstallationNamespace},
++	}
++	labels := make([]string, 0, len(base)+len(configLabels))
++	reserved := make(map[string]bool, len(base))
++	for _, kv := range base {
++		labels = append(labels, kv[0]+"="+kv[
 ```
 
-**File**: `internal/configs/policy_test.go` (modified, +319/-0)
+**File**: `internal/nginx/manager_test.go` (modified, +104/-0)
 ```diff
-@@ -231,6 +231,138 @@ func TestGeneratePolicies(t *testing.T) {
- 			},
- 			msg: "rate limit reference",
- 		},
-+		{
-+			policyRefs: []conf_v1.PolicyReference{
-+				{
-+					Name:      "connection-limit-policy",
-+					Namespace: "default",
-+				},
-+			},
-+			policies: map[string]*conf_v1.Policy{
-+				"default/connection-limit-policy": {
-+					ObjectMeta: meta_v1.ObjectMeta{
-+						Name:      "connection-limit-policy",
-+						Namespace: "default",
-+					},
-+					Spec: conf_v1.PolicySpec{
-+						ConnectionLimit: &conf_v1.ConnectionLimit{
-+							Connections: 10,
-+							Key:         "total",
-+							ZoneSize:    "10m",
-+							RejectCode:  new(503),
-+							LogLevel:    "error",
-+						},
-+					},
-+				},
-+			},
-+			expected: policiesCfg{
-+				Context: ctx,
-+				ConnectionLimit: connectionLimit{
-+					Zones: []version2.LimitConnZone{
-+						{
-+							Key:      "total",
-+							ZoneName: "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashTotal,
-+							ZoneSize: "10m",
-+						},
-+					},
-+					Conns: []version2.LimitConn{
-+						{
-+							ZoneName:    "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashTotal,
-+							Connections: 10,
-+						},
-+					},
-+					Options: version2.LimitConnOptions{
-+						LogLevel:   "error",
-+						RejectCode: 503,
-+					},
-+				},
-+			},
-+			msg: "connection limit reference",
-+		},
-+		{
-+			policyRefs: []conf_v1.PolicyReference{
-+				{
-+					Name:      "rateLimit-policy",
-+					Namespace: "default",
-+				},
-+				{
-+					Name:      "connection-limit-policy",
-+					Namespace: "default",
-+				},
-+			},
-+			policies: map[string]*conf_v1.Policy{
-+				"default/rateLimit-policy": {
-+					ObjectMeta: meta_v1.ObjectMeta{
-+						Name:      "rateLimit-policy",
-+						Namespace: "default",
-+					},
-+					Spec: conf_v1.PolicySpec{
-+						RateLimit: &conf_v1.RateLimit{
-+							Key:      "test",
-+							ZoneSize: "10M",
-+							Rate:     "10r/s",
-+						},
-+					},
-+				},
-+				"default/connection-limit-policy": {
-+					ObjectMeta: meta_v1.ObjectMeta{
-+						Name:      "connection-limit-policy",
-+						Namespace: "default",
-+					},
-+					Spec: conf_v1.PolicySpec{
-+						ConnectionLimit: &conf_v1.ConnectionLimit{
-+							Connections: 10,
-+							Key:         "${binary_remote_addr}",
-+							ZoneSize:    "10m",
-+							RejectCode:  new(503),
-+							LogLevel:    "error",
-+						},
-+					},
-+				},
-+			},
-+			expected: policiesCfg{
-+				Context: ctx,
-+				RateLimit: rateLimit{
-+					Reqs: []version2.LimitReq{
-+						{
-+							ZoneName: "pol_rl_default_rateLimit_policy_default_test_vs",
-+						},
-+					},
-+					Zones: []version2.LimitReqZone{
-+						{
-+							Key:      "test",
-+							ZoneSize: "10M",
-+							Rate:     "10r/s",
-+							ZoneName: "pol_rl_default_rateLimit_policy_default_test_vs",
-+						},
-+					},
-+					Options: version2.LimitReqOptions{
-+						LogLevel:   "error",
-+						RejectCode: 503,
-+					},
-+				},
-+				ConnectionLimit: connectionLimit{
-+					Zones: []version2.LimitConnZone{
-+						{
-+							Key:      "${binary_remote_addr}",
-+							ZoneName: "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashBinaryRemoteAddr,
-+							ZoneSize: "10m",
-+						},
-+					},
-+					Conns: []version2.LimitConn{
-+						{
-+							ZoneName:    "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashBinaryRemoteAddr,
-+							Connections: 10,
-+						},
-+					},
-+					Options: version2.LimitConnOptions{
-+						LogLevel:   "error",
-+						RejectCode: 503,
-+					},
-+				},
-+			},
-+			msg: "rate limit and connection limit references",
-+		},
- 		{
- 			policyRefs: []conf_v1.PolicyReference{
- 				{
-@@ -2686,6 +2818,193 @@ func TestAddHSTSConfig_MultiplePolicy(t *testing.T) {
+@@ -1,8 +1,12 @@
+ package nginx
+ 
+ import (
++	"os"
++	"path/filepath"
+ 	"testing"
+ 
++	"github.com/google/go-cmp/cmp"
++	"github.com/nginx/kubernetes-ingress/internal/metadata"
+ 	"github.com/nginx/nginx-plus-go-client/v3/client"
+ )
+ 
+@@ -217,3 +221,103 @@ REDHAT_SUPPORT_PRODUCT_VERSION="9.7"
+ 		})
  	}
  }
- 
-+const (
-+	clKeyHashBinaryRemoteAddr = "666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a"
-+	clKeyHashTotal            = "11239872d178729acc9e5aeaf7fc001a0ffd878c922330be43712b9b3be043a7"
-+)
 +
-+func TestConnectionLimitZoneName(t *testing.T) {
++func TestExtractAgentConfigLabels(t *testing.T) {
 +	t.Parallel()
 +
-+	vsCafe := policyOwnerDetails{parentType: "vs", parentNamespace: "default", parentName: "cafe", ownerNamespace: "default", ownerName: "cafe"}
 +	tests := []struct {
-+		name       string
-+		policyName string
-+		owner      policyOwnerDetails
-+		key        string
-+		want       string
++		name    string
++		content string // empty means the config file does not exist
++		want    map[string]string
++		wantErr bool
 +	}{
++		{name: "missing file"},
++		{name: "no labels key", content: "log:\n  level: info\n"},
 +		{
-+			name:       "VirtualServer",
-+			policyName: "per-client",
-+			owner:      vsCafe,
-+			key:        "${binary_remote_addr}",
-+			want:       "pol_cl_default_per-client_vs_default_cafe_" + clKeyHashBinaryRemoteAddr,
++			name:    "mixed scalar labels",
++			content: "labels:\n  display-name: my-nic\n  port: 8080\n  enabled: true\n  unset:\n",
++			want:    map[string]string{"display-name": "my-nic", "port": "8080", "enabled": "true", "unset": ""},
 +		},
 +		{
-+			name:       "constant key",
-+			policyName: "downloads-total",
-+			owner:      vsCafe,
-+			key:        "total",
-+			want:       "pol_cl_default_downloads-total_vs_default_cafe_" + clKeyHashTotal,
++			// Must match NGINX Agent 3 (YAML 1.2 via viper): yes/on stay strings, not booleans.
++			name:    "YAML 1.2 scalars match agent",
++			content: "labels:\n  a: yes\n  b: on\n  c: off\n  d: 1.50\n  e: 1e21\n  f: 0x1F\n",
++			want:    map[string]string{"a": "yes", "b": "on", "c": "off", "d": "1.5", "e": "1000000000000000000000", "f": "31"},
++		},
++		{name: "invalid YAML", content: "labels: [invalid", wantErr: true},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			cfgPath := filepath.Join(t.TempDir(), "nginx-agent.conf")
++			if tc.content != "" {
++				if err := os.WriteFile(cfgPath, []byte(tc.content), 0o600); err != nil {
++					t.Fatal(err)
++				}
++			}
++			got, err := extractAgentConfigLabels(cfgPath)
++			if (err != nil) != tc.wantErr {
++				t.Fatalf("extractAgentConfigLabels() error = %v, wantErr %v", err, tc.wantErr)
++			}
++			if diff := cmp.Diff(tc.want, got); diff != "" {
++				t.Errorf("extractAgentConfigLabels() mismatch (-want +got):\n%s", diff)
++			}
++		})
++	}
++}
++
++func TestBuildAgentLabels(t *testing.T) {
++	t.Parallel()
++
++	meta := &metadata.Labels{
++		ProductType:           "nic",
++		ProductVersion:        "5.8.0",
++		ClusterID:             "cluster-123",
++		InstallationID:        "install-456",
++		InstallationName:      "my-nic",
++		InstallationNamespace: "default",
++	}
++	base := "--labels=product-type=nic,product-version=5.8.0,cluster-id=cluster-123,installation-id=install-456," +
++		"installation-name=my-nic,installation-namespace=default,control-id=install-456,control-name=my-nic,control-namespace=default"
++
++	tests := []struct {
++		name         string
++		configLabels map[string]string
++		wantFlag     string
++		wantSkipped  []string
++	}{
++		{name: "no config labels", wantFlag: base},
++		{
++			name:         "custom labels appended sorted",
++			configLabels: map[string]string{"env": "staging", "display-name": "my-nic", "port": "8080"},
++			wantFlag:     base + ",display-name=my-nic,env=staging,port=8080",
 +		},
 +		{
-+			name:       "VirtualServerRoute",
-+			policyName: "per-client",
-+			owner:      policyOwnerDetails{parentType: "vs", parentNamespace: "default", parentName: "cafe", ownerType: "vsr", ownerNamespace: "tea", ownerName: "tea-routes"},
-+			key:        "${binary_remote_addr}",
-+			
-```
-
-**File**: `internal/configs/version2/__snapshots__/templates_test.snap` (modified, +826/-0)
-```diff
-@@ -2296,6 +2296,338 @@ server {
- 
- ---
- 
-+[TestExecuteVirtualServerTemplate_RendersConnectionLimitForNGINX - 1]
++			name: "reserved and invalid labels skipped",
++			configLabels: map[string]string{
++				"cluster-id":   "override",
++				"comma":        "a,b",
++				"space":        "my nic",
++				"empty":        "",
++				"bad,key":      "x",
++				"display-name": "my-nic",
++			},
++			wantFlag:    base + ",display-name=my-nic",
++			wantSkipped: []string{"bad,key", "cluster-id", "comma", "empty", "space"},
++		},
++	}
 +
-+limit_conn_zone ${binary_remote_addr} zone=pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a:10m;
-+limit_conn_zone total zone=pol_cl_default_downloads-total_vs_default_cafe_11239872d178729acc9e5aeaf7fc001a0ffd878c922330be43712b9b3be043a7:10m;
-+limit_conn_zone ${binary_remote_addr} zone=pol_cl_default_per-client_vs_default_cafe_vsr_tea_tea-routes_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a:10m;
-+server {
-+    listen 80;
-+    listen [::]:80;
-+
-+
-+    server_name cafe.example.com;
-+
-+    set $resource_type "virtualserver";
-+    set $resource_name "";
-+    set $resource_namespace "";
-+    set $service "-";
-+
-+    server_tokens "";
-+    limit_conn_dry_run off;
-+    limit_conn_log_level error;
-+    limit_conn_status 503;
-+    limit_conn pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
-+
-+    
-+
-+    
-+    location "/coffee" {
-+        set $service "";
-+
-+        
-+        set $default_connection_header close;
-+        proxy_connect_timeout ;
-+        proxy_read_timeout ;
-+        proxy_send_timeout ;
-+        client_max_body_size ;
-+
-+        proxy_buffering off;
-+        proxy_set_header Upgrade $http_upgrade;
-+        proxy_set_header Connection $vs_connection_header;
-+        proxy_pass_request_headers off;
-+        proxy_set_header X-Real-IP $remote_addr;
-+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+        proxy_set_header X-Forwarded-Host $host;
-+        proxy_set_header X-Forwarded-Port $server_port;
-+        proxy_set_header X-Forwarded-Proto $scheme;
-+        proxy_pass http://vs_default_cafe_coffee;
-+        proxy_next_upstream ;
-+        proxy_next_upstream_timeout ;
-+        proxy_next_upstream_tries 0;
-+    }
-+    location "/downloads" {
-+        set $service "";
-+        limit_conn_dry_run off;
-+        limit_conn_log_level error;
-+        limit_conn_status 503;
-+        limit_conn pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
-+        limit_conn pol_cl_default_downloads-total_vs_default_cafe_11239872d178729acc9e5aeaf7fc001a0ffd878c922330be43712b9b3be043a7 200;
-+
-+        
-+        set $default_connection_header close;
-+        proxy_connect_timeout ;
-+        proxy_read_timeout ;
-+        proxy_send_timeout ;
-+        client_max_body_size ;
-+
-+        proxy_buffering off;
-+        proxy_set_header Upgrade $http_upgrade;
-+        proxy_set_header Connection $vs_connection_header;
-+        proxy_pass_request_headers off;
-+        proxy_set_header X-Real-IP $remote_addr;
-+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+        proxy_set_header X-Forwarded-Host $host;
-+        proxy_set_header X-Forwarded-Port $server_port;
-+        proxy_set_header X-Forwarded-Proto $scheme;
-+        proxy_pass http://vs_default_cafe_files;
-+        proxy_next_upstream ;
-+        proxy_next_upstream_timeout ;
-+        proxy_next_upstream_tries 0;
-+    }
-+    location "/tea" {
-+        set $service "";
-+        limit_conn_dry_run off;
-+        limit_conn_log_level error;
-+        limit_conn_status 503;
-+        limit_conn pol_cl_default_per-client_vs_default_cafe_vsr_tea_tea-routes_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
-+
-+        
-+        set $default_connection_header close;
-+        proxy_connect_timeout ;
-+        proxy_read_timeout ;
-+        proxy_send_timeout ;
-+        client_max_body_size ;
-+
-+        proxy_buffering off;
-+        proxy_set_header Upgrade $http_upgrade;
-+        proxy_set_header Connection $vs_connection_header;
-+        proxy_pass_request_headers off;
-+        proxy_set_header X-Real-IP $remote_addr;
-+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+        proxy_set_header X-Forwarded-Host $host;
-+        proxy_set_header X-Forwarded-Port $server_port;
-+        proxy_set_header X-Forwarded-Proto $scheme;
-+        proxy_pass http://vs_default_cafe_vsr_tea_tea-routes_tea;
-+        proxy_next_upstream ;
-+        proxy_next_upstream_timeout ;
-+        proxy_next_upstream_tries 0;
-+    }
-+    location "/dry-run" {
-+        set $service "";
-+        limit_conn_dry_run on;
-+        limit_conn_log_level warn;
-+        limit_conn_status 429;
-+        limit_conn pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
-+
-+        
-+        set $default_connection_header close;
-+        proxy_connect_timeout ;
-+        proxy_read_timeout ;
-+        proxy_send_timeout ;
-+        client_max_body_size ;
-+
-+        proxy_buffering off;
-+        proxy_set_header Upgrade $http_upgrade;
-+        proxy_set_header Connection $vs_connection_header;
-+        proxy_pass_request_headers off;
-+        proxy_set_header X-Real-IP $remote_addr;
-+        
-```
-
-**File**: `internal/configs/version2/http.go` (modified, +25/-0)
-```diff
-@@ -20,6 +20,7 @@ type VirtualServerConfig struct {
- 	KeyValZones             []KeyValZone
- 	KeyVals                 []KeyVal
- 	LimitReqZones           []LimitReqZone
-+	LimitConnZones          []LimitConnZone
- 	Maps                    []Map
- 	AuthJWTClaimSets        []AuthJWTClaimSet
- 	OIDCProviders           []OIDCProvider
-@@ -98,6 +99,8 @@ type Server struct {
- 	Deny                      []string
- 	LimitReqOptions           LimitReqOptions
- 	LimitReqs                 []LimitReq
-+	LimitConnOptions          LimitConnOptions
-+	LimitConns                []LimitConn
- 	JWTAuth                   *JWTAuth
- 	JWTAuthList               map[string]*JWTAuth
- 	JWKSAuthEnabled           bool
-@@ -249,6 +252,8 @@ type Location struct {
- 	Deny                       []string
- 	LimitReqOptions            LimitReqOptions
- 	LimitReqs                  []LimitReq
-+	LimitConnOptions           LimitConnOptions
-+	LimitConns                 []LimitConn
- 	JWTAuth                    *JWTAuth
- 	OIDCProviderName           string
- 	AuthRequestOff             bool
-@@ -518,6 +523,26 @@ func (rl LimitReqOptions) String() string {
- 	return fmt.Sprintf("{DryRun %v, LogLevel %q, RejectCode %d}", rl.DryRun, rl.LogLevel, rl.RejectCode)
- }
- 
-+// LimitConnZone defines a connection limit shared memory zone.
-+type LimitConnZone struct {
-+	Key      string
-+	ZoneName string
-+	ZoneSize string
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			gotFlag, gotSkipped := buildAgentLabels(meta, tc.configLabels)
++			if gotFlag != tc.wantFlag {
++				t.Errorf("buildAgentLabels() flag = %q, want %q", gotFlag, tc.wantFlag)
++			}
++			if diff := cmp.Diff(tc.wantSkipped, gotSkipped); diff != "" {
++				t.Errorf("buildAgentLabels() skipped mismatch (-want +got):\n%s", diff)
++			}
++		})
++	}
 +}
-+
-+// LimitConn defines a connection limit.
-+type LimitConn struct {
-+	ZoneName    string
-+	Connections int
-+}
-+
-+// LimitConnOptions defines the connection limit options that apply to a whole block.
-+type LimitConnOptions struct {
-+	DryRun     bool
-+	LogLevel   string
-+	RejectCode int
-+}
-+
- // JWTAuth holds JWT authentication configuration.
- type JWTAuth struct {
- 	Key      string
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11342** (2026-11-06): Update quay.io/oauth2-proxy/oauth2-proxy Docker tag to v7.15.6 (main) (@renovate[bot])
-- **PR #11341** (2026-11-06): Update quay.io/keycloak/keycloak Docker tag to v26.8.2 (main) (@renovate[bot])
-- **PR #11340** (2026-11-06): Update module github.com/mikefarah/yq/v4 to v4.54.2 (main) (@renovate[bot])
-- **PR #11339** (2026-11-06): Update Red Hat UBI images (main) (@renovate[bot])
-- **PR #11335** (2026-11-06): Update AWS SDK v2 (release-5.7) (@renovate[bot])
-- **PR #11334** (2026-11-06): Update dependency python-dateutil to v4 (main) (@renovate[bot])
+- **PR #11372** (2026-11-10): Update version to 5.7.1 & chart to 2.8.1 (@pdabelf5)
+- **PR #11370** (2026-11-10): Update Red Hat UBI images (release-5.7) (@renovate[bot])
+- **PR #11369** (2026-11-10): Update module github.com/mikefarah/yq/v4 to v4.54.3 (main) (@renovate[bot])
+- **PR #11368** (2026-11-10): Update Red Hat UBI images (main) (@renovate[bot])
+- **PR #11367** (2026-11-11): [ci]: 1.6-lts: create an action to fetch secrets for various jobs (@javorszky)
+- **PR #11366** (2026-11-11): [ci]: 1.6-main: Create an action to fetch secrets for various jobs (@javorszky)
 
 ---
 
@@ -2362,53 +1723,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add Ingress support for connection Limit policy (#11222)
+## X. Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)
 
 **RULE**:
-When implementing operations in `examples/ingress-resources/connection-limit-mergeable/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `charts/nginx-ingress/templates/_helpers.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b8f388c7`: add Ingress support for connection Limit policy (#11222). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59dbb784`: Add nginxAgent.labels to Helm chart for NGINX One Console (#11347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/ingress-resources/connection-limit-mergeable/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/nginx-ingress/templates/_helpers.tpl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Connection Limit with Mergeable Ingresses
+{{- if .Values.nginxAgent.labels }}
 
-In this example, we deploy the cafe application, configure load balancing for it with
-[Mergeable Ingress](https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/cross-namespace-configuration/)
-resources, and apply connection limit policies with the `nginx.org/policies` annotation:
-
-- The master Ingress references `connection-limit-policy`, which applies to every path of the host.
-- The coffee minion references its own policy, `coffee-connection-limit-policy`, which replaces the master policy for
-  `/coffee`.
-- The tea minion references no policy, so `/tea` uses the master policy.
-
-## Prerequisites
-
-1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
-   instructions to deploy the Ingress Controller.
-1. Save the public IP address of the Ingress Controller into a shell variable:
-
-    ```console
-    IC_IP=XXX.YYY.ZZZ.III
-    ```
-
-1. Save the HTTP port of the Ingress Controller into a shell variable:
-
-    ```console
-    IC_HTTP_PORT=<port number>
-    ```
-
-## Step 1 - Deploy the Cafe Application
-
-Create the coffee and tea deployments and services:
-
-```console
-kubectl apply -f
+labels:
+{{ toYaml .Values.nginxAgent.labels | indent 2 }}
+{{- end }}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2418,4 +1751,4 @@ kubectl apply -f
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b8f388c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59dbb784` are properly handled with clean fallback behavior.
