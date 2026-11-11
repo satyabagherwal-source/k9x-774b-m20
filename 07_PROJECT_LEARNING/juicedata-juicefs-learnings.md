@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `5fe4ab06`  
+> **Source Version**: `e7b31f31`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T04:10:30.899Z  
+> **Timestamp**: 2026-11-11T10:00:02.282Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T04:10:30.892Z  
+> **Harvest Timestamp**: 2026-11-11T10:00:02.276Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14711 stars
+- **Stars / Engagement**: 14723 stars
 
 ---
 
@@ -1161,15 +1161,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7817** (2026-11-09): **sdk: expose session-timeout in the Java and Python SDKs**
-  *Symptoms*: #7810 added --session-timeout for mount, gateway and webdav, but the Java and Python SDKs still used the default. Pass it through libjfs as `sessionTimeout`, read it from `juicefs.session-timeout` in the Hadoop SDK and from `session_timeout` in the Python client. The default `0` keeps the current behavior (5 heartbeats).  Ref #7462
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/juicedata/juicefs/pull/7817?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 57.04%. Comparing base ([`db13db4`](https://app.codecov.io/gh/juicedata/juicefs/commit/db13db48ad46d7dbdb2ae275ffa44dad52875ebb?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)) to head ([`09726e4`](https://app.codecov.io/gh/juicedata/juicefs/commit/09726e45ef3c79e15be217a232a464086fb3180c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)). :warning: Report is 11 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff             @@ ## 
+- **Issue #7822** (2026-11-10): **cmd/mount: warn about ACLs on Linux kernels older than 4.9**
+  *Symptoms*: Mounting an ACL-enabled volume on Linux kernels older than 4.9 currently gives no warning that ACL permission checking requires newer kernel support. Log a warning with the detected kernel version and continue mounting. Skip non-Linux platforms and unknown kernel versions, and update the English and Chinese ACL documentation.  Validation: - Passed `go test ./cmd -run 'TestArgsOrder|TestHandleSysMountArgs|TestParseUIDGID' -count=1` on macOS arm64. - Passed `go fmt cmd/mount_unix.go` and `git diff --check`. - `make test.cmd` could not run because the sandbox does not permit `sudo`; the full integration suite and old-kernel behavior were not exercised locally.
 
-- **Issue #7815** (2026-11-05): **宿主机juicefs文件系统已卸载，docker容器中挂载宿主机的juicefs mount路径，容器内文件写入juicefs导致文件没有正常存储**
-  *Symptoms*: <!-- STOP -- PLEASE READ!  GitHub issue is not the right place for support requests.  If you're looking for help, check the Discussions (https://github.com/juicedata/juicefs/discussions).  You can also post your question in Discussions or the JuiceFS Discord channel (https://go.juicefs.com/discord). --> # 问题描述： 宿主机juicefs文件系统已卸载docker容器中挂载宿主机的juicefs 路径还在导致容器内文件写入juicefs，其它节点读取文件失败，但问题是文件被成功计入到metadata  # 容器内挂载详情：    "HostConfig": {             "Binds": [                 "/lib/modules/:/lib/modules/",                 "/sys:/sys",                 "/home/models:/home/models",                 "/home/model_trim/:/home/model_trim/", # docker exec -ti b0d03cf31418 bash root@xxx-04:/home/admin# df -h Filesystem                   Size  Used Avail Use% Mounted on overlay                      7.0T  5.5T  1.2T  83% / tmpfs                         64M     0   64M   0% /dev efivarfs                     512K  212K  296K  42% /sys/firmware/efi/efivars /dev/sda3                    876G  740G   92G  90% /data JuiceFS:llm-models            50T   30T   21T  59% /home/models JuiceFS:model-trim            10T  408G  9.7T   4% /home/model_trim  #宿主机 对应/home/models ，/home/model_trim已卸载  # 预期结果 容器内要么不能写，要么可以写，不会造成metadata成功，chunk存储minio失败  # juicefs --verbose NAME:    juicefs - A POSIX file system built on Redis and object storage.  USAGE:    juicefs [global options] command [command options] [arguments...]  VERSION:    1.3.1+2025-12-02.e0032b2 
-  **Post-Mortem & Fix Analysis**:
-  > 找到原因了，这个时候容器内应该还是可以读写正常的，原因minio拒绝了这个宿主机IP写操作
+- **Issue #7820** (2026-11-11): **utils: fix lost wakeups in Cond**
+  *Symptoms*: `Cond.Signal` uses a nonblocking send on an unbuffered channel. A signal sent after a waiter releases the lock but before it starts receiving is dropped, causing the waiter to wait unnecessarily until timeout.  Register each waiter under the lock before unlocking. Signal/Broadcast close registered waiter channels so notifications survive this gap; timed-out waiters are removed.  Regression tests force this timing window and cover single/multiple signals, broadcast, timeout cleanup, and notifications without waiters. The reproducer fails before the fix; Cond tests pass 10 runs with `-race`.  Local SDK WriteFile measurements:  | Workload | Before | After | | --- | ---: | ---: | | 4 KiB, SQLite, median of 3 runs | 1.968 ms/op, 508 IOPS | 0.254 ms/op, 3937 IOPS | | 1 MiB, Redis, mean of 8 runs | 1955 MB/s | 2141 MB/s |
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1186,95 +1182,303 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fe4ab06` (2026-11-09)
-**Commit Message**: sdk: expose session-timeout in the Java and Python SDKs (#7817)
+### Incident Patch 1: `e7b31f31` (2026-11-11)
+**Commit Message**: utils: fix lost wakeups in Cond (#7820)
 
-Co-authored-by: Max Yang <[REDACTED_EMAIL]>
+Signed-off-by: miyang <[REDACTED_EMAIL]>
 
-**File**: `docs/en/deployment/hadoop_java_sdk.md` (modified, +1/-0)
+**File**: `pkg/utils/cond.go` (modified, +25/-15)
 ```diff
-@@ -215,6 +215,7 @@ Please refer to the following table to set the relevant parameters of the JuiceF
- | `juicefs.backup-meta`   | 3600          | Interval (in seconds) to automatically backup metadata in the object storage (0 means disable backup)                                                                       |
- | `juicefs.backup-skip-trash` | `false`       | Skip files and directories in trash when backup metadata.                                                                                                                   |
- | `juicefs.heartbeat`     | 12            | Heartbeat interval (in seconds) between client and metadata engine. It's recommended that all clients use the same value.                                                   |
-+| `juicefs.session-timeout` | 0           | A client session that has not been refreshed for this long is considered stale, then other clients clean it up and release its file locks. The effective value is at least 5 times `juicefs.heartbeat`, `0` means 5 times `juicefs.heartbeat`. See [`--session-timeout`](../reference/command_reference.mdx#mount-metadata-options). |
- | `juicefs.skip-dir-mtime`              | 100ms         | Minimal duration to modify parent dir mtime.                                                                                                                                |
- | `juicefs.subdir`        |               | Allow access only to the subpaths of this directory. Multiple paths can be specified, separated by commas. All other paths, including the root or sibling directories, will be denied access.                                     |
+@@ -17,38 +17,41 @@
+ package utils
  
-```
-
-**File**: `docs/zh_cn/deployment/hadoop_java_sdk.md` (modified, +1/-0)
-```diff
-@@ -215,6 +215,7 @@ make win
- | `juicefs.backup-meta`     | 3600         | 自动将 JuiceFS 元数据备份到对象存储间隔（单位：秒），设置为 0 关闭自动备份                                                                 |
- |`juicefs.backup-skip-trash`| `false`      | 备份元数据时忽略回收站中的文件和目录。                                                                                         |
- | `juicefs.heartbeat`       | 12           | 客户端和元数据引擎之间的心跳间隔（单位：秒），建议所有客户端都设置一样                                                                         |
-+| `juicefs.session-timeout` | 0            | 客户端会话超过该时长未刷新即被视为失效，其他客户端会清理该会话并释放它持有的文件锁。实际生效值不小于 `juicefs.heartbeat` 的 5 倍，`0` 表示 `juicefs.heartbeat` 的 5 倍。参见 [`--session-timeout`](../reference/command_reference.mdx#mount-metadata-options) |
- | `juicefs.skip-dir-mtime`  | 100ms        | 修改父目录 mtime 间隔。                                                                                             |
- | `juicefs.subdir`          |              | 仅允许访问此目录的子路径。可以指定多个路径，使用逗号分隔。所有其他路径，包括根目录或同级目录，都将被拒绝访问。                                           |
+ import (
++	"container/list"
+ 	"sync"
+ 	"time"
+ )
  
+ // Cond is similar to sync.Cond, but you can wait with a timeout.
+ type Cond struct {
+-	L      sync.Locker
+-	signal chan struct{}
++	L       sync.Locker
++	waiters list.List
+ }
+ 
+ // Signal wakes up a waiter.
+ // It's required for the caller to hold L.
+ func (c *Cond) Signal() {
+-	select {
+-	case c.signal <- struct{}{}:
+-	default:
++	if e := c.waiters.Front(); e != nil {
++		c.waiters.Remove(e)
++		close(e.Value.(chan struct{}))
+ 	}
+ }
+ 
+ // Broadcast wake up all the waiters.
+ // It's required for the caller to hold L.
+ func (c *Cond) Broadcast() {
+-	close(c.signal)
+-	c.signal = make(chan struct{})
++	for c.waiters.Len() > 0 {
++		c.Signal()
++	}
+ }
+ 
+ var timerPool = sync.Pool{}
+ 
+ // WaitWithTimeout wait for a signal or a period of timeout eclipsed.
+ // returns true in case of timeout else false
+ func (c *Cond) WaitWithTimeout(d time.Duration) bool {
+-	ch := c.signal
++	ch := make(chan struct{})
++	waiter := c.waiters.PushBack(ch)
+ 	c.L.Unlock()
+ 	var t *time.Timer
+ 	if e := timerPool.Get(); e == nil {
+@@ -57,22 +60,29 @@ func (c *Cond) WaitWithTimeout(d time.Duration) bool {
+ 		t = e.(*time.Timer)
+ 		t.Reset(d)
+ 	}
+-	defer func() {
+-		timerPool.Put(t)
+-		c.L.Lock()
+-	}()
++	timeout := false
+ 	select {
+ 	case <-ch:
+ 		if !t.Stop() {
+ 			<-t.C
+ 		}
+-		return false
+ 	case <-t.C:
+-		return true
++		timeout = true
++	}
++	timerPool.Put(t)
++	c.L.Lock()
++	if timeout {
++		select {
++		case <-ch:
++			timeout = false // Signaled after timing out but before re-acquiring L.
++		default:
++			c.waiters.Remove(waiter)
++		}
+ 	}
++	return timeout
+ }
+ 
+ // NewCond creates a Cond.
+ func NewCond(lock sync.Locker) *Cond {
+-	return &Cond{lock, make(chan struct{})}
++	return &Cond{L: lock}
+ }
 ```
 
-**File**: `sdk/java/libjfs/main.go` (modified, +2/-0)
+**File**: `pkg/utils/cond_test.go` (modified, +144/-0)
 ```diff
-@@ -352,6 +352,7 @@ type javaConf struct {
- 	BackupMeta          string `json:"backupMeta"`
- 	BackupSkipTrash     bool   `json:"backupSkipTrash"`
- 	Heartbeat           string `json:"heartbeat"`
-+	SessionTimeout      string `json:"sessionTimeout"`
- 	CacheDir            string `json:"cacheDir"`
- 	CacheSize           string `json:"cacheSize"`
- 	CacheItems          int64  `json:"cacheItems"`
-@@ -625,6 +626,7 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
- 		metaConf.NoBGJob = jConf.NoBGJob || jConf.NoSession
- 		metaConf.OpenCache = utils.Duration(jConf.OpenCache)
- 		metaConf.Heartbeat = utils.Duration(jConf.Heartbeat)
-+		metaConf.SessionTimeout = utils.Duration(jConf.SessionTimeout)
- 		m := meta.NewClient(jConf.MetaURL, metaConf)
- 		format, err := m.Load(true)
- 		if err != nil {
+@@ -103,3 +103,147 @@ func TestCond(t *testing.T) {
+ 		}
+ 	}
+ }
++
++// Hold waiters between releasing the lock and receiving their notification.
++type condTestLocker struct {
++	sync.Mutex
++	unlocked  chan struct{}
++	resume    chan struct{}
++	relocking chan struct{}
++}
++
++func (m *condTestLocker) Lock() {
++	if m.relocking != nil {
++		m.relocking <- struct{}{}
++	}
++	m.Mutex.Lock()
++}
++
++func (m *condTestLocker) Unlock() {
++	m.Mutex.Unlock()
++	m.unlocked <- struct{}{}
++	<-m.resume
++}
++
++func TestCondNotificationBeforeReceive(t *testing.T) {
++	for _, tc := range []struct {
++		name      string
++		waiters   int
++		signals   int
++		broadcast bool
++		timeout   bool
++	}{
++		{name: "Signal", waiters: 1, signals: 1},
++		{name: "MultipleSignals", waiters: 8, signals: 8},
++		{name: "SignalOne", waiters: 8, signals: 1},
++		{name: "Broadcast", waiters: 8, broadcast: true},
++		{name: "SignalAfterTimeout", waiters: 1, signals: 1, timeout: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			m := &condTestLocker{
++				unlocked: make(chan struct{}, tc.waiters),
++				resume:   make(chan struct{}),
++			}
++			c := NewCond(m)
++			if tc.timeout {
++				close(m.resume)
++				m.Lock()
++				timedOut := c.WaitWithTimeout(0)
++				m.Mutex.Unlock()
++				if !timedOut {
++					t.Fatal("wait without a notification should time out")
++				}
++				<-m.unlocked
++				m.resume = make(chan struct{})
++			}
++			done := make(chan bool, tc.waiters)
++			for i := 0; i < tc.waiters; i++ {
++				go func() {
++					m.Lock()
++					timedOut := c.WaitWithTimeout(100 * time.Millisecond)
++					m.Mutex.Unlock()
++					done <- timedOut
++				}()
++			}
++			for i := 0; i < tc.waiters; i++ {
++				<-m.unlocked
++			}
++			m.Lock()
++			for i := 0; i < tc.signals; i++ {
++				c.Signal()
++			}
++			if tc.broadcast {
++				c.Broadcast()
++			}
++			close(m.resume)
++			m.Mutex.Unlock()
++			var notified int
++			for i := 0; i < tc.waiters; i++ {
++				if !<-done {
++					notified++
++				}
++			}
++			want := tc.signals
++			if tc.broadcast {
++				want = tc.waiters
++			}
++			if notified != want {
++				t.Fatalf("notified %d waiters, want %d", notified, want)
++			}
++		})
++	}
++}
++
++func TestCondNotificationAfterTimeoutBeforeRelock(t *testing.T) {
++	for _, name := range []string{"Signal", "Broadcast", "Timeout"} {
++		t.Run(name, func(t *testing.T) {
++			m := &condTestLocker{
++				unlocked:  make(chan struct{}),
++				resume:    make(chan struct{}),
++				relocking: make(chan struct{}),
++			}
++			c := NewCond(m)
++			done := make(chan bool, 1)
++			go func() {
++				m.Mutex.Lock()
++				timedOut := c.WaitWithTimeout(0)
++				m.Mutex.Unlock()
++				done <- timedOut
++			}()
++			<-m.unlocked
++			m.Mutex.Lock()
++			close(m.resume)
++			// The waiter has selected the timeout branch but cannot re-acquire L yet.
++			<-m.relocking
++			switch name {
++			case "Signal":
++				c.Signal()
++			case "Broadcast":
++				c.Broadcast()
++			}
++			m.Mutex.Unlock()
++			if timedOut := <-done; timedOut != (name == "Timeout") {
++				t.Errorf("timedOut = %v, want %v", timedOut, name == "Timeout")
++			}
++			m.Mutex.Lock()
++			defer m.Mutex.Unlock()
++			if c.waiters.Len() != 0 {
++				t.Fatalf("got %d remaining waiters, want 0", c.waiters.Len())
++			}
++		})
++	}
++}
++
++func TestCondNotificationWithoutWaiters(t *testing.T) {
++	var m sync.Mutex
++	c := NewCond(&m)
++	m.Lock()
++	defer m.Unlock()
++	for _, notify := range []func(){c.Signal, c.Broadcast} {
++		// A notification without waiters must not be saved for a future wait.
++		notify()
++		if !c.WaitWithTimeout(time.Millisecond) {
++			t.Fatal("notification was delivered to a future waiter")
++		}
++	}
++}
 ```
 
-**File**: `sdk/java/src/main/java/io/juicefs/JuiceFileSystemImpl.java` (modified, +1/-0)
+---
+
+### Incident Patch 2: `46b443cd` (2026-11-10)
+**Commit Message**: cmd/mount: warn about ACLs on Linux kernels older than 4.9 (#7822)
+
+**File**: `cmd/mount_unix.go` (modified, +4/-0)
 ```diff
-@@ -475,6 +475,7 @@ public void initialize(URI uri, Configuration conf) throws IOException {
-     obj.put("backupMeta", getConf(conf, "backup-meta", "3600"));
-     obj.put("backupSkipTrash", Boolean.valueOf(getConf(conf, "backup-skip-trash", "false")));
-     obj.put("heartbeat", getConf(conf, "heartbeat", "12"));
-+    obj.put("sessionTimeout", getConf(conf, "session-timeout", "0"));
-     obj.put("attrTimeout", getConf(conf, "attr-cache", "0.0"));
-     obj.put("entryTimeout", getConf(conf, "entry-cache", "0.0"));
-     obj.put("dirEntryTimeout", getConf(conf, "dir-entry-cache", "0.0"));
+@@ -1130,6 +1130,10 @@ func mountMain(v *vfs.VFS, c *cli.Context) {
+ 	conf.NegEntryTimeout = utils.Duration(c.String("negative-entry-cache"))
+ 	conf.ReaddirCache = c.Bool("readdir-cache")
+ 	major, minor := utils.GetKernelVersion()
++	if runtime.GOOS == "linux" && conf.Format.EnableACL && major > 0 &&
++		(major < 4 || (major == 4 && minor < 9)) {
++		logger.Warnf("POSIX ACL permission checking requires Linux kernel 4.9 or higher, current version: %d.%d", major, minor)
++	}
+ 	if conf.ReaddirCache {
+ 		if conf.AttrTimeout == 0 {
+ 			logger.Warnf("readdir-cache is enabled without attr-cache, it's performance may be affected")
 ```
 
-**File**: `sdk/python/juicefs/juicefs/juicefs.py` (modified, +2/-1)
+**File**: `docs/en/security/posix_acl.md` (modified, +1/-1)
 ```diff
-@@ -102,7 +102,7 @@ def __getattr__(self, n):
- class Client(object):
-     """A JuiceFS client."""
-     def __init__(self, name, meta, *, bucket="", storage_class="", read_only=False, no_session=False, no_bgjob=True,
--                 open_cache="0", backup_meta="3600", backup_skip_trash=False, heartbeat="12",
-+                 open_cache="0", backup_meta="3600", backup_skip_trash=False, heartbeat="12", session_timeout="0",
-                  cache_dir="memory", cache_size="100M", free_space_ratio="0.1", cache_partial_only=False,
-                  verify_cache_checksum="extend", cache_eviction="2-random", cache_scan_interval="3600", cache_expire="0",
-                  writeback=False, buffer_size="300M", prefetch=1, max_readahead="0", upload_limit="0",
-@@ -123,6 +123,7 @@ def __init__(self, name, meta, *, bucket="", storage_class="", read_only=False,
-         kwargs["backupMeta"] = backup_meta
-         kwargs["backupSkipTrash"] = backup_skip_trash
-         kwargs["heartbeat"] = heartbeat
-+        kwargs["sessionTimeout"] = session_timeout
-         kwargs["cacheDir"] = cache_dir
-         kwargs["cacheSize"] = cache_size
-         kwargs["freeSpace"] = free_space_ratio
+@@ -54,5 +54,5 @@ For detailed rules, guidelines, and implementation of POSIX ACLs, see:
+ 
+ ## Notes
+ 
+-* ACL permission checks require [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) or later.
++* ACL permission checks require [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) or later. With ACLs enabled, mounting on older kernels logs a warning and continues, but ACL permission checks may be incorrect.
+ * Enabling ACLs may impact performance. However, due to memory cache optimization, most usage scenarios experience minimal performance degradation.
+```
+
+**File**: `docs/zh_cn/security/posix_acl.md` (modified, +1/-1)
+```diff
+@@ -63,5 +63,5 @@ setfacl -m u:alice:rw- /mnt/jfs/file
+ 
+ ## 注意事项
+ 
+-- ACL 权限检测需要 [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) 及以上版本；
++- ACL 权限检测需要 [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) 及以上版本；启用 ACL 后，在旧内核上挂载会输出警告并继续挂载，但 ACL 权限检测可能不正确。
+ - 启用 ACL 会有额外的性能影响。但因为有内存缓存优化，大部分使用场景性能损耗都较低，可参考[压测结果](https://juicefs.com/zh-cn/blog/release-notes/juicefs-v12-beta-1-acl#03-%E6%80%A7%E8%83%BD)。
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7822** (2026-11-10): cmd/mount: warn about ACLs on Linux kernels older than 4.9 (@jiefenghuang)
+- **PR #7820** (2026-11-11): utils: fix lost wakeups in Cond (@myangitzh)
+- **PR #7819** (2026-11-09): docs: explain mount point naming and mount options for systemd.mount (@BornThisWay)
 - **PR #7817** (2026-11-09): sdk: expose session-timeout in the Java and Python SDKs (@pandacooming)
 - **PR #7810** (2026-11-05): meta: add --session-timeout to delay stale session cleanup (@jiefenghuang)
 - **PR #7809** (2026-11-06): deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (@JerryChaox)
-- **PR #7808** (closed): meta: stop clients when the session lease expires (@jiefenghuang)
-- **PR #7806** (2026-11-06): object: do not drop a failed shard when merging sharded listings (@arpitjain099)
-- **PR #7805** (2026-11-05): sdk: prevent root group membership from granting superuser access (@myangitzh)
 
 ---
 
@@ -1294,28 +1498,66 @@ Co-authored-by: Max Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk: expose session-timeout in the Java and Python SDKs (#7817)
+## X. utils: fix lost wakeups in Cond (#7820)
 
 **RULE**:
-When implementing operations in `docs/en/deployment/hadoop_java_sdk.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/utils/cond.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5fe4ab06`: sdk: expose session-timeout in the Java and Python SDKs (#7817). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7b31f31`: utils: fix lost wakeups in Cond (#7820). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/deployment/hadoop_java_sdk.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/utils/cond.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `juicefs.session-timeout` | 0           | A client session that has not been refreshed for this long is considered stale, then other clients clean it up and release its file locks. The effective value is at least 5 times `juicefs.heartbeat`, `0` means 5 times `juicefs.heartbeat`. See [`--session-timeout`](../reference/command_reference.mdx#mount-metadata-options). |
+	"container/list"
+	L       sync.Locker
+	waiters list.List
+	if e := c.waiters.Front(); e != nil {
+		c.waiters.Remove(e)
+		close(e.Value.(chan struct{}))
+	for c.waiters.Len() > 0 {
+		c.Signal()
+	}
+	ch := make(chan struct{})
+	waiter := c.waiters.PushBack(ch)
+	timeout := false
+		timeout = true
+	}
+	timerPool.Put(t)
+	c.L.Lock()
+	if timeout {
+		select {
+		case <-ch:
+			timeout = false // Signaled after timing out but before re-acquiring L.
+		default:
+			c.waiters.Remove(waiter)
+		}
+	return timeout
+	return &Cond{L: lock}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	L      sync.Locker
+	signal chan struct{}
+	select {
+	case c.signal <- struct{}{}:
+	default:
+	close(c.signal)
+	c.signal = make(chan struct{})
+	ch := c.signal
+	defer func() {
+		timerPool.Put(t)
+		c.L.Lock()
+	}()
+		return false
+		return true
+	return &Cond{lock, make(chan struct{})}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fe4ab06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7b31f31` are properly handled with clean fallback behavior.

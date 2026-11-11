@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `d566ac8a`  
+> **Source Version**: `7b2c32b9`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:24:09.059Z  
+> **Timestamp**: 2026-11-11T10:00:05.233Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:19:08.007Z  
+> **Harvest Timestamp**: 2026-11-11T10:00:05.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38854 stars
+- **Stars / Engagement**: 38918 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22274** (2026-11-10): **Logout can leave the node Stopped with its old IPs**
+  *Symptoms*: `LocalBackend.Logout` deletes the profile and resets the backend, which then ends up in `NeedsLogin` with no netmap.  If a netmap update is being processed at the same time, the state then moves to `Stopped`, [logging](https://github.com/tailscale/tailscale/blob/62d055f4c38b610d63a8cee7fa4a7e65b01564eb/ipn/ipnlocal/local.go#L7124-L7125):  ``` Switching ipn state NeedsLogin -> Stopped (WantRunning=false, nm=true) ```  The logged-out profile now holds the old netmap, reporting `Stopped` instead of `NeedsLogin`, and `tsnet.Server.TailscaleIPs` returns the old addresses until the next login completes.  Seems to be due to `setControlClientStatusLocked` checking that the status is from the current control client, but then releases `b.mu` around `tkaSyncIfNeeded` and does not check again, so it can apply the old client's netmap after `Logout` has reset the backend.  Hit this intermittently in automated tests where a tsnet client logs out shortly after reaching `Running`. It shows up more often on slower (Android) devices.
+
 - **Issue #22259** (2026-11-09): **macOS (App Store, IPNExtension): direct UDP still never re-established after network change on 1.104.5 (follow-up to #22082)**
   *Symptoms*: ### What is the issue?  Follow-up to #22082, which was closed with the statement that 1.104.5 fixes the problem (https://github.com/tailscale/tailscale/issues/22082#issuecomment-6664887117). **It does not.**  Re-tested on 1.104.5 (2026-11-07) with `tailscale ping` against two peers. Same result for both; output below for one of them. After a network change the connection falls back to DERP and direct UDP is never re-established, **not even after switching back to the original Wi-Fi** where it worked a few minutes earlier. Only quitting and relaunching the Tailscale app restores the direct connection.  **Expected:** after the network change (at the latest after switching back), a direct connection is re-established, as it is immediately after an app relaunch.  **1. Wi-Fi (home), initial state: direct** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via xx.xx.xx.xx:41641 in 29ms ```  **2. Switched to mobile hotspot: DERP only** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 29ms [... 8 more pongs via DERP(fra) ...] pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 45ms 2026/11/07 12:59:36 direct connection not established ```  **3. Switched back to the same home Wi-Fi: still DERP only** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 29ms [... 8 more pongs via DERP(fra) ...] pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 45ms 2026/11/07 13:03:36 direct connection not established ```  **4. Quit Tail
-
-- **Issue #22252** (2026-11-09): **util/clientmetric: ts_omit_clientmetrics breaks tsnet builds through syspolicy**
-  *Symptoms*: Building tsnet with client metrics omitted fails to compile:  ```sh go build -tags=ts_omit_clientmetrics ./tsnet ```  `util/syspolicy/internal/metrics` references `clientmetric.Type`, `clientmetric.TypeGauge`, and `clientmetric.TypeCounter`, but those declarations are missing from the disabled clientmetric implementation. The compiler reports undefined identifiers.  Expected: tsnet should build with client metrics disabled.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,288 +821,743 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d566ac8a` (2026-11-09)
-**Commit Message**: ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme
+### Incident Patch 1: `f6eb3f9d` (2026-11-10)
+**Commit Message**: ipn, feature/guivisibility: send incremental gui visibility updates (#22067)
 
-feature/acme uses LocalBackend.ServeConfig to find hostnames needing
-cert refresh, which broke builds with ts_omit_serve but not
-ts_omit_acme. The serveConfig field it reads exists in all builds, so
-move the method out of the serve-only file rather than making acme
-depend on serve, and skip the refresh loop hook when serve is omitted
-so the linker can drop it.
+This moves HiddenNetworkDvice policy out of ipnlocal and into an optional ipnext.
+This adds a per-session notification hook that uses each watcher's effective policy snapshot to populate NodeGUIVisibility.
+A full visibility snapshot is sent on initialization and policy changes, and on subsequent peer updates, only changed peers are evaluated.
+The extension populates Notify.NodeGUIVisibility with the hidden peers
+among the nodes the Notify covers: all peers when it carries Policy
+(initially and on policy change), or the PeersChanged peers otherwise.
+Absent means visible, so a Policy-bearing Notify replaces the client's
+visibility state and a peer-change Notify updates only the changed peers.
+No NodeGUIVisibilityChanges/Removed fields and no per-session node state
+are needed: removed peers simply leave the client's peer set, and full
+netmap updates already resend every peer alongside SelfChange.
 
-Updates #22283
+When the feature isn't linked, the hook slice is empty and the fast path
+in notifyForSessionLocked is unchanged. When the policy isn't configured,
+the hook costs a snapshot lookup per session per Notify and sends n
 
-Change-Id: I2cef6683cd6e6144306ddec95255d606f7a539ae
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-
-**File**: `feature/acme/acme.go` (modified, +5/-1)
+**File**: `cmd/tailscaled/depaware.txt` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 	"time"
- 
- 	"tailscale.com/feature"
-+	"tailscale.com/feature/buildfeatures"
- 	"tailscale.com/health"
- 	"tailscale.com/ipn"
- 	"tailscale.com/ipn/ipnext"
-@@ -48,7 +49,10 @@ func init() {
- 	ipnlocal.HookGetCertPEM.Set(getCertPEMHook)
- 	ipnlocal.HookGetACMETLSALPNCert.Set(getACMETLSALPNCertHook)
- 	ipnlocal.HookGetACMETLSALPNProto.Set(getACMETLSALPNProtoHook)
--	ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
-+	if buildfeatures.HasServe {
-+		// The refresh loop only renews certs for Serve's hostnames.
-+		ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
-+	}
- 	ipnlocal.HookShutdownCertRefreshLoop.Set(shutdownCertRefreshLoopHook)
- 	ipnlocal.HookConfigureCertsForTest.Set(configureCertsForTestHook)
- 	ipnlocal.HookHandleC2NTLSCertStatus.Set(handleC2NTLSCertStatus)
+@@ -319,6 +319,7 @@ tailscale.com/cmd/tailscaled dependencies: (generated by github.com/tailscale/de
+         tailscale.com/feature/exitnodehealth                         from tailscale.com/feature/condregister
+         tailscale.com/feature/favorites                              from tailscale.com/feature/condregister
+         tailscale.com/feature/favorites/pintype                      from tailscale.com/client/local+
++   W    tailscale.com/feature/guivisibility                          from tailscale.com/feature/condregister
+    L    tailscale.com/feature/linkspeed                              from tailscale.com/feature/condregister
+    L    tailscale.com/feature/linuxdnsfight                          from tailscale.com/feature/condregister
+         tailscale.com/feature/netlog                                 from tailscale.com/feature/condregister/netlog
 ```
 
-**File**: `ipn/ipnlocal/local.go` (modified, +12/-0)
+**File**: `feature/condregister/maybe_guivisibility_windows.go` (added, +8/-0)
 ```diff
-@@ -1487,6 +1487,18 @@ func (b *LocalBackend) Prefs() ipn.PrefsView {
- 	return b.sanitizedPrefsLocked()
- }
- 
-+// ServeConfig provides a view of the current serve mappings.
-+// If serving is not configured, the returned view is not Valid.
-+//
-+// It is defined even in ts_omit_serve builds, where it always returns
-+// an invalid view, so that features like ACME that consult the serve
-+// config, but don't require serve, still compile.
-+func (b *LocalBackend) ServeConfig() ipn.ServeConfigView {
-+	b.mu.Lock()
-+	defer b.mu.Unlock()
-+	return b.serveConfig
+@@ -0,0 +1,8 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build windows
++
++package condregister
++
++import _ "tailscale.com/feature/guivisibility"
+```
+
+**File**: `feature/guivisibility/guivisibility.go` (added, +135/-0)
+```diff
+@@ -0,0 +1,135 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++// Package guivisibility interprets the HiddenNetworkDevices policy for IPN
++// bus watchers and populates [ipn.Notify.NodeGUIVisibility] accordingly.
++package guivisibility
++
++import (
++	"tailscale.com/feature"
++	"tailscale.com/ipn"
++	"tailscale.com/ipn/ipnext"
++	"tailscale.com/tailcfg"
++	"tailscale.com/types/logger"
++	"tailscale.com/util/mak"
++	"tailscale.com/util/syspolicy/pkey"
++	"tailscale.com/util/syspolicy/policyclient"
++)
++
++func init() {
++	if feature.Register("guivisibility") {
++		ipnext.RegisterExtension("guivisibility", newExtension)
++	}
 +}
 +
- func (b *LocalBackend) sanitizedPrefsLocked() ipn.PrefsView {
- 	syncs.RequiresMutex(&b.mu)
- 	return stripKeysFromPrefs(b.pm.CurrentPrefs())
++func newExtension(logger.Logf, ipnext.SafeBackend) (ipnext.Extension, error) {
++	return &extension{}, nil
++}
++
++type extension struct {
++	host ipnext.Host
++}
++
++func (e *extension) Name() string { return "guivisibility" }
++
++func (e *extension) Init(h ipnext.Host) error {
++	e.host = h
++	h.Hooks().MutateNotifyForSessionLocked.Add(e.mutateNotifyForSession)
++	return nil
++}
++
++func (e *extension) Shutdown() error { return nil }
++
++// mutateNotifyForSession populates n.NodeGUIVisibility with the peers that
++// sess's HiddenNetworkDevices policy hides: all of them if n carries a policy
++// snapshot, or those among n.PeersChanged otherwise.
++func (e *extension) mutateNotifyForSession(sess ipnext.WatchSession, n *ipn.Notify) {
++	// Watchers requesting NotifySysPolicyChanges receive a Policy snapshot during
++	// initialization, so checking Policy covers the initial visibility calculation.
++	// Subsequent changes are handled via PeersChanged.
++	//
++	// TODO(kari-ts): consider handling InitialStatus directly if GUI visibility needs
++	// to support watchers that don't receive policy notifications.
++	if n.Policy == nil && len(n.PeersChanged) == 0 {
++		return
++	}
++	hidden := hiddenNetworkDevicesFromPolicy(sess.Policy())
++	if !hidden.hasAny() {
++		return
++	}
++	nb := e.host.NodeBackend()
++	self := nb.Self()
++	if !self.Valid() {
++		return
++	}
++	var visibility map[tailcfg.StableNodeID]ipn.NodeGUIVisibility
++	updateVisibility := func(peer tailcfg.NodeView) {
++		if peerHiddenInGUI(peer, self, hidden) {
++			mak.Set(&visibility, peer.StableID(), ipn.NodeGUIVisibility{HideInGUI: true})
++		}
++	}
++	if n.Policy != nil {
++		for _, peer := range nb.Peers() {
++			updateVisibility(peer)
++		}
++	} else {
++		for _, peer := range n.PeersChanged {
++			updateVisibility(peer.View())
++		}
++	}
++	n.NodeGUIVisibility = visibility
++}
++
++func (h hiddenNetworkDevices) hasAny() bool {
++	return h.currentUser || h.otherUsers || h.taggedDevices
++}
++
++const (
++	hiddenNetworkDevicesCurrentUser   = "current-user"
++	hiddenNetworkDevicesOtherUsers    = "other-users"
++	hiddenNetworkDevicesTaggedDevices = "tagged-devices"
++)
++
++// hiddenNetworkDevices is the parsed HiddenNetworkDevices policy for a watch
++// session. Its zero value means no devices are hidden.
++type hiddenNetworkDevices struct {
++	currentUser   bool
++	otherUsers    bool
++	taggedDevices bool
++}
++
++func hiddenNetworkDevicesFromPolicy(snapshot *policyclient.PolicySnapshot) hiddenNetworkDevices {
++	values := policyclient.GetStringArrayFromSnapshot(
++		snapshot,
++		pkey.HiddenNetworkDevices,
++	)
++
++	var hidden hiddenNetworkDevices
++	for _, value := range values {
++		switch value {
++		case hiddenNetworkDevicesCurrentUser:
++			hidden.currentUser = true
++		case hiddenNetworkDevicesOtherUsers:
++			hidden.otherUsers = true
++		case hiddenNetworkDevicesTaggedDevices:
++			hidden.taggedDevices = true
++		}
++	}
++	return hidden
++}
++
++func peerHiddenInGUI(peer, self tailcfg.NodeView, hidden hiddenNetworkDevices) bool {
++	if peer.ID() == self.ID() {
++		return false
++	}
++
++	if peer.IsTagged() {
++		return hidden.taggedDevices
++	}
++
++	if peer.SharerOrUser() == self.User() {
++		return hidden.currentUser
++	}
++
++	return hidden.otherUsers
++}
 ```
 
-**File**: `ipn/ipnlocal/serve.go` (modified, +0/-8)
+**File**: `feature/guivisibility/guivisibility_test.go` (renamed, +1/-1)
 ```diff
-@@ -428,14 +428,6 @@ func (b *LocalBackend) setServeConfigLocked(config *ipn.ServeConfig, etag string
- 	return nil
- }
+@@ -1,7 +1,7 @@
+ // Copyright (c) Tailscale Inc & contributors
+ // SPDX-License-Identifier: BSD-3-Clause
  
--// ServeConfig provides a view of the current serve mappings.
--// If serving is not configured, the returned view is not Valid.
--func (b *LocalBackend) ServeConfig() ipn.ServeConfigView {
--	b.mu.Lock()
--	defer b.mu.Unlock()
--	return b.serveConfig
+-package ipnlocal
++package guivisibility
+ 
+ import (
+ 	"testing"
+```
+
+**File**: `ipn/backend.go` (modified, +11/-5)
+```diff
+@@ -384,13 +384,19 @@ type Notify struct {
+ 	// a continuous view of node state without fetching the netmap.
+ 	InitialStatus *ipnstate.Status `json:",omitzero"`
+ 
+-	// NodeGUIVisibility, when non-nil, is a complete snapshot of GUI
+-	// visibility state for the current node and peers, keyed by stable node ID.
+-	// It is sent to watchers that requested [NotifySysPolicyChanges]. Clients
+-	// should replace their previous visibility state with this map.
++	// NodeGUIVisibility, when non-empty, lists the nodes that GUI clients
++	// should hide, keyed by stable node ID, among the nodes this Notify
++	// covers: all nodes if it carries [Notify.Policy] (initially and on
++	// policy change), or the peers in [Notify.PeersChanged] otherwise.
++	// Covered nodes absent from the map are visible, so a Notify carrying
++	// Policy replaces any previously received visibility state, while one
++	// carrying PeersChanged updates it for the changed peers only.
++	//
++	// It is populated for watchers that requested [NotifySysPolicyChanges];
++	// incremental updates additionally require [NotifyPeerChanges].
+ 	//
+ 	// This is presentation metadata only. Nodes remain present in status,
+-	// peer notifications, åand the underlying netmap.
++	// peer notifications, and the underlying netmap.
+ 	NodeGUIVisibility map[tailcfg.StableNodeID]NodeGUIVisibility `json:",omitzero"`
+ 
+ 	// PeerChangedPatch, if non-empty, lists narrow per-field peer patches
+```
+
+**File**: `ipn/ipnext/ipnext.go` (modified, +15/-0)
+```diff
+@@ -27,6 +27,7 @@ import (
+ 	"tailscale.com/types/mapx"
+ 	"tailscale.com/types/netmap"
+ 	"tailscale.com/types/views"
++	"tailscale.com/util/syspolicy/policyclient"
+ 	"tailscale.com/wgengine/filter"
+ )
+ 
+@@ -378,6 +379,14 @@ type ProfileStateChangeCallback func(_ ipn.LoginProfileView, _ ipn.PrefsView, sa
+ // back into LocalBackend, which may be locked during shutdown.
+ type NewControlClientCallback func(controlclient.Client, ipn.LoginProfileView) (cleanup func())
+ 
++// WatchSession is an IPN bus watch session, as seen by
++// [Hooks.MutateNotifyForSessionLocked].
++type WatchSession interface {
++	// Policy returns the effective policy snapshot most recently delivered to
++	// the session, or nil if it did not request [ipn.NotifySysPolicyChanges].
++	Policy() *policyclient.PolicySnapshot
++}
++
+ // Hooks is a collection of hooks that extensions can add to (non-concurrently)
+ // during program initialization and can be called by LocalBackend and others at
+ // runtime.
+@@ -439,6 +448,12 @@ type Hooks struct {
+ 	// before sending it to the IPN bus. It is called with LocalBackend.mu held.
+ 	MutateNotifyLocked feature.Hooks[func(*ipn.Notify)]
+ 
++	// MutateNotifyForSessionLocked is called to optionally mutate the provided
++	// Notify before sending it to a particular IPN bus watch session. It runs
++	// after per-session gating, so the Notify reflects what the session will
++	// receive. It is called with LocalBackend.mu held.
++	MutateNotifyForSessionLocked feature.Hooks[func(WatchSession, *ipn.Notify)]
++
+ 	// SetPeerStatus is called to mutate PeerStatus.
+ 	// Callers must only use NodeBackend to read data.
+ 	SetPeerStatus feature.Hooks[func(*ipnstate.PeerStatus, tailcfg.NodeView, NodeBackend)]
+```
+
+**File**: `ipn/ipnlocal/gui_visibility.go` (removed, +0/-85)
+```diff
+@@ -1,85 +0,0 @@
+-// Copyright (c) Tailscale Inc & contributors
+-// SPDX-License-Identifier: BSD-3-Clause
+-
+-package ipnlocal
+-
+-import (
+-	"tailscale.com/ipn"
+-	"tailscale.com/tailcfg"
+-	"tailscale.com/util/syspolicy/pkey"
+-	"tailscale.com/util/syspolicy/policyclient"
+-)
+-
+-const (
+-	hiddenNetworkDevicesCurrentUser   = "current-user"
+-	hiddenNetworkDevicesOtherUsers    = "other-users"
+-	hiddenNetworkDevicesTaggedDevices = "tagged-devices"
+-)
+-
+-// hiddenNetworkDevices is the parsed HiddenNetworkDevices policy for a watch
+-// session. Its zero value means no devices are hidden.
+-type hiddenNetworkDevices struct {
+-	currentUser   bool
+-	otherUsers    bool
+-	taggedDevices bool
 -}
 -
- // ServeConfigETag provides a view of the current serve mappings and an ETag,
- // which can later be provided to [LocalBackend.SetServeConfig] to implement
- // Optimistic Concurrency Control.
-```
-
----
-
-### Incident Patch 2: `1e2c689b` (2026-11-09)
-**Commit Message**: build(deps): bump @babel/core from 7.23.3 to 7.29.13 in /client/web
-
-Bumps [@babel/core](https://github.com/babel/babel/tree/HEAD/packages/babel-core) from 7.23.3 to 7.29.13.
-- [Release notes](https://github.com/babel/babel/releases)
-- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/babel/babel/commits/v7.29.13/packages/babel-core)
-
----
-updated-dependencies:
-- dependency-name: "@babel/core"
-  dependency-version: 7.29.7
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `client/web/yarn.lock` (modified, +213/-63)
-```diff
-@@ -12,42 +12,48 @@
-   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
-   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
- 
--"@ampproject/remapping@^2.2.0":
--  version "2.2.1"
--  resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.2.1.tgz#99e8e11851128b8702cd57c33684f1d0f260b630"
--  integrity sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg==
--  dependencies:
--    "@jridgewell/gen-mapping" "^0.3.0"
--    "@jridgewell/trace-mapping" "^0.3.9"
+-func hiddenNetworkDevicesFromPolicy(snapshot *policyclient.PolicySnapshot) hiddenNetworkDevices {
+-	values := policyclient.GetStringArrayFromSnapshot(
+-		snapshot,
+-		pkey.HiddenNetworkDevices,
+-	)
 -
--"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.22.13", "@babel/code-frame@^7.23.4":
-+"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.22.13":
-   version "7.23.4"
-   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.23.4.tgz#03ae5af150be94392cb5c7ccd97db5a19a5da6aa"
-   integrity sha512-r1IONyb6Ia+jYR2vvIDhdWdlTGhqbBoFqLTQidzZ4kepUFH15ejXvFHxCVbtl7BOXIudsIubf4E81xeA3h3IXA==
-   dependencies:
-     "@babel/highlight" "^7.23.4"
-     chalk "^2.4.2"
+-	var hidden hiddenNetworkDevices
+-	for _, value := range values {
+-		switch value {
+-		case hiddenNetworkDevicesCurrentUser:
+-			hidden.currentUser = true
+-		case hiddenNetworkDevicesOtherUsers:
+-			hidden.otherUsers = true
+-		case hiddenNetworkDevicesTaggedDevices:
+-			hidden.taggedDevices = true
+-		}
+-	}
+-	return hidden
+-}
+-
+-// nodeGUIVisibilityLocked returns a complete snapshot of GUI visibility
+-// metadata for self and all current peers.
+-//
+-// b.mu must be held.
+-func (b *LocalBackend) nodeGUIVisibilityLocked(hidden hiddenNetworkDevices) map[tailcfg.StableNodeID]ipn.NodeGUIVisibility {
+-	cn := b.currentNode()
+-	nm := cn.NetMap()
+-	if nm == nil || !nm.SelfNode.Valid() {
+-		return nil
+-	}
+-
+-	visibility := make(map[tailcfg.StableNodeID]ipn.NodeGUIVisibility, len(nm.Peers)+1)
+-
+-	visibility[nm.SelfNode.StableID()] = ipn.NodeGUIVisibility{}
+-
+-	for _, peer := range nm.Peers {
+-		visibility[peer.StableID()] = ipn.NodeGUIVisibility{
+-			HideInGUI: peerHiddenInGUI(peer, nm.SelfNode, hidden),
+-		}
+-	}
+-
+-	return visibility
+-}
+-
+-func peerHiddenInGUI(peer, self tailcfg.NodeView, hidden hiddenNetworkDevices) bool {
+-	if peer.ID() == self.ID() {
+-		return false
+-	}
+-
+-	if peer.IsTagged() {
+-		return hidden.taggedDevices
+-	}
+-
+-	if peer.SharerOrUser() == self.User() {
+-		return hidden.currentUser
+-	}
+-
+-	return hidden.otherUsers
+-}
+```
+
+**File**: `ipn/ipnlocal/local.go` (modified, +26/-20)
+```diff
+@@ -212,15 +212,17 @@ type watchSession struct {
+ 	// Empty string means default/device scope.
+ 	policyUID string
  
-+"@babel/code-frame@^7.29.7":
-+  version "7.29.7"
-+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.29.7.tgz#f2fbbfea87c44a21590ec515b778b2c26d8866e7"
-+  integrity sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==
-+  dependencies:
-+    "@babel/helper-validator-identifier" "^7.29.7"
-+    js-tokens "^4.0.0"
-+    picocolors "^1.1.1"
+-	// hiddenNetworkDevices is the parsed GUI visibility policy from the
+-	// most recent effective policy snapshot for this session.
+-	hiddenNetworkDevices hiddenNetworkDevices
++	// policy is the effective policy snapshot most recently delivered to
++	// this session, or nil if it didn't request [ipn.NotifySysPolicyChanged]
++	policy *policyclient.PolicySnapshot
+ 
+ 	// suspended is whether this session fell behind and is waiting for
+ 	// [LocalBackend.ResumeWatchNotifications]. See [ipn.NotifySuspendWhenBehind].
+ 	suspended bool
+ }
+ 
++func (sess *watchSession) Policy() *policyclient.PolicySnapshot { return sess.policy }
 +
- "@babel/compat-data@^7.22.6", "@babel/compat-data@^7.22.9", "@babel/compat-data@^7.23.3":
-   version "7.23.3"
-   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.23.3.tgz#3febd552541e62b5e883a25eb3effd7c7379db11"
-   integrity sha512-BmR4bWbDIoFJmJ9z2cZ8Gmm2MXgEDgjdWgpKmKWUt54UGFJdlj31ECtbaDvCG/qVdG3AQ1SfpZEs01lUFbzLOQ==
+ var (
+ 	// errShutdown indicates that the [LocalBackend.Shutdown] was called.
+ 	errShutdown = errors.New("shutting down")
+@@ -2527,11 +2529,10 @@ func (b *LocalBackend) sysPolicyChangedForSession(sess *watchSession) {
+ 		return
+ 	}
  
-+"@babel/compat-data@^7.29.7":
-+  version "7.29.7"
-+  resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
-+  integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
+-	sess.hiddenNetworkDevices = hiddenNetworkDevicesFromPolicy(snapshot)
++	sess.policy = snapshot
+ 	n := ipn.Notify{
+-		Policy:            snapshot,
+-		NodeGUIVisibility: b.nodeGUIVisibilityLocked(sess.hiddenNetworkDevices),
+-		Version:           version.Long(),
++		Policy:  snapshot,
++		Version: version.Long(),
+ 	}
+ 	for _, f := range b.extHost.Hooks().MutateNotifyLocked {
+ 		f(&n)
+@@ -4118,14 +4119,14 @@ func (b *LocalBackend) buildInitialNotifyLocked(sb *ipnstate.StatusBuilder, sess
+ 		ini.Policy, err = b.polc.GetPolicySnapshot(sess.policyUID)
+ 		if err != nil {
+ 			b.logf("syspolicy: GetPolicySnapshot(%q): %v", sess.policyUID, err)
+-		} else if ini.Policy != nil {
+-			sess.hiddenNetworkDevices = hiddenNetworkDevicesFromPolicy(ini.Policy)
+-			ini.NodeGUIVisibility = b.nodeGUIVisibilityLocked(sess.hiddenNetworkDevices)
+ 		}
++		sess.policy = ini.Policy
+ 	}
+ 	if mask&ipn.NotifyPeerWireGuardState != 0 {
+ 		ini.PeerState = maps.Clone(b.peerWGState)
+ 	}
 +
- "@babel/core@^7.16.0", "@babel/core@^7.21.3":
--  version "7.23.3"
--  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.23.3.tgz#5ec09c8803b91f51cc887dedc2654a35852849c9"
--  integrity sha512-Jg+msLuNuCJDyBvFv5+OKOUjWMZgd85bKjbICd3zWrKAo+bJ49HJufi7CQE0q0uR8NGyO6xkCACScNqyjHSZew==
--  dependencies:
--    "@ampproject/remapping" "^2.2.0"
--    "@babel/code-frame" "^7.22.13"
--    "@babel/generator" "^7.23.3"
--    "@babel/helper-compilation-targets" "^7.22.15"
--    "@babel/helper-module-transforms" "^7.23.3"
--    "@babel/helpers" "^7.23.2"
--    "@babel/parser" "^7.23.3"
--    "@babel/template" "^7.22.15"
--    "@babel/traverse" "^7.23.3"
--    "@babel/types" "^7.23.3"
-+  version "7.29.13"
-+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.13.tgz#dcfa718e09c1bde8531b72b6d0d1830481397b1d"
-+  integrity sha512-j1nvOQCZYSgp7HLmisnCXFTpVvFODiijQ9QHkORfGKWH6YDtskTEeCJS7eV545GZ9UBzrq0e2xsOd5QQ5PjIqw==
-+  dependencies:
-+    "@babel/code-frame" "^7.29.7"
-+    "@babel/generator" "^7.29.13"
-+    "@babel/helper-compilation-targets" "^7.29.13"
-+    "@babel/helper-module-transforms" "^7.29.13"
-+    "@babel/helpers" "^7.29.13"
-+    "@babel/parser" "^7.29.13"
-+    "@babel/template" "^7.29.7"
-+    "@babel/traverse" "^7.29.13"
-+    "@babel/types" "^7.29.11"
-+    "@jridgewell/remapping" "^2.3.5"
-     convert-source-map "^2.0.0"
-     debug "^4.1.0"
-     gensync "^1.0.0-beta.2"
-@@ -63,15 +69,16 @@
-     eslint-visitor-keys "^2.1.0"
-     semver "^6.3.1"
++	b.mutateNotifyForSessionLocked(sess, ini)
+ 	return ini
+ }
  
--"@babel/generator@^7.23.3", "@babel/generator@^7.23.4":
--  version "7.23.4"
--  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.23.4.tgz#4a41377d8566ec18f807f42962a7f3551de83d1c"
--  integrity sha512-esuS49Cga3HcThFNebGhlgsrVLkvhqvYDTzgjfFFlHJcIfLe5jFmRRfCQ1KuBfc4Jrtn3ndLgKWAKjBE+IraYQ==
-+"@babel/generator@^7.29.13":
-+  version "7.29.13"
-+  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.29.13.tgz#89bd5d368cde7437920ab3f2e67ef24f0ecfe620"
-+  integrity sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw==
-   dependencies:
--    "@babel/types" "^7.23.4"
--    "@jridgewell/gen-mapping" "^0.3.2"
--    "@jridgewell/trace-mapping" "^0.3.17"
--    jsesc "^2.5.1"
-+    "@babel/parser" "^7.29.13"
-+    "@babel/types" "^7.29.11"
-+    "@jridgewell/gen-mapping" "^0.3.12"
-+    "@jridgewell/trace-mapping" "^0.3.28"
-+    jsesc "^3.0.2"
+@@ -4449,7 +4450,8 @@ func (b *LocalBackend) suspendLaggingWatchSessionLocked(sess *watchSession) {
+ // into full-Node [Notify.PeersChanged] entries for sessions that asked
+ // for peer changes but not patches, and tracking on sess which
+ // [tailcfg.UserProfileView]s have already been delivered so subsequent
+-// sends only carry new/changed profiles.
++// sends only carry new/changed profiles. Finally, it runs the extensions'
++// [ipnext.Hooks.MutateNotifyForSessionLocked] hooks, if any, on the result.
+ //
+ // The returned pointer is either n itself (no adjustments needed for
+ // this session) or a fresh *ipn.Notify with the adjusted fields. The
+@@ -4473,11 +4475,7 @@ func (b *LocalBackend) notifyForSessionLocked(sess *watchSession, n *ipn.Notify)
+ 	stripPatches := len(n.PeerChangedPatch) > 0 && !wantsPeerPatches
+ 	stripPeerState := len(n.PeerState) > 0 && sess.mask&ipn.NotifyPeerWireGuardState == 0
+ 	promotePatches := len(n.PeerChangedPatch) > 0 && wantsPeerChanges && !wantsPeerPatches
+-	refreshNodeGUIVisibility :=
+-		sess.mask&ipn.NotifySysPolicyChanges != 0 &&
+-			(n.SelfChange != nil ||
+-				len(n.PeersChanged) != 0 ||
+-				len(n.PeersRemoved) != 0)
++	mutateHooks := b.extHost.Hooks().MutateNotifyForSessionLocked
  
- "@babel/helper-annotate-as-pure@^7.22.5":
-   version "7.22.5"
-@@ -98,6 +105,17 @@
-     lru-cache "^5.1.1"
-     semver "^6.3.1"
+ 	if sess.selfChangeResetsImplicitState(n.SelfChange.View()) {
+ 		sess.lastSentUserProfile = nil
+@@ -4507,13 +4505,10 @@ func (b *LocalBackend) notifyForSessionLocked(sess *watchSession, n *ipn.Notify)
+ 	}
+ 	replaceUserProfiles := !stripUserProfiles && len(sessUserProfiles) != len(n.UserProfiles)
  
-+"@babel/helper-compilation-targets@^7.29.13":
-+  version "7.29.13"
-+  resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.29.13.tgz#bd48c347d19d5357c6eaf742007a99b2fff5e315"
-+  integrity sha512-8WxJ4/Vmes3ghacj8VOJy3NW8eyHiFY/4thU/LSBuBE470+igjR/j1ZTNn8fV5VdNrLx6iXUwig
+-	if !stripPeersChanged && !stripPeersRemoved && !stripPatches && !stripPeerState && !stripUserProfiles && !replaceUserProfiles && !promotePatches && !refreshNodeGUIVisibility {
++	if !stripPeersChanged && !stripPeersRemoved && !stripPatches && !stripPeerState && !stripUserProfiles && !replaceUserProfiles && !promotePatches && len(mutateHooks) == 0 {
+ 		return n
+ 	}
+ 	nCopy := *n
+-	if refreshNodeGUIVisibility {
+-		nCopy.NodeGUIVisibility = b.nodeGUIVisibilityLocked(sess.hiddenNetworkDevices)
+-	}
+ 	if stripPeersChanged {
+ 		nCopy.PeersChanged = nil
+ 	}
+@@ -4544,9 +4539,20 @@ func (b *LocalBackend) notifyForSessionLocked(sess *watchSession, n *ipn.Notify)
+ 	} else if replaceUserProfiles {
+ 		nCopy.UserProfiles = sessUserProfiles
+ 	}
++	b.mutateNotifyForSessionLocked(sess, &nCopy)
+ 	return &nCopy
+ }
+ 
++// mutateNotifyForSessionLocked lets extensions adjust n, which must not be
++// shared with other sessions, before it is delivered to sess.
++//
++// b.mu must be held.
++func (b *LocalBackend) mutateNotifyForSessionLocked(sess *watchSession, n *ipn.Notify) {
++	for _, f := range b.extHost.Hooks().MutateNotifyForSessionLocked {
++		f(sess, n)
++	}
++}
++
+ // selfChangeResetsImplicitState reports whether self changes the identity of
+ // the self node last delivered to sess. WatchIPNBus sessions survive profile
+ // switches, but a self-node identity change is a boundary for implicit bus
 ```
 
 ---
 
-### Incident Patch 3: `f33f3876` (2026-06-21)
-**Commit Message**: build(deps): bump form-data from 4.0.4 to 4.0.6 in /client/web
+### Incident Patch 2: `0bda5935` (2026-11-11)
+**Commit Message**: tstest/integration: catch tailscaled crashes on the Windows service (#21883)
 
-Bumps [form-data](https://github.com/form-data/form-data) from 4.0.4 to 4.0.6.
-- [Changelog](https://github.com/form-data/form-data/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/form-data/form-data/compare/v4.0.4...v4.0.6)
+Fixes #20443
+
+Signed-off-by: Yaruk Asghar <[REDACTED_EMAIL]>
+
+**File**: `tstest/integration/integration.go` (modified, +51/-6)
+```diff
+@@ -408,6 +408,8 @@ type LogCatcher struct {
+ 	gotErr error
+ 	reqs   int
+ 	raw    bool // indicates whether to store the raw JSON logs uploaded, instead of just the text
++
++	nodeWriters map[string]io.Writer // by /node/<key> upload path, for nodes with no stderr to read
+ }
+ 
+ // UseLogf makes the logcatcher implementation use a given logf function
+@@ -450,14 +452,38 @@ func (lc *LogCatcher) Reset() {
+ 	lc.buf.Reset()
+ }
+ 
++// nodePath returns a log target path whose uploaded log lines lc also writes to w.
++func (lc *LogCatcher) nodePath(w io.Writer) string {
++	lc.mu.Lock()
++	defer lc.mu.Unlock()
++	if lc.nodeWriters == nil {
++		lc.nodeWriters = make(map[string]io.Writer)
++	}
++	key := strconv.Itoa(len(lc.nodeWriters))
++	lc.nodeWriters[key] = w
++	return "/node/" + key
++}
++
++// nodeWriter returns the writer that nodePath registered for key, or nil.
++func (lc *LogCatcher) nodeWriter(key string) io.Writer {
++	lc.mu.Lock()
++	defer lc.mu.Unlock()
++	return lc.nodeWriters[key]
++}
++
+ func (lc *LogCatcher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+-	// POST /c/<collection-name>/<private-ID>
++	// POST [/node/<key>]/c/<collection-name>/<private-ID>
+ 	if r.Method != "POST" {
+ 		log.Printf("bad logcatcher method: %v", r.Method)
+ 		http.Error(w, "only POST is supported", 400)
+ 		return
+ 	}
+-	pathParts := strings.Split(strings.TrimPrefix(r.URL.Path, "/c/"), "/")
++	path, nodeKey := r.URL.Path, ""
++	if rest, ok := strings.CutPrefix(path, "/node/"); ok {
++		nodeKey, path, _ = strings.Cut(rest, "/")
++		path = "/" + path
++	}
++	pathParts := strings.Split(strings.TrimPrefix(path, "/c/"), "/")
+ 	if len(pathParts) != 2 {
+ 		log.Printf("bad logcatcher path: %q", r.URL.Path)
+ 		http.Error(w, "bad URL", 400)
+@@ -502,6 +528,17 @@ func (lc *LogCatcher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ 		jreq = append(jreq, ent)
+ 	}
+ 
++	if nw := lc.nodeWriter(nodeKey); nw != nil && err == nil {
++		// Outside lc.mu, since the node's log line hooks run inside Write.
++		var out bytes.Buffer
++		for _, ent := range jreq {
++			if text := strings.TrimSpace(ent.Text); text != "" {
++				fmt.Fprintf(&out, "%s\n", text)
++			}
++		}
++		nw.Write(out.Bytes())
++	}
++
+ 	lc.mu.Lock()
+ 	defer lc.mu.Unlock()
+ 	lc.reqs++
+@@ -625,6 +662,7 @@ type TestNode struct {
+ 	sockFile     string
+ 	stateFile    string
+ 	upFlagGOOS   string // if non-empty, sets TS_DEBUG_UP_FLAG_GOOS for cmd/tailscale CLI
++	logTarget    string // if non-empty, sets TS_LOG_TARGET instead of the log catcher's URL
+ 	encryptState bool
+ 	allowUpdates bool
+ 	tunMode      bool // TUN rather than userspace networking
+@@ -732,10 +770,11 @@ func NewTestNode(t *testing.T, env *TestEnv, opts ...TestNodeOpt) *TestNode {
+ 		n.sockFile = `\\.\pipe\tailscale-test-` + rands.HexString(8)
+ 	}
+ 
+-	// Look for a data race or panic.
++	// Look for a data race or crash.
+ 	// Once we see the start marker, start logging the rest.
+ 	var sawRace bool
+ 	var sawPanic bool
++	var failed bool
+ 	n.addLogLineHook(func(line []byte) {
+ 		lineB := mem.B(line)
+ 		if mem.Contains(lineB, mem.S("DEBUG-ADDR=")) {
+@@ -744,10 +783,15 @@ func NewTestNode(t *testing.T, env *TestEnv, opts ...TestNodeOpt) *TestNode {
+ 		if mem.Contains(lineB, mem.S("WARNING: DATA RACE")) {
+ 			sawRace = true
+ 		}
+-		if mem.HasPrefix(lineB, mem.S("panic: ")) {
++		if mem.HasPrefix(lineB, mem.S("panic: ")) || mem.HasPrefix(lineB, mem.S("fatal error: ")) {
+ 			sawPanic = true
+ 		}
+ 		if sawRace || sawPanic {
++			if !failed {
++				failed = true
++				// Fail here, since the Windows service restarts a crashed tailscaled.
++				t.Error("tailscaled crashed or hit a data race, its output follows")
++			}
+ 			t.Logf("%s", line)
+ 		}
+ 	})
+@@ -973,7 +1017,7 @@ func (n *TestNode) awaitTailscaledRunnable() error {
+ func (n *TestNode) daemonEnv(ipnGOOS string) []string {
+ 	env := []string{
+ 		"TS_DEBUG_PERMIT_HTTP_C2N=1",
+-		"TS_LOG_TARGET=" + n.env.LogCatcherServer.URL,
++		"TS_LOG_TARGET=" + cmp.Or(n.logTarget, n.env.LogCatcherServer.URL),
+ 		"HTTP_PROXY=" + n.env.TrafficTrapServer.URL,
+ 		"HTTPS_PROXY=" + n.env.TrafficTrapServer.URL,
+ 		"TS_DEBUG_FAKE_GOOS=" + ipnGOOS,
+@@ -1016,8 +1060,9 @@ func (n *TestNode) StartDaemonAsIPNGOOS(ipnGOOS string) *Daemon {
+ 	}
+ 
+ 	if runtime.GOOS == "windows" && n.tunMode {
+-		// TODO(#20443): plumb service logs here so races/panics/DEBUG-ADDR are seen in service mode.
+ 		n.tailscaledParser = &nodeOutputParser{n: n}
++		// The service has no stderr to read, so its uploaded logs feed the parser instead.
++		n.logTarget = n.env.LogCatcherServer.URL + n.env.LogCatcher.nodePath(n.tailscaledParser)
+ 		return n.startWindowsServiceDaemon()
+ 	}
+ 
+```
+
+**File**: `tstest/integration/integration_test.go` (modified, +29/-3)
+```diff
+@@ -249,6 +249,32 @@ func TestCollectPanic(t *testing.T) {
+ 	}
+ }
+ 
++// TestLogLineHooks checks that a node's log line hooks see its output, even as the Windows service.
++func TestLogLineHooks(t *testing.T) {
++	tstest.Parallel(t)
++	env := NewTestEnv(t)
++	n1 := NewTestNode(t, env)
++	started := make(chan bool, 1)
++	n1.addLogLineHook(func(line []byte) {
++		if mem.Contains(mem.B(line), mem.S("Program starting: ")) {
++			select {
++			case started <- true:
++			default:
++			}
++		}
++	})
++
++	d1 := n1.StartDaemon()
++	n1.AwaitResponding()
++	select {
++	case <-started:
++	case <-time.After(20 * time.Second):
++		t.Fatal("log line hooks never saw tailscaled's startup line")
++	}
++
++	d1.MustCleanShutdown(t)
++}
++
+ func TestControlTimeLogLine(t *testing.T) {
+ 	tstest.Parallel(t)
+ 	env := NewTestEnv(t)
+@@ -932,11 +958,11 @@ func TestTwoNodes(t *testing.T) {
+ 		os.WriteFile("n2.log", cleanLog(n2), 0666)
+ 	})
+ 
+-	if runtime.GOOS != "windows" {
+-		// TODO(yaruk): the service node has no stderr to scrape the address from; see #20443.
++	// The Windows service runs tailscaled without --socks5-server.
++	if d1.svc == nil {
+ 		t.Logf("node1 SOCKS5 addr: %v", n1.AwaitSocksAddr(n1SocksAddrCh))
+-		t.Logf("node2 SOCKS5 addr: %v", n1.AwaitSocksAddr(n2SocksAddrCh))
+ 	}
++	t.Logf("node2 SOCKS5 addr: %v", n1.AwaitSocksAddr(n2SocksAddrCh))
+ 
+ 	n1.AwaitListening()
+ 	t.Logf("n1 is listening")
+```
 
 ---
-updated-dependencies:
-- dependency-name: form-data
-  dependency-version: 4.0.6
-  dependency-type: indirect
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+### Incident Patch 3: `cf5e4f86` (2026-11-10)
+**Commit Message**: health, net/netmon: fix tests that expected eventbus events by pointer
 
-**File**: `client/web/yarn.lock` (modified, +13/-6)
+Both tests passed filter funcs taking a pointer to an event type that
+is published by value, so the filters never matched. The health test
+passed only because Expect timed out, so make it look for the event it
+means to forbid.
+
+Updates #22307
+
+Change-Id: I7daf64656cd9b0e9e98372cd803a6e824db96594
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+
+**File**: `health/health_test.go` (modified, +5/-14)
 ```diff
-@@ -3560,15 +3560,15 @@ for-each@^0.3.3:
-     is-callable "^1.1.3"
+@@ -4,7 +4,6 @@
+ package health
  
- form-data@^4.0.0:
--  version "4.0.4"
--  resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.4.tgz#784cdcce0669a9d68e94d11ac4eea98088edd2c4"
--  integrity sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==
-+  version "4.0.6"
-+  resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.6.tgz#28e864e1b786dbebb68db1f452f9635278665827"
-+  integrity sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==
-   dependencies:
-     asynckit "^0.4.0"
-     combined-stream "^1.0.8"
-     es-set-tostringtag "^2.1.0"
--    hasown "^2.0.2"
--    mime-types "^2.1.12"
-+    hasown "^2.0.4"
-+    mime-types "^2.1.35"
+ import (
+-	"errors"
+ 	"flag"
+ 	"fmt"
+ 	"maps"
+@@ -883,20 +882,12 @@ func TestControlHealthIgnoredOutsideMapPoll(t *testing.T) {
+ 			t.Error("got a warning with code 'control-health', want none")
+ 		}
  
- fraction.js@^4.2.0:
-   version "4.2.0"
-@@ -3828,6 +3828,13 @@ hasown@^2.0.2:
-   dependencies:
-     function-bind "^1.1.2"
- 
-+hasown@^2.0.4:
-+  version "2.0.4"
-+  resolved "https://registry.yarnpkg.com/hasown/-/hasown-2.0.4.tgz#8c62d8cb90beb2aad5d0a5b67581ad9854c3f003"
-+  integrity sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==
-+  dependencies:
-+    function-bind "^1.1.2"
-+
- html-encoding-sniffer@^4.0.0:
-   version "4.0.0"
-   resolved "https://registry.yarnpkg.com/html-encoding-sniffer/-/html-encoding-sniffer-4.0.0.tgz#696df529a7cfd82446369dc5193e590a3735b448"
-@@ -4360,7 +4367,7 @@ mime-db@1.52.0:
-   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.52.0.tgz#bbabcdc02859f4987301c856e3387ce5ec43bf70"
-   integrity sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==
- 
--mime-types@^2.1.12:
-+mime-types@^2.1.35:
-   version "2.1.35"
-   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.35.tgz#381a871b62a734450660ae3deee44813f70d959a"
-   integrity sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==
+-		// An event is emitted when SetIPNState is run above,
+-		// so only fail on the second event.
+-		eventCounter := 0
+-		expectOne := func(c *Change) error {
+-			eventCounter++
+-			if eventCounter == 1 {
+-				return nil
+-			}
+-			return errors.New("saw more than 1 event")
+-		}
+-
++		// Other Warnables emit events above, but SetControlHealth must not
++		// emit a control health change outside of a map poll.
+ 		synctest.Wait()
+-		if err := eventbustest.Expect(tw, expectOne); err == nil {
+-			t.Error("event got emitted, want it to not be called")
++		controlHealthChanged := func(c Change) bool { return c.ControlHealthChanged }
++		if err := eventbustest.Expect(tw, controlHealthChanged); err == nil {
++			t.Error("got a ControlHealthChanged event, want none")
+ 		}
+ 	})
+ }
+```
+
+**File**: `net/netmon/netmon_test.go` (modified, +1/-1)
+```diff
+@@ -148,7 +148,7 @@ func TestMonitorMode(t *testing.T) {
+ 		time.AfterFunc(*monitorDuration, bus.Close)
+ 		n := 0
+ 		mon.Start()
+-		eventbustest.Expect(tw, func(event *ChangeDelta) (bool, error) {
++		eventbustest.Expect(tw, func(event ChangeDelta) (bool, error) {
+ 			n++
+ 			t.Logf("cb: changed=%v, ifSt=%v", event.RebindLikelyRequired, event.CurrentState())
+ 			return false, nil // Return false, indicating we wanna look for more events
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22286** (2026-11-10): ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme (@bradfitz)
-- **PR #22284** (2026-11-10): util/clientmetric: add NewGaugeFunc and DisableDeltas omit stubs (@bradfitz)
-- **PR #22271** (2026-11-09): go.mod: fix duplicate handshake response in wireguard-go (#22221) (@illotum)
-- **PR #22270** (2026-11-09): wgengine/magicsock: retry UDP reads on EADDRNOTAVAIL (@nbeirne)
-- **PR #22269** (2026-11-09): feature/conn25: shut down the address assignment queue from the sender side (@mazdakn)
-- **PR #22262** (closed): ipn/ipnlocal: prefer a service's IPv4 VIP when dialing it by name (@jean-malo)
+- **PR #22333** (2026-11-11): go.mod,wgengine/wgcfg: bump wg-go & configure staged global limit on iOS (@jwhited)
+- **PR #22332** (2026-11-11): go.toolchain.rev: bump Go toolchain (Go 1.27.4) (@tailscale-code-updater[bot])
+- **PR #22331** (2026-11-11): net,ipn,cmd: migrate dialer hooks to ControlContext (@raggi)
+- **PR #22322** (2026-11-11): util/eventbus/eventbuscheck: add whole-program `T` vs `*T` event check (@bradfitz)
+- **PR #22320** (2026-11-11): net/netns: compose caller ControlContext with namespace setup (@raggi)
+- **PR #22319** (2026-11-11): derp,control,logtail: add baseline heartbeat and upload metrics (@raggi)
 
 ---
 
@@ -1122,32 +1577,28 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme
+## X. ipn, feature/guivisibility: send incremental gui visibility updates (#22067)
 
 **RULE**:
-When implementing operations in `feature/acme/acme.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/tailscaled/depaware.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d566ac8a`: ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6eb3f9d`: ipn, feature/guivisibility: send incremental gui visibility updates (#22067). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/acme/acme.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/tailscaled/depaware.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"tailscale.com/feature/buildfeatures"
-	if buildfeatures.HasServe {
-		// The refresh loop only renews certs for Serve's hostnames.
-		ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
-	}
+   W    tailscale.com/feature/guivisibility                          from tailscale.com/feature/condregister
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d566ac8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6eb3f9d` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `31549f83`  
+> **Source Version**: `065aed87`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T22:16:02.677Z  
+> **Timestamp**: 2026-11-11T10:27:03.674Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T22:16:00.866Z  
+> **Harvest Timestamp**: 2026-11-11T10:26:29.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5394 stars
+- **Stars / Engagement**: 5398 stars
 
 ---
 
@@ -467,10 +467,11 @@ class HookList final : HookListBase {
   // Store up to n values of the list in output_array, and return the number of
   // elements stored.  Thread-safe and non-blocking.  This is fast (one memory
   // access) if the list is empty.
-  [[nodiscard]] int Traverse(T* output_array, int n) const;
+  [[nodiscard]] ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS int Traverse(T* output_array,
+                                                                int n) const;
 
   // Fast inline implementation for fast path of Invoke*Hook.
-  [[nodiscard]] bool empty() const {
+  [[nodiscard]] ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS bool empty() const {
     // empty() is only used as an optimization to determine if we should call
     // Traverse which has proper acquire loads.  Memory reordering around a
     // call to empty will either lead to an unnecessary Traverse call, or will
@@ -478,7 +479,7 @@ class HookList final : HookListBase {
     return priv_end.load(std::memory_order_relaxed) == 0;
   }
 
-  [[nodiscard]] int size() const {
+  [[nodiscard]] ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS int size() const {
     return priv_end.load(std::memory_order_relaxed);
   }
 
@@ -491,8 +492,9 @@ class HookList final : HookListBase {
 
  private:
   template <typename... Args>
-  ABSL_ATTRIBUTE_COLD ABSL_ATTRIBUTE_NOINLINE void InvokeSlow(
-      Args&&... args) const;
+  ABSL_ATTRIBUTE_COLD ABSL_ATTRIBUTE_NOINLINE
+      ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS void
+      InvokeSlow(Args&&... args) const;
 
   // One more than the index of the last valid element in priv_data.  During
   // 'Remove' this may be past the last valid element in priv_data, but
@@ -1230,11 +1232,13 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1875** (2026-11-06): **Activate TCMALLOC_SONIC_DEMAND_CYCLE_60S at 1%.**
-  *Symptoms*: Activate TCMALLOC_SONIC_DEMAND_CYCLE_60S at 1%. 
+- **Issue #1897** (2026-11-10): **Include fallback stats in HugetlbRegionFactory::GetStats.**
+  *Symptoms*: Include fallback stats in HugetlbRegionFactory::GetStats.  It previously skipped fallback_->GetStats when the output buffer was already exhausted, omitting fallback bytes from the returned size.  This allows zero-length buffers in Printer and forwards the remaining subspan to fallback_->GetStats.  Co-authored-by: Chris Kennelly <ckennelly@google.com> 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1897/checks?check_run_id=130138440171) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
-- **Issue #1874** (2026-11-06): **Wire `Parameters::filler_append_on_free()` to the `TCMALLOC_SONIC_FILLER_APPEND_ON_FREE` experiment and add the `tcmalloc_filler_append_on_free` test variant.**
-  *Symptoms*: Wire `Parameters::filler_append_on_free()` to the `TCMALLOC_SONIC_FILLER_APPEND_ON_FREE` experiment and add the `tcmalloc_filler_append_on_free` test variant. 
+- **Issue #1896** (2026-11-11): **Add NoopResidency for test fakes and remove unused FakeResidency.**
+  *Symptoms*: Add NoopResidency for test fakes and remove unused FakeResidency.  This provides a common base class for Residency test stubs and removes the unused FakePageFlags and FakeResidency definitions. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1251,162 +1255,62 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfe92fe5` (2026-11-07)
-**Commit Message**: In `Span::BuildFreelist`, populate `batch` directly with sequential object
-addresses and set only the remaining `[result, count)` range via `SetRange`,
-avoiding the intermediate `BuildBitmap` + `BitmapPopBatch` round-trip under the
-`CentralFreeList` lock.
+### Incident Patch 1: `0ecaf3d4` (2026-11-10)
+**Commit Message**: Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.
 
-Preserves legacy behavior under `-DTCMALLOC_INTERNAL_LEGACY_LOCKING2`.
+`ReportCorruptedFree` computed pointer alignment as `1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))`. When a corrupted pointer is `>= 4 GiB`-aligned (`countr_zero >= 32`) on 64-bit platforms, shifting a 32-bit `1u` literal invokes undefined behavior and reports `got alignment 1`. Use `addr & -addr` on the `uintptr_t` address in both `ReportCorruptedFree` overloads.
 
-PiperOrigin-RevId: 1016062483
+PiperOrigin-RevId: 1018619289
 
-**File**: `tcmalloc/span.cc` (modified, +16/-0)
+**File**: `tcmalloc/error_reporting.cc` (modified, +6/-9)
 ```diff
-@@ -94,16 +94,20 @@ void Span::BuildBitmap(size_t size, size_t count) __restrict__ {
- int Span::BuildFreelist(size_t size, size_t count, absl::Span<void*> batch,
-                         BitmapMode mode) __restrict__ {
-   TC_ASSERT_GT(count, 0);
-+#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-   freelist_ = kListEnd;
-+#endif
+@@ -22,7 +22,6 @@
+ #include "absl/base/attributes.h"
+ #include "absl/base/casts.h"
+ #include "absl/debugging/stacktrace.h"
+-#include "absl/numeric/bits.h"
+ #include "absl/types/span.h"
+ #include "tcmalloc/internal/config.h"
+ #include "tcmalloc/internal/logging.h"
+@@ -172,11 +171,10 @@ ABSL_ATTRIBUTE_NOINLINE void ReportCorruptedFree(
+   const size_t depth = absl::GetStackTrace(stack, kMaxStackDepth, 1);
  
-   if (mode != BitmapMode::kDisabled) {
-     return DynamicBitmapBuild(size, count, batch, mode);
-   }
+   RecordCrash("GWP-ASan", "invalid-free");
++  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
+   state.gwp_asan_state().RecordInvalidFree(
+-      ptr,
+-      static_cast<std::align_val_t>(
+-          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
+-      expected_alignment, std::nullopt, absl::MakeSpan(stack, depth));
++      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
++      std::nullopt, absl::MakeSpan(stack, depth));
  
-+#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-   if (UseBitmapForSize(size, mode)) {
-     BuildBitmap(size, count);
-     return BitmapPopBatch(batch, size);
-   }
-+#endif
+   TC_BUG("Attempted to free corrupted pointer %p.  Expected alignment %v", ptr,
+          expected_alignment);
+@@ -190,11 +188,10 @@ ABSL_ATTRIBUTE_NOINLINE void ReportCorruptedFree(
+   const size_t depth = absl::GetStackTrace(stack, kMaxStackDepth, 1);
  
-   // First, push as much as we can into the batch.
-   const uintptr_t start = first_page().start_uintptr();
-@@ -115,6 +119,18 @@ int Span::BuildFreelist(size_t size, size_t count, absl::Span<void*> batch,
-   }
-   allocated_ = result;
+   RecordCrash("GWP-ASan", "invalid-free");
++  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
+   state.gwp_asan_state().RecordInvalidFree(
+-      ptr,
+-      static_cast<std::align_val_t>(
+-          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
+-      expected_alignment, allocation_stack, absl::MakeSpan(stack, depth));
++      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
++      allocation_stack, absl::MakeSpan(stack, depth));
  
-+#ifndef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-+  if (ABSL_PREDICT_TRUE(UseBitmapForSize(size, mode))) {
-+    TC_ASSERT_LE(count, bitmap_.size());
-+    if (result < count) {
-+      bitmap_.SetRange(result, count - result);
-+    }
-+    TC_ASSERT_EQ(bitmap_.CountBits(), count - result);
-+    return result;
-+  }
-+  freelist_ = kListEnd;
-+#endif
-+
-   const ObjIdx idxStep = size / static_cast<size_t>(kAlignment);
-   // Valid objects are {0, idxStep, idxStep * 2, ..., idxStep * (count - 1)}.
-   ObjIdx idx = idxStep * result;
-```
-
-**File**: `tcmalloc/span_test.cc` (modified, +43/-3)
-```diff
-@@ -56,9 +56,7 @@ class RawSpan {
-                 0);
-   }
- 
--  ~RawSpan() {
--    free(mem_);
--  }
-+  ~RawSpan() { free(mem_); }
- 
-   Span& span() { return *span_; }
- 
-@@ -201,6 +199,48 @@ TEST_P(SpanTest, FreelistBasic) {
-   }
- }
- 
-+TEST_P(SpanTest, BuildFreelistReusedSpan) {
-+  Span& span = raw_span_.span();
-+  const PageId first_page = span.first_page();
-+  span.~Span();
-+  new (&span) Span(first_page);
-+
-+  const size_t count = (objects_per_span_ + 1) / 2;
-+  const size_t want = std::min(batch_size_, count);
-+
-+  void* batch[kMaxObjectsToMove];
-+  ASSERT_EQ(span.BuildFreelist(size_, count, absl::MakeSpan(batch, want),
-+                               bitmap_mode_),
-+            want);
-+
-+  char* start = static_cast<char*>(span.start_address());
-+  std::vector<bool> seen(count, false);
-+  auto record = [&](absl::Span<void* const> ptrs) {
-+    for (void* p : ptrs) {
-+      uintptr_t off = static_cast<char*>(p) - start;
-+      ASSERT_LT(off, count * size_);
-+      ASSERT_EQ(off % size_, 0);
-+      size_t idx = off / size_;
-+      EXPECT_FALSE(seen[idx]);
-+      seen[idx] = true;
-+    }
-+  };
-+
-+  record(absl::MakeSpan(batch, want));
-+  size_t popped = want;
-+  while (!span.FreelistEmpty(count)) {
-+    size_t n = span.FreelistPopBatch(absl::MakeSpan(batch, batch_size_), size_,
-+                                     count, bitmap_mode_);
-+    ASSERT_GT(n, 0);
-+    record(absl::MakeSpan(batch, n));
-+    popped += n;
-+  }
-+  EXPECT_EQ(popped, count);
-+  EXPECT_EQ(span.FreelistPopBatch(absl::MakeSpan(batch, 1), size_, count,
-+                                  bitmap_mode_),
-+            0);
-+}
-+
- INSTANTIATE_TEST_SUITE_P(
-     All, SpanTest,
-     testing::Combine(testing::Range(size_t(1), kNumClasses), testing::Bool()));
-```
-
----
-
-### Incident Patch 2: `9b7351da` (2026-11-06)
-**Commit Message**: Raise the address-space limit in OutOfMemoryTest to 8 GiB.
-
-In dynamically linked builds, shared libraries and initial allocator regions can already reserve more than 6 GiB of virtual address space before the test body starts. Setting the address-space limit to 6 GiB then leaves no room for small internal arena allocations from test and synchronization utilities, causing `LowLevelAlloc` to abort when refilling its 64 KiB slab. Raising the limit to 8 GiB leaves enough headroom for test bookkeeping while still exhausting the address space quickly during the allocation loops.
-
-PiperOrigin-RevId: 1015568156
-
-**File**: `tcmalloc/testing/outofmemory_test.cc` (modified, +2/-2)
-```diff
-@@ -42,7 +42,7 @@ class OutOfMemoryTest : public ::testing::Test {
- 
- TEST_F(OutOfMemoryTest, TestUntilFailure) {
-   ScopedNeverSample never_sample;
--  ScopedResourceLimit limit{6 * kGiB};
-+  ScopedResourceLimit limit{8 * kGiB};
- 
-   // Check that large allocations fail with NULL instead of crashing.
-   static const size_t kIncrement = 100 << 20;
-@@ -60,7 +60,7 @@ TEST_F(OutOfMemoryTest, TestUntilFailure) {
- 
- TEST_F(OutOfMemoryTest, SmallAllocs) {
-   ScopedNeverSample never_sample;
--  ScopedResourceLimit limit{6 * kGiB};
-+  ScopedResourceLimit limit{8 * kGiB};
- 
-   // Check that large allocations fail with NULL instead of crashing.
-   static constexpr size_t kSize = tcmalloc_internal::kHugePageSize / 2 - 1;
+   TC_BUG("Attempted to free corrupted pointer %p.  Expected alignment %v", ptr,
+          expected_alignment);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1875** (2026-11-06): Activate TCMALLOC_SONIC_DEMAND_CYCLE_60S at 1%. (@copybara-service[bot])
-- **PR #1874** (2026-11-06): Wire `Parameters::filler_append_on_free()` to the `TCMALLOC_SONIC_FILLER_APPEND_ON_FREE` experiment and add the `tcmalloc_filler_append_on_free` test variant. (@copybara-service[bot])
-- **PR #1873** (2026-11-06): No public description (@copybara-service[bot])
-- **PR #1872** (2026-11-07): Convert TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES into a holdback. (@copybara-service[bot])
-- **PR #1871** (2026-11-06): Deflake TouchedCpus.Multithreaded by touching faked CPUs from one thread. (@copybara-service[bot])
-- **PR #1864** (2026-11-06): Raise the address-space limit in OutOfMemoryTest to 8 GiB. (@copybara-service[bot])
+- **PR #1897** (2026-11-10): Include fallback stats in HugetlbRegionFactory::GetStats. (@copybara-service[bot])
+- **PR #1896** (2026-11-11): Add NoopResidency for test fakes and remove unused FakeResidency. (@copybara-service[bot])
+- **PR #1894** (2026-11-11): Unify UpdateMaxCapacities() and ResizeSlabs(). (@copybara-service[bot])
+- **PR #1893** (2026-11-10): Remove PerSizeClassMaxCapacity. (@copybara-service[bot])
+- **PR #1892** (closed): No public description (@copybara-service[bot])
+- **PR #1891** (2026-11-11): Replace the candidate selection heap with a buffered nth_element selector. (@copybara-service[bot])
 
 ---
 
@@ -1426,43 +1330,41 @@ PiperOrigin-RevId: 1015568156
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. In `Span::BuildFreelist`, populate `batch` directly with sequential object
+## X. Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.
 
 **RULE**:
-When implementing operations in `tcmalloc/span.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/error_reporting.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfe92fe5`: In `Span::BuildFreelist`, populate `batch` directly with sequential object. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ecaf3d4`: Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/span.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/error_reporting.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-#endif
-#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-#endif
-#ifndef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-  if (ABSL_PREDICT_TRUE(UseBitmapForSize(size, mode))) {
-    TC_ASSERT_LE(count, bitmap_.size());
-    if (result < count) {
-      bitmap_.SetRange(result, count - result);
-    }
-    TC_ASSERT_EQ(bitmap_.CountBits(), count - result);
-    return result;
-  }
-  freelist_ = kListEnd;
-#endif
-
+  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
+      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
+      std::nullopt, absl::MakeSpan(stack, depth));
+  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
+      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
+      allocation_stack, absl::MakeSpan(stack, depth));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+#include "absl/numeric/bits.h"
+      ptr,
+      static_cast<std::align_val_t>(
+          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
+      expected_alignment, std::nullopt, absl::MakeSpan(stack, depth));
+      ptr,
+      static_cast<std::align_val_t>(
+          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
+      expected_alignment, allocation_stack, absl::MakeSpan(stack, depth));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfe92fe5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ecaf3d4` are properly handled with clean fallback behavior.

@@ -8901,3 +8901,77 @@
 | `CYCLE-20261111-SZXS` | `2026-11-11T09:49:13.072Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`627048d3...`) |
 | `CYCLE-20261111-T67M` | `2026-11-11T09:49:21.202Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`377a4f99...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:49:41.481Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CB6BA6DF` [Domain D] | Yes (`94c44b74...`) |
+| `CYCLE-20261111-72GJ` | `2026-11-11T10:00:09.523Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`193da855...`) |
+| `CYCLE-20261111-79QX` | `2026-11-11T10:00:18.969Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4139ce80...`) |
+| `CYCLE-20261111-7BGK` | `2026-11-11T10:00:21.188Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c5442239...`) |
+| `CYCLE-20261111-HJRI` | `2026-11-11T10:08:18.510Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6923469f...`) |
+| `CYCLE-20261111-HSMG` | `2026-11-11T10:08:29.992Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`13d4a869...`) |
+| `CYCLE-20261111-HU54` | `2026-11-11T10:08:31.960Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b7e0587...`) |
+| `CYCLE-20261111-HX4G` | `2026-11-11T10:08:35.824Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62fed445...`) |
+| `CYCLE-20261111-J35E` | `2026-11-11T10:09:30.290Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`b19d7edf...`) |
+| `CYCLE-20261111-SYTA` | `2026-11-11T10:17:11.230Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`cbbe1060...`) |
+| `CYCLE-20261111-TDYV` | `2026-11-11T10:17:30.871Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5938d8ce...`) |
+| `CYCLE-20261111-TLXQ` | `2026-11-11T10:17:41.198Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d96f5cc...`) |
+| `CYCLE-20261111-TNPP` | `2026-11-11T10:17:43.501Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`09cef6d0...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T10:18:06.334Z` | `hf-unsloth-qwen3.8-flash-next-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-11562009` [Domain D] | Yes (`b250b613...`) |
+| `CYCLE-20261111-5CNS` | `2026-11-11T10:26:49.048Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dd242ff1...`) |
+| `CYCLE-20261111-5F4W` | `2026-11-11T10:26:52.256Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`078a5273...`) |
+| `CYCLE-20261111-5Y5F` | `2026-11-11T10:27:16.899Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d8beb555...`) |
+| `CYCLE-20261111-G3HB` | `2026-11-11T10:35:10.367Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bae83234...`) |
+| `CYCLE-20261111-G8W5` | `2026-11-11T10:35:17.381Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8ce858e9...`) |
+| `CYCLE-20261111-GGEW` | `2026-11-11T10:35:27.128Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c0b2b52f...`) |
+| `CYCLE-20261111-GH0K` | `2026-11-11T10:35:27.908Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2a5f232e...`) |
+| `CYCLE-20261111-QMZK` | `2026-11-11T10:43:22.208Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`55b7f9ea...`) |
+| `CYCLE-20261111-QWZ5` | `2026-11-11T10:43:35.153Z` | `CaviraOSS/LongMemory` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5d8720b6...`) |
+| `CYCLE-20261111-27ZR` | `2026-11-11T10:52:22.647Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`db757ba3...`) |
+| `CYCLE-20261111-2B3M` | `2026-11-11T10:52:26.674Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9159e517...`) |
+| `CYCLE-20261111-2E6J` | `2026-11-11T10:52:30.667Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ffc8c9a...`) |
+| `CYCLE-20261111-2FOL` | `2026-11-11T10:52:32.613Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`79f88559...`) |
+| `CYCLE-20261111-COFG` | `2026-11-11T11:00:30.508Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`425d71a0...`) |
+| `CYCLE-20261111-CV3Z` | `2026-11-11T11:00:39.167Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de9f9ce4...`) |
+| `CYCLE-20261111-D1L2` | `2026-11-11T11:00:47.558Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`884f54ad...`) |
+| `CYCLE-20261111-P8YU` | `2026-11-11T11:10:16.998Z` | `Comfy-Org/RelayVSR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | Yes (`1fd9414f...`) |
+| `CYCLE-20261111-PRFT` | `2026-11-11T11:10:40.937Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5373e825...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T11:10:58.468Z` | `hf-comfy-org-relayvsr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-00269E5B` [Domain D] | Yes (`8321d1c4...`) |
+| `CYCLE-20261111-0E81` | `2026-11-11T11:18:57.025Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fddc27f3...`) |
+| `CYCLE-20261111-0NRY` | `2026-11-11T11:19:09.406Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`38f9e8f5...`) |
+| `CYCLE-20261111-0O3F` | `2026-11-11T11:19:09.819Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8789ab88...`) |
+| `CYCLE-20261111-0PS0` | `2026-11-11T11:19:12.000Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2cb563c2...`) |
+| `CYCLE-20261111-R3Z8` | `2026-11-11T11:39:43.460Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7b4875f...`) |
+| `CYCLE-20261111-LRK1` | `2026-11-11T12:03:33.697Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9127a0f9...`) |
+| `CYCLE-20261111-S7X6` | `2026-11-11T12:08:34.842Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62692211...`) |
+| `CYCLE-20261111-DWNK` | `2026-11-11T12:53:26.288Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`79f65bcd...`) |
+| `CYCLE-20261111-DY9K` | `2026-11-11T12:53:28.376Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | Yes (`e3b5575a...`) |
+| `CYCLE-20261111-E2S6` | `2026-11-11T12:53:34.230Z` | `aquasecurity/trivy-operator` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d3c6f2e4...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T12:53:53.499Z` | `xerj-org-xerj` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-40589951` [Domain D] | Yes (`8e3570cf...`) |
+| `CYCLE-20261111-EWQA` | `2026-11-11T13:22:12.658Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d28c24d2...`) |
+| `CYCLE-20261111-NG36` | `2026-11-11T13:28:50.994Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | Yes (`12ae8483...`) |
+| `CYCLE-20261111-NOH5` | `2026-11-11T13:29:01.865Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0e4eec8d...`) |
+| `CYCLE-20261111-NSQX` | `2026-11-11T13:29:07.401Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`ec50654c...`) |
+| `CYCLE-20261111-NVRB` | `2026-11-11T13:29:11.303Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e7a4d897...`) |
+| `CYCLE-20261111-NWTL` | `2026-11-11T13:29:12.681Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1589357b...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T13:29:30.753Z` | `hf-baidu-ernie-5.5-flash-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BA155874` [Domain D] | Yes (`a8651b5d...`) |
+| `CYCLE-20261111-HU2R` | `2026-11-11T13:52:28.803Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f29c3443...`) |
+| `CYCLE-20261111-3Y6O` | `2026-11-11T14:09:40.560Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c2941fb9...`) |
+| `CYCLE-20261111-432H` | `2026-11-11T14:09:46.889Z` | `JetBrains/kotlinconf-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7585d8a...`) |
+| `CYCLE-20261111-D17W` | `2026-11-11T14:16:44.396Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e0514c55...`) |
+| `CYCLE-20261111-D8IA` | `2026-11-11T14:16:53.842Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b3350303...`) |
+| `CYCLE-20261111-DA62` | `2026-11-11T14:16:55.994Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5921a11e...`) |
+| `CYCLE-20261111-5HK7` | `2026-11-11T14:38:51.943Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`abe3a6c9...`) |
+| `CYCLE-20261111-5PCA` | `2026-11-11T14:39:02.026Z` | `joreilly/PeopleInSpace` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18f73239...`) |
+| `CYCLE-20261111-64X6` | `2026-11-11T14:39:22.218Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1c910471...`) |
+| `CYCLE-20261111-BWLA` | `2026-11-11T14:43:51.358Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`9b528acf...`) |
+| `CYCLE-20261111-SBZW` | `2026-11-11T14:56:37.820Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a8e501d...`) |
+| `CYCLE-20261111-SJ5R` | `2026-11-11T14:56:47.103Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1ff3ee95...`) |
+| `CYCLE-20261111-SMMG` | `2026-11-11T14:56:51.592Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a9ac9d27...`) |
+| `CYCLE-20261111-VWW7` | `2026-11-11T15:27:24.487Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`619c84ba...`) |
+| `CYCLE-20261111-WFIB` | `2026-11-11T15:27:48.611Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5cfd6a0c...`) |
+| `CYCLE-20261111-AO7Y` | `2026-11-11T16:06:52.702Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`70551f65...`) |
+| `CYCLE-20261111-AOA5` | `2026-11-11T16:06:52.781Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62d8f0e2...`) |
+| `CYCLE-20261111-GZQA` | `2026-11-11T16:11:47.554Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`741d6ef2...`) |
+| `CYCLE-20261111-SDDK` | `2026-11-11T16:20:38.456Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8ccbe2df...`) |
+| `CYCLE-20261111-SHOO` | `2026-11-11T16:20:44.040Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4d4d8b52...`) |
+| `CYCLE-20261111-BXYX` | `2026-11-11T16:35:51.609Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3a3ada3...`) |
+| `CYCLE-20261111-C38I` | `2026-11-11T16:35:58.434Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f837496e...`) |
+| `CYCLE-20261111-C445` | `2026-11-11T16:35:59.573Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5426070...`) |
+| `CYCLE-20261111-C6QS` | `2026-11-11T16:36:02.980Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fb28f5c...`) |

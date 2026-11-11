@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `e7506724`  
+> **Source Version**: `c805ecfe`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T17:44:02.747Z  
+> **Timestamp**: 2026-11-11T10:26:40.563Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T17:44:02.738Z  
+> **Harvest Timestamp**: 2026-11-11T10:26:40.556Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7739 stars
+- **Stars / Engagement**: 7751 stars
 
 ---
 
@@ -2251,17 +2251,14 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3420** (2026-11-09): **replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info**
-  *Symptoms*: 1. datatracker is an active server, and now suffers from LLMbots. 2. tools.ietf.org was deprecated: https://www.ietf.org/blog/finalizing-ietf-tools-transition/ 3. the www.rfc-editor.org/info/rfcXXXX link includes document status, and can include applied errata  (Sorry if this seems like busy work: a pet peeve of mine as I start reading code/documentation) I am also https://datatracker.ietf.org/person/Michael%20Richardson  
+- **Issue #3422** (2026-11-10): **Take graviola 0.4.5 and delete FAKE_HASH**
+  *Symptoms*: fixes #3421 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3420?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.69%. Comparing base ([`12890d8`](https://app.codecov.io/gh/rustls/rustls/commit/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`68f61b3`](https://app.codecov.io/gh/rustls/rustls/commit/68f61b34e95bb110571081bbe23486a8b608f12b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 8 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #34
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_1.2_no_crypto_server | 692844 | 694314 | ⚠️ [1470](https://bench.rustls.dev/comparisons/0d7f9b323ec71c2f359c8e490a13a57e7b1a0f53:68f61b34e95bb110571081bbe23486a8b608f12b/cachegrind-diff/handshake_session_id_1.2_no_crypto_server) (0.21%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10946552 | 10922052 | [-24500](https://bench.rustls.dev/comparisons/0d7f9b323ec71c2f359c8e490a13a57e7b1a0f53:68f61b34e95bb110571081bbe23486a8b608f12b/cachegrind-diff/handshake_no_resume_a
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_aes_server | 1336826 | 1343174 | [6348](https://bench.rustls.dev/comparisons/0312b11d3cecbd1145dfe4a5597fa2c22ae6519f:0528838434bc4169ef58c90b054c6dccba1d054a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_aes_server) (0.47%) | 1.54% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_aes_client | 3548236 | 3557015 | [8779](https://bench.rustls.dev/comparisons/0312b11d3cecbd1145dfe4a5597fa2c22ae6519f:0528838434bc4169ef58c90b054c6dccba1d054a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_aes_client) (0.25%) | 1.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8778262 | 8766059 | [
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3422?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.70%. Comparing base ([`0312b11`](https://app.codecov.io/gh/rustls/rustls/commit/0312b11d3cecbd1145dfe4a5597fa2c22ae6519f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`0528838`](https://app.codecov.io/gh/rustls/rustls/commit/0528838434bc4169ef58c90b054c6dccba1d054a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3422   +/-   ## ======================================= 
 
-- **Issue #3419** (2026-11-09): **Update Rust crate crabgrind to 0.5**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [crabgrind](https://redirect.github.com/2dav/crabgrind) | workspace.dependencies | minor | `0.4` → `0.5` |  ---  ### Release Notes  <details> <summary>2dav/crabgrind (crabgrind)</summary>  ### [`v0.5.0`](https://redirect.github.com/2dav/crabgrind/blob/HEAD/CHANGELOG.md#050---2026-11-06)  ##### Added  - Convenient, typed wrappers for `memcheck` requests for primitive scalar types - `VALGRIND_RUNNING_VERSION` request introduced in Valgrind 3.28  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/rustls/rustls). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMC4wIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6WyJkZXBlbmRlbmNpZXMiXX0=--> 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3419?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.69%. Comparing base ([`6f33cc3`](https://app.codecov.io/gh/rustls/rustls/commit/6f33cc3c133602c778914b80fd05812f49a3cb04?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`dab6fe2`](https://app.codecov.io/gh/rustls/rustls/commit/dab6fe27047e26e2939841d036954080139567de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3419 
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2265775 | 2270916 | ⚠️ [5141](https://bench.rustls.dev/comparisons/6f33cc3c133602c778914b80fd05812f49a3cb04:dab6fe27047e26e2939841d036954080139567de/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (0.23%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8777811 | 8812194 | [34383](https://bench.rustls.dev/comparisons/6f33cc3c133602c778914b80fd05812f49a3cb04:dab6fe27047e26e2939841d036954080139567de/
+- **Issue #3421** (2026-11-10): **cross-test fails ... without reason?**
+  *Symptoms*: **Checklist** * [X] I've searched the issue tracker for similar bugs.  **Describe the bug** A clear and concise description of what the bug is.  In my fork, the actions ran the CI, but one of the cross build tests fails because left!=right.  (Not in code I changed...) But, as far as I can see, left does == right.  **To Reproduce** Steps to reproduce the behavior: 1. fork and let CI run   **Applicable Version(s)** Whatever is inside the CI.  **Expected behavior** Since this PR is all documentation changes, I expected all tests to succeed.  **Additional context** Add any other context about the problem here. For example, consider including verbose logs or a packet capture. For help with this [see the manual](https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#debugging).  I hope that this run is accessible to others:  https://github.com/mcr/rustls/actions/runs/42532334309/job/128976120029#step:5:433  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2278,204 +2275,97 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7506724` (2026-10-24)
-**Commit Message**: client: reject TLS1.3-only extensions in TLS1.2 ServerHello
+### Incident Patch 1: `289b9c59` (2026-11-03)
+**Commit Message**: Reject non-empty legacy_session_id in QUIC ClientHello
 
-With TLS1.3 enabled the client offers key_share and
-psk_key_exchange_modes (and pre_shared_key when resuming) in a
-ClientHello that also offers TLS1.2. If the server picks TLS1.2,
-the unsolicited extension check lets these through because they
-were sent, and the TLS1.2 handler never looks at them, so a TLS1.2
-ServerHello carrying a key_share was accepted.
+QUIC carries TLS 1.3 without the middlebox compatibility mode of
+RFC 8446 appendix D.4. RFC 9001 section 8.4 therefore requires a QUIC
+client to send an empty legacy_session_id, and says a server should
+treat a non-empty value as a protocol violation.
 
-None of these are defined for TLS1.2. BoringSSL rejects them in a
-TLS1.2 ServerHello with UNEXPECTED_EXTENSION, and the TLS1.3 handler
-already restricts its ServerHello to an allowlist.
+The server now rejects such a ClientHello with the new
+PeerMisbehaved::NonEmptySessionIdInQuic error, which maps to an
+illegal_parameter alert. The check sits in the TLS 1.3 ClientHello
+handler, since a QUIC ClientHello that does not negotiate TLS 1.3 is
+already rejected before reaching it.
 
-**File**: `rustls/src/client/test.rs` (modified, +47/-0)
+**File**: `rustls-test/tests/api/quic.rs` (modified, +31/-0)
 ```diff
-@@ -604,6 +604,53 @@ fn test_client_rejects_non_empty_renegotiation_info_in_initial_handshake() {
+@@ -907,6 +907,37 @@ fn test_quic_server_rejects_tls12_hello() {
      );
  }
  
 +#[test]
-+fn test_client_rejects_tls13_extension_in_tls12_server_hello() {
-+    let config = Arc::new(
-+        ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
-+            .with_root_certificates(roots())
-+            .with_no_client_auth()
-+            .unwrap(),
-+    );
-+    let mut tls = Vec::new();
-+    let mut conn = config
-+        .connect(ServerName::try_from("localhost").unwrap())
-+        .build(&mut tls)
-+        .unwrap();
-+
-+    // `key_share` was offered (TLS 1.3 is enabled), so it is not
-+    // unsolicited, but it is only specified for TLS 1.3.
-+    let sh = Message {
-+        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_2),
-+        payload: MessagePayload::handshake(HandshakeMessagePayload(HandshakePayload::ServerHello(
-+            ServerHelloPayload {
-+                legacy_version: ProtocolVersion::TLSv1_2,
-+                random: Random::new(config.provider().secure_random).unwrap(),
-+                session_id: SessionId::empty(),
-+                cipher_suite: TLS_TEST_SUITE.common.suite,
-+                compression_method: Compression::Null,
-+                extensions: Box::new(ServerExtensions {
-+                    extended_main_secret_ack: Some(()),
-+                    key_share: Some(KeyShareEntry::new(
-+                        KEY_EXCHANGE_GROUP.name(),
-+                        vec![0xaa; 32],
-+                    )),
-+                    ..ServerExtensions::default()
-+                }),
-+            },
-+        ))),
-+    };
-+    let mut input = VecInput::default();
-+    input
-+        .read(&mut sh.into_wire_bytes().as_slice())
-+        .unwrap();
-+
++fn test_quic_server_rejects_non_empty_session_id() {
++    let mut server = Connection::new_quic(
++        Arc::new(make_server_config(
++            KeyType::EcdsaP256,
++            &provider::DEFAULT_PROVIDER,
++        )),
++        quic::Version::V2,
++        vec![],
++    )
++    .unwrap();
 +    assert_eq!(
-+        process(&mut input, &mut conn).unwrap_err(),
-+        PeerMisbehaved::UnsolicitedServerHelloExtension.into()
++        server
++            .read_hs(&mut SliceInput::new(&mut encoding::client_hello(
++                ProtocolVersion::TLSv1_2,
++                &[0x12; 32],
++                &[0x01, 0xaa],
++                vec![CipherSuite::TLS13_AES_128_GCM_SHA256],
++                vec![
++                    encoding::Extension::new_sig_algs(),
++                    encoding::Extension::new_versions(),
++                    encoding::Extension::new_dummy_key_share(),
++                    encoding::Extension::new_kx_groups(),
++                    encoding::Extension::new_quic_transport_params(b"blurgh"),
++                ],
++            )))
++            .err(),
++        Some(PeerMisbehaved::NonEmptySessionIdInQuic.into())
 +    );
 +}
 +
  #[test]
- fn cas_extension_in_client_hello_if_server_verifier_requests_it() {
-     let cas_sending_server_verifier =
+ fn test_quic_client_rejects_tls12_server() {
+     let mut client = Arc::new(make_client_config(
 ```
 
-**File**: `rustls/src/client/tls12.rs` (modified, +10/-1)
+**File**: `rustls/src/error/mod.rs` (modified, +1/-0)
 ```diff
-@@ -43,7 +43,7 @@ mod server_hello {
-         ClientHandler, ClientHelloInput, ClientSessionValue, ClientState, ExpectServerHello,
-     };
-     use crate::common_state::Protocol;
--    use crate::msgs::ServerHelloPayload;
-+    use crate::msgs::{ExtensionType, ServerHelloPayload};
-     use crate::sealed::Sealed;
-     use crate::verify::HandshakeSignatureValid;
- 
-@@ -96,6 +96,15 @@ mod server_hello {
-                 return Err(PeerMisbehaved::NonEmptyRenegotiationInfo.into());
+@@ -1225,6 +1225,7 @@ pub enum PeerMisbehaved {
+     MissingQuicTransportParameters,
+     NoCertificatesPresented,
+     NonEmptyRenegotiationInfo,
++    NonEmptySessionIdInQuic,
+     OfferedDuplicateCertificateCompressions,
+     OfferedDuplicateKeyShares,
+     OfferedEarlyDataWithOldProtocolVersion,
+```
+
+**File**: `rustls/src/server/tls13.rs` (modified, +5/-0)
+```diff
+@@ -105,6 +105,11 @@ mod client_hello {
+                 return Err(PeerMisbehaved::OfferedIncorrectCompressions.into());
              }
  
-+            // We may have offered these for TLS 1.3, so they are not unsolicited,
-+            // but they have no meaning in a TLS 1.2 ServerHello.
-+            if server_hello
-+                .received_types()
-+                .any(|ext| ExtensionType::TLS13_ONLY.contains(&ext))
-+            {
-+                return Err(PeerMisbehaved::UnsolicitedServerHelloExtension.into());
++            // RFC 9001 section 8.4: QUIC servers should reject a non-empty legacy_session_id
++            if st.protocol.is_quic() && !input.client_hello.session_id.is_empty() {
++                return Err(PeerMisbehaved::NonEmptySessionIdInQuic.into());
 +            }
 +
-             let ClientHelloInput {
-                 config,
-                 session_key,
-```
-
-**File**: `rustls/src/msgs/enums.rs` (modified, +12/-0)
-```diff
-@@ -119,6 +119,18 @@ impl ExtensionType {
-     pub(crate) fn is_recognized(&self) -> bool {
-         ExtensionTypeName::try_from(*self).is_ok()
-     }
-+
-+    /// Extensions specified only for TLS 1.3 that we may offer alongside TLS 1.2.
-+    ///
-+    /// `supported_versions` is checked separately.
-+    pub(crate) const TLS13_ONLY: &'static [Self] = &[
-+        Self::PreSharedKey,
-+        Self::EarlyData,
-+        Self::Cookie,
-+        Self::PSKKeyExchangeModes,
-+        Self::CertificateAuthorities,
-+        Self::KeyShare,
-+    ];
- }
- 
- enum_builder! {
-```
-
----
-
-### Incident Patch 2: `0e73e14c` (2026-11-06)
-**Commit Message**: Skip TLS 1.2 session lookup when TLS 1.2 resumption is disabled
-
-`ClientSessionValue::retrieve` fell back to `ClientSessionStore::tls12_session`
-regardless of `tls12_resumption`, so a client with `Tls12Resumption::Disabled`
-still resumed TLS 1.2 sessions by session ID. TLS 1.3 tickets are taken
-before the fallback and are unaffected.
-
-**File**: `rustls-test/tests/api/resume.rs` (modified, +24/-1)
-```diff
-@@ -8,7 +8,9 @@ use core::time::Duration;
- use std::fmt;
- use std::sync::Arc;
- 
--use rustls::client::{ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest};
-+use rustls::client::{
-+    ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest, Tls12Resumption,
-+};
- use rustls::crypto::kx::NamedGroup;
- use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
- use rustls::enums::{CertificateType, ProtocolVersion};
-@@ -104,6 +106,27 @@ impl ClientCredentialResolver for ForwardingResolver {
-     }
- }
- 
-+#[test]
-+fn tls12_resumption_disabled() {
-+    for (provider, second) in [
-+        (provider::DEFAULT_TLS12_PROVIDER, HandshakeKind::Full),
-+        (provider::DEFAULT_TLS13_PROVIDER, HandshakeKind::Resumed),
-+    ] {
-+        let mut client_config = make_client_config(KeyType::default(), &provider);
-+        client_config.resumption =
-+            Resumption::default().tls12_resumption(Tls12Resumption::Disabled);
-+        let client_config = Arc::new(client_config);
-+        let server_config = Arc::new(make_server_config(KeyType::default(), &provider));
-+        for expected in [HandshakeKind::Full, second] {
-+            let (mut client, mut server, mut buf) =
-+                make_pair_for_arc_configs(&client_config, &server_config);
-+            buf.handshake(&mut client, &mut server);
-+            assert_eq!(client.handshake_kind(), Some(expected));
-+            assert_eq!(server.handshake_kind(), Some(expected));
-+        }
-+    }
-+}
-+
- #[test]
- fn resumption_combinations() {
-     for (client_config, server_config, expect) in MultiTest::new(provider::DEFAULT_PROVIDER) {
-```
-
-**File**: `rustls/src/client/hs.rs` (modified, +3/-0)
-```diff
-@@ -1133,6 +1133,9 @@ impl ClientSessionValue {
-             .take_tls13_ticket(key)
-             .map(ClientSessionValue::Tls13)
-             .or_else(|| {
-+                if config.resumption.tls12_resumption == Tls12Resumption::Disabled {
-+                    return None;
-+                }
-                 config
-                     .resumption
-                     .store
+             let shares_ext = input
+                 .client_hello
+                 .key_shares
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3422** (2026-11-10): Take graviola 0.4.5 and delete FAKE_HASH (@ctz)
 - **PR #3420** (2026-11-09): replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info (@mcr)
 - **PR #3419** (2026-11-09): Update Rust crate crabgrind to 0.5 (@renovate-bot)
 - **PR #3417** (2026-11-06): Refactor ALPN selection (@ctz)
 - **PR #3414** (2026-11-06): client: reject hello retry request naming a group already offered (@Mounika2456)
-- **PR #3411** (2026-11-03): 0.24 documentation pass (@ctz)
-- **PR #3410** (2026-11-02): Make tests more concise (@ctz)
+- **PR #3413** (2026-11-10): ech: reject server hello selecting a PSK when ECH is rejected (@Mounika2456)
 
 ---
 
@@ -2495,48 +2385,51 @@ before the fallback and are unaffected.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. client: reject TLS1.3-only extensions in TLS1.2 ServerHello
+## X. Reject non-empty legacy_session_id in QUIC ClientHello
 
 **RULE**:
-When implementing operations in `rustls/src/client/test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/api/quic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7506724`: client: reject TLS1.3-only extensions in TLS1.2 ServerHello. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `289b9c59`: Reject non-empty legacy_session_id in QUIC ClientHello. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/client/test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/quic.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 #[test]
-fn test_client_rejects_tls13_extension_in_tls12_server_hello() {
-    let config = Arc::new(
-        ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
-            .with_root_certificates(roots())
-            .with_no_client_auth()
-            .unwrap(),
+fn test_quic_server_rejects_non_empty_session_id() {
+    let mut server = Connection::new_quic(
+        Arc::new(make_server_config(
+            KeyType::EcdsaP256,
+            &provider::DEFAULT_PROVIDER,
+        )),
+        quic::Version::V2,
+        vec![],
+    )
+    .unwrap();
+    assert_eq!(
+        server
+            .read_hs(&mut SliceInput::new(&mut encoding::client_hello(
+                ProtocolVersion::TLSv1_2,
+                &[0x12; 32],
+                &[0x01, 0xaa],
+                vec![CipherSuite::TLS13_AES_128_GCM_SHA256],
+                vec![
+                    encoding::Extension::new_sig_algs(),
+                    encoding::Extension::new_versions(),
+                    encoding::Extension::new_dummy_key_share(),
+                    encoding::Extension::new_kx_groups(),
+                    encoding::Extension::new_quic_transport_params(b"blurgh"),
+                ],
+            )))
+            .err(),
+        Some(PeerMisbehaved::NonEmptySessionIdInQuic.into())
     );
-    let mut tls = Vec::new();
-    let mut conn = config
-        .connect(ServerName::try_from("localhost").unwrap())
-        .build(&mut tls)
-        .unwrap();
+}
 
-    // `key_share` was offered (TLS 1.3 is enabled), so it is not
-    // unsolicited, but it is only specified for TLS 1.3.
-    let sh = Message {
-        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_2),
-        payload: MessagePayload::handshake(HandshakeMessagePayload(HandshakePayload::ServerHello(
-            ServerHelloPayload {
-                legacy_version: ProtocolVersion::TLSv1_2,
-                random: Random::new(config.provider().secure_random).unwrap(),
-                session_id: SessionId::empty(),
-                cipher_suite: TLS_TEST_SUITE.common.suite,
-                compression_method: Compression::Null,
-                extensions: Box::new(ServerExtensions {
-                    extended_main_secret_ack: Some(()),
-       
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2546,4 +2439,4 @@ fn test_client_rejects_tls13_extension_in_tls12_server_hello() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7506724` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `289b9c59` are properly handled with clean fallback behavior.

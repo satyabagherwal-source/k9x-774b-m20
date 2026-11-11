@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source**: github ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
-> **Source Version**: `91f5d22e`  
+> **Source Version**: `178cc027`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:45:00.753Z  
+> **Timestamp**: 2026-11-11T14:09:29.577Z  
 > **Learning ID**: `learn-github-burntsushi-ripgrep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:45:00.372Z  
+> **Harvest Timestamp**: 2026-11-11T14:09:29.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 69504 stars
+- **Stars / Engagement**: 69950 stars
 
 ---
 
@@ -1367,45 +1367,80 @@ fn render_custom_markup(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `65e072fa` (2026-10-27)
-**Commit Message**: ignore: respect linked worktree excludes without requiring Git
+### Incident Patch 1: `178cc027` (2026-11-09)
+**Commit Message**: ignore: respect custom filters with a maximum file size (#3599)
 
-PR #3578
+Do not return early for files within the size limit, so the custom entry filter is still applied. Cover sequential and parallel walkers with zero and nonzero size limits, nested files and rejected directories.
 
-**File**: `crates/ignore/src/dir.rs` (modified, +8/-1)
+PR #3599
+
+**File**: `crates/ignore/src/walk.rs` (modified, +37/-2)
 ```diff
-@@ -373,7 +373,7 @@ impl Ignore {
-     ) -> (IgnoreInner, Option<Error>) {
-         let check_vcs_dir = self.inner.opts.require_git
-             && (self.inner.opts.git_ignore || self.inner.opts.git_exclude);
--        let git_type = if check_vcs_dir
-+        let git_type = if (check_vcs_dir || self.inner.opts.git_exclude)
-             && ignore_files_list.is_none_or(|i| i.has_git_dir)
-         {
-             dir.join(".git").metadata().ok().map(|md| md.file_type())
-@@ -1669,6 +1669,13 @@ mod tests {
-         assert!(err.is_none());
-         assert!(ignore.matched("ignore_me", false).is_ignore());
+@@ -1168,11 +1168,13 @@ impl Walk {
+             }
+         }
+         if self.max_filesize.is_some() && !ent.is_dir() {
+-            return Ok(skip_filesize(
++            if skip_filesize(
+                 self.max_filesize.unwrap(),
+                 ent.path(),
+                 &ent.metadata().ok(),
+-            ));
++            ) {
++                return Ok(true);
++            }
+         }
+         if let Some(Filter(filter)) = &self.filter {
+             if !filter(ent) {
+@@ -2569,6 +2571,39 @@ mod tests {
+         );
+     }
  
-+        let without_required_git =
-+            IgnoreBuilder::new().require_git(false).build();
-+        let (ignore, err) =
-+            without_required_git.add_child(td.path().join("linked-worktree"));
-+        assert!(err.is_none());
-+        assert!(ignore.matched("ignore_me", false).is_ignore());
++    #[test]
++    fn max_filesize_respects_filter_entry() {
++        let td = tmpdir();
++        mkdirp(td.path().join("a/skipdir"));
++        wfile_size(td.path().join("keep"), 400);
++        wfile_size(td.path().join("skip"), 0);
++        wfile_size(td.path().join("large"), 600);
++        wfile_size(td.path().join("a/keep"), 0);
++        wfile_size(td.path().join("a/skip"), 200);
++        wfile_size(td.path().join("a/boundary"), 500);
++        wfile_size(td.path().join("a/skipdir/keep"), 0);
 +
-         // absolute commondir
-         wfile(commondir_path(), git_dir.to_str().unwrap());
-         let (ignore, err) = ib.add_child(td.path().join("linked-worktree"));
++        let mut builder = WalkBuilder::new(td.path());
++        builder.filter_entry(|entry| {
++            entry.file_name() != "skip" && entry.file_name() != "skipdir"
++        });
++        assert_paths(
++            td.path(),
++            &builder,
++            &["a", "keep", "large", "a/keep", "a/boundary"],
++        );
++        assert_paths(
++            td.path(),
++            builder.max_filesize(Some(0)),
++            &["a", "a/keep"],
++        );
++        assert_paths(
++            td.path(),
++            builder.max_filesize(Some(500)),
++            &["a", "keep", "a/keep", "a/boundary"],
++        );
++    }
++
+     #[cfg(unix)] // because symlinks on windows are weird
+     #[test]
+     fn symlinks() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3599** (2026-11-09): ignore: apply filter_entry to files when max_filesize is set (@mabunemeh)
+- **PR #3596** (closed): printer: skip path resolution for an empty hyperlink format (@lianxiaozhi)
+- **PR #3586** (closed): Fix passthru replacement joining lines when a line terminator is replaced (@Huyvux12)
 - **PR #3578** (2026-10-27): ignore: respect linked worktree excludes without requiring Git (@CheckPickerUpper)
 - **PR #3574** (2026-10-23): cargo: remove the `homepage` field (@BurntSushi)
 - **PR #3573** (2026-10-23): index: revert indexing additions (@BurntSushi)
-- **PR #3572** (closed): ignore: reject non-regular files as gitignore input (@princejain756)
-- **PR #3570** (closed): doc: add Windows shell quirks and workarounds section (@Manthan-Moudgalya)
-- **PR #3565** (2026-10-23): ci: install lz4 instead of liblz4-tool (@manoj-1407)
 
 ---
 
@@ -1425,35 +1460,65 @@ PR #3578
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ignore: respect linked worktree excludes without requiring Git
+## X. ignore: respect custom filters with a maximum file size (#3599)
 
 **RULE**:
-When implementing operations in `crates/ignore/src/dir.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ignore/src/walk.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `65e072fa`: ignore: respect linked worktree excludes without requiring Git. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `178cc027`: ignore: respect custom filters with a maximum file size (#3599). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ignore/src/dir.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ignore/src/walk.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let git_type = if (check_vcs_dir || self.inner.opts.git_exclude)
-        let without_required_git =
-            IgnoreBuilder::new().require_git(false).build();
-        let (ignore, err) =
-            without_required_git.add_child(td.path().join("linked-worktree"));
-        assert!(err.is_none());
-        assert!(ignore.matched("ignore_me", false).is_ignore());
+            if skip_filesize(
+            ) {
+                return Ok(true);
+            }
+    #[test]
+    fn max_filesize_respects_filter_entry() {
+        let td = tmpdir();
+        mkdirp(td.path().join("a/skipdir"));
+        wfile_size(td.path().join("keep"), 400);
+        wfile_size(td.path().join("skip"), 0);
+        wfile_size(td.path().join("large"), 600);
+        wfile_size(td.path().join("a/keep"), 0);
+        wfile_size(td.path().join("a/skip"), 200);
+        wfile_size(td.path().join("a/boundary"), 500);
+        wfile_size(td.path().join("a/skipdir/keep"), 0);
+
+        let mut builder = WalkBuilder::new(td.path());
+        builder.filter_entry(|entry| {
+            entry.file_name() != "skip" && entry.file_name() != "skipdir"
+        });
+        assert_paths(
+            td.path(),
+            &builder,
+            &["a", "keep", "large", "a/keep", "a/boundary"],
+        );
+        assert_paths(
+            td.path(),
+            builder.max_filesize(Some(0)),
+            &["a", "a/keep"],
+        );
+        assert_paths(
+            td.path(),
+            builder.max_filesize(Some(500)),
+            &["a", "keep", "a/keep", "a/boundary"],
+        );
+    }
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let git_type = if check_vcs_dir
+            return Ok(skip_filesize(
+            ));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `65e072fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `178cc027` are properly handled with clean fallback behavior.

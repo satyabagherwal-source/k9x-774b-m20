@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `80e1ef5e`  
+> **Source Version**: `af5d1570`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:31:48.302Z  
+> **Timestamp**: 2026-11-11T10:08:13.053Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:31:47.659Z  
+> **Harvest Timestamp**: 2026-11-11T10:08:13.045Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46771 stars
+- **Stars / Engagement**: 46821 stars
 
 ---
 
@@ -1308,11 +1308,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8585** (2026-11-10): **mitmweb: add quiet zone around WireGuard QR code**
+  *Symptoms*: #### Description  The WireGuard QR code in mitmweb is rendered with `margin: 0`. In the light theme the white page acts as the quiet zone, but in dark mode the code touches the dark background, and many QR scanners (including the official WireGuard app) fail to read it.  This PR draws the standard 4-module quiet zone into the canvas (the `qrcode` library default), so the QR code is scannable regardless of the theme. In the light theme the change is not visible apart from the QR code being slightly larger.  | Before | After | | --- | --- | | <img width="768" alt="QR code without quiet zone in dark mode" src="https://github.com/user-attachments/assets/75f53dd2-1437-43c7-ad4a-54d51de39a37" /> | <img width="768" alt="QR code with white quiet zone in dark mode" src="https://github.com/user-attachments/assets/8d8c8332-19c0-46c4-9202-33e30283bb01" /> |  (Screenshots use a throwaway WireGuard config.)  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG. 
+
 - **Issue #8584** (2026-11-09): **docs: fix links that go to a 404 on docs.mitmproxy.org**
   *Symptoms*: https://docs.mitmproxy.org/ and https://docs.mitmproxy.org/en/stable/ both return 404 right now. Three places link there:  - the Docs link in the header of every docs page (docs/src/layouts/_default/baseof.html) - the Docker Hub README - docs/README.md  I pointed all three at https://docs.mitmproxy.org/stable/, which is what the mitmproxy.org navbar already uses. Checked each URL with curl before and after.
-
-- **Issue #8568** (2026-11-04): **Fix Windows CI**
-  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1329,59 +1329,89 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80e1ef5e` (2026-11-09)
-**Commit Message**: docs: fix links that go to a 404 on docs.mitmproxy.org (#8584)
+### Incident Patch 1: `af5d1570` (2026-11-10)
+**Commit Message**: mitmweb: add quiet zone around WireGuard QR code (#8585)
 
-docs: point links to docs.mitmproxy.org/stable/
+* mitmweb: add quiet zone around WireGuard QR code
 
-The bare https://docs.mitmproxy.org/ and the old /en/stable/ path both
-return 404, including the Docs link in the docs site header.
+The QR code was rendered without a margin, which only worked on the
+white background of the light theme. In dark mode, the code touches the
+dark page background and many scanners, including the official
+WireGuard app, fail to read it.
 
-**File**: `docs/README.md` (modified, +1/-1)
+* [autofix.ci] apply automated fixes
+
+---------
+
+Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -1,6 +1,6 @@
- # Mitmproxy Documentation
+@@ -7,6 +7,8 @@
  
--This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/>.
-+This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/stable/>.
+ ## Unreleased: mitmproxy next
  
- ## Prerequisites
- 
++- mitmweb: Add a quiet zone around the WireGuard QR code so that it can be scanned in dark mode.
++  ([#8585](https://github.com/mitmproxy/mitmproxy/pull/8585), @yldrmzffr)
+ - Expand `~` in the `hardump` option, like other file path options. Previously, the HAR file
+   could not be written on exit and the collected flows were lost.
+   ([#8541](https://github.com/mitmproxy/mitmproxy/pull/8541), @memx13)
 ```
 
-**File**: `docs/src/layouts/_default/baseof.html` (modified, +1/-1)
+**File**: `web/src/js/__tests__/components/Modes/ServerStatusSpec.tsx` (added, +28/-0)
 ```diff
-@@ -36,7 +36,7 @@
-             <img src='{{ (resources.Get "logo-navbar.png").RelPermalink }}' alt="mitmproxy logo" width="123" height="28">
-         </a>
-         <a class="hide-mobile" href="https://mitmproxy.org/posts/">Blog</a>
--        <a class="hide-mobile" href="https://docs.mitmproxy.org/">Docs</a>
-+        <a class="hide-mobile" href="https://docs.mitmproxy.org/stable/">Docs</a>
-         <a class="hide-mobile" href="https://mitmproxy.org/publications/">Publications</a>
-         <span style="flex-grow: 1"></span>
-         <input type="search" id="search" placeholder="Search">
+@@ -0,0 +1,28 @@
++import * as React from "react";
++import QRCode from "qrcode";
++import { render } from "../../test-utils";
++import { ServerStatus } from "../../../components/Modes/CaptureSetup";
++
++jest.mock("qrcode", () => ({ toCanvas: jest.fn() }));
++
++test("WireGuard QR code has a quiet zone", () => {
++    render(
++        <ServerStatus
++            backendState={{
++                description: "WireGuard server",
++                full_spec: "wireguard",
++                is_running: true,
++                last_exception: null,
++                listen_addrs: [["0.0.0.0", 51820]],
++                type: "wireguard",
++                wireguard_conf: "[Interface]\nPrivateKey = foo",
++            }}
++        />,
++    );
++
++    expect(QRCode.toCanvas).toHaveBeenCalledWith(
++        expect.any(HTMLCanvasElement),
++        "[Interface]\nPrivateKey = foo",
++        expect.objectContaining({ margin: 4 }),
++    );
++});
 ```
 
-**File**: `release/docker/DockerHub-README.md` (modified, +1/-1)
+**File**: `web/src/js/components/Modes/CaptureSetup.tsx` (modified, +2/-1)
 ```diff
-@@ -48,7 +48,7 @@ Proxy server listening at http://*:8080
- ```
- 
- If `~/.mitmproxy/mitmproxy-ca.pem` is present in the container, mitmproxy will assume uid and gid from the file owner.
--For further details, please consult the mitmproxy [documentation](https://docs.mitmproxy.org/en/stable/).
-+For further details, please consult the mitmproxy [documentation](https://docs.mitmproxy.org/stable/).
- 
- ## Tags
- 
+@@ -29,7 +29,8 @@ function ServerDescription({
+     useEffect(() => {
+         if (wireguard_conf && qrCode.current)
+             QRCode.toCanvas(qrCode.current, wireguard_conf, {
+-                margin: 0,
++                // Draw the quiet zone into the canvas so that the code stays scannable on dark backgrounds.
++                margin: 4,
+                 scale: 3,
+             });
+     }, [wireguard_conf]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8585** (2026-11-10): mitmweb: add quiet zone around WireGuard QR code (@yldrmzffr)
 - **PR #8584** (2026-11-09): docs: fix links that go to a 404 on docs.mitmproxy.org (@Kernel-Hunter)
 - **PR #8568** (2026-11-04): Fix Windows CI (@mhils)
 - **PR #8558** (2026-11-03): build(deps): bump the github-actions group with 5 updates (@dependabot[bot])
 - **PR #8557** (2026-11-03): build(deps): update urwid requirement from <=4.0.13,>=2.6.14 to >=2.6.14,<=4.2.5 (@dependabot[bot])
 - **PR #8556** (2026-11-03): build(deps-dev): bump ruff from 0.16.9 to 0.17.2 (@dependabot[bot])
-- **PR #8554** (2026-11-03): build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.13.0 (@dependabot[bot])
 
 ---
 
@@ -1401,28 +1431,29 @@ return 404, including the Docs link in the docs site header.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix links that go to a 404 on docs.mitmproxy.org (#8584)
+## X. mitmweb: add quiet zone around WireGuard QR code (#8585)
 
 **RULE**:
-When implementing operations in `docs/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80e1ef5e`: docs: fix links that go to a 404 on docs.mitmproxy.org (#8584). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af5d1570`: mitmweb: add quiet zone around WireGuard QR code (#8585). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/stable/>.
+- mitmweb: Add a quiet zone around the WireGuard QR code so that it can be scanned in dark mode.
+  ([#8585](https://github.com/mitmproxy/mitmproxy/pull/8585), @yldrmzffr)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/>.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80e1ef5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af5d1570` are properly handled with clean fallback behavior.

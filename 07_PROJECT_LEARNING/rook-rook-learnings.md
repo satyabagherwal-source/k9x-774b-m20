@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `ad6e6fc9`  
+> **Source Version**: `6616e134`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:44:24.936Z  
+> **Timestamp**: 2026-11-11T10:08:11.114Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:44:24.754Z  
+> **Harvest Timestamp**: 2026-11-11T10:08:11.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13704 stars
+- **Stars / Engagement**: 13705 stars
 
 ---
 
@@ -1140,8 +1140,8 @@ func ObcAdditionalConfigKeyIsAllowed(configField string) bool {
 	return slices.Contains(obcAllowAdditionalConfigFields, configField)
 }
 
-// canIgnoreHealthErrStatusInReconcile determines whether a status of HEALTH_ERR in the CephCluster can be ignored safely.
-func canIgnoreHealthErrStatusInReconcile(cephCluster cephv1.CephCluster, controllerName string) bool {
+// CanIgnoreHealthErrStatusInReconcile determines whether a status of HEALTH_ERR in the CephCluster can be ignored safely.
+func CanIgnoreHealthErrStatusInReconcile(cephCluster cephv1.CephCluster, controllerName string) bool {
 	// Get a list of all the keys causing the HEALTH_ERR status.
 	healthErrKeys := make([]string, 0)
 	for key, health := range cephCluster.Status.CephStatus.Details {
@@ -1406,11 +1406,11 @@ func quanityToInt64(qty string) (*int64, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #18743** (2026-11-09): **Race can lead to blocked update/upgrade when a Ceph version introduces new health error**
+  *Symptoms*: <!-- **Are you in the right place?** 1. For issues or feature requests, please create an issue in this repository. 2. For general technical and non-technical questions, we are happy to help you on our [Rook.io Slack](https://slack.rook.io/). 3. Did you already search the existing open issues for anything similar? -->  **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:**  When Rook restarts after (some) mons are updated but before mon `postMonStartupActions()` complete, Rook can get stuck unable to reconcile the Ceph cluster due to health errors that Rook is otherwise intended to ignore.  **Expected behavior:**  Rook should always ignore the health errors defined [here](https://github.com/rook/rook/blob/a53a960adc15ec4c167c6ef9714e0b4ca009aff1/pkg/operator/ceph/controller/controller_utils.go#L214-L222) for any check that gates reconciliation.  Today, this is not the case for the pre-reconciliation Ceph version check [here](https://github.com/rook/rook/blob/8e7650583263e735b75cbbfd4b52b91bc9b74113/pkg/operator/ceph/cluster/version.go#L194-L210).  The pre-reconciliation check uses a simplified check that prohibits reconciliation from beginning on any HEALTH_ERR, even those intended to be ignored by code above.  **How to reproduce it (minimal and precise):**  Repro is as follows: - Install a Rook cluster with 3 mons using Ceph v19.2.0.   - Required: `skipUpgradeChecks: false` - Update the cluster to Ceph v19.2.6. - Force delete the rook
+
 - **Issue #18621** (2026-11-05): **PVC OSD with a separate metadata PVC is not recreated when wipeDevicesFromOtherClusters is enabled**
   *Symptoms*: **How to reproduce**  1. Create a CephCluster with the wipe option enabled and a PVC device set with a separate metadata PVC:  ```yaml spec:   cleanupPolicy:     wipeDevicesFromOtherClusters: true   storage:     storageClassDeviceSets:       - name: set1         count: 1         volumeClaimTemplates:           - metadata:               name: data             spec:               volumeMode: Block               # ...           - metadata:               name: metadata             spec:               volumeMode: Block               # ... ```  2. Wait until the OSD is up. 3. Delete the OSD deployment. Rook runs the OSD prepare job again and should recreate the deployment:  ```console kubectl -n rook-ceph delete deploy rook-ceph-osd-0 ```  **Expected**  The OSD comes back up with its data, as it does with `wipeDevicesFromOtherClusters: false`.  **Actual**  The OSD does not come back:  - **Unencrypted OSD:** the OSD's metadata PVC is wiped. The deployment is recreated, but the OSD pod fails to start and the OSD is lost. Its data has to be recovered from other replicas. - **Encrypted OSD:** the deployment is not recreated. The prepare job keeps failing and the OSD stays down. The data is not lost.  In both cases the prepare job wrongly treats the OSD's own metadata PVC as a device from another cluster and wipes it:  ``` cephosd: begin wiping OSD 0 device "/dev/vdc" belonging to a different ceph cluster "" cephosd: zap OSD.0 on device path "/dev/vdc" ```  For the encrypted OSD the wip
-
-- **Issue #18585** (2026-10-19): **RGW pods restart on reconcile without spec change: `rgwCommandFlags` emitted in random order**
-  *Symptoms*: **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:**  With two or more `spec.gateway.rgwCommandFlags`, an operator restart can roll the RGW deployment even though nothing in the `CephObjectStore` has changed. The flags are appe nded by ranging over the map, which Go iterates in random order ([spec.go#L580-L583 @ v1.20.8](https://github.com/rook/rook/blob/v1.20.8/pkg/operator/ceph/object/spec.go#L58 0-L583); `master` has the same loop):  ```go for flag, val := range c.store.Spec.Gateway.RgwCommandFlags {         container.Args = append(container.Args, cephconfig.NewFlag(flag, val)) } ```  When the order differs from the last reconcile, the pod template changes and the RGW pods are rolled.  **Expected behavior:**  Same spec, same pod template. Sort the keys:  ```go for _, flag := range slices.Sorted(maps.Keys(c.store.Spec.Gateway.RgwCommandFlags)) { ```  **How to reproduce it (minimal and precise):**  1. Create a `CephObjectStore` with 3 or more `rgwCommandFlags`. 2. Run `kubectl -n rook-ceph rollout restart deploy/rook-ceph-operator`, repeating it a few times. 3. The RGW deployment gets a new ReplicaSet whose only difference is the order of the flags.  **Logs to submit**:  Old and new ReplicaSet after an operator restart. With args sorted, the templates are identical. Unsorted:  ```diff $ diff -U4 <(kubectl -n rook-ceph get rs <old-rs> -o json | jq -r '.spec.template.spec.containers[0].args[]') \            <(kubectl -n rook-ceph get
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1427,48 +1427,373 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eec0baeb` (2026-11-06)
-**Commit Message**: Merge pull request #18702 from travisn/fix-flaky-waitfornostandbys
+### Incident Patch 1: `6799e8fc` (2026-11-09)
+**Commit Message**: test: fix flaky and racy mgr module configuration tests
 
-test: fix flaky TestWaitForNoStandbys timeout
+configureMgrModules and Start configure mgr modules in fire-and-forget
+goroutines (startModuleConfiguration). Several unit tests exercised these
+paths and then read or mutated shared state the goroutines were still
+touching, which made them flaky and racy:
 
-**File**: `pkg/daemon/ceph/client/filesystem_test.go` (modified, +6/-1)
+- TestConfigureModules enabled the rook module (spawning an orchestrator
+  configuration goroutine that runs "mgr module enable rook --force") and
+  then, in the next subcase, reset and asserted the module counters. The
+  leaked goroutine could increment the counter after the reset, failing the
+  assert, and also raced on the plain-int counters.
+- Start's goroutines read c.spec, while TestStartMgr mutated c.spec between
+  repeated Start calls.
+- Goroutines leaked across tests and raced on package globals that other
+  tests mutate (e.g. exec.CephCommandsTimeout, orchestratorInitWaitTime),
+  surfacing as a race in TestOrchestratorModules.
+
+Add a sync.WaitGroup to Cluster that startModuleConfiguration tracks (via
+WaitGroup.Go) so the module-configuration goroutines are awaitable.
+Production behavior is unchanged (nothing waits on it there; the goroutines
+still run async). The
+
+**File**: `pkg/operator/ceph/cluster/mgr/mgr.go` (modified, +6/-2)
 ```diff
-@@ -605,7 +605,12 @@ func TestWaitForNoStandbys(t *testing.T) {
- 		}
- 		return "", errors.Errorf("unexpected ceph command %q", args)
- 	}
--	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 5*time.Millisecond)
-+	// Use a generous timeout here: this case must poll at least twice (the first
-+	// dump reports a standby, subsequent dumps report none) before it can succeed.
-+	// A tight timeout makes the test flaky under CI scheduling jitter. The poll
-+	// returns as soon as the condition is met, so a large timeout keeps the test
-+	// fast while eliminating the race.
-+	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 10*time.Second)
- 	assert.NoError(t, err)
+@@ -22,6 +22,7 @@ import (
+ 	"math"
+ 	"slices"
+ 	"strconv"
++	"sync"
+ 
+ 	"github.com/banzaicloud/k8s-objectmatcher/patch"
+ 	"github.com/coreos/pkg/capnslog"
+@@ -72,6 +73,9 @@ type Cluster struct {
+ 	exitCode              func(err error) (int, bool)
+ 	spec                  cephv1.ClusterSpec
+ 	shouldRotateCephxKeys bool
++	// moduleWaitGroup tracks the asynchronous module-configuration goroutines
++	// started by startModuleConfiguration so they can be awaited (used by tests).
++	moduleWaitGroup sync.WaitGroup
  }
  
+ // New creates an instance of the mgr
+@@ -422,14 +426,14 @@ func (c *Cluster) configureModules(daemonIDs []string) {
+ }
+ 
+ func (c *Cluster) startModuleConfiguration(description string, configureModules func() error) {
+-	go func() {
++	c.moduleWaitGroup.Go(func() {
+ 		err := configureModules()
+ 		if err != nil {
+ 			log.NamespacedError(c.clusterInfo.Namespace, logger, "failed modules: %q. %v", description, err)
+ 		} else {
+ 			log.NamespacedInfo(c.clusterInfo.Namespace, logger, "successful modules: %s", description)
+ 		}
+-	}()
++	})
+ }
+ 
+ // Ceph docs about the prometheus module: http://docs.ceph.com/docs/master/mgr/prometheus/
+```
+
+**File**: `pkg/operator/ceph/cluster/mgr/mgr_test.go` (modified, +29/-1)
+```diff
+@@ -125,6 +125,19 @@ func createNewCluster(t *testing.T) *Cluster {
+ 	c := New(ctx, clusterInfo, clusterSpec, "myversion")
+ 	defer os.RemoveAll(c.spec.DataDirHostPath)
+ 
++	// This cluster enables the dashboard with SSL, so the awaited dashboard
++	// goroutine would otherwise sleep for dashboardInitWaitTime (5s). Zero it out
++	// and restore it after the goroutines are awaited (cleanups run LIFO, so the
++	// restore below runs after the Wait registered next).
++	origDashboardInitWaitTime := dashboardInitWaitTime
++	dashboardInitWaitTime = 0
++	t.Cleanup(func() { dashboardInitWaitTime = origDashboardInitWaitTime })
++
++	// Start() configures mgr modules in background goroutines. Wait for them at
++	// the end of the test so they don't leak into later tests and race on the
++	// shared package globals those goroutines read (e.g. exec.CephCommandsTimeout).
++	t.Cleanup(c.moduleWaitGroup.Wait)
++
+ 	return c
+ }
+ 
+@@ -171,6 +184,11 @@ func TestStartMgr(t *testing.T) {
+ }
+ 
+ func validateStart(t *testing.T, c *Cluster) {
++	// Start() configures the mgr modules in background goroutines that read
++	// c.spec. Wait for them to finish before the caller inspects or mutates
++	// c.spec, otherwise those accesses race with the goroutines.
++	c.moduleWaitGroup.Wait()
++
+ 	mgrNames := []string{"a", "b"}
+ 	for i := 0; i < c.spec.Mgr.Count; i++ {
+ 		logger.Infof("Looking for cephmgr replica %d", i)
+@@ -464,7 +482,11 @@ func TestConfigureModules(t *testing.T) {
+ 		{Name: "rook", Enabled: true},
+ 	}
+ 	assert.NoError(t, c.configureMgrModules())
+-	assert.GreaterOrEqual(t, modulesEnabled, 1, "rook module should be enabled on Ceph v20.2.5")
++	// Enabling the rook module spawns an asynchronous orchestrator-configuration
++	// goroutine. Wait for it to finish so its mgr commands don't leak into (and
++	// race with) the counter assertions of the next subcase.
++	c.moduleWaitGroup.Wait()
++	assert.Equal(t, 2, modulesEnabled, "rook module should be enabled by the spec and by the orchestrator configuration on Ceph v20.2.5")
+ 	assert.Equal(t, 0, modulesDisabled)
+ 	assert.Equal(t, "rook", lastModuleConfigured)
+ 
+@@ -693,6 +715,10 @@ func TestMgrKeyRotation(t *testing.T) {
+ 	// verify keyGeneration is set to 1 when the keys are created for the first time.
+ 	err := c.Start()
+ 	assert.NoError(t, err)
++	// Wait for this Start()'s async module-configuration goroutines before the
++	// next Start(), so their dashboard goroutines don't overlap on shared package
++	// globals (e.g. removeMgrDaemonConfiguration).
++	c.moduleWaitGroup.Wait()
+ 	cluster := &cephv1.CephCluster{}
+ 	err = c.context.Client.Get(t.Context(), c.clusterInfo.NamespacedName(), cluster)
+ 	assert.NoError(t, err)
+@@ -708,6 +734,7 @@ func TestMgrKeyRotation(t *testing.T) {
+ 
+ 	err = c.Start()
+ 	assert.NoError(t, err)
++	c.moduleWaitGroup.Wait()
+ 	err = c.context.Client.Get(t.Context(), c.clusterInfo.NamespacedName(), cluster)
+ 	assert.NoError(t, err)
+ 	assert.Equal(t, uint32(2), cluster.Status.Cephx.Mgr.KeyGeneration)
+@@ -720,6 +747,7 @@ func TestMgrKeyRotation(t *testing.T) {
+ 
+ 	err = c.Start()
+ 	assert.NoError(t, err)
++	c.moduleWaitGroup.Wait()
+ 	err = c.context.Client.Get(t.Context(), c.clusterInfo.NamespacedName(), cluster)
+ 	assert.NoError(t, err)
+ 	assert.Equal(t, uint32(3), cluster.Status.Cephx.Mgr.KeyGeneration)
 ```
 
 ---
 
-### Incident Patch 2: `fb9755c7` (2026-11-06)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 2: `3f1aa97a` (2026-11-10)
+**Commit Message**: build(deps): bump the github-dependencies group with 8 updates
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...1fc58d04a4d4374f921bdac573c3811c240f9c26)
+Bumps the github-dependencies group with 8 updates:
+
+| Package | From | To |
+| --- | --- | --- |
+| [github.com/IBM/go-sdk-core/v5](https://github.com/IBM/go-sdk-core) | `5.25.2` | `5.25.3` |
+| [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.5` | `1.47.8` |
+| [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.13` | `1.33.16` |
+| [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.13` | `1.20.16` |
+| [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) | `1.114.6` | `1.114.9` |
+| [github.com/aws/aws-sdk-go-v2/service/sns](https://github.com/aws/aws-sdk-go-v2) | `1.47.7` | `1.47.10` |
+| [github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring](https://github.com/prometheus-operator/prometheus-operator) | `0.94.2` | `0.95.1` |
+| [github.com/prometheus-operator/prometheus-operator/pkg/client](https://github.com/prometheus-operator/prometheus-operator) | `0.94.2` | `0.95.1` |
+
+
+Updates `github.com/IBM/go-sdk-core/v5` from 5.25.2 to 5.25.3
+- [Release notes](https://github.com/IBM/go-sdk-
+
+**File**: `go.mod` (modified, +23/-23)
+```diff
+@@ -10,13 +10,13 @@ replace (
+ )
+ 
+ require (
+-	github.com/IBM/go-sdk-core/v5 v5.25.2
++	github.com/IBM/go-sdk-core/v5 v5.25.3
+ 	github.com/IBM/keyprotect-go-client v1.1.0
+-	github.com/aws/aws-sdk-go-v2 v1.47.5
+-	github.com/aws/aws-sdk-go-v2/config v1.33.13
+-	github.com/aws/aws-sdk-go-v2/credentials v1.20.13
+-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
+-	github.com/aws/aws-sdk-go-v2/service/sns v1.47.7
++	github.com/aws/aws-sdk-go-v2 v1.47.8
++	github.com/aws/aws-sdk-go-v2/config v1.33.16
++	github.com/aws/aws-sdk-go-v2/credentials v1.20.16
++	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9
++	github.com/aws/aws-sdk-go-v2/service/sns v1.47.10
+ 	github.com/aws/smithy-go v1.28.8
+ 	github.com/banzaicloud/k8s-objectmatcher v1.8.0
+ 	github.com/ceph/ceph-csi-operator/api v0.0.0-20261001132947-98eee8980fc6
+@@ -34,8 +34,8 @@ require (
+ 	github.com/kube-object-storage/lib-bucket-provisioner v0.0.0-20260420161730-5164e3746489
+ 	github.com/libopenstorage/secrets v0.0.0-20240416031220-a17cf7f72c6c
+ 	github.com/pkg/errors v0.9.1
+-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.2
+-	github.com/prometheus-operator/prometheus-operator/pkg/client v0.94.2
++	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.95.1
++	github.com/prometheus-operator/prometheus-operator/pkg/client v0.95.1
+ 	github.com/rook/rook/pkg/apis v0.0.0-20241216163035-3170ac6a0c58
+ 	github.com/sethvargo/go-password v0.4.0
+ 	github.com/spf13/cobra v1.10.2
+@@ -47,12 +47,12 @@ require (
+ 	golang.org/x/sync v0.24.0
+ 	gopkg.in/ini.v1 v1.67.3
+ 	k8s.io/api v0.37.2
+-	k8s.io/apiextensions-apiserver v0.37.0
++	k8s.io/apiextensions-apiserver v0.37.2
+ 	k8s.io/apimachinery v0.37.2
+ 	k8s.io/cli-runtime v0.37.2
+ 	k8s.io/client-go v0.37.2
+ 	k8s.io/cloud-provider v0.37.2
+-	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
++	k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab
+ 	sigs.k8s.io/container-object-storage-interface/client v0.2.2
+ 	sigs.k8s.io/controller-runtime v0.25.2
+ 	sigs.k8s.io/mcs-api v0.5.2
+@@ -70,19 +70,19 @@ require (
+ 	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
+ 	github.com/ansel1/merry v1.8.3 // indirect
+ 	github.com/ansel1/merry/v2 v2.2.5 // indirect
+-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 // indirect
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 // indirect
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.12 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/blang/semver/v4 v4.0.0 // indirect
+ 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+```
+
+**File**: `go.sum` (modified, +46/-46)
+```diff
+@@ -110,8 +110,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/
+ github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+-github.com/IBM/go-sdk-core/v5 v5.25.2 h1:WBB+kbsYsF3Qn2kMuJPZBXPFtH53fyi3UNUaq+VFutY=
+-github.com/IBM/go-sdk-core/v5 v5.25.2/go.mod h1:83BKM+mYr4eUlkiCJWf36wjF7PSdOOAxeIjTfoSCnTg=
++github.com/IBM/go-sdk-core/v5 v5.25.3 h1:dL7r1nLoi3xPtX0MdMl0FA0WAM6E6oz40KIu4LwEloI=
++github.com/IBM/go-sdk-core/v5 v5.25.3/go.mod h1:83BKM+mYr4eUlkiCJWf36wjF7PSdOOAxeIjTfoSCnTg=
+ github.com/IBM/keyprotect-go-client v0.5.1/go.mod h1:5TwDM/4FRJq1ZOlwQL1xFahLWQ3TveR88VmL1u3njyI=
+ github.com/IBM/keyprotect-go-client v1.1.0 h1:TmPeEviEEE5fsQK8TpNZ/fblud9PCV7ZrhuQKjWhaQM=
+ github.com/IBM/keyprotect-go-client v1.1.0/go.mod h1:q5beQeQA0ChFa46s31+aK2YuojCukitDaMYNBJgmJkY=
+@@ -144,42 +144,42 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkY
+ github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
+ github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
+ github.com/aws/aws-sdk-go v1.44.164/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
+-github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2LnLS4=
+-github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 h1:MW0Iql1SOTgQPj8mCxrU/eH/K/AIDWi08ItOsXaWRLU=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25/go.mod h1:+ucVYmHYB3JqVueY0E1RHahdXAnKQbIHqybSbvOUbOM=
+-github.com/aws/aws-sdk-go-v2/config v1.33.13 h1:u52x6ISQOx172tpwM0VRxhJzEsTJYpMcEYUGM2A1wrw=
+-github.com/aws/aws-sdk-go-v2/config v1.33.13/go.mod h1:/ixtz6XPHb42zekjQ0LqD9XjTpTysNWhIGwufY1OzI4=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.13 h1:j4z41OtspmQ3ftQycaDunJ26b69a9SHfaSVUPqgRv8k=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.13/go.mod h1:SgPA1oS3b+dlMxZb618jDmGNscpXSCaxz15igS52OlE=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 h1:iXjy2SFhGYNB1jWZBhQqq8HbhsbPF23w+/zbMvPXsTg=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5/go.mod h1:k0RUiBnyXU0AXRJ9tJmY2jQke6XUIX2PNVnWtvgaPtc=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 h1:gzIWc3DTPfPbWKrQnmL6BV6WD7NPD1htxzgdk/bQ/Z4=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8/go.mod h1:vvUA5cDAZWGo4R14FZPZfXfJCmgsafOWEq78Kg0D+ug=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 h1:PWv+vG8aCLS8qd+HPdYhK7Vees90aKHWFFQ1AGYD/8E=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8/go.mod h1:xxPZEpflYHJA12366ZGyq66z9dHPCoeCIu99Jck+MPw=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 h1:WOp5De9iWdEHDPh2Kb0tBP3vGBm/dVAuRGh4a4tqduo=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8/go.mod h1:z8W8YgfhbWl62XqcTtK+CxPrE+iHGRVUOtrrbIOp7ZY=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 h1:MCIR6iZaCKO4UE0hUvoWWLI6JVjppopV64JfAJaMjng=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23/go.mod h1:pphWFS+z0MmIPivj8c/6bATd1Z+Av7Ust75DPdEFsPA=
+-github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 h1:GACgECI422Xt5n4Pojr3O0aocPv8lfH4PJe2Aon5Wv8=
+-github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9/go.mod h1:lPfnRkHpn1qWZJLbVEw10rIqSuCee1pNQTyGkUjAYh8=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 h1:+PMpWlJYOn2tm7sm6OZ/ZLd4jStl17T7wjNapd1Rczs=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8/go.mod h1:cnG3xZLGQL4c/bt8pjdzlFtZsW7epBBuNS04a5xMjdo=
+-github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 h1:RS1Wt+K0r4X0ci9Vf4JYTUfHzsQihYA2LgGJeEneKpk=
+-github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8/go.mod h1:adMnTy5kyoUW86jhXnGSVc/mvMQI4GZd1qYWMeaS8M8=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6 h1:to7+Vr3rLkpYRwVKJ5QRriI0eE306vrVN/6TnVHgxvY=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6/go.mod h1:Jc89ASa2k7HMAskj3bSnt8bf+k+p2IApzkoXnEjkgUw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 h1:WZLC+k/CZx11kZGQDqu9mpA8yhiXGX2I//jhuJE1FDo=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.1/go.mod h1:wxAk0D2oVBSjuXEIzvcKxTZfM90zticdAbh/VD42L0Y=
+-github.com/aws/aws-sdk-go-v2/service/sns v1.47.7 h1:XKmyF18UU2dk5/7uMWy6ik50hTp4Y/bu7tesKYUoWpY=
+-github.com/aws/aws-sdk-go-v2/service/sns v1.47.7/go.mod h1:Djs3JnE1OSVXBQcOy9uZNKbyrBJfw1QCC6uJRL57wAk=
+-github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 h1:4VB/dnDo7pmXSLQMszSoBzWndENuc7mzwTpD6lQn77A=
+-github.com/aws/aws-sdk-go-v2/service/sso v1.39.1/go.mod h1:UGsEYgWz4Gi+46vDQ5zkFLqUgJziyOE2SXjZjgmfmHc=
+-github.com/aws/aws-sdk-go-v2/service
+```
+
+**File**: `pkg/apis/go.mod` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ require (
+ 	github.com/stretchr/testify v1.12.1
+ 	k8s.io/api v0.37.2
+ 	k8s.io/apimachinery v0.37.2
+-	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
++	k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab
+ )
+ 
+ require (
+```
+
+**File**: `pkg/apis/go.sum` (modified, +2/-2)
+```diff
+@@ -1513,8 +1513,8 @@ k8s.io/utils v0.0.0-20210802155522-efc7438f0176/go.mod h1:jPW/WVKK9YHAvNhRxK0md/
+ k8s.io/utils v0.0.0-20211116205334-6203023598ed/go.mod h1:jPW/WVKK9YHAvNhRxK0md/EJ228hCsBRufyofKtW8HA=
+ k8s.io/utils v0.0.0-20221107191617-1a15be271d1d/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
+ k8s.io/utils v0.0.0-20221128185143-99ec85e7a448/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
+-k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3 h1:jVkFFVfXdXP74B/zbO3hM3hpSFD0xvhQ5U686DPurkE=
+-k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3/go.mod h1:M2s5JB1lIYP3jzZdorPLHXIPJzt9vv2muW5a6L9DtNM=
++k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab h1:pjQrNLaF//ytZtWwCAHtW+pqwSKjtWDqzA8+TCX37RI=
++k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab/go.mod h1:DdQ0BJxlQtuMlKDqdg7X5IMMQCXIk2b3d1/4M9OhUYo=
+ rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
+ rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
+ rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=
+```
 
 ---
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+### Incident Patch 3: `ed26bc0b` (2026-11-10)
+**Commit Message**: build(deps): bump the codeql-action group with 3 updates
+
+Bumps the codeql-action group with 3 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
+
+
+Updates `github/codeql-action/init` from 4.39.2 to 4.39.3
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/1fc58d04a4d4374f921bdac573c3811c240f9c26...33d7b85da1a04171e211befe2c739303b9a4c066)
+
+Updates `github/codeql-action/analyze` from 4.39.2 to 4.39.3
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/1fc58d04a4d4374f921bdac573c3811c240f9c26...33d7b85da1a04171e211befe2c739303b9a4c066)
+
+Updates `github/codeql-action/upload-sarif` from 4.39.2 to 4.39.3
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/
+
+**File**: `.github/workflows/codeql.yaml` (modified, +2/-2)
+```diff
+@@ -50,7 +50,7 @@ jobs:
+           go-version: "1.26"
+ 
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
++        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           languages: ${{ matrix.language }}
+           build-mode: ${{ matrix.build-mode }}
+@@ -69,7 +69,7 @@ jobs:
+       # GOFLAGS belongs here and not on init, which warns that passing it
+       # there is deprecated.
+       - name: Analyze
+-        uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
++        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         env:
+           GOFLAGS: "-tags=ceph_preview"
+         with:
+```
 
 **File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
 ```diff
@@ -1476,220 +1801,19 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
        # Upload the results to GitHub's code scanning dashboard (optional).
        # Commenting out will disable upload of results to your repo's Code Scanning dashboard
        - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+-        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
++        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
          with:
            sarif_file: results.sarif
 ```
 
----
-
-### Incident Patch 3: `31d074e9` (2026-11-05)
-**Commit Message**: build(deps): bump the github-dependencies group with 4 updates
-
-Bumps the github-dependencies group with 4 updates: [github.com/IBM/go-sdk-core/v5](https://github.com/IBM/go-sdk-core), [github.com/IBM/keyprotect-go-client](https://github.com/IBM/keyprotect-go-client), [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) and [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2).
-
-
-Updates `github.com/IBM/go-sdk-core/v5` from 5.23.5 to 5.25.2
-- [Release notes](https://github.com/IBM/go-sdk-core/releases)
-- [Changelog](https://github.com/IBM/go-sdk-core/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/IBM/go-sdk-core/compare/v5.23.5...v5.25.2)
-
-Updates `github.com/IBM/keyprotect-go-client` from 1.0.1 to 1.1.0
-- [Release notes](https://github.com/IBM/keyprotect-go-client/releases)
-- [Changelog](https://github.com/IBM/keyprotect-go-client/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/IBM/keyprotect-go-client/compare/v1.0.1...v1.1.0)
-
-Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.12 to 1.33.13
-- [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
-- [Commits](https://github.com/aws/aws-sdk-go-v2/compar
-
-**File**: `go.mod` (modified, +13/-13)
-```diff
-@@ -10,11 +10,11 @@ replace (
- )
- 
- require (
--	github.com/IBM/go-sdk-core/v5 v5.23.5
--	github.com/IBM/keyprotect-go-client v1.0.1
-+	github.com/IBM/go-sdk-core/v5 v5.25.2
-+	github.com/IBM/keyprotect-go-client v1.1.0
- 	github.com/aws/aws-sdk-go-v2 v1.47.5
--	github.com/aws/aws-sdk-go-v2/config v1.33.12
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.12
-+	github.com/aws/aws-sdk-go-v2/config v1.33.13
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.13
- 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
- 	github.com/aws/aws-sdk-go-v2/service/sns v1.47.7
- 	github.com/aws/smithy-go v1.28.7
-@@ -79,9 +79,9 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/blang/semver/v4 v4.0.0 // indirect
-@@ -95,15 +95,15 @@ require (
- 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
- 	github.com/fsnotify/fsnotify v1.9.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.3 // indirect
--	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
-+	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
- 	github.com/gemalto/flume v1.0.0 // indirect
- 	github.com/go-errors/errors v1.5.1 // indirect
- 	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/zapr v1.3.0 // indirect
--	github.com/go-openapi/errors v0.22.8 // indirect
-+	github.com/go-openapi/errors v0.22.9 // indirect
- 	github.com/go-openapi/jsonpointer v1.0.0 // indirect
- 	github.com/go-openapi/jsonreference v1.0.1 // indirect
--	github.com/go-openapi/strfmt v0.27.2 // indirect
-+	github.com/go-openapi/strfmt v0.27.4 // indirect
- 	github.com/go-openapi/swag v0.29.1 // indirect
- 	github.com/go-openapi/swag/cmdutils v0.29.1 // indirect
- 	github.com/go-openapi/swag/conv v0.29.1 // indirect
-@@ -116,9 +116,9 @@ require (
- 	github.com/go-openapi/swag/stringutils v0.29.1 // indirect
- 	github.com/go-openapi/swag/typeutils v0.29.1 // indirect
- 	github.com/go-openapi/swag/yamlutils v0.29.1 // indirect
--	github.com/go-playground/locales v0.14.1 // indirect
--	github.com/go-playground/universal-translator v0.18.1 // indirect
--	github.com/go-playground/validator/v10 v10.30.4 // indirect
-+	github.com/go-playground/locales v0.14.2 // indirect
-+	github.com/go-playground/universal-translator v0.18.2 // indirect
-+	github.com/go-playground/validator/v10 v10.30.5 // indirect
- 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
- 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
-```
-
-**File**: `go.sum` (modified, +32/-32)
-```diff
-@@ -450,11 +450,11 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 h1:kYRSnvJju5g
- github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2/go.mod h1:wP83P5OoQ5p6ip3ScPr0BAq0BvuPAvacpEuSzyouqAI=
- github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
- github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
--github.com/IBM/go-sdk-core/v5 v5.23.5 h1:ZJeheBX3Wq01c1Mw0uYtf4SwXB9Oy11hGlx4nZUrB0A=
--github.com/IBM/go-sdk-core/v5 v5.23.5/go.mod h1:STTfOZKIy3y4WowRDXYQTXb24nrAnIcm0dcxRXrinTk=
-+github.com/IBM/go-sdk-core/v5 v5.25.2 h1:WBB+kbsYsF3Qn2kMuJPZBXPFtH53fyi3UNUaq+VFutY=
-+github.com/IBM/go-sdk-core/v5 v5.25.2/go.mod h1:83BKM+mYr4eUlkiCJWf36wjF7PSdOOAxeIjTfoSCnTg=
- github.com/IBM/keyprotect-go-client v0.5.1/go.mod h1:5TwDM/4FRJq1ZOlwQL1xFahLWQ3TveR88VmL1u3njyI=
--github.com/IBM/keyprotect-go-client v1.0.1 h1:aAMQeN3UjwTOhKtE5ZVJCs/WL0xPVOP26MGowlEKEKU=
--github.com/IBM/keyprotect-go-client v1.0.1/go.mod h1:aZgNOvyjZPWD6Q9QPm/eVqJcRuZUDucjJ2/Sz2eI/AE=
-+github.com/IBM/keyprotect-go-client v1.1.0 h1:TmPeEviEEE5fsQK8TpNZ/fblud9PCV7ZrhuQKjWhaQM=
-+github.com/IBM/keyprotect-go-client v1.1.0/go.mod h1:q5beQeQA0ChFa46s31+aK2YuojCukitDaMYNBJgmJkY=
- github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
- github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
-@@ -494,10 +494,10 @@ github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2Ln
- github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
- github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 h1:MW0Iql1SOTgQPj8mCxrU/eH/K/AIDWi08ItOsXaWRLU=
- github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25/go.mod h1:+ucVYmHYB3JqVueY0E1RHahdXAnKQbIHqybSbvOUbOM=
--github.com/aws/aws-sdk-go-v2/config v1.33.12 h1:IV1YARaXahwCqUIyP8IlWsP85Lil+5ozTozDQXPumRk=
--github.com/aws/aws-sdk-go-v2/config v1.33.12/go.mod h1:h51R06bzMVwNBRZOX5ylHhNDnkB/azZeq/LvxM6q2pQ=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.12 h1:6P7Q7yH/GIwHg6MLKv3ySsBqaCoE1z+C0OTzYMenhEY=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.12/go.mod h1:Kw/SaoW/wc7IqJErqXJIzKo8b7Aelxfbuc6XlbrRnsc=
-+github.com/aws/aws-sdk-go-v2/config v1.33.13 h1:u52x6ISQOx172tpwM0VRxhJzEsTJYpMcEYUGM2A1wrw=
-+github.com/aws/aws-sdk-go-v2/config v1.33.13/go.mod h1:/ixtz6XPHb42zekjQ0LqD9XjTpTysNWhIGwufY1OzI4=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.13 h1:j4z41OtspmQ3ftQycaDunJ26b69a9SHfaSVUPqgRv8k=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.13/go.mod h1:SgPA1oS3b+dlMxZb618jDmGNscpXSCaxz15igS52OlE=
- github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 h1:iXjy2SFhGYNB1jWZBhQqq8HbhsbPF23w+/zbMvPXsTg=
- github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5/go.mod h1:k0RUiBnyXU0AXRJ9tJmY2jQke6XUIX2PNVnWtvgaPtc=
- github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 h1:gzIWc3DTPfPbWKrQnmL6BV6WD7NPD1htxzgdk/bQ/Z4=
-@@ -516,14 +516,14 @@ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 h1:RS1Wt+K0r4X0ci
- github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8/go.mod h1:adMnTy5kyoUW86jhXnGSVc/mvMQI4GZd1qYWMeaS8M8=
- github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6 h1:to7+Vr3rLkpYRwVKJ5QRriI0eE306vrVN/6TnVHgxvY=
- github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6/go.mod h1:Jc89ASa2k7HMAskj3bSnt8bf+k+p2IApzkoXnEjkgUw=
--github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 h1:3vu/eUqh0rjh7Zy4N4YKcpZX4Aud+zinB3VsLhhlQFw=
--github.com/aws/aws-sdk-go-v2/service/signin v1.12.0/go.mod h1:wxAk0D2oVBSjuXEIzvcKxTZfM90zticdAbh/VD42L0Y=
-+github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 h1:WZLC+k/CZx11kZGQDqu9mpA8yhiXGX2I//jhuJE1FDo=
-+github.com/aws/aws-sdk-go-v2/service/signin v1.12.1/go.mod h1:wxAk0D2oVBSjuXEIzvcKxTZfM90zticdAbh/VD42L0Y=
- github.com/aws/aws-sdk-go-v2/service/sns v1.47.7 h1:XKmyF18UU2dk5/7uMWy6ik50hTp4Y/bu7tesKYUoWpY=
- github.com/aws/aws-sdk-go-v2/service/sns v1.47.7/go.mod h1:Djs3JnE1OSVXBQcOy9uZNKbyrBJfw1QCC6uJRL57wAk=
--github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 h1:kIEpD5dUry7VET3Ybl7zj7PPHRB4lb52G9iTz+a1Tqk=
--github.com/aws/aws-sdk-go-v2/service/sso v1.39.0/go.mod h1:UGsEYgWz4Gi+46vDQ5zkFLqUgJziyOE2SXjZjgmfmHc=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 h1:WfFev+HgTodggcNon5HieiLxxwWwb8Br8R2+nDkixvk=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0/go.mod h1:gJSdIY6YUzDvqQLcMtPVZgBRHrFwzHryvpE8Igzbxps=
-+github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 h1:4VB/dnDo7pmXSLQMszSoBzWndENuc7mzwTpD6lQn77A=
-+github.com/aws/aws-sdk-go-v2/service/sso v1.39.1/go.mod h1:UGsEYgWz4Gi+46vDQ5zkFLqUgJziyOE2SXjZjgmfmHc=
-+github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 h1:w8yui2ZqdHmGwVBDGvazoIvKw/DnLENBLkYnN8q8iqo=
-+github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1/go.mod h1:gJSdIY6YUzDvqQLcMtPVZgBRHrFwzHryvpE8Igzbxps
-```
-
-**File**: `pkg/apis/go.mod` (modified, +3/-3)
-```diff
-@@ -44,7 +44,7 @@ require (
- 	github.com/go-openapi/swag/stringutils v0.29.1 // indirect
- 	github.com/go-openapi/swag/typeutils v0.29.1 // indirect
- 	github.com/go-openapi/swag/yamlutils v0.29.1 // indirect
--	github.com/go-openapi/testify/v2 v2.7.0 // indirect
-+	github.com/go-openapi/testify/v2 v2.8.0 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
- 	github.com/google/gnostic-models v0.7.1 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
-@@ -65,8 +65,8 @@ require (
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
--	github.com/onsi/ginkgo/v2 v2.32.2 // indirect
--	github.com/onsi/gomega v1.43.0 // indirect
-+	github.com/onsi/ginkgo/v2 v2.33.1 // indirect
-+	github.com/onsi/gomega v1.44.0 // indirect
- 	github.com/ryanuber/go-glob v1.0.0 // indirect
- 	github.com/sirupsen/logrus v1.9.4 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
-```
-
-**File**: `pkg/apis/go.sum` (modified, +6/-6)
-```diff
-@@ -308,8 +308,8 @@ github.com/go-openapi/swag/yamlutils v0.29.1 h1:69w3tsBajm7MR/fejLy7HD/3J68Ys1Se
- github.com/go-openapi/swag/yamlutils v0.29.1/go.mod h1:rgsp3vT/QdWzKwn43CigDwjOGIenPyTZMKnxEM8jZOA=
- github.com/go-openapi/testify/enable/yaml/v2 v2.6.1 h1:Jm+/ze2rMtbD98yen92AhATGLGREDYXG56Xr4gMjEtE=
- github.com/go-openapi/testify/enable/yaml/v2 v2.6.1/go.mod h1:YDPnwCRDu38/oJBVMBVXOUDiJ9cIeBHWvfImHaXqnv4=
--github.com/go-openapi/testify/v2 v2.7.0 h1:bycOreEj6wfBvijg3YFogZ/sFjTCDmQnwSodSzHa3X8=
--github.com/go-openapi/testify/v2 v2.7.0/go.mod h1:SgsVHtfooshd0tublTtJ50FPKhujf47YRqauXXOUxfw=
-+github.com/go-openapi/testify/v2 v2.8.0 h1:19QDx5b57p8KjO2E4sgs/woL4Akp+FGLRlVm2xn0Rho=
-+github.com/go-openapi/testify/v2 v2.8.0/go.mod h1:4gUN8jC+RqOE2qjW/vDmfyTvl5BCht4qL7oca0odrak=
- github.com/go-openapi/validate v0.18.0/go.mod h1:Uh4HdOzKt19xGIGm1qHf/ofbX1YQ4Y+MYsct2VUrAJ4=
- github.com/go-openapi/validate v0.19.2/go.mod h1:1tRCw7m3jtI8eNWEEliiAqUIcBztB2KDnRCRMUi7GTA=
- github.com/go-openapi/validate v0.19.5/go.mod h1:8DJv2CVJQ6kGNpFW6eV9N3JviE1C85nY1c2z52x1Gk4=
-@@ -633,8 +633,8 @@ github.com/onsi/ginkgo/v2 v2.3.0/go.mod h1:Eew0uilEqZmIEZr8JrvYlvOM7Rr6xzTmMV8Ay
- github.com/onsi/ginkgo/v2 v2.4.0/go.mod h1:iHkDK1fKGcBoEHT5W7YBq4RFWaQulw+caOMkAt4OrFo=
- github.com/onsi/ginkgo/v2 v2.5.0/go.mod h1:Luc4sArBICYCS8THh8v3i3i5CuSZO+RaQRaJoeNwomw=
- github.com/onsi/ginkgo/v2 v2.6.0/go.mod h1:63DOGlLAH8+REH8jUGdL3YpCpu7JODesutUjdENfUAc=
--github.com/onsi/ginkgo/v2 v2.32.2 h1:2o6vyFvR6snrJWgRVztC+OwuqqPEMI1UzYl2s2iU7Cg=
--github.com/onsi/ginkgo/v2 v2.32.2/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
-+github.com/onsi/ginkgo/v2 v2.33.1 h1:62XfWJbEIjPSCSDYrsCPP/SHcmH7O0M8ne8zfqQ2iz4=
-+github.com/onsi/ginkgo/v2 v2.33.1/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
- github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
- github.com/onsi/gomega v1.4.2/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
- github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
-@@ -648,8 +648,8 @@ github.com/onsi/gomega v1.22.1/go.mod h1:x6n7VNe4hw0vkyYUM4mjIXx3JbLiPaBPNgB7PRQ
- github.com/onsi/gomega v1.23.0/go.mod h1:Z/NWtiqwBrwUt4/2loMmHL63EDLnYHmVbuBpDr2vQAg=
- github.com/onsi/gomega v1.24.0/go.mod h1:Z/NWtiqwBrwUt4/2loMmHL63EDLnYHmVbuBpDr2vQAg=
- github.com/onsi/gomega v1.24.1/go.mod h1:3AOiACssS3/MajrniINInwbfOOtfZvplPzuRSmvt1jM=
--github.com/onsi/gomega v1.43.0 h1:VlG/1FxqNxhSO+lq/OHBNaaqwiBK/mO8JbVkX9Y+FeU=
--github.com/onsi/gomega v1.43.0/go.mod h1:REff/hsDsodHoKlWsP2mAPhu1+5/6hVYNf9rIEBpeSg=
-+github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
-+github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/openshift/api v0.0.0-20210105115604-44119421ec6b/go.mod h1:aqU5Cq+kqKKPbDMqxo9FojgDeSpNJI7iuskjXjtojDg=
- github.com/openshift/api v0.0.0-20241216151652-de9de05a8e43 h1:3lcB5nqOOfsJzY4JD12AMKyg3+yQhAdJzNDenbmbMQg=
- github.com/openshift/api v0.0.0-20241216151652-de9de05a8e43/go.mod h1:Shkl4HanLwDiiBzakv+con/aMGnVE2MAGvoKp5oyYUo=
-```
-
 #### Recent Merged Pull Requests:
-- **PR #18747** (2026-11-06): core: keep additional volume mounts inside their root directory (backport #18714) (@mergify[bot])
-- **PR #18737** (2026-11-06): build: bump indirect dependencies to match release branches (@jhoblitt)
-- **PR #18735** (2026-11-06): mds: honor the do-not-reconcile label on mds deployments (backport #18708) (@mergify[bot])
-- **PR #18733** (2026-11-06): osd: report error when duplicate osd id is detected (backport #17275) (@mergify[bot])
-- **PR #18732** (closed): build(deps): bump the all-dependencies group across 1 directory with 89 updates (@dependabot[bot])
-- **PR #18731** (closed): build(deps): bump the all-dependencies group across 1 directory with 91 updates (@dependabot[bot])
+- **PR #18779** (closed): merge queue: merged #18769: core: reject line breaks in options passed to assimilate-conf (backport #18723) (@mergify[bot])
+- **PR #18778** (2026-11-10): build(deps): bump the all-dependencies group with 45 updates (@dependabot[bot])
+- **PR #18777** (2026-11-10): build(deps): bump the all-dependencies group across 1 directory with 52 updates (@dependabot[bot])
+- **PR #18776** (2026-11-10): build(deps): bump golang.org/x/sync from 0.24.0 to 0.25.0 (@dependabot[bot])
+- **PR #18775** (2026-11-10): build(deps): bump the github-dependencies group with 8 updates (@dependabot[bot])
+- **PR #18774** (2026-11-10): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 
 ---
 
@@ -1709,33 +1833,34 @@ Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.12 to 1.33.13
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #18702 from travisn/fix-flaky-waitfornostandbys
+## X. test: fix flaky and racy mgr module configuration tests
 
 **RULE**:
-When implementing operations in `pkg/daemon/ceph/client/filesystem_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/operator/ceph/cluster/mgr/mgr.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eec0baeb`: Merge pull request #18702 from travisn/fix-flaky-waitfornostandbys. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6799e8fc`: test: fix flaky and racy mgr module configuration tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/daemon/ceph/client/filesystem_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/cluster/mgr/mgr.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Use a generous timeout here: this case must poll at least twice (the first
-	// dump reports a standby, subsequent dumps report none) before it can succeed.
-	// A tight timeout makes the test flaky under CI scheduling jitter. The poll
-	// returns as soon as the condition is met, so a large timeout keeps the test
-	// fast while eliminating the race.
-	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 10*time.Second)
+	"sync"
+	// moduleWaitGroup tracks the asynchronous module-configuration goroutines
+	// started by startModuleConfiguration so they can be awaited (used by tests).
+	moduleWaitGroup sync.WaitGroup
+	c.moduleWaitGroup.Go(func() {
+	})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 5*time.Millisecond)
+	go func() {
+	}()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eec0baeb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6799e8fc` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `e2db61bd`  
+> **Source Version**: `a875a4ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:50:53.963Z  
+> **Timestamp**: 2026-11-11T16:05:05.533Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:50:53.958Z  
+> **Harvest Timestamp**: 2026-11-11T16:05:05.493Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A GitOps OpenTofu and Terraform controller for Flux
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 1719 stars
+- **Stars / Engagement**: 1723 stars
 
 ---
 
@@ -974,11 +974,11 @@ package v1alpha1
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1923** (2026-10-27): **fix: stop a pass hanging on a runner that never started**
-  *Symptoms*: 
+- **Issue #1938** (2026-11-10): **chore(deps): bump golang.org/x/net to v0.62.0**
+  *Symptoms*: The `Scan` workflow fails on pull requests with one HIGH finding: `golang.org/x/net` v0.61.0, CVE-2026-78661 (denial of service via crafted HTML input in `x/net/html`), fixed in v0.62.0.  Closes #1937  This change bumps `golang.org/x/net` from v0.61.0 to v0.62.0, an indirect dependency, in the root, `api/` and `tfctl/` modules. Only the `x/net` line changes in each `go.mod`; `go mod tidy` pulls in nothing else.  Test plan:  - `go build ./...` succeeds in the root, `api/` and `tfctl/` modules, and `make fmt vet` is clean - `make test-internal` passes - `trivy fs --scanners vuln --severity HIGH,CRITICAL` on each `go.mod` no longer reports `golang.org/x/net` - the `Scan` workflow on this PR is the check that confirms the image scan is green  Notes:  - `tfctl`'s `TestShowPlan` fails in my environment because it cannot install a Terraform binary; it fails the same way without this change. - Trivy on the root `go.mod` still lists two HIGH findings in `github.com/docker/docker` with no fixed version. They are not part of the image scan finding this PR addresses. 
 
-- **Issue #1921** (2026-10-27): **fix: recover from runner pods that fail or cannot start**
-  *Symptoms*: 
+- **Issue #1937** (2026-11-10): **Trivy scan fails on golang.org/x/net v0.61.0 (CVE-2026-78661)**
+  *Symptoms*: ### Problem  The `Scan` workflow (Trivy, controller image) fails on pull requests with a single HIGH finding:  | Library | Vulnerability | Severity | Installed | Fixed | |---|---|---|---|---| | `golang.org/x/net` | CVE-2026-78661 (denial of service via crafted HTML input in `x/net/html`) | HIGH | v0.61.0 | v0.62.0 |  Trivy reports it against the `tofu-controller` Go binary, and the job exits with code 1. Example run, on a PR that does not touch `go.mod` or `go.sum`: https://github.com/flux-iac/tofu-controller/actions/runs/42815216815  ### What I checked  - `golang.org/x/net v0.61.0` is an indirect dependency on `main` in all three modules: the root `go.mod`, `api/go.mod` and `tfctl/go.mod`. - The last scheduled `Scan` run on `main` (2026-11-04) passed, so the advisory was most likely published after that. I have not re-run Trivy against `main` itself. - The `Scan` workflow is also failing on the open Dependabot PRs #1932 and #1933, which do not bump `x/net`. I have not checked whether that is the same finding.  ### Proposal  Bump `golang.org/x/net` to v0.62.0 or later in the root, `api/` and `tfctl/` modules, so `Scan` passes again for every open PR.  For reference, earlier Trivy findings were handled either by bumping the dependency (#1813) or by a temporary ignore (#1738).  ### Impact  Until this is fixed, `Scan` is red on every PR against `main`, which hides real findings introduced by a PR and blocks merging when the check is required. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -995,202 +995,440 @@ package v1alpha1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e2db61bd` (2026-10-28)
-**Commit Message**: feat: support ExternalArtifact as a Terraform source (#1901)
+### Incident Patch 1: `a875a4ba` (2026-11-11)
+**Commit Message**: feat: add topologySpreadConstraints to runner pods (#1936)
 
-* feat: support ExternalArtifact as a Terraform source
+* feat: add topologySpreadConstraints to runner pods
 
-Flux 2.7 introduced the ExternalArtifact source kind, whose artifacts
-are produced by controllers other than source-controller, such as
-source-watcher's ArtifactGenerator. Using one as a Terraform source
-lets each Terraform object reconcile from an artifact holding only its
-own module, so a commit touching one module does not re-plan every
-Terraform object that reads the same repository.
+runnerPodTemplate.spec exposes nodeSelector, affinity and tolerations,
+but nothing that caps how many runner pods share a node. During a
+reconcile burst the scheduler can pack runners onto a few nodes, and a
+cluster autoscaler has no Pending pods to react to.
 
-This change:
+Add an optional topologySpreadConstraints field to the v1alpha2
+RunnerPodSpec, and a --runner-topology-spread-constraints manager flag
+(with a runner.topologySpreadConstraints Helm value) that sets a
+controller-wide default. A non-empty list on the Terraform object
+replaces the default; the two are not merged. The flag is parsed and
+validated at startup, so an invalid value fails fast. With neither set,
+runner pods are unchanged.
 
-- accepts ExternalArtifact as a v1alpha2 sourceRef kind and resolves it
-  in getSource;
-- indexes Terraform objects by the ExternalArtifact they reference and
-  watches ExternalArtifacts, so a new artifact revision triggers a
-  reconcile, as for the other source kinds;
-- grants the controller read access to externalartifacts in the
-  generated ClusterRole and the Helm chart's RBAC template;
-- lets `tfctl create --source` name an ExternalArtifact;
-- passes the manager's context to SetupWithManager for registering the
-  field indexes;
-- adds an envtest case that applies a Terraform object from an
-  ExternalArtifact and checks that a new revision is applied before the
-  
+Refs #1935
 
-**File**: `.github/workflows/e2e.yaml` (modified, +24/-0)
+Signed-off-by: AdonisPD <[REDACTED_EMAIL]>
+
+* refactor: drop controller-wide runner topology spread flag
+
+Per review on #1936, keep only the per-object
+runnerPodTemplate.spec.topologySpreadConstraints field. Remove the
+--runner-topology-spread-constraints manager flag, the
+runner.topologySpreadConstraints Helm value and the parser; runner pods
+now take the constraints straigh
+
+**File**: `api/v1alpha2/reference_types.go` (modified, +4/-0)
 ```diff
-@@ -100,6 +100,7 @@ jobs:
-             "--log-encoding=json",
-             "--enable-leader-election",
-             "--concurrent=10",
-+            "--feature-gates=ExternalArtifact=true",
-             "--cert-rotation-check-frequency=6m0s",
-           ]}]'
+@@ -191,6 +191,10 @@ type RunnerPodSpec struct {
+ 	// +optional
+ 	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
  
-@@ -165,6 +166,26 @@ jobs:
- 
-           # delete after tests
-           kubectl -n tofu-system delete -f ./config/testdata/vars
-+      - name: Run ExternalArtifact source tests
-+        run: |
-+          kustomize build ./config/testdata/source-watcher | kubectl apply --server-side -f -
-+          kubectl -n tofu-system rollout status deploy/source-watcher --timeout=2m
++	// Set the TopologySpreadConstraints for the Runner Pod
++	// +optional
++	TopologySpreadConstraints []corev1.TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
 +
-+          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/generator.yaml
-+          kubectl -n tofu-system wait artifactgenerator/helloworld --for=condition=ready --timeout=4m
+ 	// Set Volume Mounts for the Runner Pod
+ 	// +optional
+ 	VolumeMounts []corev1.VolumeMount `json:"volumeMounts,omitempty"`
+```
+
+**File**: `api/v1alpha2/zz_generated.deepcopy.go` (modified, +7/-0)
+```diff
+@@ -356,6 +356,13 @@ func (in *RunnerPodSpec) DeepCopyInto(out *RunnerPodSpec) {
+ 			(*in)[i].DeepCopyInto(&(*out)[i])
+ 		}
+ 	}
++	if in.TopologySpreadConstraints != nil {
++		in, out := &in.TopologySpreadConstraints, &out.TopologySpreadConstraints
++		*out = make([]corev1.TopologySpreadConstraint, len(*in))
++		for i := range *in {
++			(*in)[i].DeepCopyInto(&(*out)[i])
++		}
++	}
+ 	if in.VolumeMounts != nil {
+ 		in, out := &in.VolumeMounts, &out.VolumeMounts
+ 		*out = make([]corev1.VolumeMount, len(*in))
+```
+
+**File**: `charts/tofu-controller/crds/crds.yaml` (modified, +175/-0)
+```diff
+@@ -9153,6 +9153,181 @@ spec:
+                               type: string
+                           type: object
+                         type: array
++                      topologySpreadConstraints:
++                        description: Set the TopologySpreadConstraints for the Runner
++                          Pod
++                        items:
++                          description: TopologySpreadConstraint specifies how to spread
++                            matching pods among the given topology.
++                          properties:
++                            labelSelector:
++                              description: |-
++                                LabelSelector is used to find matching pods.
++                                Pods that match this label selector are counted to determine the number of pods
++                                in their corresponding topology domain.
++                              properties:
++                                matchExpressions:
++                                  description: matchExpressions is a list of label
++                                    selector requirements. The requirements are ANDed.
++                                  items:
++                                    description: |-
++                                      A label selector requirement is a selector that contains values, a key, and an operator that
++                                      relates the key and values.
++                                    properties:
++                                      key:
++                                        description: key is the label key that the
++                                          selector applies to.
++                                        type: string
++                                      operator:
++                                        description: |-
++                                          operator represents a key's relationship to a set of values.
++                                          Valid operators are In, NotIn, Exists and DoesNotExist.
++                                        type: string
++                                      values:
++                                        description: |-
++                                          values is an array of string values. If the operator is In or NotIn,
++                                          the values array must be non-empty. If the operator is Exists or DoesNotExist,
++                                          the values array must be empty. This array is replaced during a strategic
++                                          merge patch.
++                                        items:
++                                          type: string
++                                        type: array
++                                        x-kubernetes-list-type: atomic
++                                    required:
++                                    - key
++                                    - operator
++                                    type: object
++                                  type: array
++                                  x-kubernetes-list-type: atomic
++                                matchLabels:
++                                  additionalProperties:
++                                    type: string
++                                  description: |-
++                                    matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
++                                    map is equivalent to an element of matchExpressions, whose key field is "key", the
++                                    operator is "In", and the values array contains only "value". The requirements are ANDed.
++                                  type: object
++                              type: object
++                              x-kubernetes-map-type: atomic
++                            matchLabelKeys:
++                              description: |-
++                                MatchLabelKeys is a set of pod label keys to select the pods over which
++                                spreading will be calculated. The keys are used to lookup values from the
++                                incoming pod labels, those key-value labels are ANDed with labelSelector
++                                to select the group of existing pods over which spreading will be calculated
++                                for the incoming pod. The same key is forbidden to exist in both MatchLabelKeys and LabelSelector.
++                                MatchLabelKeys cannot be set when LabelSelector isn't set.
++                                Keys that don't exist in the incoming pod labels will
++                                be ignored. A null or empty list means only match against labelSelector.
 +
-+          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/terraform.yaml
-+          kubectl -n tofu-system wait terraform/helloworld-external-artifact --for=condition=ready --timeout=4m
++                                This is a beta field and requires the MatchLabelKeysInPodTopologySpread feature gate to be enabled (enabled by default).
++                    
+```
+
+**File**: `config/crd/bases/infra.contrib.fluxcd.io_terraforms.yaml` (modified, +175/-0)
+```diff
+@@ -9153,6 +9153,181 @@ spec:
+                               type: string
+                           type: object
+                         type: array
++                      topologySpreadConstraints:
++                        description: Set the TopologySpreadConstraints for the Runner
++                          Pod
++                        items:
++                          description: TopologySpreadConstraint specifies how to spread
++                            matching pods among the given topology.
++                          properties:
++                            labelSelector:
++                              description: |-
++                                LabelSelector is used to find matching pods.
++                                Pods that match this label selector are counted to determine the number of pods
++                                in their corresponding topology domain.
++                              properties:
++                                matchExpressions:
++                                  description: matchExpressions is a list of label
++                                    selector requirements. The requirements are ANDed.
++                                  items:
++                                    description: |-
++                                      A label selector requirement is a selector that contains values, a key, and an operator that
++                                      relates the key and values.
++                                    properties:
++                                      key:
++                                        description: key is the label key that the
++                                          selector applies to.
++                                        type: string
++                                      operator:
++                                        description: |-
++                                          operator represents a key's relationship to a set of values.
++                                          Valid operators are In, NotIn, Exists and DoesNotExist.
++                                        type: string
++                                      values:
++                                        description: |-
++                                          values is an array of string values. If the operator is In or NotIn,
++                                          the values array must be non-empty. If the operator is Exists or DoesNotExist,
++                                          the values array must be empty. This array is replaced during a strategic
++                                          merge patch.
++                                        items:
++                                          type: string
++                                        type: array
++                                        x-kubernetes-list-type: atomic
++                                    required:
++                                    - key
++                                    - operator
++                                    type: object
++                                  type: array
++                                  x-kubernetes-list-type: atomic
++                                matchLabels:
++                                  additionalProperties:
++                                    type: string
++                                  description: |-
++                                    matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
++                                    map is equivalent to an element of matchExpressions, whose key field is "key", the
++                                    operator is "In", and the values array contains only "value". The requirements are ANDed.
++                                  type: object
++                              type: object
++                              x-kubernetes-map-type: atomic
++                            matchLabelKeys:
++                              description: |-
++                                MatchLabelKeys is a set of pod label keys to select the pods over which
++                                spreading will be calculated. The keys are used to lookup values from the
++                                incoming pod labels, those key-value labels are ANDed with labelSelector
++                                to select the group of existing pods over which spreading will be calculated
++                                for the incoming pod. The same key is forbidden to exist in both MatchLabelKeys and LabelSelector.
++                                MatchLabelKeys cannot be set when LabelSelector isn't set.
++                                Keys that don't exist in the incoming pod labels will
++                                be ignored. A null or empty list means only match against labelSelector.
 +
-+          # the Terraform object must have applied the ExternalArtifact's revision
-+          artifact_revision=$(kubectl -n tofu-system get externalartifact/helloworld-module -o jsonpath='{.status.artifact.revision}')
-+          applied_revision=$(kubectl -n tofu-system get terraform/helloworld-external-artifact -o jsonpath='{.status.lastAppliedRevision}')
-+          echo "artifact revision: $artifact_revision, applied revision: $applied_revision"
-+          [[ -n "$artifact_revision" && "$applied_revision" == "$artifact_revision" ]]
++                                This is a beta field and requires the MatchLabelKeysInPodTopologySpread feature gate to be enabled (enabled by default).
++                    
+```
+
+**File**: `controllers/runner_pod.go` (modified, +8/-7)
+```diff
+@@ -292,13 +292,14 @@ func (r *TerraformReconciler) runnerPodSpec(terraform *infrav1.Terraform, tlsSec
+ 				Resources:       resources,
+ 			},
+ 		},
+-		Volumes:            podVolumes,
+-		ServiceAccountName: serviceAccountName,
+-		NodeSelector:       terraform.Spec.RunnerPodTemplate.Spec.NodeSelector,
+-		Affinity:           terraform.Spec.RunnerPodTemplate.Spec.Affinity,
+-		Tolerations:        terraform.Spec.RunnerPodTemplate.Spec.Tolerations,
+-		HostAliases:        terraform.Spec.RunnerPodTemplate.Spec.HostAliases,
+-		PriorityClassName:  terraform.Spec.RunnerPodTemplate.Spec.PriorityClassName,
++		Volumes:                   podVolumes,
++		ServiceAccountName:        serviceAccountName,
++		NodeSelector:              terraform.Spec.RunnerPodTemplate.Spec.NodeSelector,
++		Affinity:                  terraform.Spec.RunnerPodTemplate.Spec.Affinity,
++		Tolerations:               terraform.Spec.RunnerPodTemplate.Spec.Tolerations,
++		TopologySpreadConstraints: terraform.Spec.RunnerPodTemplate.Spec.TopologySpreadConstraints,
++		HostAliases:               terraform.Spec.RunnerPodTemplate.Spec.HostAliases,
++		PriorityClassName:         terraform.Spec.RunnerPodTemplate.Spec.PriorityClassName,
+ 	}
+ 
+ 	if r.UsePodSubdomainResolution {
+```
+
+**File**: `controllers/tc000363_runner_topology_spread_test.go` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++package controllers
 +
-+          # delete the Terraform object before its source: finalizing it needs the ExternalArtifact
-+          kubectl -n tofu-system delete -f ./config/testdata/external-artifact/terraform.yaml --timeout=4m
-+          kubectl -n tofu-system delete -f ./config/testdata/external-artifact/generator.yaml --timeout=2m
-       - name: Run multi-tenancy test
-         run: |
-           kubectl -n tofu-system scale --replicas=3 deploy/tofu-controller
-@@ -250,6 +271,7 @@ jobs:
-       - name: Logs
-         run: |
-           kubectl -n tofu-system logs deploy/source-controller
-+          kubectl -n tofu-system logs deploy/source-watcher
-           kubectl -n tofu-system logs deploy/tofu-controller
-       - name: Debug failure
-         if: failure()
-@@ -260,6 +282,8 @@ jobs:
-           kubectl -n tofu-system logs deploy/source-controller
-           kubectl -n tofu-system describe deploy/source-controller
-           kubectl -n tofu-system describe pod source-controller
-+          kubectl -n tofu-system logs deploy/source-watcher
-+          kubectl -n tofu-system get artifactgenerators,externalartifacts -oyaml
-           kubectl -n tofu-system logs deploy/tofu-controller
-           kubectl -n tofu-system describe deploy/tofu-controller
-           kubectl -n tofu-system describe pod tofu-controller
++import (
++	"testing"
++
++	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/utils/ptr"
++)
++
++// +kubebuilder:docs-gen:collapse=Imports
++
++func Test_000363_runner_topology_spread_test(t *testing.T) {
++	Spec("This spec describes how topologySpreadConstraints reach the runner pod.")
++
++	newConstraint := func(maxSkew int32) corev1.TopologySpreadConstraint {
++		return corev1.TopologySpreadConstraint{
++			MaxSkew:            maxSkew,
++			MinDomains:         ptr.To(int32(100)),
++			TopologyKey:        "kubernetes.io/hostname",
++			WhenUnsatisfiable:  corev1.DoNotSchedule,
++			NodeAffinityPolicy: ptr.To(corev1.NodeInclusionPolicyHonor),
++			NodeTaintsPolicy:   ptr.To(corev1.NodeInclusionPolicyHonor),
++			LabelSelector: &metav1.LabelSelector{
++				MatchLabels: map[string]string{"app.kubernetes.io/created-by": "tofu-controller"},
++			},
++		}
++	}
++
++	newTerraform := func(constraints []corev1.TopologySpreadConstraint) *infrav1.Terraform {
++		return &infrav1.Terraform{
++			ObjectMeta: metav1.ObjectMeta{Name: "topology-spread-test", Namespace: "flux-system"},
++			Spec: infrav1.TerraformSpec{
++				RunnerPodTemplate: infrav1.RunnerPodTemplate{
++					Spec: infrav1.RunnerPodSpec{TopologySpreadConstraints: constraints},
++				},
++			},
++		}
++	}
++
++	newReconciler := func() *TerraformReconciler {
++		return &TerraformReconciler{RunnerGRPCPort: 30000}
++	}
++
++	t.Run("CR value is copied into the runner pod", func(t *testing.T) {
++		g := NewWithT(t)
++		Given("a Terraform resource with topologySpreadConstraints")
++		crValue := []corev1.TopologySpreadConstraint{newConstraint(10)}
++
++		spec := newReconciler().runnerPodSpec(newTerraform(crValue), "runner.tls-123")
++
++		By("checking the runner pod carries the CR value")
++		g.Expect(spec.TopologySpreadConstraints).To(Equal(crValue))
++	})
++
++	t.Run("no constraints are set when nothing is configured", func(t *testing.T) {
++		g := NewWithT(t)
++		Given("a Terraform resource without constraints")
++
++		spec := newReconciler().runnerPodSpec(newTerraform(nil), "runner.tls-123")
++
++		By("checking the runner pod has no constraints")
++		g.Expect(spec.TopologySpreadConstraints).To(BeNil())
++	})
++}
 ```
 
-**File**: `Makefile` (modified, +1/-0)
+**File**: `docs/References/terraform.md` (modified, +1/-0)
 ```diff
-@@ -85,6 +85,7 @@ download-crd-deps:
- 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_gitrepositories.yaml > config/crd/bases/gitrepositories.yaml
- 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_buckets.yaml > config/crd/bases/buckets.yaml
- 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_ocirepositories.yaml > config/crd/bases/ocirepositories.yaml
-+	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_externalartifacts.yaml > config/crd/bases/externalartifacts.yaml
- 
- TEST_SETTINGS=INSECURE_LOCAL_RUNNER=1 DISABLE_K8S_LOGS=1 DISABLE_TF_LOGS=1 DISABLE_TF_K8S_BACKEND=1 DISABLE_WEBHOOK_TLS_VERIFY=1 KUBEBUILDER_ASSETS="$(shell $(ENVTEST) --arch=$(ENVTEST_ARCH) use -i $(ENVTEST_KUBERNETES_VERSION) --bin-dir=$(ENVTEST_ASSETS_DIR) -p path)"
- 
+@@ -266,6 +266,7 @@ _Appears in:_
+ | `nodeSelector` _object (keys:string, values:string)_ | Set the NodeSelector for the Runner Pod |  | Optional: \{\} <br /> |
+ | `affinity` _[Affinity](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#affinity-v1-core)_ | Set the Affinity for the Runner Pod |  | Optional: \{\} <br /> |
+ | `tolerations` _[Toleration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#toleration-v1-core) array_ | Set the Tolerations for the Runner Pod |  | Optional: \{\} <br /> |
++| `topologySpreadConstraints` _[TopologySpreadConstraint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#topologyspreadconstraint-v1-core) array_ | Set the TopologySpreadConstraints for the Runner Pod |  | Optional: \{\} <br /> |
+ | `volumeMounts` _[VolumeMount](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#volumemount-v1-core) array_ | Set Volume Mounts for the Runner Pod |  | Optional: \{\} <br /> |
+ | `volumes` _[Volume](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#volume-v1-core) array_ | Set Volumes for the Runner Pod |  | Optional: \{\} <br /> |
+ | `initContainers` _[Container](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core) array_ | Set up Init Containers for the Runner |  | Optional: \{\} <br /> |
 ```
 
-**File**: `api/v1alpha2/reference_types.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `605175f1` (2026-11-10)
+**Commit Message**: chore(deps): bump golang.org/x/net to v0.62.0 (#1938)
+
+The Trivy scan of the controller image fails on golang.org/x/net
+v0.61.0 (CVE-2026-78661, denial of service via crafted HTML input in
+x/net/html), which is fixed in v0.62.0.
+
+Bump the indirect dependency in the root, api and tfctl modules. No
+other dependency changes.
+
+Closes #1937
+
+Signed-off-by: AdonisPD <[REDACTED_EMAIL]>
+
+**File**: `api/go.mod` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@ type CrossNamespaceSourceReference struct {
- 	APIVersion string `json:"apiVersion,omitempty"`
- 
- 	// Kind of the referent.
--	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository
-+	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository;ExternalArtifact
- 	// +required
- 	Kind string `json:"kind"`
- 
+@@ -52,7 +52,7 @@ require (
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/term v0.47.0 // indirect
 ```
 
-**File**: `api/v1alpha2/terraform_types.go` (modified, +7/-6)
+**File**: `api/go.sum` (modified, +2/-2)
 ```diff
-@@ -41,12 +41,13 @@ const (
- 	CACertSecretName = "tf-controller.tls"
- 	// RunnerTLSSecretName is the name of the secret containing a TLS cert that will be written to
- 	// the namespace in which a terraform runner is created
--	RunnerTLSSecretName     = "terraform-runner.tls"
--	RunnerLabel             = "infra.contrib.fluxcd.io/terraform"
--	GitRepositoryIndexKey   = ".metadata.gitRepository"
--	BucketIndexKey          = ".metadata.bucket"
--	OCIRepositoryIndexKey   = ".metadata.ociRepository"
--	BreakTheGlassAnnotation = "break-the-glass.tf-controller/requestedAt"
-+	RunnerTLSSecretName      = "terraform-runner.tls"
-+	RunnerLabel              = "infra.contrib.fluxcd.io/terraform"
-+	GitRepositoryIndexKey    = ".metadata.gitRepository"
-+	BucketIndexKey           = ".metadata.bucket"
-+	OCIRepositoryIndexKey    = ".metadata.ociRepository"
-+	ExternalArtifactIndexKey = ".metadata.externalArtifact"
-+	BreakTheGlassAnnotation  = "break-the-glass.tf-controller/requestedAt"
- )
- 
- type ReadInputsFromSecretSpec struct {
+@@ -122,8 +122,8 @@ go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
+ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
 ```
 
-**File**: `charts/tofu-controller/README.md` (modified, +1/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -50,6 +50,7 @@ __Note__: If you need to use the `imagePullSecrets` it would be best to set `ser
- | eksSecurityGroupPolicy.ids | list | `[]` | List of AWS Security Group IDs |
- | eventsAddress | string | `"http://notification-controller.flux-system.svc.cluster.local./"` | Argument for `--events-addr` (Controller). The event address, default to the address of the Notification Controller |
- | extraEnv | object | `{}` | Additional container environment variables. |
-+| featureGates.externalArtifact | bool | `false` | Argument for `--feature-gates=ExternalArtifact=...` (Controller).  Allow `ExternalArtifact` as a Terraform source. Requires Flux 2.7 or higher, whose `ExternalArtifact` CRD must be installed. |
- | fullnameOverride | string | `""` | Provide a fullname |
- | image.pullPolicy | string | `"IfNotPresent"` | Controller image pull policy |
- | image.repository | string | `"ghcr.io/flux-iac/tofu-controller"` | Controller image repository |
+@@ -227,7 +227,7 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
 ```
 
-**File**: `charts/tofu-controller/crds/crds.yaml` (modified, +1/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -11277,6 +11277,7 @@ spec:
-                     - GitRepository
-                     - Bucket
-                     - OCIRepository
-+                    - ExternalArtifact
-                     type: string
-                   name:
-                     description: Name of the referent.
+@@ -543,8 +543,8 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
+ golang.org/x/net v0.0.0-20190502183928-7f726cade0ab/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 ```
 
-**File**: `charts/tofu-controller/templates/deployment.yaml` (modified, +1/-0)
+**File**: `tfctl/go.mod` (modified, +1/-1)
 ```diff
-@@ -55,6 +55,7 @@ spec:
-         - --quota-retry-enabled={{ .Values.quotaRetryEnabled }}
-         - --quota-retry-delay={{ .Values.quotaRetryDelay }}
-         - --quota-retry-jitter-factor={{ .Values.quotaRetryJitterFactor }}
-+        - --feature-gates=ExternalArtifact={{ .Values.featureGates.externalArtifact }}
-         env:
-           {{- include "pod-namespace" . | indent 8 }}
-         - name: RUNNER_POD_IMAGE
+@@ -103,7 +103,7 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
 ```
 
-**File**: `charts/tofu-controller/templates/rbac.yaml` (modified, +2/-0)
+**File**: `tfctl/go.sum` (modified, +2/-2)
 ```diff
-@@ -151,6 +151,7 @@ rules:
-   - source.toolkit.fluxcd.io
-   resources:
-   - buckets
-+  - externalartifacts
-   - gitrepositories
-   - ocirepositories
-   verbs:
-@@ -165,6 +166,7 @@ rules:
-   - source.toolkit.fluxcd.io
-   resources:
-   - buckets/status
-+  - externalartifacts/status
-   - gitrepositories/status
-   - ocirepositories/status
-   verbs:
+@@ -266,8 +266,8 @@ golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+ golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1938** (2026-11-10): chore(deps): bump golang.org/x/net to v0.62.0 (@adonispd)
+- **PR #1936** (2026-11-11): feat: add topologySpreadConstraints to runner pods (@adonispd)
+- **PR #1928** (closed): chore(deps): bump the go-patch group across 3 directories with 13 updates (@dependabot[bot])
+- **PR #1927** (closed): chore(deps): bump the gh-patch group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #1925** (closed): chore(deps): bump the go-minor group across 3 directories with 10 updates (@dependabot[bot])
 - **PR #1923** (2026-10-27): fix: stop a pass hanging on a runner that never started (@alexandermarston)
-- **PR #1921** (2026-10-27): fix: recover from runner pods that fail or cannot start (@alexandermarston)
-- **PR #1920** (2026-10-26): chore: release 0.16.6 (@alexandermarston)
-- **PR #1919** (2026-10-26): feat(chart): optionally bind the runner role per namespace (@alexandermarston)
-- **PR #1918** (2026-10-26): fix(drift): Ignore data-source-only reads (@cgroschupp)
-- **PR #1917** (2026-10-27): refactor: restructure the runner (@alexandermarston)
 
 ---
 
@@ -1210,37 +1448,24 @@ This change:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support ExternalArtifact as a Terraform source (#1901)
+## X. add topologySpreadConstraints to runner pods (#1936)
 
 **RULE**:
-When implementing operations in `.github/workflows/e2e.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/v1alpha2/reference_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e2db61bd`: support ExternalArtifact as a Terraform source (#1901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a875a4ba`: add topologySpreadConstraints to runner pods (#1936). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha2/reference_types.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            "--feature-gates=ExternalArtifact=true",
-      - name: Run ExternalArtifact source tests
-        run: |
-          kustomize build ./config/testdata/source-watcher | kubectl apply --server-side -f -
-          kubectl -n tofu-system rollout status deploy/source-watcher --timeout=2m
+	// Set the TopologySpreadConstraints for the Runner Pod
+	// +optional
+	TopologySpreadConstraints []corev1.TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
 
-          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/generator.yaml
-          kubectl -n tofu-system wait artifactgenerator/helloworld --for=condition=ready --timeout=4m
-
-          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/terraform.yaml
-          kubectl -n tofu-system wait terraform/helloworld-external-artifact --for=condition=ready --timeout=4m
-
-          # the Terraform object must have applied the ExternalArtifact's revision
-          artifact_revision=$(kubectl -n tofu-system get externalartifact/helloworld-module -o jsonpath='{.status.artifact.revision}')
-          applied_revision=$(kubectl -n tofu-system get terraform/helloworld-external-artifact -o jsonpath='{.status.lastAppliedRevision}')
-          echo "artifact revision: $artifact_revision, applied revision: $applied_revision"
-          [[ -n "$artifact_revision" && "$applied_revi
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1250,4 +1475,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e2db61bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a875a4ba` are properly handled with clean fallback behavior.

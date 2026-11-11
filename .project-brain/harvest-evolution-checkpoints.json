@@ -1,19 +1,19 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:49:41.482Z",
+  "last_updated": "2026-11-11T16:36:08.780Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-11T07:59:25.580Z",
+      "processed_at": "2026-11-11T15:27:53.718Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-11T07:59:25.590Z",
+      "processed_at": "2026-11-11T16:20:50.223Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-11T06:05:08.700Z",
+      "processed_at": "2026-11-11T15:09:01.693Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -106,9 +106,319 @@
       "processed_at": "2026-11-11T09:49:41.482Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "pola-rs-polars-learnings.md": {
+      "processed_at": "2026-11-11T10:00:26.511Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "juicedata-juicefs-learnings.md": {
+      "processed_at": "2026-11-11T10:00:26.526Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tailscale-tailscale-learnings.md": {
+      "processed_at": "2026-11-11T10:00:26.533Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "apache-arrow-learnings.md": {
+      "processed_at": "2026-11-11T10:09:35.579Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-liconstudio-minimax-h3-vbvr-learnings.md": {
+      "processed_at": "2026-11-11T10:09:35.585Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rook-rook-learnings.md": {
+      "processed_at": "2026-11-11T10:09:35.591Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "facebook-folly-learnings.md": {
+      "processed_at": "2026-11-11T10:17:50.078Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-unsloth-qwen3.8-flash-next-gguf-learnings.md": {
+      "processed_at": "2026-11-11T10:18:06.334Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "aleo-labs-protocol-snarkos-learnings.md": {
+      "processed_at": "2026-11-11T10:18:06.342Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "google-tcmalloc-learnings.md": {
+      "processed_at": "2026-11-11T10:27:23.207Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "open-policy-agent-opa-learnings.md": {
+      "processed_at": "2026-11-11T10:27:23.212Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rustls-rustls-learnings.md": {
+      "processed_at": "2026-11-11T10:27:23.217Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nguyenphutrong-quotio-learnings.md": {
+      "processed_at": "2026-11-11T10:35:34.154Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "sqldelight-sqldelight-learnings.md": {
+      "processed_at": "2026-11-11T10:35:34.161Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "gravitl-netmaker-learnings.md": {
+      "processed_at": "2026-11-11T10:35:34.167Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tw93-pake-learnings.md": {
+      "processed_at": "2026-11-11T10:43:41.572Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "caviraoss-longmemory-learnings.md": {
+      "processed_at": "2026-11-11T10:43:41.578Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "kotest-kotest-learnings.md": {
+      "processed_at": "2026-11-11T10:52:42.156Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "opentofu-opentofu-learnings.md": {
+      "processed_at": "2026-11-11T10:52:42.161Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "microsoft-agent-governance-toolkit-learnings.md": {
+      "processed_at": "2026-11-11T10:52:42.163Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rtk-ai-rtk-learnings.md": {
+      "processed_at": "2026-11-11T11:00:52.985Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "temporalio-temporal-learnings.md": {
+      "processed_at": "2026-11-11T11:00:52.992Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "ontos-ai-knowhere-learnings.md": {
+      "processed_at": "2026-11-11T11:00:52.996Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-comfy-org-relayvsr-learnings.md": {
+      "processed_at": "2026-11-11T11:10:58.468Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "envoyproxy-envoy-learnings.md": {
+      "processed_at": "2026-11-11T11:10:58.474Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "sxyazi-yazi-learnings.md": {
+      "processed_at": "2026-11-11T11:19:20.185Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "onejs-one-learnings.md": {
+      "processed_at": "2026-11-11T11:19:20.190Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "k3s-io-k3s-learnings.md": {
+      "processed_at": "2026-11-11T11:19:20.195Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "prometheus-prometheus-learnings.md": {
+      "processed_at": "2026-11-11T11:39:47.832Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "zoontek-react-native-bootsplash-learnings.md": {
+      "processed_at": "2026-11-11T11:39:47.842Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "mikepenz-aboutlibraries-learnings.md": {
+      "processed_at": "2026-11-11T12:08:41.375Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "stakater-reloader-learnings.md": {
+      "processed_at": "2026-11-11T12:08:41.381Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "zseven-w-openpencil-learnings.md": {
+      "processed_at": "2026-11-11T12:41:25.388Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "iii-hq-iii-learnings.md": {
+      "processed_at": "2026-11-11T12:53:40.697Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "aquasecurity-trivy-operator-learnings.md": {
+      "processed_at": "2026-11-11T12:53:40.702Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "xerj-org-xerj-learnings.md": {
+      "processed_at": "2026-11-11T12:53:53.499Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "automattic-harper-learnings.md": {
+      "processed_at": "2026-11-11T13:22:17.166Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "max-sixty-worktrunk-learnings.md": {
+      "processed_at": "2026-11-11T13:29:19.484Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-baidu-ernie-5.5-flash-base-learnings.md": {
+      "processed_at": "2026-11-11T13:29:30.753Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "shifthackz-sdai-kmp-learnings.md": {
+      "processed_at": "2026-11-11T13:29:30.756Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "necolas-react-native-web-learnings.md": {
+      "processed_at": "2026-11-11T13:52:34.061Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "burntsushi-ripgrep-learnings.md": {
+      "processed_at": "2026-11-11T14:09:53.300Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "jetbrains-kotlinconf-app-learnings.md": {
+      "processed_at": "2026-11-11T14:09:53.305Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "sharkdp-bat-learnings.md": {
+      "processed_at": "2026-11-11T14:17:01.731Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tencent-tds-kuiklyui-learnings.md": {
+      "processed_at": "2026-11-11T14:17:01.736Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "projectcontour-contour-learnings.md": {
+      "processed_at": "2026-11-11T14:17:01.738Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "sharkdp-fd-learnings.md": {
+      "processed_at": "2026-11-11T14:43:56.736Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "joreilly-peopleinspace-learnings.md": {
+      "processed_at": "2026-11-11T14:43:56.743Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "kube-rs-kube-learnings.md": {
+      "processed_at": "2026-11-11T14:43:56.746Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hmbown-codewhale-learnings.md": {
+      "processed_at": "2026-11-11T14:56:57.862Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "gardener-gardener-learnings.md": {
+      "processed_at": "2026-11-11T14:56:57.869Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "matrixorigin-matrixone-learnings.md": {
+      "processed_at": "2026-11-11T14:56:57.873Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "arkivanov-decompose-learnings.md": {
+      "processed_at": "2026-11-11T15:27:53.704Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "doobidoo-mcp-memory-service-learnings.md": {
+      "processed_at": "2026-11-11T15:27:53.711Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "cachix-devenv-learnings.md": {
+      "processed_at": "2026-11-11T16:12:24.169Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tw93-mole-learnings.md": {
+      "processed_at": "2026-11-11T16:12:24.208Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "flux-iac-tofu-controller-learnings.md": {
+      "processed_at": "2026-11-11T16:12:24.238Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "emberstack-kubernetes-reflector-learnings.md": {
+      "processed_at": "2026-11-11T16:20:50.210Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "cilium-cilium-learnings.md": {
+      "processed_at": "2026-11-11T16:20:50.217Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "falkordb-falkordb-learnings.md": {
+      "processed_at": "2026-11-11T16:36:08.770Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nativescript-nativescript-learnings.md": {
+      "processed_at": "2026-11-11T16:36:08.777Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "pingcap-tidb-learnings.md": {
+      "processed_at": "2026-11-11T16:36:08.779Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 24,
-  "total_canonical_promoted": 12,
-  "total_staged_for_review": 9
+  "total_dossiers_evaluated": 102,
+  "total_canonical_promoted": 16,
+  "total_staged_for_review": 83
 }

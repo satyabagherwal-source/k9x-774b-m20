@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T09:49:41.481Z",
-  "total_records": 45,
+  "last_updated": "2026-11-11T13:29:30.753Z",
+  "total_records": 49,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 15,
+      "total": 19,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -40,7 +40,11 @@
         "DOM-D-BC0A19F3",
         "DOM-D-5BF650C7",
         "DOM-D-C4D2B996",
-        "DOM-D-CB6BA6DF"
+        "DOM-D-CB6BA6DF",
+        "DOM-D-11562009",
+        "DOM-D-00269E5B",
+        "DOM-D-40589951",
+        "DOM-D-BA155874"
       ]
     },
     "E": {
@@ -1802,6 +1806,170 @@
       },
       "confidence": 0.55,
       "created_at": "2026-11-11T09:49:41.479Z"
+    },
+    "DOM-D-11562009": {
+      "record_id": "DOM-D-11562009",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/Qwen3.8-Flash-Next-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF](https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF))  \n> **Source Version**: `hf-unsloth-q`  \n> **License",
+      "content_hash": "b250b6130deaee02509a58a5cc0104ccad34e38f5e051dd2a6b7ff9d35aa0594",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-qwen3.8-flash-next-gguf/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T10:17:50.078Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-qwen3.8-flash-next-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-qwen3.8-flash-next-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T10:18:06.331Z"
+    },
+    "DOM-D-00269E5B": {
+      "record_id": "DOM-D-00269E5B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/RelayVSR",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/RelayVSR](https://huggingface.co/Comfy-Org/RelayVSR))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "8321d1c40aa6a69a32fdc957572b5d6c7341c6f24f1928c1658f16cbb8b309de",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-relayvsr/hf-comfy-org-relayvsr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T11:10:45.475Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-relayvsr)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-relayvsr"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T11:10:58.466Z"
+    },
+    "DOM-D-40589951": {
+      "record_id": "DOM-D-40589951",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): xerj-org/xerj",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  \n> **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  \n> **Source Version**: `50e4ffde`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "8e3570cf329a80c7f5287338588e77d64a7e948f37869ebeeab6e3d61dd7082a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  \n> **Source**: github ([https://github.com/xerj-org/xer -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  \n> **Source**: github ([https://github.com/xerj-org/xer",
+      "provenance": {
+        "source_uri": "project://xerj-org-xerj/xerj-org-xerj-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T12:53:40.703Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (xerj-org-xerj)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of xerj-org-xerj"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T12:53:53.497Z"
+    },
+    "DOM-D-BA155874": {
+      "record_id": "DOM-D-BA155874",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): baidu/ERNIE-5.5-Flash-Base",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/baidu/ERNIE-5.5-Flash-Base](https://huggingface.co/baidu/ERNIE-5.5-Flash-Base))  \n> **Source Version**: `hf-baidu-ern`  \n> **License**: Open-Source",
+      "content_hash": "a8651b5d53845786d2a69b8c4c71d1e39bc666eaa4cdc303660d497b8e7b2fb9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-baidu-ernie-5.5-flash-base/hf-baidu-ernie-5.5-flash-base-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T13:29:19.485Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baidu-ernie-5.5-flash-base)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baidu-ernie-5.5-flash-base"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T13:29:30.751Z"
     }
   }
 }

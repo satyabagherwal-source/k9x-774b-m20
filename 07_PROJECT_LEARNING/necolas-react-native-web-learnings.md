@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `4ccb5f41`  
+> **Source Version**: `dcfd464f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:43:53.267Z  
+> **Timestamp**: 2026-11-11T13:52:17.019Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:43:53.059Z  
+> **Harvest Timestamp**: 2026-11-11T13:52:16.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22159 stars
+- **Stars / Engagement**: 22162 stars
 
 ---
 
@@ -100,7 +100,8 @@ import StyleSheet from '../StyleSheet';
 import React from 'react';
 
 export type Application = {
-  unmount: () => void
+  unmount: () => void,
+  ...
 };
 
 export default function renderApplication<Props extends Object>(
@@ -166,10 +167,12 @@ export function getApplication(
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @flow
  */
 
 'use client';
+
+import type { EventSubscription } from '../../vendor/react-native/vendor/emitter/EventEmitter';
 
 import invariant from 'invariant';
 import EventEmitter from '../../vendor/react-native/vendor/emitter/EventEmitter';
@@ -177,53 +180,54 @@ import canUseDOM from '../../modules/canUseDom';
 
 const EVENT_TYPES = ['change', 'memoryWarning'];
 
-const AppStates = {
-  BACKGROUND: 'background',
-  ACTIVE: 'active'
+type AppStateStatus = 'active' | 'background';
+
+type AppStateEvents = {
+  change: [AppStateStatus],
+  memoryWarning: []
 };
 
-let changeEmitter = null;
+const isAvailable: boolean = canUseDOM && !!document.visibilityState;
+let changeEmitter: ?EventEmitter<AppStateEvents> = null;
+
+const getCurrentState = (): AppStateStatus =>
+  !isAvailable || document.visibilityState === 'visible'
+    ? 'active'
+    : 'background';
 
 export default class AppState {
-  static isAvailable = canUseDOM && !!document.visibilityState;
+  static isAvailable: boolean = isAvailable;
 
-  static get currentState() {
-    if (!AppState.isAvailable) {
-      return AppStates.ACTIVE;
-    }
-
-    switch (document.visibilityState) {
-      case 'hidden':
-      case 'prerender':
-      case 'unloaded':
-        return AppStates.BACKGROUND;
-      default:
-        return AppStates.ACTIVE;
-    }
+  static get currentState(): AppStateStatus {
+    return getCurrentState();
   }
 
-  static addEventListener(type: string, handler: Function) {
-    if (AppState.isAvailable) {
+  static addEventListener(
+    type: string,
+    handler: (state: AppStateStatus) => unknown
+  ): ?EventSubscription {
+    if (isAvailable) {
       invariant(
         EVENT_TYPES.indexOf(type) !== -1,
         'Trying to subscribe to unknown event: "%s"',
         type
       );
+
       if (type === 'change') {
         if (!changeEmitter) {
-          changeEmitter = new EventEmitter();
+          changeEmitter = new EventEmitter<AppStateEvents>();
 
           document.addEventListener(
             'visibilitychange',
             () => {
-              if (changeEmitter) {
-                changeEmitter.emit('change', AppState.currentState);
-              }
+              changeEmitter?.emit('change', AppState.currentState);
             },
             false
           );
         }
-        return changeEmitter.addListener(type, handler);
+
+        // TODO: Remove `?.` after the TypeScript migration
+        return changeEmitter?.addListener('change', handler);
       }
     }
   }
@@ -239,7 +243,7 @@ export default class AppState {
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @flow
  */
 
 'use client';
@@ -249,14 +253,22 @@ import {
   hydrateRoot as domHydrateRoot
 } from 'react-dom/client';
 
+import type { Node } from 'react';
+
 import { createSheet } from '../StyleSheet/dom';
 
-export function hydrate(element, root) {
+export type Root = {
+  render: (children: Node) => void,
+  unmount: () => void,
+  ...
+};
+
+export function hydrate(element: Node, root: HTMLElement): Root {
   createSheet(root);
   return domHydrateRoot(root, element);
 }
 
-export default function render(element, root) {
+export default function render(element: Node, root: HTMLElement): Root {
   createSheet(root);
   const reactRoot = domCreateRoot(root);
   reactRoot.render(element);
@@ -738,274 +750,90 @@ export function isPrimaryPointerDown(domEvent: any): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad66cedd` (2026-11-05)
-**Commit Message**: [fix] ScrollView: don't set touch-action when scroll is disabled
+### Incident Patch 1: `91d73b52` (2026-11-10)
+**Commit Message**: [fix] Pressable: remove keyup listener on unmount
 
-A ScrollView with scrollEnabled={false} set "touch-action: none". This blocked pinch-zoom on it, and blocked scrolling of the page or a parent ScrollView when a drag started on it.
+If a Pressable unmounted while Enter was held, its document keyup listener stayed attached. Releasing Enter then called onPressOut on the unmounted component.
 
-"overflow: hidden" already stops the user from scrolling the ScrollView.
-Touch on it now goes to the parent, as on Android.
+Closes #2945
 
-Fix #2148
-
-**File**: `packages/react-native-web/src/exports/ScrollView/ScrollViewBase.js` (modified, +1/-5)
+**File**: `packages/react-native-web/src/modules/usePressEvents/PressResponder.js` (modified, +5/-0)
 ```diff
-@@ -161,14 +161,10 @@ const ScrollViewBase = (props: Props): React.Node => {
-   );
- };
+@@ -236,6 +236,7 @@ export default class PressResponder {
+   |}>;
+   _touchState: TouchState = NOT_RESPONDER;
+   _responderElement: ?HTMLElement = null;
++  _keyupHandler: ?(KeyboardEvent) => void = null;
  
--// Chrome doesn't support e.preventDefault in this case; touch-action must be
--// used to disable scrolling.
--// https://developers.google.com/web/updates/2017/01/scrolling-intervention
- const styles = StyleSheet.create({
-   scrollDisabled: {
-     overflowX: 'hidden',
--    overflowY: 'hidden',
--    touchAction: 'none'
-+    overflowY: 'hidden'
-   },
-   hideScrollbar: {
-     scrollbarWidth: 'none'
-```
-
----
-
-### Incident Patch 2: `68f59e0e` (2026-11-05)
-**Commit Message**: [fix] StyleSheet: don't crash on hydration when rules come before the first group
-
-Hydration expected the first rule of the style sheet element to be a group marker. A rule placed before it, such as a page's own rule or an `@layer` block, made it throw. These rules are now ignored.
-
-**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/dom-createOrderedCSSStyleSheet-test.js` (modified, +32/-0)
-```diff
-@@ -176,5 +176,37 @@ describe('createOrderedCSSStyleSheet', () => {
-       sheet.insert('@supports (color:mark){:host,:root{--rnw-mark:mark;}}', 0);
-       expect(element.sheet.cssRules.length).toBe(2);
-     });
-+
-+    test('ignores rules before the first group', () => {
-+      element.appendChild(
-+        document.createTextNode(
-+          '.page { color: blue }\n[stylesheet-group="0"]{}\n.a { color: red }'
-+        )
-+      );
-+
-+      const sheet = createOrderedCSSStyleSheet(element.sheet);
-+      sheet.insert('.b { color: red }', 0);
-+      sheet.insert('.c { color: red }', 1);
-+
-+      expect(sheet.getTextContent()).toMatchInlineSnapshot(`
-+       "[stylesheet-group="0"] {}
-+       .a {color: red;}
-+       .b { color: red }
-+       [stylesheet-group="1"]{}
-+       .c { color: red }"
-+      `);
-+
-+      expect(Array.from(element.sheet.cssRules).map((rule) => rule.cssText))
-+        .toMatchInlineSnapshot(`
-+       [
-+         ".page {color: blue;}",
-+         "[stylesheet-group="0"] {}",
-+         ".a {color: red;}",
-+         ".b {color: red;}",
-+         "[stylesheet-group="1"] {}",
-+         ".c {color: red;}",
-+       ]
-+      `);
-+    });
-   });
- });
-```
-
-**File**: `packages/react-native-web/src/exports/StyleSheet/dom/createOrderedCSSStyleSheet.js` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ export default function createOrderedCSSStyleSheet(
-       if (cssText.indexOf('stylesheet-group') > -1) {
-         group = decodeGroupRule(cssRule);
-         groups[group] = { start: i, rules: [cssText] };
--      } else {
-+      } else if (group != null) {
-         const selectorText = getSelectorText(cssText);
-         if (selectorText != null) {
-           selectors[selectorText] = true;
-```
-
----
-
-### Incident Patch 3: `77d73dc2` (2026-11-05)
-**Commit Message**: [fix] VirtualizedList: don't block wheel scroll on the other axis (#2959)
-
-**File**: `packages/react-native-web-examples/pages/nested-lists/index.js` (added, +115/-0)
-```diff
-@@ -0,0 +1,115 @@
-+import React from 'react';
-+import { FlatList, StyleSheet, Switch, Text, View } from 'react-native';
-+import Example from '../../shared/example';
-+
-+const rows = Array.from({ length: 20 }, (_, i) => ({ key: String(i) }));
-+const cells = Array.from({ length: 20 }, (_, i) => ({ key: String(i) }));
-+
-+function Option({ label, value, onValueChange }) {
-+  return (
-+    <View style={styles.option}>
-+      <Switch onValueChange={onValueChange} value={value} />
-+      <Text style={styles.optionLabel}>{label}</Text>
-+    </View>
-+  );
-+}
-+
-+export default function NestedListsPage() {
-+  const [innerInverted, setInnerInverted] = React.useState(false);
-+  const [outerInverted, setOuterInverted] = React.useState(true);
-+  const [outerScrollEnabled, setOuterScrollEnabled] = React.useState(true);
-+
-+  const renderRow = ({ item: row }) => {
-+    if (Number(row.key) % 3 !== 0) {
-+      return (
-+        <View style={styles.row}>
-+          <Text>Row {row.key}</Text>
-+        </View>
-+      );
+   constructor(config: PressResponderConfig) {
+     this.configure(config);
+@@ -252,6 +253,9 @@ export default class PressResponder {
+     this._cancelLongPressDelayTimeout();
+     this._cancelPressDelayTimeout();
+     this._cancelPressOutDelayTimeout();
++    if (this._keyupHandler != null) {
++      document.removeEventListener('keyup', this._keyupHandler);
 +    }
-+    return (
-+      <FlatList
-+        data={cells}
-+        horizontal
-+        inverted={innerInverted}
-+        renderItem={({ item: cell }) => (
-+          <View style={styles.cell}>
-+            <Text>
-+              {row.key}.{cell.key}
-+            </Text>
-+          </View>
-+        )}
-+        style={styles.inner}
-+      />
-+    );
-+  };
-+
-+  return (
-+    <Example title="Nested lists">
-+      <View style={styles.options}>
-+        <Option
-+          label="Outer (vertical) inverted"
-+          onValueChange={setOuterInverted}
-+          value={outerInverted}
-+        />
-+        <Option
-+          label="Inner (horizontal) inverted"
-+          onValueChange={setInnerInverted}
-+          value={innerInverted}
-+        />
-+        <Option
-+          label="Outer scroll enabled"
-+          onValueChange={setOuterScrollEnabled}
-+          value={outerScrollEnabled}
-+        />
-+      </View>
-+      <FlatList
-+        data={rows}
-+        extraData={innerInverted}
-+        inverted={outerInverted}
-+        renderItem={renderRow}
-+        scrollEnabled={outerScrollEnabled}
-+        style={styles.outer}
-+      />
-+    </Example>
-+  );
-+}
-+
-+const styles = StyleSheet.create({
-+  options: {
-+    marginVertical: 16
-+  },
-+  option: {
-+    alignItems: 'center',
-+    flexDirection: 'row',
-+    marginBottom: 8
-+  },
-+  optionLabel: {
-+    marginLeft: 8
-+  },
-+  outer: {
-+    borderColor: '#ccc',
-+    borderWidth: 1,
-+    height: 400,
-+    maxWidth: '100%',
-+    width: 360
-+  },
-+  row: {
-+    borderBottomColor: '#eee',
-+    borderBottomWidth: 1,
-+    padding: 16
-+  },
-+  inner: {
-+    backgroundColor: '#f5f5f5',
-+    borderBottomColor: '#eee',
-+    borderBottomWidth: 1
-+  },
-+  cell: {
-+    alignItems: 'center',
-+    borderRightColor: '#ddd',
-+    borderRightWidth: 1,
-+    height: 60,
-+    justifyContent: 'center',
-+    width: 80
-+  }
-+});
+   }
+ 
+   /**
+@@ -358,6 +362,7 @@ export default class PressResponder {
+             this._responderElement = target;
+             // Listen to 'keyup' on document to account for situations where
+             // focus is moved to another element during 'keydown'.
++            this._keyupHandler = keyupHandler;
+             document.addEventListener('keyup', keyupHandler);
+           }
+           const isSpacebarKey = key === ' ';
 ```
 
-**File**: `packages/react-native-web/src/vendor/react-native/VirtualizedList/index.js` (modified, +24/-5)
+---
+
+### Incident Patch 2: `39fc3862` (2026-11-09)
+**Commit Message**: Fix lists page layout in examples app
+
+**File**: `packages/react-native-web-examples/pages/lists/index.js` (modified, +1/-0)
 ```diff
-@@ -454,16 +454,34 @@ class VirtualizedList extends StateSafePureComponent<Props, State> {
-       renderMask: VirtualizedList._createRenderMask(props, initialRenderRegion),
-     };
+@@ -371,6 +371,7 @@ class SingleColumnExample extends React.PureComponent {
  
--      // REACT-NATIVE-WEB patch to preserve during future RN merges: Support inverted wheel scroller.
-+    // REACT-NATIVE-WEB patch to preserve during future RN merges: Support inverted wheel scroller.
-     // For issue https://github.com/necolas/react-native-web/issues/995
-     this.invertedWheelEventHandler = (ev: any) => {
-+      if (this.props.scrollEnabled === false) {
-+        return;
-+      }
-+
-+      let deltaX = ev.deltaX || ev.wheelDeltaX || 0;
-+      let deltaY = ev.deltaY || ev.wheelDeltaY || 0;
-+
-+      // Windows and Linux report Shift+wheel as deltaY but scroll horizontally
-+      if (ev.shiftKey && deltaX === 0) {
-+        deltaX = deltaY;
-+        deltaY = 0;
-+      }
-+
-+      const delta = this.props.horizontal ? deltaX : deltaY;
-+      const crossDelta = this.props.horizontal ? deltaY : deltaX;
-+
-+      // Let the browser handle wheel events on the other axis (e.g. nested lists)
-+      if (Math.abs(delta) <= Math.abs(crossDelta)) {
-+        return;
-+      }
-+
-       const scrollOffset = this.props.horizontal ? ev.target.scrollLeft : ev.target.scrollTop;
-       const scrollLength = this.props.horizontal ? ev.target.scrollWidth : ev.target.scrollHeight;
-       const clientLength = this.props.horizontal ? ev.target.clientWidth : ev.target.clientHeight;
-       const isEventTargetScrollable = ev.target !== ev.currentTarget && scrollLength > clientLength;
--      const delta = this.props.horizontal
--        ? ev.deltaX || ev.wheelDeltaX
--        : ev.deltaY || ev.wheelDeltaY;
-       let leftoverDelta = delta;
-       if (isEventTargetScrollable) {
-         leftoverDelta = delta < 0
-@@ -746,7 +764,8 @@ class VirtualizedList extends StateSafePureComponent<Props, State> {
-   setupWebWheelHandler() {
-     if (this._scrollRef && this._scrollRef.getScrollableNode) {
-       this._scrollRef.getScrollableNode().addEventListener('wheel',
--          this.invertedWheelEventHandler
-+          this.invertedWheelEventHandler,
-+          {passive: false}
-       );
-     } else {
-       setTimeout(() => this.setupWebWheelHandler(), 50);
+ const styles = StyleSheet.create({
+   container: {
++    alignSelf: 'stretch',
+     backgroundColor: 'rgb(239, 239, 244)',
+     flex: 1
+   },
+```
+
+---
+
+### Incident Patch 3: `ee8a0980` (2026-11-09)
+**Commit Message**: [fix] ScrollView: support percentage heights on pagingEnabled children
+
+The wrapper View added around each child for scroll snapping was a column, so a horizontal child with height: '100%' (like a FlatList item) collapsed to 0.
+The wrapper now uses the row direction in horizontal mode.
+
+Fix #1299
+
+**File**: `packages/react-native-web/src/exports/ScrollView/index.js` (modified, +4/-0)
+```diff
+@@ -328,6 +328,7 @@ class ScrollView extends React.Component<ScrollViewProps> {
+               return (
+                 <View
+                   style={[
++                    horizontal && styles.childWrapperHorizontal,
+                     isSticky && styles.stickyHeader,
+                     pagingEnabled && styles.pagingEnabledChild
+                   ]}
+@@ -479,6 +480,9 @@ const styles = StyleSheet.create({
+   },
+   pagingEnabledChild: {
+     scrollSnapAlign: 'start'
++  },
++  childWrapperHorizontal: {
++    flexDirection: 'row'
+   }
+ });
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1034,32 +862,32 @@ Hydration expected the first rule of the style sheet element to be a group marke
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [fix] ScrollView: don't set touch-action when scroll is disabled
+## X. [fix] Pressable: remove keyup listener on unmount
 
 **RULE**:
-When implementing operations in `packages/react-native-web/src/exports/ScrollView/ScrollViewBase.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-web/src/modules/usePressEvents/PressResponder.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad66cedd`: [fix] ScrollView: don't set touch-action when scroll is disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91d73b52`: [fix] Pressable: remove keyup listener on unmount. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/exports/ScrollView/ScrollViewBase.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/modules/usePressEvents/PressResponder.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    overflowY: 'hidden'
+  _keyupHandler: ?(KeyboardEvent) => void = null;
+    if (this._keyupHandler != null) {
+      document.removeEventListener('keyup', this._keyupHandler);
+    }
+            this._keyupHandler = keyupHandler;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Chrome doesn't support e.preventDefault in this case; touch-action must be
-// used to disable scrolling.
-// https://developers.google.com/web/updates/2017/01/scrolling-intervention
-    overflowY: 'hidden',
-    touchAction: 'none'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad66cedd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91d73b52` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `057efa66`  
+> **Source Version**: `fdcf2d37`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T03:35:30.224Z  
+> **Timestamp**: 2026-11-11T10:08:16.656Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T03:35:30.216Z  
+> **Harvest Timestamp**: 2026-11-11T10:08:16.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21021** (2026-11-08): **feat(query): segment zone map for fuse tables, built by recluster**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  A table with many segments pays one segment read per segment before any block is pruned. This adds a snapshot-level **segment zone map** for fuse tables: a parquet file with one row per covered segment (`path`, `block_count`, `fresh`) and the `min`/`max`/`null_count` of every leaf column that carries statistics, copied from the segment summaries. `do_read_partitions` reads only the columns the filter references and drops segments before any segment info is read.  Pruning is negative-only, so results are identical with or without the zone map; a stale, missing or unreadable zone map falls back to regular segment pruning with a warning. A column is only used when its stored type still matches the query schema, and a NULL `null_count` marks a segment whose statistics for that column are unknown.  - `TableSnapshot.segment_zone_map: Option<SegmentZoneMapMeta>` (`#[serde(default)]`, only `location` + `footer_offset`). `try_new` carries it from the previous snapshot; truncate, INSERT OVERWRITE, `segment_format` conversion and decimal widening clear it. Older readers skip the field; a snapshot written by an older version has no pointer, and the next recluster rebuilds it. - `storages/fuse/src/segment_zone_map/{format,build,prune}.rs`: file layout and reader (row groups of 16k segments with chunk statistics; one range read for the footer, then one per run of adjacent columns p
+- **Issue #21060** (2026-11-11): **fix(query): break rank limit ties by the remaining group keys**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  `GROUP BY k1, k2 ORDER BY k1 LIMIT n` can return wrong aggregate values when groups tie on `k1`.  A rank limit pushed into the aggregate drops, batch by batch, the rows of the groups that rank after the limit, so only the first `n` groups by **all** the rank keys (`k1, k2`) are whole. The Sort / TopN above ordered by `k1` only, so among tied groups it could return one that had lost rows. With several final aggregate processors each keeping its own first `n` groups, such groups reach the limit. `GROUP BY ... LIMIT n` without ORDER BY had the same problem when a group key cannot be sorted by (e.g. an array), because the injected sort skipped that key.  ```sql create table t (dt int, uid int); insert into t select 1, number from numbers(300000); insert into t select 1, number + 3 from numbers(300000); -- every (dt, uid) with uid in [3, 300000) has count 2, but rows such as (1, 60001, 1) were returned select dt, uid, count(*) from t group by dt, uid order by dt limit 5; ```  Changes in `RulePushDownRankLimitAggregate`:  - When ORDER BY covers only part of the group keys, append the remaining group keys to the Sort / TopN above as tie breakers, so it picks exactly the groups the rank limit kept whole. The extra keys are group keys, so the result still satisfies the ORDER BY. - When a group key that has to break ties cannot be sorted by, do not push the rank limit, for both
 
-- **Issue #21015** (2026-11-08): **fix(fuse): infer string statistics truncation by character count**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes #20197.  Fuse trims string statistics by Unicode characters, but inferred possible truncation from UTF-8 byte length. Count characters for both bounds instead, honoring per-column `STATS_TRUNCATE_LEN`.  ```sql CREATE TABLE t (s STRING); INSERT INTO t VALUES ('你好世界你好世'), ('👍👍👍👍👍'); EXPLAIN SELECT MIN(s), MAX(s) FROM t; ```  The strings contain 7 and 5 characters but occupy 21 and 20 UTF-8 bytes. Neither is truncated by the default 16-character threshold.  <details> <summary>Before: scan and aggregate the table</summary>  ```text AggregateFinal ├── output columns: [MIN(s) (#1), MAX(s) (#2)] ├── group by: [] ├── aggregate functions: [min(s), max(s)] ├── estimated rows: 1.00 └── AggregatePartial     ├── group by: []     ├── aggregate functions: [min(s), max(s)]     ├── estimated rows: 1.00     └── TableScan         ├── table: default.default.t         ├── scan id: 0         ├── output columns: [s (#0)]         ├── read rows: 2         ├── read size: < 1 KiB         ├── partitions total: 1         ├── partitions scanned: 1         ├── pruning stats: [segments: <read cost: 1 ms, decompress cost: 1 ms, range pruning: 1 to 1 cost: 1 ms>, blocks: <range pruning: 1 to 1 cost: 1 ms>]         ├── push downs: [filters: [], limit: NONE]         └── estimated rows: 2.00 ```  </details>  **After: answer directly from statistics, without scanning table data**  ```text EvalS
+- **Issue #21056** (2026-11-11): **bug: HashMethodSerializer panics on constant BlockEntry inputs**
+  *Symptoms*: ### Search before asking  - [x] I had searched in the [issues](https://github.com/databendlabs/databend/issues) and found no similar issues.  ### Version  Source at `f004c938f4` (parent of #20972). The same code is present in the `v1.2.961-nightly` source. No released binary was tested, because no SQL path has been found that reaches this code (see below).  ### What's Wrong?  `HashMethodSerializer::build_keys_state` assumes every input `BlockEntry` is a materialized column and unwraps `as_column()` while estimating capacity:  ```rust let serialize_size = group_columns     .iter()     .map(|entry| entry.as_column().unwrap().serialize_size())     .sum(); ```  Passing a constant entry therefore panics before any key bytes are written, even though the downstream serialization path (`serialize_group_columns`) already materializes entries through `to_column()`. The other hash methods (`HashMethodFixedKeys::build_keys_state` and `HashMethodSingleBinary::build_keys_state`) also accept constant entries via `to_column()`, so the serializer is the only one with this restriction.  This is separate from the underestimated-buffer issue (#21055). The issue is confirmed at the serializer API level. A SQL path that passes constant entries to this interface has not been established.  SQL reachability checked so far, on `f004c938f4`: every in-tree caller of `build_keys_state`, `hash_by_method` and `hash_by_method_for_bloom` materializes its key entries first.  - Legacy hash join build/probe (`h
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,1240 +1217,1630 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `19308cd3` (2026-11-08)
-**Commit Message**: feat(query): segment zone map for fuse tables, built by recluster (#21021)
+### Incident Patch 1: `cbbeaa8c` (2026-11-10)
+**Commit Message**: fix(query): defer transaction maintenance until after commit (#21020)
 
-* feat(query): segment zone map for fuse tables, built by recluster
+* fix(query): defer transaction maintenance until after commit
 
-A snapshot-level parquet file with the per-segment path, block count and
-min/max/null_count of every column that has statistics. Queries read the
-columns their filter references and drop segments before reading any
-segment info; pruning is negative-only, so results never change, and a
-stale, missing or unreadable zone map only falls back to segment pruning.
+Aggregate automatic maintenance inputs per table in explicit transactions
+and dispatch them in independent sessions only after successful commit.
+Discard deferred maintenance and purge requests on rollback or failure.
+Release materialized-view lifecycle locks before running maintenance.
 
-The snapshot carries a pointer (location + footer offset) that every new
-snapshot inherits; truncate, INSERT OVERWRITE, segment format conversion
-and decimal widening clear it. OPTIMIZE TABLE ... RECLUSTER refreshes the
-zone map after committed rounds when enough full segments are missing,
-admitting uncovered segments at a ratio that follows how many rows of the
-previous build survived. vacuum2 collects files no retained snapshot
-points to.
+Move maintenance stages into TableHookTask and keep scheduling separate.
+Preserve stage ordering and local error handling, distinguish sync/async
+execution logs, and recover scheduler state after runner panics.
+Keep the existing COMPACT BLOCK lock scope and async blackbox matcher.
 
-Settings: enable_segment_zone_map, enable_segment_zone_map_pruning,
-segment_zone_map_full_segment_threshold; table option
-enable_segment_zone_map. EXPLAIN shows `zone map pruning: N to M`;
-fuse_snapshot gains segment_zone_map_location.
+Add SQL regressions for transactional REPLACE and MV refresh maintenance.
 
-* feat(quer
+Fixes #20825.
 
-**File**: `src/query/catalog/src/plan/pruning_statistics.rs` (modified, +18/-0)
+* fix(query): preserve hook lock cleanup and reduce metadata reads
+
+Restore callback-chain lock release for synchronous hooks when task creation or execution fails.
+
+Skip target resolution for zero compaction hints, verify the current name before falling back to ID lookup, and reuse freshly resolved tables within each maintenance stage. Remove duplicate cache cleanup while preserving per-stage ID che
+
+**File**: `src/query/ee/src/materialized_view/handler.rs` (modified, +10/-4)
 ```diff
-@@ -20,6 +20,13 @@ pub struct PruningStatistics {
-     /// Segment block metas decompress cost in microseconds.
-     pub segments_decompress_cost: u64,
+@@ -87,11 +87,13 @@ impl MaterializedViewHandler for RealMaterializedViewHandler {
+                 ErrorCode::Internal("materialized view refresh requires QueryContext".to_string())
+             })?;
  
-+    /// Segment zone map pruning stats: segments excluded by the snapshot-level
-+    /// segment zone map before any segment info was read.
-+    pub segments_zone_map_pruning_before: usize,
-+    pub segments_zone_map_pruning_after: usize,
-+    /// Segment zone map pruning cost in microseconds.
-+    pub segments_zone_map_pruning_cost: u64,
-+
-     /// Segment range pruning stats.
-     pub segments_range_pruning_before: usize,
-     pub segments_range_pruning_after: usize,
-@@ -69,6 +76,17 @@ impl PruningStatistics {
-     pub fn merge(&mut self, other: &Self) {
-         self.segments_read_cost += other.segments_read_cost;
-         self.segments_decompress_cost += other.segments_decompress_cost;
-+        // Segment zone map pruning runs once per scan before the segments are
-+        // distributed, and every node reports the same numbers: keep one copy.
-+        self.segments_zone_map_pruning_before = self
-+            .segments_zone_map_pruning_before
-+            .max(other.segments_zone_map_pruning_before);
-+        self.segments_zone_map_pruning_after = self
-+            .segments_zone_map_pruning_after
-+            .max(other.segments_zone_map_pruning_after);
-+        self.segments_zone_map_pruning_cost = self
-+            .segments_zone_map_pruning_cost
-+            .max(other.segments_zone_map_pruning_cost);
-         self.segments_range_pruning_before += other.segments_range_pruning_before;
-         self.segments_range_pruning_after += other.segments_range_pruning_after;
-         self.segments_range_pruning_cost += other.segments_range_pruning_cost;
+-        // Refresh consumes one source checkpoint range. Keep the same mandatory non-waiting lock
+-        // across the complete lifecycle so concurrent refreshes cannot consume the same changes.
++        // Refresh consumes one source checkpoint range. Keep the mandatory non-waiting lock
++        // through the data/checkpoint commit so concurrent refreshes cannot consume the same
++        // changes. Release this guard before post-commit maintenance, which uses each
++        // operation's existing coordination mechanism.
+         let locked_table_id = table.get_id();
+         let table_lock = CoordinationManager::create_table_lock(table.get_table_info().clone());
+-        let _lock_guard = table_lock.try_lock(query_ctx.clone(), false).await?;
++        let lock_guard = table_lock.try_lock(query_ctx.clone(), false).await?;
+ 
+         // Reload after acquiring the lock: the table may have been replaced while lock acquisition
+         // was in progress, and refresh must use the endpoint protected by this guard.
+@@ -115,7 +117,11 @@ impl MaterializedViewHandler for RealMaterializedViewHandler {
+         )
+         .await?
+         {
+-            refresh.execute().await?;
++            let hooks = refresh.execute().await?;
++            drop(lock_guard);
++            if let Some(hooks) = hooks {
++                hooks.execute().await;
++            }
+         }
+         Ok(())
+     }
 ```
 
-**File**: `src/query/ee/src/storages/fuse/operations/vacuum_table_v2.rs` (modified, +44/-0)
+**File**: `src/query/ee/src/materialized_view/refresh.rs` (modified, +15/-11)
 ```diff
-@@ -104,6 +104,8 @@ struct GcRootSnapshotCtx {
-     gc_root_timestamp: DateTime<Utc>,
-     gc_root_meta_ts: DateTime<Utc>,
-     protected_segments: HashSet<Location>,
-+    /// Segment zone map files referenced by the gc root or by tagged snapshots.
-+    protected_segment_zone_maps: HashSet<String>,
-     snapshots_to_gc: Vec<String>,
- }
- 
-@@ -133,6 +135,7 @@ pub async fn do_vacuum2(
-         gc_root_timestamp,
-         gc_root_meta_ts,
-         protected_segments,
-+        protected_segment_zone_maps,
-         snapshots_to_gc,
-     }) = vacuum_base_snapshot_phase(fuse_table, &ctx, respect_flash_back).await?
-     else {
-@@ -191,6 +194,29 @@ pub async fn do_vacuum2(
-         slice_summary(&stats_to_gc)
-     ));
- 
-+    // Segment zone map files are named like segments (UUID v7 under a vacuum2
-+    // prefix) and referenced only by snapshots, so the same selection applies:
-+    // everything before the gc root that no protected snapshot points to.
-+    let start = std::time::Instant::now();
-+    let prefix = fuse_table
-+        .meta_location_generator()
-+        .segment_zone_map_location_prefix();
-+    let mut segment_zone_maps_to_gc = Vec::new();
-+    for entry in fuse_table
-+        .list_files_until_timestamp(prefix, gc_root_timestamp, false, Some(gc_root_meta_ts))
-+        .await?
-+    {
-+        if !protected_segment_zone_maps.contains(entry.path()) {
-+            segment_zone_maps_to_gc.push(entry.path().to_owned());
-+        }
-+    }
-+    ctx.set_status_info(&format!(
-+        "Listed segment zone maps before gc_root for table {}, elapsed: {:?}, segment_zone_maps_to_gc: {:?}",
-+        table_info.desc,
-+        start.elapsed(),
-+        slice_summary(&segment_zone_maps_to_gc)
-+    ));
-+
-     let start = std::time::Instant::now();
-     let segments_io =
-         SegmentsIO::create(ctx.clone(), fuse_table.get_operator(), fuse_table.schema());
-@@ -397,6 +423,12 @@ pub async fn do_vacuum2(
-         file_remover.remove_file_in_batch(&segments_to_gc).await?;
+@@ -57,8 +57,9 @@ use databend_enterprise_materialized_view::get_materialized_view_handler;
+ use databend_meta_client::types::MatchSeq;
+ use databend_query::interpreters::InsertInterpreter;
+ use databend_query::interpreters::MutationInterpreter;
++use databend_query::interpreters::PostCommitHooks;
+ use databend_query::interpreters::QueryFinishHooks;
+-use databend_query::interpreters::execute_commit_statement;
++use databend_query::interpreters::commit_transaction;
+ use databend_query::schedulers::ServiceQueryExecutor;
+ use databend_query::sessions::QueryContext;
+ use databend_query::sessions::TableContextSettings;
+@@ -709,7 +710,7 @@ impl<'a> MaterializedViewRefresh<'a> {
+         ])
      }
  
-+    if !segment_zone_maps_to_gc.is_empty() {
-+        file_remover
-+            .remove_file_in_batch(&segment_zone_maps_to_gc)
-+            .await?;
-+    }
-+
-     // Evict snapshot caches from the local node.
-     //
-     // Note:
-@@ -426,6 +458,7 @@ pub async fn do_vacuum2(
-         + block_gc_stats.removed_files
-         + stats_to_gc.len()
-         + segments_to_gc.len()
-+        + segment_zone_maps_to_gc.len()
-         + snapshots_to_gc.len();
-     ctx.set_status_info(&format!(
-         "Removed files for table {}, elapsed: {:?}, files removed: {}",
-@@ -890,6 +923,15 @@ async fn vacuum_base_snapshot_phase(
-         return Ok(None);
-     };
-     protected_segments.extend(selection.gc_root.segments.iter().cloned());
-+    // Snapshots after the gc root only point at its zone map or at ones built
-+    // later, so protecting it covers every live reference.
-+    let mut protected_segment_zone_maps = HashSet::new();
-+    protected_segment_zone_maps.extend(
-+        selection
-+            .gc_root
-+            .segment_zone_map_path()
-+            .map(str::to_string),
-+    );
-     let mut updates = std::mem::take(&mut mark.lvt_updates);
-     // Validate the owner's original fence too: FLASHBACK can change its head while descendants
-     // are being marked. Existing clone bindings always use this one LVT publication protocol.
-@@ -936,6 +978,7 @@ async fn vacuum_base_snapshot_phase(
-             &selection.gc_root_path,
-             &mut selection.snapshots_to_gc,
-             &mut protected_segments,
-+            &mut protected_segment_zone_maps,
-             ctx.cache_policy(),
-         )
-         .await?;
-@@ -949,6 +992,7 @@ async fn vacuum_base_snapshot_phase(
-         gc_root_timestamp: selection.gc_root_lvt.time,
-         gc_root_meta_ts: selection.gc_root_meta_ts,
-         protected_segments,
-+        protected_segment_zone_maps,
-         snapshots_to_gc: selection.snapshots_to_gc,
-     }))
+-    async fn execute_refresh(&self) -> Result<()> {
++    async fn execute_refresh(&self) -> Result<Option<PostCommitHooks>> {
+         let strategy = self.plan_refresh_strategy().await?;
+         if let Some(statement) = match &strategy {
+             RefreshStrategy::CheckpointOnly => None,
+@@ -742,11 +743,12 @@ impl<'a> MaterializedViewRefresh<'a> {
+                 )
+                 .await?;
+         }
+-        execute_commit_statement(self.ctx.clone()).await?;
+-        Ok(())
++        commit_transaction(self.ctx.clone()).await
+     }
+ 
+-    pub async fn execute(&self) -> Result<()> {
++    /// Commit the refresh and checkpoint while the handler holds the lifecycle lock.
++    /// The handler dispatches the returned hooks only after releasing that lock.
++    pub async fn execute(&self) -> Result<Option<PostCommitHooks>> {
+         let txn_mgr = self.ctx.txn_mgr();
+         if txn_mgr.lock().is_active() {
+             return Err(ErrorCode::InvalidOperation(
+@@ -755,12 +757,14 @@ impl<'a> MaterializedViewRefresh<'a> {
+         }
+         txn_mgr.lock().begin();
+ 
+-        if let Err(error) = self.execute_refresh().await {
+-            // execute_commit_statement() clears the transaction itself once entered. This
+-            // explicit clear covers planning and refresh failures before commit starts.
+-            txn_mgr.lock().clear();
+-            return Err(error);
++        match self.execute_refresh().await {
++            Ok(hooks) => Ok(hooks),
++            Err(error) => {
++                // commit_transaction() clears the transaction itself once entered. This
++                // explicit clear covers planning and refresh failures before commit starts.
++                txn_mgr.lock().clear();
++                Err(error)
++            }
+         }
+-        Ok(())
+     }
  }
 ```
 
-**File**: `src/query/ee/tests/it/storages/fuse/operations/vacuum2.rs` (modified, +114/-0)
+**File**: `src/query/service/src/interpreters/common/mod.rs` (modified, +1/-0)
 ```diff
-@@ -492,6 +492,120 @@ async fn test_vacuum_table_preserves_tagged_snapshot() -> anyhow::Result<()> {
-     Ok(())
- }
- 
-+/// Segment zone map files are swept like segments: the gc root's and tagged
-+/// snapshots' files stay, older ones go, and nothing stays once no snapshot
-+/// points at a zone map. Each recluster round builds one zone map.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_vacuum_table_keeps_referenced_segment_zone_map() -> anyhow::Result<()> {
-+    let fixture = TestFixture::setup_with_custom(EESetup::new()).await?;
-+    RealTableRefHandler::init()?;
-+    let settings = fixture.default_session().get_settings();
-+    settings.set_data_retention_time_in_days(0)?;
-+    for (name, value) in [
-+        ("enable_compact_after_write", "0"),
-+        // With one block per segment every segment is full, and threshold 0
-+        // refreshes the zone map after every recluster round.
-+        ("segment_zone_map_full_segment_threshold", "0"),
-+        ("enable_experimental_table_ref", "1"),
-+    ] {
-+        settings.set_setting(name.to_string(), value.to_string())?;
-+    }
-+
-+    // Two overlapping inserts give each recluster round one block to merge.
-+    let database = "vacuum_zm_db";
-+    let table = "t";
-+    for statement in [
-+        format!("create database {database}"),
-+        format!("create table {database}.{table} (c int) cluster by (c) block_per_segment = 1"),
-+        format!("insert into {database}.{table} values (1), (3)"),
-+        format!("insert into {database}.{table} values (2), (4)"),
-+        format!("optimize table {database}.{table} recluster"),
-+        format!("insert into {database}.{table} values (11), (13)"),
-+        format!("insert into {database}.{table} values (12), (14)"),
-+        format!("optimize table {database}.{table} recluster"),
-+        format!("alter table {database}.{table} create tag eight_rows"),
-+        format!("insert into {database}.{table} values (21), (23)"),
-+        format!("insert into {database}.{table} values (22), (24)"),
-+        format!("optimize table {database}.{table} recluster"),
-+    ] {
-+        fixture.execute_command(&statement).await?;
-+    }
-+
-+    let ctx = fixture.new_query_ctx().await?;
-+    let storage_root = fixture.storage_root();
-+    let segment_zone_map_files = |files: Vec<std::path::PathBuf>| {
-+        files
-+            .into_iter()
-+            .filter(|path| path.to_string_lossy().contains("/_zm/"))
-+            .collect::<Vec<_>>()
-+    };
-+    let current_zone_map = || async {
-+        let stream = fixture
-+            .execute_query(&format!(
-+                "select segment_zone_map_location from fuse_snapshot('{database}', '{table}') \
-+                 order by timestamp desc limit 1"
-+            ))
-+            .await?;
-+        let blocks: Vec<DataBlock> = stream.try_collect().await?;
-+        let location = blocks[0].get_by_offset(0).index(0).unwrap().to_owned();
-+        Ok::<_, ErrorCode>(location.as_string().cloned())
-+    };
-+
-+    // One zone map per recluster round.
-+    let files = table_storage_files(&ctx, storage_root, database, table).await?;
-+    assert_eq!(segment_zone_map_files(files).len(), 3);
-+    let head_zone_map = current_zone_map()
-+        .await?
-+        .expect("head points at a zone map");
-+
-+    fixture
-+        .execute_command(&format!("vacuum table {database}.{table}"))
-+        .await?;
-+    // The head's and the tagged snapshot's zone maps survive.
-+    let files =
-+        segment_zone_map_files(table_storage_files(&ctx, storage_root, database, table).await?);
-+    assert_eq!(files.len(), 2);
-+    assert!(
-+        files
-+            .iter()
-+            .any(|path| path.to_string_lossy().ends_with(&head_zone_map))
-+    );
-+    assert_eq!(
-+        current_zone_map().await?.as_deref(),
-+        Some(head_zone_map.as_str())
-+    );
-+
-+    // The surviving zone maps still prune correctly.
-+    let stream = fixture
-+        .execute_query(&format!(
-+            "select c from {database}.{table} where c >= 12 order by c"
-+        ))
-+        .await?;
-+    let blocks: Vec<DataBlock> = stream.try_collect().await?;
-+    assert_eq!(blocks.iter().map(DataBlock::num_rows).sum::<usize>(), 7);
-+    let stream = fixture
-+        .execute_query(&format!(
-+            "select c from {database}.{table} at (tag => \"eight_rows\") where c >= 12"
-+        ))
-+        .await?;
-+    let blocks: Vec<DataBlock> = stream.try_collect().await?;
-+    assert_eq!(blocks.iter().map(DataBlock::num_rows).sum::<usize>(), 3);
-+
-+    // Without the tag and after a truncate, no snapshot points at a zone map.
-+    for statement in [
-+        format!("alter table {database}.{table} drop tag eight_rows"),
-+        format!("truncate table {database}.{table}"),
-+        format!("vacuum table {database}.{table}"),
-+    ] {
-+        fixture.execute_command(&statement).await?;
-+    }
-+    assert_eq!(current_zone_map().await?, None);
-+    let files = table_storage_files(&ctx, storage_root, database, table).awai
+@@ -46,6 +46,7 @@ pub use materialized_view::check_materialized_view_license;
+ pub use notification::get_notification_client_config;
+ pub use query_log::InterpreterQueryLog;
+ pub use stream::build_update_stream_reqs;
++pub(crate) use table::check_expected_table_id;
+ pub use table::check_referenced_computed_columns;
+ pub use table::stored_computed_column_references;
+ pub use util::check_deduplicate_label;
 ```
 
-**File**: `src/query/service/src/interpreters/common/table_option_validation.rs` (modified, +4/-0)
+**File**: `src/query/service/src/interpreters/common/table.rs` (modified, +13/-0)
 ```diff
-@@ -39,6 +39,7 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_DATA_RETENTION_PERIOD_IN_HOURS;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_VACUUM;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_PARQUET_DICTIONARY;
-+use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN;
- use databend_common_storages_fuse::FUSE_OPT_KEY_FILE_SIZE;
- use databend_common_storages_fuse::FUSE_OPT_KEY_RECLUSTER_DEPTH;
-@@ -106,6 +107,7 @@ pub static CREATE_FUSE_OPTIONS: LazyLock<HashSet<&'static str>> = LazyLock::new(
-     r.insert(FUSE_OPT_KEY_DATA_RETENTION_NUM_SNAPSHOTS_TO_KEEP);
-     r.insert(FUSE_OPT_KEY_ENABLE_AUTO_VACUUM);
-     r.insert(FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE);
-+    r.insert(FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP);
-     r.insert(FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN);
-     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_DIRECT_COLUMNS);
-     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_PATH_STATISTICS);
-@@ -160,6 +162,7 @@ pub static CREATE_MATERIALIZED_VIEW_OPTIONS: LazyLock<HashSet<&'static str>> =
-         r.insert(FUSE_OPT_KEY_DATA_RETENTION_NUM_SNAPSHOTS_TO_KEEP);
-         r.insert(FUSE_OPT_KEY_ENABLE_AUTO_VACUUM);
-         r.insert(FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE);
-+        r.insert(FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP);
-         r.insert(FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN);
-         r.insert(FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD);
-         r.insert(OPT_KEY_BLOOM_INDEX_COLUMNS);
-@@ -233,6 +236,7 @@ pub static UNSET_TABLE_OPTIONS_WHITE_LIST: LazyLock<HashSet<&'static str>> = Laz
-     r.insert(FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN);
-     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_DIRECT_COLUMNS);
-     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_PATH_STATISTICS);
-+    r.insert(FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP);
-     r.insert(OPT_KEY_ENABLE_COPY_DEDUP_FULL_PATH);
-     r.insert(FUSE_OPT_KEY_DATA_PAGE_ROWS);
-     r.insert(FUSE_OPT_KEY_DATA_PAGE_BYTES);
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_create.rs` (modified, +2/-0)
-```diff
-@@ -56,6 +56,7 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER;
- use databend_common_storages_fuse::FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_VACUUM;
-+use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP;
- use databend_common_storages_fuse::FuseSegmentFormat;
- use databend_common_storages_fuse::FuseStorageFormat;
- use databend_common_storages_fuse::FuseTable;
-@@ -1099,6 +1100,7 @@ impl CreateTableInterpreter {
-         is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_ENABLE_AUTO_VACUUM)?;
-         // check enable auto analyze.
-         is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE)?;
-+        is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP)?;
-         is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER)?;
-         is_valid_option_of_type::<u64>(
-             &table_meta.options,
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_modify_column.rs` (modified, +2/-0)
-```diff
-@@ -1251,6 +1251,8 @@ async fn rewrite_decimal_stats_and_commit(
-     )?;
-     new_snapshot.schema = new_schema.as_ref().clone();
-     new_snapshot.segments = new_segment_locations;
-+    // Every segment was rewritten, so no row of the segment zone map is live.
-+    new_snapshot.segment_zone_map = None;
-     for rewrite in column_rewrites {
-         new_snapshot
-             .summary
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_recluster.rs` (modified, +56/-0)
-```diff
-@@ -45,6 +45,7 @@ use databend_common_storages_fuse::FuseTable;
- use databend_common_storages_fuse::operations::ReclusterFinalCarry;
- use databend_common_storages_fuse::operations::ReclusterMode;
- use databend_common_storages_fuse::operations::is_auto_vacuum_enabled;
-+use databend_common_storages_fuse::segment_zone_map::RefreshOutcome;
- use databend_enterprise_vacuum_handler::get_vacuum_handler;
- use databend_storages_common_table_meta::meta::TableSnapshot;
- use log::error;
-@@ -78,6 +79,9 @@ use crate::sessions::TableContextTableManagement;
- use crate::sessions::TableContextTelemetry;
+@@ -22,6 +22,19 @@ use databend_common_sql::parse_computed_expr;
  
- const MAX_SEGMENT_CLAIM_RETRIES: usize = 3;
-+/// Committed FINAL rounds between two segment zone map refreshes; the rounds
-+/// after the last refresh are covered once the statement ends.
-+const ZONE_MAP_REFRESH_ROUNDS: usize = 10;
+ use crate::sessions::TableContext;
  
- #[derive(Debug, PartialEq, Eq)]
- enum ReclusterRoundOutcome {
-@@ -145,6 +149,7 @@ impl Interpreter for ReclusterTableInterpreter {
-             let timeout = Duration::from_secs(recluster_timeout_secs);
-             let is_final = self.plan.is_final;
-             let mut committed_rounds = 0;
-+            let mut zone_map_rounds = 0;
-             let (result, stop_reason) = loop {
-                 if let Err(err) = ctx.check_aborting() {
-                     error!(
-@@ -166,6 +171,12 @@ impl Interpreter for ReclusterTableInterpreter {
-                             break (Ok(()), reason);
-                         }
-                         committed_rounds += 1;
-+                        // A FINAL recluster may run for a long time, so the segment
-+                        // zone map is refreshed along the way, not only at the end.
-+                        if committed_rounds % ZONE_MAP_REFRESH_ROUNDS == 0 {
-+                            self.refresh_segment_zone_map().await;
-+                            zone_map_rounds = committed_rounds;
-+                        }
-                     }
-                     Err(e) => {
-                         if is_final
-@@ -236,6 +247,9 @@ impl Interpreter for ReclusterTableInterpreter {
-                 "Recluster finished"
-             );
- 
-+            if committed_rounds > zone_map_rounds {
-+                self.refresh_segment_zone_map().await;
-+            }
-             if committed_rounds > 0 {
-                 self.vacuum_table_history().await;
-             }
-@@ -247,6 +261,48 @@ impl Interpreter for ReclusterTableInterpreter {
- }
- 
- impl ReclusterTableInterpreter {
-+    /// Refresh the segment zone map on the snapshot the last round committed,
-+    /// subject to its start decision. Recluster is the only writer that builds
-+    /// it; every other commit carries the pointer along. Failures never fail
-+    /// the recluster.
-+    async fn refresh_segment_zone_map(&self) {
-+        let result = async {
-+            let settings = self.ctx.get_settings();
-+            if !settings.get_enable_segment_zone_map()? {
-+                return Ok(RefreshOutcome::Skipped);
-+            }
-+            // The round's on-finished hook evicted the table from the cache, so this
-+            // is the snapshot the round committed.
-+            self.ctx.clear_table_meta_timestamps_cache();
-+            let table = self
-+                .ctx
-+                .get_table(&self.plan.catalog, &self.plan.database, &self.plan.table)
-+                .await?;
-+            let fuse_table = FuseTable::try_from_table(table.as_ref())?;
-+            let threshold = settings.get_segment_zone_map_full_segment_threshold()?;
-+            let ctx = self.ctx.clone();
-+            fuse_table.refresh_segment_zone_map(ctx, threshold).await
-+        }
-+        .await;
-+        match result {
-+            Ok(RefreshOutcome::Skipped) => {}
-+            Ok(outcome) => {
-+                info!("recluster: segment zone map refresh finished: {outcome:?}");
-+                // The refresh committed a snapshot; the next round must not plan on
-+                // the cached table and pay a version-mismatch retry at commit.
-+                let evicted = self.ctx.evict_table_from_cache(
-+                    &self.plan.catalog,
-+                    &self.plan.database,
-+                    &self.plan.table,
-+                );
-+                if let Err(e) = evicted {
-+                    warn!("recluster: failed to evict table from cache: {e}");
-+                }
-+            }
-+            Err(e) => warn!("recluster: segment zone map refresh failed: {e}"),
++/// Check table identity before planning or executing automatic maintenance.
++pub(crate) fn check_expected_table_id(actual_id: u64, expected_id: Option<u64>) -> Result<()> {
++    if let Some(expected_id) = expected_id {
++        if actual_id != expected_id {
++            return Err(ErrorCode::InvalidOperation(format!(
++                "Maintenance target changed: expected table id {}, found table id {}",
++                expected_id, actual_id,
++            )));
 +        }
 +    }
++    Ok(())
++}
 +
-     async fn vacuum_table_history(&self) {
-         if LicenseManagerSwitch::instance()
-             .check_enterprise_enabled(self.ctx.get_license_key(), Vacuum)
+ pub fn check_referenced_computed_columns(
+     ctx: Arc<dyn TableContext>,
+     schema: DataSchemaRef,
 ```
 
-**File**: `src/query/service/src/interpreters/interpreter_table_set_options.rs` (modified, +8/-1)
+**File**: `src/query/service/src/interpreters/hook/analyze_hook.rs` (modified, +40/-94)
 ```diff
-@@ -34,6 +34,7 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER;
- use databend_common_storages_fuse::FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE;
- use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_VACUUM;
-+use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP;
- use databend_common_storages_fuse::FuseSegmentFormat;
+@@ -17,18 +17,16 @@ databend_common_tracing::register_module_tag!("[ANALYZE-HOOK]");
+ 
+ use std::sync::Arc;
+ 
+-use databend_common_base::runtime::GlobalIORuntime;
+ use databend_common_catalog::cache_policy::CachePolicy;
+ use databend_common_catalog::table::Table;
+ use databend_common_exception::Result;
+-use databend_common_pipeline::core::ExecutionInfo;
+ use databend_common_pipeline::core::Pipeline;
  use databend_common_storages_fuse::FuseTable;
- use databend_common_storages_fuse::io::SegmentsIO;
-@@ -197,6 +198,10 @@ impl Interpreter for SetOptionsInterpreter {
-                 &self.plan.set_options,
-                 FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER,
-             )?;
-+            is_valid_option_of_type::<u32>(
-+                &self.plan.set_options,
-+                FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP,
-+            )?;
-             is_valid_option_of_type::<u64>(
-                 &self.plan.set_options,
-                 FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD,
-@@ -416,7 +421,7 @@ async fn set_segment_format(
-             }
+ use databend_common_storages_fuse::operations::AnalyzeOptions;
+ use log::info;
+ use log::warn;
+ 
+-use crate::interpreters::hook::resolve_current_table_name_by_id;
++use crate::interpreters::hook::table_hook_task::TableHookTask;
+ use crate::interpreters::hook::table_id_matches_target;
+ use crate::pipelines::executor::ExecutorSettings;
+ use crate::pipelines::executor::PipelineCompleteExecutor;
+@@ -37,82 +35,52 @@ use crate::sessions::TableContextCachePolicy;
+ use crate::sessions::TableContextPartitionStats;
+ use crate::sessions::TableContextSettings;
+ use crate::sessions::TableContextTableAccess;
+-use crate::sessions::TableContextTableManagement;
+ 
+-pub struct AnalyzeDesc {
+-    pub catalog: String,
+-    pub database: String,
+-    pub table: String,
+-    pub table_id: Option<u64>,
+-}
+-
+-/// Hook analyze action with a on-finished callback.
+-/// errors (if any) are ignored.
+-pub async fn hook_analyze(ctx: Arc<QueryContext>, pipeline: &mut Pipeline, desc: AnalyzeDesc) {
+-    if pipeline.is_empty() {
+-        return;
+-    }
+-
+-    pipeline.set_on_finished(move |info: &ExecutionInfo| {
+-        if info.res.is_ok() {
+-            let _ = GlobalIORuntime::instance().block_on(execute_analyze_hook(ctx, desc));
++impl TableHookTask {
++    pub(super) async fn execute_analyze(&self) {
++        // Maintenance after the write: `CachePolicy::MAINTENANCE` for its reads, on the context
++        // of the write, whose own reads are done by now.
++        self.ctx
++            .set_cache_policy(self.ctx.cache_policy().at_most(CachePolicy::MAINTENANCE));
++        info!("Table hook starting analyze job");
++        if !self.ctx.get_enable_auto_analyze() {
++            return;
+         }
+-        Ok(())
+-    });
+-}
+-
+-pub(crate) fn analyze_after_write_enabled(ctx: &Arc<QueryContext>) -> bool {
+-    ctx.get_enable_auto_analyze()
+-}
+-
+-pub(crate) async fn execute_analyze_hook(ctx: Arc<QueryContext>, desc: AnalyzeDesc) -> Result<()> {
+-    // Maintenance after the write: `CachePolicy::MAINTENANCE` for its reads, on the context of
+-    // the write, whose own reads are done by now.
+-    ctx.set_cache_policy(ctx.cache_policy().at_most(CachePolicy::MAINTENANCE));
+-    info!("Table hook starting analyze job");
+-    if !analyze_after_write_enabled(&ctx) {
+-        return Ok(());
+-    }
+ 
+-    match do_analyze(ctx, desc).await {
+-        Ok(_) => {
+-            info!("Analyze job completed successfully");
+-        }
+-        Err(e) => {
+-            warn!("Analyze job failed (code {}): {}", e.code(), e);
++        match self.do_analyze(self.ctx.clone()).await {
++            Ok(_) => {
++                info!("Analyze job completed successfully");
++            }
++            Err(e) => {
++                warn!("Analyze job failed (code {}): {}", e.code(), e);
++            }
          }
      }
--    let new_snapshot = TableSnapshot::try_new(
-+    let mut new_snapshot = TableSnapshot::try_new(
-         Some(fuse_table.get_table_info().ident.seq),
-         Some(table_snapshot.clone()),
-         table.schema().as_ref().clone(),
-@@ -426,6 +431,8 @@ async fn set_segment_format(
-         table_snapshot.table_statistics_location(),
-         table_meta_timestamps,
-     )?;
-+    // Every segment was rewritten, so no row of the segment zone map is live.
-+    new_snapshot.segment_zone_map = None;
-     let location = fuse_table
-         .meta_location_generator()
-         .gen_snapshot_location(&new_snapshot.snapshot_id, TableSnapshot::VERSION)?;
+ 
+-    Ok(())
+-}
+-
+-/// hook the analyze action with a on-finished callback.
+-pub(crate) async fn do_analyze(ctx: Arc<QueryContext>, desc: AnalyzeDesc) -> Result<()> {
+-    let Some(desc) = resolve_analyze_desc(&ctx, desc).await? else {
+-        return Ok(());
+-    };
+-
+-    // evict the table from cache
+-    ctx.evict_table_from_cache(&desc.catalog, &desc.database, &desc.table)?;
+-    ctx.clear_table_meta_timestamps_cache();
+-
+-    let table = ctx
+-        .get_table(&desc.catalog, &desc.database, &desc.table)
+-        .await?;
+-    if !table_id_matches_target(
+-        "analyze",
+-        desc.table_id,
+-        table.get_id(),
+-        &desc.catalog,
+-        &desc.database,
+-        &desc.table,
+-    ) {
+-        return Ok(());
++    async fn do_analyze(&self, ctx: Arc<QueryContext>) -> Result<()> {
++        let Some(desc) = self.target.resolve(&ctx, "analyze").await? else {
++            return Ok(());
++        };
++
++        // Reuse the table freshly loaded and ID-checked by this stage's resolution.
++        let table = ctx
++            .get_table(&desc.catalog, &desc.database, &desc.table)
++            .await?;
++        if !table_id_matches_target(
++            "analyze",
++            Some(desc.table_id),
++            table.get_id(),
++            &desc.catalog,
++            &desc.database,
++            &desc.table,
++        ) {
++            return Ok(());
++        }
++        let fuse_table = FuseTable::try_from_table(table.as_ref())?;
++        let options =
++            AnalyzeOptions::from_table_options(fuse_table.get_table_info().options())?.no_scan();
++        execute_analyze(ctx, fuse_table, options).await
+     }
+-    let fuse_table = FuseTable::try_from_table(table.as_ref())?;
+-    let options =
+-        Ana
+```
+
+**File**: `src/query/service/src/interpreters/hook/compact_hook.rs` (modified, +94/-156)
+```diff
+@@ -18,14 +18,12 @@ databend_common_tracing::register_module_tag!("[COMPACT-HOOK]");
+ use std::sync::Arc;
+ use std::time::Instant;
+ 
+-use databend_common_base::runtime::GlobalIORuntime;
+ use databend_common_catalog::cache_policy::CachePolicy;
+ use databend_common_catalog::lock::LockTableOption;
+ use databend_common_catalog::table::CompactionLimits;
+ use databend_common_exception::Result;
+ use databend_common_meta_app::schema::is_materialized_view_engine;
+ use databend_common_pipeline::core::ExecutionInfo;
+-use databend_common_pipeline::core::Pipeline;
+ use databend_common_pipeline::core::always_callback;
+ use databend_common_sql::optimizer::ir::SExpr;
+ use databend_common_sql::plans::MaintenanceTarget;
+@@ -39,7 +37,8 @@ use crate::interpreters::OptimizeCompactBlockInterpreter;
+ use crate::interpreters::ReclusterTableInterpreter;
+ use crate::interpreters::common::metrics_inc_compact_hook_compact_time_ms;
+ use crate::interpreters::common::metrics_inc_compact_hook_main_operation_time_ms;
+-use crate::interpreters::hook::resolve_current_table_name_by_id;
++use crate::interpreters::hook::table_hook_task::TableHookTarget;
++use crate::interpreters::hook::table_hook_task::TableHookTask;
+ use crate::interpreters::hook::table_id_matches_target;
+ use crate::interpreters::hook::vacuum_hook::hook_clear_m_cte_temp_table;
+ use crate::interpreters::hook::vacuum_hook::hook_disk_temp_dir;
+@@ -54,62 +53,6 @@ use crate::sessions::TableContextSettings;
+ use crate::sessions::TableContextTableAccess;
+ use crate::sessions::TableContextTableManagement;
+ 
+-#[derive(Clone)]
+-pub struct CompactTargetTableDescription {
+-    pub catalog: String,
+-    pub database: String,
+-    pub table: String,
+-    pub table_id: Option<u64>,
+-}
+-
+-pub struct CompactHookTraceCtx {
+-    pub start: Instant,
+-    pub operation_name: String,
+-}
+-
+-/// Hook compact action with a on-finished callback.
+-/// errors (if any) are ignored.
+-pub async fn hook_compact(
+-    ctx: Arc<QueryContext>,
+-    pipeline: &mut Pipeline,
+-    compact_target: CompactTargetTableDescription,
+-    trace_ctx: CompactHookTraceCtx,
+-    lock_opt: LockTableOption,
+-) {
+-    let op_name = trace_ctx.operation_name.clone();
+-    if let Err(e) = do_hook_compact(ctx, pipeline, compact_target, trace_ctx, lock_opt).await {
+-        info!("Operation {} failed with error (ignored): {}", op_name, e);
+-    }
+-}
+-
+-/// hook the compact action with a on-finished callback.
+-async fn do_hook_compact(
+-    ctx: Arc<QueryContext>,
+-    pipeline: &mut Pipeline,
+-    compact_target: CompactTargetTableDescription,
+-    trace_ctx: CompactHookTraceCtx,
+-    lock_opt: LockTableOption,
+-) -> Result<()> {
+-    if pipeline.is_empty() {
+-        return Ok(());
+-    }
+-
+-    pipeline.set_on_finished(move |info: &ExecutionInfo| {
+-        if info.res.is_ok() {
+-            let _ = GlobalIORuntime::instance().block_on(execute_compact_hook(
+-                ctx,
+-                compact_target,
+-                trace_ctx,
+-                lock_opt,
+-            ));
+-        }
+-
+-        Ok(())
+-    });
+-
+-    Ok(())
+-}
+-
+ pub(crate) fn compact_after_write_enabled(ctx: &Arc<QueryContext>) -> bool {
+     match ctx.get_settings().get_enable_compact_after_write() {
+         Ok(false) => {
+@@ -128,82 +71,94 @@ pub(crate) fn compact_after_write_enabled(ctx: &Arc<QueryContext>) -> bool {
+     }
+ }
+ 
+-pub(crate) async fn execute_compact_hook(
+-    ctx: Arc<QueryContext>,
+-    compact_target: CompactTargetTableDescription,
+-    trace_ctx: CompactHookTraceCtx,
+-    lock_opt: LockTableOption,
+-) -> Result<()> {
+-    // Maintenance after the write: `CachePolicy::MAINTENANCE` for its reads, on the context of
+-    // the write, whose own reads are done by now.
+-    ctx.set_cache_policy(ctx.cache_policy().at_most(CachePolicy::MAINTENANCE));
+-    let op_name = &trace_ctx.operation_name;
+-    let Some(compact_target) = resolve_compact_target(&ctx, compact_target).await? else {
+-        return Ok(());
+-    };
+-
+-    metrics_inc_compact_hook_main_operation_time_ms(
+-        op_name,
+-        trace_ctx.start.elapsed().as_millis() as u64,
+-    );
+-    info!("Operation {op_name} completed successfully, starting table optimization job.");
+-
+-    let compact_start_at = Instant::now();
+-    let compaction_num_block_hint = ctx.get_compaction_num_block_hint(&compact_target.table);
+-    info!(
+-        "Table {} requires compaction of {} blocks",
+-        compact_target.table, compaction_num_block_hint
+-    );
+-    if compaction_num_block_hint == 0 {
+-        return Ok(());
+-    }
+-    let compaction_limits = CompactionLimits {
+-        segment_limit: None,
+-        block_limit: Some(compaction_num_block_hint as usize),
+-    };
+-
+-    // keep the original progress value
+-    let write_progress = ctx.get_write_progress();
+-    let write_progress_value = write_progress.as_ref().get_values();
+-    let scan_progress = ctx.get_scan_progress();
+-    let scan_progress_value = scan_progress.as_ref().get_values();
+-
+-    match compact_table(ctx, compac
+```
+
+**File**: `src/query/service/src/interpreters/hook/hook.rs` (modified, +180/-107)
+```diff
+@@ -18,26 +18,28 @@ databend_common_tracing::register_module_tag!("[TABLE-HOOK]");
+ use std::sync::Arc;
+ use std::time::Instant;
+ 
++use databend_common_base::runtime::GlobalIORuntime;
+ use databend_common_catalog::lock::LockTableOption;
++use databend_common_exception::Result;
+ use databend_common_pipeline::core::ExecutionInfo;
+ use databend_common_pipeline::core::Pipeline;
+ use databend_common_pipeline::core::SharedLockGuard;
+ use databend_common_pipeline::core::always_callback;
+ use databend_common_sql::executor::physical_plans::MutationKind;
++use databend_storages_common_session::TxnTableHook;
+ use log::warn;
+ 
+-use crate::interpreters::hook::analyze_hook::AnalyzeDesc;
+-use crate::interpreters::hook::analyze_hook::hook_analyze;
+-use crate::interpreters::hook::compact_hook::CompactHookTraceCtx;
+-use crate::interpreters::hook::compact_hook::CompactTargetTableDescription;
+ use crate::interpreters::hook::compact_hook::compact_after_write_enabled;
+-use crate::interpreters::hook::compact_hook::hook_compact;
+-use crate::interpreters::hook::refresh_hook::RefreshDesc;
+-use crate::interpreters::hook::refresh_hook::hook_refresh;
+ use crate::interpreters::hook::table_hook_scheduler::TableHookScheduler;
+-use crate::interpreters::hook::table_hook_scheduler::TableHookTask;
+-use crate::interpreters::hook::table_hook_scheduler::TableHookTaskSettings;
++use crate::interpreters::hook::table_hook_task::TableHookTarget;
++use crate::interpreters::hook::table_hook_task::TableHookTask;
++use crate::interpreters::hook::table_hook_task::TableHookTaskSettings;
+ use crate::sessions::QueryContext;
++use crate::sessions::TableContext;
++use crate::sessions::TableContextCluster;
++use crate::sessions::TableContextPartitionStats;
++use crate::sessions::TableContextQueryInfo;
++use crate::sessions::TableContextSession;
+ use crate::sessions::TableContextTableAccess;
+ 
+ /// Register the release point of a handed-over table lock on the finished-callback chain.
+@@ -46,7 +48,7 @@ use crate::sessions::TableContextTableAccess;
+ /// still run under the lock, callbacks registered after it run without the lock. An always
+ /// callback is added as a safety net in case an earlier callback failed and interrupted the
+ /// normal chain. Both are no-ops once the guard has been taken.
+-pub(crate) fn register_lock_release(pipeline: &mut Pipeline, lock_guard: &SharedLockGuard) {
++fn register_lock_release(pipeline: &mut Pipeline, lock_guard: &SharedLockGuard) {
+     let guard = lock_guard.clone();
+     pipeline.set_on_finished(move |_info: &ExecutionInfo| {
+         drop(guard.try_take());
+@@ -109,24 +111,101 @@ impl HookOperator {
+ 
+     /// Execute the hook operator.
+     /// The hook operator will:
+-    /// 1. Compact if needed.
+-    /// 2. Refresh aggregating index if needed.
+-    /// 3. Refresh virtual columns if needed.
++    /// 1. Compact/recluster if needed.
++    /// 2. Refresh indexes if needed.
++    /// 3. Analyze if needed.
+     #[fastrace::trace]
+     #[async_backtrace::framed]
+     pub async fn execute(&self, pipeline: &mut Pipeline) {
+-        if TableHookScheduler::is_async_enabled() {
+-            self.execute_async(pipeline).await;
++        if pipeline.is_empty() {
++            return;
++        }
++        if self.ctx.txn_mgr().lock().is_active() {
++            // Preserve the statement's lock lifetime, but never execute or enqueue automatic
++            // maintenance until the user transaction has actually committed.
++            self.release_lock_guard(pipeline);
++            self.defer_until_commit(pipeline).await;
+             return;
+         }
++        let is_async = TableHookScheduler::is_async_enabled();
++        let lock_opt = if is_async {
++            // Async hooks acquire maintenance locks where required. Release the statement lock
++            // before the success callback enqueues the task, even if task creation fails.
++            self.release_lock_guard(pipeline);
++            LockTableOption::LockWithRetry
++        } else {
++            self.lock_opt.clone()
++        };
++        if let Some(mut task) = self.create_task(lock_opt).await {
++            if !is_async {
++                task.lock_guard = self.lock_guard.clone();
++            }
++            pipeline.set_on_finished(move |info: &ExecutionInfo| {
++                if info.res.is_ok() {
++                    if is_async {
++                        enqueue_table_hook(task);
++                    } else {
++                        GlobalIORuntime::instance()
++                            .block_on(async move {
++                                task.execute(is_async).await;
++                                Ok::<_, databend_common_exception::ErrorCode>(())
++                            })
++                            .unwrap_or_else(|e| warn!("Table hook execution failed: {e}"));
++                    }
++                }
++                Ok(())
++            });
++        }
++        if !is_async {
++            // Successful tasks release the lock before analyze. Keep the callback-chain
+```
+
+**File**: `src/query/service/src/interpreters/hook/mod.rs` (modified, +16/-3)
+```diff
+@@ -16,6 +16,7 @@ pub(crate) mod analyze_hook;
+ pub(crate) mod compact_hook;
+ pub(crate) mod refresh_hook;
+ pub(crate) mod table_hook_scheduler;
++pub(crate) mod table_hook_task;
+ pub(crate) mod vacuum_hook;
+ 
+ #[allow(clippy::module_inception)]
+@@ -25,14 +26,17 @@ use std::sync::Arc;
+ 
+ use databend_common_exception::Result;
+ pub use hook::HookOperator;
++pub(crate) use hook::execute_deferred_table_hooks;
+ use log::info;
+ use log::warn;
+ pub use table_hook_scheduler::TableHookScheduler;
+ 
++use crate::interpreters::common::check_expected_table_id;
+ use crate::sessions::QueryContext;
+ use crate::sessions::TableContextTableAccess;
+ use crate::sessions::TableContextTableManagement;
+ 
++/// Adapt the shared identity check to the hooks' log-and-skip behavior.
+ pub(crate) fn table_id_matches_target(
+     hook_name: &str,
+     expected_table_id: Option<u64>,
+@@ -45,7 +49,7 @@ pub(crate) fn table_id_matches_target(
+         return true;
+     };
+ 
+-    if expected_table_id == actual_table_id {
++    if check_expected_table_id(actual_table_id, Some(expected_table_id)).is_ok() {
+         return true;
+     }
+ 
+@@ -73,6 +77,12 @@ pub(crate) async fn resolve_current_table_name_by_id(
+         return Ok(Some((database.to_string(), table.to_string())));
+     };
+ 
++    // Most hooks still target the original name. Refresh and verify it first so the
++    // common path needs no ID-to-name lookup and leaves a current table in the cache.
++    if table_id_exists_in_database(ctx, catalog_name, database, table, table, table_id).await? {
++        return Ok(Some((database.to_string(), table.to_string())));
++    }
++
+     let catalog = ctx.get_catalog(catalog_name).await?;
+     let Some(current_table_name) = catalog.get_table_name_by_id(table_id).await? else {
+         warn!(
+@@ -169,14 +179,17 @@ async fn table_id_exists_in_database(
+     expected_table_id: u64,
+ ) -> Result<bool> {
+     ctx.evict_table_from_cache(catalog_name, database, original_table)?;
+-    ctx.evict_table_from_cache(catalog_name, database, current_table_name)?;
++    if current_table_name != original_table {
++        ctx.evict_table_from_cache(catalog_name, database, current_table_name)?;
++    }
+     ctx.clear_table_meta_timestamps_cache();
+ 
+     match ctx
+         .get_table(catalog_name, database, current_table_name)
+         .await
+     {
+-        Ok(table) => Ok(table.get_id() == expected_table_id),
++        // A mismatch is a failed name candidate, not a resolver error.
++        Ok(table) => Ok(check_expected_table_id(table.get_id(), Some(expected_table_id)).is_ok()),
+         Err(_) => Ok(false),
+     }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `057efa66` (2026-11-08)
-**Commit Message**: fix(query): do not make HTTP sessions sticky for materialized CTE temp tables (#21007)
+### Incident Patch 2: `831d9dc3` (2026-11-10)
+**Commit Message**: fix(storage): serve cached bloom filters without loading index meta (#20877)
 
-* fix(query): do not make HTTP sessions sticky for materialized CTE temp tables
+* perf(storage): serve cached bloom filters without loading index meta
 
-`WITH x AS MATERIALIZED (...)` and recursive CTEs materialize into
-session temporary tables that only live for the duration of the query.
-`HttpQuery::get_response_session` counted them like user temp tables,
-so any page response produced while the CTE was still being built
-carried `need_sticky: true` / `internal.has_temp_table: true`. A client
-that stopped reading before the final page (database/sql QueryRow,
-early rows.Close) kept that state and pinned every later request to
-the node; after the node was replaced the connection failed forever
-with "Sticky session state lost".
+load_bloom_filter_by_columns always resolved the bloom index meta before
+consulting the filter cache. The meta cache is bounded by item count, so
+a scan touching more blocks than that misses it on every query, and a
+miss reads the index file (whole file below parquet_fast_read_bytes)
+even when every requested filter is still cached.
 
-- Track query-scoped temp tables in `TempTblMgr` (marked by name before
-  the CTE table is created, cleared on drop) and report
-  `has_temp_table` from `has_session_scoped_tables()`, which ignores
-  them in both visible and staged (atomic CTAS) sets.
-- Register materialized / recursive CTE tables before creating them so
-  there is no window where they look session-scoped; the cleanup loop
-  skips registrations whose CREATE failed.
-- When a req
+Probe the filter cache for all requested columns first and return them
+in request order (duplicates removed) when all are cached; otherwise
+fall back to the existing meta / index file path.
 
-**File**: `Cargo.lock` (modified, +1/-0)
+* fix(storage): probe only the in-memory bloom filter cache tier
+
+A hit in the on-disk tier of the hybrid cache is a synchronous file read
+and decode. The fast path runs on the pruning thread, so leave such
+filters to the full load path, which reads them on the I/O runtime.
+
+* fix(storage): skip disk tier re-population on the bloom fast path
+
+Re-populating the on-disk tier serializes the filter, which should not
+run on the pruning thread. The full load path still re-populates it.
+
+* fix(storage): address fable review 
+
+**File**: `src/query/storages/fuse/src/io/read/bloom/block_filter_reader.rs` (modified, +165/-0)
 ```diff
-@@ -6089,6 +6089,7 @@ dependencies = [
-  "opendal 0.55.0",
-  "parking_lot 0.12.3",
-  "serde",
-+ "tokio",
-  "uuid",
- ]
+@@ -109,6 +109,14 @@ pub async fn load_bloom_filter_by_columns<'a>(
+     index_length: u64,
+     policy: CachePolicy,
+ ) -> Result<BlockFilter> {
++    // 0. Fast path: every requested filter is already cached. Serving them
++    // straight from the filter cache needs neither the index meta nor the
++    // index file, so a miss in the (count bounded) meta cache does not turn
++    // into a remote read of the index file on every query.
++    if let Some(block_filter) = load_cached_bloom_filters(index_path, column_needed, policy) {
++        return Ok(block_filter);
++    }
++
+     let whole_file =
+         prepare_bloom_index_read_source(&dal, settings, index_path, index_length, policy).await?;
  
-```
-
-**File**: `src/common/exception/src/exception_code.rs` (modified, +6/-1)
-```diff
-@@ -732,10 +732,15 @@ build_exceptions! {
- build_exceptions! {
-     /// Session Idle too long, only used for worksheet for now
-     SessionTimeout(5110),
--    /// Server side state lost, mainly because server restarted
-+    /// Server side state lost, because the server restarted or the request was
-+    /// routed to a node other than the one holding the state
-     SessionLost(5111),
-     /// Unexpected session state, maybe bug of client or server
-     InvalidSessionState(5112),
-+    /// The node the session is pinned to (X-DATABEND-STICKY-NODE) is no longer
-+    /// in the cluster, so its session state (temp tables, transaction) is gone
-+    /// for sure. Clients should drop the sticky state and reconnect.
-+    SessionNodeLost(5113),
+@@ -187,6 +195,51 @@ pub async fn load_bloom_filter_by_columns<'a>(
+     })
  }
  
- #[cfg(test)]
-```
-
-**File**: `src/query/service/src/interpreters/common/table_option_validation.rs` (modified, +3/-0)
-```diff
-@@ -72,6 +72,7 @@ use databend_storages_common_table_meta::table::OPT_KEY_ENABLE_COPY_DEDUP_FULL_P
- use databend_storages_common_table_meta::table::OPT_KEY_ENABLE_SCHEMA_EVOLUTION;
- use databend_storages_common_table_meta::table::OPT_KEY_ENGINE;
- use databend_storages_common_table_meta::table::OPT_KEY_LOCATION;
-+use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_CTE;
- use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_DATABASE_NAME;
- use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_ID;
- use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_NAME;
-@@ -133,6 +134,7 @@ pub static CREATE_FUSE_OPTIONS: LazyLock<HashSet<&'static str>> = LazyLock::new(
- 
-     r.insert("transient");
-     r.insert(OPT_KEY_TEMP_PREFIX);
-+    r.insert(OPT_KEY_MATERIALIZED_CTE);
-     r.insert(OPT_KEY_SEGMENT_FORMAT);
-     r.insert(OPT_KEY_ENABLE_COPY_DEDUP_FULL_PATH);
-     r.insert(OPT_KEY_ENABLE_SCHEMA_EVOLUTION);
-@@ -214,6 +216,7 @@ pub static CREATE_MEMORY_OPTIONS: LazyLock<HashSet<&'static str>> = LazyLock::ne
-     r.insert(OPT_KEY_DATABASE_ID);
-     r.insert(OPT_KEY_TEMP_PREFIX);
-     r.insert(OPT_KEY_RECURSIVE_CTE);
-+    r.insert(OPT_KEY_MATERIALIZED_CTE);
-     r
- });
- 
-```
-
-**File**: `src/query/service/src/servers/http/middleware/session.rs` (modified, +78/-8)
-```diff
-@@ -35,6 +35,7 @@ use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
- use databend_common_meta_app::principal::user_token::TokenType;
- use databend_common_meta_app::tenant::Tenant;
-+use databend_common_metrics::http::metrics_incr_http_response_errors_count;
- use databend_enterprise_resources_management::ResourcesManagement;
- use databend_meta_client::types::NodeInfo;
- use fastrace::func_name;
-@@ -63,6 +64,7 @@ use poem::Response;
- use poem::error::ResponseError;
- use poem::error::Result as PoemResult;
- use poem::web::Json;
-+use serde::Deserialize;
- use uuid::Uuid;
- 
- use crate::auth::AuthMgr;
-@@ -77,6 +79,7 @@ use crate::servers::http::middleware::session_header::ClientSession;
- use crate::servers::http::middleware::session_header::ClientSessionType;
- use crate::servers::http::v1::HttpQueryContext;
- use crate::servers::http::v1::HttpSessionConf;
-+use crate::servers::http::v1::QueryResponse;
- use crate::servers::http::v1::SessionClaim;
- use crate::servers::login_history::LoginEventType;
- use crate::servers::login_history::LoginHandler;
-@@ -545,6 +548,77 @@ pub async fn forward_request_with_body<T: Into<reqwest::Body>>(
-     Ok(poem_resp)
- }
- 
-+/// The node this request is pinned to is no longer in the cluster, so the
-+/// session state it held (temporary tables, transaction) is gone for sure.
-+/// Reject the request. For `POST /v1/query`, which carries the client's
-+/// session state, hand back a corrected copy so the client stops pinning.
-+/// Page and final requests carry no session state; their next
-+/// `POST /v1/query` will.
-+async fn sticky_node_lost_response(
-+    mut req: Request,
-+    sticky_node_id: &str,
-+    endpoint_kind: EndpointKind,
-+) -> Response {
-+    let session = match endpoint_kind {
-+        EndpointKind::StartQuery => request_body_session_conf(&mut req).await,
-+        _ => None,
-+    };
-+    let msg = format!(
-+        "Sticky session state lost: node '{sticky_node_id}' not found in cluster, request={}",
-+        get_request_info(req)
-+    );
-+    warn!("{}", msg);
-+    let err = ErrorCode::SessionNodeLost(msg);
-+    metrics_incr_http_response_errors_count(err.name(), err.code());
-+    // Built here instead of returned as Err: the outer `json_response`
-+    // wrapper flattens poem errors to the HTTP status, hiding the error code.
-+    match endpoint_kind {
-+        // Same body shape as the endpoint would have returned.
-+        EndpointKind::StartQuery | EndpointKind::PollQuery => {
-+            let session = session.map(|s| s.after_failed_start(true));
-+            (
-+                StatusCode::BAD_REQUEST,
-+                Json(QueryResponse::failed_to_start(session, err)),
-+            )
-+                .into_response()
++/// Returns the requested filters when all of them are present in the
++/// in-memory tier of the bloom filter cache, `None` otherwise (including when
++/// the cache is disabled).
++///
++/// The lookups follow `policy`: when it does not read the memory cache, every
++/// lookup misses and the request takes the full load path. Only the memory
++/// cache is probed; this runs on the caller's thread and does no I/O.
++///
++/// The returned filters keep the order of `column_needed` with duplicates
++/// removed, so callers that rewrite the index (e.g. ngram index refresh) get
++/// a deterministic column order.
++///
++/// A column that carries no filter in this index is never cached, so such a
++/// request falls through to the full load path, which keeps the behaviour of
++/// silently omitting it. As a consequence, a block whose index skipped one of
++/// the requested columns never takes this fast path: the bloom index builder
++/// emits no filter for a column with fewer than 2 distinct values in the
++/// block (e.g. constant or all-NULL) or for an over-long string column, while
++/// the pruner still asks for it by the table schema.
++fn load_cached_bloom_filters(
++    index_path: &str,
++    column_needed: &[String],
++    policy: CachePolicy,
++) -> Option<BlockFilter> {
++    if column_needed.is_empty() {
++        return None;
++    }
++    let cache = FuseCaches::instance().bloom_filters.with_policy(policy);
++    let mut seen = HashSet::with_capacity(column_needed.len());
++    let mut fields = Vec::with_capacity(column_needed.len());
++    let mut filters = Vec::with_capacity(column_needed.len());
++    for name in column_needed {
++        if !seen.insert(name) {
++            continue;
 +        }
-+        _ => HttpErrorCode::bad_request(err).as_response(),
++        let filter = cache.lookup(&BloomColumnFilterReader::cache_key(index_path, name))?;
++        fields.push(TableField::new(name, TableDataType::Binary));
++        filters.push(Arc::clone(&filter));
 +    }
++    Some(BlockFilter {
++        filter_schema: Arc::new(TableSchema::new(fields)),
++        filters,
++    })
 +}
 +
-+/// Upper bound on a `POST /v1/query` body read before authentication, only to
-+/// recover the session state for a `SessionNodeLost` response. Larger bodies
-+/// are not read; the response then carries no session.
-+const STICKY_LOST_MAX_BODY_BYTES: usize = 1024 * 1024;
-+
-+/// Best effort: the session state in the body of a `POST /v1/query`.
-+async fn request_body_session_conf(req: &mut Request) -> Option<HttpSessionConf> {
-+    if req.method() != Method::POST {
-+        return None;
-+    }
-+    // This runs before authentication: never buffer an unbounded body here.
-+    if req
-+        .headers()
-+        .get(http::header::CONTENT_LENGTH)
-+        .and_then(|v| v.to_str().ok()?.parse::<usize>().ok())
-+        .is_some_and(|len| len > STICKY_LOST_MAX_BODY_BYTES)
-+    {
-+        return None;
-+    }
-+    #[derive(Deserialize)]
-+    struct SessionOnly {
-+        session: Option<HttpSessionConf>,
-+    }
-+    let body = req
-+        .take_body()
-+        .into_bytes_limit(STICKY_LOST_MAX_BODY_BYTES)
-+        .await
-+        .ok()?;
-+    serde_json::from_slice::<SessionOnly>(&body)
-+        .ok()
-+        .and_then(|r| r.session)
-+}
-+
- fn get_request_info(req: Request) -> String {
-     format!(
-         "method={} uri={} headers={:?}",
-@@ -587,14 +661,10 @@ impl<E: Endpoint> Endpoint for HTTPSessionEndpoint<E> {
-                         );
-                         forward_request(req, node).await
-                     } else {
--                        let msg = format!(
--                            "Sticky session state lost: node '{sticky_node_id}' not found in cluster, request={}",
--                            get_request_info(req)
--                        );
--                        warn!("{}", msg);
--                        Err(Error::from(HttpErrorCode::bad_request(
--                            ErrorCode::BadArguments(msg),
--                        )))
-+                        Ok(
-+                            sticky_node_lost_response(req, &sticky_node_id, self.endpoint_kind)
-+                                .await,
-+                        )
-                     };
-                 }
-             } else if let Some(warehouse) = headers.get(HEADER
-```
-
-**File**: `src/query/service/src/servers/http/v1/query/http_query.rs` (modified, +75/-39)
-```diff
-@@ -105,43 +105,18 @@ pub struct HttpQueryRequest {
- impl HttpQueryRequest {
-     pub(crate) fn fail_to_start_sql(&self, err: ErrorCode) -> impl IntoResponse {
-         metrics_incr_http_response_errors_count(err.name(), err.code());
--        let session = self.session.as_ref().map(|s| {
--            let txn_state = if matches!(s.txn_state, Some(TxnState::Active)) {
--                Some(TxnState::Fail)
--            } else {
--                s.txn_state.clone()
--            };
--            let need_sticky = match &s.internal {
--                Some(internal) => internal.has_temp_table,
--                None => false,
--            };
--            HttpSessionConf {
--                txn_state,
--                need_sticky,
--                need_keep_alive: need_sticky,
--                ..s.clone()
--            }
--        });
--        Json(QueryResponse {
--            id: "".to_string(),
--            stats: QueryStats::default(),
--            state: ExecuteStateKind::Failed,
--            affect: None,
--            data: Arc::new(BlocksSerializer::empty()),
--            schema: vec![],
--            session_id: None,
--            warnings: vec![],
--            node_id: "".to_string(),
--            session,
--            next_uri: None,
--            stats_uri: None,
--            final_uri: None,
--            kill_uri: None,
--            error: Some(QueryError::from_error_code(err)),
--            has_result_set: None,
--            result_timeout_secs: None,
--            settings: None,
--        })
-+        // `SessionTimeout` here means the server checked for the temporary
-+        // tables this session claims to own and found none: they expired on
-+        // this node. Tell the client, otherwise it keeps replaying the stale
-+        // state and every statement on the connection fails. `SessionLost` is
-+        // deliberately not handled: it also covers misroutes, where the tables
-+        // still exist on the original node.
-+        let temp_tables_gone = err.code() == ErrorCode::SESSION_TIMEOUT;
-+        let session = self
-+            .session
-+            .as_ref()
-+            .map(|s| s.after_failed_start(temp_tables_gone));
-+        Json(QueryResponse::failed_to_start(session, err))
+ /// Loads bytes and index of the given column.
+ /// read data from cache, or populate cache items if possible
+ #[fastrace::trace]
+@@ -384,6 +437,7 @@ mod tests {
+     use databend_storages_common_index::BloomIndexBuilder;
+     use databend_storages_common_index::BloomIndexType;
+     use databend_storages_common_index::filters::BlockFilter;
++    use databend_storages_common_index::filters::Filter;
+     use databend_storages_common_index::filters::Xor8Filter;
+     use databend_storages_common_table_meta::meta::Versioned;
+     use databend_storages_common_table_meta::table::TableCompression;
+@@ -585,4 +639,115 @@ mod tests {
+         assert_eq!(block_filter.filters.len(), 1);
+         Ok(())
      }
- 
-     pub fn set_settings(&mut self, settings: BTreeMap<String, String>) {
-@@ -364,6 +339,67 @@ pub struct HttpSessionConf {
-     pub internal: Option<HttpSessionStateInternal>,
- }
- 
-+impl HttpSessionConf {
-+    /// The state a client should carry on with after a statement was rejected
-+    /// before it started. Client-side state (database, role, settings,
-+    /// variables) is kept; an active transaction is marked failed. With
-+    /// `temp_tables_gone` the server has established that the temporary tables
-+    /// this session claims no longer exist, so the session also stops being
-+    /// sticky.
-+    pub(crate) fn after_failed_start(&self, temp_tables_gone: bool) -> Self {
-+        let txn_state = if matches!(self.txn_state, Some(TxnState::Active)) {
-+            Some(TxnState::Fail)
-+        } else {
-+            self.txn_state.clone()
-+        };
-+        let internal = self.internal.clone().map(|mut internal| {
-+            if temp_tables_gone {
-+                internal.has_temp_table = false;
-+            }
-+            internal
-+        });
-+        let need_sticky = match &internal {
-+            Some(internal) => internal.has_temp_table,
-+            None => false,
-+        };
-+        HttpSessionConf {
-+            txn_state,
-+            need_sticky,
-+            need_keep_alive: need_sticky,
-+            internal,
-+            ..self.clone()
-+        }
-+    }
-+}
 +
-+impl QueryResponse {
-+    /// Response for a statement rejected before a query existed, so there is
-+    /// no id, node or uri. `session` is the state the client should carry on
-+    /// with, see [`HttpSessionConf::after_failed_start`].
-+    pub(crate) fn failed_to_start(session: Option<HttpSessionConf>, err: ErrorCode) -> Self {
-+        QueryResponse {
-+            id: "".to_string(),
-+            stats: QueryStats::default(),
-+            state: ExecuteStateKind::Failed,
-+            affect: None,
-+            data: Arc::new(BlocksSerializer::empty()),
-+            schema: vec![],
-+            session_id: None,
-+            warnings: vec![],
-+            node_id: "".to_string(),
-+            session,
-+            next_uri: None,
-+            stats_uri: None,
-+            final_uri: None,
-+            kill_uri: None,
-+            error: Some(QueryError::from_error_code(err)),
-+            has_result_set: None,
-+            result_timeout_secs: None,
-+            settings: None,
-+        }
-+    }
-+}
++    /// Cached filters must be served without touching the index meta or the
++    /// index file: a miss in the meta cache (bounded by item count) used to
++    /// trigger a remote read of the index file on every query even though the
++    /// requested filters were still cached.
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_cached_filters_do_not_need_meta_or_index_file() -> Result<()> {
++        init_test_globals()?;
 +
- impl Debug for HttpSessionStateInternal {
-     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-         f.debug_struct("HttpSessionStateInternal")
-@@ -491,7 +527,7 @@ impl HttpSessionConf {
-                     session.restore_query_ids_results(id.to_owned(), key);
-                 }
-             }
--            let has_te
++        let (data, filter_name) = write_bloom_index_bytes()?;
++        let operator = opendal::Operator::via_iter(opendal::Scheme::Memory, [])?;
++        let path = "bloom_index_cached_only";
++        operator.write(path, data.clone()).await?;
++
++        let caches = FuseCaches::instance();
++        let filter_cache = &caches.bloom_filters;
++        assert!(
++            filter_cache.is_enabled(),
++            "filter cache must be enabled in test globals"
++        );
++        caches.index_metas.bloom.evict(path);
++        let filter_key = BloomColumnFilterReader::cache_key(path, &filter_name);
++        filter_cache.evict(&filter_key);
++
++        let settings = ReadSettings {
++            max_gap_size: 0,
++            max_range_size: 0,
++            parquet_fast_read_bytes: data.len() as u64,
++        };
++
++        // Warm the filter cache.
++        load_bloom_filter_by_columns(
++            operator.clone(),
++            &settings,
++            &[filter_name.clone()],
++            path,
++            data.len() as u
 ```
 
-**File**: `src/query/sql/src/planner/binder/bind_query/bind.rs` (modified, +8/-1)
+**File**: `src/query/storages/fuse/src/io/read/bloom/column_filter_reader.rs` (modified, +6/-1)
 ```diff
-@@ -12,6 +12,7 @@
+@@ -47,6 +47,11 @@ pub struct BloomColumnFilterReader {
+ }
+ 
+ impl BloomColumnFilterReader {
++    /// Cache key of the filter of `filter_name` inside the index file at `index_path`.
++    pub fn cache_key(index_path: &str, filter_name: &str) -> String {
++        format!("{index_path}-{filter_name}")
++    }
++
+     pub fn new(
+         index_path: String,
+         column_ordinal: BloomIndexColumnOrdinal,
+@@ -56,7 +61,7 @@ impl BloomColumnFilterReader {
+         schema_desc: SchemaDescPtr,
+         policy: CachePolicy,
+     ) -> Self {
+-        let cache_key = format!("{index_path}-{filter_name}");
++        let cache_key = Self::cache_key(&index_path, filter_name);
+ 
+         let SingleColumnMeta {
+             offset,
+```
+
+**File**: `src/query/storages/fuse/src/io/read/bloom/mod.rs` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@ pub mod block_filter_reader;
+ mod column_filter_reader;
+ 
+ pub use block_filter_reader::BloomBlockFilterReader;
++pub(crate) use column_filter_reader::BloomColumnFilterReader;
+ 
+ /// Position of a column inside one bloom index file (`BloomIndexMeta::columns`).
+ ///
+```
+
+**File**: `src/query/storages/fuse/src/operations/table_index/processors/transform_assemble_indexes.rs` (modified, +2/-1)
+```diff
+@@ -49,6 +49,7 @@ use crate::io::BloomIndexState;
+ use crate::io::SpatialIndexBuilder;
+ use crate::io::SpatialIndexResult;
+ use crate::io::TableMetaLocationGenerator;
++use crate::io::read::bloom::BloomColumnFilterReader;
+ use crate::io::read::bloom::block_filter_reader::load_bloom_filter_by_columns;
+ use crate::io::read::load_spatial_index_files;
+ use crate::io::read::load_vector_index_meta;
+@@ -282,7 +283,7 @@ impl AssembleIndexes {
+         block.ngram_filter_index_size = state.ngram_size();
+         let old_filter_keys = old_ngram_names
+             .iter()
+-            .map(|name| format!("{path}-{name}"))
++            .map(|name| BloomColumnFilterReader::cache_key(&path, name))
+             .collect();
+         BlockWriter::rewrite_bloom_index_state(&self.operator, state, old_filter_keys).await?;
+         Ok(())
+```
+
+---
+
+### Incident Patch 3: `c7539c57` (2026-11-10)
+**Commit Message**: fix(query): preserve result page order after polling timeout (#21019)
+
+* fix(query): preserve result page order after polling timeout
+
+Select queued memory or spilled pages before the partial current page under one buffer lock when long polling expires. Preserve cancellation-safe spill restoration outside the buffer lock.
+
+Add deterministic ordering and cancellation regressions, HTTP pagination tests, and a bounded result-spill TLA+ model with a shared, opt-in nox runner.
+
+* fix
+
+**File**: `src/query/service/src/servers/http/v1/query/sized_spsc.rs` (modified, +135/-4)
+```diff
+@@ -12,6 +12,11 @@
  // See the License for the specific language governing permissions and
  // limitations under the License.
  
-+use std::collections::BTreeMap;
- use std::collections::HashMap;
- use std::sync::Arc;
- 
-@@ -39,6 +40,7 @@ use databend_common_catalog::catalog::CATALOG_DEFAULT;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
- use databend_common_expression::types::convert_to_type_name;
-+use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_CTE;
- 
- use crate::CteResolution;
- use crate::NameResolutionContext;
-@@ -346,7 +348,12 @@ impl Binder {
-             uri_location: None,
-             cluster_by: None,
-             ttl: None,
--            table_options: Default::default(),
-+            // Marks the table as query scratch space, so it does not count as
-+            // session state (see `TempTblMgr::has_session_scoped_tables`).
-+            table_options: BTreeMap::from([(
-+                OPT_KEY_MATERIALIZED_CTE.to_string(),
-+                "1".to_string(),
-+            )]),
-             partition_by: None,
-             table_properties: Default::default(),
-             as_query: Some(as_query),
-```
-
-**File**: `src/query/storages/common/session/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -21,5 +21,8 @@ parking_lot = { workspace = true }
- serde = { workspace = true }
- uuid = { workspace = true }
- 
-+[dev-dependencies]
-+tokio = { workspace = true }
++//! Sized SPSC result channel with memory buffering and spill/restore.
++//!
++//! A bounded TLA+ model of this channel's protocol is maintained in
++//! `tests/nox/tla/result_spill/ResultSpill.tla`.
 +
- [lints]
- workspace = true
-```
-
-**File**: `src/query/storages/common/session/src/temp_table.rs` (modified, +109/-0)
-```diff
-@@ -50,6 +50,7 @@ use databend_storages_common_blocks::memory::IN_MEMORY_DATA;
- use databend_storages_common_blocks::memory::InMemoryDataKey;
- use databend_storages_common_table_meta::meta::parse_storage_prefix;
- use databend_storages_common_table_meta::table::OPT_KEY_DATABASE_ID;
-+use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_CTE;
- use databend_storages_common_table_meta::table_id_ranges::TEMP_TBL_ID_BEGIN;
- use databend_storages_common_table_meta::table_id_ranges::is_temp_table_id;
- use log::info;
-@@ -106,6 +107,18 @@ impl TempTblMgr {
-         self.id_to_table.is_empty() && self.staged_tables.is_empty()
+ use std::cmp::min;
+ use std::collections::VecDeque;
+ use std::fmt::Debug;
+@@ -431,7 +436,7 @@ where S: DataBlockSpill
+                     }
+                     Err(_) => {
+                         debug!("Long polling timeout reached");
+-                        if let Some(page) = self.try_take_current_page().await? {
++                        if let Some(page) = self.try_take_page_after_timeout().await? {
+                             return Ok((page, self.chan.is_close()));
+                         }
+                         return Ok((BlocksSerializer::empty(), self.chan.is_close()));
+@@ -453,9 +458,16 @@ where S: DataBlockSpill
+         self.deserialize_page(page).await
      }
  
-+    /// Whether the session holds temporary state that outlives the current
-+    /// query and therefore requires follow-up requests to reach this node:
-+    /// user-created temporary tables or unpublished atomic CTAS tables.
-+    /// Materialized CTE scratch tables (`OPT_KEY_MATERIALIZED_CTE`) are dropped
-+    /// when their query finishes and are excluded.
-+    pub fn has_session_scoped_tables(&self) -> bool {
-+        self.id_to_table
-+            .values()
-+            .chain(self.staged_tables.values())
-+            .any(|table| !table.meta.options.contains_key(OPT_KEY_MATERIALIZED_CTE))
-+    }
-+
-     pub fn create_table(
-         &mut self,
-         req: CreateTableReq,
-@@ -630,6 +643,16 @@ mod tests {
-         engine: &str,
-         create_option: CreateOption,
-         as_dropped: bool,
-+    ) -> CreateTableReq {
-+        create_table_req_with_options(table_name, engine, create_option, as_dropped, &[])
-+    }
-+
-+    fn create_table_req_with_options(
-+        table_name: &str,
-+        engine: &str,
-+        create_option: CreateOption,
-+        as_dropped: bool,
-+        options: &[(&str, &str)],
-     ) -> CreateTableReq {
-         let mut table_meta = TableMeta {
-             engine: engine.to_string(),
-@@ -638,6 +661,9 @@ mod tests {
-         table_meta
-             .options
-             .insert(OPT_KEY_DATABASE_ID.to_string(), "1".to_string());
-+        for (k, v) in options {
-+            table_meta.options.insert(k.to_string(), v.to_string());
-+        }
- 
-         CreateTableReq {
-             create_option,
-@@ -850,4 +876,87 @@ mod tests {
-             Some(&created.table_id)
-         );
+-    #[fastrace::trace(name = "SizedChannelReceiver::try_take_current_page")]
+-    async fn try_take_current_page(&mut self) -> Result<Option<BlocksSerializer>> {
+-        let page = self.chan.buffer.lock().unwrap().take_current_page();
++    #[fastrace::trace(name = "SizedChannelReceiver::try_take_page_after_timeout")]
++    async fn try_take_page_after_timeout(&mut self) -> Result<Option<BlocksSerializer>> {
++        let page = {
++            let mut buffer = self.chan.buffer.lock().unwrap();
++            // A producer may have queued an earlier page after recv timed out.
++            // Select the queued page or partial page under the same lock.
++            buffer
++                .prepare_page_read()
++                .or_else(|| buffer.take_current_page())
++        };
+         self.deserialize_page(page).await
      }
+ 
+@@ -848,6 +860,125 @@ mod tests {
+         send_task.await.unwrap();
+     }
+ 
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_timeout_preserves_page_order() {
++        for enable_spill in [false, true] {
++            let (mut sender, mut receiver) = sized_spsc::<MockSpiller>(4, 4);
++            let spiller = enable_spill.then(MockSpiller::default);
++            sender.plan_ready(OutputFormatSettings::default(), spiller);
 +
-+    fn drop_memory_table_req(table_name: &str, table_id: u64) -> DropTableByIdReq {
-+        DropTableByIdReq {
-+            if_exists: true,
-+            tenant: Tenant::new_literal("tenant"),
-+            tb_id: table_id,
-+            table_name: table_name.to_string(),
-+            db_id: 1,
-+            db_name: "db".to_string(),
-+            engine: "MEMORY".to_string(),
-+            temp_prefix: "session".to_string(),
++            // Deterministically pause at the timeout/fallback boundary: recv
++            // observed an empty queue, then the producer publishes full pages
++            // and a partial page before the fallback acquires the buffer lock.
++            assert!(
++                tokio::time::timeout_at(tokio::time::Instant::now(), receiver.chan.recv())
++                    .await
++                    .is_err()
++            );
++            let rows = if enable_spill { 9 } else { 5 };
++            let values = (1..=rows).collect::<Vec<i32>>();
++            assert!(
++                sender
++                    .send(DataBlock::new_from_columns(vec![Int32Type::from_data(
++                        values.clone(),
++                    )]))
++                    .await
++                    .unwrap()
++            );
++            if enable_spill {
++                assert!(matches!(
++                    receiver.chan.buffer.lock().unwrap().pages.get(1),
++                    Some(Page::Spilled(_))
++                ));
++            }
++
++            for expected in values.chunks(4) {
++                let page = receiver
++                    .try_take_page_after_timeout()
++                    .await
++                    .unwrap()
++                    .unwrap();
++                let expected = expected
++                    .iter()
++                    .map(|value| vec![value.to_string()])
++                    .collect::<Vec<_>>();
++                assert_eq!(
++                    serde_json::to_value(&page).unwrap(),
++                    serde_json::json!(expected),
++                    "spill enabled: {enable_spill}"
++                );
++            }
++            assert!(
++                receiver
++                    .try_take_page_after_timeout()
++                    .await
++                    .unwrap()
++                    .is_none()
++            );
++
++            sender.finish();
++            let (page, is_end) = receiver.next_page(&Wait::Async).await.unwrap();
++            assert!(page.is_empty());
++            assert!(is_end);
++            assert_eq!(receiver.close().is_some(), enable_spill);
 +        }
 +    }
 +
-+    fn create_memory_table(
-+        mgr: &TempTblMgrRef,
-+        table_name: &str,
-+        as_dropped: bool,
-+        options: &[(&str, &str)],
-+    ) -> u64 {
-+        let reply = mgr
-+            .lock()
-+            .create_table(
-+                create_table_req_with_options(
-+                    table_name,
-+                    "MEMORY",
-+                    CreateOption::Create,
-+                    as_dropped,
-+                    options,
-+                ),
-+                "session".to_string(),
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_timeout_spilled_page_survives_cancelled_restore() {
++        let (_sender, mut receiver) = sized_spsc::<BlockingRestoreSpiller>(4, 4);
++        let block = DataBlock::new_from_columns(vec![Int32Type::from_data(vec![1, 2, 3, 4])]);
++        let (spiller, location) = BlockingRestoreSpiller::with_page("spilled_page", block);
++        let restore_started = spiller.restore_started.clone();
++
++        assert!(
++            tokio::time::timeout_at(tokio::time::Instant::now(), receiver.chan.recv())
++
+```
+
+**File**: `tests/nox/noxfile.py` (modified, +37/-0)
+```diff
+@@ -2,6 +2,7 @@
+ import os
+ import platform
+ import shutil
++import sys
+ import tarfile
+ import tempfile
+ import time
+@@ -12,6 +13,8 @@
+ 
+ import nox
+ 
++# nox also loads this file via --noxfile from outside tests/nox.
++sys.path.insert(0, str(Path(__file__).resolve().parent))
+ 
+ PYTHON_DRIVER_PINNED = ["0.33.6"]
+ PYTHON_DRIVER = ["latest", *PYTHON_DRIVER_PINNED]
+@@ -572,6 +575,40 @@ def go_client(session, source_ref):
+         session.run(*make_args, external=True, env=merge_env(env))
+ 
+ 
++def prepare_tlc():
++    # Keep TLA imports local: release testsuites do not include the tla package.
++    from tla import run as tla_runner
++
++    target = tla_runner.cached_jar(CACHE_DIR)
++    if target.exists():
++        tla_runner.verify_jar(target)
++        return target
++
++    target.parent.mkdir(parents=True, exist_ok=True)
++    with tempfile.TemporaryDirectory(dir=target.parent) as directory:
++        staged = download_file(tla_runner.TLC_URL, Path(directory) / target.name)
++        tla_runner.verify_jar(staged)
++        staged.replace(target)
++    return target
++
++
++@nox.session(python=False, default=False)
++def tla(session):
++    """Check a TLA+ model: nox -s tla -- <model-dir> [--case NAME]."""
++    from tla import run as tla_runner
++
++    args = list(session.posargs)
++    if args and not any(arg in args for arg in ("--list", "--help", "-h")):
++        jar = prepare_tlc()
++        args = ["--jar", str(jar), *args]
++    session.run(
++        sys.executable,
++        str(Path(tla_runner.__file__).resolve()),
++        *args,
++        external=True,
++    )
++
++
+ # test API with requests directly.
+ # some of the tests will fail with cluster behind nginx.
+ # so run it in .github/actions/test_stateful_cluster_linux/action.yml.
+```
+
+**File**: `tests/nox/suites/http_handler/test_result_spill.py` (modified, +54/-11)
+```diff
+@@ -1,11 +1,13 @@
+-import requests
+ import time
+ 
++import pytest
++import requests
++
+ auth = ("root", "")
+ 
+ 
+ def do_query(query, session, pagination):
+-    url = f"http://localhost:8000/v1/query"
++    url = "http://localhost:8000/v1/query"
+     payload = {
+         "sql": query,
+     }
+@@ -17,7 +19,7 @@ def do_query(query, session, pagination):
+         "Content-Type": "application/json",
+     }
+ 
+-    response = requests.post(url, headers=headers, json=payload, auth=auth)
++    response = requests.post(url, headers=headers, json=payload, auth=auth, timeout=10)
+     return response.json()
+ 
+ 
+@@ -35,20 +37,20 @@ def test_disable_result_spill():
+         "max_rows_per_page": 4,
+     }
+     resp = do_query("select * from numbers(97)", session=session, pagination=pagination)
+-    assert resp["error"] == None
++    assert resp["error"] is None
+ 
+     # print(resp["state"])
+     # print(resp["stats"])
+ 
+     rows = len(resp["data"])
+     for _ in range(30):
+-        if resp.get("next_uri") == None:
++        if resp.get("next_uri") is None:
+             break
+ 
+         uri = f"http://localhost:8000/{resp['next_uri']}"
+         resp = requests.get(uri, auth=auth).json()
+         cur_rows = len(resp["data"])
+-        assert resp["error"] == None, resp
++        assert resp["error"] is None, resp
+         if rows < 96:
+             assert cur_rows == 4
+         rows += cur_rows
+@@ -57,11 +59,52 @@ def test_disable_result_spill():
+         # print(resp["stats"])
+ 
+         # get same page again
+-        assert requests.get(uri, auth=auth).json()["error"] == None, resp
++        assert requests.get(uri, auth=auth).json()["error"] is None, resp
+ 
+     assert rows == 97
+ 
+ 
++@pytest.mark.parametrize("enable_spill", ["0", "1"])
++def test_result_spill_ordered_pagination(enable_spill):
++    session = {
++        "settings": {
++            "enable_result_set_spilling": enable_spill,
++            "max_block_size": "10",
++            "max_threads": "2",
++        }
++    }
++    pagination = {
++        "wait_time_secs": 0,
++        "max_rows_in_buffer": 4,
++        "max_rows_per_page": 4,
++    }
++    resp = do_query(
++        "select number from numbers(97) order by number",
++        session=session,
++        pagination=pagination,
++    )
++    values = []
++    deadline = time.monotonic() + 30
++    while True:
++        assert resp["error"] is None, resp
++        values.extend(int(row[0]) for row in resp["data"])
++        assert values == list(range(len(values)))
++        if resp.get("next_uri") is None:
++            break
++        assert time.monotonic() < deadline, resp
++        if not resp["data"]:
++            time.sleep(0.01)
++        uri = f"http://localhost:8000/{resp['next_uri'].lstrip('/')}"
++        resp = requests.get(uri, auth=auth, timeout=10).json()
++        # Retrying a non-empty page must return the same ordered data.
++        if resp["data"]:
++            retry = requests.get(uri, auth=auth, timeout=10).json()
++            assert retry["error"] is None, retry
++            assert retry["data"] == resp["data"]
++
++    assert values == list(range(97))
++
++
+ def test_enable_result_spill():
+     session = {
+         "settings": {
+@@ -76,26 +119,26 @@ def test_enable_result_spill():
+         "max_rows_per_page": 4,
+     }
+     resp = do_query("select * from numbers(97)", session=session, pagination=pagination)
+-    assert resp["error"] == None
++    assert resp["error"] is None
+ 
+     time.sleep(1)
+ 
+     rows = len(resp["data"])
+     for _ in range(30):
+-        if resp.get("next_uri") == None:
++        if resp.get("next_uri") is None:
+             break
+ 
+         uri = f"http://localhost:8000/{resp['next_uri']}"
+         resp = requests.get(uri, auth=auth).json()
+         cur_rows = len(resp["data"])
+-        assert resp["error"] == None, resp
++        assert resp["error"] is None, resp
+         if rows < 96:
+             assert cur_rows == 4
+         rows += cur_rows
+ 
+         assert resp["state"] == "Succeeded"
+ 
+         # get same page again
+-        assert requests.get(uri, auth=auth).json()["error"] == None, resp
++        assert requests.get(uri, auth=auth).json()["error"] is None, resp
+ 
+     assert rows == 97
+```
+
+**File**: `tests/nox/tla/README.md` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++# Local TLA+ checks
++
++Shared runner and TLC dependency preparation for model directories containing `model.json` and `<Module>.tla`. Requirements: Python 3.10+, nox, Java 11+ (`PATH` or `JAVA_HOME`). No Databend build or running service is needed.
++
++```sh
++cd tests/nox
++nox -s tla -- tla/result_spill --list
++nox -s tla -- tla/result_spill
++nox -s tla -- tla/result_spill --case batch_deadline
++```
+```
+
+**File**: `tests/nox/tla/result_spill/ResultSpill.tla` (added, +188/-0)
+```diff
+@@ -0,0 +1,188 @@
++-------------------------- MODULE ResultSpill --------------------------
++EXTENDS Naturals, Sequences, FiniteSets, TLC
++
++CONSTANTS Pages, MaxInterrupts, DeadlineReads, KeepUntilRestored, BatchFullPages,
++          QueueFirstAfterTimeout
++VARIABLES p, queue, tail, disk, layouts, stopped, r, delivered, lastPage,
++          publishedDuringFallback
++vars == <<p, queue, tail, disk, layouts, stopped, r, delivered, lastPage,
++          publishedDuringFallback>>
++Ids == 1..Pages
++Entries == [id : Ids, kind : {"memory", "spill"}]
++SeqIds(s) == {s[i] : i \in 1..Len(s)}
++QueueIds == {queue[i].id : i \in 1..Len(queue)}
++MemoryPages == Cardinality({i \in 1..Len(queue) : queue[i].kind = "memory"})
++OneOrEmpty(n) == IF n = 0 THEN {} ELSE {n}
++
++Init ==
++    /\ p = [next |-> 1, pending |-> 0, stage |-> "idle"]
++    /\ queue = <<>> /\ tail = 0 /\ disk = {} /\ layouts = {}
++    /\ stopped = FALSE
++    /\ r = [pc |-> "idle", page |-> 0, interrupts |-> 0, cancelledPage |-> 0,
++             fromFallback |-> FALSE]
++    /\ delivered = <<>> /\ lastPage = 0
++    /\ publishedDuringFallback = FALSE
++
++\* One full page per producer input; the last input is a partial page.
++\* Capacity is one full in-memory page; spilled pages count as zero.
++BufferMemory ==
++    /\ ~BatchFullPages
++    /\ p.stage = "idle" /\ p.next < Pages /\ MemoryPages = 0
++    /\ queue' = Append(queue, [id |-> p.next, kind |-> "memory"])
++    /\ p' = [p EXCEPT !.next = @ + 1]
++    /\ UNCHANGED <<tail, disk, layouts, stopped, r, delivered, lastPage,
++                    publishedDuringFallback>>
++
++\* A single input containing two full pages enters try_add_block's loop:
++\* first page queued and second detached under ONE buffer lock. This case
++\* matches a 9-row block with page_rows=max_rows=4 (partial tail follows).
++BufferBatch ==
++    /\ BatchFullPages /\ Pages = 3
++    /\ p.stage = "idle" /\ p.next = 1
++    /\ queue' = <<[id |-> 1, kind |-> "memory"]>>
++    /\ p' = [next |-> 3, pending |-> 2, stage |-> "writing"]
++    /\ UNCHANGED <<tail, disk, layouts, stopped, r, delivered, lastPage,
++                    publishedDuringFallback>>
++
++DetachForSpill ==
++    /\ p.stage = "idle" /\ p.next < Pages /\ MemoryPages = 1
++    /\ p' = [p EXCEPT !.pending = p.next, !.next = @ + 1, !.stage = "writing"]
++    /\ UNCHANGED <<queue, tail, disk, layouts, stopped, r, delivered, lastPage,
++                    publishedDuringFallback>>
++
++\* The write await completes before layout registration and queue publication.
++SpillWritten ==
++    /\ p.stage = "writing"
++    /\ disk' = disk \cup {p.pending}
++    /\ p' = [p EXCEPT !.stage = "written"]
++    /\ UNCHANGED <<queue, tail, layouts, stopped, r, delivered, lastPage,
++                    publishedDuringFallback>>
++
++RegisterLayout ==
++    /\ p.stage = "written"
++    /\ layouts' = layouts \cup {p.pending}
++    /\ p' = [p EXCEPT !.stage = "registered"]
++    /\ UNCHANGED <<queue, tail, disk, stopped, r, delivered, lastPage,
++                    publishedDuringFallback>>
++
++PublishSpill ==
++    /\ p.stage = "registered"
++    /\ queue' = Append(queue, [id |-> p.pending, kind |-> "spill"])
++    /\ p' = [p EXCEPT !.pending = 0, !.stage = "idle"]
++    /\ publishedDuringFallback' = (publishedDuringFallback \/ r.pc = "fallback")
++    /\ UNCHANGED <<tail, disk, layouts, stopped, r, delivered, lastPage>>
++
++BufferTail ==
++    /\ p.stage = "idle" /\ p.next = Pages /\ tail = 0
++    /\ tail' = p.next
++    /\ p' = [p EXCEPT !.next = @ + 1]
++    /\ UNCHANGED <<queue, disk, layouts, stopped, r, delivered, lastPage,
++                    publishedDuringFallback>>
++
++Finish ==
++    /\ p.stage = "idle" /\ p.next = Pages + 1
++    /\ queue' = IF tail = 0 THEN queue
++                 ELSE Append(queue, [id |-> tail, kind |-> "memory"])
++    /\ tail' = 0 /\ stopped' = TRUE
++    /\ p' = [p EXCEPT !.stage = "done"]
++    /\ UNCHANGED <<disk, layouts, r, delivered, lastPage, publishedDuringFallback>>
++
++ObserveEmpty ==
++    /\ r.pc = "idle" /\ Len(queue) = 0 /\ ~stopped
++    /\ r' = [r EXCEPT !.pc = "waiting"]
++    /\ UNCHANGED <<p, queue, tail, disk, layouts, stopped, delivered, lastPage,
++                    publishedDuringFallback>>
++
++\* timeout polls recv first. Expiry is admitted only with an empty queue.
++\* Another OS worker can run after expiry, before take_current_page locks.
++DeadlineExpired ==
++    /\ DeadlineReads /\ r.pc = "waiting" /\ Len(queue) = 0 /\ ~stopped
++    /\ r' = [r EXCEPT !.pc = "fallback"]
++    /\ UNCHANGED <<p, queue, tail, disk, layouts, stopped, delivered, lastPage,
++                    publishedDuringFallback>>
++
++\* The fixed fallback selects queued pages first under the SAME buffer lock.
++\* Mutation QueueFirstAfterTimeout=FALSE restores the old unchecked take.
++TakePartialAfterTimeout ==
++    /\ r.pc = "fallback"
++    /\ (~QueueFirstAfterTimeout \/ Len(queue) = 0)
++    /\ delivered' = IF tail = 0 THEN delivered ELSE Append(delivered, tail)
++    /\ lastPage' = IF tail = 0 THEN lastPage ELSE tail
++    /\ tail
+```
+
+**File**: `tests/nox/tla/result_spill/model.json` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++{
++  "module": "ResultSpill",
++  "constants": {"Pages": 3, "MaxInterrupts": 1, "DeadlineReads": false, "KeepUntilRestored": true, "BatchFullPages": false, "QueueFirstAfterTimeout": true},
++  "invariants": ["TypeOK", "NoPageLoss", "OrderedDelivery", "NoDuplicates", "ReadableSpills", "CacheMatchesLast"],
++  "matrix": {"Pages": [2, 3], "DeadlineReads": [false, true]},
++  "cases": {
++    "batch_async": {"constants": {"BatchFullPages": true}},
++    "batch_deadline": {"constants": {"BatchFullPages": true, "DeadlineReads": true}},
++    "mutation_partial_before_queue": {
++      "constants": {"DeadlineReads": true, "BatchFullPages": true, "QueueFirstAfterTimeout": false},
++      "violation": "OrderedDelivery"
++    },
++    "mutation_pop_before_restore": {
++      "constants": {"KeepUntilRestored": false},
++      "violation": "NoPageLoss"
++    },
++    "witness_cancel_then_retry": {"witness": "NeverCancelledRetry"},
++    "witness_spill_during_timeout_fallback": {
++      "constants": {"DeadlineReads": true, "BatchFullPages": true},
++      "witness": "NeverSpillDuringFallback"
++    },
++    "witness_fallback_restore_preserves_tail": {
++      "constants": {"DeadlineReads": true, "BatchFullPages": true},
++      "witness": "NeverFallbackRestoreWithTail"
++    }
++  },
++  "scope": [
++    "Single producer and receiver; 2 or 3 page tokens with unique locations. All but last input are full pages; last input is partial. This is a concrete subset of permitted producer inputs, not a general model of row slicing.",
++    "One full memory page capacity (page_rows=max_rows); spilled pages have zero in-memory row accounting. This matches legal HTTP pagination configuration. BatchFullPages=true makes first two full pages one atomic try_add_block call, matching the native nine-row input reproduction; final partial row appended after spill publication.",
++    "Producer full-page try_add_block is atomic under buffer mutex. Spill write, layout registration and queue publication are split. File writes are assumed successful and persistent; crashes/partial writes, codec corruption and cleanup are not checked.",
++    "Last partial page is current_page until finish or deadline fallback. Empty terminal pages are elided because they contain no result rows. BufferTail abstracts an append smaller than a full page.",
++    "Restore may fail or be cancelled at its await at most MaxInterrupts times in total; retry is allowed. Restore has no destructive side effects (SpillerInner::read_spilled_file).",
++    "Deadline expiry only occurs after recv observes an empty queue. Producer can run on another OS thread between timeout completion and the fallback buffer lock; no invented await is needed.",
++    "Successful memory extraction/restore commit through page-manager cache are collapsed: there is no await on this suffix and a single receiver owns the page_manager mutex. Producer may append independently; this does not change the consumed identity.",
++    "Page order, non-duplication, retained page availability and published spill readability are safety properties. No liveness, end-of-stream signaling, HTTP transport retry policy, spill write failure/abort, close/cleanup race, leak freedom, or memory-byte bound is claimed.",
++    "Close excluded: it intentionally discards results; actual HttpQuery::kill serializes it with get_page using page_manager mutex. No fabricated close/restore race.",
++    "Fixed fallback atomically selects queued memory/spill if present, else partial current_page under one buffer mutex. TakePartialAfterTimeout's empty-queue guard and fallback-enabled TakeMemory/BeginRestore are alternatives of this SAME locked selection, not separate check/use actions. QueueFirstAfterTimeout=false disables this actual protection for mutation control.",
++    "fromFallback is diagnostic history only: it enables a witness that spilled restore occurs from timeout fallback while a later partial page remains. It neither guards safety actions nor prunes schedules.",
++    "Matrix includes DeadlineReads=true to investigate ordering rather than assume fallback FIFO. Any normal-case failure must be triaged against source; do not weaken OrderedDelivery to get a pass."
++  ],
++  "source_map": {
++    "BufferMemory,BufferBatch,DetachForSpill,BufferTail": "src/query/service/src/servers/http/v1/query/sized_spsc.rs::SizedChannelBuffer::try_add_block; PageBuilder::try_append_block",
++    "SpillWritten": "src/query/service/src/spillers/inner.rs::SpillerInner::write_encodes; spill_unmanage",
++    "RegisterLayout": "src/query/service/src/spillers/inner.rs::SpillerInner::spill; src/query/service/src/spillers/adapter.rs::LiteAdapter::add_spill_file",
++    "PublishSpill": "src/query/service/src/servers/http/v1/query/sized_spsc.rs::SizedChannelSender::send; SizedChannelBuffer::try_add_page",
++    "Finish": "src/query/service/src/servers/http/v1/query/sized_spsc.rs::SizedChannelSender::finish",
++    "ObserveEmpty": "src/query/service/src/servers/http/v1/query/siz
+```
+
+**File**: `tests/nox/tla/run.py` (added, +275/-0)
+```diff
+@@ -0,0 +1,275 @@
++#!/usr/bin/env python3
++"""Check a TLA+ model directory locally with a verified TLC jar."""
++
++import argparse
++import hashlib
++import itertools
++import json
++import os
++import re
++import shutil
++import subprocess
++import sys
++import tempfile
++import time
++from pathlib import Path
++
++# v1.8.0 and rolling are mutable master-build releases; use the stable release.
++TLC_VERSION = "1.7.4"
++TLC_SHA256 = "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88"
++TLC_URL = (
++    f"https://github.com/tlaplus/tlaplus/releases/download/v{TLC_VERSION}/tla2tools.jar"
++)
++CACHE_DIR = Path(__file__).resolve().parents[1] / "cache"
++CASE_NAME = re.compile(r"[\w-]+")
++CASE_KEYS = {"constants", "invariants", "violation", "witness"}
++
++
++def literal(value):
++    if isinstance(value, bool):
++        return str(value).upper()
++    if isinstance(value, int):
++        return str(value)
++    if isinstance(value, str) and re.fullmatch(r'[^"\\\n]*', value):
++        return f'"{value}"'
++    raise ValueError(f"Unsupported TLA constant: {value!r}")
++
++
++def cases(spec):
++    """Expand the matrix and named cases into {name: (constants, invariants, expected)}."""
++    for key in ("module", "constants", "invariants"):
++        if key not in spec:
++            raise ValueError(f"model.json is missing '{key}'")
++    defaults = spec["constants"]
++    if not spec["invariants"]:
++        raise ValueError("model.json needs at least one invariant")
++    matrix = spec.get("matrix", {})
++    if matrix.keys() - defaults.keys() or any(not v for v in matrix.values()):
++        raise ValueError("Matrix keys must be declared constants with nonempty domains")
++    result = {}
++    for values in itertools.product(*matrix.values()):
++        overrides = dict(zip(matrix, values, strict=True))
++        name = ",".join(f"{k}={label(v)}" for k, v in overrides.items()) or "default"
++        result[name] = (defaults | overrides, list(spec["invariants"]), None)
++    for name, case in spec.get("cases", {}).items():
++        if not CASE_NAME.fullmatch(name) or name in result:
++            raise ValueError(f"Invalid or duplicate case name: {name}")
++        if case.keys() - CASE_KEYS:
++            raise ValueError(
++                f"Unknown options in case {name}: {sorted(case.keys() - CASE_KEYS)}"
 +            )
-+            .unwrap();
-+        IN_MEMORY_DATA.write().insert(
-+            InMemoryDataKey {
-+                temp_prefix: Some("session".to_string()),
-+                table_id: reply.table_id,
-+            },
-+            Default::default(),
-+        );
-+        reply.table_id
-+    }
++        overrides = case.get("constants", {})
++        if overrides.keys() - defaults.keys():
++            raise ValueError(f"Undeclared constants in case {name}")
++        if "witness" in case and ("violation" in case or "invariants" in case):
++            raise ValueError(f"A witness keeps the default invariants: {name}")
++        invariants = list(case.get("invariants", spec["invariants"]))
++        expected = case.get("violation", case.get("witness"))
++        if "witness" in case:
++            invariants.append(expected)
++        if expected and expected not in invariants:
++            raise ValueError(f"Expected invariant is not checked in case {name}")
++        result[name] = (defaults | overrides, invariants, expected)
++    return result
 +
-+    #[tokio::test]
-+    async fn test_materialized_cte_tables_do_not_count_as_session_scoped() {
-+        let cte_opt = [(OPT_KEY_MATERIALIZED_CTE, "1")];
-+        let mgr = TempTblMgr::init();
-+        assert!(!mgr.lock().has_session_scoped_tables());
 +
-+        // A materialized CTE scratch table alone is not session state.
-+        let cte_id = create_memory_table(&mgr, "cte$query", false, &cte_opt);
-+        assert!(!mgr.lock().is_empty());
-+        assert!(!mgr.lock().has_session_scoped_tables());
++def label(value):
++    if not isinstance(value, str):
++        return literal(value)
++    if not re.fullmatch(r"[\w.-]+", value):
++        raise ValueError(f"Matrix string values must be simple names: {value!r}")
++    return value
 +
-+        // A user temporary table alongside it makes the session sticky.
-+        let user_id = create_memory_table(&mgr, "t", false, &[]);
-+        assert!(mgr.lock().has_session_scoped_tables());
 +
-+        drop_table_by_id(mgr.clone(), drop_memory_table_req("cte$query", cte_id))
-+            .await
-+            .unwrap()
-+            .unwrap();
-+        assert!(mgr.lock().has_session_scoped_tables());
++def config_text(constants, invariants):
++    if not invariants:
++        raise ValueError("At least one invariant is required")
++    return "\n".join(
++        [
++            "CONSTANTS",
++            *(f"    {name} = {literal(value)}" for name, value in constants.items()),
++            "INIT Init",
++            "NEXT Next",
++            "CHECK_DEADLOCK FALSE",
++            "INVARIANTS " + " ".join(invariants),
++            "",
++        ]
++    )
 +
-+        drop_table_by_id(mgr.clone(), drop_memory_table_req("t", user_id))
-+            .await
-+            .unwrap()
-+            .unwrap();
-+        assert!(!mgr.lock().has_session_scoped_tables());
-+        assert!(mgr.lock().is_empty());
 +
-+        // Atomic CTAS stages the table by id while the pipeline runs; a
-+        // staged CTE table must not count either, a staged user table must.
-+        let staged_cte = create_memory_table(&mgr, "cte_ctas$query", true, &cte_opt);
-+        assert!(!mgr.lock().is_empt
++def verdict(code, text, expected):
++    """Normal cases need a complete search; controls need exactly the expected violation."""
++    errors = [line for line in text.splitlines() if line.startswith("Error:")]
++    if expected:
++        return (
++            code == 12
++            and errors
++            == [
++                f"Error: Invariant {expected} is violated.",
++                "Error: The behavior up to this point is:",
++            ]
++            and "State 1:" in text
++        )
++    return (
++        code == 0
++        and not errors
++        and "Model checking completed. No error has been found." in text
++        and re.search(
++            r"(?m)^\d+ states generated, \d+ distinct states found, 0 states left on queue\.$",
++            text,
++        )
++        is not None
++    )
++
++
++def cached_jar(cache_dir=CACHE_DIR):
++    return cache_dir / "tlc" / TLC_SHA256 / f"tla2tools-{TLC_VERSION}.jar"
++
++
++def verify_jar(path):
++    digest = hashlib.sha256(path.read_bytes()).hexdigest()
++    if digest != TLC_SHA256:
++        raise ValueError(
++            f"SHA-256 mismatch for {path}: expected {TLC_SHA256}, got {digest}"
++        )
++
++
++def find_java(explicit):
++    if explicit:
++        ret
 ```
 
----
-
-### Incident Patch 3: `91ad15b9` (2026-11-08)
-**Commit Message**: fix(fuse): infer string statistics truncation by character count (#21015)
-
-* fix(fuse): infer string statistics truncation by character count
-
-* ci(fuse): cover mixed adaptive string statistics lengths
-
-* docs(fuse): clarify string statistics truncation assumption
-
-* fix(fuse): keep attached string statistics conservative
-
-* ci(fuse): cover attached string statistics with EE logic test
-
-**File**: `src/query/storages/fuse/src/fuse_table.rs` (modified, +17/-2)
+**File**: `tests/nox/tla/test_runner.py` (added, +240/-0)
 ```diff
-@@ -1483,19 +1483,34 @@ impl Table for FuseTable {
-         }
- 
-         let col_stats_truncate_lens = &self.table_info.meta.field_stats_truncate_len;
-+        // ATTACH does not preserve the source column's STATS_TRUNCATE_LEN option.
-+        // Its string bounds may have been truncated at any number of characters.
-+        let unknown_string_truncation = self.table_type == FuseTableType::Attached;
-         let r = reduced
-             .into_iter()
-             .map(|(k, v)| {
-                 let truncate_len = col_stats_truncate_lens
-                     .get(&k)
-                     .map(|&n| n as usize)
-                     .unwrap_or(STATS_STRING_PREFIX_LEN);
-+                // STATS_TRUNCATE_LEN N truncates string min/max statistics when the
-+                // original value contains more than N Unicode characters, not bytes.
-+                // Assumes this column setting is unchanged since writing these stats.
-+                // When the column has no STATS_TRUNCATE_LEN option, each block chooses
-+                // its own N >= STATS_STRING_PREFIX_LEN (the fallback used above).
-+                // A stored min/max shorter than truncate_len cannot have been truncated.
-+                // Otherwise, metadata cannot distinguish an unchanged original value
-+                // from a result of truncation, so mark it as possibly truncated.
-                 let min_may_be_truncated = match &v.min {
--                    Scalar::String(s) => s.len() >= truncate_len,
-+                    Scalar::String(s) => {
-+                        unknown_string_truncation || s.chars().count() >= truncate_len
-+                    }
-                     _ => false,
-                 };
-                 let max_may_be_truncated = match &v.max {
--                    Scalar::String(s) => s.len() >= truncate_len,
-+                    Scalar::String(s) => {
-+                        unknown_string_truncation || s.chars().count() >= truncate_len
-+                    }
-                     _ => false,
-                 };
-                 (k, ColumnRange {
-```
-
-**File**: `tests/sqllogictests/suites/base/05_ddl/05_0065_ddl_stats_truncate_len.test` (modified, +74/-0)
-```diff
-@@ -239,3 +239,77 @@ explicit abcdefghijklmnop abcdefghijklmno􏿿
- 
- statement ok
- DROP TABLE t_adaptive_stats_truncate;
+@@ -0,0 +1,240 @@
++"""Offline runner/dependency tests; subprocesses and downloads are mocked, not TLC."""
 +
-+## UTF-8 byte length must not make exact short bounds look truncated.
-+## Both columns have byte lengths >= their limits, but fewer Unicode characters.
-+statement ok
-+CREATE TABLE t_unicode_stats (
-+    a STRING,
-+    b STRING STATS_TRUNCATE_LEN 4
-+) row_per_block=100;
++import contextlib
++import hashlib
++import io
++import json
++import subprocess
++import tempfile
++import unittest
++from pathlib import Path
++from types import SimpleNamespace
++from unittest import mock
 +
-+statement ok
-+INSERT INTO t_unicode_stats VALUES
-+    ('你好世界你好世', '你好世'),
-+    ('👍👍👍👍👍', '👍👍');
++import noxfile
 +
-+## All four aggregates must be answered from exact statistics, without a TableScan.
-+query T
-+EXPLAIN SELECT MIN(a), MAX(a), MIN(b), MAX(b) FROM t_unicode_stats;
-+----
-+EvalScalar
-+├── output columns: [MIN(a) (#2), MAX(a) (#3), MIN(b) (#4), MAX(b) (#5)]
-+├── expressions: ['你好世界你好世', '👍👍👍👍👍', '你好世', '👍👍']
-+├── estimated rows: 1.00
-+└── DummyTableScan
++from tla import run
 +
-+statement ok
-+TRUNCATE TABLE t_unicode_stats;
++SUCCESS = (
++    "Model checking completed. No error has been found.\n"
++    "10 states generated, 8 distinct states found, 0 states left on queue.\n"
++)
++TRACE = (
++    "Error: Invariant Safe is violated.\n"
++    "Error: The behavior up to this point is:\nState 1: <Initial predicate>\n"
++)
++SPEC = {
++    "module": "Model",
++    "constants": {"N": 1, "Flag": True, "Mode": "fast"},
++    "invariants": ["Safe"],
++    "matrix": {"N": [1, 2], "Mode": ["fast", "slow"]},
++    "cases": {
++        "no_flag": {"constants": {"Flag": False}, "violation": "Safe"},
++        "reachable": {"witness": "NeverDone"},
++    },
++}
 +
-+## Genuinely truncated multibyte bounds must still scan and return full strings.
-+## The different leading characters prevent adaptive extension of the default limit.
-+statement ok
-+INSERT INTO t_unicode_stats VALUES
-+    (repeat('好', 17), repeat('好', 5)),
-+    (repeat('👍', 17), repeat('👍', 5));
 +
-+query IIII
-+SELECT char_length(MIN(a)), char_length(MAX(a)), char_length(MIN(b)), char_length(MAX(b))
-+FROM t_unicode_stats;
-+----
-+17 17 5 5
++class RunnerTests(unittest.TestCase):
++    def test_verdict_rejects_incomplete_or_wrong_failure(self):
++        for code, text, expected, passed in [
++            (0, SUCCESS, None, True),
++            (0, "Starting...", None, False),
++            (0, SUCCESS.replace("0 states left", "10 states left"), None, False),
++            (-9, SUCCESS, None, False),
++            (12, TRACE, "Safe", True),
++            (0, TRACE, "Safe", False),
++            (1, TRACE, "Safe", False),
++            (12, TRACE, "Other", False),
++            (12, TRACE, None, False),
++            (12, TRACE.replace("State 1:", "No trace:"), "Safe", False),
++            (12, TRACE + "Error: Unexpected exception\n", "Safe", False),
++        ]:
++            with self.subTest(code=code, text=text, expected=expected):
++                self.assertEqual(run.verdict(code, text, expected), passed)
 +
-+statement ok
-+DROP TABLE t_unicode_stats;
++    def test_matrix_mutation_and_witness(self):
++        generated = run.cases(SPEC)
++        self.assertEqual(len(generated), 6)
++        self.assertIn("N=2,Mode=slow", generated)
++        constants, invariants, expected = generated["reachable"]
++        self.assertEqual((invariants, expected), (["Safe", "NeverDone"], "NeverDone"))
++        self.assertFalse(generated["no_flag"][0]["Flag"])
++        text = run.config_text(constants, invariants)
++        for line in [
++            "Flag = TRUE",
++            'Mode = "fast"',
++            "INVARIANTS Safe NeverDone",
++            "CHECK_DEADLOCK FALSE",
++        ]:
++            self.assertIn(line, text)
 +
-+## Different blocks can use different adaptive prefix lengths without a DDL change.
-+statement ok
-+CREATE TABLE t_mixed_stats_prefix(a STRING) row_per_block=100;
++    def test_invalid_specs(self):
++        for spec in [
++            {k: v for k, v in SPEC.items() if k != "module"},
++            {**SPEC, "invariants": []},
++            {**SPEC, "matrix": {"Unknown": [1]}},
++            {**SPEC, "matrix": {"N": []}},
++            {**SPEC, "matrix": {"Mode": ["a/b"]}},
++            {**SPEC, "cases": {"bad name": {}}},
++            {**SPEC, "cases": {"x": {"typo": 1}}},
++            {**SPEC, "cases": {"x": {"constants": {"Unknown": 1}}}},
++            {**SPEC, "cases": {"x": {"witness": "W", "invariants": []}}},
++            {**SPEC, "cases": {"x": {"violation": "Other"}}},
++        ]:
++            with self.subTest(spec=spec), self.assertRaises(ValueError):
++                run.cases(spec)
++        for value in [1.5, None, 'quote"d', [1]]:
++            with self.subTest(value=value), self.assertRaises(ValueError):
++                run.literal(value)
 +
-+## No common prefix: both bounds are truncated to 16 characters.
-+statement ok
-+INSERT INTO t_mixed_stats_prefix VALUES (repeat('a', 17)), (repeat('b', 17));
++    def test_list_needs_no_java_or_jar(self):
++        with tempfile.TemporaryDirectory() as directory:
++            model = Path(directory)
++            (model / "model.json").write_text(json.dumps(SPEC))
++            output = io.StringIO()
++            with (
++                mock.patch.object(run.subprocess, "run") as execute,
++                mock.patch.object(run, "verify_jar") as verify,
++                contextlib.redirect_stdout(output),
++            ):
++                self.assertEqual(run.main([str(model), "--list"]), 0)
++            execute.assert_not_called()
++            verify.assert_not_called()
++            self.assertEqual(len(output.getvalue().splitlines()), 6)
 +
-+## A common 20-character prefix extends this block's bounds to 21 characters.
-+statement ok
-+INSERT INTO t_mixed_stats_prefix VALUES
-+    (repeat('m', 20) || 'a-tail'), (repeat('m', 20) || 'z-tail');
++    def test_timeout_fails(self):
++        with tempfile.TemporaryDirectory() as directory:
++            args = SimpleNamespace(java="unused", timeout=1, workers=1)
++            with (
++                mock.patch.object(
++                    run.subprocess,
++                    "run",
++                    side_effect=subprocess.TimeoutExpired("tlc", 1),
++                ),
++                contextlib.redirect_stdout(io.StringIO()),
++            ):
++                self.assertFalse(
++                    run.run_case(args, Path("x.jar"), Path(directory), "M", None)
++                )
 +
-+query II
-+SELECT char_length(statistics:min::string), char_length(statistics:max::string)
-+FROM fuse_block_statistics('default', 't_mixed_stats_prefix') ORDER BY 1;
-+----
-+16 16
-+21 21
-+
-+## The global min comes from the first block and max from the second.
-+## Neither truncated bound may be used as an exact aggregate result.
-+query II
-+SELECT (MIN(a) = repeat('a', 17))::INT,
-+       (MAX(a) = (repeat('m', 20) || 'z-tail'))::INT
-+FROM t_mixed_stats_prefix;
-+----
-+1 1
-+
-+statement ok
-+DROP TABLE t_mixed_stats_prefix;
-```
-
-**File**: `tests/sqllogictests/suites/ee/05_ee_ddl/05_0024_attach_string_statistics.test` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+## ATTACH must not treat truncated string bounds as original values when the
-+## source column's STATS_TRUNCATE_LEN option is absent from attached metadata.
-+statement ok
-+DROP TABLE IF EXISTS attach_stats_target;
-+
-+statement ok
-+DROP TABLE IF EXISTS attach_stats_source;
-+
-+statement ok
-+CREATE TABLE attach_stats_source(id INT, s STRING STATS_TRUNCATE_LEN 4)
-+'fs:///tmp/attach_string_statistics/' row_per_block=100;
-+
-+statement ok
-+INSERT INTO attach_stats_source VALUES (1, repeat('👍', 17));
-+
-+## The stored min/max contain four characters, not the original 17.
-+query II
-+SELECT char_length(statistics:min::string), char_length(statistics:max::string)
-+FROM fuse_block_statistics('default', 'attach_stats_source')
-+WHERE column_name = 's';
-+----
-+4 4
-+
-+## Derive the table's generated storage prefix instead of assuming table IDs.
-+statement ok
-+SET VARIABLE attach_stats_sql = (
-+    SELECT 'ATTACH TABLE attach_stats_target ''fs:///tmp/attach_string_statistics/'
-+           || split_part(snapshot_location, '/_ss/', 1) || ''''
-+    FROM fuse_snapshot('default', 'attach_stats_source')
-+);
-+
-+statement ok
-+EXECUTE IMMEDIATE $attach_stats_sql;
-+
-+## Aggregates on the attached table must return the complete string, not a
-+## prefix or the synthetic upper bound used for pruning.
-+query BB
-+SELECT MIN(s) = repeat('👍', 17), MAX(s) = repeat('👍', 17)
-+FROM attach_stats_target;
-+----
-+1 1
-+
-+## Numeric statistics must remain eligible for aggregate rewriting.
-+query T
-+EXPLAIN SELECT MIN(id), MAX(id) FROM attach_stats_target;
-+----
-+EvalScalar
-+├── output columns: [MIN(id) (#2), MAX(id) (#3)]
-+├── expressions: [1, 1]
-+├── estimated rows: 1.00
-+└── DummyTableScan
-+
-+statement ok
-+DROP TABLE attach_stats_target;
-+
-+statement ok
-+DROP TABLE attach_stats_source;
-+
-+statement ok
-+UNSET VARIABLE attach_stats_sql;
++    def test_selected_models_have_separate_cache_outputs(self):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            jar = root / "tools.jar"
++            jar.write_bytes(b"verified in dependency tests")
++            cache = root / "cache"
++        
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21021** (2026-11-08): feat(query): segment zone map for fuse tables, built by recluster (@zhang2014)
-- **PR #21015** (2026-11-08): fix(fuse): infer string statistics truncation by character count (@dantengsky)
-- **PR #21013** (2026-11-06): feat(query): expose node-local cache statistics on admin API (@bohutang)
-- **PR #21011** (2026-11-07): fix(query): fix data loss in UNION ALL (@SkyFan2002)
-- **PR #21009** (2026-11-06): chore(ci): cancel closed PR runs and limit PR auto retries (@TCeason)
-- **PR #21007** (2026-11-08): fix(query): do not make HTTP sessions sticky for materialized CTE temp tables (@youngsofun)
+- **PR #21060** (2026-11-11): fix(query): break rank limit ties by the remaining group keys (@zhang2014)
+- **PR #21052** (2026-11-11): fix(storage): cut recluster output at the table block thresholds (@zhang2014)
+- **PR #21050** (closed): feat(query): bound what a statement writes to the table data cache (@bohutang)
+- **PR #21049** (2026-11-10): fix(query): reject cyclic named window references (@KKould)
+- **PR #21048** (2026-11-10): fix(query): guard expression parsing against stack exhaustion (@KKould)
+- **PR #21047** (2026-11-10): fix(query): reject MVs on tables with row access or masking policies (@TCeason)
 
 ---
 
@@ -2470,45 +2860,40 @@ with "Sticky session state lost".
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): segment zone map for fuse tables, built by recluster (#21021)
+## X. query): defer transaction maintenance until after commit (#21020)
 
 **RULE**:
-When implementing operations in `src/query/catalog/src/plan/pruning_statistics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/ee/src/materialized_view/handler.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `19308cd3`: query): segment zone map for fuse tables, built by recluster (#21021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cbbeaa8c`: query): defer transaction maintenance until after commit (#21020). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/catalog/src/plan/pruning_statistics.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/ee/src/materialized_view/handler.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Segment zone map pruning stats: segments excluded by the snapshot-level
-    /// segment zone map before any segment info was read.
-    pub segments_zone_map_pruning_before: usize,
-    pub segments_zone_map_pruning_after: usize,
-    /// Segment zone map pruning cost in microseconds.
-    pub segments_zone_map_pruning_cost: u64,
-
-        // Segment zone map pruning runs once per scan before the segments are
-        // distributed, and every node reports the same numbers: keep one copy.
-        self.segments_zone_map_pruning_before = self
-            .segments_zone_map_pruning_before
-            .max(other.segments_zone_map_pruning_before);
-        self.segments_zone_map_pruning_after = self
-            .segments_zone_map_pruning_after
-            .max(other.segments_zone_map_pruning_after);
-        self.segments_zone_map_pruning_cost = self
-            .segments_zone_map_pruning_cost
-            .max(other.segments_zone_map_pruning_cost);
+        // Refresh consumes one source checkpoint range. Keep the mandatory non-waiting lock
+        // through the data/checkpoint commit so concurrent refreshes cannot consume the same
+        // changes. Release this guard before post-commit maintenance, which uses each
+        // operation's existing coordination mechanism.
+        let lock_guard = table_lock.try_lock(query_ctx.clone(), false).await?;
+            let hooks = refresh.execute().await?;
+            drop(lock_guard);
+            if let Some(hooks) = hooks {
+                hooks.execute().await;
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        // Refresh consumes one source checkpoint range. Keep the same mandatory non-waiting lock
+        // across the complete lifecycle so concurrent refreshes cannot consume the same changes.
+        let _lock_guard = table_lock.try_lock(query_ctx.clone(), false).await?;
+            refresh.execute().await?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `19308cd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cbbeaa8c` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `ce71455b`  
+> **Source Version**: `7e497e23`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:56:03.333Z  
+> **Timestamp**: 2026-11-11T11:18:52.840Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:56:02.717Z  
+> **Harvest Timestamp**: 2026-11-11T11:18:52.832Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4640 stars
+- **Stars / Engagement**: 4644 stars
 
 ---
 
@@ -1883,531 +1883,863 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9c80de5` (2026-11-06)
-**Commit Message**: fix(tests): preserve Android dump command errors
+### Incident Patch 1: `2b3c0f93` (2026-11-10)
+**Commit Message**: fix(one): emit the objective-c selector a protocol requirement declares (#1179)
 
-A uiautomator process can write its hierarchy and then fail during accessibility cleanup. Preserve the exec error message ahead of success stdout so the existing condition wait can classify the dump failure. No timeout or condition changes.
+* fix(one): emit the objective-c selector a protocol requirement declares
 
-Validation: existing snapshot suite reproduces the misleading success-output failure before this change (6 pass,1 fail) and passes afterward (7 pass). Root lint passes.
-Team-Machine-Session: m103855
+Bare @objc made every overload share one inferred selector, so wasm
+conformance failed for delegates whose selector is not the swift name.
+Requirements that are not objective-c representable are skipped, and
+constant lists use Self.member so a same-named global is not ambiguous.
 
-**File**: `tests/native-features/scripts/one-native-android-snapshot.test.ts` (modified, +8/-2)
+* fix(one): skip protocol requirements swiftc rejects as @objc
+
+Character, a generic argument that does not bridge, an optional of a scalar, a variadic parameter, and a non-class metatype were treated as representable. Those requirements now stay off @objc.
+
+* fix(one): keep optional elements out of objective-c collections
+
+An optional object is a nullable parameter. An array, set, or dictionary of optionals is not representable, and neither is a double optional.
+
+* fix(one): keep function types out of objective-c collections
+
+A block parameter and an optional block are selector-safe. An array, set, or dictionary of blocks is not.
+
+* fix(vxrn): drop the stale __esmMin production assertion
+
+The native iife turns strict execution order off, so rolldown no
+
+**File**: `packages/one/codegen/sdk/emit-protocols.ts` (modified, +153/-3)
 ```diff
-@@ -4,7 +4,7 @@ import { expect } from 'bun:test'
- // adb is scripted per test: uiautomator dump steps run down dumpScript
- // ('fail' throws the busy-system signature, 'ok' dumps dumpedXml), taps and
- // swipes are recorded. anything else fails loudly as unstubbed.
--type DumpStep = 'fail' | 'ok'
-+type DumpStep = 'fail' | 'fail-after-dump' | 'ok'
- let dumpScript: DumpStep[] = []
- let dumpedXml = ''
- let dumpCalls = 0
-@@ -23,6 +23,12 @@ function dispatchExec(args: unknown[]) {
-     const step = dumpScript.length ? dumpScript.shift()! : 'ok'
-     if (step === 'fail')
-       throw new Error('Command failed: Error: Unable to dump window hierarchy')
-+    if (step === 'fail-after-dump')
-+      throw Object.assign(new Error('Command failed: adb shell uiautomator dump'), {
-+        stdout: 'UI hierchary dumped to: /sdcard/one.xml',
-+        stderr: '',
-+        status: 1,
-+      })
-     return 'UI hierchary dumped to: /sdcard/one.xml'
-   }
-   if (head === 'shell input tap') {
-@@ -100,7 +106,7 @@ test('snapshot keeps the redbox and empty-tree verdicts', () => {
- })
+@@ -2,7 +2,7 @@
+ import { inUniverse, type Bridge } from './bridge'
+ import { effectsOf, outputValue, type Skipped } from './emit'
+ import { loadGraph, type Fragment, type Graph, type Symbol } from './graph'
+-import { parameterType, type SwiftType } from './types'
++import { parameterType, parseType, type SwiftType, TypeParseError } from './types'
  
- test('waitFor tolerates transient dumps while awaiting its condition', async () => {
--  reset(['fail', 'fail', 'ok'], readyXml)
-+  reset(['fail', 'fail-after-dump', 'ok'], readyXml)
-   const result = await waitFor(
-     config,
-     'ready marker',
-```
-
-**File**: `tests/native-features/scripts/one-native-conformance.android.ts` (modified, +1/-1)
-```diff
-@@ -189,9 +189,9 @@ function commandError(command: string, args: string[], error: unknown) {
-     message?: string
-   }
-   const detail =
-+    result.message ||
-     result.stderr?.toString() ||
-     result.stdout?.toString() ||
--    result.message ||
-     'unknown error'
-   return new Error(`${command} ${args.join(' ')} failed: ${detail}`)
- }
-```
-
----
-
-### Incident Patch 2: `6dc71f51` (2026-11-06)
-**Commit Message**: fix(tests): compile complete native Swift source proof
-
-Validation: existing proof fails before on missing view dispatch protocol, then macOS-only API availability; final strict Swift 6 iOS typecheck, macOS compilation and date/data/struct/enum/subscription runtime proof pass. Assertions and iOS behavior unchanged.
-Team-Machine-Session: m103855
-
-**File**: `tests/native-features/native-source/NativeScreens.swift` (modified, +10/-0)
-```diff
-@@ -42,8 +42,11 @@ public struct EntryList: View {
-       }
-     }
-     .navigationTitle("Entries")
-+    #if os(iOS)
-     .navigationBarTitleDisplayMode(.large)
-+    #endif
-     .searchable(text: $query)
-+    #if os(iOS)
-     .toolbar {
-       ToolbarItem(placement: .topBarLeading) {
-         Button("Sort", action: onSort)
-@@ -52,6 +55,7 @@ public struct EntryList: View {
-         Button("Add", systemImage: "plus", action: onAdd)
-       }
-     }
-+    #endif
-   }
- }
+ const text = (fragments: Fragment[] = []) => fragments.map((f) => f.spelling).join('')
+ const quoted = (name: string) => `\`${name.replace(/`/g, '')}\``
+@@ -12,6 +12,144 @@ const SYNC_REASON = 'synchronous protocol result requires an active JS-thread ca
+ // checks the generated witness against their concurrency semantics.
+ const MARKERS = new Set(['s:s8SendableP', 's:s16SendableMetatypeP'])
  
-@@ -91,7 +95,9 @@ public struct EntryDetail: View {
-       }
-     }
-     .navigationTitle(entry.title)
-+    #if os(iOS)
-     .navigationBarTitleDisplayMode(.inline)
-+    #endif
-   }
- }
- 
-@@ -117,7 +123,9 @@ public struct SortSheet: View {
-       }
-     }
-     .navigationTitle("Sort")
-+    #if os(iOS)
-     .navigationBarTitleDisplayMode(.inline)
-+    #endif
-     .toolbar {
-       ToolbarItem(placement: .confirmationAction) {
-         Button("Done", action: onClose)
-@@ -143,7 +151,9 @@ public struct EntryForm: View {
-       }
-     }
-     .navigationTitle("New entry")
-+    #if os(iOS)
-     .navigationBarTitleDisplayMode(.inline)
-+    #endif
-     .toolbar {
-       ToolbarItem(placement: .cancellationAction) {
-         Button("Cancel", action: onCancel)
-```
-
-**File**: `tests/native-features/scripts/native-source-swift-proof.ts` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ const contracts = [
- ]
- const glue = renderSwiftSourceGlue('native_source', contracts).source
- const api = readFileSync(resolve(import.meta.dir, '../../../packages/one/ios/OneSwiftPackage.swift'), 'utf8')
--const protocols = api.slice(api.indexOf('@MainActor public protocol PeachModule'), api.indexOf('// a package\'s typed views'))
-+const protocols = api.slice(api.indexOf('@MainActor public protocol PeachModule'), api.indexOf('extension PeachPackage'))
- const source = `import Foundation
- import SwiftUI
- ${protocols}
-```
-
----
-
-### Incident Patch 3: `f9404197` (2026-11-05)
-**Commit Message**: chore(vxrn): replace five runtime deps with Node builtins (#1112)
-
-* chore(vxrn): replace five runtime deps with Node builtins
-
-Drop fs-extra, pkg-types, get-port-please, env-editor and find-node-modules from vxrn. A shared utils/fs module covers the JSON/path helpers, and the four single-use imports move to small call-site replacements: a node:net port probe, an upward package.json lookup, a node_modules walk-up, and $EDITOR parsing. Regenerated types keep the public PackageJSON shape. The lockfile loses 9 package entries and keeps @hono/node-server 2.1.6 with hono 4.13.11, past the serveStatic double-decode fixes.
-
-Validation: vxrn typecheck passed. 96 tests passed across getServerOptionsFilled (3, incl. 2 new port tests), patches (11), scanDepsToOptimize (11), prebuildWithoutExpo (71). depcheck clean, matching baseline. vxrn build passed with no removed-dep references in dist. A fillOptions live probe resolved port 8081 and the nearest package.json. bun.lock diff is pure deletion; fs-extra and get-port-please remain locked only for other workspaces.
-
-* fix(vxrn): preserve editor aliases and cross-volume asset moves
-
-Vendor env-editor 1.3.0 with its MIT license instead of droppin
-
-**File**: `bun.lock` (modified, +0/-24)
-```diff
-@@ -712,12 +712,8 @@
-         "citty": "^0.1.6",
-         "dotenv": "^17.2.1",
-         "dotenv-expand": "^12.0.2",
--        "env-editor": "^1.1.0",
-         "es-module-lexer": "^1.3.0",
-         "fast-glob": "^3.3.3",
--        "find-node-modules": "^2.1.3",
--        "fs-extra": "^11.2.0",
--        "get-port-please": "^3.1.2",
-         "hono": "^4.13.11",
-         "image-size": "2.0.3",
-         "magic-string": "^0.30.21",
-@@ -727,7 +723,6 @@
-         "oxc-transform-react": "^0.145.0",
-         "perfect-debounce": "^1.0.0",
-         "picocolors": "^1.0.0",
--        "pkg-types": "^1.0.3",
-         "rolldown": "^1.2.8",
-         "semver": "^7.6.3",
-         "sharp": "^0.35.5",
-@@ -739,7 +734,6 @@
-         "@biomejs/biome": "2.5.15",
-         "@jridgewell/gen-mapping": "^0.3.5",
-         "@tamagui/build": "3.2.3",
--        "@types/find-node-modules": "^2.1.2",
-         "@types/node": "^24.10.0",
-         "@types/ws": "^8.18.1",
-         "@vxrn/vite-plugin-metro": "workspace:*",
-@@ -2941,8 +2935,6 @@
- 
-     "@types/estree-jsx": ["@types/estree-jsx@1.0.5", "", { "dependencies": { "@types/estree": "*" } }, "sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg=="],
- 
--    "@types/find-node-modules": ["@types/find-node-modules@2.1.2", "", {}, "sha512-5hRcqDclY6MTkHXJBc5q79z5luG+IJRlGR01wluMVMM9lYogYc2sfclXTVU5Edp0Ja4viIOCDI1lXhFRlsNTKA=="],
--
-     "@types/fs-extra": ["@types/fs-extra@9.0.13", "", { "dependencies": { "@types/node": "*" } }, "sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA=="],
- 
-     "@types/graceful-fs": ["@types/graceful-fs@4.1.9", "", { "dependencies": { "@types/node": "*" } }, "sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ=="],
-@@ -3451,8 +3443,6 @@
- 
-     "compression": ["compression@1.8.2", "", { "dependencies": { "bytes": "3.1.2", "compressible": "~2.0.18", "debug": "2.6.9", "destroy": "1.2.0", "negotiator": "~0.6.4", "on-headers": "~1.1.0", "safe-buffer": "5.2.1", "vary": "~1.1.2" } }, "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ=="],
- 
--    "confbox": ["confbox@0.1.8", "", {}, "sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w=="],
--
-     "config-chain": ["config-chain@1.1.13", "", { "dependencies": { "ini": "^1.3.4", "proto-list": "~1.2.1" } }, "sha512-qj+f8APARXHrM0hraqXYb2/bOVSV4PvJQlNZ/DVj0QrmNM2q2euizkeuVckQ57J+W0mRH6Hvi+k50M4Jul2VRQ=="],
- 
-     "connect": ["connect@3.7.0", "", { "dependencies": { "debug": "2.6.9", "finalhandler": "1.1.2", "parseurl": "~1.3.3", "utils-merge": "1.0.1" } }, "sha512-ZqRXc+tZukToSNmh5C2iWMSoV3X1YUcPbqEM4DkEG5tNQXrQUZCNVGGv3IuicnkMtPfGf3Xtp8WCXs295iQ1pQ=="],
-@@ -3639,8 +3629,6 @@
- 
-     "entities": ["entities@7.0.0", "", {}, "sha512-FDWG5cmEYf2Z00IkYRhbFrwIwvdFKH07uV8dvNy0omp/Qb1xcyCWp2UDtcwJF4QZZvk0sLudP6/hAu42TaqVhQ=="],
- 
--    "env-editor": ["env-editor@1.3.0", "", {}, "sha512-EqiD/j01PooUbeWk+etUo2TWoocjoxMfGNYpS9e47glIJ5r8WepycIki+LCbonFbPdwlqY5ETeSTAJVMih4z4w=="],
--
-     "env-paths": ["env-paths@2.2.1", "", {}, "sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A=="],
- 
-     "envinfo": ["envinfo@7.21.0", "", { "bin": { "envinfo": "dist/cli.js" } }, "sha512-Lw7I8Zp5YKHFCXL7+Dz95g4CcbMEpgvqZNNq3AmlT5XAV6CgAAk6gyAMqn2zjw08K9BHfcNuKrMiCPLByGafow=="],
-@@ -3813,8 +3801,6 @@
- 
-     "find-babel-config": ["find-babel-config@2.1.2", "", { "dependencies": { "json5": "^2.2.3" } }, "sha512-ZfZp1rQyp4gyuxqt1ZqjFGVeVBvmpURMqdIWXbPRfB97Bf6BzdK/xSIbylEINzQ0kB5tlDQfn9HkNXXWsqTqLg=="],
- 
--    "find-node-modules": ["find-node-modules@2.1.3", "", { "dependencies": { "findup-sync": "^4.0.0", "merge": "^2.1.1" } }, "sha512-UC2I2+nx1ZuOBclWVNdcnbDR5dlrOdVb7xNjmT/lHE+LsgztWks3dG7boJ37yTS/venXw84B/mAW9uHVoC5QRg=="],
--
-     "find-root": ["find-root@1.1.0", "", {}, "sha512-NKfW6bec6GfKc0SGx1e07QZY9PE99u0Bft/0rzSD5k3sO/vwkVUpDUKVm5Gpp5Ue3YfShPFTX2070tDs5kB9Ng=="],
- 
-     "find-up": ["find-up@5.0.0", "", { "dependencies": { "locate-path": "^6.0.0", "path-exists": "^4.0.0" } }, "sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng=="],
-@@ -4333,8 +4319,6 @@
- 
-     "memorystream": ["memorystream@0.3.1", "", {}, "sha512-S3UwM3yj5mtUSEfP41UZmt/0SCoVYUcU1rkXv+BQ5Ig8ndL4sPoJNBUJERafdPb5jjHJGuMgytgKvKIf58XNBw=="],
- 
--    "merge": ["merge@2.1.1", "", {}, "sha512-jz+Cfrg9GWOZbQAnDQ4hlVnQky+341Yk5ru8bZSe6sIDTCIg8n9i/u7hSQGSVOF3C7lH6mGtqjkiT9G4wFLL0w=="],
--
-     "merge-descriptors": ["merge-descriptors@1.0.3", "", {}, "sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ=="],
- 
-     "merge-stream": ["merge-stream@2.0.0", "", {}, "sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w=="],
-@@ -4471,8 +4455,6 @@
- 
-     "mkdirp-classic": ["mkdirp-classic@0.5.3", "", {}, "sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVB
-```
-
-**File**: `packages/vxrn/package.json` (modified, +0/-6)
-```diff
-@@ -91,7 +91,6 @@
-     "citty": "^0.1.6",
-     "dotenv": "^17.2.1",
-     "dotenv-expand": "^12.0.2",
--    "env-editor": "^1.1.0",
-     "es-module-lexer": "^1.3.0",
-     "oxc-parser": "^0.112.0",
-     "oxc-transform": "^0.148.0",
-@@ -100,13 +99,9 @@
-     "image-size": "2.0.3",
-     "magic-string": "^0.30.21",
-     "micromatch": "^4.0.8",
--    "find-node-modules": "^2.1.3",
--    "fs-extra": "^11.2.0",
--    "get-port-please": "^3.1.2",
-     "hono": "^4.13.11",
-     "perfect-debounce": "^1.0.0",
-     "picocolors": "^1.0.0",
--    "pkg-types": "^1.0.3",
-     "rolldown": "^1.2.8",
-     "semver": "^7.6.3",
-     "sharp": "^0.35.5",
-@@ -118,7 +113,6 @@
-     "@biomejs/biome": "2.5.15",
-     "@jridgewell/gen-mapping": "^0.3.5",
-     "@tamagui/build": "3.2.3",
--    "@types/find-node-modules": "^2.1.2",
-     "@types/node": "^24.10.0",
-     "@types/ws": "^8.18.1",
-     "depcheck": "^1.4.7",
-```
-
-**File**: `packages/vxrn/src/config/getBaseViteConfigOnly.ts` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- import type { InlineConfig } from 'vite'
- import { resolvePath } from '@vxrn/resolve'
--import FSExtra from 'fs-extra'
- import { join } from 'node:path'
-+import { pathExists, readJSON } from '../utils/fs'
- import type { VXRNOptionsFilled } from './getOptionsFilled'
- 
- // essentially base web config not base everything
-@@ -52,15 +52,15 @@ export async function getBaseViteConfig(
-   const postCSSConfigPath = (
-     await Promise.all(
-       postCSSPaths.map(async (x) => {
--        if (await FSExtra.pathExists(x)) {
-+        if (await pathExists(x)) {
-           return x
-         }
-       })
-     )
-   ).find((x) => typeof x === 'string')
- 
-   const reactNativePackageJsonPath = resolvePath('react-native/package.json', root)
--  const { version } = await FSExtra.readJSON(reactNativePackageJsonPath)
-+  const { version } = await readJSON(reactNativePackageJsonPath)
- 
-   return {
-     mode,
-```
-
-**File**: `packages/vxrn/src/config/getOptionsFilled.ts` (modified, +35/-2)
-```diff
-@@ -1,8 +1,9 @@
- import { createHash } from 'node:crypto'
-+import { existsSync } from 'node:fs'
-+import { readFile } from 'node:fs/promises'
- import { createRequire } from 'node:module'
- import { tmpdir } from 'node:os'
--import { join } from 'node:path'
--import { readPackageJSON } from 'pkg-types'
-+import { basename, dirname, join, resolve } from 'node:path'
- import type { Mode, VXRNOptions } from '../types'
- import { getServerOptionsFilled } from './getServerOptionsFilled'
- import { readState } from '../utils/state'
-@@ -38,6 +39,14 @@ const require = createRequire(import.meta.url)
-  *   * Over time, we can progressively eliminate dependencies on
-  *     `VXRNOptionsFilled` across the codebase.
-  */
-+export type PackageJSON = {
-+  name?: string
-+  version?: string
-+  dependencies?: Record<string, string>
-+  devDependencies?: Record<string, string>
-+  [key: string]: any
-+}
-+
- export type VXRNOptionsFilled = Awaited<ReturnType<typeof fillOptions>>
- 
- let optionsFilled: VXRNOptionsFilled | null = null
-@@ -115,6 +124,30 @@ export function getOptionsFilled() {
-   return optionsFilled
- }
- 
-+async function readPackageJSON(cwd = process.cwd()): Promise<PackageJSON> {
-+  // nearest package.json walking up, stopping above the shallowest
-+  // node_modules segment, matching the pkg-types lookup this replaces
-+  let stopDir: string | null = null
-+  for (let dir = resolve(cwd); ; ) {
-+    if (basename(dir) === 'node_modules') stopDir = dir
-+    const parent = dirname(dir)
-+    if (parent === dir) break
-+    dir = parent
-+  }
-+  let dir = resolve(cwd)
-+  for (;;) {
-+    const candidate = join(dir, 'package.json')
-+    if (existsSync(candidate)) {
-+      return JSON.parse(await readFile(candidate, 'utf8'))
-+    }
-+    if (stopDir && resolve(dir) === stopDir) break
-+    const parent = dirname(dir)
-+    if (parent === dir) break
-+    dir = parent
-+  }
-+  throw new Error(`Cannot find matching package.json in ${cwd} or parent directories`)
-+}
-+
- function hashString(str: string): string {
-   const hash = createHash('sha256') // Create a hash object with the desired algorithm (e.g., 'sha256')
-   hash.update(str) // Update the hash content with the input string
-```
-
-**File**: `packages/vxrn/src/config/getServerOptionsFilled.test.ts` (modified, +37/-0)
-```diff
-@@ -1,6 +1,22 @@
-+import { createServer } from 'node:net'
- import { describe, expect, test } from 'vitest'
- import { getServerOptionsFilled } from './getServerOptionsFilled'
- 
-+async function occupyPort(): Promise<{ port: number; close: () => Promise<void> }> {
-+  const server = createServer()
-+  await new Promise<void>((resolve) => {
-+    server.listen({ port: 0, host: '0.0.0.0' }, () => resolve())
-+  })
-+  const port = (server.address() as { port: number }).port
-+  return {
-+    port,
-+    close: () =>
-+      new Promise<void>((resolve, reject) => {
-+        server.close((err) => (err ? reject(err) : resolve()))
-+      }),
-+  }
-+}
-+
- describe('getServerOptionsFilled', () => {
-   test('uses the configured TLS protocol in the public server URL', async () => {
-     const server = await getServerOptionsFilled(
-@@ -21,4 +37,25 @@ describe('getServerOptionsFilled', () => {
-       key: 'private-key',
-     })
-   })
-+
-+  test('resolves an explicitly requested free port', async () => {
-+    const occupied = await occupyPort()
-+    const port = occupied.port
-+    await occupied.close()
-+
-+    const server = await getServerOptionsFilled({ port }, 'dev')
-+
-+    expect(server.port).toBe(port)
-+  })
-+
-+  test('rejects an explicitly requested port that is already in use', async () => {
-+    const occupied = await occupyPort()
-+    try {
-+      await expect(getServerOptionsFilled({ port: occupied.port }, 'dev')).rejects.toThrow(
-+        `Port ${occupied.port} is already in use`
-+      )
-+    } finally {
-+      await occupied.close()
-+    }
-+  })
- })
-```
-
-**File**: `packages/vxrn/src/config/getServerOptionsFilled.ts` (modified, +57/-1)
-```diff
-@@ -1,6 +1,62 @@
--import { getPort } from 'get-port-please'
-+import { createServer } from 'node:net'
- import type { Mode, VXRNOptions, VXRNServeOptionsFilled } from '../types'
- 
-+// ports browsers refuse to connect to, so binding one would serve nothing.
-+// same list get-port-please filters; vxrn's default ranges never hit it.
-+const UNSAFE_PORTS = new Set([
-+  1, 7, 9, 11, 13, 15, 17, 19, 20, 21, 22, 23, 25, 37, 42, 43, 53, 69, 77, 79, 87,
-+  95, 101, 102, 103, 104, 109, 110, 111, 113, 115, 117, 119, 123, 135, 137, 139,
-+  143, 161, 179, 389, 427, 465, 512, 513, 514, 515, 526, 530, 531, 532, 540, 548,
-+  554, 556, 563, 587, 601, 636, 989, 990, 993, 995, 1719, 1720, 1723, 2049, 3659,
-+  4045, 5060, 5061, 6000, 6566, 6665, 6666, 6667, 6668, 6669, 6697, 10080,
++// stdlib and foundation values that cross into an objective-c method. character
++// is a swift struct and does not. array, dictionary, set and optional are in
++// this set, and objcRepresentable still requires every generic argument.
++const BRIDGED_USRS = new Set([
++  's:Sb', 's:Si', 's:Su', 's:Sd', 's:Sf', 's:SS', 's:Ss',
++  's:s4Int8V', 's:s5Int16V', 's:s5Int32V', 's:s5Int64V',
++  's:s5UInt8V', 's:s6UInt16V', 's:s6UInt32V', 's:s6UInt64V', 's:s7Float16V',
++  's:14CoreFoundation7CGFloatV', 's:12CoreGraphics7CGFloatV',
++  's:s5ErrorP', 's:s4Voida', 's:s8AnyClassa',
++  's:10Foundation4DateV', 's:10Foundation3URLV', 's:10Foundation4DataV', 's:10Foundation4UUIDV',
++  's:Sa', 's:SD', 's:Sh', 's:Sq',
 +])
 +
-+const HOSTNAME_RE = /^(?!-)[\d.:A-Za-z-]{1,63}(?<!-)$/
-+
-+function tryPort(port: number, host: string | undefined): Promise<number | false> {
-+  return new Promise((resolve) => {
-+    const server = createServer()
-+    server.unref()
-+    server.on('error', () => {
-+      resolve(false)
-+    })
-+    server.listen({ port, host }, () => {
-+      const bound = (server.address() as { port: number }).port
-+      server.close(() => {
-+        resolve(!UNSAFE_PORTS.has(bound) && bound)
-+      })
-+    })
-+  })
++// c:objc(pl)Name(im)archiver:didEncodeObject: — the selector is the objective-c
++// requirement, which is not the selector swift infers from the swift name.
++function objcMethod(usr: string): { selector: string; instance: boolean } | undefined {
++  const match = /^c:objc\([^)]*\)[^(]*\((im|cm)\)([A-Za-z_][A-Za-z0-9_:]*)$/.exec(usr)
++  if (!match) return undefined
++  return { selector: match[2], instance: match[1] === 'im' }
 +}
 +
-+async function getPort({
-+  port,
-+  portRange,
-+  host,
-+}: {
-+  port: number
-+  portRange: [number, number]
-+  host: string | undefined
-+}): Promise<number> {
-+  if (host && !HOSTNAME_RE.test(host)) {
-+    host = '127.0.0.1'
-+  }
-+  const ports = [port]
-+  for (let p = portRange[0]; p <= portRange[1]; p++) {
-+    ports.push(p)
-+  }
-+  for (const p of ports) {
-+    if (!p || UNSAFE_PORTS.has(p)) continue
-+    const found = await tryPort(p, host)
-+    if (found) return found
-+  }
-+  const random = await tryPort(0, host)
-+  if (random) return random
-+  throw new Error(
-+    `Unable to find an available port ${host ? `on host ${JSON.stringify(host)}` : 'on any host'} (tried ${portRange.join('-')})`
-+  )
++// values that bridge to an objective-c object, so an optional of them is nullable.
++// numbers and clang enums are selector-safe on their own and are not.
++const REFERENCE_USRS = new Set([
++  's:SS', 's:Ss',
++  's:10Foundation4DateV', 's:10Foundation3URLV', 's:10Foundation4DataV', 's:10Foundation4UUIDV',
++])
++
++function clangEnum(usr: string | undefined): boolean {
++  return !!usr && usr.includes('@E@')
 +}
 +
- export async function getServerOptionsFilled(
-   serverOptions: VXRNOptions['server'],
-   mode: Mode
++function bridgesToObjC(usr: string, bridge: Bridge, seen: Set<string>, boxed: boolean): boolean {
++  if (BRIDGED_USRS.has(usr) || usr.startsWith('c:')) return !(boxed && clangEnum(usr))
++  if (seen.has(usr)) return false
++  seen.add(usr)
++  const info = bridge.index.get(usr)
++  if (!info) return false
++  if (info.conformsTo?.some((id) => bridge.index.get(id)?.path.at(-1) === 'ReferenceConvertible')) return true
++  if (info.kind === 'typealias' && info.alias) return objcRepresentable(info.alias, bridge, seen, boxed)
++  if (info.kind === 'class' && info.superclass) return bridgesToObjC(info.superclass, bridge, seen, boxed)
++  return false
++}
++
++// a metatype is selector-safe only for an objective-c class. string.Type is not.
++function objcClassType(type: SwiftType, bridge: Bridge, seen: Set<string>): boolean {
++  if (type.k === 'existential') return objcClassType(type.t, bridge, seen)
++  if (type.k !== 'named' || type.args.length > 0) return false
++  const name = type.name.split('.').at(-1)!
++  if (name === 'AnyObject' || name === 'AnyClass') return true
++  if (!type.usr) return false
++  if (type.usr.startsWith('c:objc(cs)') || type.usr.startsWith('c:objc(pl)')) return true
++  const key = `class:${type.usr}`
++  if (seen.has(key)) return false
++  seen.add(key)
++  const info = bridge.index.get(type.usr)
++  if (!info || info.kind !== 'class' || !info.superclass) return false
++  if (info.superclass.startsWith('c:objc(cs)')) return true
++  return objcClassType({ k: 'named', name: '', usr: info.superclass, args: [] }, bridge, seen)
++}
++
++// optional bridges only when the wrapped value is an object. collections bridge
++// to nsarray, nsset and nsdictionary, which are objects.
++function objcOptional(type: SwiftType, bridge: Bridge, seen: Set<string>): boolean {
++  switch (type.k) {
++    case 'optional':
++      return false
++    case 'existential':
++      return objcOptional(type.t, bridge, seen)
++    case 'array':
++    case 'dictionary':
++      return objcRepresentable(type, bridge, seen)
++    case 'function':
++      if (type.throws || type.async) return false
++      return type.params.every((param) => objcRepresentable(param.t, bridge, seen)) && objcRepresentable(type.result, bridge, seen)
++    case 'metatype':
++      return objcClassType(type.t, bridge, seen)
++    case 'composition':
++      return type.items.every((item) => objcOptional(item, bridge, seen))
++    case 'named': {
++      if (type.usr === 's:Sa' || type.usr === 's:Sh' || type.usr === 's:SD' || type.usr === 's:Sq') return objcRepresentable(type, bridge, seen)
++      const name = type.name.split('.').at(-1)!
++      if (name === 'Any' || name === 'AnyObject' || name === 'AnyClass' || name =
 ```
 
-**File**: `packages/vxrn/src/exports/build.ts` (modified, +5/-5)
+**File**: `packages/one/codegen/sdk/emit.ts` (modified, +4/-2)
 ```diff
-@@ -1,6 +1,6 @@
--import FSExtra from 'fs-extra'
--import { rm } from 'node:fs/promises'
-+import { readFile, rm, writeFile } from 'node:fs/promises'
- import { sep } from 'node:path'
-+import { readJSON } from '../utils/fs'
- import type { OutputAsset, OutputChunk, RolldownOutput } from 'rolldown'
- import {
-   loadConfigFromFile,
-@@ -355,11 +355,11 @@ export const build = async (optionsIn: VXRNOptions, buildArgs: BuildArgs = {}) =
+@@ -864,9 +864,11 @@ function emitConformance(symbol: Symbol, bridge: Bridge, memberUsrs: string[], b
+   const list = (names: string[]) => {
+     const always = names.filter((n) => !needsCheck(laterVersion(versionOf.get(n), typeVersion)) || laterVersion(typeVersion, versionOf.get(n)) === typeVersion)
+     const later = names.filter((n) => !always.includes(n))
+-    const literal = (ns: string[]) => `[${ns.map((n) => `(${JSON.stringify(n)}, .${member(n)})`).join(', ')}]`
++    // Self.member, not a leading dot: a same-named global (a cf constant beside
++    // an extensible-enum member) makes the implicit member ambiguous.
++    const literal = (ns: string[]) => `[${ns.map((n) => `(${JSON.stringify(n)}, Self.${member(n)})`).join(', ')}]`
+     if (!later.length) return literal(always)
+-    return `{ var out: [(String, Self)] = ${literal(always)}; ${later.map((n) => `if #available(iOS ${versionOf.get(n)}, *) { out.append((${JSON.stringify(n)}, .${member(n)})) }`).join('; ')}; return out }()`
++    return `{ var out: [(String, Self)] = ${literal(always)}; ${later.map((n) => `if #available(iOS ${versionOf.get(n)}, *) { out.append((${JSON.stringify(n)}, Self.${member(n)})) }`).join('; ')}; return out }()`
    }
- 
-   if (serverOptions !== false) {
--    clientManifest = await FSExtra.readJSON(`${outDir}/client/.vite/manifest.json`)
-+    clientManifest = await readJSON(`${outDir}/client/.vite/manifest.json`)
- 
-     // temp fix - react native web is importing non-existent react 19 apis
--    const old = await FSExtra.readFile(serverEntry, 'utf-8')
--    await FSExtra.writeFile(
-+    const old = await readFile(serverEntry, 'utf-8')
-+    await writeFile(
-       serverEntry,
-       old
-         .replace(
+   const available = needsCheck(typeVersion) ? `@available(iOS ${typeVersion}, *)\n` : ''
+   if (info.kind === 'enum' && info.cases?.length && !info.payload) {
 ```
 
-**File**: `packages/vxrn/src/exports/clean.test.ts` (modified, +1/-1)
+**File**: `packages/one/ios-bindings/AVRouting.ts` (modified, +36/-36)
 ```diff
-@@ -107,7 +107,7 @@ async function tryConnect(port: number): Promise<Socket | undefined> {
+@@ -15,17 +15,17 @@ type $SDK3 = (Implements<AVRoutingPlaybackParticipant> | SDKHandle) | null;
+  */
+ export class AVCustomDeviceRoute extends SDKHandle {
+   /** init() */
+-  static init(): AVCustomDeviceRoute { return callSDK<AVCustomDeviceRoute>("AVRouting_b66fbf8c99a1c012", 3584039809474712, undefined, []); }
++  static init(): AVCustomDeviceRoute { return callSDK<AVCustomDeviceRoute>("AVRouting_86f7e029fa4ce140", 3584039809474712, undefined, []); }
+   /**
+    * var bluetoothIdentifier: UUID? { get }
+    * @availability iOS 16.0+
+    */
+-  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AVRouting_b66fbf8c99a1c012", 4204461396644883, this, []); }
++  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AVRouting_86f7e029fa4ce140", 4204461396644883, this, []); }
+   /**
+    * var networkEndpoint: nw_endpoint_t? { get }
+    * @availability iOS 16.0+
+    */
+-  get networkEndpoint(): (SDKHandle) | null { return callSDK<(SDKHandle) | null>("AVRouting_b66fbf8c99a1c012", 1104922136028668, this, []); }
++  get networkEndpoint(): (SDKHandle) | null { return callSDK<(SDKHandle) | null>("AVRouting_86f7e029fa4ce140", 1104922136028668, this, []); }
+   declare readonly $type: { "c:objc(cs)AVCustomDeviceRoute": true; "c:objc(cs)NSObject": true };
+   declare readonly $observable: { "bluetoothIdentifier": true; "networkEndpoint": true };
+ }
+@@ -36,13 +36,13 @@ export class AVCustomDeviceRoute extends SDKHandle {
+  */
+ export class AVCustomRoutingActionItem extends SDKHandle {
+   /** init() */
+-  static init(): AVCustomRoutingActionItem { return callSDK<AVCustomRoutingActionItem>("AVRouting_b66fbf8c99a1c012", 1613856744217575, undefined, []); }
++  static init(): AVCustomRoutingActionItem { return callSDK<AVCustomRoutingActionItem>("AVRouting_86f7e029fa4ce140", 1613856744217575, undefined, []); }
+   /**
+    * var overrideTitle: String? { get set }
+    * @availability iOS 16.0+
+    */
+-  get overrideTitle(): (string) | null { return callSDK<(string) | null>("AVRouting_b66fbf8c99a1c012", 3290305562960780, this, []); }
+-  set overrideTitle(value: (string) | null) { callSDK<void>("AVRouting_b66fbf8c99a1c012", 1046266366010321, this, [value]); }
++  get overrideTitle(): (string) | null { return callSDK<(string) | null>("AVRouting_86f7e029fa4ce140", 3290305562960780, this, []); }
++  set overrideTitle(value: (string) | null) { callSDK<void>("AVRouting_86f7e029fa4ce140", 1046266366010321, this, [value]); }
+   declare readonly $type: { "c:objc(cs)AVCustomRoutingActionItem": true; "c:objc(cs)NSObject": true };
+   declare readonly $observable: { "overrideTitle": true };
+ }
+@@ -56,47 +56,47 @@ export class AVCustomRoutingController extends SDKHandle {
+    * class let authorizedRoutesDidChange: NSNotification.Name
+    * @availability iOS 16.0+
+    */
+-  static get authorizedRoutesDidChange(): _Foundation_NSNotification_Name { return callSDK<_Foundation_NSNotification_Name>("AVRouting_b66fbf8c99a1c012", 174651251545805, undefined, []); }
++  static get authorizedRoutesDidChange(): _Foundation_NSNotification_Name { return callSDK<_Foundation_NSNotification_Name>("AVRouting_86f7e029fa4ce140", 174651251545805, undefined, []); }
+   /** init() */
+-  static init(): AVCustomRoutingController { return callSDK<AVCustomRoutingController>("AVRouting_b66fbf8c99a1c012", 3915504032879488, undefined, []); }
++  static init(): AVCustomRoutingController { return callSDK<AVCustomRoutingController>("AVRouting_86f7e029fa4ce140", 3915504032879488, undefined, []); }
+   /**
+    * func invalidateAuthorization(for route: AVCustomDeviceRoute)
+    * @availability iOS 16.0+
+    */
+-  invalidateAuthorization(route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_b66fbf8c99a1c012", 3781054979465583, this, [route]); }
++  invalidateAuthorization(route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_86f7e029fa4ce140", 3781054979465583, this, [route]); }
+   /**
+    * func isRouteActive(_ route: AVCustomDeviceRoute) -> Bool
+    * @availability iOS 16.0+
+    */
+-  isRouteActive(route: AVCustomDeviceRoute): boolean { return callSDK<boolean>("AVRouting_b66fbf8c99a1c012", 2238314312563014, this, [route]); }
++  isRouteActive(route: AVCustomDeviceRoute): boolean { return callSDK<boolean>("AVRouting_86f7e029fa4ce140", 2238314312563014, this, [route]); }
+   /**
+    * func setActive(_ active: Bool, for route: AVCustomDeviceRoute)
+    * @availability iOS 16.0+
+    */
+-  setActive(active: boolean, route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_b66fbf8c99a1c012", 4122320749038147, this, [active, route]); }
++  setActive(active: boolean, route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_86f7e029fa4ce140", 4122320749038147, this, [active, route]); }
+   /**
+    * var authorizedRoutes: [AVCustomDeviceRoute] { get }
+    * @availability iOS 16.0+
+    */
+-  get authorizedRoutes(): Array<AVCustomDeviceRoute> { return callSDK<Array<AVCustomDeviceRoute>>("AVRouting_b66fbf8c99a1c012"
+```
+
+**File**: `packages/one/ios-bindings/AccessoryLiveActivities.ts` (modified, +23/-23)
+```diff
+@@ -17,12 +17,12 @@ export const AccessoryAuthorizationResult = {
+    * var description: String { get }
+    * @availability iOS 26.5+
+    */
+-  getDescription($self: AccessoryAuthorizationResult): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 3670283131861824, $self, []); },
++  getDescription($self: AccessoryAuthorizationResult): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 3670283131861824, $self, []); },
+   /**
+    * nonisolated static var allCases: [AccessoryAuthorizationResult] { get }
+    * @availability iOS 26.5+
+    */
+-  get allCases(): $SDK0 { return callSDK<$SDK0>("AccessoryLiveActivities_b66fbf8c99a1c012", 3709921195692933, undefined, []); }
++  get allCases(): $SDK0 { return callSDK<$SDK0>("AccessoryLiveActivities_86f7e029fa4ce140", 3709921195692933, undefined, []); }
+ };
+ 
+ /**
+@@ -40,32 +40,32 @@ export class AccessoryLiveActivity extends SDKHandle {
+    * let sourceBundleIcon: AccessoryLiveActivity.IconFile?
+    * @availability iOS 26.5+
+    */
+-  get sourceBundleIcon(): (AccessoryLiveActivity_IconFile) | null { return callSDK<(AccessoryLiveActivity_IconFile) | null>("AccessoryLiveActivities_b66fbf8c99a1c012", 4047563833700731, this, []); }
++  get sourceBundleIcon(): (AccessoryLiveActivity_IconFile) | null { return callSDK<(AccessoryLiveActivity_IconFile) | null>("AccessoryLiveActivities_86f7e029fa4ce140", 4047563833700731, this, []); }
+   /**
+    * let sourceBundleName: String
+    * @availability iOS 26.5+
+    */
+-  get sourceBundleName(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 3185154113949138, this, []); }
++  get sourceBundleName(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 3185154113949138, this, []); }
+   /**
+    * let activityIdentifier: String
+    * @availability iOS 26.5+
+    */
+-  get activityIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 4337749233102375, this, []); }
++  get activityIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 4337749233102375, this, []); }
+   /**
+    * let sourceBundleIdentifier: String
+    * @availability iOS 26.5+
+    */
+-  get sourceBundleIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 4416715418224946, this, []); }
++  get sourceBundleIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 4416715418224946, this, []); }
+   /**
+    * let state: ActivityState
+    * @availability iOS 26.5+
+    */
+-  get state(): _ActivityKit_ActivityState { return callSDK<_ActivityKit_ActivityState>("AccessoryLiveActivities_b66fbf8c99a1c012", 420192175269726, this, []); }
++  get state(): _ActivityKit_ActivityState { return callSDK<_ActivityKit_ActivityState>("AccessoryLiveActivities_86f7e029fa4ce140", 420192175269726, this, []); }
+   /**
+    * let content: AccessoryLiveActivity.Content?
+    * @availability iOS 26.5+
+    */
+-  get content(): (AccessoryLiveActivity_Content) | null { return callSDK<(AccessoryLiveActivity_Content) | null>("AccessoryLiveActivities_b66fbf8c99a1c012", 363878853623809, this, []); }
++  get content(): (AccessoryLiveActivity_Content) | null { return callSDK<(AccessoryLiveActivity_Content) | null>("AccessoryLiveActivities_86f7e029fa4ce140", 363878853623809, this, []); }
+   declare readonly $type: { "s:23AccessoryLiveActivities0aB8ActivityV": true };
  }
  
- // outermost node_modules above the test, so a bundled worker's bare
--// imports (vite, fs-extra, ...) resolve the way the workspace lays out
-+// imports (vite, picocolors, ...) resolve the way the workspace lays out
- function outermostNodeModules(from: string): string {
-   let dir = from
-   let found: string | undefined
+@@ -78,7 +78,7 @@ export class AccessoryLiveActivity_Content extends SDKHandle {
+    * let alert: AccessoryLiveActivity.Content.AlertMessage?
+    * @availability iOS 26.5+
+    */
+-  get alert(): (AccessoryLiveActivity_Content_AlertMessage) | null { return callSDK<(AccessoryLiveActivity_Content_AlertMessage) | null>("AccessoryLiveActivities_b66fbf8c99a1c012", 4307931896745600, this, []); }
++  get alert(): (AccessoryLiveActivity_Content_AlertMessage) | null { return callSDK<(AccessoryLiveActivity_Content_AlertMessage) | null>("AccessoryLiveActivities_86f7e029fa4ce140", 4307931896745600, this, []); }
+   declare readonly $type: { "s:23AccessoryLiveActivities0aB8ActivityV7ContentV": true };
+ }
+ 
+@@ -91,12 +91,12 @@ export class AccessoryLiveActivity_Content_AlertMessage extends SDKHandle {
+    * let body: String
+    * @availability iOS 26.5+
+    */
+-  get body(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 4022771453244179, this, []); }
++  get body(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 4022771453244179, this, []); }
+   /**
+    * let title: String
+    * @availability iOS 26.5+
+    */
+-  get title(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 1035982993643164, this, []); }
++  get title(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 1035982993643164, this, []); }
+   declare readonly $type: { "s:23AccessoryLiveActivities0aB8ActivityV7ContentV12AlertMessageV": true };
+ }
+ 
+@@ -109,7 +109,7 @@ ex
+```
+
+**File**: `packages/one/ios-bindings/AccessoryNotifications.ts` (modified, +68/-68)
+```diff
+@@ -32,77 +32,77 @@ export class AccessoryNotification extends SDKHandle {
+    * let attributes: AccessoryNotification.Attributes
+    * @availability iOS 26.5+
+    */
+-  get attributes(): AccessoryNotification_Attributes { return callSDK<AccessoryNotification_Attributes>("AccessoryNotifications_b66fbf8c99a1c012", 1227217026595009, this, []); }
++  get attributes(): AccessoryNotification_Attributes { return callSDK<AccessoryNotification_Attributes>("AccessoryNotifications_86f7e029fa4ce140", 1227217026595009, this, []); }
+   /**
+    * init(identifier: AccessoryNotification.Identifier, sourceName: String, deliveryDate: Date, displayDate: AccessoryNotification.DisplayDate = .deliveryDate, title: String? = nil, subtitle: String? = nil, body: NSAttributedString? = nil, threadIdentifier: String? = nil, attributes: AccessoryNotification.Attributes = [], summary: NSAttributedString? = nil, actions: [AccessoryNotification.Action] = [], sourceIcon: AccessoryNotification.File? = nil, contextIcon: AccessoryNotification.File? = nil, attachments: [AccessoryNotification.File] = [])
+    * @availability iOS 26.5+
+    */
+-  static init(identifier: AccessoryNotification_Identifier, sourceName: string, deliveryDate: globalThis.Date, displayDate?: AccessoryNotification_DisplayDate, title?: (string) | null, subtitle?: (string) | null, body?: $SDK0, threadIdentifier?: (string) | null, attributes?: AccessoryNotification_Attributes, summary?: $SDK0, actions?: $SDK1, sourceIcon?: $SDK2, contextIcon?: $SDK2, attachments?: $SDK3): AccessoryNotification { return callSDK<AccessoryNotification>("AccessoryNotifications_b66fbf8c99a1c012", 3801282590515458, undefined, [identifier, sourceName, deliveryDate, displayDate, title, subtitle, body, threadIdentifier, attributes, summary, actions, sourceIcon, contextIcon, attachments]); }
++  static init(identifier: AccessoryNotification_Identifier, sourceName: string, deliveryDate: globalThis.Date, displayDate?: AccessoryNotification_DisplayDate, title?: (string) | null, subtitle?: (string) | null, body?: $SDK0, threadIdentifier?: (string) | null, attributes?: AccessoryNotification_Attributes, summary?: $SDK0, actions?: $SDK1, sourceIcon?: $SDK2, contextIcon?: $SDK2, attachments?: $SDK3): AccessoryNotification { return callSDK<AccessoryNotification>("AccessoryNotifications_86f7e029fa4ce140", 3801282590515458, undefined, [identifier, sourceName, deliveryDate, displayDate, title, subtitle, body, threadIdentifier, attributes, summary, actions, sourceIcon, contextIcon, attachments]); }
+   /**
+    * let identifier: AccessoryNotification.Identifier
+    * @availability iOS 26.5+
+    */
+-  get identifier(): AccessoryNotification_Identifier { return callSDK<AccessoryNotification_Identifier>("AccessoryNotifications_b66fbf8c99a1c012", 383882640483565, this, []); }
++  get identifier(): AccessoryNotification_Identifier { return callSDK<AccessoryNotification_Identifier>("AccessoryNotifications_86f7e029fa4ce140", 383882640483565, this, []); }
+   /**
+    * let sourceIcon: AccessoryNotification.File?
+    * @availability iOS 26.5+
+    */
+-  get sourceIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_b66fbf8c99a1c012", 2625070366122517, this, []); }
++  get sourceIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_86f7e029fa4ce140", 2625070366122517, this, []); }
+   /**
+    * let sourceName: String
+    * @availability iOS 26.5+
+    */
+-  get sourceName(): string { return callSDK<string>("AccessoryNotifications_b66fbf8c99a1c012", 864514208070037, this, []); }
++  get sourceName(): string { return callSDK<string>("AccessoryNotifications_86f7e029fa4ce140", 864514208070037, this, []); }
+   /**
+    * let attachments: [AccessoryNotification.File]
+    * @availability iOS 26.5+
+    */
+-  get attachments(): $SDK3 { return callSDK<$SDK3>("AccessoryNotifications_b66fbf8c99a1c012", 2502421713953149, this, []); }
++  get attachments(): $SDK3 { return callSDK<$SDK3>("AccessoryNotifications_86f7e029fa4ce140", 2502421713953149, this, []); }
+   /**
+    * let contextIcon: AccessoryNotification.File?
+    * @availability iOS 26.5+
+    */
+-  get contextIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_b66fbf8c99a1c012", 1817948872673576, this, []); }
++  get contextIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_86f7e029fa4ce140", 1817948872673576, this, []); }
+   /**
+    * let displayDate: AccessoryNotification.DisplayDate
+    * @availability iOS 26.5+
+    */
+-  get displayDate(): AccessoryNotification_DisplayDate { return callSDK<AccessoryNotification_DisplayDate>("AccessoryNotifications_b66fbf8c99a1c012", 2241925399924083, this, []); }
++  get displayDate(): AccessoryNotification_DisplayDate { return callSDK<AccessoryNotification_DisplayDate>("AccessoryNotifications_86f7e029fa4ce140", 2241925399924083, this, []); }
+   /**
+    * let deliveryDate: Date
+    * @availability iOS 26.5+
+    */
+-  get deliveryDate(): globalThis.Date { return callSDK<globalThis.Date>("AccessoryNotifications_b66fbf8c99a1c
+```
+
+**File**: `packages/one/ios-bindings/AccessorySetupKit.ts` (modified, +143/-143)
+```diff
+@@ -19,42 +19,42 @@ type $SDK7 = (ASPropertyCompareString) | null;
+  */
+ export class ASAccessory extends SDKHandle {
+   /** init() */
+-  static init(): ASAccessory { return callSDK<ASAccessory>("AccessorySetupKit_b66fbf8c99a1c012", 3669024516710039, undefined, []); }
++  static init(): ASAccessory { return callSDK<ASAccessory>("AccessorySetupKit_86f7e029fa4ce140", 3669024516710039, undefined, []); }
+   /**
+    * var ssid: String? { get }
+    * @availability iOS 18.0+
+    */
+-  get ssid(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_b66fbf8c99a1c012", 2914734530532972, this, []); }
++  get ssid(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_86f7e029fa4ce140", 2914734530532972, this, []); }
+   /**
+    * var bluetoothIdentifier: UUID? { get }
+    * @availability iOS 18.0+
+    */
+-  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_b66fbf8c99a1c012", 1911175871666637, this, []); }
++  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_86f7e029fa4ce140", 1911175871666637, this, []); }
+   /**
+    * var bluetoothTransportBridgingIdentifier: Data? { get }
+    * @availability iOS 18.0+
+    */
+-  get bluetoothTransportBridgingIdentifier(): (ArrayBuffer) | null { return callSDK<(ArrayBuffer) | null>("AccessorySetupKit_b66fbf8c99a1c012", 1103404994235907, this, []); }
++  get bluetoothTransportBridgingIdentifier(): (ArrayBuffer) | null { return callSDK<(ArrayBuffer) | null>("AccessorySetupKit_86f7e029fa4ce140", 1103404994235907, this, []); }
+   /**
+    * @NSCopying var descriptor: ASDiscoveryDescriptor { get }
+    * @availability iOS 18.0+
+    */
+-  get descriptor(): ASDiscoveryDescriptor { return callSDK<ASDiscoveryDescriptor>("AccessorySetupKit_b66fbf8c99a1c012", 7373525458804, this, []); }
++  get descriptor(): ASDiscoveryDescriptor { return callSDK<ASDiscoveryDescriptor>("AccessorySetupKit_86f7e029fa4ce140", 7373525458804, this, []); }
+   /**
+    * var displayName: String { get }
+    * @availability iOS 18.0+
+    */
+-  get displayName(): string { return callSDK<string>("AccessorySetupKit_b66fbf8c99a1c012", 1602967468563506, this, []); }
++  get displayName(): string { return callSDK<string>("AccessorySetupKit_86f7e029fa4ce140", 1602967468563506, this, []); }
+   /**
+    * var state: ASAccessory.AccessoryState { get }
+    * @availability iOS 18.0+
+    */
+-  get state(): ASAccessory_AccessoryState { return callSDK<ASAccessory_AccessoryState>("AccessorySetupKit_b66fbf8c99a1c012", 1768942552787339, this, []); }
++  get state(): ASAccessory_AccessoryState { return callSDK<ASAccessory_AccessoryState>("AccessorySetupKit_86f7e029fa4ce140", 1768942552787339, this, []); }
+   /**
+    * var wifiAwarePairedDeviceID: ASAccessory.WiFiAwarePairedDeviceID { get }
+    * @availability iOS 26.0+
+    */
+-  get wifiAwarePairedDeviceID(): number { return callSDK<number>("AccessorySetupKit_b66fbf8c99a1c012", 1374554358110187, this, []); }
++  get wifiAwarePairedDeviceID(): number { return callSDK<number>("AccessorySetupKit_86f7e029fa4ce140", 1374554358110187, this, []); }
+   declare readonly $type: { "c:objc(cs)ASAccessory": true; "c:objc(cs)NSObject": true };
+   declare readonly $observable: { "ssid": true; "bluetoothIdentifier": true; "bluetoothTransportBridgingIdentifier": true; "descriptor": true; "displayName": true; "state": true; "wifiAwarePairedDeviceID": true };
+ }
+@@ -64,17 +64,17 @@ export type ASAccessory_AccessoryState = "unauthorized" | "awaitingAuthorization
+ 
+ export const ASAccessory_AccessoryState = {
+   /** init?(rawValue: Int) */
+-  init(rawValue: number): (ASAccessory_AccessoryState) | null { return callSDK<(ASAccessory_AccessoryState) | null>("AccessorySetupKit_b66fbf8c99a1c012", 804282956779045, undefined, [rawValue]); }
++  init(rawValue: number): (ASAccessory_AccessoryState) | null { return callSDK<(ASAccessory_AccessoryState) | null>("AccessorySetupKit_86f7e029fa4ce140", 804282956779045, undefined, [rawValue]); }
+ };
+ 
+ /** struct RenameOptions */
+ export type ASAccessory_RenameOptions = Array<"ssid">;
+ 
+ export const ASAccessory_RenameOptions = {
+   /** static var ssid: ASAccessory.RenameOptions { get } */
+-  get ssid(): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_b66fbf8c99a1c012", 1749257941837886, undefined, []); },
++  get ssid(): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_86f7e029fa4ce140", 1749257941837886, undefined, []); },
+   /** init(rawValue: UInt) */
+-  init(rawValue: number): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_b66fbf8c99a1c012", 689685456475229, undefined, [rawValue]); }
++  init(rawValue: number): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_86f7e029fa4ce140", 689685456475229, undefined, [rawValue]); }
+ };
+ 
+ /** struct SupportOptions */
+@@ -85,13 +85,13 @@ export const ASAccessory_Sup
+```
+
+**File**: `packages/one/ios-bindings/AccessoryTransportExtension.ts` (modified, +55/-55)
+```diff
+@@ -55,12 +55,12 @@ export class AccessoryMessage extends SDKHandle {
+    * let id: UUID
+    * @availability iOS 26.5+
+    */
+-  get id(): string { return callSDK<string>("AccessoryTransportExtension_b66fbf8c99a1c012", 774128166234715, this, []); }
++  get id(): string { return callSDK<string>("AccessoryTransportExtension_86f7e029fa4ce140", 774128166234715, this, []); }
+   /**
+    * let payloads: [AccessoryMessage.Payload]
+    * @availability iOS 26.5+
+    */
+-  get payloads(): Array<AccessoryMessage_Payload> { return callSDK<Array<AccessoryMessage_Payload>>("AccessoryTransportExtension_b66fbf8c99a1c012", 779717261205513, this, []); }
++  get payloads(): Array<AccessoryMessage_Payload> { return callSDK<Array<AccessoryMessage_Payload>>("AccessoryTransportExtension_86f7e029fa4ce140", 779717261205513, this, []); }
+   declare readonly $type: { "s:27AccessoryTransportExtension0A7MessageV": true };
+ }
+ 
+@@ -73,22 +73,22 @@ export class AccessoryMessage_Builder extends SDKHandle {
+    * static func buildEither(first component: AccessoryMessage) -> AccessoryMessage
+    * @availability iOS 26.5+
+    */
+-  static buildEitherFirst(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 2855712208762146, undefined, [component]); }
++  static buildEitherFirst(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 2855712208762146, undefined, [component]); }
+   /**
+    * static func buildEither(second component: AccessoryMessage) -> AccessoryMessage
+    * @availability iOS 26.5+
+    */
+-  static buildEitherSecond(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 854258817505985, undefined, [component]); }
++  static buildEitherSecond(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 854258817505985, undefined, [component]); }
+   /**
+    * static func buildOptional(_ component: AccessoryMessage?) -> AccessoryMessage
+    * @availability iOS 26.5+
+    */
+-  static buildOptional(component?: (AccessoryMessage) | null): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 3921256350998921, undefined, [component]); }
++  static buildOptional(component?: (AccessoryMessage) | null): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 3921256350998921, undefined, [component]); }
+   /**
+    * static func buildExpression(_ expression: AccessoryMessage.Payload) -> AccessoryMessage
+    * @availability iOS 26.5+
+    */
+-  static buildExpression(expression: AccessoryMessage_Payload): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 2490227912391446, undefined, [expression]); }
++  static buildExpression(expression: AccessoryMessage_Payload): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 2490227912391446, undefined, [expression]); }
+   declare readonly $type: { "s:27AccessoryTransportExtension0A7MessageV7BuilderV": true };
+ }
+ 
+@@ -113,17 +113,17 @@ export class AccessoryMessage_Payload extends SDKHandle {
+    * let data: Data
+    * @availability iOS 26.5+
+    */
+-  get data(): ArrayBuffer { return callSDK<ArrayBuffer>("AccessoryTransportExtension_b66fbf8c99a1c012", 1235276067093849, this, []); }
++  get data(): ArrayBuffer { return callSDK<ArrayBuffer>("AccessoryTransportExtension_86f7e029fa4ce140", 1235276067093849, this, []); }
+   /**
+    * init(transport: AccessoryTransport = .bluetooth, data: Data)
+    * @availability iOS 26.5+
+    */
+-  static init(transport: AccessoryTransport, data: ArrayBuffer): AccessoryMessage_Payload { return callSDK<AccessoryMessage_Payload>("AccessoryTransportExtension_b66fbf8c99a1c012", 2491419463238566, undefined, [transport, data]); }
++  static init(transport: AccessoryTransport, data: ArrayBuffer): AccessoryMessage_Payload { return callSDK<AccessoryMessage_Payload>("AccessoryTransportExtension_86f7e029fa4ce140", 2491419463238566, undefined, [transport, data]); }
+   /**
+    * let transport: AccessoryTransport
+    * @availability iOS 26.5+
+    */
+-  get transport(): AccessoryTransport { return callSDK<AccessoryTransport>("AccessoryTransportExtension_b66fbf8c99a1c012", 1636390874581994, this, []); }
++  get transport(): AccessoryTransport { return callSDK<AccessoryTransport>("AccessoryTransportExtension_86f7e029fa4ce140", 1636390874581994, this, []); }
+   declare readonly $type: { "s:27AccessoryTransportExtension0A7MessageV7PayloadV": true };
+ }
+ 
+@@ -144,17 +144,17 @@ export class AccessorySecuritySession extends SDKHandle {
+    * func sendSecurityMessage(_ message: SecurityMessage) throws(AccessorySecuritySession.Error)
+    * @availability iOS 26.5+
+    */
+-  sendSecurityMessage(message: SecurityMessage): void { 
+```
+
+**File**: `packages/one/ios-bindings/Accounts.ts` (modified, +73/-73)
+```diff
+@@ -19,47 +19,47 @@ export class ACAccount extends SDKHandle {
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  static init(type?: (ACAccountType) | null): ACAccount { return callSDK<ACAccount>("Accounts_b66fbf8c99a1c012", 3553497133647124, undefined, [type]); }
++  static init(type?: (ACAccountType) | null): ACAccount { return callSDK<ACAccount>("Accounts_86f7e029fa4ce140", 3553497133647124, undefined, [type]); }
+   /**
+    * var accountDescription: String! { get set }
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  get accountDescription(): (string) | null { return callSDK<(string) | null>("Accounts_b66fbf8c99a1c012", 3793422184587810, this, []); }
+-  set accountDescription(value: (string) | null) { callSDK<void>("Accounts_b66fbf8c99a1c012", 1094570912781220, this, [value]); }
++  get accountDescription(): (string) | null { return callSDK<(string) | null>("Accounts_86f7e029fa4ce140", 3793422184587810, this, []); }
++  set accountDescription(value: (string) | null) { callSDK<void>("Accounts_86f7e029fa4ce140", 1094570912781220, this, [value]); }
+   /**
+    * var accountType: ACAccountType! { get set }
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  get accountType(): (ACAccountType) | null { return callSDK<(ACAccountType) | null>("Accounts_b66fbf8c99a1c012", 3193494046219139, this, []); }
+-  set accountType(value: (ACAccountType) | null) { callSDK<void>("Accounts_b66fbf8c99a1c012", 1535889853684466, this, [value]); }
++  get accountType(): (ACAccountType) | null { return callSDK<(ACAccountType) | null>("Accounts_86f7e029fa4ce140", 3193494046219139, this, []); }
++  set accountType(value: (ACAccountType) | null) { callSDK<void>("Accounts_86f7e029fa4ce140", 1535889853684466, this, [value]); }
+   /**
+    * var credential: ACAccountCredential! { get set }
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  get credential(): $SDK0 { return callSDK<$SDK0>("Accounts_b66fbf8c99a1c012", 2489381869882901, this, []); }
+-  set credential(value: $SDK0) { callSDK<void>("Accounts_b66fbf8c99a1c012", 2892676595699668, this, [value]); }
++  get credential(): $SDK0 { return callSDK<$SDK0>("Accounts_86f7e029fa4ce140", 2489381869882901, this, []); }
++  set credential(value: $SDK0) { callSDK<void>("Accounts_86f7e029fa4ce140", 2892676595699668, this, [value]); }
+   /**
+    * weak var identifier: NSString! { get }
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  get identifier(): (_Foundation_NSString) | null { return callSDK<(_Foundation_NSString) | null>("Accounts_b66fbf8c99a1c012", 2209586596200436, this, []); }
++  get identifier(): (_Foundation_NSString) | null { return callSDK<(_Foundation_NSString) | null>("Accounts_86f7e029fa4ce140", 2209586596200436, this, []); }
+   /**
+    * var userFullName: String! { get }
+    * @availability iOS 7.0+
+    * @deprecated iOS 15.0
+    */
+-  get userFullName(): (string) | null { return callSDK<(string) | null>("Accounts_b66fbf8c99a1c012", 94016183291278, this, []); }
++  get userFullName(): (string) | null { return callSDK<(string) | null>("Accounts_86f7e029fa4ce140", 94016183291278, this, []); }
+   /**
+    * var username: String! { get set }
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  get username(): (string) | null { return callSDK<(string) | null>("Accounts_b66fbf8c99a1c012", 171930232256420, this, []); }
+-  set username(value: (string) | null) { callSDK<void>("Accounts_b66fbf8c99a1c012", 2317682055580322, this, [value]); }
++  get username(): (string) | null { return callSDK<(string) | null>("Accounts_86f7e029fa4ce140", 171930232256420, this, []); }
++  set username(value: (string) | null) { callSDK<void>("Accounts_86f7e029fa4ce140", 2317682055580322, this, [value]); }
+   declare readonly $type: { "c:objc(cs)ACAccount": true; "c:objc(cs)NSObject": true };
+   declare readonly $observable: { "accountDescription": true; "accountType": true; "credential": true; "identifier": true; "userFullName": true; "username": true };
+ }
+@@ -75,20 +75,20 @@ export class ACAccountCredential extends SDKHandle {
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  static initOAuth2TokenRefreshTokenExpiryDate(token?: (string) | null, refreshToken?: (string) | null, expiryDate?: (globalThis.Date) | null): ACAccountCredential { return callSDK<ACAccountCredential>("Accounts_b66fbf8c99a1c012", 4499833021511138, undefined, [token, refreshToken, expiryDate]); }
++  static initOAuth2TokenRefreshTokenExpiryDate(token?: (string) | null, refreshToken?: (string) | null, expiryDate?: (globalThis.Date) | null): ACAccountCredential { return callSDK<ACAccountCredential>("Accounts_86f7e029fa4ce140", 4499833021511138, undefined, [token, refreshToken, expiryDate]); }
+   /**
+    * init!(oAuthToken token: String!, tokenSecret secret: String!)
+    * @availability iOS 6.0+
+    * @deprecated iOS 15.0
+    */
+-  static initOAuthTokenTokenSecret(token?: (string) | null, secret?: (string) | null): ACAccountCredential { return 
+```
+
+---
+
+### Incident Patch 2: `e16b55a0` (2026-11-09)
+**Commit Message**: fix(vxrn): serve native dev assets requested with a platform that has no engine (#1170)
+
+* fix(vxrn): serve native dev assets requested with a platform that has no engine
+
+Validation: new reactNativeDevServer test fails with 404 before the change and passes after; not run against the Team Machine repro app (its worktree no longer exists).
+
+* fix(vxrn): look native assets up across engines, requested platform first
+
+Validation: reactNativeDevServer test passes.
+
+**File**: `packages/vxrn/src/plugins/reactNativeDevServer.test.ts` (modified, +63/-0)
+```diff
+@@ -146,3 +146,66 @@ it('starts the native multipart response before bundling finishes', async () =>
+     await rm(root, { recursive: true, force: true })
+   }
+ })
++
++it('serves an asset outside the app root for a platform without its own engine', async () => {
++  const workspace = await mkdtemp(join(tmpdir(), 'native-asset-http-'))
++  const root = join(workspace, 'app')
++  const rnRoot = join(root, 'node_modules/react-native')
++  await mkdir(join(rnRoot, 'src'), { recursive: true })
++  await mkdir(join(workspace, 'assets'))
++  await mkdir(join(root, 'node_modules/one'))
++  await writeFile(join(root, 'node_modules/one/package.json'), '{"name":"one"}')
++  await writeFile(
++    join(rnRoot, 'package.json'),
++    JSON.stringify({
++      name: 'react-native',
++      exports: { './asset-registry': './src/asset-registry.js' },
++    })
++  )
++  await writeFile(
++    join(rnRoot, 'src/asset-registry.js'),
++    'const assets = []; export function registerAsset(asset) { return assets.push(asset) }; export function getAssetByID(id) { return assets[id - 1] }'
++  )
++  await writeFile(join(workspace, 'assets/logo.png'), 'logo')
++  await writeFile(
++    join(root, 'entry.js'),
++    "import logo from '../assets/logo.png'; import { getAssetByID } from 'react-native/asset-registry'; globalThis.logo = getAssetByID(logo)"
++  )
++  const previousPlugins = globalThis.__vxrnAddNativePlugins
++  globalThis.__vxrnAddNativePlugins = () => [
++    {
++      name: 'asset-fixture-entry',
++      transform(_code, id) {
++        if (id.endsWith('/__virtual-native-entry.tsx')) return "import './entry.js'"
++      },
++    },
++  ]
++  const server = await createServer({
++    root,
++    configFile: false,
++    plugins: [createReactNativeDevServerPlugin()],
++    server: { host: '127.0.0.1', port: 0 },
++  })
++  try {
++    await server.listen()
++    const { port } = server.httpServer!.address() as { port: number }
++    const origin = `http://127.0.0.1:${port}`
++    const bundle = await fetch(`${origin}/index.bundle?platform=macos`)
++    const code = await bundle.text()
++    expect(bundle.status, code.slice(0, 800)).toBe(200)
++    const hash = code.match(/hash["']?\s*:\s*["']([0-9a-f]{32})["']/)![1]
++    const location = code.match(/httpServerLocation["']?\s*:\s*["']([^"']+)["']/)![1]
++    // react-native internals resolve to Platform.ios.js on macOS, so the
++    // asset URL carries platform=ios although only a macos engine exists
++    const url = `${origin}${location}/logo.png?platform=ios`
++    expect(location).toBe('/assets/_/assets')
++    const served = await fetch(`${url}&hash=${hash}`)
++    expect(served.status).toBe(200)
++    expect(await served.text()).toBe('logo')
++    expect((await fetch(`${url}&hash=stale`)).status).toBe(404)
++  } finally {
++    await server.close()
++    globalThis.__vxrnAddNativePlugins = previousPlugins
++    await rm(workspace, { recursive: true, force: true })
++  }
++})
+```
+
+**File**: `packages/vxrn/src/plugins/reactNativeDevServer.ts` (modified, +12/-3)
+```diff
+@@ -276,8 +276,16 @@ export function createReactNativeDevServerPlugin(
+ 
+         const url = new URL(rawUrl, `http://${req.headers.host || 'localhost'}`)
+ 
++        // macOS and linux keep react-native internals on Platform.ios.js, so asset
++        // urls say `?platform=ios` with no ios engine. ask the requested engine first, then the rest.
+         const platform = validPlatforms[url.searchParams.get('platform') || '']
+-        const engine = platform ? devEngines[platform] : undefined
++        const requested = platform ? devEngines[platform] : undefined
++        const engines = platform
++          ? [
++              requested,
++              ...Object.values(devEngines).filter((e) => e !== requested),
++            ].filter((e) => e != null)
++          : []
+ 
+         let pathname: string
+         try {
+@@ -288,11 +296,12 @@ export function createReactNativeDevServerPlugin(
+           return
+         }
+ 
++        const hash = url.searchParams.get('hash') || undefined
+         const asset =
+-          engine?.getAsset(pathname, url.searchParams.get('hash') || undefined) ??
++          engines.map((e) => e.getAsset(pathname, hash)).find(Boolean) ??
+           getProjectAssetFile(root, pathname)
+         if (!asset) {
+-          if (!engine) return next()
++          if (!engines.length) return next()
+           res.writeHead(404, { 'Content-Type': 'text/plain' })
+           res.end('Native asset not found')
+           return
+```
+
+---
+
+### Incident Patch 3: `c894ac22` (2026-11-11)
+**Commit Message**: fix(one): load the optional reanimated and worklets peers only when installed
+
+Stack screens skip the shared transition boundary without reanimated, and SyncSwitch needs worklets only for onCheckedChangeSync.
+
+Team-Machine-Session: m116428
+
+**File**: `packages/one/src/layouts/stack-navigator.tsx` (modified, +19/-8)
+```diff
+@@ -1,7 +1,6 @@
+ import { createNativeStackNavigator } from '@react-navigation/native-stack'
+ import { useIsFocused } from '@react-navigation/native'
+ import type { ReactElement, ReactNode } from 'react'
+-import { SharedTransitionBoundary } from 'react-native-reanimated'
+ 
+ /**
+  * Returns a Stack navigator factory. On native this is the stock
+@@ -10,23 +9,35 @@ import { SharedTransitionBoundary } from 'react-native-reanimated'
+  */
+ export const createStackNavigator = createNativeStackNavigator
+ 
++// reanimated is an optional peer, so an app without it gets no shared transitions
++let SharedTransitionBoundary:
++  | typeof import('react-native-reanimated').SharedTransitionBoundary
++  | undefined
++try {
++  SharedTransitionBoundary = require('react-native-reanimated').SharedTransitionBoundary
++} catch {}
++
+ // reanimated matches sharedTransitionTag views only inside an active boundary,
+ // so the focused screen's boundary is the one a push or pop morphs into
+-function SharedTransitionScreen({ children }: { children: ReactNode }) {
+-  return (
+-    <SharedTransitionBoundary isActive={useIsFocused()}>
+-      {children}
+-    </SharedTransitionBoundary>
+-  )
++function SharedTransitionScreen({
++  Boundary,
++  children,
++}: {
++  Boundary: NonNullable<typeof SharedTransitionBoundary>
++  children: ReactNode
++}) {
++  return <Boundary isActive={useIsFocused()}>{children}</Boundary>
+ }
+ 
+ export function getStackNavigatorProps<Args extends { children: ReactElement }>(
+   _children: ReactNode,
+   screenLayout?: (props: Args) => ReactElement
+ ) {
++  const Boundary = SharedTransitionBoundary
++  if (!Boundary) return { screenLayout }
+   return {
+     screenLayout: (props: Args) => (
+-      <SharedTransitionScreen>
++      <SharedTransitionScreen Boundary={Boundary}>
+         {screenLayout ? screenLayout(props) : props.children}
+       </SharedTransitionScreen>
+     ),
+```
+
+**File**: `packages/one/src/platform/compose.android.tsx` (modified, +13/-3)
+```diff
+@@ -1,4 +1,3 @@
+-import { runOnUISync, isWorkletFunction } from 'react-native-worklets'
+ import { composeRangeDay, validateComposeFamily } from './composeFamilyValidation'
+ import { Children, createContext, forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState, type ReactNode } from 'react'
+ import { Image as ReactNativeImage, StyleSheet, type ColorValue } from 'react-native'
+@@ -2251,6 +2250,12 @@ const Shape = {
+   Polygon: shape('polygon'),
+   RoundedCorner: shape('roundedCorner'),
+ }
++// worklets is an optional peer, needed only for SyncSwitch's onCheckedChangeSync
++let worklets: typeof import('react-native-worklets') | undefined
++try {
++  worklets = require('react-native-worklets')
++} catch {}
++
+ let nextSyncCallback = 1
+ function SyncSwitch({
+   isOn,
+@@ -2259,10 +2264,15 @@ function SyncSwitch({
+   ...props
+ }: ComposeSyncSwitchProps) {
+   validateComposeFamily('syncswitch', { isOn, enabled })
+-  if (onCheckedChangeSync !== undefined && !isWorkletFunction(onCheckedChangeSync))
+-    throw new Error('SyncSwitch onCheckedChangeSync must be a worklet')
++  if (onCheckedChangeSync !== undefined) {
++    if (!worklets) throw new Error('SyncSwitch onCheckedChangeSync requires react-native-worklets')
++    if (!worklets.isWorkletFunction(onCheckedChangeSync))
++      throw new Error('SyncSwitch onCheckedChangeSync must be a worklet')
++  }
+   const [callbackId] = useState(() => nextSyncCallback++)
+   useEffect(() => {
++    if (!worklets) return
++    const { runOnUISync } = worklets
+     runOnUISync(() => {
+       'worklet'
+       const globals = globalThis as unknown as {
+```
+
+**File**: `packages/one/tests/setupNativeState.ts` (modified, +10/-0)
+```diff
+@@ -3,6 +3,8 @@
+ // release invalidation). loaded as a vitest setup file so every suite
+ // starts with a fresh global; the installer is re-exported so tests can
+ // restore it after removal.
++import Module, { createRequire } from 'node:module'
++import * as worklets from '../src/__mocks__/react-native-worklets'
+ import { createMemorySyncFactory } from '../src/platform/syncMemoryHost'
+ import type { NativeSyncHost } from '../src/platform/syncNative'
+ 
+@@ -15,6 +17,14 @@ export function installMockNativeSync(): void {
+ 
+ installMockNativeSync()
+ 
++// compose requires its optional worklets peer, which a vitest alias cannot reach
++const require = createRequire(import.meta.url)
++const workletsPath = require.resolve('react-native-worklets')
++const workletsModule = new Module(workletsPath)
++workletsModule.exports = worklets
++workletsModule.loaded = true
++require.cache[workletsPath] = workletsModule
++
+ // creates a handle whose native entry the test can write the way a native edit
+ // does: the entry changes before the view's event reaches JS, and only the
+ // entry's onChange hears it.
+```
+
+**File**: `packages/one/vitest.config.ts` (modified, +0/-4)
+```diff
+@@ -111,10 +111,6 @@ export default defineConfig({
+             // a nested react copy breaks hooks rendered through react-test-renderer
+             { find: /^react$/, replacement: react },
+             { find: /^react-native$/, replacement: reactNativeWeb },
+-            {
+-              find: /^react-native-worklets$/,
+-              replacement: resolve(__dirname, 'src/__mocks__/react-native-worklets.ts'),
+-            },
+             {
+               find: /^react-native\/Libraries\/Utilities\/codegenNativeCommands$/,
+               replacement: resolve(__dirname, 'src/__mocks__/codegenNativeCommands.ts'),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1136** (2026-11-07): chore(deps): upgrade Tamagui to 3.2.4 (@natew)
-- **PR #1135** (2026-11-07): fix: android prebuild activity dep, xcrun SDK check, vite-mode native console (@natew)
-- **PR #1131** (2026-11-06): fix(metro): reuse dev transforms across restarts (@natew)
-- **PR #1129** (2026-11-06): fix(tests): compile complete native Swift source proof (@natew)
-- **PR #1128** (closed): fix(release): prepare fixed-version One 2.13.10 recovery (@natew)
-- **PR #1127** (2026-11-06): fix(release): stream canary package build progress (@natew)
+- **PR #1186** (2026-11-11): feat: patch opt-out, Expo watch folders, optional reanimated, worklets and css-interop (@natew)
+- **PR #1185** (2026-11-11): fix: type Swift SDK dispatch bounds as Int64 (@natew)
+- **PR #1183** (2026-11-11): fix(one): Metro config load without tsconfig or hoisting, watcher-free release bundle, peer ranges (@natew)
+- **PR #1181** (2026-11-10): fix(vxrn): declare @react-native-community/template as optional peer dependency (@natew)
+- **PR #1179** (2026-11-10): fix(one): emit the objective-c selector a protocol requirement declares (@natew)
+- **PR #1177** (2026-11-10): fix(one): expose generated Objective-C delegate witnesses explicitly (@natew)
 
 ---
 
@@ -2427,36 +2759,47 @@ Vendor env-editor 1.3.0 with its MIT license instead of droppin
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests): preserve Android dump command errors
+## X. one): emit the objective-c selector a protocol requirement declares (#1179)
 
 **RULE**:
-When implementing operations in `tests/native-features/scripts/one-native-android-snapshot.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/one/codegen/sdk/emit-protocols.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9c80de5`: tests): preserve Android dump command errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b3c0f93`: one): emit the objective-c selector a protocol requirement declares (#1179). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/native-features/scripts/one-native-android-snapshot.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/one/codegen/sdk/emit-protocols.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-type DumpStep = 'fail' | 'fail-after-dump' | 'ok'
-    if (step === 'fail-after-dump')
-      throw Object.assign(new Error('Command failed: adb shell uiautomator dump'), {
-        stdout: 'UI hierchary dumped to: /sdcard/one.xml',
-        stderr: '',
-        status: 1,
-      })
-  reset(['fail', 'fail-after-dump', 'ok'], readyXml)
+import { parameterType, parseType, type SwiftType, TypeParseError } from './types'
+// stdlib and foundation values that cross into an objective-c method. character
+// is a swift struct and does not. array, dictionary, set and optional are in
+// this set, and objcRepresentable still requires every generic argument.
+const BRIDGED_USRS = new Set([
+  's:Sb', 's:Si', 's:Su', 's:Sd', 's:Sf', 's:SS', 's:Ss',
+  's:s4Int8V', 's:s5Int16V', 's:s5Int32V', 's:s5Int64V',
+  's:s5UInt8V', 's:s6UInt16V', 's:s6UInt32V', 's:s6UInt64V', 's:s7Float16V',
+  's:14CoreFoundation7CGFloatV', 's:12CoreGraphics7CGFloatV',
+  's:s5ErrorP', 's:s4Voida', 's:s8AnyClassa',
+  's:10Foundation4DateV', 's:10Foundation3URLV', 's:10Foundation4DataV', 's:10Foundation4UUIDV',
+  's:Sa', 's:SD', 's:Sh', 's:Sq',
+])
+
+// c:objc(pl)Name(im)archiver:didEncodeObject: — the selector is the objective-c
+// requirement, which is not the selector swift infers from the swift name.
+function objcMethod(usr: string): { selector: string; instance: boolean } | undefined {
+  const match = /^c:objc\([^)]*\)[^(]*\((im|cm)\)([A-Za-z_][A-Za-z0-9_:]*)$/.exec(usr)
+  if (!match) return undefined
+  return { selector: match[2], instance: match[1] === '
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-type DumpStep = 'fail' | 'ok'
-  reset(['fail', 'fail', 'ok'], readyXml)
+import { parameterType, type SwiftType } from './types'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9c80de5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b3c0f93` are properly handled with clean fallback behavior.

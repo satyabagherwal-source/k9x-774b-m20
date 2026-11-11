@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `d0e358e1`  
+> **Source Version**: `3ea984cf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T23:36:21.153Z  
+> **Timestamp**: 2026-11-11T10:34:56.074Z  
 > **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T23:36:21.145Z  
+> **Harvest Timestamp**: 2026-11-11T10:34:55.867Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4909 stars
+- **Stars / Engagement**: 4912 stars
 
 ---
 
@@ -1046,480 +1046,295 @@ public struct ProviderSettingsState: Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0e358e1` (2026-11-08)
-**Commit Message**: fix(deps): remove unmaintained pin-utils dependency
+### Incident Patch 1: `0007e9c5` (2026-11-11)
+**Commit Message**: fix(accounts): recheck receipt bytes after directory sync
 
-**File**: `apps/cli/Cargo.lock` (modified, +10/-18)
+**File**: `apps/cli/src/accounts/staging.rs` (modified, +12/-1)
 ```diff
-@@ -693,9 +693,9 @@ dependencies = [
- 
- [[package]]
- name = "futures-core"
--version = "0.3.31"
-+version = "0.3.34"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
-+checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
- 
- [[package]]
- name = "futures-sink"
-@@ -705,20 +705,19 @@ checksum = "1944426bf7d03f1d14f708785e4b33efd750b36d48a157b836b3efc15ede8e1d"
- 
- [[package]]
- name = "futures-task"
--version = "0.3.31"
-+version = "0.3.34"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
-+checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
- 
- [[package]]
- name = "futures-util"
--version = "0.3.31"
-+version = "0.3.34"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
-+checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
- dependencies = [
-  "futures-core",
-  "futures-task",
-  "pin-project-lite",
-- "pin-utils",
-  "slab",
- ]
- 
-@@ -891,9 +890,9 @@ checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
- 
- [[package]]
- name = "hyper"
--version = "1.8.1"
-+version = "1.12.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
-+checksum = "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c"
- dependencies = [
-  "atomic-waker",
-  "bytes",
-@@ -906,7 +905,6 @@ dependencies = [
-  "httpdate",
-  "itoa",
-  "pin-project-lite",
-- "pin-utils",
-  "smallvec",
-  "tokio",
-  "want",
-@@ -1489,12 +1487,6 @@ version = "0.2.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b"
- 
--[[package]]
--name = "pin-utils"
--version = "0.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
--
- [[package]]
- name = "pkg-config"
- version = "0.3.34"
-@@ -2598,9 +2590,9 @@ checksum = "5c3082ca00d5a5ef149bb8b555a72ae84c9c59f7250f013ac822ac2e49b19c64"
- 
- [[package]]
- name = "want"
--version = "0.3.1"
-+version = "0.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bfa7760aed19e106de2c7c0b581b509f2f25d3dacaf737cb82ac61bc6d760b0e"
-+checksum = "ec4cdd0dd910afe868b7ef477227d8d538b46b3075031afee8a9f2acb0a2ed0b"
- dependencies = [
-  "try-lock",
- ]
-```
-
----
-
-### Incident Patch 2: `7bbabc52` (2026-11-08)
-**Commit Message**: fix(accounts): preserve logical IDs and receipts during adoption
-
-**File**: `apps/cli/src/accounts/adopt.rs` (modified, +41/-10)
-```diff
-@@ -7,17 +7,36 @@ pub struct Source {
-     pub config: Option<PathBuf>,
- }
- 
--#[derive(serde::Serialize)]
--struct Marker {
--    schema_version: u32,
-+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-+pub struct Receipt {
-+    pub schema_version: u32,
-     #[serde(with = "time::serde::rfc3339")]
--    adopted_at: time::OffsetDateTime,
--    accounts_added: usize,
--    accounts_refreshed: usize,
--    history_rows: u64,
-+    pub adopted_at: time::OffsetDateTime,
-+    pub accounts_added: usize,
-+    pub accounts_refreshed: usize,
-+    pub history_rows: u64,
-+    #[serde(default)]
-+    pub source_host: Option<String>,
-+    #[serde(default)]
-+    pub target_host: Option<String>,
-+    /// Absent in v1 receipts, where a colliding ID cannot safely be reconstructed.
-+    #[serde(default)]
-+    pub account_mappings: Option<std::collections::BTreeMap<String, String>>,
-+    #[serde(default)]
-+    pub kept_target_pairing: bool,
- }
- 
- impl Source {
-+    pub fn receipt(&self) -> std::io::Result<Option<Receipt>> {
-+        match std::fs::read(self.marker_path()) {
-+            Ok(bytes) => serde_json::from_slice(&bytes)
-+                .map(Some)
-+                .map_err(std::io::Error::other),
-+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
-+            Err(error) => Err(error),
-+        }
-+    }
-+
-     fn marker_path(&self) -> PathBuf {
-         self.data_dir
-             .join(self.namespace.lock_name())
-@@ -84,13 +103,21 @@ pub async fn vault(
-             return false;
-         }
-     };
-+    let source_host = document
-+        .resolved
-+        .as_ref()
-+        .map(|registry| registry.host_id.clone());
-     let absorbed = match absorb(target, document).await {
-         Ok(absorbed) => absorbed,
-         Err(error) => {
-             tracing::warn!(?error, "vault_adoption_target_unavailable");
-             return false;
-         }
-     };
-+    let target_host = absorbed
-+        .history
-+        .as_ref()
-+        .map(|rewrite| rewrite.host.clone());
-     let rows = match absorbed.history {
-         None => Ok(0),
-         Some(rewrite) => match history {
-@@ -117,12 +144,16 @@ pub async fn vault(
-         tracing::info!("vault_adoption_marker_deferred");
-         return absorbed.changed || rows > 0;
-     }
--    let marker = Marker {
--        schema_version: 1,
-+    let marker = Receipt {
-+        schema_version: 2,
-         adopted_at: time::OffsetDateTime::now_utc(),
-         accounts_added: absorbed.added,
-         accounts_refreshed: absorbed.refreshed,
-         history_rows: rows,
-+        source_host,
-+        target_host,
-+        account_mappings: Some(absorbed.account_mappings),
-+        kept_target_pairing: absorbed.kept_target_pairing,
-     };
-     match write_marker(source, &marker) {
-         Ok(()) => tracing::info!(
-@@ -151,7 +182,7 @@ async fn absorb(
-     Ok(absorbed)
- }
- 
--fn write_marker(source: &Source, marker: &Marker) -> std::io::Result<()> {
-+fn write_marker(source: &Source, marker: &Receipt) -> std::io::Result<()> {
-     use std::io::Write;
-     let bytes = serde_json::to_vec(marker)?;
-     let path = source.marker_path();
-```
-
-**File**: `apps/cli/src/accounts/mod.rs` (modified, +23/-3)
-```diff
-@@ -725,6 +725,9 @@ pub struct Absorbed {
-     pub refreshed: usize,
-     pub skipped: usize,
-     pub history: Option<crate::history::Rewrite>,
-+    /// Unambiguous source logical IDs mapped to destination logical IDs.
-+    pub account_mappings: std::collections::BTreeMap<String, String>,
-+    pub kept_target_pairing: bool,
- }
- 
- impl Credential {
-@@ -774,13 +777,26 @@ impl Document {
-                 .resolved
-                 .as_ref()
-                 .map(|registry| crate::history::Rewrite::onto(registry.host_id.clone()));
-+            let account_mappings = other
-+                .accounts
-+                .iter()
-+                .filter_map(|account| {
-+                    let id = other
-+                        .resolved
-+                        .as_ref()?
-+                        .account_id_for_source(&account.id)?;
-+                    Some((id.to_owned(), id.to_owned()))
-+                })
-+                .collect();
-             *self = other;
-             return Ok(Absorbed {
-                 changed: true,
-                 added,
-                 refreshed: 0,
-                 skipped: 0,
-                 history,
-+                account_mappings,
-+                kept_target_pairing: false,
-             });
-         }
-         let before = serde_json::to_vec(&*self).map_err(|_| AccountError::Corrupt)?;
-@@ -845,17 +861,19 @@ impl Document {
-             self.accounts.push(account);
-             added += 1;
-         }
-+        let kept_target_pairing = other.has_pairing() && self.has_pairing();
-         let take_host = other.has_pairing() && !self.has_pairing();
--        let history = match (self.resolved.as_mut(), other.resolved.take()) {
-+        let (history, account_mappings) = match (self.resolved.as_mut(), other.resolved.take()) {
-             (Some(mine), Some(theirs)) => {
-                 if take_host {
-                     mine.host_id = theirs.host_id.clone();
-                 } else if other.has_pairing() && mine.host_id != theirs.host_id {
-                     tracing::warn!("vault_adoption_pairing_dropped");
-                 }
--                Some(mine.absorb(theirs, &id_map)?)
-+                let (history, mappings) = mine.absorb(theirs, &id_map)?;
-+                (Some(history), mappings)
-             }
--            _ => None,
-+            _ => (None, Default::default()),
-         };
-         if take_host {
-             self.companion_identity = other.companion_identity.take();
-@@ -906,6 +924,8 @@ impl Document {
-             refreshed,
-             skipped,
-             history,
-+            account_mappings,
-+            kept_target_pairing,
-         })
-     }
- }
-```
-
-**File**: `apps/cli/src/accounts/resolved.rs` (modified, +27/-9)
-```diff
-@@ -481,7 +481,7 @@ impl Registry {
-         &mut self,
-         other: Registry,
-         id_map: &BTreeMap<String, String>,
--    ) -> Result<crate::history::Rewrite, AccountError> {
-+    ) -> Result<(crate::history::Rewrite, BTreeMap<String, String>), AccountError> {
-         let mut landed: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-         for (source_id, binding) in &other.bindings {
-             let Some(id) = id_map.get(source_id) else {
-@@ -505,7 +505,17 @@ impl Registry {
-                             .map(|held| held.account_id.clone())
-                             .min()
-                     });
--                    let logical = joined.unwrap_or_else(|| binding.account_id.clone());
-+                    let logical = match joined {
-+                        Some(logical) => logical,
-+                        None if self
-+                            .bindings
-+                            .values()
-+                            .any(|held| held.account_id == binding.account_id) =>
-+                        {
-+                            random_string()?
-+                        }
-+                        None => binding.account_id.clone(),
-+                    };
-                     self.bindings.insert(
-                         id.clone(),
-                         Binding {
-@@ -526,13 +536,18 @@ impl Registry {
-             .values()
-             .map(|binding| binding.account_id.clone())
-             .collect();
--        let accounts: BTreeMap<String, String> = landed
-+        let mappings: BTreeMap<String, String> = landed
-             .iter()
-             .filter_map(|(old, targets)| {
-                 let target = targets.first()?;
--                (targets.len() == 1 && target != old).then(|| (old.clone(), target.clone()))
-+                (targets.len() == 1).then(|| (old.clone(), target.clone()))
-             })
-             .collect();
-+        let accounts: BTreeMap<String, String> = mappings
-+            .iter()
-+            .filter(|(old, target)| old != target)
-+            .map(|(old, target)| (old.clone(), target.clone()))
-+            .collect();
-         let mut epochs = BTreeMap::new();
-         for old in landed.keys() {
-             match accounts.get(old) {
-@@ -596,11 +611,14 @@ impl Registry {
-                 .extend(keys);
-         }
-         self.revision = self.revision.max(other.revision);
--        Ok(crate::history::Rewrite {
--            host: self.host_id.clone(),
--            account_renames: accounts,
--            epoch_renames: epochs,
--        })
-+        Ok((
-+            crate::history::Rewrite {
-+                host: self.host_id.clone(),
-+                account_renames: accounts,
-+                epoch_renames: epochs,
+@@ -371,7 +371,10 @@ mod unix {
+         io::{Read, Write},
+         os::{
+             fd::{AsRawFd, FromRawFd},
+-            unix::{ffi::OsStrExt, fs::MetadataExt},
++            unix::{
++                ffi::OsStrExt,
++                fs::{FileExt, MetadataExt},
 +            },
-+            mappings,
-+        ))
+         },
+         path::Component,
+     };
+@@ -563,6 +566,14 @@ mod unix {
+             sync(&existing)
+                 .and_then(|_| sync(dir))
+                 .map_err(|_| StagingError::CommitUncertain)?;
++            // Same-length writes can share timestamps on coarse-resolution filesystems.
++            let mut verified = vec![0; bytes.len()];
++            existing
++                .read_exact_at(&mut verified, 0)
++                .map_err(|_| StagingError::Conflict)?;
++            if verified != bytes {
++                return Err(StagingError::Conflict);
++            }
+             stable()
+         };
+         match openat(dir, &name, libc::O_RDONLY) {
+```
+
+**File**: `apps/cli/src/accounts/staging/tests.rs` (modified, +4/-1)
+```diff
+@@ -420,7 +420,10 @@ fn destination_mutations_during_verification_are_detected() {
+                 }
+                 file.sync_all()
+             });
+-            assert!(matches!(result, Err(StagingError::Conflict)));
++            assert!(
++                matches!(result, Err(StagingError::Conflict)),
++                "{result:?}; preexisting={preexisting}, replace={replace}"
++            );
+         }
      }
- 
-     pub fn synchronize(&mut self, accounts: &[Account]) -> Result<(), AccountError> {
+ }
 ```
 
 ---
 
-### Incident Patch 3: `fe3f7998` (2026-11-07)
-**Commit Message**: fix(desktop): share the Swift app's vault on Developer ID builds
+### Incident Patch 2: `5c6b3e10` (2026-11-11)
+**Commit Message**: fix(deps): update bundled SQLite and require Rust 1.89
 
-A macOS build signed as dev.quotio.cli now uses the standalone CLI's shared
-vault and config.toml, and adopts the Swift app's quotio-macos store for the
-same bundle id, so a Sparkle update from the Swift app keeps its accounts and
-history. Other builds keep the isolated quotio-desktop vault and host.toml.
-
-**File**: `apps/desktop/Cargo.lock` (modified, +1/-0)
+**File**: `.github/workflows/cli-ci.yml` (modified, +1/-1)
 ```diff
-@@ -5826,6 +5826,7 @@ dependencies = [
-  "reqwest",
-  "ring",
-  "rust-embed",
-+ "security-framework",
-  "semver",
-  "serde",
-  "serde_json",
+@@ -35,7 +35,7 @@ jobs:
+       fail-fast: false
+       matrix:
+         os: [macos-15, ubuntu-24.04]
+-        toolchain: [stable, '1.88.0']
++        toolchain: [stable, '1.89.0']
+     env:
+       CARGO_TERM_COLOR: never
+       RUST_BACKTRACE: '1'
 ```
 
-**File**: `apps/desktop/Cargo.toml` (modified, +2/-1)
+**File**: `.github/workflows/macos-ci.yml` (modified, +2/-2)
 ```diff
-@@ -39,7 +39,8 @@ tray-icon = "0.26"
- block2 = "0.6"
- objc2 = "0.6"
- objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "block2", "objc2-core-foundation", "NSApplication", "NSAttributedString", "NSButton", "NSColor", "NSControl", "NSEvent", "NSFont", "NSFontDescriptor", "NSGraphics", "NSImage", "NSResponder", "NSStatusBarButton", "NSStatusItem", "NSStringDrawing", "NSView", "NSWindow"] }
--objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSAttributedString", "NSData", "NSDictionary", "NSEnumerator", "NSGeometry", "NSString"] }
-+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSAttributedString", "NSData", "NSDictionary", "NSEnumerator", "NSBundle", "NSGeometry", "NSString"] }
-+security-framework = "3"
+@@ -41,8 +41,8 @@ jobs:
  
- [target.'cfg(windows)'.dependencies]
- raw-window-handle = "0.6"
+       - name: Setup Rust
+         run: |
+-          rustup toolchain install 1.88.0 --profile minimal
+-          rustup default 1.88.0
++          rustup toolchain install 1.89.0 --profile minimal
++          rustup default 1.89.0
+ 
+       - name: Test portable host client
+         run: swift test --package-path Packages/QuotioHostClient
 ```
 
-**File**: `apps/desktop/src/host.rs` (modified, +65/-5)
+**File**: `.github/workflows/macos-release.yml` (modified, +2/-2)
 ```diff
-@@ -164,8 +164,12 @@ impl Drop for EmbeddedHost {
- }
+@@ -45,8 +45,8 @@ jobs:
  
- fn serve_args(options: &HostOptions) -> Result<ServeArgs> {
-+    let swift = if options.demo { None } else { swift_vault() };
-     let (provider, vault_namespace, account_data_dir) = if options.demo {
-         (vec![Provider::Mock], None, None)
-+    } else if swift.is_some() {
-+        // Shares the standalone CLI's vault, as the Swift app's helper does.
-+        (Vec::new(), None, None)
-     } else {
-         // The desktop app keeps its own vault, like the macOS app's `quotio-macos`.
-         let namespace = "quotio-desktop"
-@@ -177,16 +181,21 @@ fn serve_args(options: &HostOptions) -> Result<ServeArgs> {
-         parent_pipe: false,
-         listen: SocketAddr::from(([127, 0, 0, 1], 0)),
-         provider,
--        // Its own settings too, apart from the command-line tool's `config.toml`.
--        config: Some(project_dirs()?.config_dir().join("host.toml")),
-+        // Its own settings too, apart from the command-line tool's `config.toml`,
-+        // unless it shares that tool's vault.
-+        config: if swift.is_some() {
-+            None
-+        } else {
-+            Some(project_dirs()?.config_dir().join("host.toml"))
-+        },
-         refresh_interval: None,
-         timeout: None,
-         no_saved_accounts: options.demo,
-         account_vault_namespace: vault_namespace,
-         account_data_dir,
--        adopt_vault_namespace: None,
--        adopt_data_dir: None,
--        adopt_config: None,
-+        adopt_config: swift.as_ref().and_then(|swift| swift.config.clone()),
-+        adopt_data_dir: swift.as_ref().map(|swift| swift.data_dir.clone()),
-+        adopt_vault_namespace: swift.map(|swift| swift.namespace),
-         cli_proxy_auth_dir: None,
-         cli_proxy_config: (!options.demo).then(crate::proxy::config_path),
-         manage: true,
-@@ -221,6 +230,57 @@ fn account_data_dir() -> Result<PathBuf> {
-     Ok(dir)
- }
+       - name: Setup Rust
+         run: |
+-          rustup toolchain install 1.88.0 --profile minimal
+-          rustup default 1.88.0
++          rustup toolchain install 1.89.0 --profile minimal
++          rustup default 1.89.0
+           rustup target add aarch64-apple-darwin x86_64-apple-darwin
  
-+/// The vault the Swift app kept for this bundle before this build replaced it.
-+#[cfg_attr(not(target_os = "macos"), allow(dead_code))]
-+struct SwiftVault {
-+    namespace: quotio::accounts::vault::VaultNamespace,
-+    data_dir: PathBuf,
-+    config: Option<PathBuf>,
-+}
+       # ===========================================
+```
+
+**File**: `apps/cli/Cargo.lock` (modified, +23/-8)
+```diff
+@@ -653,6 +653,12 @@ version = "0.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
+ 
++[[package]]
++name = "foldhash"
++version = "0.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
 +
-+/// Mirrors the Swift app: only a Developer ID build signed as the standalone CLI
-+/// (`dev.quotio.cli`) may use the shared vault; others keep their own.
-+#[cfg(target_os = "macos")]
-+fn swift_vault() -> Option<SwiftVault> {
-+    use security_framework::os::macos::code_signing::{Flags, SecCode, SecRequirement};
-+    let requirement: SecRequirement = r#"identifier "dev.quotio.cli" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] exists"#
-+        .parse()
-+        .ok()?;
-+    SecCode::for_self(Flags::NONE)
-+        .ok()?
-+        .check_validity(Flags::NONE, &requirement)
-+        .ok()?;
-+    let bundle = objc2_foundation::NSBundle::mainBundle()
-+        .bundleIdentifier()?
-+        .to_string();
-+    // AppIdentity.quotioCLIVaultNamespace and RuntimeIdentity.applicationSupportDirectoryName.
-+    let production = bundle == "app.bytrong.quotio";
-+    let namespace = if production {
-+        "quotio-macos".to_owned()
-+    } else {
-+        let digest = ring::digest::digest(&ring::digest::SHA256, bundle.as_bytes());
-+        let hex: String = digest.as_ref()[..8]
-+            .iter()
-+            .map(|byte| format!("{byte:02x}"))
-+            .collect();
-+        format!("quotio-macos-{hex}")
-+    };
-+    let support = directories::BaseDirs::new()?
-+        .data_dir()
-+        .join(if production { "Quotio" } else { &bundle });
-+    let config = support.join("quotio-cli.toml");
-+    Some(SwiftVault {
-+        namespace: namespace.parse().ok()?,
-+        data_dir: support.join("QuotioCLI"),
-+        config: config.is_file().then_some(config),
-+    })
-+}
+ [[package]]
+ name = "form_urlencoded"
+ version = "1.2.1"
+@@ -819,7 +825,7 @@ version = "0.15.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "bf151400ff0baff5465007dd2f3e717f3fe502074ca563069ce3a6629d07b289"
+ dependencies = [
+- "foldhash",
++ "foldhash 0.1.5",
+ ]
+ 
+ [[package]]
+@@ -828,13 +834,22 @@ version = "0.16.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "5419bdc4f6a9207fbeba6d11b604d481addf78ecd10c11ad51e76c2f6482748d"
+ 
++[[package]]
++name = "hashbrown"
++version = "0.17.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
++dependencies = [
++ "foldhash 0.2.0",
++]
 +
-+#[cfg(not(target_os = "macos"))]
-+fn swift_vault() -> Option<SwiftVault> {
-+    None
-+}
-+
- /// The Linux vault is AES-encrypted with a key the host reads from
- /// `QUOTIO_VAULT_KEY_FILE`. Without one it stays locked, so the app keeps its own
- /// key in the config directory, apart from the vault, unless the user set one.
+ [[package]]
+ name = "hashlink"
+-version = "0.10.0"
++version = "0.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7382cf6263419f2d8df38c55d7da83da5c18aef87fc7a7fc1fb1e344edfe14c1"
++checksum = "a596f1b20ed2cc5ecac41a164aaebc7258057060f06c0cf7a2ba3991ee7990fb"
+ dependencies = [
+- "hashbrown 0.15.2",
++ "hashbrown 0.17.1",
+ ]
+ 
+ [[package]]
+@@ -1223,9 +1238,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libsqlite3-sys"
+-version = "0.35.0"
++version = "0.39.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "133c182a6a2c87864fe97778797e46c7e999672690dc9fa3ee8e241aa4a9c13f"
++checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+ dependencies = [
+  "cc",
+  "pkg-config",
+@@ -1820,9 +1835,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rusqlite"
+-version = "0.37.0"
++version = "0.41.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "165ca6e57b20e1351573e3729b958bc62f0e48025386970b6e4d29e7a7e71f3f"
++checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+ dependencies = [
+  "bitflags",
+  "fallible-iterator",
+```
+
+**File**: `apps/cli/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@
+ name = "quotio"
+ version = "1.0.0-beta.8"
+ edition = "2024"
+-rust-version = "1.88"
++rust-version = "1.89"
+ license = "MIT"
+ 
+ [dependencies]
+@@ -16,7 +16,7 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "sync"
+ reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+ serde = { version = "1", features = ["derive"] }
+ serde_json = "1"
+-rusqlite = { version = "0.37", features = ["bundled"] }
++rusqlite = { version = "0.41", default-features = false, features = ["bundled", "cache", "fallible_uint"] }
+ serde-saphyr = { version = "=0.0.27", default-features = false, features = ["deserialize"] }
+ toml = "0.9"
+ time = { version = "=0.3.47", features = ["serde", "serde-well-known", "formatting", "macros"] }
+```
+
+**File**: `apps/cli/README.md` (modified, +2/-2)
+```diff
+@@ -41,7 +41,7 @@ snapshot need the beta channel and must reject other `schema_version` values.
+ 
+ Each `cli-v*` GitHub release also has `.tar.gz` archives for macOS (Apple Silicon
+ and Intel) and Linux x64, with `SHA256SUMS`. Windows has no release build. To run
+-from source, use Rust 1.88 or later and replace `quotio` with `cargo run --` in the
++from source, use Rust 1.89 or later and replace `quotio` with `cargo run --` in the
+ examples below. See [release channels](docs/release-channels.md) for details.
+ 
+ ## Local REST API
+@@ -90,7 +90,7 @@ Quota comes from the existing provider APIs, never from proxy traffic counters.
+ 
+ ## Run
+ 
+-Use Rust stable with edition 2024 support. The package declares Rust 1.88 or newer;
++Use Rust stable with edition 2024 support. The package declares Rust 1.89 or newer;
+ this revision was verified with Rust 1.92.0. `Cargo.lock` pins dependencies.
+ 
+ ```sh
+```
+
+**File**: `apps/desktop/Cargo.lock` (modified, +10/-7)
+```diff
+@@ -3370,14 +3370,17 @@ name = "hashbrown"
+ version = "0.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
++dependencies = [
++ "foldhash 0.2.0",
++]
+ 
+ [[package]]
+ name = "hashlink"
+-version = "0.10.0"
++version = "0.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7382cf6263419f2d8df38c55d7da83da5c18aef87fc7a7fc1fb1e344edfe14c1"
++checksum = "a596f1b20ed2cc5ecac41a164aaebc7258057060f06c0cf7a2ba3991ee7990fb"
+ dependencies = [
+- "hashbrown 0.15.5",
++ "hashbrown 0.17.1",
+ ]
+ 
+ [[package]]
+@@ -4133,9 +4136,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libsqlite3-sys"
+-version = "0.35.0"
++version = "0.39.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "133c182a6a2c87864fe97778797e46c7e999672690dc9fa3ee8e241aa4a9c13f"
++checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+ dependencies = [
+  "cc",
+  "pkg-config",
+@@ -6292,9 +6295,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rusqlite"
+-version = "0.37.0"
++version = "0.41.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "165ca6e57b20e1351573e3729b958bc62f0e48025386970b6e4d29e7a7e71f3f"
++checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+ dependencies = [
+  "bitflags 2.13.2",
+  "fallible-iterator",
+```
+
+---
+
+### Incident Patch 3: `85b3f08b` (2026-11-10)
+**Commit Message**: fix(desktop): preserve Linux launch path during updates
+
+**File**: `apps/desktop/src/updater.rs` (modified, +5/-0)
+```diff
+@@ -308,9 +308,14 @@ fn replace(binary: &[u8]) -> Result<()> {
+         std::fs::set_permissions(&new, std::fs::Permissions::from_mode(0o755))?;
+     }
+     let _ = std::fs::remove_file(&old);
++    // Keep the launch path intact until the atomic replacement on Unix.
++    #[cfg(unix)]
++    std::fs::hard_link(&exe, &old)?;
+     // Windows can rename a running executable but not overwrite it.
++    #[cfg(windows)]
+     std::fs::rename(&exe, &old)?;
+     if let Err(error) = std::fs::rename(&new, &exe) {
++        #[cfg(windows)]
+         let _ = std::fs::rename(&old, &exe);
+         return Err(error.into());
+     }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1548,54 +1363,39 @@ history. Other builds keep the isolated quotio-desktop vault and host.toml.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): remove unmaintained pin-utils dependency
+## X. accounts): recheck receipt bytes after directory sync
 
 **RULE**:
-When implementing operations in `apps/cli/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/cli/src/accounts/staging.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0e358e1`: deps): remove unmaintained pin-utils dependency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0007e9c5`: accounts): recheck receipt bytes after directory sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/cli/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/cli/src/accounts/staging.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.3.34"
-checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
-version = "0.3.34"
-checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
-version = "0.3.34"
-checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
-version = "1.12.0"
-checksum = "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c"
-version = "0.3.2"
-checksum = "ec4cdd0dd910afe868b7ef477227d8d538b46b3075031afee8a9f2acb0a2ed0b"
+            unix::{
+                ffi::OsStrExt,
+                fs::{FileExt, MetadataExt},
+            },
+            // Same-length writes can share timestamps on coarse-resolution filesystems.
+            let mut verified = vec![0; bytes.len()];
+            existing
+                .read_exact_at(&mut verified, 0)
+                .map_err(|_| StagingError::Conflict)?;
+            if verified != bytes {
+                return Err(StagingError::Conflict);
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.3.31"
-checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
-version = "0.3.31"
-checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
-version = "0.3.31"
-checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
- "pin-utils",
-version = "1.8.1"
-checksum = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
- "pin-utils",
-[[package]]
-name = "pin-utils"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
-
-version = "0.3.1"
-checksum = "bfa7760aed19e106de2c7c0b581b509f2f25d3dacaf737cb82ac61bc6d760b0e"
+            unix::{ffi::OsStrExt, fs::MetadataExt},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0e358e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0007e9c5` are properly handled with clean fallback behavior.

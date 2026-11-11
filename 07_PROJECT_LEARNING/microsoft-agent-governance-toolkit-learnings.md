@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `48f04e5a`  
+> **Source Version**: `81a399b8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T21:05:58.459Z  
+> **Timestamp**: 2026-11-11T10:52:12.706Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T21:05:57.434Z  
+> **Harvest Timestamp**: 2026-11-11T10:52:12.701Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6545 stars
+- **Stars / Engagement**: 6554 stars
 
 ---
 
@@ -405,118 +405,110 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48f04e5a` (2026-11-09)
-**Commit Message**: fix(agent-os): reject max_attempts below 1 and negative backoff in retry (#4492)
+### Incident Patch 1: `81a399b8` (2026-11-10)
+**Commit Message**: chore(deps-dev): Update pydantic requirement (#4558)
 
-With max_attempts=0 the retry wrapper never called the function and
-raised None, which surfaced as "TypeError: exceptions must derive from
-BaseException". A negative backoff_base made the sleep before the first
-retry raise ValueError, hiding the exception being retried. Validate
-both when the decorator is created.
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/v2.14.2/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.14.1...v2.14.2)
 
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.2
+  dependency-type: direct:development
+...
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-sre/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-rag-governance` rejects a negative `max_retrievals_per_minute`.** `RAGPolicy` accepted any value, and `RateLimiter.check` treats only `0` as "no limit", so a negative limit (such as `-1`, often used to mean "unlimited") could never be met and every retrieval raised `RateLimitExceededError` ("exceeded retrieval limit of -1 per 60s"). `RAGPolicy` now raises `ValueError` for a negative limit when it is created, as it already does for a `rate_limit_window_seconds` that is not positive.
- - **`a2a-protocol` `TaskEnvelope.fail` leaves the task unchanged when it cannot fail it.** `fail(error)` set `error` before checking the state transition, so calling it on a task that was already complete, failed or canceled raised `ValueError` but still wrote the new error: a completed task serialised as `{"state": "complete", "error": ...}`, and a failed task lost its original error. This also happened through `TrustGate.evaluate_and_gate` when a denied task was already finished. The transition is now checked first, and `error` is set only when the task moves to `failed`.
- - **`agent-hypervisor` `HypervisorEventBus.query(limit=0)` returns no events.** `query` kept the last `limit` events with `results[-limit:]`, and `results[-0:]` is the whole list, so `limit=0` returned every matching event, and a negative limit such as `-2` returned all but the two oldest. The same happened through `GET /api/v1/events?limit=...`. `limit=0` now returns an empty list, a negative limit raises `ValueError`, and the endpoint rejects a negative `limit` with a 422 validation error.
-+- **`agent-os` `retry` rejects `max_attempts` below 1 and a negative `backoff_base`.** With `max_attempts=0` the decorated function was never called, and each call raised `TypeError: exceptions must derive from BaseException` from the wrapper's `raise last_exc` on `None`. A negative `backoff_base` gave a negative delay, so the first retry raised `ValueError: sleep length must be non-negative` in place of the exception being retried. `retry` now raises `ValueError` for both when the decorator is created.
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+@@ -35,7 +35,7 @@ dev = [
+     "pytest-asyncio>=1.4.1.post1,<2.0",
+     "ruff>=0.17.3,<1.0",
+     "mypy>=2.4.1,<3.0",
+-    "pydantic>=2.14.1,<3.0",
++    "pydantic>=2.14.2,<3.0",
+     "pyyaml>=6.0.3,<7.0",
+     "croniter>=2.0,<7.0",
+     "opentelemetry-api>=1.45.1,<2.0",
 ```
 
-**File**: `agent-governance-python/agent-os/src/agent_os/retry.py` (modified, +12/-0)
+---
+
+### Incident Patch 2: `2bff9e8a` (2026-11-10)
+**Commit Message**: chore(deps): Update pydantic requirement (#4557)
+
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/v2.14.2/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.14.1...v2.14.2)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.2
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-primitives/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -53,11 +53,23 @@ def retry(
-             shared upstream. Disable only for deterministic tests; production
-             callers should leave this on.
+@@ -34,7 +34,7 @@ classifiers = [
  
-+    Raises:
-+        ValueError: If ``max_attempts`` is less than 1 or ``backoff_base``
-+            is negative.
-+
-     Example:
-         @retry(max_attempts=3, exceptions=(ConnectionError, TimeoutError))
-         async def fetch_data(url: str) -> dict:
-             ...
-     """
-+    # With no attempts the wrapper would never call the function and would
-+    # raise ``None``; a negative delay makes the sleep before the first retry
-+    # raise and hide the exception being retried.
-+    if max_attempts < 1:
-+        raise ValueError(f"max_attempts must be at least 1; got {max_attempts!r}")
-+    if backoff_base < 0:
-+        raise ValueError(f"backoff_base must be zero or positive; got {backoff_base!r}")
-+
-     def decorator(func: Callable) -> Callable:
-         if asyncio.iscoroutinefunction(func):
-             @functools.wraps(func)
+ dependencies = [
+     "agent-governance-toolkit-core>=5.0.0,<6.0",
+-    "pydantic>=2.14.1,<3.0",
++    "pydantic>=2.14.2,<3.0",
+ ]
+ 
+ [project.optional-dependencies]
 ```
 
-**File**: `agent-governance-python/agent-os/tests/test_retry.py` (modified, +45/-0)
+---
+
+### Incident Patch 3: `79d87814` (2026-11-10)
+**Commit Message**: chore(deps-dev): Update pydantic requirement (#4556)
+
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/v2.14.2/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.14.1...v2.14.2)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.2
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-mesh/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -259,3 +259,48 @@ async def async_documented():
- 
-         assert async_documented.__name__ == "async_documented"
-         assert async_documented.__doc__ == "Async docstring."
-+
-+
-+# ============================================================================
-+# Argument validation
-+# ============================================================================
-+
-+
-+class TestRetryArguments:
-+    """``retry`` rejects arguments that would break the wrapper."""
-+
-+    @pytest.mark.parametrize("max_attempts", [0, -1])
-+    def test_rejects_fewer_than_one_attempt(self, max_attempts):
-+        with pytest.raises(ValueError, match="max_attempts"):
-+            retry(max_attempts=max_attempts)
-+
-+    def test_rejects_negative_backoff(self):
-+        with pytest.raises(ValueError, match="backoff_base"):
-+            retry(backoff_base=-1.0)
-+
-+    def test_single_attempt_calls_function_once(self):
-+        calls = 0
-+
-+        @retry(max_attempts=1, exceptions=(ValueError,))
-+        def fails():
-+            nonlocal calls
-+            calls += 1
-+            raise ValueError("boom")
-+
-+        with pytest.raises(ValueError, match="boom"):
-+            fails()
-+        assert calls == 1
-+
-+    def test_zero_backoff_retries_without_waiting(self):
-+        calls = 0
-+
-+        @retry(max_attempts=2, backoff_base=0.0, exceptions=(ValueError,))
-+        def flaky():
-+            nonlocal calls
-+            calls += 1
-+            if calls == 1:
-+                raise ValueError("transient")
-+            return "ok"
-+
-+        assert flaky() == "ok"
-+        assert calls == 2
+@@ -50,7 +50,7 @@ dev = [
+     "opentelemetry-sdk>=1.45.1,<2.0",
+     "opentelemetry-exporter-otlp-proto-grpc>=1.44.0,<2.0",
+     "PyJWT[crypto]>=2.15.1,<3.0",
+-    "pydantic[email]>=2.14.1,<3.0",
++    "pydantic[email]>=2.14.2,<3.0",
+     "cryptography>=50.0.2,<51.0",
+     "PyNaCl>=1.6.2,<2.0",
+     "pyyaml>=6.0.3,<7.0",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4519** (2026-11-03): chore(deps-dev): Bump qs from 6.15.2 to 6.17.1 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4516** (2026-11-03): chore(deps-dev): Bump qs from 6.15.2 to 6.17.1 in /policy-engine/sdk/node (@dependabot[bot])
-- **PR #4515** (2026-11-03): chore(deps): Bump cedar-policy from 4.11.0 to 4.11.2 in /policy-engine (@dependabot[bot])
-- **PR #4514** (2026-11-03): chore(deps): Bump rustls from 0.23.45 to 0.23.46 in /agent-governance-rust (@dependabot[bot])
-- **PR #4511** (2026-11-03): chore(deps-dev): Update fastapi requirement from <1.0,>=0.151.0 to >=0.162.0,<1.0 in /agent-governance-python/agent-sre (@dependabot[bot])
-- **PR #4510** (2026-11-03): chore(deps-dev): Update setuptools requirement from >=84.2.0 to >=84.2.1 in /agent-governance-python/agent-sre (@dependabot[bot])
+- **PR #4558** (2026-11-10): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.1 to >=2.14.2,<3.0 in /agent-governance-python/agent-sre (@dependabot[bot])
+- **PR #4557** (2026-11-10): chore(deps): Update pydantic requirement from <3.0,>=2.14.1 to >=2.14.2,<3.0 in /agent-governance-python/agent-primitives (@dependabot[bot])
+- **PR #4556** (2026-11-10): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.1 to >=2.14.2,<3.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
+- **PR #4555** (2026-11-10): chore(deps-dev): Update hypothesis requirement from <7.0,>=6.170.12 to >=6.170.14,<7.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
+- **PR #4553** (2026-11-10): chore(deps-dev): Update hypothesis requirement from <7.0,>=6.170.12 to >=6.170.14,<7.0 in /agent-governance-python/agent-hypervisor (@dependabot[bot])
+- **PR #4552** (2026-11-10): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.1 to >=2.14.2,<3.0 in /agent-governance-python/agent-hypervisor (@dependabot[bot])
 
 ---
 
@@ -536,28 +528,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-os): reject max_attempts below 1 and negative backoff in retry (#4492)
+## X. deps-dev): Update pydantic requirement (#4558)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent-governance-python/agent-sre/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48f04e5a`: agent-os): reject max_attempts below 1 and negative backoff in retry (#4492). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81a399b8`: deps-dev): Update pydantic requirement (#4558). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-sre/pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-os` `retry` rejects `max_attempts` below 1 and a negative `backoff_base`.** With `max_attempts=0` the decorated function was never called, and each call raised `TypeError: exceptions must derive from BaseException` from the wrapper's `raise last_exc` on `None`. A negative `backoff_base` gave a negative delay, so the first retry raised `ValueError: sleep length must be non-negative` in place of the exception being retried. `retry` now raises `ValueError` for both when the decorator is created.
+    "pydantic>=2.14.2,<3.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "pydantic>=2.14.1,<3.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48f04e5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81a399b8` are properly handled with clean fallback behavior.

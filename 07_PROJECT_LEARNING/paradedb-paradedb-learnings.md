@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `34441533`  
+> **Source Version**: `781cb511`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T03:42:52.261Z  
+> **Timestamp**: 2026-11-11T10:17:26.254Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T03:42:52.252Z  
+> **Harvest Timestamp**: 2026-11-11T10:17:26.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9497 stars
+- **Stars / Engagement**: 9504 stars
 
 ---
 
@@ -36,6 +36,237 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `basescan/src/postgres/customscan/basescan/scan_state.rs`
+```
+// Copyright (c) 2023-2026 ParadeDB, Inc.
+//
+// This file is part of ParadeDB - Postgres for Search and Analytics
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+#![allow(unsafe_op_in_unsafe_fn)]
+
+use std::cell::UnsafeCell;
+use std::collections::BTreeMap;
+use std::sync::Arc;
+
+use crate::api::{FieldName, HashMap, OrderByFeature, OrderByInfo, Varno};
+use crate::customscan::CustomScanState;
+use crate::index::fast_fields_helper::FFHelper;
+use crate::index::reader::index::SearchIndexReader;
+use crate::postgres::customscan::basescan::cost::WorkerDecisionReason;
+use crate::postgres::customscan::basescan::exec_methods::ExecMethod;
+use crate::postgres::customscan::basescan::parallel::{ParallelRole, ParallelScanHandle};
+use crate::postgres::customscan::basescan::projections::snippet::SnippetType;
+use crate::postgres::customscan::basescan::projections::snippet::pdb::IntArray2D;
+use crate::postgres::customscan::basescan::projections::window_agg::WindowAggregateInfo;
+use crate::postgres::customscan::basescan::telemetry::ScanTelemetry;
+use crate::postgres::customscan::bitmap_intersection::BitmapExec;
+use crate::postgres::customscan::builders::custom_path::ExecMethodType;
+use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
+use crate::postgres::customscan::qual_inspect::Qual;
+use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
+use crate::postgres::heap::{HeapFetchState, VisibilityChecker};
+use crate::postgres::rel::PgSearchRelation;
+use crate::postgres::utils::u64_to_item_pointer;
+use crate::postgres::{ParallelScanArgs, ParallelScanState};
+use crate::query::SearchQueryInput;
+use crate::query::tid_bitmap_stream::BitmapCell;
+use std::ptr::NonNull;
+
+use crate::index::reader::vector::SharedVectorRouting;
+use pgrx::heap_tuple::PgHeapTuple;
+use pgrx::{PgTupleDesc, pg_sys};
+use tantivy::index::SegmentId;
+use tantivy::snippet::SnippetGenerator;
+
+#[derive(Default)]
+pub struct BaseScanState {
+    // Declared first so any DataFusion stream /PgTokioRuntime / Tantivy scorers inside
+    // `exec_method` drop before `visibility_checker`, `doc_from_heap_state`, `search_reader`,
+    // `bitmap_cell`, `bitmap_exec`, and `heaprel`/`indexrel`.
+    exec_method: UnsafeCell<Box<dyn ExecMethod>>,
+    exec_method_name: String,
+
+    pub io_trace: Option<crate::index::reader::io_stats::Trace>,
+    /// Process-local EXPLAIN metrics (query counts, per-segment JSON, …).
+    pub telemetry: ScanTelemetry,
+    /// Set when this scan is parallel-aware (DSM attached).
+    pub parallel: Option<ParallelScanHandle>,
+    /// Workers wait for the leader to publish this plan when they first need it.
+    pub vector_routing_plan: Option<Arc<SharedVectorRouting>>,
+    pub vector_routing_pending: bool,
+
+    // Note: the range table index at execution time might be different from the one at planning time,
+    // so we need to use the one at execution time when creating the custom scan state.
+    // But, we also keep the planning RTI for the case when we need to use it for the `var_attname_lookup`
+    // because the `var_attname_lookup` is created based on the planning RTI.
+    // See https://www.postgresql.org/docs/current/custom-scan-plan.html
+    pub planning_rti: pg_sys::Index,
+    pub execution_rti: pg_sys::Index,
+
+    base_search_query_input: SearchQueryInput,
+    search_query_input: SearchQueryInput,
+    /// Where `search_query_input` is solved; `None` when the base query has nothing to solve.
+    /// Separate from `ps_ExprContext`, which `exec_custom_scan` resets per row: see the rules in
+    /// `solve_expr.rs`.
+    pub runtime_context: Option<NonNull<pg_sys::ExprContext>>,
+    pub visibility_checker: Option<VisibilityChecker>,
+    pub doc_from_heap_state: Option<HeapFetchState>,
+    pub search_reader: Option<SearchIndexReader>,
+    /// Executor startup before `SearchIndexReader::open`; consumed into the
+    /// reader's flat `scan_init_ns` metric on first execution.
+    pub executor_scan_init_ns: u64,
+    /// End-to-end CustomScan execution interval used to assign only the
+    /// residual around named nested stages to result assembly.
+    /// Whether the current execution is collecting stage timings for
+    /// `EXPLAIN ANALYZE`.  Timed queries leave the executor delivery path
+    /// uninstrumented.
+    pub explain_stage_accounting: bool,
+
+    pub targetlist_len: usize,
+
+    pub virtual_tuple_count: usize,
+
+    pub segment_count: usize,
+    pub(super) worker_selection_reason: Option<WorkerDecisionReason>,
+    pub quals: Option<Qual>,
+
+    pub need_scores: bool,
+    pub score_funcoids: [pg_sys::Oid; 2],
+
+    /// True when a junk ORDER-BY `embedding <-> query` `OpExpr` in the scan's
+    /// targetlist was replaced with a NULL placeholder `Const` (see
+    /// `inject_vector_distance_placeholders`). The value is never read — the
+    /// TopK scan already provides the ordering and the column is junk-stripped
+    /// — so the placeholder just spares `ExecProject` from calling
+    /// `l2_distance(embedding, query)` and detoasting the heap vector. We track
+    /// it only so the projection path knows it must use `placeholders`.
+    pub vector_distance_placeholder: bool,
+
+    pub snippet_funcoids: [pg_sys::Oid; 2],
+    pub snippets_funcoids: [pg_sys::Oid; 2],
+    pub snippet_positions_funcoids: [pg_sys::Oid; 2],
+
+    pub snippet_generators: HashMap<SnippetType, Option<SnippetGenerator>>,
+
+    pub var_attname_lookup: HashMap<(Varno, pg_sys::AttrNumber), FieldName>,
+    pub placeholders: Option<BasePlaceholders>,
+
+    // Store join-level search predicates for enhanced scoring/snippet generation
+    pub join_predicates: Option<SearchQueryInput>,
+
+    pub exec_method_type: ExecMethodType,
+    pub ambulkdelete_epoch: u32,
+
+    /// Execution state for the child bitmap scan, if a bitmap intersection source was
+    /// harvested at plan time.
+    pub bitmap_cell: Option<BitmapCell>,
+    pub bitmap_exec: Option<BitmapExec>,
+
+    // Window aggregate support
+    pub window_aggregates: Vec<WindowAggregateInfo>,
+    pub window_aggregate_results: Option<HashMap<usize, pg_sys::Datum>>,
+
+    pub heaprelid: pg_sys::Oid,
+    pub heaprel: Option<PgSearchRelation>,
+    pub indexrel: Option<PgSearchRelation>,
+    pub indexrelid: pg_sys::Oid,
+    pub lockmode: pg_sys::LOCKMODE,
+}
+
+/// The projection that gives a row its score, snippets and window aggregates, and the placeholder
+/// columns it reads them from.
+///
+/// One struct holds them, because the columns are valid only for the slot of this projection.
+pub struct BasePlaceholders {
+    pub projection: PlaceholderProjection,
+    pub score: PlaceholderColumn,
+    pub snippets: HashMap<SnippetType, Vec<PlaceholderColumn>>,
+    /// Indexed by target entry position.
+    pub window_aggs: HashMap<usize, PlaceholderColumn>,
+}
+
+impl CustomScanState for BaseScanState {
+    fn init_exec_method(&mut self, cstate: *mut pg_sys::CustomScanState) {
+        unsafe {
+            // SAFETY: inner_scan_state is always initialized and call to `init()` could never move `self`
+            (*self.exec_method.get()).init(self, cstate)
+        }
+    }
+}
+
+impl BaseScanState {
+    pub fn open_relations(&mut self, lockmode: pg_sys::LOCKMODE) {
+        self.lockmode = lockmode;
+        if self.heaprel.is_none() {
+            self.heaprel = if lockmode == pg_sys::NoLock as pg_sys::LOCKMODE {
+                Some(PgSearchRelation::open(self.heaprelid))
+            } else {
+                Some(PgSearchRelation::with_lock(self.heaprelid, lockmode))
+            }
+        };
+
+        if self.indexrel.is_none() {
+            self.indexrel = if lockmode == pg_sys::NoLock as pg_sys::LOCKMODE {
+                Some(PgSearchRelation::open(self.indexrelid))
+            } else {
+                Some(PgSearchRelation::with_lock(self.indexrelid, lockmode))
+            }
+        };
+    }
+
+    pub fn set_base_search_query_input(&mut self, input: SearchQueryInput) {
+        self.base_search_query_input = input;
+    }
+
+    pub fn search_query_input(&self) -> &SearchQueryInput {
+        if matches!(self.search_query_input, SearchQueryInput::Uninitialized) {
+            panic!("search_query_input should be initialized");
+        }
+        &self.search_query_input
+    }
+
+    /// Get the original base search query input before any modifications
+    pub fn base_search_query_input(&self) -> &SearchQueryInput {
+        &self.base_search_query_input
+    }
+
+    /// Drop the active search results (whose scorers hold bitmap cursors),
+    /// keeping the selected exec method: `reset()` re-binds it to the rebuilt
+    /// reader after a rescan. Replacing the method here would leave the
+    /// default `UnknownScanStyle`, which panics on its next use. No reader means
+    /// the scan never executed: there are no scorers, and the exec method may
+    /// not even be bound yet.
+    pub fn reset_exec_results(&mut self) {
+        if self.search_reader.is_some() {
+            self.exec_method_mut().reset(self);
+        }
+    }
+
+    /// Drop the current exec method (and with it any search results whose
+    /// scorers hold bitmap cursors) before the bitmap machinery is torn down.
+    pub fn drop_exec_method(&mut self) {
+        self.exec_method = UnsafeCell::new(Default::default());
+        self.exec_method_name = String::new();
+    }
+
+    #[inline(always)]
+    pub fn assign_exec_method<T: ExecMethod + 'static>(
+        &mut self,
+        m
+```
 
 ### Core Architecture Module: `benchmarks/src/utils.rs`
 ```
@@ -162,7 +393,7 @@ pub fn validate_output<'a>(
 
 ```
 
-### Core Architecture Module: `pg_search/src/api/operator/const_score.rs`
+### Core Architecture Module: `common/src/parallel_worker/mod.rs`
 ```
 // Copyright (c) 2023-2026 ParadeDB, Inc.
 //
@@ -180,783 +411,7 @@ pub fn validate_output<'a>(
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-use crate::api::operator::f16_typmod::deserialize_i32_to_f32;
-use crate::query::pdb_query::pdb;
-use crate::query::pdb_query::pdb::ScoreAdjustStyle;
-use crate::query::proximity::ProximityClause;
-use pgrx::{extension_sql, pg_cast, pg_extern};
-
-/// [`ConstType`] is a user-facing type used in SQL queries to indicate that should const a query
-/// predicate's score.  The "const" value is a multiplier so users should watch out for zero (`0`).
-///
-/// While there's no indication on the Rust type, [`ConstType`] wants a Postgres type modifier (typmod)
-/// when constructed so that a [`pdb::Query::Const { const: $typemod, query }`] can be constructed.
-///
-/// Users would use this type like so:
-///
-/// ```sql
-/// SELECT * FROM t WHERE body @@@ 'beer'::const(3);
-/// ```
-///
-/// It's up to individual operators to decide if/how they support [`ConstType`]
-///
-/// Invariant: `pdb.fuzzy` and `pdb.slop` are both IMPLICITLY castable to *both*
-/// `pdb.boost` and `pdb.const`. That is only unambiguous because no operator or
-/// function accepts both a [`BoostType`](crate::api::operator::boost::BoostType)
-/// and a `ConstType` overload at the same call site. If one ever does, those
-/// fuzzy/slop -> {boost, const} casts would resolve ambiguously and one of each
-/// pair must drop to `AS ASSIGNMENT` (see the boost/fuzzy cast in `fuzzy.rs`).
-#[derive(Debug)]
-#[repr(transparent)]
-pub struct ConstType(pdb::Query);
-
-// Contains all the boilerplate required by pgrx to make a custom type from scratch
-mod sql_datum_support {
-    use crate::api::operator::const_score::ConstType;
-    use crate::api::operator::const_typoid;
-    use crate::query::pdb_query::pdb;
-    use pgrx::callconv::{Arg, ArgAbi, BoxRet, FcInfo};
-    use pgrx::nullable::Nullable;
-    use pgrx::pgrx_sql_entity_graph::metadata::{
-        ArgumentError, ReturnsError, ReturnsRef, SqlMappingRef, SqlTranslatable, TypeOrigin,
-    };
-    use pgrx::{FromDatum, IntoDatum, pg_sys};
-
-    impl From<ConstType> for pdb::Query {
-        fn from(value: ConstType) -> Self {
-            match value.0 {
-                const_ @ pdb::Query::ScoreAdjusted { .. } => const_,
-                other => pdb::Query::ScoreAdjusted {
-                    query: Box::new(other),
-                    score: None,
-                },
-            }
-        }
-    }
-
-    impl IntoDatum for ConstType {
-        fn into_datum(self) -> Option<pg_sys::Datum> {
-            self.0.into_datum()
-        }
-
-        fn type_oid() -> pg_sys::Oid {
-            const_typoid()
-        }
-    }
-
-    impl FromDatum for ConstType {
-        unsafe fn from_polymorphic_datum(
-            datum: pg_sys::Datum,
-            is_null: bool,
-            typoid: pg_sys::Oid,
-        ) -> Option<Self> {
-            pdb::Query::from_polymorphic_datum(datum, is_null, typoid).map(ConstType)
-        }
-    }
-
-    unsafe impl SqlTranslatable for ConstType {
-        const TYPE_IDENT: &'static str = pgrx::pgrx_resolved_type!(ConstType);
-        const TYPE_ORIGIN: TypeOrigin = TypeOrigin::External;
-        const ARGUMENT_SQL: Result<SqlMappingRef, ArgumentError> =
-            Ok(SqlMappingRef::literal("pdb.const"));
-        const RETURN_SQL: Result<ReturnsRef, ReturnsError> =
-            Ok(ReturnsRef::One(SqlMappingRef::literal("pdb.const")));
-    }
-
-    unsafe impl BoxRet for ConstType {
-        unsafe fn box_into<'fcx>(self, fcinfo: &mut FcInfo<'fcx>) -> pgrx::datum::Datum<'fcx> {
-            match self.into_datum() {
-                Some(datum) => unsafe { fcinfo.return_raw_datum(datum) },
-                None => fcinfo.return_null(),
-            }
-        }
-    }
-
-    unsafe impl<'fcx> ArgAbi<'fcx> for ConstType {
-        unsafe fn unbox_arg_unchecked(arg: Arg<'_, 'fcx>) -> Self {
-            let index = arg.index();
-            unsafe {
-                arg.unbox_arg_using_from_datum()
-                    .unwrap_or_else(|| panic!("argument {index} must not be null"))
-            }
-        }
-
-        unsafe fn unbox_nullable_arg(arg: Arg<'_, 'fcx>) -> Nullable<Self> {
-            unsafe { arg.unbox_arg_using_from_datum().into() }
-        }
-    }
-}
-
-// [`ConstType`]'s SQL type definition and necessary functions to support creating
-mod typedef {
-    use crate::api::operator::const_score::ConstType;
-    use crate::api::operator::f16_typmod::{
-        TYPMOD_BOUNDS, deserialize_i32_to_f32, serialize_f32_to_i32,
-    };
-    use crate::query::pdb_query::pdb;
-    use crate::query::pdb_query::pdb::{ScoreAdjustStyle, query_out};
-    use pgrx::{Array, extension_sql, pg_extern, pg_sys};
-    use std::ffi::{CStr, CString};
-    use std::str::FromStr;
-
-    extension_sql!(
-        r#"
-            CREATE SCHEMA IF NOT EXISTS pdb;
-            CREATE TYPE pdb.const;
-        "#,
-        name = "ConstType_shell",
-        creates = [Type(ConstType)]
-    );
-
-    #[pg_extern(immutable, parallel_safe)]
-    fn const_in(input: &CStr, _typoid: pg_sys::Oid, typmod: i32) -> ConstType {
-        let query =
-            pdb::Query::unclassified_string(input.to_str().expect("input must not be NULL"));
-        ConstType(pdb::Query::ScoreAdjusted {
-            query: Box::new(query),
-            score: (typmod != -1)
-                .then(|| deserialize_i32_to_f32(typmod))
-                .map(ScoreAdjustStyle::Const),
-        })
-    }
-
-    #[pg_extern(immutable, parallel_safe)]
-    fn const_out(input: ConstType) -> CString {
-        query_out(input.0)
-    }
-
-    /// Parse the user-specified "typmod" value string and encode it into an i32 after round-tripping
-    /// it through a [`half::f16`] so that the user's value will fit in the positive side of an i32,
-    /// which is all Postgres lets us use.
-    ///
-    /// We clamp the user-provided value to `[-2048.0..2048.0]` to avoid confusion around precision
-    /// loss of larger integers, due to the nature of 16 bit floats.
-    #[pg_extern(immutable, parallel_safe)]
-    fn const_typmod_in(typmod_parts: Array<&CStr>) -> i32 {
-        assert!(typmod_parts.len() == 1);
-        let const_str = typmod_parts
-            .get(0)
-            .unwrap()
-            .expect("typmod cstring must not be NULL");
-        let const_f32 = f32::from_str(const_str.to_str().unwrap())
-            .unwrap_or_else(|_| panic!("invalid const value: {}", const_str.to_str().unwrap()));
-
-        let const_ = const_f32.clamp(TYPMOD_BOUNDS.0, TYPMOD_BOUNDS.1);
-        serialize_f32_to_i32(const_)
-    }
-
-    #[pg_extern(immutable, parallel_safe)]
-    fn const_typmod_out(typmod: i32) -> CString {
-        let const_ = deserialize_i32_to_f32(typmod);
-        CString::from_str(&const_.to_string()).unwrap()
-    }
-
-    extension_sql!(
-        r#"
-            CREATE TYPE pdb.const (
-                INPUT = const_in,
-                OUTPUT = const_out,
-                INTERNALLENGTH = VARIABLE,
-                LIKE = text,
-                TYPMOD_IN = const_typmod_in,
-                TYPMOD_OUT = const_typmod_out
-            );
-        "#,
-        name = "ConstType_final",
-        requires = [
-            "ConstType_shell",
-            const_in,
-            const_out,
-            const_typmod_in,
-            const_typmod_out
-        ]
-    );
-}
-
-#[pg_extern(immutable, parallel_safe)]
-pub fn query_to_const(input: pdb::Query, typmod: i32, _is_explicit: bool) -> ConstType {
-    let const_ = deserialize_i32_to_f32(typmod);
-    ConstType(pdb::Query::ScoreAdjusted {
-        query: Box::new(input),
-        score: Some(ScoreAdjustStyle::Const(const_)),
-    })
-}
-
-#[pg_extern(immutable, parallel_safe)]
-pub(crate) fn text_array_to_const(
-    array: Vec<String>,
-    typmod: i32,
-    _is_explicit: bool,
-) -> ConstType {
-    let const_ = deserialize_i32_to_f32(typmod);
-    let query = pdb::Query::UnclassifiedArray {
-        array,
-        fuzzy_data: None,
-        slop_data: None,
-    };
-    ConstType(pdb::Query::ScoreAdjusted {
-        query: Box::new(query),
-        score: Some(ScoreAdjustStyle::Const(const_)),
-    })
-}
-
-#[pg_extern(immutable, parallel_safe)]
-fn prox_to_const(input: ProximityClause, typmod: i32, _is_explicit: bool) -> ConstType {
-    let const_ = deserialize_i32_to_f32(typmod);
-
-    let prox = if let ProximityClause::Proximity {
-        left,
-        right,
-        distance,
-    } = input
-    {
-        pdb::Query::Proximity {
-            left: *left,
-            right: *right,
-            distance,
-        }
-    } else {
-        panic!("invalid ProximityClause variant: {input:?}")
-    };
-
-    ConstType(pdb::Query::ScoreAdjusted {
-        query: Box::new(prox),
-        score: Some(ScoreAdjustStyle::Const(const_)),
-    })
-}
-
-#[pg_cast(implicit, immutable, parallel_safe)]
-fn const_to_query(input: ConstType) -> pdb::Query {
-    input.0
-}
-
-/// SQL `CAST` function used by Postgres to apply the `typmod` value after the type has been constructed
-///
-/// One would think the type's input function, which also allows for a `typmod` argument would be
-/// able to do this, but alas, Postgres always sets that to `-1` for historical reasons.
-///
-/// In our case, a simple expression like:
-///
-/// ```sql
-/// SELECT 'foo'::const(3);
-/// ```
-///
-/// Will first go through the `const_in` function with a `-1` typmod, and then Postgres will call
-/// the `typmod_in`/`typmod_out` functions defined for [`ConstType`], then pass th
-```
-
-### Core Architecture Module: `pg_search/src/index/directory/utils.rs`
-```
-// Copyright (c) 2023-2026 ParadeDB, Inc.
-//
-// This file is part of ParadeDB - Postgres for Search and Analytics
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-use crate::api::{HashMap, HashSet};
-use crate::index::mvcc::{MvccSatisfies, PinCushion};
-use crate::postgres::rel::PgSearchRelation;
-use crate::postgres::storage::block::{
-    CTID_MAP_EXT, DeleteEntry, FileEntry, LinkedList, MVCCEntry, PgItem, STATS_EXT,
-    SegmentFileDetails, SegmentMetaEntry, SegmentMetaEntryImmutable, VECTOR_CENTROIDS_EXT,
-    VECTOR_VEC_EXT,
-};
-use crate::postgres::storage::metadata::MetaPage;
-use anyhow::Result;
-use pgrx::pg_sys;
-use std::path::PathBuf;
-use tantivy::index::SegmentComponent;
-use tantivy::{
-    IndexMeta,
-    index::{IndexSettings, SegmentId, SegmentMetaInventory},
-    schema::Schema,
-};
-
-pub fn save_schema(indexrel: &PgSearchRelation, tantivy_schema: &Schema) -> Result<()> {
-    let schema = MetaPage::open(indexrel).schema_bytes();
-    if schema.is_empty() {
-        let bytes = serde_json::to_vec(tantivy_schema)?;
-        unsafe {
-            schema.writer().write(&bytes)?;
-        }
-    }
-    Ok(())
-}
-
-pub fn save_settings(indexrel: &PgSearchRelation, tantivy_settings: &IndexSettings) -> Result<()> {
-    let settings = MetaPage::open(indexrel).settings_bytes();
-    if settings.is_empty() {
-        let bytes = serde_json::to_vec(tantivy_settings)?;
-        unsafe {
-            settings.writer().write(&bytes)?;
-        }
-    }
-    Ok(())
-}
-
-pub unsafe fn save_new_metas(
-    indexrel: &PgSearchRelation,
-    new_meta: &IndexMeta,
-    prev_meta: &IndexMeta,
-    directory_entries: &mut HashMap<PathBuf, FileEntry>,
-) -> Result<()> {
-    // in order to ensure that all of our mutations to the list of segments appear atomically on
-    // physical replicas, we atomically operate on a deep copy of the list.
-    let mut segment_metas_linked_list = MetaPage::open(indexrel).segment_metas();
-    let mut linked_list = segment_metas_linked_list.atomically();
-
-    let incoming_segments = new_meta
-        .segments
-        .iter()
-        .map(|s| (s.id(), s))
-        .collect::<HashMap<_, _>>();
-    let new_ids = new_meta
-        .segments
-        .iter()
-        .map(|s| s.id())
-        .collect::<HashSet<_>>();
-    let previous_ids = prev_meta
-        .segments
-        .iter()
-        .map(|s| s.id())
-        .collect::<HashSet<_>>();
-
-    if pg_sys::message_level_is_interesting(pg_sys::DEBUG1 as _) {
-        pgrx::debug1!(
-            "entered save_new_metas with {} new ids and {} previous ids",
-            new_ids.len(),
-            previous_ids.len()
-        );
-    }
-
-    // first, reorganize the directory_entries by segment id
-    let mut new_files =
-        HashMap::<SegmentId, HashMap<SegmentComponent, (FileEntry, PathBuf)>>::default();
-
-    for (path, file_entry) in directory_entries.drain() {
-        let segment_id = path.segment_id();
-        let component_type = path.component_type();
-
-        if let (Some(segment_id), Some(component_type)) = (segment_id, component_type) {
-            new_files
-                .entry(segment_id)
-                .or_default()
-                .insert(component_type, (file_entry, path));
-        } else {
-            panic!("malformed PathBuf: {}", path.display());
-        }
-    }
-
-    let created_ids = new_ids.difference(&previous_ids).collect::<Vec<_>>();
-    let mut modified_ids = previous_ids.intersection(&new_ids).collect::<Vec<_>>();
-    let deleted_ids = previous_ids.difference(&new_ids).collect::<Vec<_>>();
-
-    modified_ids.retain(|id| {
-        if let Some(new_files) = new_files.get(id) {
-            new_files.contains_key(&SegmentComponent::Delete)
-        } else {
-            false
-        }
-    });
-
-    //
-    // process the new segments
-    //
-    // these are added to the linked list as new items
-    // xmin is set to the current transaction id
-    // and xmax is set to InvalidTransactionId
-    //
-    let created_entries = created_ids
-        .into_iter()
-        .filter_map(|id| {
-            let created_segment = incoming_segments.get(id).unwrap();
-            let mut files = new_files.remove(id)?;
-
-            let meta_entry = SegmentMetaEntry::new_immutable(
-                *id,
-                created_segment.max_doc(),
-                pg_sys::InvalidTransactionId,
-                SegmentMetaEntryImmutable {
-                    postings: files.remove(&SegmentComponent::Postings).map(|e| e.0),
-                    positions: files.remove(&SegmentComponent::Positions).map(|e| e.0),
-                    fast_fields: files.remove(&SegmentComponent::FastFields).map(|e| e.0),
-                    field_norms: files.remove(&SegmentComponent::FieldNorms).map(|e| e.0),
-                    terms: files.remove(&SegmentComponent::Terms).map(|e| e.0),
-                    store: files.remove(&SegmentComponent::Store).map(|e| e.0),
-                    temp_store: files.remove(&SegmentComponent::TempStore).map(|e| e.0),
-                    delete: files
-                        .remove(&SegmentComponent::Delete)
-                        .map(|(file_entry, _)| DeleteEntry {
-                            file_entry,
-                            num_deleted_docs: created_segment.num_deleted_docs(),
-                        }),
-                    vec: files
-                        .remove(&SegmentComponent::Custom(VECTOR_VEC_EXT.to_string()))
-                        .map(|e| e.0),
-                    centroids: files
-                        .remove(&SegmentComponent::Custom(VECTOR_CENTROIDS_EXT.to_string()))
-                        .map(|e| e.0),
-                    stats: files
-                        .remove(&SegmentComponent::Custom(STATS_EXT.to_string()))
-                        .map(|e| e.0),
-                    ctid_map: files
-                        .remove(&SegmentComponent::Custom(CTID_MAP_EXT.to_string()))
-                        .map(|e| e.0),
-                    posting_norms: files.remove(&SegmentComponent::PostingNorms).map(|e| e.0),
-                    posting_bitmaps: files.remove(&SegmentComponent::PostingBitmaps).map(|e| e.0),
-                },
-            );
-
-            Some(meta_entry)
-        })
-        .collect::<Vec<_>>();
-
-    //
-    // process the modified segments
-    //
-    // lookup existing version, update the `delete` entry
-    // if it already has one, remember the old entry in `orphaned_deletes_files` so it can be
-    // re-added below as an immediately-recyclable entry
-    // xmin/xmax do not change
-    //
-    let mut orphaned_deletes_files = Vec::new();
-    let modified_entries = modified_ids
-        .into_iter()
-        .filter_map(|id| {
-            let mut files = new_files.remove(id)?;
-            assert!(
-                files.len() == 1 && files.contains_key(&SegmentComponent::Delete),
-                "new files for segment_id `{id}` should be exactly one Delete component:  {files:#?}"
-            );
-
-            let existing_segment = incoming_segments.get(id).unwrap();
-            let (mut meta_entry, blockno, _) = linked_list
-                .lookup_ex(|entry| entry.segment_id() == *id, None)
-                .unwrap_or_else(|e| {
-                    panic!("segment id `{id}` should be in the segment meta linked list:  {e}")
-                });
-            let (new_delete_entry, _path) = files
-                .remove(&SegmentComponent::Delete)
-                .unwrap_or_else(|| panic!("missing new delete file for segment_id `{id}`"));
-
-            let deletes = DeleteEntry {
-                file_entry: new_delete_entry,
-                num_deleted_docs: existing_segment.num_deleted_docs(),
-            };
-            if let Some(old_entry) = meta_entry.replace_deletes(deletes) {
-                // remember the old delete_entry for future action
-                orphaned_deletes_files.push(old_entry);
-            }
-
-            Some((meta_entry, blockno))
-        })
-        .collect::<Vec<_>>();
-
-    //
-    // process the deleted segments
-    //
-    // find the deleted segment entries and set their `xmax` to `FrozenTransactionId`, which is
-    // safe because a deleted segment always belongs to a transaction known to not be in progress
-    //
-    let deleted_entries = deleted_ids
-        .into_iter()
-        .map(|id| {
-            let (mut meta_entry, blockno, _) = linked_list
-                .lookup_ex(|entry| entry.segment_id() == *id, None)
-                .unwrap_or_else(|e| {
-                    panic!("segment id `{id}` should be in the segment meta linked list: {e}")
-                });
-
-            // Merges and VACUUM retire replaced segments inside a transaction.
-            assert!(pg_sys::IsTransactionState());
-
-            assert!(
-                meta_entry.xmax() == pg_sys::InvalidTransactionId,
-                "SegmentMetaEntry {} should not already be deleted",
-                meta_entry.segment_id()
-            );
-
-            // deleted segments belong to a transaction that is known to not be in progress
-            // and so when we mark them as deleted, it'll be with a transaction that is known to
-            // not be in progress, the FrozenTransactionId.
-            meta_entry.set_xmax(pg_sys::FrozenTransactionId);
-
-            (meta_entry, blockno)
-        })
-        .collect::<Vec<_>>();
-
-    //
-    // recycle anything leftover in `new_files` to our input `directory_entries` as they belong to segment(s) we
-    // are not 
-```
-
-### Core Architecture Module: `pg_search/src/index/reader/scorer.rs`
-```
-// Copyright (c) 2023-2026 ParadeDB, Inc.
-//
-// This file is part of ParadeDB - Postgres for Search and Analytics
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-use crate::index::reader::index::enable_scoring;
-use std::sync::{Arc, OnceLock};
-use tantivy::query::{BooleanQuery, Occur, PruningScorer, Query, Scorer, Weight};
-use tantivy::{DocAddress, DocId, DocSet, Score, Searcher, SegmentOrdinal, SegmentReader};
-
-#[cfg(any(test, feature = "pg_test"))]
-pub(crate) mod test_support {
-    use std::sync::atomic::AtomicUsize;
-
-    /// Number of deferred per-segment scorers that crossed the actual Tantivy open boundary.
-    pub(crate) static SCORERS_OPENED: AtomicUsize = AtomicUsize::new(0);
-}
-
-/// Lazily builds one [`Weight`] and shares it across a search's segments.
-///
-/// A scored weight aggregates corpus-level term statistics: `doc_freq` walks every
-/// segment's term dictionary. Building the weight per segment therefore costs
-/// segments² dictionary lookups per query, which dominates scored scans on
-/// many-segment indexes.
-pub struct LazyWeight {
-    query: Box<dyn Query>,
-    need_scores: bool,
-    searcher: Searcher,
-    weight: OnceLock<Box<dyn Weight>>,
-}
-
-impl LazyWeight {
-    pub fn new(query: Box<dyn Query>, need_scores: bool, searcher: Searcher) -> Self {
-        Self {
-            query,
-            need_scores,
-            searcher,
-            weight: Default::default(),
-        }
-    }
-
-    /// Conjoin another query using the same searcher and scoring mode.
-    /// Each segment still receives its own scorer.
-    pub(super) fn and_query(self: &Arc<Self>, query: Box<dyn Query>) -> Self {
-        Self::new(
-            Box::new(BooleanQuery::new(vec![
-                (Occur::Must, self.query.box_clone()),
-                (Occur::Must, query),
-            ])),
-            self.need_scores,
-            self.searcher.clone(),
-        )
-    }
-
-    pub(super) fn get(&self) -> &dyn Weight {
-        self.weight
-            .get_or_init(|| {
-                self.query
-                    .weight(enable_scoring(self.need_scores, &self.searcher))
-                    .expect("weight should be constructable")
-            })
-            .as_ref()
-    }
-}
-
-pub struct DeferredScorer {
-    weight: Arc<LazyWeight>,
-    segment_reader: SegmentReader,
-    scorer: OnceLock<Box<dyn PruningScorer>>,
-}
-
-impl DeferredScorer {
-    pub fn new(weight: Arc<LazyWeight>, segment_reader: SegmentReader) -> Self {
-        Self {
-            weight,
-            segment_reader,
-            scorer: Default::default(),
-        }
-    }
-
-    #[track_caller]
-    #[inline(always)]
-    fn scorer_mut(&mut self) -> &mut dyn PruningScorer {
-        self.scorer();
-        self.scorer
-            .get_mut()
-            .expect("deferred scorer should have been initialized")
-    }
-
-    #[track_caller]
-    #[inline(always)]
-    fn scorer(&self) -> &dyn PruningScorer {
-        self.scorer.get_or_init(|| {
-            #[cfg(any(test, feature = "pg_test"))]
-            test_support::SCORERS_OPENED.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-            self.weight
-                .get()
-                .pruning_scorer(&self.segment_reader, 1.0, Score::MIN)
-                .expect("pruning scorer should be constructable")
-        })
-    }
-
-    fn set_threshold(&mut self, threshold: Score) {
-        self.scorer_mut().set_threshold(threshold);
-    }
-}
-
-impl DocSet for DeferredScorer {
-    #[inline(always)]
-    fn advance(&mut self) -> DocId {
-        self.scorer_mut().advance()
-    }
-
-    #[inline(always)]
-    fn doc(&self) -> DocId {
-        self.scorer().doc()
-    }
-
-    fn size_hint(&self) -> u32 {
-        self.scorer().size_hint()
-    }
-}
-
-impl Scorer for DeferredScorer {
-    #[inline(always)]
-    fn score(&mut self) -> Score {
-        self.scorer_mut().score()
-    }
-}
-
-pub struct ScorerIter {
-    deferred: DeferredScorer,
-    segment_ord: SegmentOrdinal,
-    segment_reader: SegmentReader,
-}
-
-impl ScorerIter {
-    pub fn new(
-        scorer: DeferredScorer,
-        segment_ord: SegmentOrdinal,
-        segment_reader: SegmentReader,
-    ) -> Self {
-        Self {
-            deferred: scorer,
-            segment_ord,
-            segment_reader,
-        }
-    }
-
-    pub fn segment_ord(&self) -> SegmentOrdinal {
-        self.segment_ord
-    }
-
-    pub fn segment_id(&self) -> tantivy::index::SegmentId {
-        self.segment_reader.segment_id()
-    }
-
-    /// Returns the estimated number of documents that will be yielded by this iterator.
-    ///
-    /// This is used for query planning statistics and uses Tantivy's `size_hint`.
-    pub fn estimated_doc_count(&self) -> u32 {
-        self.deferred.size_hint()
-    }
-
-    pub fn set_threshold(&mut self, threshold: Score) {
-        self.deferred.set_threshold(threshold);
-    }
-
-    /// Returns an upper bound on the number of documents this iterator can yield starting from
-    /// `from_doc` (inclusive) through the end of the segment.
-    pub fn remaining_docs_upper_bound(&self, from_doc: DocId) -> usize {
-        self.segment_reader
-            .max_doc()
-            .saturating_sub(from_doc)
-            .min(self.segment_reader.num_docs()) as usize
-    }
-}
-
-impl Iterator for ScorerIter {
-    type Item = (Score, DocAddress);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        loop {
-            let doc_id = self.deferred.doc();
-
-            if doc_id == tantivy::TERMINATED {
-                // we've read all the docs
-                return None;
-            } else if self
-                .segment_reader
-                .alive_bitset()
-                .map(|alive_bitset| alive_bitset.is_alive(doc_id))
-                // if there's no alive_bitset, the doc is alive
-                .unwrap_or(true)
-            {
-                // this doc is alive
-                let score = self.deferred.score();
-                let this = (score, DocAddress::new(self.segment_ord, doc_id));
-
-                // move to the next doc for the next iteration
-                self.deferred.advance();
-
-                // return the live doc
-                return Some(this);
-            }
-
-            // this doc isn't alive, move to the next doc and loop around
-            self.deferred.advance();
-        }
-    }
-
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        // NOTE: We do not implement size_hint for `ScorerIter`, because the implementation of
-        // `Scorer::size_hint` can take a lot longer to execute than is usually expected from
-        // `Iterator::size_hint`. We also never consume a `ScorerIter` in a way that requires an
-        // accurate size: when consuming for Top K, we consume a precise amount, and in all other
-        // cases the iterator is consumed as streaming.
-        (0, None)
-    }
-}
-
-```
-
-### Core Architecture Module: `pg_search/src/parallel_worker/mod.rs`
-```
-// Copyright (c) 2023-2026 ParadeDB, Inc.
-//
-// This file is part of ParadeDB - Postgres for Search and Analytics
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+#![allow(clippy::not_unsafe_ptr_arg_deref, unsafe_op_in_unsafe_fn)]
 
 //! Provides an abstract API over Postgres' parallel workers, allowing for the implementation of
 //! different strategies for distributing work across processes.
@@ -999,7 +454,7 @@ enum TocKeys {
     WalUsage = 0xE000_0000_0000_000A,
 }
 
-pub(crate) struct WorkerStatsGuard {
+pub struct WorkerStatsGuard {
     buf_usage: *mut pg_sys::BufferUsage,
     wal_usage: *mut pg_sys::WalUsage,
     worker_idx: usize,
@@ -1029,6 +484,26 @@ impl From<TocKeys> for u64 {
 /// These properties let `as_bytes()` and `object()`/`slice()` operate
 /// without undefined behaviour.
 pub trait ParallelStateType: bytemuck::Pod {}
+
+impl ParallelState for pg_sys::SharedFileSet {
+    fn as_bytes(&self) -> &[u8] {
+        unsafe { std::slice::from_raw_parts(self as *const _ as *const u8, size_of_val(self)) }
+    }
+}
+
+impl ParallelState for (usize, *mut pg_sys::ParallelTableScanDescData) {
+    fn type_name(&self) -> &'static str {
+        std::any::type_name::<pg_sys::ParallelTableScanDescData>()
+    }
+
+    fn size_of(&self) -> usize {
+        self.0
+    }
+
+    fn as_bytes(&self) -> &[u8] {
+        unsafe { std::slice::from_raw_parts(self.1 as *const _ as *const u8, self.size_of()) }
+    }
+}
 
 pub trait ParallelState {
     /// A binary representation of the header information necessary to store/retrieve [`ParallelState`]
@@ -1228,7 +703,7 @@ impl Display for ValueError {
 }
 
 impl ParallelStateManager {
-    pub(crate) fn new(toc: *mut pg_sys::shm_toc, seg: *mut pg_sys::dsm_segment) -> Self {
+    pub fn new(toc: *mut pg_sys::shm_toc, seg: *mut pg_sys::dsm_segment) -> Self {
         assert!(!toc.is_null());
         unsafe {
             let ptr = pg_sys::shm_toc_lookup(toc, TocKeys::UserStateLength.into(), true);
@@ -1237,29 +712,9 @@ impl ParallelStateManager {
             Self {
                 toc: NonNull::new(toc).unwrap_unchecked(),
                 len,
-                seg,
-            }
-        }
-    }
-
-    /// The DSM segment the state lives in, for shared regions whose lifetime hooks onto it (a
-    /// `SharedFileSet` a worker attaches to, for one).
-    pub fn dsm_segment(&self) -> *mut pg_sys::dsm_segment {
-        self.seg
-    }
-
-    unsafe fn decode_info<T: Copy + 'static>(
-        &self,
-        i: usize,
-    ) -> Result<Option<(usize, &str)>, ValueError> {
-        let idx: u64 = TocKeys::UserState.into();
-        let idx = idx + i as u64;
-        let ptr = pg_sys::shm_toc_lookup(self.toc.as_ptr(), idx, true);
-        if ptr.is_null() {
-            return 
 ```
 
-### Core Architecture Module: `pg_search/src/parallel_worker/mqueue.rs`
+### Core Architecture Module: `common/src/parallel_worker/mqueue.rs`
 ```
 // Copyright (c) 2023-2026 ParadeDB, Inc.
 //
@@ -1495,7 +950,7 @@ impl MessageQueueReceiver {
 
 ```
 
-### Core Architecture Module: `pg_search/src/postgres/customscan/aggregatescan/scan_state.rs`
+### Core Architecture Module: `common/src/postgres/utils.rs`
 ```
 // Copyright (c) 2023-2026 ParadeDB, Inc.
 //
@@ -1513,6 +968,1052 @@ impl MessageQueueReceiver {
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+#![allow(
+    clippy::missing_safety_doc,
+    clippy::not_unsafe_ptr_arg_deref,
+    unsafe_op_in_unsafe_fn
+)]
+
+use crate::api::tokenizers::{DatumWithType, type_is_alias, type_is_tokenizer};
+use crate::api::version::Version;
+use crate::nodecast;
+use crate::postgres::composite::CompositeSlotValues;
+use crate::postgres::datetime::PostgresDateTime;
+use crate::postgres::node::NodeExt;
+use crate::postgres::types::{TantivyValue, TantivyValueError};
+
+use crate::schema::{CategorizedFieldData, SearchFieldType};
+use anyhow::Result;
+use pgrx::itemptr::item_pointer_get_both;
+use pgrx::*;
+
+use std::collections::BTreeMap;
+use std::str::FromStr;
+use tokenizers::SearchNormalizer;
+
+pub fn text_lower_funcoid() -> pg_sys::Oid {
+    pg_sys::F_LOWER_TEXT.into()
+}
+
+unsafe extern "C-unwind" {
+    // SAFETY: `IsTransactionState()` doesn't raise an ERROR.  As such, we can avoid the pgrx
+    // sigsetjmp overhead by linking to the function directly.
+    pub fn IsTransactionState() -> bool;
+}
+
+/// `IsA()` for a node pointer that may be NULL, as the `pgrx::is_a` that pgrx 0.20 removed.
+///
+/// # Safety
+///
+/// `node` must be NULL or point to a live `Node`.
+#[inline]
+pub unsafe fn is_a(node: *mut pg_sys::Node, tag: pg_sys::NodeTag) -> bool {
+    unsafe { <pg_sys::Node as pg_sys::PgNode>::is_a_ptr(node, tag) }
+}
+
+/// Argument `num` of `fcinfo`, or `None` when it is SQL NULL, as the `pg_getarg_datum` that
+/// pgrx 0.20 removed.
+///
+/// # Safety
+///
+/// `fcinfo` must point to a live `FunctionCallInfo` whose arguments are initialized.
+#[inline]
+pub unsafe fn pg_getarg_datum(
+    fcinfo: pg_sys::FunctionCallInfo,
+    num: usize,
+) -> Option<pg_sys::Datum> {
+    unsafe { pgrx::fcinfo::pg_get_nullable_datum(fcinfo, num) }.into()
+}
+
+pub fn vacuum_delay_point() {
+    unsafe {
+        #[cfg(any(feature = "pg15", feature = "pg16", feature = "pg17"))]
+        pg_sys::vacuum_delay_point();
+        #[cfg(not(any(feature = "pg15", feature = "pg16", feature = "pg17")))]
+        pg_sys::vacuum_delay_point(false);
+    }
+}
+
+/// Implements `Drop` for a Postgres resource that must be cleaned up on the Postgres main thread,
+/// skipping cleanup during panic unwinding or process exit.
+///
+/// Because panics on the Postgres main thread are used to propagate PostgreSQL errors via pgrx, it
+/// is almost never safe to interact with PostgreSQL APIs during panic unwinding - doing so can
+/// cause a double-panic which results in SIGABRT. This macro also enforces that the destructor runs
+/// on the Postgres main thread (printing via `eprintln!` so an off-main-thread drop during
+/// unwinding never double-panics, panicking in debug builds when not unwinding, and skipping the
+/// body in release builds). Types that can be dropped on background threads must wrap their inner
+/// Postgres resource in `crate::postgres::customscan::mpp::MainThread` or forward their cleanup
+/// payload via `crate::postgres::customscan::mpp::drop_on_main_thread` from a plain `impl Drop`.
+///
+/// PostgreSQL's transaction abort mechanism will clean up resources (buffers, relations, etc.)
+/// when the transaction is aborted due to the error.
+///
+/// Cleanup is also skipped once `proc_exit` has started: a FATAL doesn't unwind, so `panicking()`
+/// can't see it, and the abort that `proc_exit` runs releases those resources too. Skipping the body
+/// doesn't stop Rust dropping the fields afterwards; values whose fields a FATAL can leave mid-use
+/// are handled where they are leaked, see `PgMemoryContextsExt::leak_and_drop_unless_exiting`.
+///
+/// # Example
+/// ```ignore
+/// impl_safe_drop!(MyStruct, |self| {
+///     unsafe {
+///         if crate::postgres::utils::IsTransactionState() {
+///             pg_sys::some_cleanup_function(self.handle);
+///         }
+///     }
+/// });
+/// ```
+///
+/// A generic type puts its impl parameters in brackets first:
+/// `impl_safe_drop!([T: Trait] MyStruct<T>, |self| { ... })`.
+#[macro_export]
+macro_rules! impl_safe_drop {
+    ([$($generics:tt)*] $ty:ty, |$self:ident| $body:block) => {
+        impl<$($generics)*> Drop for $ty {
+            fn drop(&mut $self) {
+                if !$crate::postgres::customscan::mpp::interrupt::is_main_thread() {
+                    eprintln!(
+                        "BUG: Drop for {} ran off the Postgres main thread",
+                        stringify!($ty)
+                    );
+                    #[cfg(debug_assertions)]
+                    if !std::thread::panicking() {
+                        panic!(
+                            "BUG: Drop for {} ran off the Postgres main thread",
+                            stringify!($ty)
+                        );
+                    }
+                    return;
+                }
+                if std::thread::panicking() || $crate::postgres::utils::proc_exit_in_progress() {
+                    return;
+                }
+                $body
+            }
+        }
+    };
+    ($ty:ty, |$self:ident| $body:block) => {
+        $crate::impl_safe_drop!([] $ty, |$self| $body);
+    };
+}
+
+/// Adds `leak_and_drop_unless_exiting` to pgrx's `PgMemoryContexts`.
+pub trait PgMemoryContextsExt {
+    /// pgrx's `leak_and_drop_on_delete`, except the drop is skipped once `proc_exit` has started.
+    ///
+    /// For the scan states that go with a query's memory: each custom scan's
+    /// (`CustomScanStateWrapper`) and the index AM's (`IndexScanDesc::opaque`). A FATAL can stop
+    /// any call into them, and a `Drop` on the state can't cover that: it skips only its own body, and
+    /// Rust still drops the fields:
+    ///
+    /// 1. A FATAL (e.g. from `pg_terminate_backend`) is raised at a `CHECK_FOR_INTERRUPTS()`, which
+    ///    can be deep inside a Rust call. Postgres calls `proc_exit` right there instead of
+    ///    unwinding, so that call never returns and `panicking()` is false.
+    /// 2. `proc_exit` aborts the transaction, which frees the query's memory. The callback on that
+    ///    memory drops the scan state, including values the interrupted call was still using.
+    /// 3. A value left mid-use panics when dropped: std's `OnceLock` while `get_or_init` is
+    ///    running (the readers hold many, in `FFHelper`, `LinkedBytesList`, `DeferredScorer` and
+    ///    tantivy's `SegmentReader`), tokio's `Runtime` while `block_on` holds its core, and the
+    ///    columnar scan's DataFusion stream mid-poll, which frees memory it doesn't own. A Rust
+    ///    panic can't pass through the C callback, so pgrx raises it as a Postgres ERROR.
+    /// 4. Postgres turns an ERROR raised during `proc_exit` into a FATAL, which calls `proc_exit`
+    ///    again. That nested exit skips the rest of the first abort, so the process exits still
+    ///    holding its buffer pins and locks.
+    ///
+    /// Skipping the drop lets the abort finish and release them. Nothing is lost: the abort also
+    /// releases the snapshots and temp files the state holds, and the `Box` goes with the process.
+    /// After a plain ERROR the drop still runs, since the backend keeps going and the state would
+    /// otherwise leak.
+    ///
+    /// The whole state is skipped, not just some of its values, because the values above are
+    /// std, tokio, tantivy and DataFusion types: there is no `Drop` of ours on them to put
+    /// `impl_safe_drop!` on. Our own `Drop`s are checked by `.github/scripts/check_impl_drop.py`.
+    ///
+    /// The body mirrors pgrx 0.19.2's `leak_and_drop_on_delete` (`memcxt.rs`) plus the
+    /// `proc_exit` check; keep it in sync when bumping pgrx.
+    fn leak_and_drop_unless_exiting<T>(&mut self, v: T) -> *mut T;
+}
+
+impl PgMemoryContextsExt for PgMemoryContexts {
+    fn leak_and_drop_unless_exiting<T>(&mut self, v: T) -> *mut T {
+        #[pg_guard]
+        unsafe extern "C-unwind" fn drop_unless_exiting<T>(ptr: *mut std::ffi::c_void) {
+            if proc_exit_in_progress() {
+                return;
+            }
+            // SAFETY: `ptr` came from the `Box::leak` below, and Postgres runs a reset callback
+            // once.
+            drop(unsafe { Box::from_raw(ptr.cast::<T>()) });
+        }
+
+        let leaked = Box::leak(Box::new(v));
+        unsafe {
+            // SAFETY: the callback struct is plain pointers, all set before it is registered.
+            let callback = self.palloc_struct::<pg_sys::MemoryContextCallback>();
+            (*callback).func = Some(drop_unless_exiting::<T>);
+            (*callback).arg = (leaked as *mut T).cast();
+            pg_sys::MemoryContextRegisterResetCallback(self.value(), callback);
+        }
+        leaked
+    }
+}
+
+/// Whether this backend is running `proc_exit`, where a FATAL may have left Rust state mid-use.
+#[cfg(not(test))]
+pub fn proc_exit_in_progress() -> bool {
+    // SAFETY: plain read of a backend-local flag on the backend thread.
+    unsafe { pgrx::pg_sys::proc_exit_inprogress }
+}
+
+/// The lib-test binary doesn't link the PG globals, and no test runs `proc_exit`.
+#[cfg(test)]
+pub fn proc_exit_in_progress() -> bool {
+    false
+}
+
+/// RAII guard for PostgreSQL standalone expression context
+/// Automatically frees the context when dropped
+///
+/// let context_guard = ExprContextGuard::new();
+/// // Use context_guard.as_ptr() to get the raw pointer
+/// // Context is automatically freed when
+```
+
+### Core Architecture Module: `index_read/src/index/directory/utils.rs`
+```
+// Copyright (c) 2023-2026 ParadeDB, Inc.
+//
+// This file is part of ParadeDB - Postgres for Search and Analytics
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+#![allow(clippy::missing_safety_doc, unsafe_op_in_unsafe_fn)]
+
+use crate::api::{HashMap, HashSet};
+use crate::index::mvcc::{MvccSatisfies, PinCushion};
+use crate::postgres::rel::PgSearchRelation;
+use crate::postgres::storage::block::{
+    CTID_MAP_EXT, DeleteEntry, FileEntry, LinkedList, MVCCEntry, PgItem, STATS_EXT,
+    SegmentFileDetails, SegmentMetaEntry, SegmentMetaEntryImmutable, VECTOR_CENTROIDS_EXT,
+    VECTOR_VEC_EXT,
+};
+use crate::postgres::storage::metadata::MetaPage;
+use anyhow::Result;
+use pgrx::pg_sys;
+use std::path::PathBuf;
+use tantivy::index::SegmentComponent;
+use tantivy::{
+    IndexMeta,
+    index::{IndexSettings, SegmentId, SegmentMetaInventory},
+    schema::Schema,
+};
+
+pub fn save_schema(indexrel: &PgSearchRelation, tantivy_schema: &Schema) -> Result<()> {
+    let schema = MetaPage::open(indexrel).schema_bytes();
+    if schema.is_empty() {
+        let bytes = serde_json::to_vec(tantivy_schema)?;
+        unsafe {
+            schema.writer().write(&bytes)?;
+        }
+    }
+    Ok(())
+}
+
+pub fn save_settings(indexrel: &PgSearchRelation, tantivy_settings: &IndexSettings) -> Result<()> {
+    let settings = MetaPage::open(indexrel).settings_bytes();
+    if settings.is_empty() {
+        let bytes = serde_json::to_vec(tantivy_settings)?;
+        unsafe {
+            settings.writer().write(&bytes)?;
+        }
+    }
+    Ok(())
+}
+
+pub unsafe fn save_new_metas(
+    indexrel: &PgSearchRelation,
+    new_meta: &IndexMeta,
+    prev_meta: &IndexMeta,
+    directory_entries: &mut HashMap<PathBuf, FileEntry>,
+) -> Result<()> {
+    // in order to ensure that all of our mutations to the list of segments appear atomically on
+    // physical replicas, we atomically operate on a deep copy of the list.
+    let mut segment_metas_linked_list = MetaPage::open(indexrel).segment_metas();
+    let mut linked_list = segment_metas_linked_list.atomically();
+
+    let incoming_segments = new_meta
+        .segments
+        .iter()
+        .map(|s| (s.id(), s))
+        .collect::<HashMap<_, _>>();
+    let new_ids = new_meta
+        .segments
+        .iter()
+        .map(|s| s.id())
+        .collect::<HashSet<_>>();
+    let previous_ids = prev_meta
+        .segments
+        .iter()
+        .map(|s| s.id())
+        .collect::<HashSet<_>>();
+
+    if pg_sys::message_level_is_interesting(pg_sys::DEBUG1 as _) {
+        pgrx::debug1!(
+            "entered save_new_metas with {} new ids and {} previous ids",
+            new_ids.len(),
+            previous_ids.len()
+        );
+    }
+
+    // first, reorganize the directory_entries by segment id
+    let mut new_files =
+        HashMap::<SegmentId, HashMap<SegmentComponent, (FileEntry, PathBuf)>>::default();
+
+    for (path, file_entry) in directory_entries.drain() {
+        let segment_id = path.segment_id();
+        let component_type = path.component_type();
+
+        if let (Some(segment_id), Some(component_type)) = (segment_id, component_type) {
+            new_files
+                .entry(segment_id)
+                .or_default()
+                .insert(component_type, (file_entry, path));
+        } else {
+            panic!("malformed PathBuf: {}", path.display());
+        }
+    }
+
+    let created_ids = new_ids.difference(&previous_ids).collect::<Vec<_>>();
+    let mut modified_ids = previous_ids.intersection(&new_ids).collect::<Vec<_>>();
+    let deleted_ids = previous_ids.difference(&new_ids).collect::<Vec<_>>();
+
+    modified_ids.retain(|id| {
+        if let Some(new_files) = new_files.get(id) {
+            new_files.contains_key(&SegmentComponent::Delete)
+        } else {
+            false
+        }
+    });
+
+    //
+    // process the new segments
+    //
+    // these are added to the linked list as new items
+    // xmin is set to the current transaction id
+    // and xmax is set to InvalidTransactionId
+    //
+    let created_entries = created_ids
+        .into_iter()
+        .filter_map(|id| {
+            let created_segment = incoming_segments.get(id).unwrap();
+            let mut files = new_files.remove(id)?;
+
+            let meta_entry = SegmentMetaEntry::new_immutable(
+                *id,
+                created_segment.max_doc(),
+                pg_sys::InvalidTransactionId,
+                SegmentMetaEntryImmutable {
+                    postings: files.remove(&SegmentComponent::Postings).map(|e| e.0),
+                    positions: files.remove(&SegmentComponent::Positions).map(|e| e.0),
+                    fast_fields: files.remove(&SegmentComponent::FastFields).map(|e| e.0),
+                    field_norms: files.remove(&SegmentComponent::FieldNorms).map(|e| e.0),
+                    terms: files.remove(&SegmentComponent::Terms).map(|e| e.0),
+                    store: files.remove(&SegmentComponent::Store).map(|e| e.0),
+                    temp_store: files.remove(&SegmentComponent::TempStore).map(|e| e.0),
+                    delete: files
+                        .remove(&SegmentComponent::Delete)
+                        .map(|(file_entry, _)| DeleteEntry {
+                            file_entry,
+                            num_deleted_docs: created_segment.num_deleted_docs(),
+                        }),
+                    vec: files
+                        .remove(&SegmentComponent::Custom(VECTOR_VEC_EXT.to_string()))
+                        .map(|e| e.0),
+                    centroids: files
+                        .remove(&SegmentComponent::Custom(VECTOR_CENTROIDS_EXT.to_string()))
+                        .map(|e| e.0),
+                    stats: files
+                        .remove(&SegmentComponent::Custom(STATS_EXT.to_string()))
+                        .map(|e| e.0),
+                    ctid_map: files
+                        .remove(&SegmentComponent::Custom(CTID_MAP_EXT.to_string()))
+                        .map(|e| e.0),
+                    posting_norms: files.remove(&SegmentComponent::PostingNorms).map(|e| e.0),
+                    posting_bitmaps: files.remove(&SegmentComponent::PostingBitmaps).map(|e| e.0),
+                },
+            );
+
+            Some(meta_entry)
+        })
+        .collect::<Vec<_>>();
+
+    //
+    // process the modified segments
+    //
+    // lookup existing version, update the `delete` entry
+    // if it already has one, remember the old entry in `orphaned_deletes_files` so it can be
+    // re-added below as an immediately-recyclable entry
+    // xmin/xmax do not change
+    //
+    let mut orphaned_deletes_files = Vec::new();
+    let modified_entries = modified_ids
+        .into_iter()
+        .filter_map(|id| {
+            let mut files = new_files.remove(id)?;
+            assert!(
+                files.len() == 1 && files.contains_key(&SegmentComponent::Delete),
+                "new files for segment_id `{id}` should be exactly one Delete component:  {files:#?}"
+            );
+
+            let existing_segment = incoming_segments.get(id).unwrap();
+            let (mut meta_entry, blockno, _) = linked_list
+                .lookup_ex(|entry| entry.segment_id() == *id, None)
+                .unwrap_or_else(|e| {
+                    panic!("segment id `{id}` should be in the segment meta linked list:  {e}")
+                });
+            let (new_delete_entry, _path) = files
+                .remove(&SegmentComponent::Delete)
+                .unwrap_or_else(|| panic!("missing new delete file for segment_id `{id}`"));
+
+            let deletes = DeleteEntry {
+                file_entry: new_delete_entry,
+                num_deleted_docs: existing_segment.num_deleted_docs(),
+            };
+            if let Some(old_entry) = meta_entry.replace_deletes(deletes) {
+                // remember the old delete_entry for future action
+                orphaned_deletes_files.push(old_entry);
+            }
+
+            Some((meta_entry, blockno))
+        })
+        .collect::<Vec<_>>();
+
+    //
+    // process the deleted segments
+    //
+    // find the deleted segment entries and set their `xmax` to `FrozenTransactionId`, which is
+    // safe because a deleted segment always belongs to a transaction known to not be in progress
+    //
+    let deleted_entries = deleted_ids
+        .into_iter()
+        .map(|id| {
+            let (mut meta_entry, blockno, _) = linked_list
+                .lookup_ex(|entry| entry.segment_id() == *id, None)
+                .unwrap_or_else(|e| {
+                    panic!("segment id `{id}` should be in the segment meta linked list: {e}")
+                });
+
+            // Merges and VACUUM retire replaced segments inside a transaction.
+            assert!(pg_sys::IsTransactionState());
+
+            assert!(
+                meta_entry.xmax() == pg_sys::InvalidTransactionId,
+                "SegmentMetaEntry {} should not already be deleted",
+                meta_entry.segment_id()
+            );
+
+            // deleted segments belong to a transaction that is known to not be in progress
+            // and so when we mark them as deleted, it'll be with a transaction that is known to
+            // not be in progress, the FrozenTransactionId.
+            meta_entry.set_xmax(pg_sys::FrozenTransactionId);
+
+            (meta_entry, blockno)
+        })
+        .collect::<Vec<_>>();
+
+    //
+    // recycle anything leftover in `new_files` to our input `dire
+```
+
+### Core Architecture Module: `index_read/src/index/reader/scorer.rs`
+```
+// Copyright (c) 2023-2026 ParadeDB, Inc.
+//
+// This file is part of ParadeDB - Postgres for Search and Analytics
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+use crate::index::reader::index::enable_scoring;
+use std::sync::{Arc, OnceLock};
+use tantivy::query::{BooleanQuery, Occur, PruningScorer, Query, Scorer, Weight};
+use tantivy::{DocAddress, DocId, DocSet, Score, Searcher, SegmentOrdinal, SegmentReader};
+
+#[cfg(any(test, feature = "pg_test"))]
+pub mod test_support {
+    use std::sync::atomic::AtomicUsize;
+
+    /// Number of deferred per-segment scorers that crossed the actual Tantivy open boundary.
+    pub static SCORERS_OPENED: AtomicUsize = AtomicUsize::new(0);
+}
+
+/// Lazily builds one [`Weight`] and shares it across a search's segments.
+///
+/// A scored weight aggregates corpus-level term statistics: `doc_freq` walks every
+/// segment's term dictionary. Building the weight per segment therefore costs
+/// segments² dictionary lookups per query, which dominates scored scans on
+/// many-segment indexes.
+pub struct LazyWeight {
+    query: Box<dyn Query>,
+    need_scores: bool,
+    searcher: Searcher,
+    weight: OnceLock<Box<dyn Weight>>,
+}
+
+impl LazyWeight {
+    pub fn new(query: Box<dyn Query>, need_scores: bool, searcher: Searcher) -> Self {
+        Self {
+            query,
+            need_scores,
+            searcher,
+            weight: Default::default(),
+        }
+    }
+
+    /// Conjoin another query using the same searcher and scoring mode.
+    /// Each segment still receives its own scorer.
+    pub(super) fn and_query(self: &Arc<Self>, query: Box<dyn Query>) -> Self {
+        Self::new(
+            Box::new(BooleanQuery::new(vec![
+                (Occur::Must, self.query.box_clone()),
+                (Occur::Must, query),
+            ])),
+            self.need_scores,
+            self.searcher.clone(),
+        )
+    }
+
+    pub(super) fn get(&self) -> &dyn Weight {
+        self.weight
+            .get_or_init(|| {
+                self.query
+                    .weight(enable_scoring(self.need_scores, &self.searcher))
+                    .expect("weight should be constructable")
+            })
+            .as_ref()
+    }
+}
+
+pub struct DeferredScorer {
+    weight: Arc<LazyWeight>,
+    segment_reader: SegmentReader,
+    scorer: OnceLock<Box<dyn PruningScorer>>,
+}
+
+impl DeferredScorer {
+    pub fn new(weight: Arc<LazyWeight>, segment_reader: SegmentReader) -> Self {
+        Self {
+            weight,
+            segment_reader,
+            scorer: Default::default(),
+        }
+    }
+
+    #[track_caller]
+    #[inline(always)]
+    fn scorer_mut(&mut self) -> &mut dyn PruningScorer {
+        self.scorer();
+        self.scorer
+            .get_mut()
+            .expect("deferred scorer should have been initialized")
+    }
+
+    #[track_caller]
+    #[inline(always)]
+    fn scorer(&self) -> &dyn PruningScorer {
+        self.scorer.get_or_init(|| {
+            #[cfg(any(test, feature = "pg_test"))]
+            test_support::SCORERS_OPENED.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            self.weight
+                .get()
+                .pruning_scorer(&self.segment_reader, 1.0, Score::MIN)
+                .expect("pruning scorer should be constructable")
+        })
+    }
+
+    fn set_threshold(&mut self, threshold: Score) {
+        self.scorer_mut().set_threshold(threshold);
+    }
+}
+
+impl DocSet for DeferredScorer {
+    #[inline(always)]
+    fn advance(&mut self) -> DocId {
+        self.scorer_mut().advance()
+    }
+
+    #[inline(always)]
+    fn doc(&self) -> DocId {
+        self.scorer().doc()
+    }
+
+    fn size_hint(&self) -> u32 {
+        self.scorer().size_hint()
+    }
+}
+
+impl Scorer for DeferredScorer {
+    #[inline(always)]
+    fn score(&mut self) -> Score {
+        self.scorer_mut().score()
+    }
+}
+
+pub struct ScorerIter {
+    deferred: DeferredScorer,
+    segment_ord: SegmentOrdinal,
+    segment_reader: SegmentReader,
+}
+
+impl ScorerIter {
+    pub fn new(
+        scorer: DeferredScorer,
+        segment_ord: SegmentOrdinal,
+        segment_reader: SegmentReader,
+    ) -> Self {
+        Self {
+            deferred: scorer,
+            segment_ord,
+            segment_reader,
+        }
+    }
+
+    pub fn segment_ord(&self) -> SegmentOrdinal {
+        self.segment_ord
+    }
+
+    pub fn segment_id(&self) -> tantivy::index::SegmentId {
+        self.segment_reader.segment_id()
+    }
+
+    /// Returns the estimated number of documents that will be yielded by this iterator.
+    ///
+    /// This is used for query planning statistics and uses Tantivy's `size_hint`.
+    pub fn estimated_doc_count(&self) -> u32 {
+        self.deferred.size_hint()
+    }
+
+    pub fn set_threshold(&mut self, threshold: Score) {
+        self.deferred.set_threshold(threshold);
+    }
+
+    /// Returns an upper bound on the number of documents this iterator can yield starting from
+    /// `from_doc` (inclusive) through the end of the segment.
+    pub fn remaining_docs_upper_bound(&self, from_doc: DocId) -> usize {
+        self.segment_reader
+            .max_doc()
+            .saturating_sub(from_doc)
+            .min(self.segment_reader.num_docs()) as usize
+    }
+}
+
+impl Iterator for ScorerIter {
+    type Item = (Score, DocAddress);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            let doc_id = self.deferred.doc();
+
+            if doc_id == tantivy::TERMINATED {
+                // we've read all the docs
+                return None;
+            } else if self
+                .segment_reader
+                .alive_bitset()
+                .map(|alive_bitset| alive_bitset.is_alive(doc_id))
+                // if there's no alive_bitset, the doc is alive
+                .unwrap_or(true)
+            {
+                // this doc is alive
+                let score = self.deferred.score();
+                let this = (score, DocAddress::new(self.segment_ord, doc_id));
+
+                // move to the next doc for the next iteration
+                self.deferred.advance();
+
+                // return the live doc
+                return Some(this);
+            }
+
+            // this doc isn't alive, move to the next doc and loop around
+            self.deferred.advance();
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        // NOTE: We do not implement size_hint for `ScorerIter`, because the implementation of
+        // `Scorer::size_hint` can take a lot longer to execute than is usually expected from
+        // `Iterator::size_hint`. We also never consume a `ScorerIter` in a way that requires an
+        // accurate size: when consuming for Top K, we consume a precise amount, and in all other
+        // cases the iterator is consumed as streaming.
+        (0, None)
+    }
+}
+
+```
+
+### Core Architecture Module: `index_read/src/query/proximity/scorer.rs`
+```
+// Copyright (c) 2023-2026 ParadeDB, Inc.
+//
+// This file is part of ParadeDB - Postgres for Search and Analytics
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+use crate::query::proximity::ProximityDistance;
+use std::cmp::Ordering;
+use tantivy::fieldnorm::FieldNormReader;
+use tantivy::postings::Postings;
+use tantivy::query::{Bm25Weight, Intersection, Scorer, SimpleUnion};
+use tantivy::{DocId, DocSet, Score, TERMINATED};
+
+pub struct ProximityScorer {
+    #[allow(clippy::type_complexity)]
+    intersection: Intersection<SimpleUnion<Box<dyn Postings>>, SimpleUnion<Box<dyn Postings>>>,
+    distance: ProximityDistance,
+    fieldnorm_reader: FieldNormReader,
+    weight_opt: Option<Bm25Weight>,
+    nmatches: usize,
+    lpos: Vec<u32>,
+    rpos: Vec<u32>,
+}
+
+impl ProximityScorer {
+    pub fn new(
+        left: Vec<Box<dyn Postings>>,
+        distance: ProximityDistance,
+        right: Vec<Box<dyn Postings>>,
+        fieldnorm_reader: FieldNormReader,
+        weight_opt: Option<Bm25Weight>,
+        num_docs: u32,
+    ) -> Self {
+        let left = SimpleUnion::build(left);
+        let right = SimpleUnion::build(right);
+        let intersection = Intersection::with_two_sets(left, right, num_docs);
+        let mut scorer = Self {
+            intersection,
+            distance,
+            fieldnorm_reader,
+            weight_opt,
+            nmatches: 0,
+            lpos: Default::default(),
+            rpos: Default::default(),
+        };
+
+        if scorer.doc() != TERMINATED && !scorer.prox_match() {
+            scorer.advance();
+        }
+
+        scorer
+    }
+
+    pub fn fieldnorm_id(&self) -> u8 {
+        self.intersection
+            .docset_specialized(0)
+            .fieldnorm_id()
+            .unwrap_or_else(|| self.fieldnorm_reader.fieldnorm_id(self.doc()))
+    }
+
+    pub fn prox_iter(&mut self) -> impl Iterator<Item = (u32, u32)> + '_ {
+        self.lpos.clear();
+        self.rpos.clear();
+        self.intersection
+            .docset_mut_specialized(0)
+            .positions(&mut self.lpos);
+        self.intersection
+            .docset_mut_specialized(1)
+            .positions(&mut self.rpos);
+        ProxIter::new(self.distance, &self.lpos, &self.rpos)
+    }
+
+    pub fn prox_count(&mut self) -> usize {
+        self.prox_iter().count()
+    }
+
+    fn prox_match(&mut self) -> bool {
+        let has_weight = self.weight_opt.is_some();
+        let mut iter = self.prox_iter();
+        if has_weight {
+            let count = iter.count();
+            self.nmatches = count;
+            count > 0
+        } else {
+            iter.next().is_some()
+        }
+    }
+}
+
+struct ProxIter<'a> {
+    distance: ProximityDistance,
+    lpos: &'a [u32],
+    rpos: &'a [u32],
+    li: usize,
+    ri: usize,
+}
+
+impl<'a> ProxIter<'a> {
+    fn new(distance: ProximityDistance, lpos: &'a [u32], rpos: &'a [u32]) -> Self {
+        Self {
+            distance,
+            lpos,
+            rpos,
+            li: 0,
+            ri: 0,
+        }
+    }
+}
+
+impl Iterator for ProxIter<'_> {
+    type Item = (u32, u32);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            if self.li >= self.lpos.len() || self.ri >= self.rpos.len() {
+                return None;
+            }
+
+            let l = self.lpos[self.li];
+            let r = self.rpos[self.ri];
+
+            let diff = self.distance.diff(l, r);
+            if diff <= self.distance.distance() + 1 {
+                self.li += 1;
+                return Some((l, r));
+            }
+
+            match l.cmp(&r) {
+                Ordering::Less => self.li += 1,
+                Ordering::Equal => {
+                    self.li += 1;
+                    self.ri += 1;
+                }
+                Ordering::Greater => self.ri += 1,
+            }
+        }
+    }
+}
+
+impl DocSet for ProximityScorer {
+    fn advance(&mut self) -> DocId {
+        loop {
+            let doc = self.intersection.advance();
+            if doc == TERMINATED || self.prox_match() {
+                return doc;
+            }
+        }
+    }
+
+    fn seek(&mut self, target: DocId) -> DocId {
+        let doc = self.intersection.seek(target);
+        if doc == TERMINATED || self.prox_match() {
+            return doc;
+        }
+        self.advance()
+    }
+
+    fn doc(&self) -> DocId {
+        self.intersection.doc()
+    }
+
+    fn size_hint(&self) -> u32 {
+        self.intersection.size_hint()
+    }
+}
+
+impl Scorer for ProximityScorer {
+    fn score(&mut self) -> Score {
+        if let Some(similarity_weight) = self.weight_opt.as_ref() {
+            similarity_weight.score(self.fieldnorm_id(), self.nmatches as u32)
+        } else {
+            1.0f32
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `index_read/src/query/score.rs`
+```
+// Copyright (c) 2023-2026 ParadeDB, Inc.
+//
+// This file is part of ParadeDB - Postgres for Search and Analytics
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+use std::ops::{Bound, RangeBounds};
+use tantivy::query::{EmptyScorer, EnableScoring, Explanation, Query, QueryClone, Scorer, Weight};
+use tantivy::schema::Field;
+use tantivy::{DocId, DocSet, Score, SegmentReader, TERMINATED, Term};
+
+#[derive(Debug)]
+pub struct ScoreFilter {
+    bounds: Vec<(Bound<f32>, Bound<f32>)>,
+    query: Box<dyn Query>,
+}
+
+impl QueryClone for ScoreFilter {
+    fn box_clone(&self) -> Box<dyn Query> {
+        Box::new(Self {
+            bounds: self.bounds.clone(),
+            query: self.query.box_clone(),
+        })
+    }
+}
+
+impl ScoreFilter {
+    pub fn new(bounds: Vec<(Bound<f32>, Bound<f32>)>, query: Box<dyn Query>) -> Self {
+        Self { bounds, query }
+    }
+}
+
+struct ScoreFilterWeight {
+    bounds: Vec<(Bound<f32>, Bound<f32>)>,
+    weight: Box<dyn Weight>,
+}
+
+impl Weight for ScoreFilterWeight {
+    fn scorer(&self, reader: &SegmentReader, boost: Score) -> tantivy::Result<Box<dyn Scorer>> {
+        let mut scorer = self.weight.scorer(reader, boost)?;
+
+        while !self
+            .bounds
+            .iter()
+            .any(|&(lower, upper)| (lower, upper).contains(&scorer.score()))
+        {
+            if scorer.advance() == TERMINATED {
+                scorer = Box::new(EmptyScorer);
+                break;
+            }
+        }
+
+        Ok(Box::new(ScoreFilterScorer {
+            bounds: self.bounds.clone(),
+            scorer,
+        }))
+    }
+
+    fn explain(&self, reader: &SegmentReader, doc: DocId) -> tantivy::Result<Explanation> {
+        self.weight.explain(reader, doc)
+    }
+}
+
+struct ScoreFilterScorer {
+    bounds: Vec<(Bound<f32>, Bound<f32>)>,
+    scorer: Box<dyn Scorer>,
+}
+
+impl Scorer for ScoreFilterScorer {
+    fn score(&mut self) -> Score {
+        self.scorer.score()
+    }
+}
+
+impl DocSet for ScoreFilterScorer {
+    fn advance(&mut self) -> DocId {
+        loop {
+            let doc = self.scorer.advance();
+            if doc == TERMINATED
+                || self
+                    .bounds
+                    .iter()
+                    .any(|&(lower, upper)| (lower, upper).contains(&self.scorer.score()))
+            {
+                return doc;
+            }
+        }
+    }
+
+    fn doc(&self) -> DocId {
+        self.scorer.doc()
+    }
+
+    fn size_hint(&self) -> u32 {
+        self.scorer.size_hint()
+    }
+}
+
+impl Query for ScoreFilter {
+    fn weight(&self, enable_scoring: EnableScoring<'_>) -> tantivy::Result<Box<dyn Weight>> {
+        Ok(Box::new(ScoreFilterWeight {
+            bounds: self.bounds.clone(),
+            weight: self.query.weight(enable_scoring)?,
+        }))
+    }
+
+    fn query_terms(
+        &self,
+        field: Field,
+        segment_reader: &SegmentReader,
+        visitor: &mut dyn FnMut(&Term, bool),
+    ) {
+        self.query.query_terms(field, segment_reader, visitor)
+    }
+}
+
+```
+
+### Core Architecture Module: `joinscan/src/postgres/customscan/aggregatescan/scan_state.rs`
+```
+// Copyright (c) 2023-2026 ParadeDB, Inc.
+//
+// This file is part of ParadeDB - Postgres for Search and Analytics
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
 
 use crate::customscan::aggregatescan::AggregateCSClause;
 use crate::customscan::aggregatescan::exec::AggregationResultsRow;
@@ -1694,584 +2195,7 @@ impl AggregateScanState {
             .expect("BaseScanState: indexrel should be initialized")
     }
 
-    /// Returns true if the DataFusion backend is active.
-    pub f
-```
-
-### Core Architecture Module: `pg_search/src/postgres/customscan/basescan/projections/score.rs`
-```
-// Copyright (c) 2023-2026 ParadeDB, Inc.
-//
-// This file is part of ParadeDB - Postgres for Search and Analytics
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-use crate::nodecast;
-use crate::postgres::customscan::basescan::projections::missing_scan_error;
-use crate::postgres::customscan::score_funcoids;
-use pgrx::{AnyElement, PgList, extension_sql, pg_extern, pg_sys};
-
-#[pgrx::pg_schema]
-mod pdb {
-    use crate::postgres::customscan::basescan::projections::missing_scan_error;
-    use pgrx::{AnyElement, extension_sql, pg_extern};
-
-    #[allow(unused_variables)]
-    #[pg_extern(name = "score", stable, parallel_safe, cost = 1)]
-    fn score_from_relation(relation_reference: AnyElement) -> f32 {
-        missing_scan_error("pdb.score")
-    }
-
-    extension_sql!(
-        r#"
-    ALTER FUNCTION pdb.score SUPPORT paradedb.placeholder_support;
-    "#,
-        name = "score_placeholder",
-        requires = [score_from_relation, placeholder_support]
-    );
-}
-
-// In `0.19.0`, we renamed the schema from `paradedb` to `pdb`.
-// This is a backwards compatibility shim to ensure that old queries continue to work.
-#[warn(deprecated)]
-#[allow(unused_variables)]
-#[pg_extern(name = "score", stable, parallel_safe, cost = 1)]
-fn paradedb_score_from_relation(relation_reference: AnyElement) -> Option<f32> {
-    missing_scan_error("paradedb.score")
-}
-
-extension_sql!(
-    r#"
-    ALTER FUNCTION paradedb.score SUPPORT paradedb.placeholder_support;
-    "#,
-    name = "paradedb_score_placeholder",
-    requires = [paradedb_score_from_relation, placeholder_support]
-);
-
-pub unsafe fn is_score_func(node: *mut pg_sys::Node, rti: pg_sys::Index) -> bool {
-    if let Some(funcexpr) = nodecast!(FuncExpr, T_FuncExpr, node)
-        && score_funcoids().contains(&(*funcexpr).funcid)
-    {
-        let args = PgList::<pg_sys::Node>::from_pg((*funcexpr).args);
-        assert!(args.len() == 1, "score function must have 1 argument");
-        if let Some(var) = nodecast!(Var, T_Var, args.get_ptr(0).unwrap())
-            && (*var).varno as i32 == rti as i32
-        {
-            return true;
-        }
-    }
-
-    false
-}
-
-```
-
-### Core Architecture Module: `pg_search/src/postgres/customscan/basescan/scan_state.rs`
-```
-// Copyright (c) 2023-2026 ParadeDB, Inc.
-//
-// This file is part of ParadeDB - Postgres for Search and Analytics
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-use std::cell::UnsafeCell;
-use std::collections::BTreeMap;
-use std::sync::Arc;
-
-use crate::api::{FieldName, HashMap, OrderByInfo, Varno};
-use crate::customscan::CustomScanState;
-use crate::index::fast_fields_helper::FFHelper;
-use crate::index::reader::index::SearchIndexReader;
-use crate::postgres::customscan::basescan::cost::WorkerDecisionReason;
-use crate::postgres::customscan::basescan::exec_methods::ExecMethod;
-use crate::postgres::customscan::basescan::parallel::{ParallelRole, ParallelScanHandle};
-use crate::postgres::customscan::basescan::projections::snippet::SnippetType;
-use crate::postgres::customscan::basescan::projections::snippet::pdb::IntArray2D;
-use crate::postgres::customscan::basescan::projections::window_agg::WindowAggregateInfo;
-use crate::postgres::customscan::basescan::telemetry::ScanTelemetry;
-use crate::postgres::customscan::bitmap_intersection::BitmapExec;
-use crate::postgres::customscan::builders::custom_path::ExecMethodType;
-use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
-use crate::postgres::customscan::qual_inspect::Qual;
-use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
-use crate::postgres::heap::{HeapFetchState, VisibilityChecker};
-use crate::postgres::rel::PgSearchRelation;
-use crate::postgres::utils::u64_to_item_pointer;
-use crate::postgres::{ParallelScanArgs, ParallelScanState};
-use crate::query::SearchQueryInput;
-use crate::query::tid_bitmap_stream::BitmapCell;
-use std::ptr::NonNull;
-
-use pgrx::heap_tuple::PgHeapTuple;
-use pgrx::{PgTupleDesc, pg_sys};
-use tantivy::index::SegmentId;
-use tantivy::snippet::SnippetGenerator;
-
-#[derive(Default)]
-pub struct BaseScanState {
-    // Declared first so any DataFusion stream /PgTokioRuntime / Tantivy scorers inside
-    // `exec_method` drop before `visibility_checker`, `doc_from_heap_state`, `search_reader`,
-    // `bitmap_cell`, `bitmap_exec`, and `heaprel`/`indexrel`.
-    exec_method: UnsafeCell<Box<dyn ExecMethod>>,
-    exec_method_name: String,
-
-    pub io_trace: Option<crate::index::reader::io_stats::Trace>,
-    /// Process-local EXPLAIN metrics (query counts, per-segment JSON, …).
-    pub telemetry: ScanTelemetry,
-    /// Set when this scan is parallel-aware (DSM attached).
-    pub parallel: Option<ParallelScanHandle>,
-
-    // Note: the range table index at execution time might be different from the one at planning time,
-    // so we need to use the one at execution time when creating the custom scan state.
-    // But, we also keep the planning RTI for the case when we need to use it for the `var_attname_lookup`
-    // because the `var_attname_lookup` is created based on the planning RTI.
-    // See https://www.postgresql.org/docs/current/custom-scan-plan.html
-    pub planning_rti: pg_sys::Index,
-    pub execution_rti: pg_sys::Index,
-
-    base_search_query_input: SearchQueryInput,
-    search_query_input: SearchQueryInput,
-    /// Where `search_query_input` is solved; `None` when the base query has nothing to solve.
-    /// Separate from `ps_ExprContext`, which `exec_custom_scan` resets per row: see the rules in
-    /// `solve_expr.rs`.
-    pub runtime_context: Option<NonNull<pg_sys::ExprContext>>,
-    pub visibility_checker: Option<VisibilityChecker>,
-    pub doc_from_heap_state: Option<HeapFetchState>,
-    pub search_reader: Option<SearchIndexReader>,
-    /// Executor startup before `SearchIndexReader::open`; consumed into the
-    /// reader's flat `scan_init_ns` metric on first execution.
-    pub executor_scan_init_ns: u64,
-    /// End-to-end CustomScan execution interval used to assign only the
-    /// residual around named nested stages to result assembly.
-    /// Whether the current execution is collecting stage timings for
-    /// `EXPLAIN ANALYZE`.  Timed queries leave the executor delivery path
-    /// uninstrumented.
-    pub explain_stage_accounting: bool,
-
-    pub targetlist_len: usize,
-
-    pub virtual_tuple_count: usize,
-
-    pub segment_count: usize,
-    pub(super) worker_selection_reason: Option<WorkerDecisionReason>,
-    pub quals: Option<Qual>,
-
-    pub need_scores: bool,
-    pub score_funcoids: [pg_sys::Oid; 2],
-
-    /// True when a junk ORDER-BY `embedding <-> query` `OpExpr` in the scan's
-    /// targetlist was replaced with a NULL placeholder `Const` (see
-    /// `inject_vector_distance_placeholders`). The value is never read — the
-    /// TopK scan already provides the ordering and the column is junk-stripped
-    /// — so the placeholder just spares `ExecProject` from calling
-    /// `l2_distance(embedding, query)` and detoasting the heap vector. We track
-    /// it only so the projection path knows it must use `placeholders`.
-    pub vector_distance_placeholder: bool,
-
-    pub snippet_funcoids: [pg_sys::Oid; 2],
-    pub snippets_funcoids: [pg_sys::Oid; 2],
-    pub snippet_positions_funcoids: [pg_sys::Oid; 2],
-
-    pub snippet_generators: HashMap<SnippetType, Option<SnippetGenerator>>,
-
-    pub var_attname_lookup: HashMap<(Varno, pg_sys::AttrNumber), FieldName>,
-    pub placeholders: Option<BasePlaceholders>,
-
-    // Store join-level search predicates for enhanced scoring/snippet generation
-    pub join_predicates: Option<SearchQueryInput>,
-
-    pub exec_method_type: ExecMethodType,
-    pub ambulkdelete_epoch: u32,
-
-    /// Execution state for the child bitmap scan, if a bitmap intersection source was
-    /// harvested at plan time.
-    pub bitmap_cell: Option<BitmapCell>,
-    pub bitmap_exec: Option<BitmapExec>,
-
-    // Window aggregate support
-    pub window_aggregates: Vec<WindowAggregateInfo>,
-    pub window_aggregate_results: Option<HashMap<usize, pg_sys::Datum>>,
-
-    pub heaprelid: pg_sys::Oid,
-    pub heaprel: Option<PgSearchRelation>,
-    pub indexrel: Option<PgSearchRelation>,
-    pub indexrelid: pg_sys::Oid,
-    pub lockmode: pg_sys::LOCKMODE,
-}
-
-/// The projection that gives a row its score, snippets and window aggregates, and the placeholder
-/// columns it reads them from.
-///
-/// One struct holds them, because the columns are valid only for the slot of this projection.
-pub struct BasePlaceholders {
-    pub projection: PlaceholderProjection,
-    pub score: PlaceholderColumn,
-    pub snippets: HashMap<SnippetType, Vec<PlaceholderColumn>>,
-    /// Indexed by target entry position.
-    pub window_aggs: HashMap<usize, PlaceholderColumn>,
-}
-
-impl CustomScanState for BaseScanState {
-    fn init_exec_method(&mut self, cstate: *mut pg_sys::CustomScanState) {
-        unsafe {
-            // SAFETY: inner_scan_state is always initialized and call to `init()` could never move `self`
-            (*self.exec_method.get()).init(self, cstate)
-        }
-    }
-}
-
-impl BaseScanState {
-    pub fn open_relations(&mut self, lockmode: pg_sys::LOCKMODE) {
-        self.lockmode = lockmode;
-        if self.heaprel.is_none() {
-            self.heaprel = if lockmode == pg_sys::NoLock as pg_sys::LOCKMODE {
-                Some(PgSearchRelation::open(self.heaprelid))
-            } else {
-                Some(PgSearchRelation::with_lock(self.heaprelid, lockmode))
-            }
-        };
-
-        if self.indexrel.is_none() {
-            self.indexrel = if lockmode == pg_sys::NoLock as pg_sys::LOCKMODE {
-                Some(PgSearchRelation::open(self.indexrelid))
-            } else {
-                Some(PgSearchRelation::with_lock(self.indexrelid, lockmode))
-            }
-        };
-    }
-
-    pub fn set_base_search_query_input(&mut self, input: SearchQueryInput) {
-        self.base_search_query_input = input;
-    }
-
-    pub fn search_query_input(&self) -> &SearchQueryInput {
-        if matches!(self.search_query_input, SearchQueryInput::Uninitialized) {
-            panic!("search_query_input should be initialized");
-        }
-        &self.search_query_input
-    }
-
-    /// Get the original base search query input before any modifications
-    pub fn base_search_query_input(&self) -> &SearchQueryInput {
-        &self.base_search_query_input
-    }
-
-    /// Drop the active search results (whose scorers hold bitmap cursors),
-    /// keeping the selected exec method: `reset()` re-binds it to the rebuilt
-    /// reader after a rescan. Replacing the method here would leave the
-    /// default `UnknownScanStyle`, which panics on its next use. No reader means
-    /// the scan never executed: there are no scorers, and the exec method may
-    /// not even be bound yet.
-    pub fn reset_exec_results(&mut self) {
-        if self.search_reader.is_some() {
-            self.exec_method_mut().reset(self);
-        }
-    }
-
-    /// Drop the current exec method (and with it any search results whose
-    /// scorers hold bitmap cursors) before the bitmap machinery is torn down.
-    pub fn drop_exec_method(&mut self) {
-        self.exec_method = UnsafeCell::new(Default::default());
-        self.exec_method_name = String::new();
-    }
-
-    #[inline(always)]
-    pub fn assign_exec_method<T: ExecMethod + 'static>(
-        &mut self,
-        method: T,
-        updated_exec_method_type: Option<ExecMethodType>,
-    ) {
-        self.exec_method = UnsafeCell::new(Box::new(method));
-        self.exec_method_name = std::any::type_name::<T>().to_string();
-        if let Some(exec_method_type) = updated_exec_method_type {
-           
-```
-
-### Core Architecture Module: `pg_search/src/postgres/customscan/hook.rs`
-```
-// Copyright (c) 2023-2026 ParadeDB, Inc.
-//
-// This file is part of ParadeDB - Postgres for Search and Analytics
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-use crate::api::agg_funcoids;
-use crate::api::operator::anyelement_search_opoids;
-use crate::api::window_aggregate::window_agg_oid;
-use crate::gucs;
-use crate::nodecast;
-use crate::postgres::customscan::aggregatescan::targetlist::TargetList;
-use crate::postgres::customscan::basescan::projections::window_agg;
-use crate::postgres::customscan::builders::custom_path::{
-    CustomPathBuilder, Flags, RestrictInfoType,
-};
-use crate::postgres::customscan::orderby::validate_topk_compatibility;
-use crate::postgres::customscan::qual_inspect::{PlannerContext, QualExtractState, extract_quals};
-use crate::postgres::customscan::{CreateUpperPathsHookArgs, CustomScan, RelPathlistHookArgs};
-use crate::postgres::node::NodeExt;
-use crate::postgres::planner_warnings::{clear_planner_warnings, emit_planner_warnings};
-use crate::postgres::rel_get_bm25_index;
-use crate::postgres::search_operator_relations;
-use crate::postgres::utils::pg_search_extension_installed;
-use once_cell::sync::Lazy;
-use pgrx::{PgList, PgMemoryContexts, pg_guard, pg_sys};
-use std::collections::{HashMap, hash_map::Entry};
-
-unsafe fn add_path(rel: *mut pg_sys::RelOptInfo, mut path: pg_sys::CustomPath) {
-    let forced = path.flags & Flags::Force as u32 != 0;
-    let offer_parallel = path.flags & Flags::OfferParallel as u32 != 0;
-    // Clear flags that are private to us before handing the path to PostgreSQL.
-    path.flags &= !(Flags::Force as u32 | Flags::OfferParallel as u32);
-
-    // Force means our custom path is not interchangeable with native PostgreSQL paths.
-    // Clear both complete and partial candidates up front so neither a regular path nor a
-    // Gather-built parallel path can outcompete us.
-    if forced {
-        (*rel).pathlist = std::ptr::null_mut();
-        (*rel).partial_pathlist = std::ptr::null_mut();
-    }
-
-    let custom_path = PgMemoryContexts::CurrentMemoryContext
-        .copy_ptr_into(&mut path, std::mem::size_of_val(&path));
-
-    // Complete (serial) path: add it for consideration and we're done.
-    if !(*custom_path).path.parallel_aware {
-        pg_sys::add_path(rel, custom_path.cast());
-        return;
-    }
-
-    // Parallel-aware: offer the partial path so PostgreSQL can build a Gather over it.
-    pg_sys::add_partial_path(rel, custom_path.cast());
-
-    // CostedBoth (offer_parallel) stops here -- the real serial sibling stays in the pathlist for a
-    // fair compare. Binding parallel (ParallelOnly) instead clears the complete paths and adds a
-    // junk-cost serial stub so the Gather must win.
-    if !offer_parallel {
-        (*rel).pathlist = std::ptr::null_mut();
-        let copy = PgMemoryContexts::CurrentMemoryContext
-            .copy_ptr_into(&mut path, std::mem::size_of_val(&path));
-        (*copy).path.parallel_aware = false;
-        (*copy).path.total_cost = 1000000000.0;
-        (*copy).path.startup_cost = 1000000000.0;
-        pg_sys::add_path(rel, copy.cast());
-    }
-}
-
-pub fn register_rel_pathlist<CS>(_: CS)
-where
-    CS: CustomScan<Args = RelPathlistHookArgs> + 'static,
-{
-    unsafe {
-        static mut PREV_HOOKS: Lazy<HashMap<std::any::TypeId, pg_sys::set_rel_pathlist_hook_type>> =
-            Lazy::new(Default::default);
-
-        #[pg_guard]
-        extern "C-unwind" fn __priv_callback<CS>(
-            root: *mut pg_sys::PlannerInfo,
-            rel: *mut pg_sys::RelOptInfo,
-            rti: pg_sys::Index,
-            rte: *mut pg_sys::RangeTblEntry,
-        ) where
-            CS: CustomScan<Args = RelPathlistHookArgs> + 'static,
-        {
-            unsafe {
-                #[allow(static_mut_refs)]
-                if let Some(Some(prev_hook)) = PREV_HOOKS.get(&std::any::TypeId::of::<CS>()) {
-                    (*prev_hook)(root, rel, rti, rte);
-                }
-
-                paradedb_rel_pathlist_callback::<CS>(root, rel, rti, rte);
-            }
-        }
-
-        #[allow(static_mut_refs)]
-        match PREV_HOOKS.entry(std::any::TypeId::of::<CS>()) {
-            Entry::Occupied(_) => panic!("{} is already registered", std::any::type_name::<CS>()),
-            Entry::Vacant(entry) => entry.insert(pg_sys::set_rel_pathlist_hook),
-        };
-
-        pg_sys::set_rel_pathlist_hook = Some(__priv_callback::<CS>);
-
-        pg_sys::RegisterCustomScanMethods(CS::custom_scan_methods())
-    }
-}
-
-/// Although this hook function can be used to examine, modify, or remove paths generated by the
-/// core system, a custom scan provider will typically confine itself to generating CustomPath
-/// objects and adding them to rel using add_path. The custom scan provider is responsible for
-/// initializing the CustomPath object, which is declared like this:
-#[pg_guard]
-pub extern "C-unwind" fn paradedb_rel_pathlist_callback<CS>(
-    root: *mut pg_sys::PlannerInfo,
-    rel: *mut pg_sys::RelOptInfo,
-    rti: pg_sys::Index,
-    rte: *mut pg_sys::RangeTblEntry,
-) where
-    CS: CustomScan<Args = RelPathlistHookArgs> + 'static,
-{
-    unsafe {
-        // Skip dummy relations (proven empty, e.g. via constraint exclusion).
-        // Adding a custom path replaces/precedes the dummy Append path in rel->pathlist,
-        // breaking is_dummy_rel and crashing Postgres indxpath assertions (Assert(outer_rel->rows > 0)).
-        if pg_sys::is_dummy_rel(rel) {
-            return;
-        }
-
-        if !pg_search_extension_installed() {
-            return;
-        }
-
-        if !gucs::enable_custom_scan() {
-            return;
-        }
-
-        let paths = CS::create_custom_path(CustomPathBuilder::new(
-            root,
-            rel,
-            RelPathlistHookArgs {
-                root,
-                rel,
-                rti,
-                rte,
-            },
-        ));
-
-        for path in paths {
-            add_path(rel, path);
-        }
-    }
-}
-
-pub fn register_upper_path<CS>(_: CS)
-where
-    CS: CustomScan<Args = CreateUpperPathsHookArgs> + 'static,
-{
-    unsafe {
-        static mut PREV_HOOKS: Lazy<
-            HashMap<std::any::TypeId, pg_sys::create_upper_paths_hook_type>,
-        > = Lazy::new(Default::default);
-
-        #[pg_guard]
-        extern "C-unwind" fn __priv_callback<CS>(
-            root: *mut pg_sys::PlannerInfo,
-            stage: pg_sys::UpperRelationKind::Type,
-            input_rel: *mut pg_sys::RelOptInfo,
-            output_rel: *mut pg_sys::RelOptInfo,
-            extra: *mut ::std::os::raw::c_void,
-        ) where
-            CS: CustomScan<Args = CreateUpperPathsHookArgs> + 'static,
-        {
-            unsafe {
-                #[allow(static_mut_refs)]
-                if let Some(Some(prev_hook)) = PREV_HOOKS.get(&std::any::TypeId::of::<CS>()) {
-                    (*prev_hook)(root, stage, input_rel, output_rel, extra);
-                }
-
-                paradedb_upper_paths_callback::<CS>(root, stage, input_rel, output_rel, extra);
-            }
-        }
-
-        #[allow(static_mut_refs)]
-        match PREV_HOOKS.entry(std::any::TypeId::of::<CS>()) {
-            Entry::Occupied(_) => panic!("{} is already registered", std::any::type_name::<CS>()),
-            Entry::Vacant(entry) => entry.insert(pg_sys::create_upper_paths_hook),
-        };
-
-        pg_sys::create_upper_paths_hook = Some(__priv_callback::<CS>);
-
-        pg_sys::RegisterCustomScanMethods(CS::custom_scan_methods())
-    }
-}
-
-#[pg_guard]
-pub extern "C-unwind" fn paradedb_upper_paths_callback<CS>(
-    root: *mut pg_sys::PlannerInfo,
-    stage: pg_sys::UpperRelationKind::Type,
-    input_rel: *mut pg_sys::RelOptInfo,
-    output_rel: *mut pg_sys::RelOptInfo,
-    extra: *mut ::std::os::raw::c_void,
-) where
-    CS: CustomScan<Args = CreateUpperPathsHookArgs> + 'static,
-{
-    if !pg_search_extension_installed() {
-        return;
-    }
-
-    unsafe {
-        let paths = CS::create_custom_path(CustomPathBuilder::new(
-            root,
-            output_rel,
-            CreateUpperPathsHookArgs {
-                root,
-                stage,
-                input_rel,
-                output_rel,
-                extra,
-            },
-        ));
-
-        for path in paths {
-            add_path(output_rel, path);
-        }
-    }
-}
-
-/// Static variable to store the previous planner hook (e.g., from Citus or other extensions)
-/// This MUST be outside both register_planner_hook() and paradedb_planner_hook()
-/// so they both reference the same variable for proper hook chaining.
-static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
-
-/// Register a global planner hook to intercept and modify queries before planning.
-/// This is called once during extension initialization and affects all queries.
-///
-/// # Window Function Replacement Strategy
-///
-/// ## Current Approach: Early Replacement via `planner_hook`
-///
-/// We replace `WindowFunc` nodes with `paradedb.window_agg(json)` placeholder calls
-/// **before** PostgreSQL's standard planning begins. This happens at the very start
-/// of the planning process, before any path generation or optimization.
-///
-/// ### Why Replace Early?
-///
-/// 1. **Prevents WindowAgg Node Creation**: By replacing window functions before
-///    `grouping_planner()` runs, we prevent PostgreSQL from creating `WindowAgg`
-///    plan nodes that would try to execute our placeholder functions.
-///
-/// 2. **Enables Top K Integration**: Our custom scan c
+    /// Returns true if
 ```
 
 
@@ -2283,8 +2207,8 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 - **Issue #7313** (2026-11-08): **JoinScan segfaults when a projected expression contains a scalar subquery**
   *Symptoms*: ### What happens?  ParadeDB Join Scan crashes the server (segmentation fault) when an expression in the SELECT list contains a scalar subquery, such as `a.q + (SELECT 1)`. Postgres then restarts all connections. A prepared statement parameter in the same place, with a generic plan, fails with ERROR: no value found for parameter 1.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE a (id int PRIMARY KEY, q int); CREATE TABLE b (id int PRIMARY KEY, a_id int);  INSERT INTO a VALUES (1, 5); INSERT INTO b VALUES (1, 1);  CREATE INDEX a_idx ON a USING paradedb (id, q); CREATE INDEX b_idx ON b USING paradedb (id, a_id);  SELECT a.id, a.q + (SELECT 1) FROM a JOIN b ON b.a_id = a.id WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; ```  The server crashes with "terminated by signal 11: Segmentation fault". Expected 1 | 6. With SET paradedb.enable_join_custom_scan = off; it returns 1 | 6.  The parameter case:  ```sql SET plan_cache_mode = force_generic_plan; PREPARE s(int) AS   SELECT a.id, a.q + $1 FROM a JOIN b ON b.a_id = a.id   WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; EXECUTE s(1); ```  Returns ERROR: no value found for parameter 1. Expected 1 | 6.  ### OS:  macOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  e80cf37  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB pg_search Extension  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant da
 
-- **Issue #7214** (2026-11-05): **Aggregate Scan returns NULL for an oid grouping key of 0**
-  *Symptoms*: The Tantivy backend of Aggregate Scan returns SQL NULL for `0::oid`, even when the grouping column is `NOT NULL`. PostgreSQL returns 0.  ## Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search CASCADE; BEGIN; SET LOCAL max_parallel_workers_per_gather = 0; SET LOCAL enable_indexscan = off; SET LOCAL paradedb.enable_aggregate_custom_scan = on;  CREATE TABLE oid_groups (id bigint PRIMARY KEY, k oid NOT NULL); INSERT INTO oid_groups VALUES (1, 0), (2, 1); CREATE INDEX oid_groups_idx ON oid_groups USING paradedb (id, k); ANALYZE oid_groups;  EXPLAIN (COSTS OFF) SELECT k, count(*) FROM oid_groups WHERE id @@@ pdb.all() GROUP BY k ORDER BY k; -- Custom Scan (ParadeDB Aggregate Scan), Tantivy terms on k.  SELECT k, count(*) FROM oid_groups WHERE id @@@ pdb.all() GROUP BY k ORDER BY k; -- Actual: NULL | 1 --            1 | 1  SET LOCAL paradedb.enable_aggregate_custom_scan = off; SET LOCAL paradedb.enable_custom_scan = off; SELECT k, count(*) FROM oid_groups GROUP BY k ORDER BY k; -- Expected: 0 | 1 --           1 | 1 ROLLBACK; ```  `TantivyValue::try_into_datum` calls `Oid::from(u32::try_from(self)?).into_datum()` in [types.rs:90](https://github.com/paradedb/paradedb/blob/d0213faa89c9b51998155cec6418e6b3e04aee60/pg_search/src/postgres/types.rs#L90). pgrx returns `None` for OID zero (`Oid::INVALID`), so a valid SQL value becomes NULL. Zero should remain a non-NULL Datum.  Reproduced PG18.1  
+- **Issue #7293** (2026-11-10): **Server crashes when a join filter compares an expression over two tables to a scalar subquery**
+  *Symptoms*: ### What happens?  ParadeDB crashes the backend with a segmentation fault when a join query has a filter that uses columns from both tables and an uncorrelated scalar subquery, for example `a.price * b.qty > (SELECT 1)`. Postgres then terminates all active connections and restarts. Plain `EXPLAIN` crashes too, because the fault happens during planning.  Both Aggregate Scan and Join Scan are affected. The same query without aggregates crashes through Join Scan when it has an `ORDER BY` and `LIMIT`.  The crash report shows DataFusion's constant evaluator calling `PgExprUdf`, which faults in `ExecEvalParamExec` on a NULL address:  ``` ExecEvalParamExec        (KERN_INVALID_ADDRESS at 0x0) ExecInterpExpr ExecEvalExpr PgExprUdf                (pg_expr_udf.rs) ScalarUDF::invoke_with_args ConstEvaluator           (datafusion_optimizer expr_simplifier) ```  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE ca (id int PRIMARY KEY, name text, price float8); CREATE TABLE cb (id int PRIMARY KEY, a_id int, qty float8);  INSERT INTO ca VALUES (1, 'x shoes', 1.5), (2, 'y shoes', 2.5); INSERT INTO cb VALUES (1, 1, 1), (2, 2, 2);  CREATE INDEX ca_idx ON ca USING paradedb (id, name, price); CREATE INDEX cb_idx ON cb USING paradedb (id, a_id, qty);  SELECT COUNT(*) FROM ca JOIN cb ON cb.a_id = ca.id WHERE ca.id @@@ pdb.all()   AND ca.price * cb.qty > (SELECT 1); ```  Crashes with `server closed the connection unexpectedly`. The Postgres log shows `terminated by si
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2301,529 +2225,680 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3390563` (2026-11-08)
-**Commit Message**: fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (#7305)
+### Incident Patch 1: `61edff0a` (2026-11-10)
+**Commit Message**: fix: correct Tantivy revision after clustering update (#7365)
 
 ## What
 
-1. Fix a backend crash (`SIGSEGV`) when a `JoinScan` `SELECT` list
-combines `pdb.score()` with a scalar subquery (`InitPlan`) or
-prepared-statement parameter (`$1`).
-2. Emit a planner warning (`WARNING: RankJoinExec not used: ...`) during
-`EXPLAIN` when `paradedb.planner_warnings` is enabled and a
-score-ordered top-K join falls back to `HashJoinExec`.
-3. Keep `RankJoinExec` enabled when one side of a two-sided score join
-has 6 or more `OR` search predicates (for example, searching across many
-text columns on one table), or when a cross-table `OR` contains repeated
-predicates on the same table.
+Restore compilation on main by pinning Tantivy to
+`05b861b5ef138c4f4a3d93544d3b174e1994e207`, the merged revision of
+paradedb/tantivy#392.
 
 ## Why
 
-- Users normalizing or offsetting `pdb.score()` in `SELECT` with a
-scalar subquery or `$1` parameter hit a backend crash during planning or
-execution.
-- When a top-K join ordered by `pdb.score()` was ineligible for
-`RankJoinExec`, it silently fell back to `HashJoinExec` even with
-`paradedb.planner_warnings` turned on, making it hard to diagnose why a
-query was slow.
-- `RankJoinExec` checks that neither side of a two-sided score join
-dominates the combined score by more than 5:1 (
+#7346 pinned the pre-merge branch commit `1c7c2150`, which lacks the
+vector-routing APIs already required by #7295, including
+`VectorSearchBudget`, `AtomicVectorWork`, and
+`TopClustersBySimilarityCollector`. Both
+[HN](https://github.com/paradedb/paradedb/actions/runs/42894121461) and
+[MS
+MARCO](https://github.com/paradedb/paradedb/actions/runs/42894122837)
+pg_vectorsearch runs failed while compiling `pg_search` during cluster
+setup.
 
-**File**: `docs/project/changelog/unreleased/7305.bugfix.mdx` (added, +5/-0)
+## How
+
+Update all four Tantivy dependency/patch pins and the ten Tantivy-family
+lockfile entries. The merged revision retains the geometric
+`target_leaf_size` changes and includes the required routing APIs. No
+other dependency versions change. The existing Nix CI workflow will
+refresh `cargoHash` for the updated lockfile.
+
+## Tests
+
+- `cargo metadata --format-version 1 --locked`: all ten Tantivy-family
+packages resolve to the new revision.
+- `cargo check --workspace --all-targets --locked`: passed locally with
+PostgreSQL 18, including 
+
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+Fixed a crash when a `JoinScan` `SELECT` list combines `pdb.score()` with a scalar subquery or query parameter, kept `RankJoinExec` for joins with many `OR` or constant-score predicates on one side, and added `EXPLAIN` warnings when `RankJoinExec` is not used.
+@@ -5254,7 +5254,7 @@ dependencies = [
+ [[package]]
+ name = "ownedbytes"
+ version = "0.9.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "stable_deref_trait",
+ ]
+@@ -7513,7 +7513,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
+ [[package]]
+ name = "tantivy"
+ version = "0.27.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "aho-corasick",
+  "arc-swap",
+@@ -7572,15 +7572,15 @@ dependencies = [
+ [[package]]
+ name = "tantivy-bitpacker"
+ version = "0.10.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "bitpacking",
+ ]
+ 
+ [[package]]
+ name = "tantivy-columnar"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "downcast-rs",
+  "fastdivide",
+@@ -7595,7 +7595,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-common"
+ version = "0.11.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "async-trait",
+  "byteorder",
+@@ -7628,7 +7628,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-quant"
+ version = "0.1.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "rand_chacha 0.3.1",
+  "rand_core 0.6.4",
+@@ -7637,7 +7637,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-query-grammar"
+ version = "0.26.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "fnv",
+  "nom 7.1.3",
+@@ -7649,7 +7649,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-sstable"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "futures-util",
+  "itertools 0.14.0",
+@@ -7662,7 +7662,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-stacker"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "fixedbitset",
+  "murmurhash32",
+@@ -7699,7 +7699,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-tokenizer-api"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
++source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+ dependencies = [
+  "serde",
+ ]
 ```
 
-**File**: `docs/reference/configuration.mdx` (modified, +17/-17)
+**File**: `Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -28,23 +28,23 @@ ALTER ROLE app_user SET paradedb.vector_cluster_max_probe = 0.05;
+@@ -89,7 +89,7 @@ pgrx-tests = "=0.19.3"
  
- These settings control whether ParadeDB proposes custom plans for eligible queries.
+ # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
+ # patches in sync.
+-tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7", features = [
++tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207", features = [
+   "columnar-zstd-compression",
+   "lz4-compression",
+   "paradedb",
+@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
+   "stemmer",
+   "stopwords",
+ ], default-features = false }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
+ tantivy-jieba = "0.21.0"
  
--| Setting                                             | Default       | Context | Description                                                                                                                 |
--| --------------------------------------------------- | ------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
--| `paradedb.enable_custom_scan`                       | `on`          | user    | Enables ParadeDB's base custom scan, which replaces table scans with ParadeDB index scans.                                  |
--| `paradedb.enable_aggregate_custom_scan`             | `on`          | user    | Enables the aggregate custom scan for eligible `pdb.agg` and `GROUP BY` queries.                                            |
--| `paradedb.enable_join_custom_scan`                  | `on`          | user    | Enables the join custom scan, which pushes eligible joins into the ParadeDB executor.                                       |
--| `paradedb.enable_rank_join`                         | `on`          | user    | Enables `RankJoinExec` and lazy probe-side top-K execution for eligible joins with `ORDER BY ... LIMIT`.                    |
--| `paradedb.rank_join_min_rows`                       | `10000`       | user    | Minimum estimated matching rows on join inputs before replacing a one-pass `HashJoinExec` with `RankJoinExec` or lazy sort. |
--| `paradedb.rank_join_unscored_selectivity_threshold` | `0.08`        | user    | Minimum unscored input selectivity for single-sided `RankJoinExec` before preferring `HashJoinExec` with `InList` pushdown. |
--| `paradedb.enable_custom_scan_without_operator`      | `off`         | user    | Allows custom scans without a ParadeDB search operator when the whole `WHERE` clause can push down.                         |
--| `paradedb.enable_filter_pushdown`                   | `on`          | user    | Allows non-indexed predicates to use heap filtering after the ParadeDB scan.                                                |
--| `paradedb.enable_range_partitioned_join`            | `on`          | user    | Enables range co-partitioned joins and asymmetric range alignment for MPP joins on indexes configured with `partition_by`.  |
--| `paradedb.enable_segment_pruning`                   | `on`          | user    | Prunes non-matching index segments using per-segment min/max field statistics during planning and scan execution.           |
--| `paradedb.enable_heuristic_selectivity`             | `on`          | user    | Uses cheap planner selectivity estimates for expensive fuzzy, regex, and range query shapes.                                |
--| `paradedb.per_tuple_cost`                           | `100000000.0` | user    | Planner cost multiplier that discourages using ParadeDB operators outside a supported index plan.                           |
--| `paradedb.explain_recursive_estimates`              | `off`         | user    | Shows recursive document-count estimates in `EXPLAIN VERBOSE`; intended for debugging.                                      |
--| `paradedb.planner_warnings`                         | `warning`     | user    | Controls warnings when an optimized scan cannot be used. Accepts `off`, `warning`, or `error`.                              |
--| `paradedb.spill_to_disk`                            | `off`         | user    | Allows eligible join and aggregate queries to spill to disk when they exceed `work_mem`.                                    |
-+| Setting                                             | Default       | Context | Description                                                                                                                                                                            |
-+| --------------------------------------------------- | ------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| `paradedb.enable_custom_scan`                       | `on`          | user    | Enables ParadeDB's base custom scan, which replaces table scans with ParadeDB index scans.                                                                                             |
-+| `paradedb.enable_aggregate_custom_scan`             | `on`          | user    | Enables the aggregate custom scan for eligible `pdb.agg` and `GROUP BY` queries.                                                                                                       |
-+| `paradedb.enable_join_custom_scan`                  | `on`          | user    | Enables the join custom scan, which pushes eligible joins into the ParadeDB executor.                                
+ async-trait = "0.1.92"
+@@ -185,8 +185,8 @@ rstest = "0.28.0"
+ postgres = "0.19.14"
+ 
+ [patch.crates-io]
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
+-tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
++tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
+ 
+ [workspace.lints.rust]
+ unused_crate_dependencies = "warn"
 ```
 
-**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +15/-0)
-```diff
-@@ -38,6 +38,7 @@ use crate::postgres::customscan::datafusion::translator::{
- };
- use crate::postgres::customscan::expr_eval::InputVarInfo;
- use crate::postgres::customscan::pg_expr_udf::{InputDecode, PgExprUdf};
-+use crate::postgres::node::NodeExt;
- 
- const PVC_RECURSE_ALL: i32 = (pg_sys::PVC_RECURSE_AGGREGATES
-     | pg_sys::PVC_RECURSE_WINDOWFUNCS
-@@ -386,6 +387,8 @@ impl<'a> PredicateTranslator<'a> {
-     /// columns, and delegates to `ExecEvalExpr`.
-     ///
-     /// Returns `None` when the expression can't be wrapped:
-+    ///   - the expression contains a parameter (`T_Param`), subplan (`T_SubPlan`),
-+    ///     or score function (`pdb.score`),
-     ///   - result type is outside the supported set,
-     ///   - some input Var can't be resolved against `self.sources` / mapper,
-     ///   - `nodeToString` returns null.
-@@ -394,6 +397,18 @@ impl<'a> PredicateTranslator<'a> {
-     /// [`PredicateTranslator::translate`] — any subtree that fails native
-     /// translation is wrapped here.
-     pub(crate) unsafe fn try_wrap_as_udf(&self, node: *mut pg_sys::Node) -> Option<Expr> {
-+        if node.contains_param()
-+            || node.contains_type(pg_sys::NodeTag::T_SubPlan)
-+            || node.contains_functions(&crate::postgres::customscan::score_funcoids())
-+        {
-+            pgrx::debug1!(
-+                "PredicateTranslator: declining UDF wrap for expression containing Param, SubPlan, or score function [{}] | {}",
-+                node_tag_debug(node),
-+                self.deparse_for_debug(node)
-+            );
-+            return None;
-+        }
-+
-         let result_type_oid = pg_sys::exprType(node);
-         if PgExprUdf::get_result_type_to_arrow(result_type_oid).is_none() {
-             pgrx::debug1!(
-```
+---
 
-**File**: `pg_search/src/postgres/customscan/datafusion/translator.rs` (modified, +61/-2)
-```diff
-@@ -30,6 +30,9 @@ use crate::postgres::customscan::joinscan::build::{
-     RelationAlias, ScoreColumn, UnnestNode, VectorScoreColumn,
- };
- use crate::postgres::customscan::joinscan::privdat::OutputColumnInfo;
-+use crate::postgres::customscan::joinscan::window_func::{
-+    WINDOW_SENTINEL_VARNO, WindowAggIndex, WindowAggList, rewrite_window_funcs_to_sentinels,
-+};
- use crate::postgres::customscan::pg_expr_udf::InputDecode;
- use crate::scan::ScanMode;
- use crate::schema::SearchFieldType;
-@@ -240,17 +243,50 @@ impl<'a> PredicateTranslator<'a> {
-         sources: &'a [&'a JoinSource],
-         node: *mut pg_sys::Node,
-         plan: Option<&'a RelNode>,
-+    ) -> bool {
-+        Self::can_translate_inner(root, sources, node, plan, None)
-+    }
-+
-+    /// Like [`Self::can_translate`], but also resolves embedded `WindowFunc`
-+    /// subtrees against `window_aggs` (rewriting them to sentinel `Var`s with
-+    /// placeholder `resno = 0` to match the execution path in
-+    /// `translate_child_projection_expr`).
-+    pub fn can_translate_with_windows(
-+        root: Option<*mut pg_sys::PlannerInfo>,
-+        sources: &'a [&'a JoinSource],
-+        node: *mut pg_sys::Node,
-+        plan: Option<&'a RelNode>,
-+        window_aggs: &'a WindowAggList,
-+    ) -> bool {
-+        Self::can_translate_inner(root, sources, node, plan, Some(window_aggs))
-+    }
-+
-+    fn can_translate_inner(
-+        root: Option<*mut pg_sys::PlannerInfo>,
-+        sources: &'a [&'a JoinSource],
-+        node: *mut pg_sys::Node,
-+        plan: Option<&'a RelNode>,
-+        window_aggs: Option<&'a WindowAggList>,
-     ) -> bool {
-         struct ValidationMapper<'a> {
-             sources: &'a [&'a JoinSource],
-             plan: Option<&'a RelNode>,
-+            window_aggs: Option<&'a WindowAggList>,
-         }
- 
-         impl<'a> ColumnMapper for ValidationMapper<'a> {
-             /// Just confirm the source exists — field registration hasn't
-             /// happened yet at this planning stage. Column validity is
-             /// covered by all_vars_are_fast_fields_recursive which runs first.
--            fn map_var(&self, varno: pg_sys::Index, _varattno: pg_sys::AttrNumber) -> Option<Expr> {
-+            fn map_var(&self, varno: pg_sys::Index, varattno: pg_sys::AttrNumber) -> Option<Expr> {
-+                if varno == WINDOW_SENTINEL_VARNO {
-+                    let index = WindowAggIndex::from_sentinel_attno(varattno)?;
-+                    let window_agg = self.window_aggs?.get(index)?;
-+                    if window_agg.requires_udf_decode() {
-+                        return None;
-+                    }
-+                    return Some(col("placeholder"));
-+                }
-                 if let Some(_source) = self.sources.iter().find(|s| s.contains_rti(varno)) {
-                     return Some(col("placeholder"));
-                 }
-@@ -265,9 +301,32 @@ impl<'a> PredicateTranslator<'a> {
-                 }
-                 None
-             }
-+
-+            fn udf_input(
-+                &self,
-+                varno: pg_sys::Index,
-+                varattno: pg_sys::AttrNumber,
-+            ) -> Option<(Expr, InputDecode)> {
-+                if varno == WINDOW_SENTINEL_VARNO {
-+                    let index = WindowAggIndex::from_sentinel_attno(varattno)?;
-+                    let window_agg = self.window_aggs?.get(index)?;
-+                    return Some((col("placeholder"), window_agg.udf_input_decode()));
-+                }
-+                None
-+            }
-         }
- 
--        let mapper = ValidationMapper { sources, plan };
-+        let node = match window_aggs {
-+            Some(aggs) if !aggs.is_empty() => unsafe {
-+                rewrite_window_funcs_to_sentinels(node, 0, aggs)
-+            },
-+            _ => node,
-+        };
-+        let mapper = ValidationMapper {
-+            sources,
-+            plan,
-+            window_aggs,
-+        };
-         let mut translator = Self::new(sources).with_mapper(Box::new(mapper));
-         if let Some(r) = root {
-             translator = translator.with_planner_info(r);
-```
+### Incident Patch 2: `29cca447` (2026-11-09)
+**Commit Message**: fix: bypass planner hooks during mutable sweeps (#7301)
 
-**File**: `pg_search/src/postgres/customscan/joinscan/build.rs` (modified, +14/-6)
-```diff
-@@ -2226,17 +2226,25 @@ pub fn assign_tagged_queries<'a>(
-     for source in sources {
-         let alias =
-             RelationAlias::new(source.scan_info.alias.as_deref()).execution(source.plan_position);
--        let local_queries: Vec<crate::scan::TaggedQuery> = predicates
--            .iter()
--            .enumerate()
--            .filter(|(_, (plan_pos, _))| *plan_pos == source.plan_position)
-+        // Deduplicate by `p.query` per source: tag columns resolve by query equality,
-+        // so a duplicate is never referenced and scores twice.
-+        let mut unique_queries: Vec<(usize, &SearchQueryInput)> = Vec::new();
-+        for (global_idx, (plan_pos, p)) in predicates.iter().enumerate() {
-+            if *plan_pos == source.plan_position
-+                && !unique_queries.iter().any(|(_, q)| *q == &p.query)
-+            {
-+                unique_queries.push((global_idx, &p.query));
-+            }
-+        }
-+        let local_queries: Vec<crate::scan::TaggedQuery> = unique_queries
-+            .into_iter()
-             .enumerate()
-             .map(
--                |(local_idx, (global_idx, (_, p)))| crate::scan::TaggedQuery {
-+                |(local_idx, (global_idx, query))| crate::scan::TaggedQuery {
-                     tag_name: format!("__{alias}_tag_{local_idx}"),
-                     tag_idx: crate::scan::TagIndex(local_idx),
-                     predicate_idx: crate::scan::GlobalPredicateIndex(global_idx),
--                    query: Box::new(p.query.clone()),
-+                    query: Box::new(query.clone()),
-                 },
-             )
-             .collect();
-```
+# Ticket(s) Closed
 
-**File**: `pg_search/src/postgres/customscan/joinscan/mod.rs` (modified, +72/-4)
+- Addresses #7299
+
+## What
+
+Make mutable-sweep catalog discovery bypass planner hooks, allowing the
+worker to find Citus shard indexes and avoid the Citus crash path during
+concurrent table drops.
+
+## Why
+
+Citus rewrites SQL queries against `pg_class` to hide shard indexes. Its
+visibility check can dereference a null relation name during concurrent
+`DROP TABLE`, crashing the sweeper and causing PostgreSQL to terminate
+other backends.
+
+## How
+
+Read the extension version through `pg_extension_name_index`, avoiding
+an extension syscache that is unavailable on older PostgreSQL minor
+releases.
+
+Scan `pg_class` directly and filter relation kind, persistence, and
+access method before looking up `INDEXRELID` to check index validity and
+readiness. This limits per-pass index syscache probes to ParadeDB
+candidates. Reuse the existing syscache guard and access-method checks,
+preserving the extension-version gate, OID ordering, and nonblocking
+relation locking.
+
+## Tests
+
+- Passed the catalog-discovery regression test on PostgreSQL 17.6 and
+18.3. The test rejects every planner-hook invocation and checks
+filtering of te
+
+**File**: `pg_search/src/postgres/catalog.rs` (modified, +146/-0)
 ```diff
-@@ -1270,6 +1270,8 @@ impl CustomScan for JoinScan {
-                 pg_sys::copyObjectImpl(tlist_ptr.cast()).cast(),
-             );
-             // replace pg_projected slots with NULL placeholders, and add their inputs to the tlist.
-+            let mut pg_projected_exprs =
-+                Vec::with_capacity(private_data.join_clause.pg_projected_resnos.len());
-             for resno in &private_data.join_clause.pg_projected_resnos {
-                 let te = custom_scan_tlist
-                     .get_ptr(((*resno) - 1) as usize)
-@@ -1283,7 +1285,10 @@ impl CustomScan for JoinScan {
-                     pg_sys::exprCollation(expr),
-                 )
-                 .cast();
--                crate::postgres::utils::add_vars_to_tlist(expr, &mut custom_scan_tlist);
-+                pg_projected_exprs.push(expr);
-+            }
-+            for expr in pg_projected_exprs {
-+                add_vars_and_scores_to_tlist(expr, &mut custom_scan_tlist);
-             }
- 
-             let path_private_full = PgList::<pg_sys::Node>::from_pg((*best_path).custom_private);
-@@ -2093,6 +2098,46 @@ impl CustomScan for JoinScan {
+@@ -78,6 +78,87 @@ pub fn lookup_namespace(namespace: &CStr) -> Option<pg_sys::Oid> {
      }
  }
  
-+/// Ensure all non-score `Var` nodes and `pdb.score(...)` subexpressions referenced by
-+/// `expr` are present in `tlist` so PostgreSQL's `set_customscan_references` can rewrite
-+/// them to `INDEX_VAR` references into the scan slot.
-+unsafe fn add_vars_and_scores_to_tlist(
-+    expr: *mut pg_sys::Node,
-+    tlist: &mut PgList<pg_sys::TargetEntry>,
-+) {
-+    if expr.is_null() {
-+        return;
++pub fn lookup_extension_version(name: &CStr) -> Option<String> {
++    unsafe {
++        let relation =
++            pg_sys::table_open(pg_sys::ExtensionRelationId, pg_sys::AccessShareLock as _);
++        let mut key = pg_sys::ScanKeyData::default();
++        pg_sys::ScanKeyInit(
++            &mut key,
++            pg_sys::Anum_pg_extension_extname as _,
++            pg_sys::BTEqualStrategyNumber as _,
++            pg_sys::F_NAMEEQ.into(),
++            pg_sys::Datum::from(name.as_ptr()),
++        );
++        let scan = pg_sys::systable_beginscan(
++            relation,
++            pg_sys::ExtensionNameIndexId.into(),
++            true,
++            std::ptr::null_mut(),
++            1,
++            &mut key,
++        );
++        let tuple = pg_sys::systable_getnext(scan);
++        let version = if tuple.is_null() {
++            None
++        } else {
++            let mut is_null = false;
++            let datum = pg_sys::heap_getattr(
++                tuple,
++                pg_sys::Anum_pg_extension_extversion as _,
++                (*relation).rd_att,
++                &mut is_null,
++            );
++            String::from_datum(datum, is_null)
++        };
++        pg_sys::systable_endscan(scan);
++        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
++        version
 +    }
-+
-+    expr.walk(|node| {
-+        if matches!(
-+            (*node).type_,
-+            pg_sys::NodeTag::T_PlaceHolderVar | pg_sys::NodeTag::T_FuncExpr
-+        ) {
-+            let stripped = crate::postgres::utils::strip_wrappers(node);
-+            if get_score_func_rti(stripped.cast()).is_some() {
-+                let already_present = tlist
-+                    .iter_ptr()
-+                    .any(|te| pg_sys::equal((*te).expr.cast(), node.cast()));
-+                if !already_present {
-+                    let resno = tlist.len() as pg_sys::AttrNumber + 1;
-+                    let new_score = pg_sys::copyObjectImpl(node.cast()).cast::<pg_sys::Expr>();
-+                    let te = pg_sys::makeTargetEntry(new_score, resno, std::ptr::null_mut(), true);
-+                    tlist.push(te);
-+                }
-+                return crate::postgres::node::WalkControl::SkipChildren;
-+            }
-+        }
-+
-+        if let Some(var_ptr) = nodecast!(Var, T_Var, node) {
-+            crate::postgres::utils::push_var_to_tlist_if_absent(var_ptr, tlist);
-+            return crate::postgres::node::WalkControl::SkipChildren;
-+        }
-+
-+        crate::postgres::node::WalkControl::Continue
-+    });
 +}
 +
- /// Walk a target list and classify each entry into the corresponding
- /// [`privdat::OutputColumnInfo`]: a `Var` resolves to a plan position via the
- /// join clause, a `paradedb.score()` call becomes a `Score` sentinel, and any
-@@ -2288,19 +2333,42 @@ unsafe fn build_output_projection(
-         }
-     }
- 
-+    // `add_vars_to_tlist` / `add_vars_and_scores_to_tlist` may have appended extra `Var` and
-+    // `pdb.score()` entries after `scan_target_entries` for `custom_exprs` or `pg_projected_resnos`.
-+    // Only extend `output_projection` through the last appended `Score` (so its `col_{idx + 1}`
-+    // alias lines up with `output_columns[idx]`): projecting trailing `Var`s would add extra
-+    // `NULL AS col_N` columns to DataFusion's `ProjectionExec` and `DISTINCT` `GROUP BY` keys.
-+    let num_projected_columns = private_data
-+        .output_columns
-+        .iter()
-+        .rposition(|c| matches!(c, privdat::OutputColumnInfo::Score { .. }))
-+        .map_or(scan_target_entries.len(), |last_score_idx| {
-+            (last_score_idx + 1).max(scan_target_entries.len())
-+        });
-+
-     private_data.join_clause.output_projection = Some(
-         private_data
-             .output_columns
-             .iter()
--            .zip(&resolved_entries)
--            .zip(&scan_target_entries)
--            .map(|((info, resolved), te)| {
-+            .take(num_projected_columns)
-+            .enumerate()
-+            .map(|(idx, info)| {
-                 // If this column belongs to a relation pruned from output (e.g. the RHS
-                 // of an Anti Join), do not construct projection expressions referencing
-                 // the pruned source, as it does not exist in the physical scan plan.
-                 if matches!(info, privdat::OutputColumnInfo::Pruned) {
-                     return info.into();
-                 }
-+                if idx >= scan_target_entries.len() {
-+                    return match info {
-+                        privdat::OutputColumnInfo::Score { rti, .. } => {
-+                            build::ChildProjection::Score { rti: *rti }
-+                        }
-+                        _ => (&privdat::OutputColumnInfo::Pruned).into(),
-+                  
-```
-
-**File**: `pg_search/src/postgres/customscan/joinscan/planning.rs` (modified, +74/-17)
-```diff
-@@ -30,7 +30,7 @@ use super::build::{
- };
- use super::predicate::{all_vars_are_fast_fields_recursive, resolve_join_conditions};
- use super::privdat::{OutputColumnInfo, PrivateData};
--use super::window_func::{WindowAgg, WindowAggDef, WindowAggId, extract_window_agg};
-+use super::window_func::{WindowAggDef, WindowAggId, WindowAggList, extract_window_agg};
- use crate::postgres::customscan::datafusion::translator::PredicateTranslator;
- use crate::postgres::customscan::node::CustomScanNodeExt;
- use crate::postgres::node::NodeExt;
-@@ -867,26 +867,31 @@ unsafe fn collect_join_sources_join_rel(
-     None
- }
- 
-+/// Check whether `expr` can be evaluated by PostgreSQL's projection step above the `JoinScan`
-+/// (`ResolvedExpr::PgProjected`).
-+///
-+/// Rejects set-returning expressions, subplans, embedded window functions, system/whole-row
-+/// `Var`s, and `Var`s or `pdb.score()` calls referencing relations absent from
-+/// `plan.output_rtis()`. Supported `Var`s and `pdb.score()` subexpressions are appended to
-+/// `custom_scan_tlist` by `add_vars_and_scores_to_tlist` during `plan_custom_path`.
- pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<(), String> {
-     if pg_sys::expression_returns_set(expr) {
-         pgrx::debug1!("JoinScan declined Postgres projection: expression returns a set");
-         return Err("returns a set".to_string());
-     }
- 
-+    if expr.contains_type(pg_sys::NodeTag::T_SubPlan) {
-+        pgrx::debug1!("JoinScan declined Postgres projection: expression contains a SubPlan");
-+        return Err("contains a subplan".to_string());
-+    }
-+
-     let mut deps = ExprDeps {
-         vars: Vec::new(),
-         score_rtis: Vec::new(),
-         window_funcs: Vec::new(),
-     };
-     expr_deps_walker(expr, std::ptr::addr_of_mut!(deps).cast());
- 
--    if !deps.score_rtis.is_empty() {
--        pgrx::debug1!(
--            "JoinScan declined Postgres projection: expression depends on a score function"
--        );
--        return Err("depends on a score function".to_string());
--    }
--
-     if !deps.window_funcs.is_empty() {
-         pgrx::debug1!(
-             "JoinScan declined Postgres projection: expression depends on a window function"
-@@ -901,6 +906,19 @@ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<
-         .collect::<Vec<_>>()
-         .join(", ");
- 
-+    let output_rtis = plan.output_rtis();
-+    for score_rti in deps.score_rtis {
-+        if !output_rtis.contains(&score_rti) {
-+            pgrx::debug1!(
-+                "JoinScan declined Postgres projection: expression depends on score for relation \
-+                 (rti={}) not found in any source (tables: {})",
-+                score_rti,
-+                tables_str
-+            );
-+            return Err("score function references a relation outside the join".to_string());
++pub fn paradedb_index_oids() -> Vec<pg_sys::Oid> {
++    unsafe {
++        let relation = pg_sys::table_open(pg_sys::RelationRelationId, pg_sys::AccessShareLock as _);
++        let scan = pg_sys::systable_beginscan(
++            relation,
++            pg_sys::InvalidOid,
++            false,
++            std::ptr::null_mut(),
++            0,
++            std::ptr::null_mut(),
++        );
++        let mut indexes = Vec::new();
++        loop {
++            let tuple = pg_sys::systable_getnext(scan);
++            if tuple.is_null() {
++                break;
++            }
++            let class = &*pg_sys::GETSTRUCT(tuple).cast::<pg_sys::FormData_pg_class>();
++            if class.relkind as u8 != pg_sys::RELKIND_INDEX
++                || class.relpersistence as u8 == pg_sys::RELPERSISTENCE_TEMP
++                || !class.relam.is_paradedb_am()
++            {
++                continue;
++            }
++            let Some(entry) = SysCacheEntry::search1(
++                pg_sys::SysCacheIdentifier::INDEXRELID,
++                class.oid.into_datum().unwrap(),
++            ) else {
++                continue;
++            };
++            let index = &*pg_sys::GETSTRUCT(entry.tuple).cast::<pg_sys::FormData_pg_index>();
++            if index.indisvalid && index.indisready {
++                indexes.push(class.oid);
++            }
 +        }
++        pg_sys::systable_endscan(scan);
++        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
++        indexes.sort_unstable_by_key(|oid| oid.to_u32());
++        indexes
++    }
++}
++
+ /// Helper function to lookup a type's assigned `typcategory` attribute from `pg_catalog.pg_type`
+ pub fn lookup_type_category(typoid: pg_sys::Oid) -> Option<u8> {
+     unsafe {
+@@ -320,3 +401,68 @@ pub fn lookup_collation_locale(collation: pg_sys::Oid) -> Option<CollationLocale
+         })
+     }
+ }
++
++#[cfg(any(test, feature = "pg_test"))]
++#[pgrx::pg_schema]
++mod tests {
++    use super::*;
++    use pgrx::{PgTryBuilder, Spi, pg_guard, pg_test};
++
++    #[pg_guard]
++    unsafe extern "C-unwind" fn reject_planning(
++        _parse: *mut pg_sys::Query,
++        _query: *const std::ffi::c_char,
++        _options: std::ffi::c_int,
++        _params: pg_sys::ParamListInfo,
++    ) -> *mut pg_sys::PlannedStmt {
++        pgrx::error!("catalog discovery must not invoke planner hooks");
 +    }
 +
-     let mut seen = std::collections::HashSet::new();
-     for var_ptr in deps.vars {
-         let varno = (*var_ptr).varno as pg_sys::Index;
-@@ -921,7 +939,7 @@ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<
-             continue;
-         }
- 
--        if !plan.output_rtis().contains(&varno) {
-+        if !output_rtis.contains(&varno) {
-             pgrx::debug1!(
-                 "JoinScan declined Postgres projection: expression depends on a relation \
-                  (rti={}) not found in any source (tables: {})",
-@@ -2417,13 +2435,13 @@ pub(crate) enum ResolvedExpr {
-         input_vars: Vec<InputVarInfo>,
-         result_type: pg_sys::Oid,
-         /// Window functions embedded in the expression, in walker visit order
--        /// (each one's id ordinal is its position in this Vec). They are
-+        /// (each one's id ordinal is its position in this list). They are
-         /// computed by the scan's window step and fed to expression
-         /// evaluation as opaque inputs; their argument Vars deliberately do
-         /// NOT appear in `input_vars`. The extracted specs carry a
-         /// placeholder resno of 0 in their `WindowAggId` — the caller that
-         /// records them stamps the owning target entry's resno.
--        window_deps: Vec<WindowAgg>,
-+        window_deps: WindowAggList,
-     },
-     PgProjected,
-     /// A window function, or expression over one, that will return a constant value on all rows
-@@ -2575,11 +2593,13 @@ unsafe extern "C-unwind" fn expr_deps_walker(
- /// Check if an expression in the target list can be evaluated and projected by JoinScan.
- ///
- /// Plain Vars, score functions, and indexed expressions are mapped to their respective
--/// ResolvedExpr variants. A general expression (or constant) declines on an aggregate. It
--/// runs inside the scan when every Var it reads is a fast field (score function arguments
--/// excluded) and its result type is Arrow-convertible; otherwise, volatile functions
--/// included, Postgres computes it over the scan's rows when `enable_pg_project_fallback`
--/// is set.
-+/// ResolvedE
++    #[pg_test]
++    fn sweep_catalog_discovery_bypasses_planner_hooks() {
++        let mut expected = paradedb_index_oids();
++        Spi::run(
++            "CREATE TABLE sweep_catalog (id int, body text);
++             CREATE INDEX sweep_catalog_idx ON sweep_catalog USING paradedb(id, body);
++             CREATE INDEX sweep_catalog_btree ON sweep_catalog(id);
++             CREATE TABLE sweep_catalog_invalid_table (id int, body text);
++             CREATE INDEX sweep_catalog_invalid ON sweep_catalog_invalid_table USING paradedb(id, body);
++             CREATE TABLE sweep_catalog_unready_table (id int, body text);
++             CREATE INDEX sweep_catalog_unready ON sweep_catalog_unready_table USING paradedb(id, body);
++             UPDATE pg_index SET indisvalid = false WHERE indexrelid = 'sweep_catalog_invalid'::regclass;
++             UPDATE pg_index SET indisready = false WHERE indexrelid = 'sweep_catalog_unready'::regclass;
++             CREATE TEMP TABLE sweep_catalog_temp (id int, body text);
++             CREATE INDEX sweep_catalog_temp_idx ON sweep_catalog_temp USING paradedb(id, body);
++             CREATE UNLOGGED TABLE sweep_catalog_unlogged (id int, body text);
++             CREATE INDEX sweep_catalog_u
 ```
 
-**File**: `pg_search/src/postgres/customscan/joinscan/scan_state.rs` (modified, +9/-23)
+**File**: `pg_search/src/postgres/mutable_sweep.rs` (modified, +28/-27)
 ```diff
-@@ -112,24 +112,17 @@ fn resolve_var_to_df_col(
-     attno: pg_sys::AttrNumber,
- ) -> Option<Expr> {
-     // A window-aggregate sentinel Var (from rewrite_window_funcs_to_sentinels)
--    // resolves to the window step's output column — except for
--    // numeric-storage aggregates, whose column values are encoded (scaled
--    // i64, decimal bytes, avg blobs). Native DataFusion math over those
--    // would be wrong, so refuse here: per-node translation then falls back
--    // to the PgExprUdf path, whose window inputs decode via
--    // `JoinClauseMapper::udf_input`.
-+    // resolves to the window step's output column — except when the column
-+    // holds storage-encoded values (numeric-storage SQL aggregates or `pdb.agg`
-+    // JSON text; see `WindowAgg::requires_udf_decode`). Native DataFusion
-+    // operations over those would be wrong, so refuse here: per-node
-+    // translation then falls back to the PgExprUdf path, whose window inputs
-+    // decode via `JoinClauseMapper::udf_input`.
-     if rti == WINDOW_SENTINEL_VARNO {
-         let index = WindowAggIndex::from_sentinel_attno(attno)?;
-         let window_agg = join_clause.window_aggs.get(index)?;
--        match &window_agg.agg_def {
--            WindowAggDef::Sql(sql) => {
--                if sql.arg_field_type().is_some_and(|ft| ft.is_numeric()) {
--                    return None;
--                }
--            }
--            // The column holds the document as text, which only the
--            // PgExprUdf path turns back into the jsonb the expression reads.
--            WindowAggDef::PdbAgg(_) => return None,
-+        if window_agg.requires_udf_decode() {
-+            return None;
-         }
-         let canonical = join_clause.window_aggs.canonical_index(index);
-         return Some(col(canonical.as_col_name()));
-@@ -227,14 +220,7 @@ impl<'a> ColumnMapper for JoinClauseMapper<'a> {
-             let index = WindowAggIndex::from_sentinel_attno(varattno)?;
-             let window_agg = self.join_clause.window_aggs.get(index)?;
-             let canonical = self.join_clause.window_aggs.canonical_index(index);
--            let decode = match &window_agg.agg_def {
--                WindowAggDef::Sql(sql) => InputDecode::StorageEncoded {
--                    is_avg: matches!(sql.agg_type(), SupportedWindowAggType::Avg),
--                    field_type: sql.arg_field_type().cloned(),
--                },
--                WindowAggDef::PdbAgg(_) => InputDecode::JsonDocument,
--            };
--            return Some((col(canonical.as_col_name()), decode));
-+            return Some((col(canonical.as_col_name()), window_agg.udf_input_decode()));
-         }
-         let field_type = numeric_fast_field_type(self.join_clause, varno, varattno)?;
-         let expr = resolve_var_to_df_col(self.join_clause, varno, varattno)?;
+@@ -19,7 +19,7 @@ use crate::api::{HashMap, HashSet};
+ use crate::index::merge_policy::LayeredMergePolicy;
+ use crate::index::mvcc::MvccSatisfies;
+ use crate::index::writer::index::SearchIndexMerger;
+-use crate::postgres::catalog::OidExt;
++use crate::postgres::catalog::{OidExt, lookup_extension_version, paradedb_index_oids};
+ use crate::postgres::delete::VacuumSignal;
+ use crate::postgres::index::free_leaf_partition_indexes;
+ use crate::postgres::locks::AdvisoryLock;
+@@ -31,8 +31,8 @@ use crate::postgres::ps_status::{MERGING, set_ps_display_suffix};
+ use crate::postgres::storage::metadata::MetaPage;
+ use pgrx::bgworkers::{BackgroundWorker, BackgroundWorkerBuilder, SignalWakeFlags};
+ use pgrx::{
+-    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, Spi,
+-    check_for_interrupts, pg_guard, pg_sys,
++    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, check_for_interrupts,
++    pg_guard, pg_sys,
+ };
+ use std::ffi::CStr;
+ use std::panic::AssertUnwindSafe;
+@@ -226,25 +226,12 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
+         if sweeping {
+             let observed_counts = pass_context.switch_to(|_| {
+                 let indexes = BackgroundWorker::transaction(|| {
+-                    let version = Spi::get_one::<String>(
+-                        "SELECT max(extversion::text) FROM pg_catalog.pg_extension WHERE extname = 'pg_search'",
+-                    )
+-                    .expect("should be able to inspect pg_search version");
++                    let version = lookup_extension_version(c"pg_search");
+                     if version.as_deref() != Some(env!("CARGO_PKG_VERSION")) {
+                         return None;
+                     }
+-                    let indexes = Spi::get_one::<Vec<pg_sys::Oid>>(
+-                        "SELECT array_agg(i.indexrelid ORDER BY i.indexrelid)
+-                         FROM pg_catalog.pg_index i
+-                         JOIN pg_catalog.pg_class c ON c.oid = i.indexrelid
+-                         JOIN pg_catalog.pg_am am ON am.oid = c.relam
+-                         JOIN pg_catalog.pg_proc p ON p.oid = am.amhandler
+-                         JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+-                         WHERE n.nspname = 'paradedb' AND p.proname = 'bm25_handler'
+-                           AND i.indisvalid AND i.indisready AND c.relkind = 'i' AND c.relpersistence <> 't'",
+-                    )
+-                    .expect("should be able to discover ParadeDB indexes")
+-                    .unwrap_or_default();
++                    // Planner hooks can hide shard indexes or race with concurrent drops.
++                    let indexes = paradedb_index_oids();
+                     let mut current_counts = HashMap::default();
+                     let indexes = free_leaf_partition_indexes(&indexes)
+                         .filter_map(|index| {
+@@ -253,7 +240,9 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
+                             }
+                             let mut idle_segments = HashMap::default();
+                             MetaPage::open(&index).segment_metas().for_each(|_, entry| {
+-                                if entry.is_mutable() && entry.xmax() == pg_sys::InvalidTransactionId {
++                                if entry.is_mutable()
++                                    && entry.xmax() == pg_sys::InvalidTransactionId
++                                {
+                                     let key = (index.oid(), entry.segment_id());
+                                     let count = entry.num_docs();
+                                     current_counts.insert(key, count);
+@@ -282,7 +271,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
+                             if VacuumSignal::new(index.oid()).wants_cancel() {
+                                 return;
+                             }
+-                            let Some(_slot) = MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
++                            let Some(_slot) =
++                                MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
+                             else {
+                                 return;
+                             };
+@@ -293,7 +283,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
+                             let merge_lock = metadata.acquire_merge_lock();
+                             PgTryBuilder::new(AssertUnwindSafe(|| {
+                                 let frozen = metadata.freeze_mutable_segments_matching(|entry| {
+-                                    idle_segments.get(&entry.segment_id()) == Some(&entry.num_docs())
++                                    idle_segments.get(&entry.segment_id())
++                                        == Some(&entry.num_docs())
+                                 });
+                                 if 
+```
+
+---
+
+### Incident Patch 3: `781cb511` (2026-11-11)
+**Commit Message**: fix: restore IVF split logic while keeping target_leaf_size (#7377)
+
+## What
+
+Soft-revert geometric clustering while keeping the `target_leaf_size`
+name and default of 200. ParadeDB's source integration, option names,
+and SQL regression fixtures remain identical to the PR base. Update the
+dependency pins and correct two descriptions of the training-leaf cap;
+retain the original option-rename changelog entry.
+
+## Dependencies and scope
+
+- [superkmeans-rs
+#45](https://github.com/paradedb/superkmeans-rs/pull/45),
+`6b0d0bc08e2071220b99222db0c79ad49305f8dc`: restore `ceil(n_sub /
+target_leaf_size)` recursive splitting and enforce the training-leaf cap
+while preserving the API name.
+- [Tantivy #399](https://github.com/paradedb/tantivy/pull/399),
+`98b3d5c1570c912f51f40530ba1645f1695b458b` (merged): use that
+implementation for IVF and stacked routing; preserve
+`with_target_leaf_size` and `DEFAULT_TARGET_LEAF_SIZE`.
+- Preserve donor revival, convergence guards, statistics, and later
+dependency changes. Sampling remains 0.32. Explicit `k` sizing is
+separate. Both dependency PRs are merged; the direct superkmeans pin
+matches the revision used by the merged Tantivy commit.
+
+Updated against cur
+
+**File**: `.github/scripts/docs_snippet_coverage.json` (modified, +4/-4)
+```diff
+@@ -176,13 +176,13 @@
+       ]
+     },
+     {
+-      "reason": "Uses the 0.27 target_leaf_size option before the published ORM client packages ship support; the SQL fence runs in the standalone inventory.",
++      "reason": "The vector index-options CodeGroup contains 0.27 target_leaf_size examples awaiting ORM client support; its SQL fence runs in the standalone inventory.",
+       "fences": [
+         ["reference/indexing/indexing-vectors.mdx::fence-014", "53c92670d4bf64621e64b1db4aa59eb7476bfc799d4ba4134ef9fd8372135c15"],
+-        ["reference/indexing/indexing-vectors.mdx::fence-015", "821236f776b5cb115dc2ea7124ab3edd9d7e2fa853164d4f00c2f0a98ad5bcc3"],
++        ["reference/indexing/indexing-vectors.mdx::fence-015", "5cab4e761805be2b46f77a7b2cc649fe55e0d6c6bdb0a6e327e6fb1246764812"],
+         ["reference/indexing/indexing-vectors.mdx::fence-016", "cd2cc9292117f96cd302bdb88ca5a30074992a9ca9c106eb1d948e99df350d73"],
+-        ["reference/indexing/indexing-vectors.mdx::fence-017", "61bbc3322127cc2c471e9e161cafbeae0ef27a0172362974e1fdcdbfd2078388"],
+-        ["reference/indexing/indexing-vectors.mdx::fence-018", "e3cd48db5fa758ad4e47dfdf5c3426af64262a260ebdea73337ac4c56ef9bcf4"]
++        ["reference/indexing/indexing-vectors.mdx::fence-017", "582e688c81c32cf2ef26addb3286c298067a04f5e5250d448e6e8bc3b8aecf5f"],
++        ["reference/indexing/indexing-vectors.mdx::fence-018", "126340fc1e720d46471e7e7e121434ad4ec13784b130d13ee5b814de15becdee"]
+       ]
+     }
+   ],
+```
+
+**File**: `Cargo.lock` (modified, +11/-11)
+```diff
+@@ -5192,7 +5192,7 @@ dependencies = [
+ [[package]]
+ name = "ownedbytes"
+ version = "0.9.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "stable_deref_trait",
+ ]
+@@ -7329,7 +7329,7 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
+ [[package]]
+ name = "superkmeans-rs"
+ version = "0.4.0"
+-source = "git+https://github.com/paradedb/superkmeans-rs?rev=06c8e247a6a0241a996a640080c7245f6c7b5940#06c8e247a6a0241a996a640080c7245f6c7b5940"
++source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
+ dependencies = [
+  "matrixmultiply",
+  "pkg-config",
+@@ -7414,7 +7414,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
+ [[package]]
+ name = "tantivy"
+ version = "0.27.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "aho-corasick",
+  "arc-swap",
+@@ -7473,15 +7473,15 @@ dependencies = [
+ [[package]]
+ name = "tantivy-bitpacker"
+ version = "0.10.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "bitpacking",
+ ]
+ 
+ [[package]]
+ name = "tantivy-columnar"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "downcast-rs",
+  "fastdivide",
+@@ -7496,7 +7496,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-common"
+ version = "0.11.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "async-trait",
+  "byteorder",
+@@ -7529,7 +7529,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-quant"
+ version = "0.1.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "rand_chacha 0.3.1",
+  "rand_core 0.6.4",
+@@ -7538,7 +7538,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-query-grammar"
+ version = "0.26.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "fnv",
+  "nom 7.1.3",
+@@ -7550,7 +7550,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-sstable"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "futures-util",
+  "itertools 0.14.0",
+@@ -7563,7 +7563,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-stacker"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "fixedbitset",
+  "murmurhash32",
+@@ -7600,7 +7600,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-tokenizer-api"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+ dependencies = [
+  "serde",
+ ]
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0-beta.1"
+ 
+ # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
+ # patches in sync.
+-tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b", features = [
++tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b", features = [
+   "columnar-zstd-compression",
+   "lz4-compression",
+   "paradedb",
+@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
+   "stemmer",
+   "stopwords",
+ ], default-features = false }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
+ tantivy-jieba = "0.21.0"
+ 
+ async-trait = "0.1.92"
+@@ -185,8 +185,8 @@ rstest = "0.28.0"
+ postgres = "0.19.14"
+ 
+ [patch.crates-io]
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
+-tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
++tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
+ 
+ [workspace.lints.rust]
+ unused_crate_dependencies = "warn"
+```
+
+**File**: `docs/project/changelog/unreleased/7346.breaking.mdx` (modified, +1/-1)
+```diff
+@@ -2,4 +2,4 @@
+ header: breaking
+ ---
+ 
+-Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value is a clustering target rather than a hard cap; actual leaves may be somewhat larger. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
++Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value caps the number of sampled training vectors per leaf; it does not cap the number of indexed vectors assigned to a cluster. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
+```
+
+**File**: `docs/reference/indexing/indexing-vectors.mdx` (modified, +4/-4)
+```diff
+@@ -254,10 +254,10 @@ modelBuilder.Entity<MockItem>()
+ <ParamField body="target_leaf_size" default={200}>
+   The target number of sampled training vectors in a leaf of the hierarchical
+   clustering tree. Must be an integer between `1` and `2147483647`. Smaller
+-  values generally produce more centroids and smaller clusters. Actual leaves
+-  may be somewhat larger than the target. This setting is independent of
+-  `training_sample_ratio` and does not cap the number of indexed vectors
+-  assigned to a cluster.
++  values generally produce more centroids and smaller clusters. Training leaves
++  are split until they contain at most this many vectors. This setting is
++  independent of `training_sample_ratio` and does not cap the number of indexed
++  vectors assigned to a cluster.
+ </ParamField>
+ <ParamField body="vector_router_quantization" default={true}>
+   Route each query through one-bit codes of the IVF centroids, then rerank the
+```
+
+**File**: `index_write/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -31,12 +31,12 @@ serde_json.workspace = true
+ tantivy.workspace = true
+ 
+ [target.'cfg(target_os = "macos")'.dependencies]
+-superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
++superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
+   "accelerate",
+ ] }
+ 
+ [target.'cfg(not(target_os = "macos"))'.dependencies]
+-superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
++superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
+   "openblas",
+ ] }
+ 
+```
+
+**File**: `nix/pg_search.nix` (modified, +1/-1)
+```diff
+@@ -70,7 +70,7 @@ buildPgrxExtension (finalAttrs: {
+   # If maintainers forget to do so, Nix will throw an error message that begins
+   # like this and then provides the correct new hash:
+   # error: hash mismatch in fixed-output derivation '...'
+-  cargoHash = "sha256-4BtZK4+7KXsuqsJODOvlUzTsRXtvx1yTlxFt3ePUHJg=";
++  cargoHash = "sha256-3VMVjQ0izB1fY6hX9LDapCcUJyiCOFviV4wsj4Dt+vU=";
+ 
+   inherit postgresql;
+   # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7323** (2026-11-08): fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (@paradedb-github-bot[bot])
-- **PR #7310** (2026-11-08): chore: Preserve benchmark cluster GUCs across heap snapshot restores. (@stuhood)
-- **PR #7309** (2026-11-07): chore: Fix conflict between #7108 and #7298. (@stuhood)
-- **PR #7305** (2026-11-08): fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (@stuhood)
-- **PR #7303** (2026-11-07): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@paradedb-github-bot[bot])
-- **PR #7298** (2026-11-06): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@mithuncy)
+- **PR #7378** (closed): perf: pin Tantivy with SIMD rotation kernels for vector quantization (@walter-woodall)
+- **PR #7377** (2026-11-11): fix: restore IVF split logic while keeping target_leaf_size (@rebasedming)
+- **PR #7373** (closed): perf(vector): lower default target leaf size to 150 (@rebasedming)
+- **PR #7371** (2026-11-10): chore: Fix docs after vector updates. (@stuhood)
+- **PR #7367** (closed): chore: Ignore (@stuhood)
+- **PR #7365** (2026-11-10): fix: correct Tantivy revision after clustering update (@rebasedming)
 
 ---
 
@@ -2843,32 +2918,44 @@ dominates the combined score by more than 5:1 (
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. polish RankJoin eligibility, planner warnings, and parameterized score projectio
+## X. correct Tantivy revision after clustering update (#7365)
 
 **RULE**:
-When implementing operations in `docs/project/changelog/unreleased/7305.bugfix.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3390563`: polish RankJoin eligibility, planner warnings, and parameterized score projections (#7305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61edff0a`: correct Tantivy revision after clustering update (#7365). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7305.bugfix.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-header: stability
----
-
-Fixed a crash when a `JoinScan` `SELECT` list combines `pdb.score()` with a scalar subquery or query parameter, kept `RankJoinExec` for joins with many `OR` or constant-score predicates on one side, and added `EXPLAIN` warnings when `RankJoinExec` is not used.
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
+source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3390563` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61edff0a` are properly handled with clean fallback behavior.

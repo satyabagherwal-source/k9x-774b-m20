@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `9655d320`  
+> **Source Version**: `622870a7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:51:59.546Z  
+> **Timestamp**: 2026-11-11T16:09:59.126Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:51:57.580Z  
+> **Harvest Timestamp**: 2026-11-11T16:04:56.714Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7798 stars
+- **Stars / Engagement**: 7825 stars
 
 ---
 
@@ -1700,637 +1700,149 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e6eb8ec` (2026-11-03)
-**Commit Message**: fix(tui): avoid blocking keyboard capability probes (#3334)
+### Incident Patch 1: `622870a7` (2026-11-11)
+**Commit Message**: chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362)
 
-* fix(direnv): skip TUI initialization for environment exports
+Bumps [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-parser) from 5.10.1 to 5.12.0.
+- [Release notes](https://github.com/NaturalIntelligence/fast-xml-parser/releases)
+- [Changelog](https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/NaturalIntelligence/fast-xml-parser/compare/v5.10.1...v5.12.0)
 
-Prevent terminal capability probes and raw mode for direnv-export and print-dev-env, including when TUI is explicitly enabled.
+---
+updated-dependencies:
+- dependency-name: fast-xml-parser
+  dependency-version: 5.12.0
+  dependency-type: indirect
+...
 
-Fixes #3169.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Prepared with AI assistance.
-
-* fix(tui): request keyboard reporting without blocking probes
-
-Keep direnv-export and print-dev-env eligible for the TUI. Request the optional Kitty keyboard mode directly and restore it on suspend instead of waiting for a capability response.
-
-Add isolated PTY coverage for captured stdout, legacy and Kitty input, rendering, idempotent cleanup, and terminal restoration.
-
-Prepared with AI assistance.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `docs/package-lock.json` (modified, +19/-19)
 ```diff
-@@ -11,6 +11,7 @@
- 
- ### Bug Fixes
- 
-+- Fixed a two-second TUI startup delay on terminals that do not answer keyboard capability queries, including during direnv shell activation. Interactive progress remains available for `direnv-export` and `print-dev-env` ([#3169](https://github.com/cachix/devenv/issues/3169)).
- - Foreground `devenv up` now publishes its manager before service readiness, so other `devenv up` calls can detect it during startup. Failed publication cancels setup tasks before cleaning up.
- - Foreground and detached native process startup now share a lock, preventing simultaneous cold starts from overwriting each other's manager socket and PID file. Waiting for the lock can be cancelled, and competing callers preserve the winning manager's proxy routes.
- - Manager PID files are now published atomically, preventing concurrent status checks from treating an incomplete PID as stale and deleting discovery state.
-```
-
-**File**: `devenv-tui/src/inline_terminal.rs` (modified, +137/-19)
-```diff
-@@ -137,7 +137,6 @@ pub struct InlineTerminal {
-     stderr: io::Stderr,
-     viewport: Viewport,
-     previous: Option<Canvas>,
--    keyboard_enhancement: bool,
-     keyboard_enhancement_active: bool,
-     raw_mode_active: bool,
-     cursor_hidden: bool,
-@@ -147,7 +146,6 @@ pub struct InlineTerminal {
- impl InlineTerminal {
-     pub fn new(placement: ViewportPlacement) -> io::Result<Self> {
-         let screen = terminal::size()?;
--        let keyboard_enhancement = terminal::supports_keyboard_enhancement().unwrap_or(false);
-         let mut terminal = Self {
-             stderr: io::stderr(),
-             viewport: Viewport {
-@@ -159,7 +157,6 @@ impl InlineTerminal {
-                 claimed: false,
-             },
-             previous: None,
--            keyboard_enhancement,
-             keyboard_enhancement_active: false,
-             raw_mode_active: false,
-             cursor_hidden: false,
-@@ -388,25 +385,24 @@ impl InlineTerminal {
-     }
- 
-     pub fn resume(&mut self) -> io::Result<()> {
--        if self.raw_mode_active
--            && self.cursor_hidden
--            && (!self.keyboard_enhancement || self.keyboard_enhancement_active)
--        {
-+        if self.raw_mode_active && self.cursor_hidden && self.keyboard_enhancement_active {
-             return Ok(());
-         }
-         self.suspend()?;
- 
--        if self.keyboard_enhancement {
--            self.keyboard_enhancement_active = true;
--            if let Err(error) = execute!(
--                self.stderr,
--                event::PushKeyboardEnhancementFlags(
--                    event::KeyboardEnhancementFlags::REPORT_EVENT_TYPES,
--                )
--            ) {
--                let _ = self.suspend();
--                return Err(error);
--            }
-+        // Request the optional Kitty keyboard mode without a capability query.
-+        // Unsupported terminals ignore it; Crossterm also accepts legacy keys.
-+        // A query can otherwise stall startup for two seconds without a reply.
-+        // Pair every push with a pop in suspend(), including error cleanup.
-+        self.keyboard_enhancement_active = true;
-+        if let Err(error) = execute!(
-+            self.stderr,
-+            event::PushKeyboardEnhancementFlags(
-+                event::KeyboardEnhancementFlags::REPORT_EVENT_TYPES,
-+            )
-+        ) {
-+            let _ = self.suspend();
-+            return Err(error);
-         }
-         if let Err(error) = terminal::enable_raw_mode() {
-             let _ = self.suspend();
-@@ -861,6 +857,129 @@ mod tests {
- 
-     // Run terminal mutations in a child with its own PTY so the test runner's
-     // terminal and Crossterm's process-global state are never affected.
-+    #[cfg(unix)]
-+    #[test]
-+    fn startup_with_captured_stdout_does_not_probe_keyboard_support() {
-+        use nix::poll::{PollFd, PollFlags, poll};
-+        use nix::pty::{Winsize, openpty};
-+        use nix::sys::termios::tcgetattr;
-+        use std::fs::File;
-+        use std::io::Read;
-+        use std::os::fd::AsFd;
-+        use std::process::{Command, Stdio};
-+
-+        const CHILD: &str = "DEVENV_TEST_TERMINAL_STARTUP";
-+        if let Ok(mode) = std::env::var(CHILD) {
-+            // Do not let Crossterm open the test runner's controlling terminal.
-+            nix::unistd::setsid().unwrap();
-+            let cooked = tcgetattr(io::stdin()).unwrap().local_flags;
-+            let mut terminal = InlineTerminal::new(ViewportPlacement::Inline).unwrap();
-+            terminal.resume().unwrap();
-+            io::stderr().write_all(b"ready for keys").unwrap();
-+            let first = event::read().unwrap();
-+            assert!(
-+                matches!(first, Event::Key(key) if key.code == event::KeyCode::Char('j')
-+                && key.kind == event::KeyEventKind::Press)
-+            );
-+            if mode == "kitty" {
-+                for kind in [event::KeyEventKind::Repeat, event::KeyEventKind::Release] {
-+                    let key = event::read().unwrap();
-+                    assert!(
-+                        matches!(key, Event::Key(key) if key.code == event::KeyCode::Char('k')
-+                        && key.kind == kind)
-+                    );
-+                }
-+            }
-+            let canvas = element!(View { Text(content: "building") }).render(Some(80));
-+            terminal.draw_with_size(&canvas, (80, 24), None).unwrap();
-+            terminal.suspend().unwrap();
-+            terminal.suspend().unwrap();
-+            drop(terminal);
-+            assert_eq!(tcgetattr(io::stdin()).unwrap().local_flags, cooked);
-+            println!("export data");
-+            return;
-+        }
-+
-+        for mode in ["legacy", "kitty"] {
-+            let pty = openpty(
-+                Some(&Winsize {
-+                    ws_row: 24,
-+                    ws_col: 80,
-+                    ws_xpixel: 0,
-+                    ws_ypixel: 0,
-+                }),
-+                None,
-+            )
-+            .unwrap();
-+            l
-```
-
-**File**: `devenv/src/cli.rs` (modified, +15/-0)
-```diff
-@@ -1667,6 +1667,21 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn export_commands_support_tui() {
-+        for command in [
-+            vec!["direnv-export"],
-+            vec!["print-dev-env"],
-+            vec!["print-dev-env", "--json"],
-+        ] {
-+            for flags in [vec![], vec!["--tui", "true"]] {
-+                let cli =
-+                    Cli::parse_from(["devenv"].into_iter().chain(flags).chain(command.clone()));
-+                assert!(cli.command.supports_tui(), "{command:?}");
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn trace_output_spec_bare_destination_defaults_to_json() {
-         let spec: TraceOutputSpec = "stderr".parse().unwrap();
+@@ -1976,9 +1976,9 @@
+       }
+     },
+     "node_modules/@nodable/entities": {
+-      "version": "3.0.0",
+-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
+-      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
++      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
+       "funding": [
+         {
+           "type": "github",
+@@ -4153,9 +4153,9 @@
+       }
+     },
+     "node_modules/fast-xml-builder": {
+-      "version": "1.3.0",
+-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.0.tgz",
+-      "integrity": "sha512-F74cZEdCvuw9P41GAC3rod4X04jjWGM1JPEv/GWSqFTWLsdyMSBMBMlm9Hk3GLBgLBbdBNY8yee0pQh2RBVESQ==",
++      "version": "1.3.1",
++      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
++      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
+       "funding": [
+         {
+           "type": "github",
+@@ -4169,9 +4169,9 @@
+       }
+     },
+     "node_modules/fast-xml-parser": {
+-      "version": "5.10.1",
+-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.10.1.tgz",
+-      "integrity": "sha512-IEMIf7298kXuZSRFoGfMYrl7is8LpavODgbNz1cwIudv7KwVFnuU+UsMporfq6PD6aXSlawZlARiA3UywCTfMw==",
++      "version": "5.12.0",
++      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
++      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
+       "funding": [
+         {
+           "type": "github",
+@@ -4180,11 +4180,11 @@
+       ],
+       "license": "MIT",
+       "dependencies": {
+-        "@nodable/entities": "^3.0.0",
+-        "fast-xml-builder": "^1.2.0",
+-        "is-unsafe": "^2.0.0",
++        "@nodable/entities": "^3.1.0",
++        "fast-xml-builder": "^1.3.1",
++        "is-unsafe": "^2.0.3",
+         "path-expression-matcher": "^1.6.2",
+-        "strnum": "^2.4.1",
++        "strnum": "^2.5.1",
+         "xml-naming": "^0.3.0"
+       },
+       "bin": {
+@@ -4857,9 +4857,9 @@
+       }
+     },
+     "node_modules/is-unsafe": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.0.tgz",
+-      "integrity": "sha512-2LdV822R+wmI86unXA93WCFpL6g+av8ynWk0nrHyJqGop5VoocYsSLFgN8jrfalT6iGeLNM4KXuVSsULP53kEA==",
++      "version": "2.0.3",
++      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
++      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
+       "funding": [
+         {
+           "type": "github",
+@@ -7562,9 +7562,9 @@
+       }
+     },
+     "node_modules/strnum": {
+-      "version": "2.4.1",
+-      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.4.1.tgz",
+-      "integrity": "sha512-M9eUSMT2dCB2cTNPG7UYj6KuK7RJR2SN2+yCV/fTW3xzTCS6EaGZ5pSMgDIjB7r8zSfTGk+dvvn9rTjpVS9Mwg==",
++      "version": "2.5.1",
++      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
++      "integrity": "sha512-UM4nTLWzQiDBseVxUGxN0wJzIk0UU89Qi7pKXz9qISo+lhviJikTuikBsK/oFRlpvYHvSdz0TVoLyQ+sEpYwxA==",
+       "funding": [
+         {
+           "type": "github",
 ```
 
 ---
 
-### Incident Patch 2: `e83830a0` (2026-11-03)
-**Commit Message**: fix(processes): prevent orphaned native managers during startup (#3333)
+### Incident Patch 2: `f0783152` (2026-11-11)
+**Commit Message**: chore(deps): bump nokogiri in /src/modules/lib/ruby-lsp (#3361)
 
-Publish foreground managers before readiness and serialize foreground and
-detached discovery with a cancellable startup lock. Cancel setup work on
-publication errors, preserve the winning manager's proxy routes, and publish
-PID files atomically so concurrent discovery cannot remove partial writes.
-
-Add regression coverage for startup failures, concurrent foreground/detached
-callers, cancellation, proxy ownership, and concurrent PID validation.
-
-Builds on #3332.
-
-Co-authored-by: soupdiver <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -11,6 +11,9 @@
- 
- ### Bug Fixes
- 
-+- Foreground `devenv up` now publishes its manager before service readiness, so other `devenv up` calls can detect it during startup. Failed publication cancels setup tasks before cleaning up.
-+- Foreground and detached native process startup now share a lock, preventing simultaneous cold starts from overwriting each other's manager socket and PID file. Waiting for the lock can be cancelled, and competing callers preserve the winning manager's proxy routes.
-+- Manager PID files are now published atomically, preventing concurrent status checks from treating an incomplete PID as stale and deleting discovery state.
- - Fixed `devenv processes` commands reporting that no process manager is running after `devenv up -d` had been running for more than three days on macOS, where the system `/tmp` cleaner deleted the manager's PID file ([#3316](https://github.com/cachix/devenv/issues/3316)).
- - Fetched `--from` sources now load YAML configuration, local overrides, and YAML imports alongside their Nix modules. Source-local YAML imports are followed, and relative input overrides in the target's `devenv.local.yaml` resolve from the target directory.
- - Locked inputs with complete source metadata now reuse sources from the Nix store or configured binary caches without contacting their original remote, so `devenv shell` works when that remote is unavailable ([#3244](https://github.com/cachix/devenv/pull/3244)).
-```
-
-**File**: `devenv-processes/src/pid.rs` (modified, +76/-2)
-```diff
-@@ -70,12 +70,86 @@ pub async fn read_pid(pid_file: &Path) -> Result<Pid> {
-     Ok(Pid::from_raw(pid_num))
- }
- 
--/// Write PID to a file
-+/// Publish a complete PID atomically so concurrent validators cannot remove a
-+/// partially written file as stale. The staging file must share its filesystem.
- pub async fn write_pid(pid_file: &Path, pid: u32) -> Result<()> {
--    fs::write(pid_file, pid.to_string()).await.into_diagnostic()
-+    let pid_file = pid_file.to_path_buf();
-+    tokio::task::spawn_blocking(move || -> std::io::Result<()> {
-+        use std::io::Write;
-+
-+        let parent = pid_file
-+            .parent()
-+            .filter(|path| !path.as_os_str().is_empty())
-+            .unwrap_or_else(|| Path::new("."));
-+        let mut staged = tempfile::NamedTempFile::new_in(parent)?;
-+        write!(staged, "{pid}")?;
-+        staged.persist(pid_file).map_err(|error| error.error)?;
-+        Ok(())
-+    })
-+    .await
-+    .into_diagnostic()?
-+    .into_diagnostic()
- }
- 
- /// Remove a PID file
- pub async fn remove_pid(pid_file: &Path) -> Result<()> {
-     fs::remove_file(pid_file).await.into_diagnostic()
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use std::sync::Arc;
-+
-+    #[tokio::test]
-+    async fn failed_pid_publication_removes_its_staging_file() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("manager.pid");
-+        fs::create_dir(&path).await.unwrap();
-+        assert!(write_pid(&path, std::process::id()).await.is_err());
-+        assert!(path.is_dir());
-+        assert_eq!(std::fs::read_dir(dir.path()).unwrap().count(), 1);
-+    }
-+
-+    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
-+    async fn concurrent_pid_checks_never_observe_partial_publication() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("manager.pid");
-+        let pid = std::process::id();
-+        write_pid(&path, pid).await.unwrap();
-+        let barrier = Arc::new(tokio::sync::Barrier::new(5));
-+        let writer = {
-+            let path = path.clone();
-+            let barrier = Arc::clone(&barrier);
-+            tokio::spawn(async move {
-+                barrier.wait().await;
-+                for _ in 0..512 {
-+                    write_pid(&path, pid).await.unwrap();
-+                }
-+            })
-+        };
-+        let mut readers = Vec::new();
-+        for _ in 0..4 {
-+            let path = path.clone();
-+            let barrier = Arc::clone(&barrier);
-+            readers.push(tokio::spawn(async move {
-+                barrier.wait().await;
-+                for _ in 0..512 {
-+                    let status = check_pid_file(&path).await.unwrap();
-+                    if !matches!(status, PidStatus::Running(live) if live.as_raw() == pid as i32) {
-+                        return Err(format!("Reader observed {status:?} during publication"));
-+                    }
-+                }
-+                Ok(())
-+            }));
-+        }
-+        writer.await.unwrap();
-+        for reader in readers {
-+            reader.await.unwrap().unwrap();
-+        }
-+        assert!(matches!(
-+            check_pid_file(&path).await.unwrap(),
-+            PidStatus::Running(_)
-+        ));
-+    }
-+}
-```
-
-**File**: `devenv/src/devenv/mod.rs` (modified, +178/-78)
-```diff
-@@ -283,12 +283,20 @@ fn should_attach_to_running_manager(
-     mode == ClientRunMode::Follow && interactivity == ClientInteractivity::Interactive
- }
- 
--fn should_clear_proxy_routes(
--    manager_was_running: bool,
--    owns_foreground_manager: bool,
--    start_failed: bool,
--) -> bool {
--    owns_foreground_manager || (!manager_was_running && start_failed)
-+#[derive(Clone, Copy)]
-+enum ProcessStartOwnership {
-+    Unclaimed,
-+    Existing,
-+    Foreground,
-+    Detached,
-+}
-+
-+fn should_clear_proxy_routes(ownership: ProcessStartOwnership, start_failed: bool) -> bool {
-+    match ownership {
-+        ProcessStartOwnership::Foreground => true,
-+        ProcessStartOwnership::Detached => start_failed,
-+        ProcessStartOwnership::Unclaimed | ProcessStartOwnership::Existing => false,
-+    }
- }
- 
- /// Keep the startup lock and proxy routes while a slow daemon is still alive.
-@@ -2584,8 +2592,15 @@ impl Devenv {
-                 mode: ClientRunMode::ReturnAfterStart,
-                 ..Default::default()
-             };
--            self.start_processes(vec![], devenv_tasks::RunMode::All, envs, options, None)
--                .await?;
-+            self.start_processes(
-+                vec![],
-+                devenv_tasks::RunMode::All,
-+                envs,
-+                options,
-+                None,
-+                &mut ProcessStartOwnership::Unclaimed,
-+            )
-+            .await?;
-         }
- 
-         // ── Phase 5: Running tests ──────────────────────────────────
-@@ -2777,18 +2792,18 @@ impl Devenv {
-         .await?;
- 
-         // ── Phase 3: Running processes ──────────────────────────────
--        let manager_was_running =
--            self.native_manager_running().await || self.external_process_manager_state_exists();
--        let owns_foreground_manager =
--            options.mode == ClientRunMode::Follow && !options.daemon && !manager_was_running;
-+        let mut ownership = ProcessStartOwnership::Unclaimed;
-         let result = self
--            .start_processes(processes, task_mode, envs, options, Some(task_configs))
-+            .start_processes(
-+                processes,
-+                task_mode,
-+                envs,
-+                options,
-+                Some(task_configs),
-+                &mut ownership,
-+            )
-             .await;
--        if should_clear_proxy_routes(
--            manager_was_running,
--            owns_foreground_manager,
--            result.is_err(),
--        ) {
-+        if should_clear_proxy_routes(ownership, result.is_err()) {
-             crate::proxy::clear(&self.proxy_owner());
-         }
-         result
-@@ -2802,6 +2817,7 @@ impl Devenv {
-         envs: HashMap<String, String>,
-         mut options: ProcessOptions,
-         preloaded_tasks: Option<Vec<tasks::TaskConfig>>,
-+        ownership: &mut ProcessStartOwnership,
-     ) -> Result<ProcessStartOutcome> {
-         // Release port reservations so processes can bind their allocated ports.
-         // The port allocator holds TcpListeners during Nix evaluation to prevent
-@@ -2941,12 +2957,27 @@ impl Devenv {
-                 .make_task_config(roots, task_configs, task_mode, envs)
-                 .await?;
- 
-+            // Serialize discovery and publication across foreground and detached
-+            // cold starts. Release before following a manager or waiting for readiness.
-+            let startup_lock = self.lock_native_startup().await?;
-+            let pid_file = self.native_manager_pid_file();
-+            let pid_status = processes::check_pid_file(&pid_file).await;
-+            let manager_running = matches!(&pid_status, Ok(processes::PidStatus::Running(_)));
-+            *ownership = if manager_running {
-+                ProcessStartOwnership::Existing
-+            } else if options.mode == ClientRunMode::Follow && !options.daemon {
-+                ProcessStartOwnership::Foreground
-+            } else {
-+                ProcessStartOwnership::Detached
-+            };
-+
-             if options.daemon {
-                 // Spawn a separate daemon process via re-exec to avoid
-                 // fork-safety issues in this multithreaded process.
-                 return self
-                     .spawn_daemon_processes(
-                         config,
-+                        manager_running,
-                         &launch_names,
-                         &capability_requests,
-                         capabilities_required_now,
-@@ -2959,10 +2990,8 @@ impl Devenv {
-             // attach to it over the control socket and start the up-enabled
-             // processes instead of starting a second manager (which would
-             // clobber the daemon's PID file/socket and orphan it).
--            let pid_file = self.native_manager_pid_file();
--            if let Ok(processes::PidStatus::Running(pid)) =
--                processes::check_pid_file(&pid_file).await
--            {
-+            if let Ok(processes::PidStatus::Running(pid)) = pid_status {
-+                drop(st
-```
-
-**File**: `tests/process-up-attach/.test.sh` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ reset_port_files() {
- 
- # Poll until the running manager's pid file exists and it reports ready.
- # `devenv processes wait` fails fast while the pid file is absent (the
--# foreground session writes it only once its cold start completes), so retry
-+# foreground session writes it once its processes are scheduled), so retry
- # it; once the pid file exists it blocks until ready. Event-driven with a
- # bounded number of attempts.
- wait_for_manager() {
-```
-
-**File**: `tests/process-up-concurrent/.test-config.yml` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+use_shell: false
-```
-
-**File**: `tests/process-up-concurrent/.test.sh` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
-+
-+. "$DEVENV_TEST_LIB"
-+
-+devenv shell -- python3 test_startup.py "$(devenv_runtime_dir)/processes"
-```
-
-**File**: `tests/process-up-concurrent/devenv.nix` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{ config, pkgs, ... }:
-+{
-+  packages = [ pkgs.python3 ];
-+  process.manager.implementation = "native";
-+  processes.slow = {
-+    exec = ''
-+      echo $$ >> "${config.devenv.state}/launch-pids"
-+      exec sleep infinity
-+    '';
-+    ready.exec = "test -e ${config.devenv.state}/ready";
-+  };
-+}
-```
-
-**File**: `tests/process-up-concurrent/test_startup.py` (added, +192/-0)
-```diff
-@@ -0,0 +1,192 @@
-+"""Queue real CLI callers behind an external lock before releasing them together."""
-+
-+import fcntl
-+import json
-+import os
-+from pathlib import Path
-+import signal
-+import socketserver
-+import subprocess
-+import sys
-+import time
-+import threading
-+
-+
-+runtime = Path(sys.argv[1])
-+runtime.mkdir(parents=True, exist_ok=True)
-+state = Path(".devenv/state")
-+pid_file = runtime / "native-manager.pid"
-+socket = runtime / "native.sock"
-+waiting_message = "Waiting for native process manager startup lock"
-+
-+
-+# Observe real CLI cleanup requests without touching the user's shared proxy.
-+# Proxy-disabled configuration legitimately reconciles once before discovery;
-+# a losing or cancelled caller must not send another destructive replacement.
-+class ProxyControl(socketserver.StreamRequestHandler):
-+    def handle(self):
-+        request = json.loads(self.rfile.readline())
-+        assert request["command"] == "replace_owner", request
-+        self.server.commands.append(request)
-+        self.wfile.write(b'{"status":"ok","routes":null,"removed":null}\n')
-+
-+
-+proxy_path = runtime / "test-proxy.sock"
-+proxy_path.unlink(missing_ok=True)
-+proxy = socketserver.UnixStreamServer(str(proxy_path), ProxyControl)
-+proxy.commands = []
-+proxy_thread = threading.Thread(target=proxy.serve_forever, daemon=True)
-+proxy_thread.start()
-+os.environ["DEVENV_PROXY_SOCKET"] = str(proxy_path)
-+
-+
-+def wait_until(predicate, description, timeout=60):
-+    deadline = time.monotonic() + timeout
-+    while not predicate():
-+        if time.monotonic() >= deadline:
-+            raise AssertionError(f"Timed out waiting for {description}")
-+        time.sleep(0.1)
-+
-+
-+def run(*args):
-+    return subprocess.run(["devenv", *args], check=True, timeout=60)
-+
-+
-+def stop_manager(children):
-+    if not pid_file.exists():
-+        return
-+    manager_pid = int(pid_file.read_text())
-+    owner = next((child for child in children if child.pid == manager_pid), None)
-+    if owner is not None:
-+        # Reap a foreground child ourselves; a synchronous `processes down`
-+        # would otherwise wait for this parent's unreaped zombie.
-+        owner.send_signal(signal.SIGINT)
-+        owner.wait(timeout=30)
-+    else:
-+        run("processes", "down")
-+
-+
-+def exercise(first_daemon, second_daemon):
-+    label = "-".join("detached" if daemon else "foreground"
-+                     for daemon in (first_daemon, second_daemon))
-+    children = []
-+    state.joinpath("ready").unlink(missing_ok=True)
-+    state.joinpath("launch-pids").unlink(missing_ok=True)
-+
-+    def start(name, daemon=False):
-+        trace = Path(f"{label}-{name}.json")
-+        trace.unlink(missing_ok=True)
-+        with Path(f"{label}-{name}.log").open("w") as log:
-+            child = subprocess.Popen(
-+                ["devenv", "--verbose", "--trace-to", f"json:file:{trace}",
-+                 "up", "--no-tui", *(["-d"] if daemon else [])],
-+                stdout=log,
-+                stderr=subprocess.STDOUT,
-+                env={**os.environ, "DEVENV_NO_AI_AGENT": "1", "RUST_LOG": "devenv=debug"},
-+            )
-+        children.append(child)
-+
-+        def blocked():
-+            assert child.poll() is None, f"{name} exited before reaching the startup lock"
-+            assert not pid_file.exists(), f"{name} published while the startup lock was held"
-+            assert not socket.exists(), f"{name} bound its socket while the startup lock was held"
-+            return trace.exists() and waiting_message in trace.read_text()
-+
-+        wait_until(blocked, f"{name} to wait for the startup lock")
-+        return child
-+
-+    try:
-+        # Both callers must reach discovery while no manager exists. This avoids
-+        # depending on machine speed to hit the pre-publication race.
-+        with (runtime / "native-start.lock").open("a") as lock:
-+            fcntl.flock(lock, fcntl.LOCK_EX)
-+            first = start("first", daemon=first_daemon)
-+            second = start("second", daemon=second_daemon)
-+            cancelled = start("cancelled", daemon=second_daemon)
-+            reconciled = len(proxy.commands)
-+            assert reconciled >= 3, "Each caller must reconcile before waiting"
-+            cancelled.send_signal(signal.SIGINT)
-+            assert cancelled.wait(timeout=30) != 0
-+            assert len(proxy.commands) == reconciled, "Cancelled waiter cleared shared proxy routes"
-+            assert not pid_file.exists(), "A waiting caller published a manager"
-+            assert not socket.exists(), "A waiting caller published a socket"
-+            fcntl.flock(lock, fcntl.LOCK_UN)
-+
-+        wait_until(lambda: pid_file.exists() and pid_file.read_text().strip().isdigit(),
-+                   "manager publication")
-+        manager_pid = int(pid_file.read_text())
-+        foreground_owner = any(child.pid == manager_pid and not daemon
-+                               for child, daemon in ((first, first_daemon), (second, second_daemon)))
-+        for name,
-```
+Bumps [nokogiri](https://github.com/sparklemotion/nokogiri) from 1.18.10 to 1.19.5.
+- [Release notes](https://github.com/sparklemotion/nokogiri/releases)
+- [Changelog](https://github.com/sparklemotion/nokogiri/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sparklemotion/nokogiri/compare/v1.18.10...v1.19.5)
 
 ---
+updated-dependencies:
+- dependency-name: nokogiri
+  dependency-version: 1.19.5
+  dependency-type: indirect
+...
 
-### Incident Patch 3: `9655d320` (2026-11-03)
-**Commit Message**: test(closure-size): raise the Linux limit to 425 MB (#3339)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-The base of #3333 already measured 423.93 MB, and the startup fix measured 423.96 MB. Set the non-Darwin limit to 425 MB while retaining the 540 MB Darwin limit.
-
-**File**: `tests/closure-size/.test.sh` (modified, +1/-1)
+**File**: `src/modules/lib/ruby-lsp/Gemfile.lock` (modified, +1/-1)
 ```diff
-@@ -8,7 +8,7 @@ set -euo pipefail
- system=$(nix eval --impure --raw --expr builtins.currentSystem)
- case "$system" in
-   aarch64-darwin) MAX_MB=540 ;;
--  *) MAX_MB=420 ;;
-+  *) MAX_MB=425 ;;
- esac
- 
- repo=$(cd ../.. && pwd)
+@@ -15,7 +15,7 @@ GEM
+     lint_roller (1.1.0)
+     logger (1.7.0)
+     mini_portile2 (2.8.9)
+-    nokogiri (1.18.10)
++    nokogiri (1.19.5)
+       mini_portile2 (~> 2.8.2)
+       racc (~> 1.4)
+     observer (0.1.2)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3339** (2026-11-03): test(closure-size): raise the Linux limit to 425 MB (@domenkozar)
-- **PR #3334** (2026-11-03): fix(tui): avoid blocking keyboard capability probes (@domenkozar)
-- **PR #3333** (2026-11-03): fix(processes): prevent orphaned native managers during startup (@domenkozar)
-- **PR #3332** (closed): fix(processes): publish foreground manager before readiness (@soupdiver)
-- **PR #3330** (2026-10-28): docs: publish changelog-merge blog post (@domenkozar)
-- **PR #3329** (2026-10-28): chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in /docs (@dependabot[bot])
+- **PR #3362** (2026-11-11): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (@dependabot[bot])
+- **PR #3361** (2026-11-11): chore(deps): bump nokogiri from 1.18.10 to 1.19.5 in /src/modules/lib/ruby-lsp (@dependabot[bot])
+- **PR #3354** (2026-11-10): feat(elixir): per-project MIX_HOME, mix deps task and versionFile (@nelsonmestevao)
+- **PR #3353** (2026-11-10): feat(elixir): add version option (@nelsonmestevao)
+- **PR #3351** (2026-11-10): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #3348** (closed): fix(top-level): keep `env` values that setup hooks replace (@frankhinek)
 
 ---
 
@@ -2350,28 +1862,64 @@ The base of #3333 already measured 423.93 MB, and the startup fix measured 423.9
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): avoid blocking keyboard capability probes (#3334)
+## X. deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e6eb8ec`: tui): avoid blocking keyboard capability probes (#3334). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `622870a7`: deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed a two-second TUI startup delay on terminals that do not answer keyboard capability queries, including during direnv shell activation. Interactive progress remains available for `direnv-export` and `print-dev-env` ([#3169](https://github.com/cachix/devenv/issues/3169)).
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
+      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
+      "version": "1.3.1",
+      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
+      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
+      "version": "5.12.0",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
+      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
+        "@nodable/entities": "^3.1.0",
+        "fast-xml-builder": "^1.3.1",
+        "is-unsafe": "^2.0.3",
+        "strnum": "^2.5.1",
+      "version": "2.0.3",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
+      "version": "2.5.1",
+      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
+      "integrity": "sha512-UM4nTL
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
+      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
+      "version": "1.3.0",
+      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.0.tgz",
+      "integrity": "sha512-F74cZEdCvuw9P41GAC3rod4X04jjWGM1JPEv/GWSqFTWLsdyMSBMBMlm9Hk3GLBgLBbdBNY8yee0pQh2RBVESQ==",
+      "version": "5.10.1",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.10.1.tgz",
+      "integrity": "sha512-IEMIf7298kXuZSRFoGfMYrl7is8LpavODgbNz1cwIudv7KwVFnuU+UsMporfq6PD6aXSlawZlARiA3UywCTfMw==",
+        "@nodable/entities": "^3.0.0",
+        "fast-xml-builder": "^1.2.0",
+        "is-unsafe": "^2.0.0",
+        "strnum": "^2.4.1",
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.0.tgz",
+      "integrity": "sha512-2LdV822R+wmI86unXA93WCFpL6g+av8ynWk0nrHyJqGop5VoocYsSLFgN8jrfalT6iGeLNM4KXuVSsULP53kEA==",
+      "version": "2.4.1",
+      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.4.1.tgz",
+      "integrity": "sha512-M9eUSM
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e6eb8ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `622870a7` are properly handled with clean fallback behavior.

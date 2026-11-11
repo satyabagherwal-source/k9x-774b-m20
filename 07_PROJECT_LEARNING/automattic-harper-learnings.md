@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `11f7925c`  
+> **Source Version**: `2fac72e1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:01:19.357Z  
+> **Timestamp**: 2026-11-11T13:22:03.047Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:01:18.848Z  
+> **Harvest Timestamp**: 2026-11-11T13:17:02.214Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17494 stars
+- **Stars / Engagement**: 17596 stars
 
 ---
 
@@ -1429,268 +1429,375 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11f7925c` (2026-11-08)
-**Commit Message**: fix(core): mark "later" and "further" as adverbs (#4868)
+### Incident Patch 1: `b59b5ad2` (2026-11-10)
+**Commit Message**: fix(desktop): memory leak when the device goes to sleep (#4905)
 
-Without the adverb sense, "She would later become president." was flagged by
-ModalBeAdjective and "She further explained the plan." by PronounVerbAgreement.
+Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
-Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
-
-**File**: `harper-core/dictionary.dict` (modified, +2/-1)
+**File**: `harper-desktop/src-tauri/src/highlighter/window_manager.rs` (modified, +81/-6)
 ```diff
-@@ -26348,7 +26348,7 @@ furriness/Ng
- furring/V6Ng
- furrow/NgSVdG
- furry/~J^>pNZ
--further/~VSGdJc
-+further/~VSGdJcR
- furtherance/Nmg
- furthermore/~J
- furthermost/J
-@@ -32102,6 +32102,7 @@ latecomer/NgS
- latency/~Ng
- lateness/Ng
- latent/~JYNgS
-+later/~JcR
- lateral/~JYNgSVdG
- latest/~JNg
- latex/~Ng
-```
-
-**File**: `harper-core/src/linting/modal_be_adjective.rs` (modified, +8/-0)
-```diff
-@@ -165,4 +165,12 @@ mod tests {
-             ModalBeAdjective::default(),
+@@ -1,3 +1,4 @@
++use std::collections::HashSet;
+ use std::time::{Duration, Instant};
+ 
+ use winit::application::ApplicationHandler;
+@@ -19,6 +20,7 @@ use crate::os_broker::{LintText, OsBroker};
+ use crate::rect::ActionableLint;
+ 
+ const CONFIG_POLL_INTERVAL: Duration = Duration::from_secs(1);
++const OVERLAY_RESUME_CHECK_INTERVAL: Duration = Duration::from_millis(500);
+ 
+ /// Owns the winit event loop and the overlay windows created for each monitor.
+ ///
+@@ -94,7 +96,8 @@ impl WindowManager {
+             },
          );
-     }
-+
-+    #[test]
-+    fn ignore_would_later() {
-+        assert_no_lints(
-+            "She would later become president.",
-+            ModalBeAdjective::default(),
-+        );
-+    }
+ 
+-        // Run continuously without a read timer; VSync presentation provides backpressure.
++        // VSync provides backpressure while displays are awake. The handler waits while overlays
++        // are paused instead of relying on presentation to throttle the loop during display sleep.
+         self.event_loop.set_control_flow(ControlFlow::Poll);
+         let result = self.event_loop.run_app(&mut app);
+ 
+@@ -115,6 +118,8 @@ struct WindowManagerApp {
+     refresh_config: RefreshConfig,
+     hovered_lint: Option<usize>,
+     cursor_hittest_enabled: bool,
++    occluded_windows: HashSet<WindowId>,
++    overlays_paused: bool,
+     error: Option<Error>,
  }
-```
-
-**File**: `harper-core/src/linting/pronoun_verb_agreement.rs` (modified, +5/-0)
-```diff
-@@ -550,4 +550,9 @@ mod lints {
-     fn dont_flag_4388() {
-         assert_no_lints("We humans are naturally curious.", test_linter());
+ 
+@@ -141,6 +146,8 @@ impl WindowManagerApp {
+             refresh_config: callbacks.refresh_config,
+             hovered_lint: None,
+             cursor_hittest_enabled: false,
++            occluded_windows: HashSet::new(),
++            overlays_paused: false,
+             error: None,
+         }
      }
-+
-+    #[test]
-+    fn dont_flag_she_further_explained() {
-+        assert_no_lints("She further explained the plan.", test_linter());
+@@ -154,10 +161,31 @@ impl WindowManagerApp {
+         }
+ 
+         for window in &self.windows {
+-            window.request_redraw();
++            if self.can_render_window(window.id()) {
++                window.request_redraw();
++            }
+         }
+     }
+ 
++    /// Whether to suspend overlay OS reads and rendering because no overlay can be seen.
++    /// Configuration synchronization remains active. An empty window list alone does not imply
++    /// occlusion: windows may not have been created yet.
++    fn should_pause_overlays(&self) -> bool {
++        all_displays_asleep()
++            || (!self.windows.is_empty()
++                && self
++                    .windows
++                    .iter()
++                    .all(|window| self.occluded_windows.contains(&window.id())))
 +    }
++
++    /// Checks redraw eligibility using the pause state last refreshed in `about_to_wait` and the
++    /// latest window occlusion events. Apply this both when requesting and consuming redraws:
++    /// an already-queued redraw must not render an unavailable overlay.
++    fn can_render_window(&self, window_id: WindowId) -> bool {
++        !self.overlays_paused && !self.occluded_windows.contains(&window_id)
++    }
++
+     fn refresh_config(&mut self) {
+         (self.refresh_config)();
+     }
+@@ -207,7 +235,9 @@ impl WindowManagerApp {
+         self.render_state.set_highlighted_lint(Some(index));
+ 
+         for window in &self.windows {
+-            window.request_redraw();
++            if self.can_render_window(window.id()) {
++                window.request_redraw();
++            }
+         }
+     }
  }
+@@ -216,13 +246,23 @@ impl ApplicationHandler for WindowManagerApp {
+     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+         let now = Instant::now();
+ 
+-        self.read_rect_updates();
+-
+         if now.duration_since(self.last_config_poll) >= CONFIG_POLL_INTERVAL {
+             self.refresh_config();
+             self.last_config_poll = now;
+         }
+ 
++        // Rendering while displays sleep can rapidly accumulate Metal drawables (#3874).
++        // Suspend overlay work until it can be displayed again, but keep config sync alive.
++        self.overlays_paused = self.should_pause_overlays();
++        if self.overlays_paused {
++            event_loop
++                .set_control_flow(ControlFlow::WaitUntil(now + OVERLAY_RESUME_CHECK_INTERVAL));
++            return;
++        }
++
++        // Preserve VSync-driven polling while awake. This also requests a fresh frame on wake.
++        event_loop.set_control_flow(ControlFlow::Poll);
++        self.read_rect_updates();
+         self.update_cursor_hittest(event_loop);
+     }
+ 
+@@ -251,6 +291,20 @@ impl ApplicationHandler for WindowManagerApp {
+         window_id: WindowId,
+         event: WindowEvent,
+     ) {
++        if let WindowEvent::Occluded(occluded) = &event {
++            if *occluded {
++                self.occluded_windows.insert(window_id);
++            } else {
++                self.occluded_windows.remove(&window_id);
++            }
++        }
++
++        // Do not pass paused redraws to egui: it requests another redraw in response, which
++        // would keep waking the event loop even though no frame can be presented (#3874).
++        if matches!(&event, WindowEvent::RedrawRequested) && !self.can_render_window(window_id) {
++            return;
++        }
++
+         let should_select_hit_lint = matches!(
+             &event,
+             WindowEvent::MouseInput 
 ```
 
-**File**: `harper-core/tests/text/tagged/Alice's Adventures in Wonderland.md` (modified, +6/-6)
+---
+
+### Incident Patch 2: `62863ef7` (2026-11-10)
+**Commit Message**: fix(chrome-ext): handle a reset user dictionary (#4827)
+
+Opening the options page saves the user dictionary, which first stores
+null through resetDictionary and then rebuilds the linter. The default
+passed to chrome.storage.local.get only applies to missing keys, so
+getUserDictionary returned null and importWords threw an uncaught
+TypeError in the service worker.
+
+A null left in storage also stopped the linter initialising on startup.
+
+**File**: `packages/chrome-plugin/src/background/index.ts` (modified, +2/-1)
 ```diff
-@@ -267,7 +267,7 @@
- > bleeds ; and  she  had never forgotten that      , if    you    drink   much         from a   bottle  marked
- # NPl/V3 . VB/C ISg+ VP  R     NSg/VPp/J I/C/Ddem+ . NSg/C ISgPl+ NSg/VB+ NSg/I/J/R/Dq P    D/P NSg/VB+ VP/J
- > “ poison   , ” it       is  almost certain to disagree with you    , sooner or    later .
--# . N🅪Sg/VB+ . . NSg/ISg+ VL3 R      I/J     P  VB       P    ISgPl+ . JC     NPr/C JC    .
-+# . N🅪Sg/VB+ . . NSg/ISg+ VL3 R      I/J     P  VB       P    ISgPl+ . JC     NPr/C JC/R  .
- >
- #
- > However , this    bottle  was  not     marked “ poison   , ” so          Alice ventured to taste    it       , and
-@@ -291,7 +291,7 @@
- > door    into that     lovely garden    . First , however , she  waited for   a    few       minutes to
- # NSg/VB+ P    I/C/Ddem NSg/J  NSg/VB/J+ . NSg/J . C       . ISg+ VP/J   R/C/P D/P+ NSg/I/Dq+ NPl/V3+ P
- > see    if    she  was  going   to shrink any    further : she  felt      a   little     nervous about
--# NSg/VB NSg/C ISg+ VLPt Nᴹ/Vg/J P  NSg/VB I/R/Dq VB/JC   . ISg+ N🅪Sg/VP/J D/P NPr/I/J/Dq J       J/P
-+# NSg/VB NSg/C ISg+ VLPt Nᴹ/Vg/J P  NSg/VB I/R/Dq VB/JC/R . ISg+ N🅪Sg/VP/J D/P NPr/I/J/Dq J       J/P
- > this    ; “ for   it       might    end     , you    know , ” said Alice to herself , “ in        my  going   out
- # I/Ddem+ . . R/C/P NSg/ISg+ Nᴹ/VXB/J NSg/VB+ . ISgPl+ VB   . . VP/J NPr+  P  ISg+    . . NPr/J/R/P D$+ Nᴹ/Vg/J NSg/VB/J/R/P
- > altogether , like         a    candle  . I       wonder  what   I       should be       like         then      ? ” And  she  tried
-@@ -2499,7 +2499,7 @@
- > about it       : it       was  neither more         nor   less    than a    pig     , and  she  felt      that     it       would be
- # J/P   NSg/ISg+ . NSg/ISg+ VLPt I/C     NPr/I/J/R/Dq NSg/C J/R/C/P C/P  D/P+ NSg/VB+ . VB/C ISg+ N🅪Sg/VP/J I/C/Ddem NSg/ISg+ VXB   NSg/VLXB
- > quite absurd for   her     to carry  it       further .
--# R     NSg/J  R/C/P ISg/D$+ P  NSg/VB NSg/ISg+ VB/JC   .
-+# R     NSg/J  R/C/P ISg/D$+ P  NSg/VB NSg/ISg+ VB/JC/R .
- >
- #
- > So          she  set       the little      creature down        , and  felt      quite relieved to see    it       trot    away
-@@ -4641,7 +4641,7 @@
- > “ What   matters it       how   far      we   go       ? ” his     scaly  friend    replied . “ There is  another
- # . NSg/I+ NPl/V3+ NSg/ISg+ NSg/C NSg/VB/J IPl+ NSg/VB/J . . ISg/D$+ NSg/J+ NPr/VB/J+ VP/J    . . R+    VL3 I/D+
- > shore   , you    know , upon the other     side      . The further off        from England the nearer
--# NSg/VB+ . ISgPl+ VB   . P    D+  NSg/VB/J+ NSg/VB/J+ . D   VB/JC   NSg/VB/J/P P    NPr+    D   NSg/JC
-+# NSg/VB+ . ISgPl+ VB   . P    D+  NSg/VB/J+ NSg/VB/J+ . D   VB/JC/R NSg/VB/J/P P    NPr+    D   NSg/JC
- > is  to France — Then      turn   not     pale     , beloved  snail  , but     come       and  join   the dance    .
- # VL3 P  NPr+   . NSg/J/R/C NSg/VB NSg/R/C NSg/VB/J . NSg/VB/J NSg/VB . NSg/C/P NSg/VBPp/P VB/C NSg/VB D   N🅪Sg/VB+ .
- > Will    you    , won’t you    , will    you    , won’t you    , will    you    join   the dance    ? Will    you    ,
-@@ -4857,7 +4857,7 @@
- >
- #
- > ( later editions continued as    follows When    the sands   are all          dry      , he       is  gay      as
--# . JC    NPl      VP/J      R/C/P NPl/V3  NSg/I/C D   NPl/V3+ VLB NSg/I/J/C/Dq NSg/VB/J . NPr/ISg+ VL3 NPr/VB/J R/C/P
-+# . JC/R  NPl      VP/J      R/C/P NPl/V3  NSg/I/C D   NPl/V3+ VLB NSg/I/J/C/Dq NSg/VB/J . NPr/ISg+ VL3 NPr/VB/J R/C/P
- > a   lark   , And  will    talk    in        contemptuous tones  of the Shark   , But     , when    the tide
- # D/P NSg/VB . VB/C NPr/VXB N🅪Sg/VB NPr/J/R/P J            NPl/V3 P  D   NSg/VB+ . NSg/C/P . NSg/I/C D   NSg/VB+
- > rises   and  sharks are around , His     voice   has a   timid and  tremulous sound      . )
-@@ -4919,7 +4919,7 @@
- >
- #
- > ( later editions continued as    follows The Panther took pie      - crust    , and  gravy    ,
--# . JC    NPl      VP/J      R/C/P NPl/V3  D   NSg     VPt  N🅪Sg/VB+ . N🅪Sg/VB+ . VB/C N🅪Sg/VB+ .
-+# . JC/R  NPl      VP/J      R/C/P NPl/V3  D   NSg     VPt  N🅪Sg/VB+ . N🅪Sg/VB+ . VB/C N🅪Sg/VB+ .
- > and  meat  , While      the Owl     had the dish    as    its     share  of the treat   . When    the pie
- # VB/C N🅪Sg+ . NSg/VB/C/P D   NSg/VB+ VP  D   NSg/VB+ R/C/P ISg/D$+ NSg/VB P  D   NSg/VB+ . NSg/I/C D+  N🅪Sg/VB+
- > was  all          finished , the Owl     , as    a   boon  , Was  kindly permitted to pocket   the
+@@ -890,7 +890,8 @@ async function addToDictionary(words: string[]): Promise<void> {
+ /** Grab the user dictionary from persistent storage. */
+ async function getUserDictionary(): Promise<string[]> {
+ 	const resp = await chrome.storage.local.get({ userDictionary: [] });
+-	return resp.userDictionary;
++	// `resetDictionary` stores null, which the default above does not replace.
++	return resp.userDictionary ?? [];
+ }
+ 
+ /** Record the date the extension was installed, if it's missing. */
 ```
 
-**File**: `harper-core/tests/text/tagged/Computer science.md` (modified, +3/-3)
+---
+
+### Incident Patch 3: `85403580` (2026-11-10)
+**Commit Message**: fix(ci): upgrade Playwright (#4902)
+
+**File**: `packages/chrome-plugin/package.json` (modified, +2/-2)
 ```diff
-@@ -251,7 +251,7 @@
- > the ACM — turingineer , turologist , flow    - charts  - man     , applied meta  - mathematician ,
- # D   NSg . ?           . ?          . NSg/VB+ . NPl/V3+ . NPr/VB+ . VP/J    NSg/J . NSg+          .
- > and  applied epistemologist . Three months later in        the same journal   , comptologist
--# VB/C VP/J    NSg            . NSg+  NPl+   JC    NPr/J/R/P D+  I/J+ NSg/VB/J+ . ?
-+# VB/C VP/J    NSg            . NSg+  NPl+   JC/R  NPr/J/R/P D+  I/J+ NSg/VB/J+ . ?
- > was  suggested , followed next    year by hypologist . The term      computics has also
- # VLPt VP/J      . VP/J     NSg/J/P NSg+ P  ?          . D+  NSg/VB/J+ ?         V3  R/C
- > been   suggested . In        Europe , terms   derived from contracted translations of the
-@@ -317,7 +317,7 @@
- > The relationship between computer science and  software engineering is  a
- # D   NSg          NSg/P   NSg+     N🅪Sg/VB VB/C Nᴹ+      Nᴹ/Vg/J+    VL3 D/P
- > contentious issue  , which is  further muddied by disputes over    what   the term
--# J           NSg/VB . I/C+  VL3 VB/JC   VP/J    P  NPl/V3+  NSg/J/P NSg/I+ D   NSg/VB/J+
-+# J           NSg/VB . I/C+  VL3 VB/JC/R VP/J    P  NPl/V3+  NSg/J/P NSg/I+ D   NSg/VB/J+
- > " software engineering " means  , and  how   computer science  is  defined . David Parnas ,
- # . Nᴹ+      Nᴹ/Vg/J+    . NPl/V3 . VB/C NSg/C NSg+     N🅪Sg/VB+ VL3 VP/J    . NPr+  ?      .
- > taking   a   cue     from the relationship between other    engineering and  science
-@@ -967,7 +967,7 @@
- > repetition : WHILE      such  - and  - such  is  the case      , DO  this    . The three rules  of
- # N🅪Sg/VB+   . NSg/VB/C/P NSg/I . VB/C . NSg/I VL3 D   NPr🅪Sg/VB . VXB I/Ddem+ . D   NSg   NPl/V3 P
- > Boehm's and  Jacopini's insight can     be       further simplified with the use      of
--# ?       VB/C ?          N🅪Sg+   NPr/VXB NSg/VLXB VB/JC   VP/J       P    D   N🅪Sg/VB+ P
-+# ?       VB/C ?          N🅪Sg+   NPr/VXB NSg/VLXB VB/JC/R VP/J       P    D   N🅪Sg/VB+ P
- > goto ( which means  it       is  more         elementary than structured programming ) .
- # ?    . I/C+  NPl/V3 NSg/ISg+ VL3 NPr/I/J/R/Dq NSg/J      C/P  VP/J       Nᴹ/Vg/J+    . .
- >
+@@ -29,7 +29,7 @@
+ 	},
+ 	"devDependencies": {
+ 		"@crxjs/vite-plugin": "^2.3.0",
+-		"@playwright/test": "1.60.0",
++		"@playwright/test": "1.65.0",
+ 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+ 		"@tailwindcss/vite": "^4.1.4",
+ 		"@types/chrome": "^0.0.246",
+@@ -39,7 +39,7 @@
+ 		"gulp": "^5.0.0",
+ 		"gulp-zip": "^6.0.0",
+ 		"http-server": "^14.1.1",
+-		"playwright": "1.60.0",
++		"playwright": "1.65.0",
+ 		"playwright-webextext": "^0.0.5",
+ 		"rollup-plugin-copy": "^3.5.0",
+ 		"svelte": "^5.0.0",
 ```
 
-**File**: `harper-core/tests/text/tagged/Part-of-speech tagging.md` (modified, +3/-3)
+**File**: `packages/components/package.json` (modified, +1/-1)
 ```diff
-@@ -191,7 +191,7 @@
- > cannot  . The program got about 70 % correct  . Its     results were repeatedly reviewed
- # NSg/VXB . D+  NPr/VB+ VP  J/P   #  . NSg/VB/J . ISg/D$+ NPl/V3+ VLPt R          VP/J
- > and  corrected by hand    , and  later users sent   in        errata so          that      by the late  70 s
--# VB/C VP/J      P  NSg/VB+ . VB/C JC    NPl+  NSg/VP NPr/J/R/P NSg    NSg/I/J/R/C I/C/Ddem+ P  D   NSg/J #  ?
-+# VB/C VP/J      P  NSg/VB+ . VB/C JC/R  NPl+  NSg/VP NPr/J/R/P NSg    NSg/I/J/R/C I/C/Ddem+ P  D   NSg/J #  ?
- > the tagging was  nearly perfect  ( allowing for   some     cases   on  which even       human
- # D   NSg/Vg  VLPt R      NSg/VB/J . Nᴹ/Vg/J  R/C/P I/J/R/Dq NPl/V3+ J/P I/C+  NSg/VB/J/R NSg/J+
- > speakers might    not     agree ) .
-@@ -205,7 +205,7 @@
- > other    languages . Statistics derived by analyzing it       formed the basis for   most
- # NSg/VB/J NPl+      . NPl/V3+    VP/J    P  Nᴹ/Vg/J   NSg/ISg+ VP/J   D+  NSg+  R/C/P NSg/I/J/R/Dq
- > later part      - of - speech   tagging systems , such  as    CLAWS   and  VOLSUNGA . However , by
--# JC    NSg/VB/J+ . P  . N🅪Sg/VB+ NSg/Vg  NPl+    . NSg/I R/C/P NPl/V3+ VB/C ?        . C       . P
-+# JC/R  NSg/VB/J+ . P  . N🅪Sg/VB+ NSg/Vg  NPl+    . NSg/I R/C/P NPl/V3+ VB/C ?        . C       . P
- > this    time       ( 2005 ) it       has been   superseded by larger corpora such  as    the 100
- # I/Ddem+ N🅪Sg/VB/J+ . #    . NSg/ISg+ V3  VLPp/B VP/J       P  JC     NPl+    NSg/I R/C/P D   #
- > million word    British National Corpus , even       though larger corpora are rarely so
-@@ -385,7 +385,7 @@
- >
- #
- > These   two  categories can     be       further subdivided into rule    - based , stochastic , and
--# I/Ddem+ NSg+ NPl+       NPr/VXB NSg/VLXB VB/JC   VP/J       P    NSg/VB+ . VP/J  . J          . VB/C
-+# I/Ddem+ NSg+ NPl+       NPr/VXB NSg/VLXB VB/JC/R VP/J       P    NSg/VB+ . VP/J  . J          . VB/C
- > neural approaches .
- # J      NPl/V3+    .
- >
+@@ -57,7 +57,7 @@
+ 		"@vitest/coverage-v8": "4.1.12",
+ 		"@vueless/storybook-dark-mode": "^10.0.8",
+ 		"flowbite": "^3.1.2",
+-		"playwright": "1.60.0",
++		"playwright": "1.65.0",
+ 		"publint": "^0.3.14",
+ 		"storybook": "^10.6.3",
+ 		"svelte": "^5.57.3",
 ```
 
-**File**: `harper-core/tests/text/tagged/The Constitution of the United States.md` (modified, +1/-1)
+**File**: `packages/harper-editor/package.json` (modified, +1/-1)
 ```diff
-@@ -215,7 +215,7 @@
- >
- #
- > Judgment in        Cases   of impeachment shall not     extend further than to removal from
--# NSg+     NPr/J/R/P NPl/V3+ P  N🅪Sg        VXB   NSg/R/C NSg/VB VB/JC   C/P  P  NSg     P
-+# NSg+     NPr/J/R/P NPl/V3+ P  N🅪Sg        VXB   NSg/R/C NSg/VB VB/JC/R C/P  P  NSg     P
- > Office  , and  disqualification to hold     and  enjoy any    Office of honor       , Trust     or
- # NSg/VB+ . VB/C N🅪Sg             P  NSg/VB/J VB/C VB    I/R/Dq NSg/VB P  N🅪Sg/VB/Am+ . N🅪Sg/VB/J NPr/C
- > Profit      under   the United States    : but     the Party     convicted shall nevertheless be
+@@ -61,7 +61,7 @@
+ 		"components": "workspace:*",
+ 		"harper.js": "workspace:*",
+ 		"lint-framework": "workspace:*",
+-		"playwright": "1.60.0",
++		"playwright": "1.65.0",
+ 		"publint": "^0.3.14",
+ 		"storybook": "^10.6.3",
+ 		"quill": "^2.0.3",
 ```
 
-**File**: `harper-core/tests/text/tagged/The Great Gatsby.md` (modified, +27/-27)
+**File**: `packages/harper.js/package.json` (modified, +1/-1)
 ```diff
-@@ -115,7 +115,7 @@
- > graduated from New    Haven   in        1915 , just a   quarter  of a   century after my  father  ,
- # VP/J      P    NSg/J+ NSg/VB+ NPr/J/R/P #    . J/R  D/P NSg/VB/J P  D/P NSg+    P     D$+ NPr/VB+ .
- > and  a   little     later I       participated in        that      delayed Teutonic migration known as
--# VB/C D/P NPr/I/J/Dq JC    ISg/#r+ VP/J         NPr/J/R/P I/C/Ddem+ VP/J    NSg/J    NSg+      VPp/J R/C/P
-+# VB/C D/P NPr/I/J/Dq JC/R  ISg/#r+ VP/J         NPr/J/R/P I/C/Ddem+ VP/J    NSg/J    NSg+      VPp/J R/C/P
- > the Great War      . I       enjoyed the counter   - raid    so          thoroughly that     I       came      back
- # D   NSg/J N🅪Sg/VB+ . ISg/#r+ VP/J    D   NSg/VB/J+ . NSg/VB+ NSg/I/J/R/C R          I/C/Ddem ISg/#r+ NSg/VPt/P NSg/VB/J
- > restless . Instead of being        the warm     centre      of the world   , the Middle    West      now
-@@ -711,7 +711,7 @@
- > or    to be       entertained . They knew that     presently dinner   would be       over    and  a   little
- # NPr/C P  NSg/VLXB VP/J        . IPl+ VPt  I/C/Ddem R         N🅪Sg/VB+ VXB   NSg/VLXB NSg/J/P VB/C D/P NPr/I/J/Dq
- > later the evening    too would be       over    and  casually put     away . It       was  sharply
--# JC    D+  N🅪Sg/Vg/J+ R   VXB   NSg/VLXB NSg/J/P VB/C R        NSg/VBP VB/J . NSg/ISg+ VLPt R
-+# JC/R  D+  N🅪Sg/Vg/J+ R   VXB   NSg/VLXB NSg/J/P VB/C R        NSg/VBP VB/J . NSg/ISg+ VLPt R
- > different from the West      , where   an   evening    was  hurried from phase   to phase  toward
- # NSg/J     P    D+  NPr/VB/J+ . NSg/R/C D/P+ N🅪Sg/Vg/J+ VLPt VP/J    P    NPr/VB+ P  NPr/VB J/P
- > its     close    , in        a   continually disappointed anticipation or    else    in        sheer    nervous
-@@ -1199,7 +1199,7 @@
- >
- #
- > I       said lightly that     I       had heard nothing  at    all          , and  a    few       minutes later I       got up
--# ISg/#r+ VP/J R       I/C/Ddem ISg/#r+ VP  VP/J  NSg/I/J+ NSg/P NSg/I/J/C/Dq . VB/C D/P+ NSg/I/Dq+ NPl/V3+ JC    ISg/#r+ VP  NSg/VB/J/P
-+# ISg/#r+ VP/J R       I/C/Ddem ISg/#r+ VP  VP/J  NSg/I/J+ NSg/P NSg/I/J/C/Dq . VB/C D/P+ NSg/I/Dq+ NPl/V3+ JC/R  ISg/#r+ VP  NSg/VB/J/P
- > to go       home      . They came      to the door    with me       and  stood side      by side      in        a   cheerful
- # P  NSg/VB/J NSg/VB/J+ . IPl+ NSg/VPt/P P  D+  NSg/VB+ P    NPr/ISg+ VB/C VP    NSg/VB/J+ P  NSg/VB/J+ NPr/J/R/P D/P J
- > square   of light      . As    I       started my  motor     Daisy peremptorily called : “ Wait   !
-@@ -1763,7 +1763,7 @@
- > his     greeting to every one      in        the room     . He       informed me       that     he       was  in        the
- # ISg/D$+ Nᴹ/Vg/J+ P  Dq    NSg/I/J+ NPr/J/R/P D   N🅪Sg/VB+ . NPr/ISg+ VP/J     NPr/ISg+ I/C/Ddem NPr/ISg+ VLPt NPr/J/R/P D
- > “ artistic game      , ” and  I       gathered later that     he       was  a   photographer and  had made
--# . J+       NSg/VB/J+ . . VB/C ISg/#r+ VP/J     JC    I/C/Ddem NPr/ISg+ VLPt D/P NSg          VB/C VP  VP
-+# . J+       NSg/VB/J+ . . VB/C ISg/#r+ VP/J     JC/R  I/C/Ddem NPr/ISg+ VLPt D/P NSg          VB/C VP  VP
- > the dim      enlargement of Mrs  . Wilson’s mother    which hovered like         an  ectoplasm on
- # D   NSg/VB/J NSg         P  NPl+ . NPr$     NSg/VB/J+ I/C+  VP/J    NSg/VB/J/C/P D/P N🅪Sg      J/P
- > the wall    . His     wife      was  shrill   , languid , handsome , and  horrible . She  told me       with
-@@ -2661,7 +2661,7 @@
- > escort , a   persistent undergraduate given       to violent  innuendo , and  obviously
- # NSg/VB . D/P J          NSg/J         NSg/VPp/J/P P  NSg/VB/J N🅪Sg/VB  . VB/C R
- > under   the impression that      sooner or    later Jordan was  going   to yield  him  up         her
--# NSg/J/P D   NSg/VB+    I/C/Ddem+ JC     NPr/C JC    NPr+   VLPt Nᴹ/Vg/J P  NSg/VB ISg+ NSg/VB/J/P ISg/D$+
-+# NSg/J/P D   NSg/VB+    I/C/Ddem+ JC     NPr/C JC/R  NPr+   VLPt Nᴹ/Vg/J P  NSg/VB ISg+ NSg/VB/J/P ISg/D$+
- > person  to a   greater or    lesser degree . Instead of rambling this    party     had
- # NSg/VB+ P  D/P JC      NPr/C JC     NSg+   . R       P  Nᴹ/Vg/J  I/Ddem+ NSg/VB/J+ VP
- > preserved a   dignified homogeneity , and  assumed to itself the function of
-@@ -2949,7 +2949,7 @@
- > “ If    you    want   anything  just ask    for   it       , old    sport   , ” he       urged me       . “ Excuse  me       . I
- # . NSg/C ISgPl+ NSg/VB NSg/I/VB+ J/R  NSg/VB R/C/P NSg/ISg+ . NSg/J+ NSg/VB+ . . NPr/ISg+ VP/J  NPr/ISg+ . . NSg/VB+ NPr/ISg+ . ISg/#r+
- > will    rejoin you    later . ”
--# NPr/VXB NSg/VB ISgPl+ JC    . .
-+# NPr/VXB NSg/VB ISgPl+ JC/R  . .
- >
- #
- > When    he       was  gone    I       turned immediately to Jordan — constrained to assure her     of my
-@@ -3465,7 +3465,7 @@
- > contrary  , they were merely casual events in        a    crowded summer     , and  , until much
- # NSg/VB/J+ . IPl+ VLPt R      NSg/J  NPl/V3 NPr/J/R/P D/P+ VP/J+   NPr🅪Sg/VB+ . VB/C . C/P   NSg/I/J/R/Dq
- > later , they
+@@ -33,7 +33,7 @@
+ 		"marked": "^16.4.1",
+ 		"p-lazy": "^5.0.0",
+ 		"p-memoize": "^7.1.1",
+-		"playwright": "1.60.0",
++		"playwright": "1.65.0",
+ 		"type-fest": "^4.37.0",
+ 		"typescript": "catalog:",
+ 		"vite": "^8.3.5",
+```
+
+**File**: `packages/obsidian-plugin/package.json` (modified, +2/-2)
+```diff
+@@ -4,15 +4,15 @@
+ 	"version": "3.1.0",
+ 	"main": "main.js",
+ 	"devDependencies": {
+-		"@playwright/test": "1.60.0",
++		"@playwright/test": "1.65.0",
+ 		"@rollup/plugin-node-resolve": "^16.0.0",
+ 		"@types/lodash-es": "^4.17.12",
+ 		"@types/node": "catalog:",
+ 		"@types/rollup-plugin-peer-deps-external": "^2.2.6",
+ 		"@vitest/browser": "^4.0.16",
+ 		"@vitest/browser-playwright": "^4.0.16",
+ 		"obsidian": "^1.7.2",
+-		"playwright": "1.60.0",
++		"playwright": "1.65.0",
+ 		"rollup": "4.35.0",
+ 		"rollup-plugin-peer-deps-external": "^2.2.4",
+ 		"rollup-plugin-svg-import": "^3.0.0",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +50/-59)
+```diff
+@@ -130,8 +130,8 @@ importers:
+         specifier: ^2.3.0
+         version: 2.3.0
+       '@playwright/test':
+-        specifier: 1.60.0
+-        version: 1.60.0
++        specifier: 1.65.0
++        version: 1.65.0
+       '@sveltejs/vite-plugin-svelte':
+         specifier: ^4.0.0
+         version: 4.0.4(svelte@5.57.3)(vite@5.4.17(@types/node@22.13.10)(lightningcss@1.33.0)(sass@1.85.1)(terser@5.51.2))
+@@ -160,11 +160,11 @@ importers:
+         specifier: ^14.1.1
+         version: 14.1.1
+       playwright:
+-        specifier: 1.60.0
+-        version: 1.60.0
++        specifier: 1.65.0
++        version: 1.65.0
+       playwright-webextext:
+         specifier: ^0.0.5
+-        version: 0.0.5(@playwright/test@1.60.0)(playwright@1.60.0)
++        version: 0.0.5(@playwright/test@1.65.0)(playwright@1.65.0)
+       rollup-plugin-copy:
+         specifier: ^3.5.0
+         version: 3.5.0
+@@ -237,7 +237,7 @@ importers:
+         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
+       '@vitest/browser-playwright':
+         specifier: 4.1.12
+-        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
++        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
+       '@vitest/coverage-v8':
+         specifier: 4.1.12
+         version: 4.1.12(@vitest/browser@4.1.12)(vitest@4.1.12)
+@@ -248,8 +248,8 @@ importers:
+         specifier: ^3.1.2
+         version: 3.1.2(rollup@4.53.3)
+       playwright:
+-        specifier: 1.60.0
+-        version: 1.60.0
++        specifier: 1.65.0
++        version: 1.65.0
+       publint:
+         specifier: ^0.3.14
+         version: 0.3.15
+@@ -318,7 +318,7 @@ importers:
+         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
+       '@vitest/browser-playwright':
+         specifier: 4.1.12
+-        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
++        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
+       '@vueless/storybook-dark-mode':
+         specifier: ^10.0.8
+         version: 10.0.8(storybook@10.6.3(@types/react@18.3.18)(react@18.3.1))
+@@ -332,8 +332,8 @@ importers:
+         specifier: workspace:*
+         version: link:../lint-framework
+       playwright:
+-        specifier: 1.60.0
+-        version: 1.60.0
++        specifier: 1.65.0
++        version: 1.65.0
+       publint:
+         specifier: ^0.3.14
+         version: 0.3.15
+@@ -382,7 +382,7 @@ importers:
+         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
+       '@vitest/browser-playwright':
+         specifier: 4.1.12
+-        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
++        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
+       '@vitest/ui':
+         specifier: 4.1.12
+         version: 4.1.12(vitest@4.1.12)
+@@ -399,8 +399,8 @@ importers:
+         specifier: ^7.1.1
+         version: 7.1.1
+       playwright:
+-        specifier: 1.60.0
+-        version: 1.60.0
++        specifier: 1.65.0
++        version: 1.65.0
+       type-fest:
+         specifier: ^4.37.0
+         version: 4.37.0
+@@ -512,8 +512,8 @@ importers:
+         version: 2.8.1
+     devDependencies:
+       '@playwright/test':
+-        specifier: 1.60.0
+-        version: 1.60.0
++        specifier: 1.65.0
++        version: 1.65.0
+       '@rollup/plugin-node-resolve':
+         specifier: ^16.0.0
+         version: 16.0.3(rollup@4.35.0)
+@@ -531,13 +531,13 @@ importers:
+         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@6.3.5(@types/node@22.13.10)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
+       '@vitest/browser-playwright':
+         specifier: ^4.0.16
+-        version: 4.1.12(msw@2.7.3(@t
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4868** (2026-11-08): fix(core): mark "later" and "further" as adverbs (@jayhemnani9910)
-- **PR #4867** (2026-11-08): docs: GitHub issue template for false negatives (@hippietrail)
-- **PR #4863** (2026-11-07): fix(linting): don't join "out guesses" to "outguesses" (@Yi-111-a)
-- **PR #4857** (2026-11-07): feat: no-to-little → little-to-no (@hippietrail)
-- **PR #4856** (2026-11-07): fix(core): TheyToThem no longer flags "the help they received" (@jayhemnani9910)
-- **PR #4848** (2026-11-06): feat(core): correct `doin` to `doing` (@elijah-potter)
+- **PR #4905** (2026-11-10): fix(desktop): memory leak when the device goes to sleep (@elijah-potter)
+- **PR #4902** (2026-11-10): fix(ci): upgrade Playwright (@elijah-potter)
+- **PR #4894** (2026-11-11): feat: moment(s) of truths → moments of truth (@hippietrail)
+- **PR #4886** (closed): fix(desktop): make the Windows highlighter overlay transparent (@hridyesh-gupta)
+- **PR #4885** (2026-11-11): feat: look forwards to → look forward to (@hippietrail)
+- **PR #4873** (2026-11-11): feat: if I where to → if I were to (@hippietrail)
 
 ---
 
@@ -1710,29 +1817,56 @@ Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): mark "later" and "further" as adverbs (#4868)
+## X. desktop): memory leak when the device goes to sleep (#4905)
 
 **RULE**:
-When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-desktop/src-tauri/src/highlighter/window_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11f7925c`: core): mark "later" and "further" as adverbs (#4868). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b59b5ad2`: desktop): memory leak when the device goes to sleep (#4905). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-desktop/src-tauri/src/highlighter/window_manager.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-further/~VSGdJcR
-later/~JcR
+use std::collections::HashSet;
+const OVERLAY_RESUME_CHECK_INTERVAL: Duration = Duration::from_millis(500);
+        // VSync provides backpressure while displays are awake. The handler waits while overlays
+        // are paused instead of relying on presentation to throttle the loop during display sleep.
+    occluded_windows: HashSet<WindowId>,
+    overlays_paused: bool,
+            occluded_windows: HashSet::new(),
+            overlays_paused: false,
+            if self.can_render_window(window.id()) {
+                window.request_redraw();
+            }
+    /// Whether to suspend overlay OS reads and rendering because no overlay can be seen.
+    /// Configuration synchronization remains active. An empty window list alone does not imply
+    /// occlusion: windows may not have been created yet.
+    fn should_pause_overlays(&self) -> bool {
+        all_displays_asleep()
+            || (!self.windows.is_empty()
+                && self
+                    .windows
+                    .iter()
+                    .all(|window| self.occluded_windows.contains(&window.id())))
+    }
+
+    /// Checks redraw eligibility using the pause state last refreshed in `about_to_wait` and the
+    /// l
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-further/~VSGdJc
+        // Run continuously without a read timer; VSync presentation provides backpressure.
+            window.request_redraw();
+            window.request_redraw();
+        self.read_rect_updates();
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11f7925c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b59b5ad2` are properly handled with clean fallback behavior.

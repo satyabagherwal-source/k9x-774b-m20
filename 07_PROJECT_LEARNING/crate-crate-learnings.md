@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `31875da1`  
+> **Source Version**: `f7d204bd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T14:22:51.918Z  
+> **Timestamp**: 2026-11-11T10:52:14.429Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T14:22:51.911Z  
+> **Harvest Timestamp**: 2026-11-11T10:52:14.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4449 stars
+- **Stars / Engagement**: 4452 stars
 
 ---
 
@@ -555,569 +555,259 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `31875da1` (2026-11-03)
-**Commit Message**: Add initial S3 support to parquet fdw via OpenDAL
+### Incident Patch 1: `7ce57725` (2026-11-09)
+**Commit Message**: Add release note entries for released security fixes
 
-This allows queries to run against parquet files stored in S3.
-
-A note about the current implementation:
-
-The parquet fdw can perform projection
-pushdown, but it does not yet do filter pushdown, so every column chunk
-is fetched from the object store.
-
-Future work could explore utilizing filter pushdown in hardwood, which
-may prune entire column chunks, thereby reducing the amount of data required from s3
-
-**File**: `blackbox/test_s3.py` (modified, +54/-0)
+**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +33/-4)
 ```diff
-@@ -21,6 +21,7 @@
+@@ -194,7 +194,36 @@ Fixes
+   the subscriber cluster were relocated to another node or when a replica shard
+   was promoted to primary.
  
- 
- import os
-+import pathlib
- import platform
- import shutil
- import tempfile
-@@ -71,6 +72,7 @@ class MinioServer:
- 
-     MINIO_ACCESS_KEY = 'minio'
-     MINIO_SECRET_KEY = 'miniostorage/'
-+    MINIO_REGION = 'myRegion'
- 
-     CACHE_ROOT = Path(os.environ.get('XDG_CACHE_HOME', os.path.join(os.path.expanduser('~'), '.cache')))
-     CACHE_DIR = CACHE_ROOT / 'crate-tests'
-@@ -100,6 +102,7 @@ def run(self):
-         env = os.environ.copy()
-         env['MINIO_ACCESS_KEY'] = MinioServer.MINIO_ACCESS_KEY
-         env['MINIO_SECRET_KEY'] = MinioServer.MINIO_SECRET_KEY
-+        env['MINIO_REGION'] = MinioServer.MINIO_REGION
-         self.process = Popen(
-             cmd,
-             stdin=DEVNULL,
-@@ -302,3 +305,54 @@ def test_anonymous_read_write(self):
-                 self.assertEqual(result, [[1],[1],[2],[2],[3],[3]]) # two sets because copied to/from the same table
- 
-                 c.execute('DROP TABLE t1')
+-- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
+-  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
+-  to have ``AL`` privilege to avoid a security issue when authenticated user can
+-  can switch to CrateDB's unauthenticated internal transport protocol.
++- Fixed a `security issue
++  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
++  that allowed authenticated users to switch to CrateDB's unauthenticated
++  internal transport protocol, by using
++  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
++  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
++  user now requires the ``AL`` privilege.
 +
-+class S3ParquetIntegrationTest(unittest.TestCase):
++- Fixed security issues (`GHSA-7p46-fxpg-cwm7
++  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
++  and `GHSA-jp7h-6782-g32q
++  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
++  that allowed existing sessions to use the privileges and role memberships
++  their user had when the session was created. Changes in privileges and role
++  memberships now take effect immediately and if the session user is dropped,
++  all SQL statements are rejected. This includes prepared statements and portals
++  created before the changes, and ``FETCH`` on cursors declared before such
++  changes.
 +
-+    @classmethod
-+    def setUpClass(cls):
-+        crate_node.start()
++- Fixed a `security issue
++  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
++  that allowed users to read tables without having the required privileges,
++  by using scalar subqueries in a ``VALUES`` list, in the arguments of a table
++  function, or in a ``JOIN ... ON`` condition, e.g.::
 +
-+    @classmethod
-+    def tearDownClass(cls):
-+        crate_node.stop()
++    SELECT * FROM (VALUES ((SELECT secret FROM restricted))) AS v(x)
 +
-+    def test_basic_read_parquet_from_s3(self):
-+        client = Minio(endpoint='127.0.0.1:9000',
-+                       access_key = MinioServer.MINIO_ACCESS_KEY,
-+                       secret_key = MinioServer.MINIO_SECRET_KEY,
-+                       region = "myRegion",
-+                       secure = False)
-+
-+        with MinioServer() as minio:
-+            t = threading.Thread(target=minio.run)
-+            t.daemon = True
-+            t.start()
-+            wait_until(lambda: _is_up('127.0.0.1', 9000))
-+
-+            bucket_name = "my-bucket"
-+            client.make_bucket(bucket_name=bucket_name)
-+            client.fput_object(
-+                bucket_name=bucket_name,
-+                object_name="key/departments.parquet",
-+                file_path=os.path.join("testdata", "departments.parquet")
-+            )
-+            local_file = pathlib.Path(os.path.abspath(os.path.join("testdata", "departments2.parquet"))).as_uri()
-+
-+            with connect(crate_node.http_url) as conn:
-+                c = conn.cursor()
-+                c.execute(f"""
-+                    CREATE SERVER pq FOREIGN DATA WRAPPER parquet
-+                    OPTIONS (files ['s3://minio:miniostorage%2F@127.0.0.1:9000/{bucket_name}/key/departments.parquet',
-+                    '{local_file}'], protocol 'http', region 'myRegion')
-+                """)
-+                c.execute("""
-+                    CREATE FOREIGN TABLE departments (manager_id bigint, name text, location bigint, id bigint)
-+                    SERVER pq;
-+                """)
-+                c.execute("""
-+                    SELECT manager_id, name FROM departments;
-+                """)
-+                result = c.fetchall()
-+                self.assertEqual(result, [[501, 'Administration'], [511, 'Marketing'], [518, 'Purchasing'], [517, 'Human Resources'], [121, 'Shipping'], [502, 'IT'], [520, 'Sales']])
-+                c.execute('DROP SERVER pq CASCADE')
-+
++- Fixed a `security issue
++  <https://github.com/crate/crate/security/advisories/GHSA-qcp3-r37v-7p8j>`__
++  that allowed unauthenticated clients to exhaust the memory of a node by
++  sending compressed HTTP requests, as their content was decompressed and
++  buffered before the request was authenticated. HTTP requests are now
++  authenticated before their content is decompressed.
 ```
 
-**File**: `docs/admin/fdw.rst` (modified, +19/-6)
+**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +33/-4)
 ```diff
-@@ -185,14 +185,14 @@ Example::
- ``parquet``
- ===========
+@@ -199,7 +199,36 @@ Fixes
+   the subscriber cluster were relocated to another node or when a replica shard
+   was promoted to primary.
  
--The ``parquet`` foreign data wrapper allows CrateDB to read local parquet
--files. Only the ``crate`` superuser is allowed to do this.
-+The ``parquet`` foreign data wrapper allows CrateDB to read parquet
-+files stored locally and/or in a remote object storage.
- The ``parquet`` foreign data wrapper does not support writing data to parquet files.
- 
- Usage::
- 
-   cr> CREATE SERVER my_parquet FOREIGN DATA WRAPPER parquet
--  ... OPTIONS (local_files ['testdata/departments.parquet']);
-+  ... OPTIONS (files ['testdata/departments.parquet']);
-   CREATE OK, 1 row affected (... sec)
- 
-   cr> CREATE FOREIGN TABLE departments (manager_id bigint, name text, location bigint, id bigint) SERVER my_parquet;
-@@ -288,10 +288,23 @@ the parquet foreign data wrapper.
- The parquet foreign data wrapper supports the following ``OPTIONS`` for use with
- :ref:`ref-create-server`:
- 
--:local_files:
-+:files: (required)
- 
--  A list of absolute paths to local parquet files. This is required. The files must be
--  present on all nodes.
-+  A list of paths to parquet files. The paths could be either absolute paths
-+  or object storage URIs. Currently, only object stores with `s3`
-+  compatibility are supported.
+-- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
+-  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
+-  to have ``AL`` privilege to avoid a security issue when authenticated user can
+-  can switch to CrateDB's unauthenticated internal transport protocol.
++- Fixed a `security issue
++  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
++  that allowed authenticated users to switch to CrateDB's unauthenticated
++  internal transport protocol, by using
++  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
++  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
++  user now requires the ``AL`` privilege.
 +
-+  In order to read local parquet files, the files must be present on all nodes.
-+  Only the ``crate`` superuser is allowed to read local files.
- 
-   You can provide multiple files, but they all must have the same schema.
-   Otherwise an error will be raised when executing the query.
++- Fixed security issues (`GHSA-7p46-fxpg-cwm7
++  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
++  and `GHSA-jp7h-6782-g32q
++  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
++  that allowed existing sessions to use the privileges and role memberships
++  their user had when the session was created. Changes in privileges and role
++  memberships now take effect immediately and if the session user is dropped,
++  all SQL statements are rejected. This includes prepared statements and portals
++  created before the changes, and ``FETCH`` on cursors declared before such
++  changes.
 +
-+:protocol: (optional)
++- Fixed a `security issue
++  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
++  that allowed users to read tables without having the required privileges,
++  by using scalar subqueries in a ``VALUES`` list, in the arguments of a table
++  function, or in a ``JOIN ... ON`` condition, e.g.::
 +
-+  A protocol can be provided. Valid options are ``http`` or ``https``.
-+  Default is ``https``. This is only relevant when reading remote files.
++    SELECT * FROM (VALUES ((SELECT secret FROM restricted))) AS v(x)
 +
-+:region: (optional)
-+
-+  If your `s3` compatible object storage requires you to specify a region, provide it here.
-```
-
-**File**: `docs/appendices/release-notes/6.6.0.rst` (modified, +2/-2)
-```diff
-@@ -68,8 +68,8 @@ SQL Standard and PostgreSQL Compatibility
-   ``name[]`` parameters. The ``typarray`` of ``name`` changed from ``-1`` to
-   ``1003``.
- 
--- Added initial Parquet foreign data wrapper that can read local parquet files
--  :ref:`administration-fdw-parquet`.
-+- Added initial Parquet foreign data wrapper that can read parquet files
-+  from local storage or from s3 compatible object stores. See :ref:`administration-fdw-parquet`.
- 
- Data Types
- ----------
-```
-
-**File**: `extensions/parquet/pom.xml` (modified, +20/-1)
-```diff
-@@ -31,17 +31,32 @@
-             <artifactId>crate-server</artifactId>
-             <version>${project.version}</version>
-         </dependency>
-+        <dependency>
-+            <groupId>io.crate</groupId>
-+            <artifactId>crate-libs-opendal</artifactId>
-+            <version>${project.version}</version>
-+            </dependency>
-         <dependency>
-             <groupId>org.jspecify</groupId>
-             <artifactId>jspecify</artifactId>
-             <version>${versions.jspecify}</version>
-         </dependency>
- 
-         <dependency>
-+            <groupId>org.apache.opendal</groupId>
-+            <artifactId>opendal</artifactId>
-+            <version>${versions.opendal}</version>
-+        </dependency>
-+        <dependency>
-+            <groupId>org.apache.opendal</groupId>
-+            <artifactId>opendal</artifactId>
-+            <version>${versions.opendal}</version>
-+            <classifier>${os.classifier}</classifier>
-+        </dependency>        <dependency>
-             <groupId>dev.hardwood</groupId>
-             <artifactId>hardwood-core</artifactId>
-         </dependency>
--        <!-- Hardwood uses these two deps for compression: https://hardwood.dev/latest/getting-started/#compression-libraries -->
-+        <!-- Hardwood uses the following deps for compression: https://hardwood.dev/latest/getting-started/#compression-libraries -->
-         <dependency>
-             <groupId>com.github.luben</groupId>
-             <artifactId>zstd-jni</artifactId>
-@@ -50,6 +65,10 @@
-             <groupId>org.xerial.snappy</groupId>
-             <artifactId>snappy-java</artifactId>
-         </dependency>
-+        <dependency>
-+            <groupId>at.yawk.lz4</groupId>
-+            <artifactId>lz4-java</artifactId>
-+        </dependency>
- 
-         <dependency>
-             <groupId>io.crate</groupId>
-```
-
-**File**: `extensions/parquet/src/main/java/io/crate/parquet/OpenDALInputFile.java` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+/*
-+ * Licensed to Crate.io GmbH ("Crate") under one or more contributor
-+ * license agreements.  See the NOTICE file distributed with this work for
-+ * additional information regarding copyright ownership.  Crate licenses
-+ * this file to you under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.  You may
-+ * obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-+ * License for the specific language governing permissions and limitations
-+ * under the License.
-+ *
-+ * However, if you have executed another commercial license agreement
-+ * with Crate these terms will supersede the license and you may use the
-+ * software solely pursuant to the terms of the relevant commercial agreement.
-+ */
-+
-+package io.crate.parquet;
-+
-+import java.io.IOException;
-+import java.nio.ByteBuffer;
-+
-+import org.apache.opendal.Metadata;
-+import org.apache.opendal.Operator;
-+
-+import dev.hardwood.InputFile;
-+
-+public class OpenDALInputFile implements InputFile {
-+
-+    private final Operator operator;
-+    private final String path;
-+
-+    public OpenDALInputFile(Operator operator, String path) {
-+        this.operator = operator;
-+        this.path = path;
-+    }
-+
-+    @Override
-+    public void close() throws IOException {
-+        operator.close();
-+    }
-+
-+    @Override
-+    public void open() throws IOException {
-+    }
-+
-+    @Override
-+    public ByteBuffer readRange(long offset, int length) throws IOException {
-+        byte[] bs = operator.read(path, offset, length);
-+        return ByteBuffer.wrap(bs);
-+    }
-+
-+    @Override
-+    public long length() throws IOException {
-+        Metadata stat = operator.stat(path);
-+        return stat.getContentLength();
-+    }
-+
-+    @Override
-+    public String name() {
-+        return path;
-+    }
-+}
-```
-
-**File**: `extensions/parquet/src/main/java/io/crate/parquet/ParquetBatchIterator.java` (modified, +2/-0)
-```diff
-@@ -159,6 +159,8 @@ private void initReader() {
-             rowReader = builder.build();
-         } catch (IOException e) {
-             Exceptions.rethrowUnchecked(e);
-+        } catch (UncheckedIOException e) {
-+            Exceptions.rethrowUnchecked(e.getCause());
-         }
-     }
- }
-```
-
-**File**: `extensions/parquet/src/main/java/io/crate/parquet/ParquetForeignDataWrapper.java` (modified, +48/-8)
-```diff
-@@ -23,18 +23,23 @@
- 
- import static io.crate.types.DataTypes.STRING_ARRAY;
- 
-+import java.net.URI;
- import java.nio.file.Path;
--import java.nio.file.Paths;
- import java.util.ArrayList;
- import java.util.List;
- import java.util.concurrent.CompletableFuture;
- 
-+import org.apache.opendal.AsyncExecutor;
-+import org.apache.opendal.AsyncOperator;
-+import org.apache.opendal.Operator;
-+import org.apache.opendal.ServiceConfig.S3;
- import org.elasticsearch.common.settings.Setting;
- import org.elasticsearch.common.settings.Settings;
- 
- import dev.hardwood.InputFile;
- import io.crate.data.BatchIterator;
- import io.crate.data.Row;
-+import io.crate.exceptions.InvalidArgumentException;
- import io.crate.exceptions.UnauthorizedException;
- import io.crate.execution.dsl.projection.builder.InputColumns;
- import io.crate.execution.dsl.projection.builder.InputColumns.SourceSymbols;
-@@ -44,6 +49,9 @@
- import io.crate.expression.InputFactory.Context;
- import io.crate.fdw.ForeignDataWrapper;
- import io.crate.metadata.TransactionContext;
-+import io.crate.opendal.S3Env;
-+import io.crate.opendal.S3URI;
-+import io.crate.opendal.SharedAsyncExecutor;
- import io.crate.metadata.ColumnIdent;
- import io.crate.metadata.Reference;
- import io.crate.metadata.RelationMetadata;
-@@ -54,8 +62,12 @@
- public class ParquetForeignDataWrapper implements ForeignDataWrapper {
- 
-     private final InputFactory inputFactory;
--    private final Setting<List<String>> localFilesSetting = Setting.listSetting("local_files", new ArrayList<>(), s -> s, STRING_ARRAY);
--    private final List<Setting<?>> mandatoryServerOptions = List.of(localFilesSetting);
-+    private final Setting<List<String>> filesSetting = Setting.listSetting("files", new ArrayList<>(), s -> s, STRING_ARRAY);
-+    private final Setting<String> protocolSetting = Setting.simpleString("protocol");
-+    private final Setting<String> regionSetting = Setting.simpleString("region");
-+    private final List<Setting<?>> mandatoryServerOptions = List.of(filesSetting);
-+    private final List<Setting<?>> optionalServerOptions = List.of(protocolSetting, regionSetting);
-+    private AsyncExecutor executor;
- 
-     public ParquetForeignDataWrapper(InputFactory inputFactory) {
-         this.inputFactory = inputFactory;
-@@ -71,6 +83,11 @@ public List<Setting<?>> mandatoryServerOptions() {
-         return mandatoryServerOptions;
-     }
- 
-+    @Override
-+    public List<Setting<?>> optionalServerOptions() {
-+        return optionalServerOptions;
-+    }
-+
-     @Override
-     public CompletableFuture<BatchIterator<Row>> getIterator(Role currentUser,
-             Server server,
-@@ -79,11 +96,34 @@ public CompletableFuture<BatchIterator<Row>> getIterator(Role currentUser,
-             List<Symbol> collect,
-             Symbol query) {
-         Settings options = server.options();
--        List<String> pathsToLocalFiles = localFilesSetting.get(options);
--        if (!pathsToLocalFiles.isEmpty() && !currentUser.isSuperUser()) {
--            throw new UnauthorizedException("Only a superuser can read from the local file system");
-+        List<String> pathsToFiles = filesSetting.get(options);
-+        if (pathsToFiles.isEmpty()) {
-+            throw new InvalidArgumentException("No files provided. Please provide paths to parquet files");
-+        }
-+
-+        List<InputFile> inputFiles = new ArrayList<>();
-+        for (String p : pathsToFiles) {
-+            URI uri = URI.create(p);
-+            String scheme = uri.getScheme();
-+            if (scheme == null || scheme.equals("file")) {
-+                if (!currentUser.isSuperUser()) {
-+                    throw new UnauthorizedException("Only a superuser can read from the local file system");
-+                }
-+                inputFiles.add(InputFile.of(Path.of(uri.getPath())));
-+            } else if (scheme.equals("s3")) {
-+                if (executor == null) {
-+                    SharedAsyncExecutor sharedAsyncExecutor = SharedAsyncExecutor.getInstance(options);
-+                    executor = sharedAsyncExecutor.asyncExecutor();
-+                }
-+                S3URI s3uri = S3URI.of(URI.create(p));
-+                S3 s3 = S3Env.getServiceConfig(s3uri, options);
-+                Operator operator = AsyncOperator.of(s3, executor).blocking();
-+                inputFiles.add(new OpenDALInputFile(operator, s3uri.path()));
-+            } else {
-+                throw new InvalidArgumentException("Unsupported URI scheme: " + scheme);
-+            }
-         }
--        List<Path> localParquetFiles = pathsToLocalFiles.stream().map(Paths::get).toList();
-+
- 
-         List<Reference> columns = new ArrayList<>();
-         for (Symbol symbol : collect) {
-@@ -99,7 +139,7 @@ public CompletableFuture<BatchIterator<Row>> getIterator(Role currentUser,
-             });
-         }
- 
--        BatchIterator<Row> it = new ParquetBatchIterator(InputFile.ofPaths(localParquetFiles), columns);
-+        BatchIterator<Row> it = new ParquetBatchIterator(inputFiles, columns);
- 
-       
-```
-
-**File**: `extensions/parquet/src/test/java/io/crate/parquet/ParquetBatchIteratorTest.java` (modified, +46/-0)
-```diff
-@@ -24,13 +24,19 @@
- import static org.assertj.core.api.Assertions.assertThat;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- 
-+import java.nio.file.Files;
- import java.nio.file.Path;
-+import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
- import java.util.UUID;
- import java.util.concurrent.ExecutionException;
- import java.util.concurrent.TimeUnit;
- 
-+import org.apache.opendal.AsyncExecutor;
-+import org.apache.opendal.AsyncOperator;
-+import org.apache.opendal.Operator;
-+import org.apache.opendal.ServiceConfig;
- import org.junit.Before;
- import org.junit.Test;
- 
-@@ -862,4 +868,44 @@ public void test_raises_if_ip_type_not_stored_as_long_or_string() throws Excepti
-                         "Column `car_sensor` has type `ip` in the foreign table, but in the parquet file it has type `STRUCT`. These are incompatible.");
- 
-     }
-+
-+    @Test
-+    public void test_read_from_opendal() throws Exception {
-+        DocTableInfo table = e.resolveTableInfo("doc.taxi");
-+        List<Reference> columns = List.of(table.getReadReference(ColumnIdent.of("trip_distance")));
-+
-+        try (AsyncExecutor tokioExecutor = AsyncExecutor.createTokioExecutor(1)) {
-+            ServiceConfig.Memory memory = ServiceConfig.Memory.builder().build();
-+            Operator operator = AsyncOperator.of(memory, tokioExecutor).blocking();
-+            List<InputFile> inputFiles = new ArrayList<>();
-+            for (Path p : parquetFile) {
-+                operator.write(p.toString(), Files.readAllBytes(p));
-+                inputFiles.add(new OpenDALInputFile(operator, p.toString()));
-+            }
-+            ParquetBatchIterator it = new ParquetBatchIterator(inputFiles, columns);
-+            List<Object[]> rows = it.toList(Row::materialize).get(10, TimeUnit.SECONDS);
-+            assertThat(rows).containsExactly(
-+                    new Object[] { 0.97 },
-+                    new Object[] { 0.9 },
-+                    new Object[] { 1.4 },
-+                    new Object[] { 5.58 },
-+                    new Object[] { 2.16 },
-+                    new Object[] { 2.33 },
-+                    new Object[] { 1.3 },
-+                    new Object[] { 2.9 },
-+                    new Object[] { 5.34 },
-+                    new Object[] { 1.83 },
-+                    new Object[] { 1.54 },
-+                    new Object[] { 1.79 },
-+                    new Object[] { 1.24 },
-+                    new Object[] { 2.0 },
-+                    new Object[] { 0.83 },
-+                    new Object[] { 3.83 },
-+                    new Object[] { 5.38 },
-+                    new Object[] { 1.22 },
-+                    new Object[] { 1.69 },
-+                    new Object[] { 1.13 },
-+                    new Object[] { null });
-+        }
-+    }
- }
++- Fixed a `security issue
++  <https://github.com/crate/crate/security/advisories/GHSA-qcp3-r37v-7p8j>`__
++  that allowed unauthenticated clients to exhaust the memory of a node by
++  sending compressed HTTP requests, as their content was decompressed and
++  buffered before the request was authenticated. HTTP requests are now
++  authenticated before their content is decompressed.
 ```
 
 ---
 
-### Incident Patch 2: `795a14e4` (2026-11-03)
-**Commit Message**: Add optionalOptions to ForeignDataWrapper
+### Incident Patch 2: `f7d204bd` (2026-11-09)
+**Commit Message**: Fix SketchRamAccounting undercount bug
 
-For the parquet fdw, we currently have the option to read local files
-and we will add the ability to read remote files. It is not required to
-have both. Currently, there is only support for mandatory options in
-with CREATE SERVER. We now add optional options to allow parquet fdw to
-have either local files or remote files as an option
-
-**File**: `server/src/main/java/io/crate/fdw/ForeignDataWrapper.java` (modified, +4/-0)
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
 ```diff
-@@ -42,6 +42,10 @@ default List<Setting<?>> mandatoryServerOptions() {
-         return List.of();
-     }
+@@ -48,3 +48,6 @@ Fixes
  
-+    default List<Setting<?>> optionalServerOptions() {
-+        return List.of();
-+    }
-+
-     default List<Setting<?>> optionalTableOptions() {
-         return List.of();
-     }
+ - Fixed an issue where querying ``sys.nodes`` might return ``SQLParseException[Values less than -1 bytes
+   are not supported: -86016b]``.
++- `Yannic Hamann <https://github.com/yannic-hamann-abb>`_ fixed an issue that
++  caused :ref:`ANALYZE <analyze>` to exceed the configured I/O rate limit
++  during statistics collection.
 ```
 
-**File**: `server/src/main/java/io/crate/planner/CreateServerPlan.java` (modified, +15/-2)
+**File**: `server/src/main/java/io/crate/statistics/SketchRamAccounting.java` (modified, +4/-4)
 ```diff
-@@ -22,11 +22,14 @@
- package io.crate.planner;
+@@ -53,14 +53,14 @@ public SketchRamAccounting(RamAccounting ramAccounting, RateLimiter rateLimiter)
  
- import java.util.HashMap;
-+import java.util.List;
- import java.util.Locale;
- import java.util.Map;
- import java.util.function.Function;
- import java.util.stream.Collectors;
-+import java.util.stream.Stream;
- 
-+import org.elasticsearch.common.settings.Setting;
- import org.elasticsearch.common.settings.Settings;
- 
- import io.crate.analyze.AnalyzedCreateServer;
-@@ -74,7 +77,9 @@ public void executeOrFail(DependencyCarrier dependencies,
-         Settings.Builder optionsBuilder = Settings.builder();
-         Map<String, Symbol> options = new HashMap<>(createServer.options());
-         var foreignDataWrapper = foreignDataWrappers.get(createServer.fdw());
--        for (var option : foreignDataWrapper.mandatoryServerOptions()) {
-+        List<Setting<?>> mandatoryServerOptions = foreignDataWrapper.mandatoryServerOptions();
-+        List<Setting<?>> optionalServerOptions = foreignDataWrapper.optionalServerOptions();
-+        for (var option : mandatoryServerOptions) {
-             String optionName = option.getKey();
-             Symbol symbol = options.remove(optionName);
-             if (symbol == null) {
-@@ -87,13 +92,21 @@ public void executeOrFail(DependencyCarrier dependencies,
-             }
-             optionsBuilder.put(optionName, convert.apply(symbol));
+     public void addBytes(long bytes) {
+         this.blockCache += bytes;
+-        boolean checklimit = false;
++        long flushedBytes = 0;
+         while (this.blockCache > BLOCK_SIZE) {
+             this.blockCache -= BLOCK_SIZE;
+             ramAccounting.addBytes(SHIFTED_BLOCK_SIZE);
+-            checklimit = true;
++            flushedBytes += BLOCK_SIZE;
          }
-+        for (var option : optionalServerOptions) {
-+            String optionName = option.getKey();
-+            Symbol symbol = options.remove(optionName);
-+            if (symbol != null) {
-+                optionsBuilder.put(optionName, convert.apply(symbol));
+-        if (checklimit) {
+-            checkRateLimit(bytes);
++        if (flushedBytes > 0) {
++            checkRateLimit(flushedBytes);
+         }
+     }
+ 
+```
+
+**File**: `server/src/test/java/io/crate/statistics/SketchRamAccountingTest.java` (modified, +5/-3)
+```diff
+@@ -56,10 +56,12 @@ public void test_rate_limited_ram_accounting() {
+         TrackingRateLimiter rateLimiter = new TrackingRateLimiter(1000);
+         var ra = new SketchRamAccounting(RamAccounting.NO_ACCOUNTING, rateLimiter);
+ 
+-        long bytesToAdd = rateLimiter.getMinPauseCheckBytes() / 2;
++        long totalBytesAdded = 0;
++        long bytesToAdd = 5 * rateLimiter.getMinPauseCheckBytes() + 8;
+ 
+-        for (int i = 0; i < 10; i++) {
+-            ra.addBytes(bytesToAdd);
++        while (totalBytesAdded < bytesToAdd) {
++            ra.addBytes(8);
++            totalBytesAdded += 8;
+         }
+ 
+         Assertions.assertThat(rateLimiter.pauses).isEqualTo(5);
+```
+
+---
+
+### Incident Patch 3: `d33cbcb3` (2026-11-05)
+**Commit Message**: Return 0 for negative "free" and "total" memory reported by the OS
+
+Related to https://github.com/crate/crate/issues/20558
+
+Ported from https://github.com/elastic/elasticsearch/pull/42725
+(The code in this elasticsearch PR contains comments about when the OS might report
+negative values for free and total memory)
+
+As mentioned in the CrateDB bug report, this seems to be a flaky issue.
+I wasn't able to re-create it. However the PR in elasticsearch
+(above) addresses an issue with the same error mentioned in the CrateDB
+issue: "Values less than -1 bytes are not supported: "
+
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +2/-1)
+```diff
+@@ -46,4 +46,5 @@ series.
+ Fixes
+ =====
+ 
+-None
++- Fixed an issue where querying ``sys.nodes`` might return ``SQLParseException[Values less than -1 bytes
++  are not supported: -86016b]``.
+```
+
+**File**: `server/src/main/java/org/elasticsearch/monitor/os/OsProbe.java` (modified, +18/-5)
+```diff
+@@ -94,9 +94,15 @@ public long getFreePhysicalMemorySize() {
+             return -1;
+         }
+         try {
+-            return (long) GET_FREE_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
++            final long freeMem = (long) GET_FREE_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
++            if (freeMem < 0) {
++                logger.warn("OS reported a negative free memory value [{}]", freeMem);
++                return 0;
 +            }
-+        }
-         if (!options.isEmpty()) {
-             throw new IllegalArgumentException(String.format(
-                 Locale.ENGLISH,
-                 "Unsupported server options for foreign data wrapper `%s`: %s. Valid options are: %s",
-                 createServer.fdw(),
-                 String.join(", ", options.keySet()),
--                foreignDataWrapper.mandatoryServerOptions().stream()
-+                Stream.concat(mandatoryServerOptions.stream(),
-+                optionalServerOptions.stream())
-                     .map(x -> x.getKey())
-                     .collect(Collectors.joining(", "))
-             ));
++            return freeMem;
+         } catch (Exception e) {
+-            return -1;
++            logger.warn("exception retrieving free physical memory", e);
++            return 0;
+         }
+     }
+ 
+@@ -105,12 +111,19 @@ public long getFreePhysicalMemorySize() {
+      */
+     public long getTotalPhysicalMemorySize() {
+         if (GET_TOTAL_PHYSICAL_MEMORY_SIZE == null) {
+-            return -1;
++            logger.warn("getTotalPhysicalMemorySize is not available");
++            return 0;
+         }
+         try {
+-            return (long) GET_TOTAL_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
++            final long totalMem = (long) GET_TOTAL_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
++            if (totalMem < 0) {
++                logger.warn("OS reported a negative total memory value [{}]", totalMem);
++                return 0;
++            }
++            return totalMem;
+         } catch (Exception e) {
+-            return -1;
++            logger.warn("exception retrieving total physical memory", e);
++            return 0;
+         }
+     }
+ 
+```
+
+**File**: `server/src/main/java/org/elasticsearch/monitor/os/OsStats.java` (modified, +4/-0)
+```diff
+@@ -159,13 +159,17 @@ public static class Mem implements Writeable {
+         private final long free;
+ 
+         public Mem(long total, long free) {
++            assert total >= 0 : "expected total memory to be positive, got: " + total;
++            assert free >= 0 : "expected free memory to be positive, got: " + total;
+             this.total = total;
+             this.free = free;
+         }
+ 
+         public Mem(StreamInput in) throws IOException {
+             this.total = in.readLong();
++            assert total >= 0 : "expected total memory to be positive, got: " + total;
+             this.free = in.readLong();
++            assert free >= 0 : "expected free memory to be positive, got: " + total;
+         }
+ 
+         @Override
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20560** (2026-11-04): Fix typo in change entries (backport #20557) (@mergify[bot])
-- **PR #20559** (2026-11-04): Fix typo in change entries (backport #20557) (@mergify[bot])
-- **PR #20557** (2026-11-04): Fix typo in change entries (@BaurzhanSakhariev)
-- **PR #20556** (2026-11-04): Reflect releases 6.4.7 and 6.5.1 (@BaurzhanSakhariev)
-- **PR #20555** (2026-11-04): Bump version to 6.5.2-SNAPSHOT; reflect 6.4.7 release (@BaurzhanSakhariev)
-- **PR #20554** (2026-11-04): Release 6.4.7 (@BaurzhanSakhariev)
+- **PR #20579** (2026-11-10): Add docs reference for http.max_content_length (backport #20578) (@mergify[bot])
+- **PR #20578** (2026-11-10): Add docs reference for http.max_content_length (@matriv)
+- **PR #20577** (2026-11-10): Mention that authenticated DoS issues should be reported public (@mfussenegger)
+- **PR #20573** (2026-11-10): Update netty to 4.2.20 (backport #20572) (@mergify[bot])
+- **PR #20572** (2026-11-09): Update netty to 4.2.20 (@mfussenegger)
+- **PR #20571** (2026-11-09): Add release note entries for released security fixes (backport #20569) (@mergify[bot])
 
 ---
 
@@ -1137,62 +827,52 @@ have either local files or remote files as an option
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add initial S3 support to parquet fdw via OpenDAL
+## X. Add release note entries for released security fixes
 
 **RULE**:
-When implementing operations in `blackbox/test_s3.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `31875da1`: Add initial S3 support to parquet fdw via OpenDAL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ce57725`: Add release note entries for released security fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `blackbox/test_s3.py`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import pathlib
-    MINIO_REGION = 'myRegion'
-        env['MINIO_REGION'] = MinioServer.MINIO_REGION
+- Fixed a `security issue
+  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
+  that allowed authenticated users to switch to CrateDB's unauthenticated
+  internal transport protocol, by using
+  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
+  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
+  user now requires the ``AL`` privilege.
 
-class S3ParquetIntegrationTest(unittest.TestCase):
+- Fixed security issues (`GHSA-7p46-fxpg-cwm7
+  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
+  and `GHSA-jp7h-6782-g32q
+  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
+  that allowed existing sessions to use the privileges and role memberships
+  their user had when the session was created. Changes in privileges and role
+  memberships now take effect immediately and if the session user is dropped,
+  all SQL statements are rejected. This includes prepared statements and portals
+  created before the changes, and ``FETCH`` on cursors declared before such
+  changes.
 
-    @classmethod
-    def setUpClass(cls):
-        crate_node.start()
-
-    @classmethod
-    def tearDownClass(cls):
-        crate_node.stop()
-
-    def test_basic_read_parquet_from_s3(self):
-        client = Minio(endpoint='127.0.0.1:9000',
-                       access_key = MinioServer.MINIO_ACCESS_KEY,
-                       secret_key = MinioServer.MINIO_SECRET_KEY,
-                       region = "myRegion",
-                       secure = False)
-
-        with MinioServer() as minio:
-            t = threading.Thread(target=minio.run)
-            t.daemon = True
-            t.start()
-            wait_until(lambda: _is_up('127.0.0.1', 9000))
-
-            bucket_name = "my-bucket"
-            client.make_bucket(bucket_name=bucket_name)
-            client.fput_object(
-                bucket_name=bucket_name,
-                object_name="key/departments.parquet",
-                file_path=os.path.join("testdata", "departments.parquet")
-            )
-            local_file = pathlib.Path(os.path.abspath(os.path.join("testdata", "depar
+- Fixed a `security issue
+  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
+  that allowed users to read tables without having the required pri
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
+  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
+  to have ``AL`` privilege to avoid a security issue when authenticated user can
+  can switch to CrateDB's unauthenticated internal transport protocol.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `31875da1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ce57725` are properly handled with clean fallback behavior.

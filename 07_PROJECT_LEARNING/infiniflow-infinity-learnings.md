@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `b078219d`  
+> **Source Version**: `a8583bc5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T04:00:47.414Z  
+> **Timestamp**: 2026-11-11T10:35:08.842Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T04:00:47.406Z  
+> **Harvest Timestamp**: 2026-11-11T10:35:08.832Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4762 stars
+- **Stars / Engagement**: 4764 stars
 
 ---
 
@@ -1349,684 +1349,614 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b078219d` (2026-11-08)
-**Commit Message**: Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++ reference, enforced by conformance, byte and cross-engine gates.
+### Incident Patch 1: `a8583bc5` (2026-11-11)
+**Commit Message**: Port secondary index and plaid to rust (#3547)
 
-## What
-
-A Rust rewrite of the engine, developed as a separate workspace
-(`rust_engine/`) with the C++ tree untouched. Goal: the same SQL, the
-same wire protocols and the *same files on disk* — either engine can
-open a directory the other wrote.
-
-- `rust_engine/` — 13 crates (`storage`, `catalog`, `txn`, `parser`,
-`planner`, `expression`, `index`, `analyzer`, `analyzer-ffi`,
-`executor`, `server`, `cli`, `common`) + docs.
-- `RUST_REWRITE_PLAN.md` — scope, gates and current status.
-- `.github/workflows/rust_engine.yml` — CI: a reference/rewrite x
-amd64/arm64 matrix that runs one test definition against both engines,
-plus the cross-engine format gate.
-
-## Verification (see `rust_engine/docs/`)
-
-| Gate | What it checks | Status |
-|---|---|---|
-| A — SQL | the 175-file `.slt` suite | 1754/1754 statements, 129/129
-errors, 1560/1560 queries |
-| B — SDK / wire | unmodified Python and Go SDKs, HTTP | green |
-| C — persistence | restart, crash recovery, cross-engine reads |
-regular cases green; one heavy import profile still needs a CI-class
-machi
-
-**File**: `.github/workflows/rust_engine.yml` (added, +655/-0)
+**File**: `rust_engine/Cargo.lock` (modified, +28/-0)
 ```diff
-@@ -0,0 +1,655 @@
-+name: rust_engine
+@@ -920,6 +920,12 @@ dependencies = [
+  "either",
+ ]
+ 
++[[package]]
++name = "itoa"
++version = "1.0.19"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
 +
-+# CI for the Rust rewrite (RUST_REWRITE_PLAN.md M0/M6).
-+#
-+# This workflow tests the rewrite alone: the reference engine, the
-+# cross-engine format gate and the C++ suites belong to the reference's own
-+# workflows (tests.yml / slow_tests.yml), so nothing here builds C++.
-+#
-+# Each suite is written once and run per architecture; every trigger covers
-+# both amd64 and arm64.
+ [[package]]
+ name = "jobserver"
+ version = "0.1.35"
+@@ -1363,6 +1369,7 @@ dependencies = [
+  "common",
+  "expression",
+  "parser",
++ "roaring",
+ ]
+ 
+ [[package]]
+@@ -1678,6 +1685,19 @@ dependencies = [
+  "syn 3.0.3",
+ ]
+ 
++[[package]]
++name = "serde_json"
++version = "1.0.154"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
++dependencies = [
++ "itoa",
++ "memchr",
++ "serde",
++ "serde_core",
++ "zmij",
++]
 +
-+on:
-+  push:
-+    paths:
-+      - 'rust_engine/**'
-+      - 'python/restart_test/**'
-+      - 'python/test_pysdk/**'
-+      - 'tools/run_restart_test.py'
-+      - '.github/workflows/rust_engine.yml'
-+  pull_request:
-+    paths:
-+      - 'rust_engine/**'
-+      - 'python/restart_test/**'
-+      - 'python/test_pysdk/**'
-+      - 'go/**'
-+      - 'tools/run_restart_test.py'
-+      - '.github/workflows/rust_engine.yml'
-+  schedule:
-+    - cron: '0 18 * * *' # nightly: the arm64 lane
-+  workflow_dispatch:
+ [[package]]
+ name = "server"
+ version = "0.1.0"
+@@ -1790,6 +1810,8 @@ dependencies = [
+  "rocksdb",
+  "rustls",
+  "rustls-native-certs",
++ "serde",
++ "serde_json",
+  "sha2",
+  "tempfile",
+ ]
+@@ -2297,6 +2319,12 @@ version = "1.8.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0"
+ 
++[[package]]
++name = "zmij"
++version = "1.0.23"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
 +
-+concurrency:
-+  group: rust-engine-${{ github.ref }}
-+  cancel-in-progress: true
-+
-+env:
-+  # Cases the rewrite cannot run yet, one pytest node id per line. There is no
-+  # reference cell to leave untouched here, so they are deselected from every
-+  # cell; a line goes away when the gap closes. Source of truth:
-+  # rust_engine/docs/GAPS.md section 1.
-+  RUST_DESELECT: |
-+    python/restart_test/test_cross_engine_bytes_60_storage.py::test_the_port_round_trips_through_object_storage
-+
-+jobs:
-+  quality:
-+    # Gate F: formatting, lints, licenses / advisories.
-+    name: quality
-+    runs-on: ubuntu-latest
-+    defaults:
-+      run:
-+        working-directory: rust_engine
-+    steps:
-+      - uses: actions/checkout@v6
-+        with:
-+          # The lefthook step below diffs the base of the push/PR, so the
-+          # history has to be there (the default depth-1 fetch has neither the
-+          # base commit nor HEAD's parent).
-+          fetch-depth: 0
-+      - name: Install the pinned toolchain
-+        run: |
-+          # rust_engine/rust-toolchain.toml is the single source of truth.
-+          rustup toolchain install --profile minimal
-+          rustup component add rustfmt clippy
-+      - name: Install clang, mold and libclang
-+        # rust_engine/.cargo/config.toml builds RocksDB with clang and links
-+        # with mold (`-fuse-ld=mold`), and librocksdb-sys runs bindgen, which
-+        # needs libclang. Without them the build fails in its first seconds
-+        # ("cannot find 'ld'", then "couldn't find any valid shared libraries
-+        # matching: ['libclang.so']").
-+        run: |
-+          sudo apt-get update -qq
-+          sudo apt-get install -y -qq clang mold libclang-dev
-+          if ! command -v ld.mold >/dev/null 2>&1; then
-+            sudo ln -sf "$(command -v mold)" /usr/bin/ld.mold
-+          fi
-+          # clang-sys (bindgen, for librocksdb-sys) needs libclang, and
-+          # LIBCLANG_PATH overrides its search - so point it at the LLVM that
-+          # actually ships libclang.so* (the image also carries an LLVM
-+          # without the dev package, and a wrong directory is fatal).
-+          so=$(ls /usr/lib/llvm-*/lib/libclang.so* 2>/dev/null | sort -V | tail -1)
-+          if [ -n "$so" ]; then
-+            echo "LIBCLANG_PATH=$(dirname "$so")" >> "$GITHUB_ENV"
-+          fi
-+      - uses: Swatinem/rust-cache@v2
-+        with:
-+          workspaces: rust_engine
-+      - name: Collect the changed files
-+        id: changed
-+        working-directory: ${{ github.workspace }}
-+        run: |
-+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
-+            base="${{ github.event.pull_request.base.sha }}"
-+            head="${{ github.event.pull_request.head.sha }}"
-+          else
-+            base="${{ github.event.before }}"
-+            head="${GITHUB_SHA}"
-+          fi
-+          # A new branch (or a base that a force-push moved away) has no common
-+          # ancestor: check the last commit instead.
-+          if [ -z "${base}" ] || [ "${base}" = "0000000000000000000000000000000000000000" ] \
-+             || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
-+            base=$(git rev-parse "${head}^" 2>/dev/null || git rev-parse "${head}")
-+          fi
-+          files="${RUNNER_TEMP}/lefthook-files"
-+          : > "${files}"
-+          git diff --name-only -z "${base}"..."${head}" | while IFS= read -r -d '' file; do
-+            if [ -f "${file}" ]; then printf '%s\0' "${file}"; fi
-+          done > "${files}"
-+          echo "Changed files:"
-+          if [ -s "${files}" ]; then tr '\0' '\n' < "${files}"; else echo "  (none)"; fi
-+          if tr '\0' '\n' < "${files}" | grep -qE '\.(c|h|hpp|cpp|cppm)$'; then
-+            echo "has_cpp=1" >> "${GITHUB_OUTPUT}"
-+          else
-+            echo "has_cpp=0" >> "${GITHUB_OUTPUT}"
-+          fi
-+          echo "files=${files}" >> "${GITHUB_OUTPUT}"
-+          echo "base=${base}" >> "${GITHUB_OUTPUT}"
-+
-+      - name: Install uv (ruff runs through `uvx`)
-+        uses: astral-sh/setup-uv@v7
+ [[package]]
+ name = "zstd"
+ version = "0.13.4"
 ```
 
-**File**: `.gitignore` (modified, +10/-0)
+**File**: `rust_engine/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -149,6 +149,11 @@ python/benchmark/datasets/
- .venv*/
- tmp*/
- 
-+# Scratch space for anything a run leaves behind: benchmark data dirs, unit
-+# and functional test fixtures, engine logs, result files. Kept inside the
-+# checkout so a run is reproducible from the tree alone, never in /tmp.
-+.scratch/
-+
- dist/
- python/infinity_sdk/infinity_sdk.egg-info/
- minio/
-@@ -157,3 +162,8 @@ minio/
- !Dockerfile*
- 
- vcpkg_installed/
-+
-+# The pysdk suite generates its fixtures under python/test/data (a copy of
-+# test/data); the C++ CI copies it the same way.
-+python/test/data/
-+.scratch/
+@@ -58,3 +58,5 @@ memmap2 = "0.9"
+ thiserror = "1"
+ tempfile = "3"
+ roaring = "0.11"
++serde = "1"
++serde_json = "1"
 ```
 
-**File**: `.hooks/pre-commit` (removed, +0/-45)
+**File**: `rust_engine/crates/catalog/src/layout.rs` (modified, +26/-5)
 ```diff
-@@ -1,45 +0,0 @@
--#!/usr/bin/env python3
--
--import subprocess
--
--
--def get_files():
--    return subprocess.check_output(['git', 'diff-index', '--cached',
--                                    '--name-only', 'HEAD', '--diff-filter=d']).split()
--
--
--def apply_code_style():
--    files = filter(lambda x: x.find(b'third_party') == -1, get_files())
--    files = filter(lambda x: x.find(b'src/networker/third_party/infinity_thrift') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/expression_parser.cpp') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/expression_parser.h') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/lexer.cpp') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/lexer.h') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/parser.cpp') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/parser.h') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/search_parser.cpp') == -1, files)
--    files = filter(lambda x: x.find(b'src/parser/search_parser.h') == -1, files)
--
--    files = filter(lambda x: x.endswith(b'.c') or
--                             x.endswith(b'.h') or
--                             x.endswith(b'.hpp') or
--                             x.endswith(b'.cpp') or
--                             x.endswith(b'.cppm'), files)
--    for f in files:
--        print("Apply code style to: " + str(f))
--        try:
--            subprocess.check_output(['clang-format-20', '-i', f])
--        except subprocess.CalledProcessError as e:
--            print(f"⚠️ clang-format failed for {f}: {e}")
--        try:
--            subprocess.check_output(['git', 'add', f])
--        except subprocess.CalledProcessError as e:
--            print(f"⚠️ git add failed for {f}: {e}")
--
--
--def main():
--    apply_code_style()
--
--
--if (__name__ == '__main__'):
--    main()
+@@ -589,14 +589,22 @@ pub(crate) fn index_def_for(im: &IndexMeta, table: &TableLayout) -> Option<Index
+             &im.column,
+             &opt_word("ANALYZER", "standard"),
+         )),
++        // A functional index names an expression, not a column: the record
++        // carries the expression, its base column and the return type
++        // (`IndexSecondaryFunctional::Serialize`).
++        "SECONDARYFUNCTIONAL" => functional_index_def(im, table),
+         // An index with no `USING` kind is the C++ default, a secondary index.
+         "SECONDARY" | "" => match col {
+             Some(col) => {
+                 let is_json = value_format::data_type_code(&col.column_type)
+                     == Some(value_format::logical::JSON);
+-                let low = opt("CARDINALITY")
+-                    .map(|v| v.eq_ignore_ascii_case("low"))
+-                    .unwrap_or(false);
++                // `IndexSecondary` forces `kLowCardinality` for a JSON column
++                // (`index_secondary.cppm:56`), so the record says `low` whether
++                // or not the statement asked for it.
++                let low = is_json
++                    || opt("CARDINALITY")
++                        .map(|v| v.eq_ignore_ascii_case("low"))
++                        .unwrap_or(false);
+                 Some(IndexDefValue::secondary(
+                     &im.name,
+                     &table.table_name,
+@@ -693,7 +701,10 @@ pub(crate) fn index_def_for(im: &IndexMeta, table: &TableLayout) -> Option<Index
+             &table.table_name,
+             &im.column,
+             opt_num("NBITS", 4),
+-            opt_num("N_CENTROIDS", 0),
++            // `centroids` is the option the statement spells
++            // (`CREATE INDEX … WITH (centroids = 4096)`); the record's field is
++            // `n_centroids`, which a record read back from disk carries instead.
++            opt_num("CENTROIDS", 0).max(opt_num("N_CENTROIDS", 0)),
+             opt("COLBERTSAR_MODE")
+                 .map(|v| v.eq_ignore_ascii_case("true"))
+                 .unwrap_or(false),
+@@ -751,12 +762,22 @@ fn functional_index_def(im: &IndexMeta, table: &TableLayout) -> Option<IndexDefV
+         .find(|(k, _)| k.eq_ignore_ascii_case("CARDINALITY"))
+         .map(|(_, v)| v.eq_ignore_ascii_case("low"))
+         .unwrap_or(false);
++    // `func_return_type` is the function's own type, not the argument's: the
++    // engine records it when the index is created (`FUNC_RETURN`).
++    let returns = im
++        .options
++        .iter()
++        .find(|(k, _)| k.eq_ignore_ascii_case("FUNC_RETURN"))
++        .map(|(_, v)| v.clone())
++        .filter(|v| !v.trim().is_empty())
++        .and_then(|v| data_type_of_text(&v))
++        .unwrap_or_else(|| col.column_type.clone());
+     Some(IndexDefValue::secondary_functional(
+         &im.name,
+         &table.table_name,
+         base,
+         expr,
+-        col.column_type.clone(),
++        returns,
+         expression::json::Json::Obj(vec![(
+             "name".to_string(),
+             expression::json::Json::Str(func.to_string()),
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +44/-6)
+**File**: `rust_engine/crates/common/src/error.rs` (modified, +15/-0)
 ```diff
-@@ -22,26 +22,64 @@ The list below mentions some contributions you can make, but it is not a complet
- ### General workflow
- 
- 1. Fork our GitHub repository.
--2. Clone your fork to your local machine: 
-+2. Clone your fork to your local machine:
- `git clone git@github.com:<yourname>/infinity.git`
--3. Create a local branch: 
-+3. Create a local branch:
- `git checkout -b my-branch`
- 4. Provide sufficient information in your commit message
- `git commit -m 'Provide sufficient info in your commit message'`
- 5. Commit changes to your local branch, and push to GitHub: (include necessary commit message)
- `git push origin my-branch.`
- 6. Submit a pull request for review.
- 
-+### Git hooks (lefthook)
+@@ -135,6 +135,10 @@ impl Error {
+             // 3009 INVALID_INDEX_DEFINITION (index kind vs column type).
+             Error::Invalid(m) if m.starts_with("SECONDARY index requires") => 3009,
+             Error::Invalid(m) if m.contains("index requires a") => 3009,
++            // `IndexSecondary::ValidateColumnDataType` refuses the column type
++            // with `InvalidIndexDefinition`, so a secondary index on a column
++            // that cannot carry one is 3009, not a generic invalid parameter.
++            Error::Invalid(m) if m.starts_with("Cannot build secondary index on data type") => 3009,
+             // 3077 ANALYZER_NOT_FOUND (unknown name, or a C++ family the Rust
+             // port does not vendor; both carry an explanatory suffix).
+             Error::Invalid(m) if m.starts_with("analyzer ") && m.contains("not found") => 3077,
+@@ -270,4 +274,15 @@ mod tests {
+         assert_eq!(error.status_code(), 8007);
+         assert_eq!(error.to_string(), "Attempt to write on non-writable node");
+     }
 +
-+The repository uses [lefthook](https://github.com/evilmartians/lefthook) for the
-+checks that run before a commit and in CI (`.github/workflows/rust_engine.yml`,
-+the `quality` job), the same way RAGFlow does.
-+
-+```bash
-+lefthook install   # once per clone; writes .git/hooks/pre-commit
-+```
-+
-+`git commit` then runs these jobs on the staged files:
-+
-+| Job | Tool |
-+|---|---|
-+| `clang-format` | `clang-format-20` (Clang 20+, see the build requirements) |
-+| `rustfmt` | `cargo fmt` for the `rust_engine` workspace |
-+| `ruff`, `ruff-format` | `uvx ruff` |
-+| `end-of-file-fixer`, `trailing-whitespace`, `mixed-line-ending` | `tools/hooks/check_files.py` |
-+| `check-yaml`, `check-json`, `check-case-conflict`, `check-merge-conflict` | `tools/hooks/check_files.py` |
-+
-+The fix-capable jobs rewrite the file and stage the result, so a commit that
-+passes is already formatted. CI runs the same jobs on the files a push or a pull
-+request touched with `LEFTHOOK_CHECK_ONLY=1`: nothing is rewritten and a finding
-+fails the run. Run them by hand with:
-+
-+```bash
-+LEFTHOOK_CHECK_ONLY=1 lefthook run pre-commit --all-files
-+```
-+
-+CI runs a **second** hook after that one, the same split RAGFlow uses
-+(`pre-commit`, then `web-checks`): `rust-checks` holds `cargo clippy
-+--workspace --all-targets -- -D warnings`. It is not part of a commit because
-+it needs a workspace compile; run it by hand when the commit touched Rust:
-+
-+```bash
-+lefthook run rust-checks
-+```
-+
- ### Before filing a PR
- 
--- Consider splitting a large PR into multiple smaller, standalone PRs to keep a traceable development history. 
-+- Consider splitting a large PR into multiple smaller, standalone PRs to keep a traceable development history.
- - Ensure that your PR addresses just one issue, or keep any unrelated changes small.
- - Add test cases when contributing new features. They demonstrate that your code functions correctly and protect against potential issues from future changes.
--### Describing your PR 
-+### Describing your PR
- 
- - Ensure that your PR title is concise and clear, providing all the required information.
--- Refer to a corresponding GitHub issue in your PR description if applicable. 
-+- Refer to a corresponding GitHub issue in your PR description if applicable.
- - Include sufficient design details for *breaking changes* or *API changes* in your description.
- 
- ### Reviewing & merging a PR
--- Ensure that your PR passes all Continuous Integration (CI) tests before merging it.
-\ No newline at end of file
-+- Ensure that your PR passes all Continuous Integration (CI) tests before merging it.
++    /// `IndexSecondary::ValidateColumnDataType` rejects a column type that
++    /// cannot carry the index with `Status::InvalidIndexDefinition` (3009), the
++    /// code the SDK's `test_sparse_knn_with_invalid_index_type` asserts.
++    #[test]
++    fn a_secondary_index_on_an_unsupported_column_type_maps_to_3009() {
++        let error = Error::Invalid(
++            "Cannot build secondary index on data type: SPARSE(FLOAT,1000)".to_string(),
++        );
++        assert_eq!(error.status_code(), 3009);
++    }
+ }
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `rust_engine/crates/executor/src/blocks/chunk.rs` (modified, +13/-1)
 ```diff
-@@ -117,7 +117,7 @@ print(res)
- 
- ## 🔧 Deploy Infinity using binary
- 
--If you wish to deploy Infinity using binary with the server and client as separate processes, see the [Deploy infinity using binary](https://infiniflow.org/docs/dev/deploy_infinity_server) guide.
-+If you wish to deploy Infinity using binary with the server and client as separate processes, see the [Deploy infinity using binary](https://infiniflow.org/docs/dev/deploy_server) guide.
- 
- ## 🔧 Build from Source
- 
-```
-
-**File**: `RUST_REWRITE_PLAN.md` (added, +713/-0)
-```diff
-@@ -0,0 +1,713 @@
-+# Infinity Rust 重写计划书
-+
-+> 版本：v1.1（2026-10-18 迁移策略修订：D1 由「洁净室重写」改为「结构对齐的类级移植」）
-+> 日期：2026-10-18
-+> 基准代码：infinity `main` @ `5d27942c0`（v0.7.4 线，2026-10-19 rebase；含 regex literal extractor 上游更新）
-+> 实现代码：`rust_engine/`（Cargo workspace），C++ 引擎作为参考实现（oracle）
-+> 评审：codex 三轮评审（round 3 `VERDICT: APPROVE`，见附录 C）
-+> 状态：**计划已定稿；实现进入收尾** —— Gate A/B/D/E/F/G 达标；Gate C 常规全绿，重档在无 `earlyoom` 的 CI 机复跑（见 §8）
-+
-+本文件是**唯一**的计划与状态来源。历史进展叙述已合并进 §7/§8；已实现项不再保留「待做」表述。
-+
-+---
-+
-+## 0. 摘要（Executive Summary）
-+
-+将 Infinity 引擎从 C++23（**约 38.3 万行 / 1,689 个源文件**，其中 8.61 万行 `.cppm`；另有单元测试约 12.8 万行）整体重写为 Rust，目标是内存安全、并发简化、行为等价与可维护性。
-+
-+三条技术主线：
-+
-+1. **并发**：以 **Tokio 多线程运行时** 替代「固定线程池 + 逐核绑核 + 私有阻塞队列」的 `TaskScheduler`，采用「async 编排 + CPU 计算下沉 Rayon」两层模型（§4.4）。
-+2. **KV 存储**：RocksDB 在 Infinity 中只承担**元数据**（catalog / 计数器 / 对象清单 / rough filter / drop 墓碑），不承载行数据与索引。定义 `MetaStore` trait，唯一实现是 `rust-rocksdb`（与 C++ catalog 同一底座，§4.2）。
-+3. **验收**：以现有测试资产为准 —— **173 个 SQL Logic Test**、**Python PySDK 308 个有效 `def test_`**、**Go SDK 375 用例**，外加持久化 / 并发 / 性能关卡（§8）。测试经网络连接真实服务，因此 **Thrift 线协议必须保持兼容**（`TBinaryProtocol` + `client_version == 37`）。
-+
-+迁移策略：**结构对齐的类级移植（structure-preserving port）**——以 C++ 类/public 方法为骨架逐类/逐方法移植（已批准的设计变更除外），C++ 单元测试随对应类一并移植，conformance testing 只作为验收而非设计来源（§4.1 D1）。新旧二进制并存，C++ 为 oracle；测试通过不等于移植完成，以 `CLASS_MAP.md` 的未闭合项为准。
-+
-+**当期结论**：
-+
-+| 维度 | 状态 |
-+|---|---|
-+| SQL 功能（Gate A） | ✅ 1752 statement ok / 129 statement error / 1546 query 全部通过 |
-+| SDK 协议（Gate B） | ✅ 未修改的 Python / Go SDK 与 HTTP 模式全绿 |
-+| 持久化恢复（Gate C） | ⚠️ 常规用例（含跨引擎兼容）全绿；仅 5.toml 重档未闭合：磁盘目录下 Rust 峰值 12.6–15 GB（C++ 9.47 GB、>30 min 未跑完），本机 30 GB + earlyoom 无法判定，需 CI 复跑 |
-+| 并发稳定（Gate D） | ✅ loom + miri + ASan/TSAN + `parallel_test` |
-+| 性能（Gate E） | ✅ 对 C++ golden **+4.59%**（最新；+2.93% / +4.75% 亦通过，门限 `<7%`）：insert 持平、全量 select +81%、点查 +394% |
-+| 工程质量（Gate F） | ✅ fmt / clippy / deny |
-+| 不变量（Gate G） | ✅ G1–G5 全部闭合 |
-+| 磁盘格式（§3.1） | ✅ 全文 / 向量索引 / 稀疏 / 多向量 / 次级 / 数据块 / Catalog 均按 C++ 字节布局读写 |
-+
-+---
-+
-+## 1. 背景与目标
-+
-+### 1.1 背景
-+
-+Infinity 是面向 LLM 应用的 AI-native 数据库，提供稠密向量、稀疏向量、张量（多向量）与全文检索的混合搜索。v0.7.x 已具备完整能力，但积累了工程负担：
-+
-+- **并发模型复杂**：自研线程池、绑核、私有阻塞队列、`mutex`+`condvar`、fragment 树隐式依赖，难以形式化验证；TSAN 排查是常态成本。
-+- **内存安全跨层**：53 处 `std::thread` 分布在 WAL / 后台任务 / 索引构建 / 网络，生命周期靠人工保证。
-+- **构建沉重**：vcpkg + CMake + Clang 20 + Bison/Flex，多 target（x64-v2/v3/v4、arm64）链路长。
-+
-+### 1.2 目标（Goals）
-+
-+- **G1 内存安全**：核心路径零 `unsafe`（收敛到 FFI / SIMD 内核并集中审计）。
-+- **G2 并发简化**：async/await + 结构化并发替代手工线程与条件变量。
-+- **G3 行为等价**：验收测试上与 C++ 功能等价（§8），线协议兼容。
-+- **G4 可维护性**：单一 Cargo workspace，模块边界清晰，编译期强制接口契约。
-+- **G5 性能不退化**：关键基准达到现有 golden 水平（Gate E，`<7%`）。
-+
-+### 1.3 非目标（Non-Goals）
-+
-+- **磁盘格式兼容曾是非目标，2026-10-16 已收紧为硬要求**（§3.1）：全文倒排、向量列存储、向量索引、Catalog KV 均须与 C++ 互通。
-+- 首版不重写集群/分布式能力（现有 peer/cluster 为实验性、默认关闭）。
-+- 不改变 SDK 对外 API 形态（SQL / Python / Go 语义不变）。
-+
-+---
-+
-+## 2. C++ 现状评估（As-Is）
-+
-+### 2.1 规模（不含单元测试）
-+
-+> 统计口径：`src/**` 下 `.cpp/.h/.hpp` 与 `.cppm`（C++ 模块同样含实现）合并计数，`src/unit_test` 单列。
-+
-+| 模块 | 合计行数 | 其中 `.cppm` | 说明 |
-+|---|---:|---:|---|
-+| `src/storage` | 119,194 | 47,852 | KV / WAL / buffer / catalog / txn / 索引 |
-+| `src/network` | 70,753 | 1,760 | Thrift / HTTP / PG / peer |
-+| `src/parser` | 47,599 | 2,086 | Bison/Flex 语法 + AST（含生成代码） |
-+| `src/common` | 37,816 | 8,391 | 基础设施 / 工具 / 分析器 |
-+| `src/executor` | 36,781 | 6,921 | 物理算子、fragment 构建 |
-+| `src/planner` | 29,428 | 6,492 | 逻辑计划、绑定、优化器 |
-+| `src/function` | 19,202 | 7,538 | 标量 / 聚合函数 |
-+| `src/main` | 9,826 | 2,006 | 引擎门面 / 配置 / 集群 |
-+| `src/admin` | 4,690 | 67 | 管理接口 |
-+| `src/expression` | 3,714 | 1,686 | 表达式 AST |
-+| `src/scheduler` | 2,547 | 534 | 任务调度器 |
-+| `src/bin` / `src/metrics` | 1,417 | 734 | 入口 / 指标 |
-+| **引擎合计** | **382,967** | **86,067** | **1,689 个源文件** |
-+| `src/unit_test` | 128,345 | 530 | GTest（约 1032 用例） |
-+
-+### 2.2 三大持久化底座（关键认知）
-+
-+三个**彼此独立**的持久化介质，重写时不可混为一谈：
-+
-+| 底座 | 内容 | C++ 位置 | Rust 对应 |
-+|---|---|---|---|
-+| **RocksDB（事务 KV）** | Catalog/元数据、ID 计数器、对象清单、rough filter、drop 墓碑 | `storage/catalog/kv_store*`、`meta/*` | `MetaStore` trait（`RocksMetaStore`） |
-+| **自研 WAL** | 已提交 DDL/DML 的 redo log（CRC32 分帧） | `storage/wal/*` | `storage::wal`（格式全量移植） |
-+| **自研块文件** | 列数据、MVCC `version`、索引 chunk | `storage/buffer/*`、`meta/*_impl.cpp` | `cpp_format` / `BufferManager` |
-+
-+要点：
-+
-+- **RocksDB 自身 WAL 并非全局关闭**：默认写入路径 `disable_wal=true`，但**对象清单持久化显式启用**（`KVStore::Put(..., false)` → `FlushWAL(false)`，`kv_store_impl.cpp:443,450`；调用点 `persistence_manager_impl.cpp:141`）。两条耐久性契约须分别保留。
-+- RocksDB **未用列族 / 自定义比较器 / 显式 block cache**，仅默认单 CF + 字节序 + 自定义 merge operator（计数器）。
-+- **MVCC 不依赖 RocksDB 快照**，而是时间戳数组：`BlockVersion.created_` / `deleted_`；更新 = 删除 + 追加。
-+- 磁盘布局：`db_<id>/tbl_<id>/seg_<id>/blk_<id>/`，列文件 `<col>.col` + 变长 `<col>.out`，版本文件 `version`；块 8192 行、段 8M 行。
-+- **索引文件并非统一单 `.idx`**：向量族用 per-chunk `chunk_<id>.idx`；全文用 `.dic` / `.pos` / `.spill` / `.len`（`index_defines.cppm:55`、`memory_indexer_impl.cpp:491`）。共性是「内存构建 → 落盘 → KV 记录 `ChunkIndexMetaInfo`」，但**文件集合 / 发布 / 合并 / 清理 / 恢复契约逐索引定义**。
-+
-+### 2.3 并发与调度模型
-+
-+现状（`src/s
-```
-
-**File**: `benchmark/local_infinity/fulltext/fulltext_benchmark.cpp` (modified, +40/-7)
-```diff
-@@ -116,6 +116,13 @@ std::shared_ptr<Infinity> CreateDbAndTable(const std::string &db_name, const std
-     return infinity;
+@@ -15,8 +15,13 @@ pub(crate) fn decode_secondary_key(
+         KeyKind::U64 => Key::U64(u64::from_le_bytes(bytes.try_into().ok()?)),
+         KeyKind::I64 => Key::I64(i64::from_le_bytes(bytes.try_into().ok()?)),
+         KeyKind::I32 => Key::I32(i32::from_le_bytes(bytes.try_into().ok()?)),
++        KeyKind::I16 => Key::I16(i16::from_le_bytes(bytes.try_into().ok()?)),
++        KeyKind::I8 => Key::I8(*bytes.first()? as i8),
++        KeyKind::Bool => Key::Bool(*bytes.first()? != 0),
+         KeyKind::F32 => Key::F32(f32::from_le_bytes(bytes.try_into().ok()?)),
+         KeyKind::F64 => Key::F64(f64::from_le_bytes(bytes.try_into().ok()?)),
++        // A JSON chunk is low-cardinality and has no ordered key array.
++        KeyKind::Bytes => return None,
+     })
  }
  
-+// Opens the directory as it stands: no database, table or index DDL, and
-+// nothing dropped (CreateDbAndTable drops the table with kIgnore).
-+std::shared_ptr<Infinity> ConnectExisting() {
-+    Infinity::LocalInit("/var/infinity");
-+    return Infinity::LocalConnect();
+@@ -45,6 +50,10 @@ pub(crate) fn publish_secondary_chunks(
+     let width = kind.key_width();
+     let stride = width + 4;
+     let mut by_block: std::collections::BTreeMap<u64, Vec<_>> = Default::default();
++    // A merged spill file holds the whole segment (`merge_secondary_chunks`),
++    // which is the reference's layout after `OptimizeIndex`: one chunk per
++    // segment rather than one per block.
++    let mut merged = false;
+     let Ok(entries) = std::fs::read_dir(dir) else {
+         return Vec::new();
+     };
+@@ -70,6 +79,9 @@ pub(crate) fn publish_secondary_chunks(
+         if run_segment.parse::<u32>() != Ok(segment) {
+             continue;
+         };
++        if rest.contains("_merged") {
++            merged = true;
++        }
+         let (Ok(bytes), Ok(reader)) = (
+             std::fs::read(&path),
+             SecondarySegmentReader::open_with_kind(&path, kind),
+@@ -96,7 +108,7 @@ pub(crate) fn publish_secondary_chunks(
+     // one in-memory index and dumps **once**, so an imported segment has a
+     // single chunk covering all of its blocks (`InsertBlockData` is called per
+     // block, `Dump` once after the loop).
+-    if single_chunk {
++    if single_chunk || merged {
+         let mut entries: Vec<_> = by_block.into_values().flatten().collect();
+         if entries.is_empty() || std::fs::create_dir_all(seg_dir).is_err() {
+             return Vec::new();
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +37/-9)
+```diff
+@@ -4447,6 +4447,14 @@ impl Engine {
+                     if let Err(error) = self.optimize_all_fulltext_indexes() {
+                         eprintln!("optimize: merging the full-text chunks failed: {error}");
+                     }
++                    // The secondary half of `OptimizeIndexInner`
++                    // (`new_txn_index_impl.cpp:336-340`): a segment with more than
++                    // one chunk folds them into one. Like the full-text rewrite its
++                    // catalog records are derived from the files, so it also runs
++                    // after the vector commit.
++                    if let Err(error) = self.optimize_all_secondary_indexes() {
++                        eprintln!("optimize: merging the secondary chunks failed: {error}");
++                    }
+                     Ok(())
+                 }
+                 // A concurrent merge (or a drop that took the index away) is a
+@@ -5825,7 +5833,12 @@ impl Engine {
+                 if let Ok(v) = value.parse() {
+                     options.nbits = v;
+                 }
+-            } else if key.eq_ignore_ascii_case("n_centroids") {
++            } else if key.eq_ignore_ascii_case("n_centroids")
++                || key.eq_ignore_ascii_case("centroids")
++            {
++                // `centroids` is the SQL spelling (`CREATE INDEX … WITH
++                // (centroids = 4096)`); `n_centroids` is the catalog field the
++                // record carries. Both name the same option.
+                 if let Ok(v) = value.parse() {
+                     options.n_centroids = v;
+                 }
+@@ -5961,14 +5974,29 @@ impl Engine {
+             .nbits;
+         let mut chunks = Vec::new();
+         for (id, path) in self.live_chunk_files(table, index_name, 0, &mirror.dir) {
+-            let bytes = std::fs::read(&path).map_err(|e| Error::Io {
+-                path: path.clone(),
+-                source: e,
+-            })?;
+-            let (index, _) =
+-                PlaidIndex::from_bytes(0, mirror.dims, nbits, &bytes).map_err(|e| {
+-                    Error::Invalid(format!("bad PLAID chunk '{}': {e}", path.display()))
+-                })?;
++            // Map the chunk and keep its packed residual codes file-backed (the
++            // reference's buffer-manager chunk): reading them into a `Vec` doubled
++            // the resident size of a large index. A zero-length or unopenable file
++            // falls back to a plain read.
++            let bad = |e: &dyn std::fmt::Display| {
++                Error::Invalid(format!("bad PLAID chunk '{}': {e}", path.display()))
++            };
++            let index = match storage::buffer::mapped::MappedFile::open(&path) {
++                Ok(mapped) if !mapped.is_empty() => {
++                    let backing: std::sync::Arc<dyn AsRef<[u8]> + Send + Sync> =
++                        std::sync::Arc::new(mapped);
++                    PlaidIndex::from_shared(backing, mirror.dims, nbits).map_err(|e| bad(&e))?
++                }
++                _ => {
++                    let bytes = std::fs::read(&path).map_err(|e| Error::Io {
++                        path: path.clone(),
++                        source: e,
++                    })?;
++                    PlaidIndex::from_bytes(0, mirror.dims, nbits, &bytes)
++                        .map_err(|e| bad(&e))?
++                        .0
++                }
++            };
+             chunks.push(PlaidChunkFile { id, index });
+         }
+         Ok(chunks)
+```
+
+**File**: `rust_engine/crates/executor/src/engine/admin.rs` (modified, +1/-0)
+```diff
+@@ -225,6 +225,7 @@ impl Engine {
+                 // block-level indexes, the in-memory secondary tails, the full-text
+                 // inverted index, the sparse documents and the vector buffers.
+                 entry.secondary.indexes.clear();
++                entry.secondary.declared_types.clear();
+                 entry.secondary.disk.clear();
+                 entry.text.clear();
+                 entry.sparse.clear();
+```
+
+**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +132/-47)
+```diff
+@@ -99,6 +99,7 @@ impl Engine {
+             }
+         }
+         let mut readers = Vec::new();
++        let mut meta: Vec<(u64, usize)> = Vec::new();
+         for (segment, entries) in by_segment {
+             let mut by_block: std::collections::BTreeMap<u64, Vec<_>> = Default::default();
+             for entry in entries {
+@@ -121,20 +122,20 @@ impl Engine {
+                     storage::secondary_segment::SecondarySegmentReader::open_with_kind(&path, kind)
+                 {
+                     // The chunk's offsets are already segment-relative, so the
+-                    // base is the segment alone.
++                    // base is the segment alone; its `ChunkIndexMetaInfo` covers
++                    // the rows the block held.
++                    meta.push((segment << 32, entries.len()));
+                     readers.push((segment << 32, Arc::new(reader)));
+                 }
+             }
+         }
+         let tkey = self.table_key(table);
+-        self.tables
+-            .lock()
+-            .unwrap()
+-            .entry(tkey)
+-            .or_default()
+-            .secondary
+-            .disk
+-            .insert(column.to_string(), readers);
++        let mut tables = self.tables.lock().unwrap();
++        let entry = tables.entry(tkey).or_default();
++        entry.secondary.disk.insert(column.to_string(), readers);
++        // A rebuild replaces the whole chunk set, so its meta replaces the list
++        // a previous dump appended to.
++        entry.secondary.chunk_meta.insert(column.to_string(), meta);
+     }
+ 
+     /// Appends a committed batch to the decoded-row cache, if the table has one.
+@@ -746,8 +747,12 @@ impl Engine {
+                 // thread (the reference's `MemIndexAppender` is a single
+                 // thread, which is the one structural deviation here).
+                 let schema = engine.table_schema(&index_table).unwrap_or_default();
+-                for (seq, texts) in &index_rows {
+-                    engine.update_indexes_on_insert_text(&index_table, *seq, texts, &schema)?;
++                for (k, (seq, _)) in index_rows.iter().enumerate() {
++                    // `index_rows` is `bottom_rows` rendered, so the literals are
++                    // the same rows: the secondary hook needs them to tell a NULL
++                    // from an empty cell.
++                    let values = bottom_rows.get(k).map(Vec::as_slice).unwrap_or(&[]);
++                    engine.update_indexes_on_insert(&index_table, *seq, values, &schema)?;
+                 }
+                 // One batch: the full-text terms of the whole append are
+                 // tokenised without the column lock and inserted under it once.
+@@ -1109,8 +1114,34 @@ impl Engine {
+         values: &[Literal],
+         schema: &[String],
+     ) -> Result<()> {
+-        let texts: Vec<String> = values.iter().map(|v| v.to_slt_string()).collect();
+-        self.update_indexes_on_insert_text(table, seq, &texts, schema)
++        // The evaluated row is only built when a functional index needs it: a
++        // plain index reads its cell's text and pays nothing.
++        let mut row_values: Option<Vec<Value>> = None;
++        for target in self.secondary_targets(table, schema) {
++            let Some(value) = values.get(target.pos) else {
++                continue;
++            };
++            // `SecondaryIndexInMemT::InsertInner` skips a row whose null bit is
++            // set: a NULL is not a key.
++            if matches!(value, Literal::Null) {
++                continue;
++            }
++            let keys = match &target.func {
++                None => text_to_tail_keys(&target.declared, &value.to_slt_string()),
++                Some(func) => {
++                    let row = row_values
++                        .get_or_insert_with(|| values.iter().map(Value::from_literal).collect());
++                    match functional_value(func, target.pos, row) {
++                        Some(value) => value_to_key(&target.declared, &value),
++                        None => Vec::new(),
++                    }
++                }
++            };
++            for key in keys {
++                target.index.insert(&key, seq as u64);
++            }
++        }
++        Ok(())
+     }
+ 
+     /// Feeds a whole batch of rows into every secondary index of `table`.
+@@ -1119,6 +1150,12 @@ impl Engine {
+     /// string) and took the registry lock for every row, and looked the indexed
+     /// column up in the schema once per index per row. A bulk statement paid
+     /// that per row; this pays it once for the batch.
++    ///
++    /// Each key is the column's **order-preserving encoding**
++    /// (`Key::ordered_bytes`) - the same domain a sealed chunk uses - so the
++    /// memory tail is ordered like the column (a range scan slices it instead
++    /// of decoding every key) and a dump can write its keys out directly. The
++    /// tails are cloned out under the table lock and appended to outside it.
+     pub(crate) fn update_seco
+```
+
+---
+
+### Incident Patch 2: `e714e483` (2026-11-10)
+**Commit Message**: Port merge and skiplist to rust version of fulltext index (#3545)
+
+**File**: `rust_engine/crates/analyzer/src/ngram.rs` (modified, +1/-0)
+```diff
+@@ -54,6 +54,7 @@ impl NGramAnalyzer {
+                 word_offset: offset,
+                 char_offset: start_byte as u32,
+                 end_offset: end_byte as u32,
++                payload: 0,
+             });
+             offset += 1;
+             i += 1;
+```
+
+**File**: `rust_engine/crates/analyzer/src/rank_features.rs` (modified, +8/-0)
+```diff
+@@ -1,6 +1,14 @@
+ use super::*;
+ 
+ /// C++: `SmallFloat::Float122ToUInt16` (`smallfloat.cppm`).
++/// C++ `SmallFloat::UInt16ToFloat122`: the inverse of [`float122_to_uint16`],
++/// used by `RankFeatureDocIterator` to turn a posting's doc-payload back into
++/// the feature weight.
++pub fn uint16_to_float122(i: u16) -> f32 {
++    let bits = ((i as i32 + ((127 - 2) << 12)) << (23 - 12)) as u32;
++    f32::from_bits(bits)
 +}
 +
- void BenchmarkImport(std::shared_ptr<Infinity> infinity, const std::string &db_name, const std::string &table_name, const std::string &import_from) {
-     if (!VirtualStore::Exists(import_from)) {
-         LOG_ERROR(fmt::format("Data file doesn't exist: {}", import_from));
-@@ -308,7 +315,10 @@ void BenchmarkQuery(std::shared_ptr<Infinity> infinity,
-                      "social custom \"harmful chemical\"",
-                      "\"annual American awards\"",
-                      "harmful chemical",
--                     "\"one of\""};
-+                     "\"one of\"",
-+                     // Multi-term (10+ OR terms): every term is a WAND cursor in the same pass.
-+                     "harmful chemical social custom annual American awards one of the first world war",
-+                     "national football league high school state university population family city game season team player"};
-     }
- 
-     for (auto match_text : query_vec) {
-@@ -401,11 +411,15 @@ int main(int argc, char *argv[]) {
-     CLI::App app{"fulltext_benchmark"};
-     // https://github.com/CLIUtils/CLI11/blob/main/examples/enum.cpp
-     // Using enumerations in an option
--    enum class Mode : u8 { kInsert, kImport, kMerge, kQuery };
--    std::map<std::string, Mode> mode_map{{"insert", Mode::kInsert}, {"import", Mode::kImport}, {"merge", Mode::kMerge}, {"query", Mode::kQuery}};
-+    enum class Mode : u8 { kInsert, kImport, kMerge, kQuery, kQueryOnly };
-+    std::map<std::string, Mode> mode_map{{"insert", Mode::kInsert},
-+                                         {"import", Mode::kImport},
-+                                         {"merge", Mode::kMerge},
-+                                         {"query", Mode::kQuery},
-+                                         {"query-only", Mode::kQueryOnly}};
-     Mode mode(Mode::kInsert);
-     size_t insert_batch = 500;
--    app.add_option("--mode", mode, "Benchmark mode, one of insert, import, merge, query")
-+    app.add_option("--mode", mode, "Benchmark mode, one of insert, import, merge, query, query-only")
-         ->required()
-         ->transform(CLI::CheckedTransformer(mode_map, CLI::ignore_case));
-     app.add_option("--insert-batch", insert_batch, "batch size of each insert, valid only at insert and merge mode, default value 500");
-@@ -428,10 +442,15 @@ int main(int argc, char *argv[]) {
-     srcfile += "/benchmark/dbpedia-entity/corpus.jsonl";
-     // srcfile += "/benchmark/enwiki.33332620.csv";
- 
-+    // query-only reuses the directory a previous run left behind (no DDL, no
-+    // insert), so the query times are the query path alone.
-+    const bool reuse = mode == Mode::kQueryOnly;
-     printf("Cleanup /var/infinity\n");
--    system("rm -rf /var/infinity/data /var/infinity/log /var/infinity/persistence /var/infinity/tmp /var/infinity/wal");
-+    if (!reuse) {
-+        system("rm -rf /var/infinity/data /var/infinity/log /var/infinity/persistence /var/infinity/tmp /var/infinity/wal");
-+    }
- 
--    std::shared_ptr<Infinity> infinity = CreateDbAndTable(db_name, table_name);
-+    std::shared_ptr<Infinity> infinity = reuse ? ConnectExisting() : CreateDbAndTable(db_name, table_name);
- 
-     switch (mode) {
-         case Mode::kInsert: {
-@@ -466,11 +485,25 @@ int main(int argc, char *argv[]) {
-             BenchmarkMoreQuery(infinity, db_name, table_name, query_opts, vocab);
-             break;
-         }
-+        case Mode::kQueryOnly: {
-+            std::vector<std::string> vocab;
-+            if (query_opts.terms_ > 0) {
-+                vocab = LoadVocabulary(srcfile, 1000, 20000);
-+                if (vocab.size() < query_opts.terms_) {
-+                    LOG_ERROR(fmt::format("Vocabulary too small: {} < {} (--terms)", vocab.size(), query_opts.terms_));
-+                    break;
-+                }
-+            }
-+            BenchmarkMoreQuery(infinity, db_name, table_name, query_opts, vocab);
-+            break;
-+        }
-         default: {
-             printf("Unsupported benchmark mode: %u\n", static_cast<u8>(mode));
-         }
-     }
--    sleep(10);
-+    if (!reuse) {
-+        sleep(10);
-+    }
- 
-     Infinity::LocalUnInit();
- }
+ pub(crate) fn float122_to_uint16(f: f32) -> u16 {
+     let bits = f.to_bits() as i32;
+     let smallfloat = bits >> (23 - 12);
 ```
 
-**File**: `docs/references/pysdk_api_reference.md` (modified, +395/-197)
+**File**: `rust_engine/crates/analyzer/src/sparsegram.rs` (modified, +1/-0)
 ```diff
-@@ -86,8 +86,9 @@ If you have deployed Infinity as a separate server and installed the Infinity cl
+@@ -26,6 +26,7 @@ impl SparseGramAnalyzer {
+                 word_offset: offset,
+                 char_offset: 0,
+                 end_offset: offset + 1,
++                payload: 0,
+             });
+             offset += 1;
+         });
+```
+
+**File**: `rust_engine/crates/analyzer/src/standard.rs` (modified, +1/-0)
+```diff
+@@ -104,6 +104,7 @@ impl StandardAnalyzer {
+                     word_offset,
+                     char_offset: offset,
+                     end_offset,
++                    payload: 0,
+                 })
+             };
+             let emit = &mut emit;
+```
+
+**File**: `rust_engine/crates/analyzer/src/tokenizer.rs` (modified, +3/-0)
+```diff
+@@ -140,6 +140,9 @@ pub struct TermView<'a> {
+     pub word_offset: u32,
+     pub char_offset: u32,
+     pub end_offset: u32,
++    /// C++ `Term::payload_`; zero for every streaming analyzer (only
++    /// `rankfeatures` produces a value, and it goes through `analyze`).
++    pub payload: u16,
+ }
  
- ```python
- import infinity
+ /// C++: `Term`.
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/chunk.rs` (modified, +4/-4)
+```diff
+@@ -404,10 +404,10 @@ pub fn encode_fulltext_chunk(
+     lengths: &[u32],
+ ) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
+     const OPTION_FLAG_ALL: u8 = 1 | 2 | 4 | 8 | 16 | 32;
+-    let flags = storage::invertedindex::format::TermMetaFlags {
+-        has_term_frequency: true,
+-        has_term_payload: true,
+-    };
++    // The `.dic` half records `total_tf` and the term payload, and the doc list
++    // below is built with `OPTION_FLAG_ALL`, so the flags have to describe the
++    // same option word (`index_full_text.cppm:73`).
++    let flags = storage::invertedindex::format::OPTION_FLAG_ALL;
+     let doc_option =
+         storage::invertedindex::format::doc_list::DocListFormatOption::new(OPTION_FLAG_ALL);
+     let mut pos = Vec::new();
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +17/-13)
+```diff
+@@ -2206,20 +2206,14 @@ impl Engine {
+             .unwrap_or(false)
+     }
+ 
+-    /// Whether the delete journal holds `seq`. Reads the loaded journal in
+-    /// place, and only pays for loading it when this is the first look.
++    /// Whether the delete journal holds `seq`.
++    ///
++    /// One hash lookup into the journal's set. The journal itself is a `Vec`
++    /// and used to be scanned here, which a bulk `DELETE`/`UPDATE` pays once
++    /// per row (`row_is_present`) and made the statement quadratic in the
++    /// journal's length.
+     pub(crate) fn is_deleted(&self, table: &str, seq: usize) -> bool {
+-        let key = self.table_key(table);
+-        {
+-            let tables = self.tables.lock().unwrap();
+-            if let Some(ids) = tables
+-                .get(&key)
+-                .and_then(|entry| entry.deleted_ids.as_ref())
+-            {
+-                return ids.contains(&(seq as u64));
+-            }
+-        }
+-        self.deleted_ids(table).contains(&(seq as u64))
++        self.deleted_set(table).contains(&(seq as u64))
+     }
+ 
+     /// The blocks a reader may see: the table's block index minus every segment
+@@ -4443,6 +4437,16 @@ impl Engine {
+                     // part of the index; reconcile the in-memory set now instead
+                     // of at the next checkpoint.
+                     self.reload_vector_indexes();
++                    // The full-text half of `OptimizeIndexInner`
++                    // (`new_txn_index_impl.cpp:349-353` → `OptimizeFtIndex`).
++                    // A full-text chunk is only its three files — the chunk list
++                    // *is* the directory — so this rewrite carries no catalog
++                    // entry and therefore runs after the vector commit: a failed
++                    // merge leaves the source chunks readable instead of rolling
++                    // back the vector work.
++                    if let Err(error) = self.optimize_all_fulltext_indexes() {
++                        eprintln!("optimize: merging the full-text chunks failed: {error}");
++                    }
+                     Ok(())
+                 }
+                 // A concurrent merge (or a drop that took the index away) is a
+```
+
+**File**: `rust_engine/crates/executor/src/diagnostics.rs` (modified, +35/-0)
+```diff
+@@ -70,6 +70,41 @@ pub struct MemoryIndexRow {
+     pub mem_used: usize,
+ }
+ 
++/// Health of one full-text index: where a slow query's cost comes from.
++///
++/// A query walks **every** sealed chunk for its terms, then the memory tail, so
++/// the numbers that matter are how many chunks there are and how much of the
++/// column is still unsealed - the two things `optimize` and the seal trigger
++/// move. `overridden_rows` is the price of the append-only delete story: those
++/// rows are held in a set and filtered out of every scan.
++///
++/// Reported by [`crate::Engine::fulltext_stats`]. It is deliberately **not** part
++/// of the `SHOW MEMINDEX` wire shape (that one is the reference's
++/// `MemIndexTracerInfo`); exposing these fields to clients is a schema decision
++/// left to the caller.
++#[derive(Clone, Debug, Default, PartialEq, Eq)]
++pub struct FulltextStats {
++    pub table: String,
++    pub index: String,
++    /// Sealed chunks. Every query probes all of them.
++    pub chunks: usize,
++    /// Rows held by the sealed chunks.
++    pub chunk_rows: usize,
++    /// Rows still in the memory tail (not sealed yet).
++    pub tail_rows: usize,
++    /// Sorted runs the tail spilled into; `> 0` means the next seal merges them
++    /// instead of writing the tail straight out.
++    pub spill_runs: usize,
++    /// Rows a seal is writing right now (they keep answering from memory).
++    pub inflight_rows: usize,
++    /// Rows whose sealed copy is stale: deleted, or re-indexed in place.
++    pub overridden_rows: usize,
++    /// Bytes the unsealed tail estimates it occupies.
++    pub tail_bytes: usize,
++    /// Duration of the last seal's file write, in microseconds.
++    pub last_seal_us: u64,
++}
 +
- # If Infinity is deployed on the local machine, use infinity.LOCAL_HOST to replace <SERVER_IP_ADDRESS>
--infinity_object = infinity.connect(infinity.NetworkAddress("192.168.1.101", 23817)) 
-+infinity_object = infinity.connect(infinity.NetworkAddress("192.168.1.101", 23817))
- ```
- 
- ---
-@@ -121,7 +122,7 @@ infinity_object.disconnect()
- ### create_database
- 
- ```python
--infinity_object.create_database(db_name, conflict_type = ConflictType.Error, comment = None)
-+infinity_object.create_database(db_name, conflict_type=ConflictType.Error, comment=None)
- ```
- 
- Creates a database with a specified name.
-@@ -172,29 +173,34 @@ Additional comment for the database to create.
- 
- ```python
- # Create a database named 'my_database':
--# If the specified database already exists, raise an error. 
-+# If the specified database already exists, raise an error.
- infinity_object.create_database("my_database")
- ```
- 
- ```python
- # Create a database named 'my_database':
--# If the specified database already exists, raise an error (same as above). 
--infinity_object.create_database("my_database", infinity.common.ConflictType.Error, comment="Database One")
-+# If the specified database already exists, raise an error (same as above).
-+infinity_object.create_database(
-+    "my_database", infinity.common.ConflictType.Error, comment="Database One"
-+)
- ```
- 
- ```python
- from infinity.common import ConflictType
-+
- # Create a database named 'my_database':
--# If the specified database already exists, silently ignore the operation and proceed. 
--infinity_object.create_database("my_database", ConflictType.Ignore, comment="Database One")
-+# If the specified database already exists, silently ignore the operation and proceed.
-+infinity_object.create_database(
-+    "my_database", ConflictType.Ignore, comment="Database One"
-+)
- ```
- 
- ---
- 
- ### drop_database
- 
- ```python
--infinity_object.drop_database(db_name, conflict_type = ConflictType.Error)
-+infinity_object.drop_database(db_name, conflict_type=ConflictType.Error)
- ```
- 
- Deletes a database by its name.
-@@ -237,18 +243,19 @@ A structure containing the following attributes:
- 
- ```python
- # Delete a database named 'my_database':
--# If the specified database does not exist, raise an error. 
-+# If the specified database does not exist, raise an error.
- infinity_object.drop_database("my_database")
- ```
- 
- ```python
- # Delete a database named 'my_database':
--# If the specified database does not exist, raise an error (same as above). 
-+# If the specified database does not exist, raise an error (same as above).
- infinity_object.drop_database("my_database", infinity.common.ConflictType.Error)
- ```
- 
- ```python
- from infinity.common import ConflictType
-+
- # Delete a database named 'my_database':
- # If the specified database does not exist, silently ignore the operation and proceed.
- infinity_object.drop_database("my_database", ConflictType.Ignore)
-@@ -278,8 +285,8 @@ A structure containing the following attributes:
- #### Examples
- 
- ```python
--res = infinity_object.list_databases() 
--print(res.db_names) # ['my_database', 'database_1']
-+res = infinity_object.list_databases()
-+print(res.db_names)  # ['my_database', 'database_1']
- ```
- 
- ---
-@@ -305,7 +312,7 @@ A structure containing the following attributes:
- #### Examples
- 
- ```python
--res = infinity_object.show_database('my_database')
-+res = infinity_object.show_database("my_database")
- ```
- 
- ---
-@@ -342,7 +349,7 @@ db_object = infinity_object.get_database("my_database")
- ### create_table
- 
- ```python
--db_object.create_table(table_name, columns_definition, conflict_type = ConflictType.Error)
-+db_object.create_table(table_name, columns_definition, conflict_type=ConflictType.Error)
- ```
- 
- Creates a table with a specified name and defined columns.
-@@ -521,12 +528,11 @@ You can build a HNSW index on the vector column to speed up the match_dense sear
- :::
- 
- ```python
--# Create a table with a vector column only:  
-+# Create a table with a vector column only:
- # - `vector`: The column is a vector column
- # - `128`: The vector dimension
- # - `float`: The primitive data type of the vectors. Can be `float`/`float32`, `float16`, `bfloat16`, `uint8` or `int8`
- db_object.create_table("my_table", {"c1": {"type": "vector,128,float"}})
--
- ```
- 
- ##### Create a table with a multi-vector column only
-@@ -536,12 +542,11 @@ You can build an HNSW index on the multi-vector column to accelerate match_dense
- :::
- 
- ```python
--# Create a table with a multi-vector column only:  
-+# Create a table with a multi-vector column only:
- # - `multivector`: The column is a multi-vector column
- # - `128`: The basic vector dimension
- # - `float`: The primitive data type of the basic vectors. Can be `float`/`float32`, `float16`, `bfloat16`, `uint8` or `int8`
- db_object.create_table("my_table", {"c1": {"type": "multivector,128,float"}})
--
- ```
- 
- ##### Create a tab
+ /// A query that is executing right now.
+ #[derive(Clone, Debug)]
+ pub struct RunningQuery {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3547** (2026-11-11): Port secondary index and plaid to rust (@yingfeng)
+- **PR #3545** (2026-11-10): Port merge and skiplist to rust version of fulltext index (@yingfeng)
 - **PR #3541** (2026-11-08): Rust rewrite: the rust_engine port of the engine (@yuzhichang)
 - **PR #3540** (2026-11-05): fix(txn): report concurrent checkpoint/cleanup as skipped instead of failing (@qinling0210)
 - **PR #3539** (2026-11-04): fix(cleanup): remove only the dirs of dropped entities (@qinling0210)
 - **PR #3538** (2026-11-02): CI: Fix no tar file in artifacts (@myf-bee)
-- **PR #3536** (2026-11-05): Update version to 0.7.5 (@qinling0210)
-- **PR #3535** (2026-11-01): feat(search): heap-based block-max WAND as the default top-k early-termination iterator (@yingfeng)
 
 ---
 
@@ -2046,60 +1976,48 @@ machi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++
+## X. Port secondary index and plaid to rust (#3547)
 
 **RULE**:
-When implementing operations in `.github/workflows/rust_engine.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust_engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b078219d`: Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++ reference, enforced by conformance, byte and cross-engine gates.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8583bc5`: Port secondary index and plaid to rust (#3547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust_engine.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-name: rust_engine
+[[package]]
+name = "itoa"
+version = "1.0.19"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
 
-# CI for the Rust rewrite (RUST_REWRITE_PLAN.md M0/M6).
-#
-# This workflow tests the rewrite alone: the reference engine, the
-# cross-engine format gate and the C++ suites belong to the reference's own
-# workflows (tests.yml / slow_tests.yml), so nothing here builds C++.
-#
-# Each suite is written once and run per architecture; every trigger covers
-# both amd64 and arm64.
+ "roaring",
+[[package]]
+name = "serde_json"
+version = "1.0.154"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
+dependencies = [
+ "itoa",
+ "memchr",
+ "serde",
+ "serde_core",
+ "zmij",
+]
 
-on:
-  push:
-    paths:
-      - 'rust_engine/**'
-      - 'python/restart_test/**'
-      - 'python/test_pysdk/**'
-      - 'tools/run_restart_test.py'
-      - '.github/workflows/rust_engine.yml'
-  pull_request:
-    paths:
-      - 'rust_engine/**'
-      - 'python/restart_test/**'
-      - 'python/test_pysdk/**'
-      - 'go/**'
-      - 'tools/run_restart_test.py'
-      - '.github/workflows/rust_engine.yml'
-  schedule:
-    - cron: '0 18 * * *' # nightly: the arm64 lane
-  workflow_dispatch:
+ "serde",
+ "serde_json",
+[[package]]
+name = "zmij"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
 
-concurrency:
-  group: rust-engine-${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-  # Cases the rewrite cannot run yet, one pytest node id per line. There is no
-  # reference cell to leave untouched here, so they are deselected from every
-  # cell; a line goes away when the gap closes. Source of truth:
-  # rust_en
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2109,4 +2027,4 @@ env:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b078219d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8583bc5` are properly handled with clean fallback behavior.

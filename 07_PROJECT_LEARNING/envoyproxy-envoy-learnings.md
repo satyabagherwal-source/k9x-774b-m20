@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `70a60076`  
+> **Source Version**: `8085a1d8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T05:26:06.142Z  
+> **Timestamp**: 2026-11-11T11:10:31.644Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T05:26:06.135Z  
+> **Harvest Timestamp**: 2026-11-11T11:10:31.639Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29195 stars
+- **Stars / Engagement**: 29221 stars
 
 ---
 
@@ -114,43 +114,15 @@ void ossl_dlopen(int expected_major, int expected_minor) {
     char ossl_path[PATH_MAX];
     char temp_path[PATH_MAX];
 
-    // Locate the OpenSSL libraries in the runfiles tree. The repository
-    // directory name and layout depend on the build/runtime:
-    //  - WORKSPACE / Bazel 7 nests external repos under the workspace, using the
-    //    apparent name (e.g. {RUNFILES_DIR}/{TEST_WORKSPACE}/external/openssl/...).
-    //  - Bazel 8 places them directly under the runfiles root
-    //    (e.g. {RUNFILES_DIR}/openssl/...).
-    //  - bzlmod materialises them under their canonical name, which is the
-    //    apparent name with a trailing '+' (e.g. .../openssl+/...).
-    // Probe each candidate and use the first that exists, defaulting to the last
-    // so dlopen() reports a sensible path if none are found.
-    const char* repo_names[] = {"openssl", "openssl+"};
-    const size_t num_repo_names = sizeof(repo_names) / sizeof(repo_names[0]);
-    for (size_t i = 0; i < num_repo_names; i++) {
-      snprintf(ossl_path, sizeof(ossl_path), "%s/%s/external/%s/openssl/lib",
-                                              runfiles_dir, test_workspace, repo_names[i]);
-      if (access(ossl_path, F_OK) == 0) {
-        break;
-      }
-      snprintf(ossl_path, sizeof(ossl_path), "%s/%s/openssl/lib",
-                                              runfiles_dir, repo_names[i]);
-      if (access(ossl_path, F_OK) == 0) {
-        break;
-      }
-    }
+    // The shared libraries are built by //compat/openssl:libcrypto and :libssl.
+    // OSSL_RUNFILES_LIB_DIR is their runfiles directory, set by the BUILD file.
+    snprintf(ossl_path, sizeof(ossl_path), "%s/%s", runfiles_dir, OSSL_RUNFILES_LIB_DIR);
 
     strcpy(temp_path, libcrypto_path);
     snprintf(libcrypto_path, sizeof(libcrypto_path), "%s/%s", ossl_path, temp_path);
 
     strcpy(temp_path, libssl_path);
     snprintf(libssl_path, sizeof(libssl_path), "%s/%s", ossl_path, temp_path);
-
-    // When running under bazel, we also need to set the OPENSSL_MODULES
-    // environment variable, so that OpenSSL can find its modules at runtime,
-    // This is needed by some tests that load the legacy provider.
-    char ossl_modules_path[PATH_MAX];
-    snprintf(ossl_modules_path, sizeof(ossl_modules_path), "%s/ossl-modules", ossl_path);
-    setenv("OPENSSL_MODULES", ossl_modules_path, 1);
   }
 
   // Load libcrypto.so first, because libssl.so depends on it.
@@ -1077,529 +1049,657 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbab4cd9` (2026-11-08)
-**Commit Message**: tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711)
+### Incident Patch 1: `86b4404b` (2026-11-10)
+**Commit Message**: [cache_v2] Fix upstream reset crash and stats (#48814)
 
-Adds `incoming_trace_context` and `outgoing_trace_context` to
-`OpenTelemetryConfig`, so the tracer can read and write W3C Trace
-Context, the B3 single header, or B3 multiple headers. Default stays W3C
-only.
+Commit Message: [cache_v2] Fix upstream reset crash and stats
+Additional Description: Cache filter could crash if an upstream reset
+while more than one downstream was waiting on it (subject to a race
+going the wrong way). This makes it so an upstream reset fails harder,
+preventing the crash, and also fixes that there was previously no path
+to the upstream_reset metric being updated.
+Risk Level: WIP filter
+Testing: Yes
+Docs Changes: Yes
+Release Notes: Yes
+Platform Specific Features: Filter is already disabled for Windows
 
-Additional Description:
-- Extraction tries formats in order; the first valid one wins and
-malformed ones are skipped. If headers are present but none are valid,
-the request is not traced, as with a malformed `traceparent` today.
-- Injection writes every configured format and leaves other headers
-alone.
-- B3 parsing follows the OpenTelemetry B3 spec and the Zipkin tracer's
-leniency. It lives in the OpenTelemetry tracer because Zipkin already
-depends on this library.
-- Out of scope: injecting only the extracted format (#40977), GCP and
-AWS formats, baggage.
+---------
 
-AI disclosure: written with AI assistance (Cursor). I have reviewed and
-understand all of the code.
+Signed-off-by: Raven Black <[REDACTED_EMAIL]>
 
-Risk Level: Low. Opt-in; the default config is unchanged.
-Testing: New unit, driver, and config tests. All OpenTelemetry and
-Zipkin tracer tests pass locally.
-Docs Changes: Proto docs and a tracing architecture overview entry.
-Release Notes:
-`ch
-
-**File**: `api/envoy/config/trace/v3/opentelemetry.proto` (modified, +54/-1)
+**File**: `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst` (added, +4/-0)
 ```diff
-@@ -10,6 +10,7 @@ import "google/protobuf/wrappers.proto";
- 
- import "udpa/annotations/migrate.proto";
- import "udpa/annotations/status.proto";
-+import "validate/validate.proto";
- 
- option java_package = "io.envoyproxy.envoy.config.trace.v3";
- option java_outer_classname = "OpentelemetryProto";
-@@ -21,8 +22,35 @@ option (udpa.annotations.file_status).package_version_status = ACTIVE;
- 
- // Configuration for the OpenTelemetry tracer.
- //  [#extension: envoy.tracers.opentelemetry]
--// [#next-free-field: 11]
-+// [#next-free-field: 13]
- message OpenTelemetryConfig {
-+  // Trace context formats that can be extracted from downstream requests and injected into
-+  // upstream requests.
-+  enum TraceContextFormat {
-+    // W3C Trace Context: the :ref:`traceparent <config_http_conn_man_headers_traceparent>` and
-+    // ``tracestate`` headers.
-+    // See `W3C Trace Context <https://www.w3.org/TR/trace-context/>`_.
-+    TRACE_CONTEXT = 0;
-+
-+    // B3 single header: the :ref:`b3 <config_http_conn_man_headers_b3>` header.
-+    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
-+    //
-+    // When extracting, both the single header and the multiple header encodings are accepted, with
-+    // the single header taking precedence. When injecting, the single header is written, and any
-+    // ``x-b3-*`` headers already on the request are rewritten so that they describe the same span.
-+    B3 = 1;
-+
-+    // B3 multiple headers: the :ref:`x-b3-traceid <config_http_conn_man_headers_x-b3-traceid>`,
-+    // ``x-b3-spanid``, ``x-b3-sampled`` and ``x-b3-flags`` headers.
-+    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
-+    //
-+    // When extracting, both the single header and the multiple header encodings are accepted, with
-+    // the single header taking precedence. When injecting, ``x-b3-traceid``, ``x-b3-spanid`` and
-+    // ``x-b3-sampled`` are written, and a ``b3`` header already on the request is rewritten so that
-+    // it describes the same span.
-+    B3_MULTI = 2;
-+  }
-+
-   // The upstream gRPC cluster that will receive OTLP traces.
-   // Note that the tracer drops traces if the server does not read data fast enough.
-   // This field can be left empty to disable reporting traces to the gRPC service.
-@@ -88,4 +116,29 @@ message OpenTelemetryConfig {
-   // Specifies whether to set the instrumentation scope name ("envoy") and version on emitted traces.
-   // If not specified, the default is to set the instrumentation scope name and version.
-   google.protobuf.BoolValue set_instrumentation_scope = 9;
-+
-+  // The trace context formats to extract from downstream requests, in order of precedence.
-+  // The first format whose headers are present and valid is used as the parent of the span; the
-+  // remaining formats are ignored. A format whose headers are malformed is skipped. If headers
-+  // were present but none of them could be extracted, the request is not traced.
-+  //
-+  // B3 trace context without a sampling decision joins the trace, and the span's sampling
-+  // decision is made by Envoy as if it were the first span in the trace.
-+  //
-+  // B3 headers that carry a decision not to sample but no trace context, such as ``b3: 0`` or
-+  // ``x-b3-sampled: 0`` without ``x-b3-traceid`` and ``x-b3-spanid``, start a new trace that is
-+  // not sampled, regardless of Envoy's tracing decision or the configured sampler. A decision to
-+  // sample without trace context is ignored.
-+  //
-+  // Each format may be listed at most once. If not specified, the default is ``[TRACE_CONTEXT]``.
-+  repeated TraceContextFormat incoming_trace_context = 11
-+      [(validate.rules).repeated = {items {enum {defined_only: true}}}];
-+
-+  // The trace context formats to inject into upstream requests. Headers of formats that are not
-+  // listed are left unchanged, except that injecting either B3 encoding also rewrites headers of
-+  // the other B3 encoding that are already on the request.
-+  //
-+  // Each format may be listed at most once. If not specified, the default is ``[TRACE_CONTEXT]``.
-+  repeated TraceContextFormat outgoing_trace_context = 12
-+      [(validate.rules).repeated = {items {enum {defined_only: true}}}];
- }
+@@ -0,0 +1,4 @@
++http: fixed a crash in the cache v2 filter when a late callback from a failed cache insertion affected a subsequent
++  request for the same entry. Aborted insertions now reset waiting requests, and subsequent requests use a new cache session.
++  Lookups aborted without a response source now increment the cache ``upstream_reset`` event counter.
++  Upstream resets during cache validation reset waiting lookups while preserving existing cached readers.
 ```
 
-**File**: `changelogs/current/new_features/tracing__opentelemetry-b3-propagation.rst` (added, +5/-0)
+**File**: `docs/root/configuration/http/http_filters/cache_v2_filter.rst` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+Added :ref:`incoming_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.incoming_trace_context>`
-+and :ref:`outgoing_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.outgoing_trace_context>`
-+to the OpenTelemetry tracer to configure which trace context formats are extracted from downstream requests
-+and injected into upstream requests. In addition to W3C Trace Context, the B3 single header and multiple
-+header formats are supported. The default remains W3C Trace Context only.
-```
-
-**File**: `docs/root/intro/arch_overview/observability/tracing.rst` (modified, +16/-0)
-```diff
-@@ -113,6 +113,22 @@ Alternatively the trace context can be manually propagated by the service:
-   This option is disabled by default (``USE_B3``) to maintain backward compatibility, where only
-   B3 headers are used for both extraction and injection.
+@@ -52,6 +52,13 @@ persistent caches. They can be fully custom caches, or wrappers/adapters around
+ Built-in cache storage backends include :ref:`SimpleHttpCacheV2Config <envoy_v3_api_msg_extensions.http.cache_v2.simple_http_cache.v3.SimpleHttpCacheV2Config>`
+ (in-memory) and :ref:`FileSystemHttpCacheV2Config <envoy_v3_api_msg_extensions.http.cache_v2.file_system_http_cache.v3.FileSystemHttpCacheV2Config>` (persistent; LRU).
  
-+* When using the OpenTelemetry tracer, Envoy relies on the service to propagate the W3C trace
-+  context headers (:ref:`traceparent <config_http_conn_man_headers_traceparent>` and
-+  :ref:`tracestate <config_http_conn_man_headers_tracestate>`) by default. The tracer can also
-+  extract and inject B3 headers, using the single :ref:`config_http_conn_man_headers_b3` header or
-+  the multiple ``x-b3-*`` headers. This is controlled by the
-+  :ref:`incoming_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.incoming_trace_context>`
-+  and :ref:`outgoing_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.outgoing_trace_context>`
-+  configuration options:
++If an upstream response resets while it is being inserted into the cache, requests waiting for that insertion
++are reset. A subsequent request performs a new cache lookup and can start a new upstream fetch. Requests using
++the aborted response cannot continue by reading from the later fetch. Each lookup aborted without a response
++source increments the ``cache.event`` counter with ``event_type=upstream_reset``. If an upstream cache validation
++resets, requests waiting for validation are reset. Existing readers continue using the cached response, and
++a subsequent request can retry validation.
 +
-+  - For downstream requests: Extract trace context from the first configured format whose headers
-+    are present and valid.
-+  - For upstream requests: Inject trace context in every configured format.
-+
-+  Configuring the formats separately supports migrations between formats, for example accepting
-+  both W3C and B3 headers while only injecting W3C headers.
-+
- * When using the Datadog tracer, Envoy relies on the service to propagate the
-   Datadog-specific HTTP headers (
-   :ref:`config_http_conn_man_headers_x-datadog-trace-id`,
-```
-
-**File**: `source/extensions/tracers/opentelemetry/BUILD` (modified, +5/-0)
-```diff
-@@ -25,11 +25,13 @@ envoy_cc_extension(
- envoy_cc_library(
-     name = "opentelemetry_tracer_lib",
-     srcs = [
-+        "b3_span_context.cc",
-         "opentelemetry_tracer_impl.cc",
-         "span_context_extractor.cc",
-         "tracer.cc",
-     ],
-     hdrs = [
-+        "b3_span_context.h",
-         "opentelemetry_tracer_impl.h",
-         "span_context.h",
-         "span_context_extractor.h",
-@@ -43,9 +45,12 @@ envoy_cc_library(
-     deps = [
-         ":trace_exporter",
-         "//envoy/thread_local:thread_local_interface",
-+        "//envoy/tracing:trace_context_interface",
-         "//source/common/config:utility_lib",
-         "//source/common/http:http_service_headers_lib",
-+        "//source/common/singleton:const_singleton",
-         "//source/common/tracing:http_tracer_lib",
-+        "//source/common/tracing:trace_context_lib",
-         "//source/common/tracing:tracer_config_lib",
-         "//source/extensions/tracers/common:factory_base_lib",
-         "//source/extensions/tracers/opentelemetry/resource_detectors:resource_detector_lib",
-```
-
-**File**: `source/extensions/tracers/opentelemetry/b3_span_context.cc` (added, +205/-0)
-```diff
-@@ -0,0 +1,205 @@
-+#include "source/extensions/tracers/opentelemetry/b3_span_context.h"
-+
-+#include <algorithm>
-+#include <vector>
-+
-+#include "absl/strings/ascii.h"
-+#include "absl/strings/str_cat.h"
-+#include "absl/strings/str_split.h"
-+
-+namespace Envoy {
-+namespace Extensions {
-+namespace Tracers {
-+namespace OpenTelemetry {
-+namespace {
-+
-+constexpr size_t kTraceId64HexSize = 16;
-+constexpr size_t kTraceId128HexSize = 32;
-+constexpr size_t kSpanIdHexSize = 16;
-+// {TraceId128}-{SpanId}-{SamplingState}-{ParentSpanId}
-+constexpr size_t kMaxSingleHeaderSize =
-+    kTraceId128HexSize + 1 + kSpanIdHexSize + 2 + 1 + kSpanIdHexSize;
-+
-+bool isValidHex(absl::string_view input) {
-+  return std::all_of(input.begin(), input.end(),
-+                     [](const char& c) { return absl::ascii_isxdigit(c); });
-+}
-+
-+bool isAllZeros(absl::string_view input) {
-+  return std::all_of(input.begin(), input.end(), [](const char& c) { return c == '0'; });
-+}
-+
-+bool isValidTraceId(absl::string_view trace_id) {
-+  return (trace_id.size() == kTraceId64HexSize || trace_id.size() == kTraceId128HexSize) &&
-+         isValidHex(trace_id) && !isAllZeros(trace_id);
-+}
-+
-+bool isValidSpanId(absl::string_view span_id) {
-+  return span_id.size() == kSpanIdHexSize && isValidHex(span_id) && !isAllZeros(span_id);
-+}
-+
-+std::string toTraceId128(absl::string_view trace_id) {
-+  if (trace_id.size() == kTraceId128HexSize) {
-+    return std::string(trace_id);
-+  }
-+  return absl::StrCat(std::string(kTraceId64HexSize, '0'), trace_id);
-+}
-+
-+// A single header of one character carries only a sampling decision, e.g. "b3: 0".
-+bool isSamplingOnly(absl::string_view b3) { return b3.size() == 1; }
-+
-+// Both ids are required; a lone x-b3-traceid or x-b3-spanid is not treated as trace context.
-+bool multipleHeadersPresent(const Tracing::TraceContext& trace_context) {
-+  return B3Constants::get().X_B3_TRACE_ID.get(trace_context).has_value() &&
-+         B3Constants::get().X_B3_SPAN_ID.get(trace_context).has_value();
-+}
-+
-+// b3: {TraceId}-{SpanId}-{SamplingState}-{ParentSpanId}, where the last two fields are optional.
-+absl::StatusOr<B3SpanContext> extractFromSingleHeader(absl::string_view b3) {
-+  if (b3.size() > kMaxSingleHeaderSize) {
-+    return absl::InvalidArgumentError("Invalid b3 header length");
-+  }
-+  const std::vector<absl::string_view> fields = absl::StrSplit(b3, absl::MaxSplits('-', 4));
-+  if (fields.size() < 2 || fields.size() > 4) {
-+    return absl::InvalidArgumentError("Invalid b3 header field count");
-+  }
-+  if (!isValidTraceId(fields[0])) {
-+    return absl::InvalidArgumentError("Invalid b3 trace id");
-+  }
-+  if (!isValidSpanId(fields[1])) {
-+    return absl::InvalidArgumentError("Invalid b3 span id");
-+  }
-+
-+  B3SpanContext span_context{toTraceId128(fields[0]), std::string(fields[1]), std::nullopt};
-+  if (fields.size() >= 3) {
-+    if (fields[2] == "1" || fields[2] == "d") {
-+      span_context.sampled = true;
-+    } else if (fields[2] == "0") {
-+      span_context.sampled = false;
-+    } else {
-+      return absl::InvalidArgumentError("Invalid b3 sampling state");
-+    }
-+  }
-+  if (fields.size() == 4 && (fields[3].size() != kSpanIdHexSize || !isValidHex(fields[3]))) {
-+    return absl::InvalidArgumentError("Invalid b3 parent span id");
-+  }
-+  return span_context;
-+}
-+
-+absl::StatusOr<B3SpanContext>
-+extractFromMultipleHeaders(const Tracing::TraceContext& trace_context) {
-+  const auto trace_id = B3Constants::get().X_B3_TRACE_ID.get(trace_context);
-+  const auto span_id = B3Constants::get().X_B3_SPAN_ID.get(trace_context);
-+  if (!trace_id.has_value() || !span_id.has_value()) {
-+    return absl::InvalidArgumentError("Missing x-b3-traceid or x-b3-spanid header");
-+  }
-+  if (!isValidTraceId(trace_id.value())) {
-+    return absl::InvalidArgumentError("Invalid x-b3-traceid header");
-+  }
-+  if (!isValidSpanId(span_id.value())) {
-+    return absl::InvalidArgumentError("Invalid x-b3-spanid header");
-+  }
-+
-+  B3SpanContext span_context{toTraceId128(trace_id.value()), std::string(span_id.value()),
-+                             std::nullopt};
-+  // The debug flag implies an accept sampling decision.
-+  const auto flags = B3Constants::get().X_B3_FLAGS.get(trace_context);
-+  if (flags.has_value() && flags.value() == "1") {
-+    span_context.sampled = true;
-+    return span_context;
-+  }
-+  // "true" is accepted for compatibility with older Zipkin tracers.
-+  const auto sampled = B3Constants::get().X_B3_SAMPLED.get(trace_context);
-+  if (sampled.has_value()) {
-+    span_context.sampled = sampled.value() == "1" || sampled.value() == "true";
-+  }
-+  return span_context;
-+}
-+
-+bool anyMultipleHeaderPresent(const Tracing::TraceContext& trace_context) {
-+  const B3ConstantValues& constants = B3Constants::get();
-+  return constants.X_B3_TRACE_ID.get(trace_context).has_value() ||
-+         constants.X_B3_SPAN_ID.get(trace_context).has_value() ||
-+         constants.X_B3_PARENT_SPAN_ID.get(trace_context).has_value() ||
-+         constants.X_
-```
-
-**File**: `source/extensions/tracers/opentelemetry/b3_span_context.h` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+#pragma once
-+
-+#include <optional>
-+#include <string>
-+
-+#include "envoy/tracing/trace_context.h"
-+
-+#include "source/common/singleton/const_singleton.h"
-+#include "source/common/tracing/trace_context_impl.h"
-+
-+#include "absl/status/statusor.h"
-+#include "absl/strings/string_view.h"
-+
-+namespace Envoy {
-+namespace Extensions {
-+namespace Tracers {
-+namespace OpenTelemetry {
-+
-+class B3ConstantValues {
-+public:
-+  const Tracing::TraceContextHandler B3{"b3"};
-+  const Tracing::TraceContextHandler X_B3_TRACE_ID{"x-b3-traceid"};
-+  const Tracing::TraceContextHandler X_B3_SPAN_ID{"x-b3-spanid"};
-+  const Tracing::TraceContextHandler X_B3_PARENT_SPAN_ID{"x-b3-parentspanid"};
-+  const Tracing::TraceContextHandler X_B3_SAMPLED{"x-b3-sampled"};
-+  const Tracing::TraceContextHandler X_B3_FLAGS{"x-b3-flags"};
-+};
-+
-+using B3Constants = ConstSingleton<B3ConstantValues>;
-+
-+/**
-+ * Trace context extracted from B3 headers.
-+ * See https://github.com/openzipkin/b3-propagation.
-+ */
-+struct B3SpanContext {
-+  // 128-bit trace id as 32 hex characters. 64-bit trace ids are left-padded with zeros.
-+  std::string trace_id;
-+  // 64-bit span id as 16 hex characters.
-+  std::string span_id;
-+  // The sampling decision, or std::nullopt if the sender deferred the decision.
-+  std::optional<bool> sampled;
-+};
-+
-+/**
-+ * @return true if the trace context carries B3 trace and span ids in either the single header or
-+ * the multiple header encoding. A single header that only carries a sampling decision, or only one
-+ * of x-b3-traceid and x-b3-spanid, is not considered to be present.
-+ */
-+bool b3HeadersPresent(const Tracing::TraceContext& trace_context);
-+
-+/**
-+ * Extracts B3 trace context. The single header encoding takes precedence over the multiple header
-+ * encoding; if the single header is malformed, the multiple header encoding is tried.
-+ * @return the extracted context or an error if no valid B3 trace context is present.
-+ */
-+absl::StatusOr<B3SpanContext> extractB3SpanContext(const Tracing::TraceContext& trace_context);
-+
-+/**
-+ * Extracts a sampling decision from B3 headers that carry no trace context: a single header that
-+ * only carries a sampling decision, or x-b3-sampled or x-b3-flags without both ids. Only meaningful
-+ * when b3HeadersPresent() is false.
-+ * @return the sampling decision, or std::nullopt if there is none.
-+ */
-+std::optional<bool> extractB3SamplingDecision(const Tracing::TraceContext& trace_context);
-+
-+/**
-+ * Writes the B3 single header. If any B3 multiple headers are present, they are rewritten too so
-+ * that they don't describe a different span.
-+ */
-+void injectB3SingleHeader(Tracing::TraceContext& trace_context, absl::string_view trace_id,
-+                          absl::string_view span_id, bool sampled);
-+
-+/**
-+ * Writes the B3 multiple headers. Any existing x-b3-parentspanid and x-b3-flags headers are
-+ * removed, and an existing b3 header is rewritten, because they would describe a different span.
-+ */
-+void injectB3MultiHeaders(Tracing::TraceContext& trace_context, absl::string_view trace_id,
-+                          absl::string_view span_id, bool sampled);
-+
-+} // namespace OpenTelemetry
-+} // namespace Tracers
-+} // namespace Extensions
-+} // namespace Envoy
-```
-
-**File**: `source/extensions/tracers/opentelemetry/opentelemetry_tracer_impl.cc` (modified, +106/-20)
-```diff
-@@ -1,5 +1,6 @@
- #include "source/extensions/tracers/opentelemetry/opentelemetry_tracer_impl.h"
+ Architecture and extension points
+ ---------------------------------
  
-+#include <algorithm>
- #include <string>
- 
- #include "envoy/common/exception.h"
-@@ -12,6 +13,7 @@
- #include "source/common/http/http_service_headers.h"
- #include "source/common/tracing/http_tracer_impl.h"
- #include "source/common/tracing/tracer_config_impl.h"
-+#include "source/extensions/tracers/opentelemetry/b3_span_context.h"
- #include "source/extensions/tracers/opentelemetry/grpc_trace_exporter.h"
- #include "source/extensions/tracers/opentelemetry/http_trace_exporter.h"
- #include "source/extensions/tracers/opentelemetry/resource_detectors/resource_detector.h"
-@@ -37,6 +39,8 @@ namespace {
- // Default max cache size for OpenTelemetry tracer
- static constexpr uint64_t DEFAULT_MAX_CACHE_SIZE = 1024;
- 
-+constexpr absl::string_view kDefaultVersion = "00";
-+
- SamplerSharedPtr
- tryCreateSamper(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetry_config,
-                 Server::Configuration::TracerFactoryContext& context) {
-@@ -66,6 +70,57 @@ OTelSpanKind getSpanKind(const Tracing::Config& config) {
-               : ::opentelemetry::proto::trace::v1::Span::SPAN_KIND_SERVER);
+```
+
+**File**: `source/extensions/filters/http/cache_v2/cache_filter.cc` (modified, +1/-0)
+```diff
+@@ -188,6 +188,7 @@ void CacheFilter::onLookupResult(ActiveLookupResultPtr lookup_result) {
+   lookup_result_ = std::move(lookup_result);
+   if (!lookup_result_->http_source_) {
+     // Lookup failed, typically implying upstream request was reset.
++    stats().incForStatus(CacheEntryStatus::UpstreamReset);
+     decoder_callbacks_->streamInfo().setResponseCodeDetails(
+         CacheResponseCodeDetails::CacheFilterAbortedDuringLookup);
+     decoder_callbacks_->resetStream();
+```
+
+**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.cc` (modified, +65/-6)
+```diff
+@@ -94,6 +94,9 @@ void ActiveLookupContext::getHeaders(GetHeadersCallback&& cb) {
+         dispatcher(), lookup().timestamp(),
+         [ranges = std::move(ranges.value()), cl = content_length_,
+          cb = std::move(cb)](Http::ResponseHeaderMapPtr headers, EndStream end_stream) mutable {
++          if (end_stream == EndStream::Reset) {
++            return cb(nullptr, EndStream::Reset);
++          }
+           ASSERT(headers != nullptr, "it should be impossible for headers to be null");
+           // The Range header field is evaluated after evaluating the precondition header
+           // fields defined in Section 13.1, and only if the result in absence of the Range
+@@ -152,12 +155,16 @@ void CacheSession::clearUncacheableState() {
+   state_ = State::New;
  }
  
-+template <class RepeatedFormats>
-+TraceContextFormats toTraceContextFormats(const RepeatedFormats& formats,
-+                                          absl::string_view field_name) {
-+  if (formats.empty()) {
-+    return {envoy::config::trace::v3::OpenTelemetryConfig::TRACE_CONTEXT};
-+  }
-+  TraceContextFormats result;
-+  result.reserve(formats.size());
-+  for (const int format : formats) {
-+    const auto trace_context_format = static_cast<TraceContextFormat>(format);
-+    if (std::find(result.begin(), result.end(), trace_context_format) != result.end()) {
-+      throw EnvoyException(fmt::format(
-+          "OpenTelemetry tracer {} contains duplicate trace context format: {}", field_name,
-+          envoy::config::trace::v3::OpenTelemetryConfig::TraceContextFormat_Name(
-+              trace_context_format)));
+-void CacheSession::wantHeaders(Event::Dispatcher&, SystemTime lookup_timestamp,
++void CacheSession::wantHeaders(Event::Dispatcher& dispatcher, SystemTime lookup_timestamp,
+                                GetHeadersCallback&& cb) {
+   Http::ResponseHeaderMapPtr headers;
+   EndStream end_stream_after_headers;
+   {
+     absl::MutexLock lock(mu_);
++    if (state_ == State::Failed) {
++      dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
++      return;
 +    }
-+    result.push_back(trace_context_format);
+     ASSERT(entry_.response_headers_ != nullptr,
+            "headers should have been initialized during lookup");
+     headers = Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*entry_.response_headers_);
+@@ -172,6 +179,10 @@ void CacheSession::wantHeaders(Event::Dispatcher&, SystemTime lookup_timestamp,
+ void CacheSession::wantBodyRange(AdjustedByteRange range, Event::Dispatcher& dispatcher,
+                                  GetBodyCallback&& cb) {
+   absl::MutexLock lock(mu_);
++  if (state_ == State::Failed) {
++    dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
++    return;
 +  }
-+  return result;
-+}
-+
-+// Extracts the parent span context in the given format. Returns std::nullopt if the trace context
-+// has no headers for the format. B3 context without a sampling decision uses `traced`.
-+std::optional<absl::StatusOr<SpanContext>>
-+extractSpanContext(TraceContextFormat format, Tracing::TraceContext& trace_context, bool traced) {
-+  switch (format) {
-+  case envoy::config::trace::v3::OpenTelemetryConfig::TRACE_CONTEXT: {
-+    SpanContextExtractor extractor(trace_context);
-+    if (!extractor.propagationHeaderPresent()) {
-+      return std::nullopt;
-+    }
-+    return extractor.extractSpanContext();
-+  }
-+  case envoy::config::trace::v3::OpenTelemetryConfig::B3:
-+  case envoy::config::trace::v3::OpenTelemetryConfig::B3_MULTI: {
-+    if (!b3HeadersPresent(trace_context)) {
-+      return std::nullopt;
-+    }
-+    absl::StatusOr<B3SpanContext> b3_context = extractB3SpanContext(trace_context);
-+    if (!b3_context.ok()) {
-+      return b3_context.status();
-+    }
-+    return SpanContext(kDefaultVersion, b3_context->trace_id, b3_context->span_id,
-+                       b3_context->sampled.value_or(traced), /*tracestate=*/"",
-+                       /*is_remote=*/true);
-+  }
-+  default:
-+    PANIC_DUE_TO_CORRUPT_ENUM;
-+  }
-+}
-+
- } // namespace
+   ASSERT(entry_.response_headers_ != nullptr,
+          "body should not be requested when headers haven't been sent");
+   if (auto cache_sessions = cache_sessions_.lock()) {
+@@ -184,6 +195,10 @@ void CacheSession::wantBodyRange(AdjustedByteRange range, Event::Dispatcher& dis
  
- Driver::Driver(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetry_config,
-@@ -77,7 +132,9 @@ Driver::Driver(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetr
-                const ResourceProvider& resource_provider)
-     : tls_slot_ptr_(context.serverFactoryContext().threadLocal().allocateSlot()),
-       tracing_stats_{OPENTELEMETRY_TRACER_STATS(
--          POOL_COUNTER_PREFIX(context.serverFactoryContext().scope(), "tracing.opentelemetry"))} {
-+          POOL_COUNTER_PREFIX(context.serverFactoryContext().scope(), "tracing.opentelemetry"))},
-+      incoming_trace_context_(toTraceContextFormats(opentelemetry_config.incoming_trace_context(),
-+                                                    "incoming_trace_context")) {
-   auto& factory_context = context.serverFactoryContext();
+ void CacheSession::wantTrailers(Event::Dispatcher& dispatcher, GetTrailersCallback&& cb) {
+   absl::MutexLock lock(mu_);
++  if (state_ == State::Failed) {
++    dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
++    return;
++  }
+   if (entry_.response_trailers_ != nullptr) {
+     auto trailers = Http::createHeaderMap<Http::ResponseTrailerMapImpl>(*entry_.response_trailers_);
+     dispatcher.post([cb = std::move(cb), trailers = std::move(trailers)]() mutable {
+@@ -202,6 +217,9 @@ void CacheSession::wantTrailers(Event::Dispatcher& dispatcher, GetTrailersCallba
+ void CacheSession::onHeadersInserted(CacheReaderPtr cache_reader,
+                                      Http::ResponseHeaderMapPtr headers, bool end_stream) {
+   absl::MutexLock lock(mu_);
++  if (state_ == State::Failed) {
++    return;
++  }
+   std::shared_ptr<CacheSessionsImpl> cache_sessions = cache_sessions_.lock();
+   if (!cache_sessions) {
+     ENVOY_LOG(error, "cache config was deleted while header-insertion was in flight");
+@@ -286,6 +304,9 @@ void CacheSession::sendSuccessfulLookupResultTo(LookupSubscriber& subscriber,
  
-   ResourceProviderOptions options;
-@@ -159,11 +216,14 @@ Driver::Driver(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetr
-         Http::HttpServiceHeadersApplicator::createOrThrow(*http_service, factory_context);
+ void CacheSession::onBodyInserted(AdjustedByteRange range, bool end_stream) {
+   absl::MutexLock lock(mu_);
++  if (state_ == State::Failed) {
++    return;
++  }
+   body_length_available_ = range.end();
+   if (end_stream) {
+     insertComplete();
+@@ -297,6 +318,9 @@ void CacheSession::onBodyInserted(AdjustedByteRange range, bool end_stream) {
+ void CacheSession::onTrailersInserted(Http::ResponseTrailerMapPtr trailers) {
+   ASSERT(trailers);
+   absl::MutexLock lock(mu_);
++  if (state_ == State::Failed) {
++    return;
++  }
+   entry_.response_trailers_ = std::move(trailers);
+   insertComplete();
+   for (TrailerSubscriber& subscriber : trailer_subscribers_) {
+@@ -355,8 +379,14 @@ static void postUpstreamPassThroughWithReset(CacheSession::LookupSubscriber&& su
+   });
+ }
+ 
+-void CacheSession::onCacheError() {
++void CacheSession::onCacheError(bool reset_lookups) {
+   mu_.AssertHeld();
++  if (state_ == State::Failed) {
++    return;
++  }
++  // Old readers and insertion callbacks may outlive the failure. Keep them isolated from
++  // subsequent lookups by retiring this session instead of reusing its state.
++  state_ = State::Failed;
+   auto cache_sessions = cache_sessions_.lock();
+   if (cache_sessions) {
+     Event::Dispatcher* dispatcher = nullptr;
+@@ -377,7 +407,15 @@ void CacheSession::onCacheError() {
+     cache_sessions->stats().subCacheSessionsSubscribers(lookup_subscribers_.size());
    }
- 
-+  const TraceContextFormats outgoing_trace_context = toTraceContextFormats(
-+      opentelemetry_config.outgoing_trace_context(), "outgoing_trace_context");
-+
-   // Create the tracer in Thread Local Storage.
-   tls_slot_ptr_->set([http_service, max_cache_size, set_instrumentation_scope, &factory_context,
-                       this, resource_ptr, sampler, headers_applicator, grpc_client_factory,
--                      custom_exporter_factory, shared_unpacked_config,
--                      worker_factory_context](Event::Dispatcher& dispatcher) {
-+              
+   for (LookupSubscriber& sub : lookup_subscribers_) {
+-    postUpstreamPassThrough(std::move(sub), CacheEntryStatus::LookupError);
++    if (reset_lookups) {
++      sub.dispatcher().post([cb = std::move(sub.callback_)]() mutable {
++        auto result = std::make_unique<Active
 ```
 
-**File**: `source/extensions/tracers/opentelemetry/opentelemetry_tracer_impl.h` (modified, +1/-0)
+**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.h` (modified, +8/-2)
 ```diff
-@@ -49,6 +49,7 @@ class Driver : Logger::Loggable<Logger::Id::tracing>, public Tracing::Driver {
-   const envoy::config::trace::v3::OpenTelemetryConfig opentelemetry_config_;
-   ThreadLocal::SlotSharedPtr tls_slot_ptr_;
-   OpenTelemetryTracerStats tracing_stats_;
-+  const TraceContextFormats incoming_trace_context_;
+@@ -123,7 +123,9 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
+     // If the passed-through response turns out to be cacheable (i.e. upstream has changed
+     // cache headers), client should update state to Writing, or, if state is already changed,
+     // client should abort the new upstream request and use the shared one.
+-    NotCacheable
++    NotCacheable,
++    // Failed sessions remain failed for existing readers. New lookups use a new session.
++    Failed
+   };
+ 
+   EndStream endStreamAfterHeaders() const ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
+@@ -214,7 +216,7 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
+   bool canReadBodyRangeFromCacheEntry(BodySubscriber& subscriber);
+   void onBodyChunkFromCache(AdjustedByteRange range, Buffer::InstancePtr buffer,
+                             EndStream end_stream) ABSL_LOCKS_EXCLUDED(mu_);
+-  void onCacheError() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
++  void onCacheError(bool reset_lookups = true) ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
+ 
+   void doCacheEntryInvalid() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
+   void doCacheMiss() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
+@@ -259,6 +261,10 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
+     absl::MutexLock lock(mu_);
+     return state_ == State::Inserting;
+   }
++  bool failed() const {
++    absl::MutexLock lock(mu_);
++    return state_ == State::Failed;
++  }
+   void setExpiry(SystemTime expiry) { expires_at_ = expiry; }
+   bool isExpiredAt(SystemTime t) const { return expires_at_ < t && !inserting(); }
+ 
+```
+
+**File**: `test/extensions/filters/http/cache_v2/cache_filter_test.cc` (modified, +16/-9)
+```diff
+@@ -236,15 +236,22 @@ TEST_F(CacheFilterTest, FilterDestroyedBeforeLookupCompletesAbortsTheLookupCallb
+   captured_lookup_callback_(nullptr);
+ }
+ 
+-TEST_F(CacheFilterTest, ResetDuringLookupResetsDownstream) {
+-  CacheFilterSharedPtr filter = makeFilter(mock_cache_);
+-  EXPECT_CALL(*mock_cache_, lookup);
+-  EXPECT_THAT(filter->decodeHeaders(request_headers_, true),
+-              Eq(Http::FilterHeadersStatus::StopIteration));
+-  EXPECT_CALL(decoder_callbacks_, resetStream);
+-  captured_lookup_callback_(std::make_unique<ActiveLookupResult>(
+-      ActiveLookupResult{nullptr, CacheEntryStatus::LookupError}));
+-  EXPECT_THAT(decoder_callbacks_.details(), Eq("cache.aborted_lookup"));
++TEST_F(CacheFilterTest, ResetDuringLookupCountsUpstreamResetAndResetsDownstream) {
++  for (CacheEntryStatus status : {CacheEntryStatus::LookupError, CacheEntryStatus::UpstreamReset}) {
++    SCOPED_TRACE(cacheEntryStatusString(status));
++    CacheFilterSharedPtr filter = makeFilter(mock_cache_);
++    EXPECT_CALL(*mock_cache_, lookup);
++    EXPECT_THAT(filter->decodeHeaders(request_headers_, true),
++                Eq(Http::FilterHeadersStatus::StopIteration));
++    {
++      testing::InSequence sequence;
++      EXPECT_CALL(stats(), incForStatus(CacheEntryStatus::UpstreamReset));
++      EXPECT_CALL(decoder_callbacks_, resetStream);
++    }
++    captured_lookup_callback_(
++        std::make_unique<ActiveLookupResult>(ActiveLookupResult{nullptr, status}));
++    EXPECT_THAT(decoder_callbacks_.details(), Eq("cache.aborted_lookup"));
++  }
+ }
+ 
+ TEST_F(CacheFilterTest, ResetDuringGetHeadersResetsDownstream) {
+```
+
+**File**: `test/extensions/filters/http/cache_v2/cache_sessions_test.cc` (modified, +267/-58)
+```diff
+@@ -4,6 +4,7 @@
+ 
+ #include "source/common/http/headers.h"
+ #include "source/extensions/filters/http/cache_v2/cache_sessions.h"
++#include "source/extensions/filters/http/cache_v2/cache_sessions_impl.h"
+ 
+ #include "test/extensions/filters/http/cache_v2/mocks.h"
+ #include "test/mocks/http/mocks.h"
+@@ -620,83 +621,210 @@ TEST_F(CacheSessionsTest, CacheHitGoesDirectlyToCachedResponses) {
+   pumpDispatcher();
+ }
+ 
+-TEST_F(CacheSessionsTest, CacheInsertFailurePassesThroughLookupsAndWillLookupAgain) {
+-  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _));
+-  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _)).Times(2);
++TEST_F(CacheSessionsTest, CacheInsertFailureResetsLookupsAndWillLookupAgain) {
++  auto second_dispatcher = api_->allocateDispatcher("second_subscriber");
++  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _)).Times(2);
++  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _)).Times(3);
++  EXPECT_CALL(*mock_http_cache_, evict(_, KeyHasPath("/a"))).Times(2);
+   ActiveLookupResultPtr result1, result2, result3;
+-  auto response_headers = cacheableResponseHeadersByExpire();
+   cache_sessions_->lookup(testLookupRequest("/a"),
+                           [&result1](ActiveLookupResultPtr r) { result1 = std::move(r); });
+-  cache_sessions_->lookup(testLookupRequest("/a"),
++  cache_sessions_->lookup(testLookupRequest("/a", *second_dispatcher),
+                           [&result2](ActiveLookupResultPtr r) { result2 = std::move(r); });
+   pumpDispatcher();
+-  // Cache miss.
+   consumeCallback(captured_lookup_callbacks_[0])(LookupResult{});
+   pumpDispatcher();
+-  // Upstream request should have been sent.
+-  ASSERT_THAT(fake_upstreams_.size(), Eq(1));
+-  EXPECT_THAT(fake_upstream_sent_headers_[0],
+-              Pointee(IsSupersetOfHeaders(Http::TestRequestHeaderMapImpl{{":path", "/a"}})));
+-  ASSERT_THAT(fake_upstream_get_headers_callbacks_.size(), Eq(1));
+   std::shared_ptr<CacheProgressReceiver> progress;
+-  EXPECT_CALL(
+-      *mock_http_cache_,
+-      insert(_, KeyHasPath("/a"), Pointee(IsSupersetOfHeaders(*response_headers)), _, IsNull(), _))
+-      .WillOnce([&](Event::Dispatcher&, Key, Http::ResponseHeaderMapPtr, ResponseMetadata,
+-                    HttpSourcePtr,
+-                    std::shared_ptr<CacheProgressReceiver> receiver) { progress = receiver; });
+-  consumeCallback(fake_upstream_get_headers_callbacks_[0])(
+-      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
++  EXPECT_CALL(*mock_http_cache_, insert)
++      .WillRepeatedly(
++          [&](Event::Dispatcher&, Key, Http::ResponseHeaderMapPtr, ResponseMetadata, HttpSourcePtr,
++              std::shared_ptr<CacheProgressReceiver> receiver) { progress = std::move(receiver); });
++  consumeCallback(fake_upstream_get_headers_callbacks_[0])(cacheableResponseHeadersByExpire(),
++                                                           EndStream::End);
+   pumpDispatcher();
+-  Mock::VerifyAndClearExpectations(mock_http_cache_);
+-  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _));
+-  EXPECT_CALL(*mock_http_cache_, evict(_, KeyHasPath("/a")));
+-  progress->onInsertFailed(absl::InternalError("test error"));
++  progress->onInsertFailed(absl::UnavailableError("upstream reset"));
++  EXPECT_EQ(result1, nullptr);
++  EXPECT_EQ(result2, nullptr);
+   pumpDispatcher();
+-  ASSERT_THAT(result1->http_source_, NotNull());
+-  ASSERT_THAT(result2->http_source_, NotNull());
+-  MockFunction<void(Http::ResponseHeaderMapPtr, EndStream)> header_callback1, header_callback2;
+-  EXPECT_CALL(header_callback1,
+-              Call(Pointee(Http::IsSupersetOfHeaders(*response_headers)), EndStream::End));
+-  EXPECT_CALL(header_callback2,
+-              Call(Pointee(Http::IsSupersetOfHeaders(*response_headers)), EndStream::End));
+-  result1->http_source_->getHeaders(header_callback1.AsStdFunction());
+-  result2->http_source_->getHeaders(header_callback2.AsStdFunction());
+-  // Both requests should have a fresh upstream for pass-through.
+-  ASSERT_THAT(fake_upstream_get_headers_callbacks_.size(), Eq(3));
+-  consumeCallback(fake_upstream_get_headers_callbacks_[1])(
+-      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
+-  consumeCallback(fake_upstream_get_headers_callbacks_[2])(
+-      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
+-  pumpDispatcher();
+-  // A new request should provoke a new lookup because the previous insertion failed.
+-  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _));
++  EXPECT_EQ(result2, nullptr);
++  second_dispatcher->run(Event::Dispatcher::RunType::Block);
++  ASSERT_NE(result1, nullptr);
++  ASSERT_NE(result2, nullptr);
++  EXPECT_EQ(result1->status_, CacheEntryStatus::UpstreamReset);
++  EXPECT_EQ(result2->status_, CacheEntryStatus::UpstreamReset);
++  EXPECT_EQ(result1->http_source_, nullptr);
++  EXPECT_EQ(result2->http_source_, nullptr);
++  EXPECT_EQ(fake_upstreams_.size(), 1);
++
+
+```
+
+---
+
+### Incident Patch 2: `9d3b9894` (2026-11-10)
+**Commit Message**: ci: Stop caching the build image (#49133)
+
+Since 2026-11-09T22:58Z restoring the cached build image intermittently
+leaves Docker unable to start on GitHub's hosted runners ("Job for
+docker.service failed"), failing jobs in their first 20s. The cache blob
+(primed 2026-10-21), the runner image (20261101.360 since 2026-11-03)
+and the restore path are unchanged, so this is on the runner side, and
+the restore action discards the journal that would say why.
+
+Since #48963 the CI build image is 275 MiB in six layers, pulled in
+seconds, so the cache saves nothing worth stopping Docker and swapping
+/var/lib/docker under sudo on every job. Drop the restore from the run
+workflow and stop priming the cache; the cache-build-image inputs are
+kept so callers need not change.
+
+Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/_load_env.yml` (modified, +0/-14)
+```diff
+@@ -15,9 +15,6 @@ on:
+       branch-name:
+         type: string
+         default: main
+-      cache-docker:
+-        type: boolean
+-        default: true
+       config-file:
+         type: string
+         default: ./.github/config.yml
+@@ -100,14 +97,3 @@ jobs:
+         ref: ${{ fromJSON(steps.env.outputs.data).request.ref }}
+         sha: ${{ fromJSON(steps.env.outputs.data).request.sha }}
+         target-branch: ${{ fromJSON(steps.env.outputs.data).request.target-branch }}
+-
+-  cache:
+-    secrets:
+-      app-id: ${{ secrets.lock-app-id }}
+-      app-key: ${{ secrets.lock-app-key }}
+-    uses: ./.github/workflows/_request_cache_docker.yml
+-    needs: request
+-    if: ${{ inputs.cache-docker }}
+-    with:
+-      caches: ${{ needs.request.outputs.caches }}
+-      image-tag: ${{ fromJSON(needs.request.outputs.build-image).default }}
+```
+
+**File**: `.github/workflows/_request.yml` (modified, +0/-43)
+```diff
+@@ -43,7 +43,6 @@ jobs:
+       pull-requests: read
+     outputs:
+       env: ${{ steps.data.outputs.value }}
+-      caches: ${{ steps.caches.outputs.value }}
+       config: ${{ steps.config.outputs.config }}
+     steps:
+     - uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+@@ -123,48 +122,6 @@ jobs:
+               "linked-title": $linkedTitle}
+           | del(.config.tables)
+ 
+-    # TODO(phlax): shift this to ci/request action above
+-    - name: Check Docker cache (x64)
+-      id: cache-exists-docker-x64
+-      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+-      with:
+-        lookup-only: true
+-        path: /tmp/cache
+-        key: ${{ fromJSON(steps.data.outputs.value).request.build-image.default }}
+-    - name: Check Docker cache (arm64)
+-      id: cache-exists-docker-arm64
+-      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+-      with:
+-        lookup-only: true
+-        path: /tmp/cache
+-        key: ${{ fromJSON(steps.data.outputs.value).request.build-image.default }}-arm64
+-    - name: Caches
+-      uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+-      id: caches
+-      with:
+-        input-format: yaml
+-        input: |
+-          docker:
+-            x64: ${{ steps.cache-exists-docker-x64.outputs.cache-hit || 'false' }}
+-            arm64: ${{ steps.cache-exists-docker-arm64.outputs.cache-hit || 'false' }}
+-        filter: |
+-          .
+-
+-  cache:
+-    permissions:
+-      actions: write
+-      contents: read
+-      packages: read
+-    if: ${{ github.repository == 'envoyproxy/envoy' || vars.ENVOY_CI }}
+-    needs: incoming
+-    uses: ./.github/workflows/_request_cache.yml
+-    secrets:
+-      app-id: ${{ secrets.lock-app-id }}
+-      app-key: ${{ secrets.lock-app-key }}
+-    with:
+-      caches: ${{ needs.incoming.outputs.caches }}
+-      env: ${{ needs.incoming.outputs.env }}
+-
+   checks:
+     if: ${{ github.repository == 'envoyproxy/envoy' || vars.ENVOY_CI }}
+     needs: incoming
+```
+
+**File**: `.github/workflows/_request_cache.yml` (removed, +0/-45)
+```diff
+@@ -1,45 +0,0 @@
+-name: Request/cache
+-
+-permissions:
+-  contents: read
+-
+-on:
+-  workflow_call:
+-    secrets:
+-      app-id:
+-        required: true
+-      app-key:
+-        required: true
+-
+-    inputs:
+-      env:
+-        type: string
+-        required: true
+-      caches:
+-        type: string
+-        required: true
+-
+-
+-jobs:
+-  docker:
+-    secrets:
+-      app-id: ${{ secrets.app-id }}
+-      app-key: ${{ secrets.app-key }}
+-    name: Docker/${{ matrix.arch }}
+-    uses: ./.github/workflows/_request_cache_docker.yml
+-    with:
+-      arch: ${{ matrix.arch }}
+-      cache-suffix: ${{ matrix.cache-suffix }}
+-      caches: ${{ inputs.caches }}
+-      image-tag: ${{ fromJSON(inputs.env).request.build-image.default }}
+-      runs-on: ${{ matrix.runs-on }}
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        include:
+-        - target: docker-x64
+-          arch: x64
+-        - target: docker-arm64
+-          arch: arm64
+-          cache-suffix: -arm64
+-          runs-on: ${{ vars.ENVOY_ARM_VM || 'ubuntu-24.04-arm' }}
+```
+
+**File**: `.github/workflows/_request_cache_docker.yml` (removed, +0/-82)
+```diff
+@@ -1,82 +0,0 @@
+-name: Request/cache (prime Docker)
+-
+-permissions:
+-  contents: read
+-
+-on:
+-  workflow_call:
+-    secrets:
+-      app-id:
+-        required: true
+-      app-key:
+-        required: true
+-    inputs:
+-      caches:
+-        type: string
+-        required: true
+-      image-tag:
+-        type: string
+-        required: true
+-
+-      arch:
+-        type: string
+-        default: x64
+-      cache-suffix:
+-        type: string
+-        default:
+-      runs-on:
+-        type: string
+-        default:
+-      lock-repository:
+-        type: string
+-        default: envoyproxy/ci-mutex
+-
+-## Docker cache
+-#
+-# This workflow will only prime the cache, and should be done separately first, prior
+-# to any jobs that require it.
+-#
+-# For a job that does, you can restore with something like:
+-#
+-#    steps:
+-#    - uses: envoyproxy/toolshed/actions/docker/cache/restore@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+-#      with:
+-#        key: "${{ needs.env.outputs.build-image }}"
+-#
+-
+-
+-jobs:
+-  docker:
+-    runs-on: ${{ inputs.runs-on || 'ubuntu-24.04' }}
+-    name: "[${{ inputs.arch }}] Prime Docker cache"
+-    if: ${{ ! fromJSON(inputs.caches).docker[inputs.arch] }}
+-    steps:
+-    - uses: envoyproxy/toolshed/actions/appauth@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+-      id: appauth
+-      name: Appauth (mutex lock)
+-      with:
+-        app_id: ${{ secrets.app-id }}
+-        key: ${{ secrets.app-key }}
+-    - uses: envoyproxy/toolshed/actions/docker/cache/prime@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+-      id: docker
+-      name: Prime Docker cache (${{ inputs.image-tag }}${{ inputs.cache-suffix }})
+-      with:
+-        image-tag: ${{ inputs.image-tag }}
+-        key-suffix: ${{ inputs.cache-suffix }}
+-        lock-token: ${{ steps.appauth.outputs.token }}
+-        lock-repository: ${{ inputs.lock-repository }}
+-    - uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+-      id: data
+-      name: Cache data
+-      with:
+-        input-format: yaml
+-        input: |
+-          cached: ${{ steps.docker.outputs.cached }}
+-          key: ${{ inputs.image-tag }}${{ inputs.cache-suffix }}
+-    - uses: envoyproxy/toolshed/actions/json/table@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+-      name: Summary
+-      with:
+-        json: ${{ steps.data.outputs.value }}
+-        output-path: GITHUB_STEP_SUMMARY
+-        title: >-
+-          Cache (Docker ${{ inputs.arch }})
+```
+
+**File**: `.github/workflows/_run.yml` (modified, +2/-15)
+```diff
+@@ -40,6 +40,8 @@ on:
+           - src: /mnt/runner
+             target: RUNNER_TEMP/container/bazel_root
+             chown: "runner:runner"
++      # The build image is no longer cached (it is pulled in seconds); these are accepted so
++      # callers need not change, and ignored.
+       cache-build-image:
+         type: string
+       cache-build-image-key-suffix:
+@@ -280,21 +282,6 @@ jobs:
+             else . end
+           | "${{ inputs.template-docker-configure }}"
+ 
+-    # HACK/WORKAROUND for cache scope issue (https://github.com/envoyproxy/envoy/issues/37603)
+-    - if: ${{ inputs.cache-build-image }}
+-      id: cache-lookup
+-      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+-      with:
+-        lookup-only: true
+-        path: /tmp/cache
+-        key: ${{ inputs.cache-build-image }}${{ inputs.cache-build-image-key-suffix }}
+-    - if: ${{ inputs.cache-build-image && steps.cache-lookup.outputs.cache-hit == 'true' }}
+-      name: Restore Docker cache ${{ inputs.cache-build-image && format('({0})', inputs.cache-build-image) || '' }}
+-      uses: envoyproxy/toolshed/actions/docker/cache/restore@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+-      with:
+-        image-tag: ${{ inputs.cache-build-image }}
+-        key-suffix: ${{ inputs.cache-build-image-key-suffix }}
+-
+     - uses: envoyproxy/toolshed/actions/appauth@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
+       id: appauth
+       name: Appauth
+```
+
+---
+
+### Incident Patch 3: `961fd728` (2026-11-10)
+**Commit Message**: typo: fix parse authority comment (#49117)
+
+Commit Message: fix a comment typo.
+Additional Description:
+Risk Level:
+Testing:
+Docs Changes:
+Release Notes:
+Platform Specific Features:
+
+Signed-off-by: Kuat Yessenov <[REDACTED_EMAIL]>
+
+**File**: `source/common/http/utility.h` (modified, +2/-3)
+```diff
+@@ -647,10 +647,9 @@ struct AuthorityAttributes {
  };
  
- } // namespace OpenTelemetry
+ /**
+- * Parse passed authority, and get that is valid FQDN or IPv4/IPv6 address, hostname and port-name.
++ * Parse passed authority, and get that is valid FQDN or IPv4/IPv6 address, hostname and port value.
+  * @param host host/authority
+- * @param default_port If passed authority does not have port, this value is returned
+- * @return hostname parse result. that includes whether host is IP Address, hostname and port-name
++ * @return hostname parse result. that includes whether host is IP Address, hostname and port value.
+  */
+ AuthorityAttributes parseAuthority(absl::string_view host);
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49079** (2026-11-08): Revert "dfp cluster: create new host rather than update address in place when address updated (#48176)" (@yanavlasov)
-- **PR #49067** (2026-11-06): dynamic_modules: prevent `EnvoyMutBuffer` aliases (@gavinbunney)
-- **PR #49063** (2026-11-06): dynamic_modules: fix `EnvoyBuffer::new` lifetime (@gavinbunney)
-- **PR #49060** (closed): [bp/1.39] CVE/wasmtime stack (@phlax)
-- **PR #49056** (2026-11-06): repo: remove derekargueta from emeritus code owners (@derekargueta)
-- **PR #49055** (2026-11-06): tests/coverage: Don't exec bazel in the coverage shim (@phlax)
+- **PR #49162** (closed): [WIP] ci: Name each Check/build job's run flag in the matrix (@phlax)
+- **PR #49155** (2026-11-10): dynamic_modules/bindgen: Stage clang's builtin headers for the bindin… (@phlax)
+- **PR #49150** (2026-11-10): ci/openssl: Leave incompatible targets out of the presubmit selection (@phlax)
+- **PR #49148** (2026-11-10): dynamic_modules: move the cluster writer's queue into a shared writer base (@agrawroh)
+- **PR #49147** (2026-11-11): listener: report an update that replaces a listener before the workers start (@agrawroh)
+- **PR #49145** (2026-11-11): listener: notify update callbacks when a listener fails to listen (@agrawroh)
 
 ---
 
@@ -1619,50 +1719,31 @@ Release Notes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711
+## X. [cache_v2] Fix upstream reset crash and stats (#48814)
 
 **RULE**:
-When implementing operations in `api/envoy/config/trace/v3/opentelemetry.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbab4cd9`: tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86b4404b`: [cache_v2] Fix upstream reset crash and stats (#48814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/config/trace/v3/opentelemetry.proto`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-import "validate/validate.proto";
-// [#next-free-field: 13]
-  // Trace context formats that can be extracted from downstream requests and injected into
-  // upstream requests.
-  enum TraceContextFormat {
-    // W3C Trace Context: the :ref:`traceparent <config_http_conn_man_headers_traceparent>` and
-    // ``tracestate`` headers.
-    // See `W3C Trace Context <https://www.w3.org/TR/trace-context/>`_.
-    TRACE_CONTEXT = 0;
-
-    // B3 single header: the :ref:`b3 <config_http_conn_man_headers_b3>` header.
-    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
-    //
-    // When extracting, both the single header and the multiple header encodings are accepted, with
-    // the single header taking precedence. When injecting, the single header is written, and any
-    // ``x-b3-*`` headers already on the request are rewritten so that they describe the same span.
-    B3 = 1;
-
-    // B3 multiple headers: the :ref:`x-b3-traceid <config_http_conn_man_headers_x-b3-traceid>`,
-    // ``x-b3-spanid``, ``x-b3-sampled`` and ``x-b3-flags`` headers.
-    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
-    //
-    // When extracting, both the single header 
+http: fixed a crash in the cache v2 filter when a late callback from a failed cache insertion affected a subsequent
+  request for the same entry. Aborted insertions now reset waiting requests, and subsequent requests use a new cache session.
+  Lookups aborted without a response source now increment the cache ``upstream_reset`` event counter.
+  Upstream resets during cache validation reset waiting lookups while preserving existing cached readers.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// [#next-free-field: 11]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbab4cd9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86b4404b` are properly handled with clean fallback behavior.

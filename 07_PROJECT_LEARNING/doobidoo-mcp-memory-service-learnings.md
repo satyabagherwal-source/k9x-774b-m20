@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `c37639d3`  
+> **Source Version**: `35668fa1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T07:21:01.993Z  
+> **Timestamp**: 2026-11-11T15:27:13.569Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T07:21:01.985Z  
+> **Harvest Timestamp**: 2026-11-11T15:27:13.358Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2100 stars
+- **Stars / Engagement**: 2113 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1893** (2026-11-08): **Delta-sync logs drop the exception type, so failed peer requests log an empty reason**
-  *Symptoms*: When a delta-sync request to a peer fails, the log says that it failed but not why. This is what my Mac logged on every failed cycle against the hub this morning:  ``` HTTP request failed: GET /api/sync/capabilities -  Delta-sync capability probe failed for peer hub:  ```  Both lines end after the colon. The dashboard showed "Capability probe failed; check peer connectivity and credentials." The same request from a script on the same machine, with the same client code (`RemoteHTTPStorage`) and the same CA bundle, returned 200. With nothing in the log I could not tell whether it was a timeout, a TLS error, a refused connection or a reset, and the cause is now lost. The next cycle succeeded.  ## Cause  The log calls only format the exception's message:  - `src/mcp_memory_service/storage/remote_http.py`, `_request()`: `sanitized_error = _sanitize_log_value(str(e))` - `src/mcp_memory_service/consolidation/scheduler.py`, the capability probe in `_probe_sync_peers()` (`"Delta-sync capability probe failed for peer %s: %s"`) and the cycle failure (`"Delta-sync cycle failed for peer %s: %s"`), both with `_sanitize_log_value(exc)`  Some exceptions have an empty message, so `str(exc)` is `""`. For example `str(httpx.ConnectTimeout(''))` is `''`. The class name is the one piece of information that is always there, and it is not logged.  ## Fix  Log the exception class next to the message in those three places, the way `ingestion/csv_loader.py` already does:  ```python logger.error(     "
+- **Issue #1944** (2026-11-10): **[Bug]: Dashboard emits multiple Three.js instances warning on page load**
+  *Symptoms*: ## Bug description  Loading the dashboard emits `THREE.WARNING: Multiple instances of Three.js being imported.` This is reproducible on an ordinary dashboard reload, before opening the 3D graph.  ## Steps to reproduce  1. Run the HTTP dashboard from v12.8.0 (commit `03ff09de93e9078433e6a917a9884c4fc26b2419`). 2. Open the dashboard in a browser and start console capture. 3. Reload the page. 4. Observe the Three.js warning during startup.  ## Expected behavior  The dashboard loads a consistent Three.js module graph without the multiple-instance warning. The 3D graph and bloom effects continue to work.  ## Actual behavior and impact  ```text THREE.WARNING: Multiple instances of Three.js being imported. ```  Confirmed with console capture in Orca's embedded browser. The same warning was also reported in Chrome, where its source was `webgpu.mjs:2`.  No functional failure has been demonstrated: observed requests for memories, server status, sync status and the event stream returned HTTP 200. No CSP violations appeared in the Orca console capture. This report does not attribute authentication/update problems or the separately reported Chrome CSP messages to this warning.  ## Investigation starting point  - `src/mcp_memory_service/web/static/dashboard-bootstrap.js` imports `3d-force-graph@1.80.0?external=three`, the bare `three` specifier, and `UnrealBloomPass`. - The import map in `src/mcp_memory_service/web/static/index.html` maps `three` to `https://esm.sh/three@0.184.0` and `thre
 
-- **Issue #1892** (2026-11-08): **Dashboard: browsers keep running a stale app.js after an upgrade**
-  *Symptoms*: After upgrading to v12.7.0, Settings > Sync "Test Connection" still failed for me with the #1839 error:  ``` ✗ Request failed: Failed to execute 'fetch' on 'Window': '[object Object]' is not a valid HTTP method. ```  The server was already serving the fixed `app.js` (`curl https://127.0.0.1:8000/static/app.js` shows the positional `apiCall('/config/credentials/test', 'POST', {...})` from #1841). The browser was running the old copy from its cache. A hard reload fixed it. Every user who upgrades can hit the same thing, and a fixed bug then looks unfixed.  ## Cause  Two things together:  1. `src/mcp_memory_service/web/static/index.html` loads its assets with a hand-maintained cache buster that nobody bumps:     ```html    <link rel="stylesheet" href="static/style.css?v=delta-sync-ui-1">    <script src="static/app.js?v=delta-sync-ui-1"></script>    ```     The string was last changed in b4fa94a9 (#1694). The URL has not changed across the releases since, so the browser treats it as the same file.  2. `/static` is served by `RootPathStaticFiles` in `src/mcp_memory_service/web/app.py`, a Starlette `StaticFiles` subclass. It sends `ETag` and `Last-Modified` but no `Cache-Control`:     ```    $ curl -skI https://127.0.0.1:8000/static/app.js | grep -i "cache\|etag\|last-mod"    last-modified: Sat, 07 Nov 2026 06:44:44 GMT    etag: "a59771174e3c4b1aa20fa2760616e58c"    ```     Without `Cache-Control` the browser may use heuristic freshness (typically 10% of the time since `Last-Modifi
+- **Issue #1930** (2026-11-09): **Startup dependency check reports torch/sentence-transformers as missing on the ONNX install**
+  *Symptoms*: On an install with the `[sqlite]` extra (onnxruntime + tokenizers, no torch), every server start prints this to stderr even though embeddings work:  ``` [MISSING] Missing dependencies detected: torch, sentence-transformers [INSTALL] To install missing dependencies, run:    python install.py [WARNING] IMPORTANT: Missing dependencies will cause timeouts! [WARNING] The server will attempt to continue, but may timeout during initialization. WARNING:mcp_memory_service.dependency_check:Dependencies missing, extending base timeout to 30.0s (before client cap) ```  Reproduced on 12.7.0 with `uvx --from "mcp-memory-service[sqlite]" memory server` and a fresh SQLite path. The server initializes, lists 28 tools, and `memory_store` / `memory_search` work with ONNX embeddings, so nothing is actually missing for this setup. The `[sqlite]` extra is what the README now recommends (#1929), so every new user sees this.  ## What is wrong  `check_critical_dependencies()` in `src/mcp_memory_service/dependency_check.py` only knows the torch path: it probes `torch` and `sentence_transformers` and treats either one missing as a failure. ONNX (`onnxruntime` + `tokenizers`) is the default embedding backend for the lightweight install and is not considered.  Three consequences:  1. `run_dependency_check()` (called from `utils/startup_orchestrator.py`) prints the `[MISSING]` and timeout warnings. 2. `get_recommended_timeout()` doubles the base init timeout because it thinks dependencies are missing. 3. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,543 +2932,839 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c37639d3` (2026-11-08)
-**Commit Message**: fix(remote_http): honor store in get_by_hash, update and delete (#1879) (#1922)
+### Incident Patch 1: `5bddbfc9` (2026-11-11)
+**Commit Message**: refactor(logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)
 
-* fix(remote_http): honor store in get_by_hash, update and delete (#1879)
+exact_match_retrieve(), behind the exact_match_retrieve MCP tool, logged the
+backend's exception through an f-string. Pass it through
+_sanitize_log_value instead, and the backend class name as a %s argument.
+Ordinary messages are unchanged; a backend error carrying a newline no
+longer forges a second log line.
 
-/api/sync/capabilities advertises store_scoped_access from the server
-storage's get_by_hash_is_store_scoped (default False, so an older server
-reads the same as a missing field). RemoteHTTPStorage reads it in
-initialize() and check_sync_compatibility(), reusing one response so the
-scheduler still asks the peer once per cycle, and sets
-get_by_hash_is_store_scoped from it.
+Add the module to GUARDED_MODULES next to utils/health_check.py. `e` is
+already in EXTERNAL_NAMES, so dropping the wrapper fails the lazy scan.
 
-get_by_hash, update_memory_metadata (new store kwarg, as in base.py) and
-delete send a named store as ?store=. Against a peer that does not
-advertise the flag they fail closed without a request and log once per
-peer. None, "default" and "all" keep working against older hubs.
+Co-authored-by: samyferhat <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Part of #1683.
-
-* fix(remote_http): raise a failed capabilities probe once, do not retry it
-
-initialize() keeps the request error from /api/sync/capabilities and
-check_sync_compatibility() raises it instead of asking the peer again.
-The scheduler calls the two back to back, so an unreachable peer was
-waited for through two timeouts and logged twice. The error is consumed
-with the response:
-
-**File**: `changelog.d/1879.fixed.md` (added, +1/-0)
+**File**: `changelog.d/1146-utils-debug.internal.md` (added, +6/-0)
 ```diff
-@@ -0,0 +1 @@
-+- **`RemoteHTTPStorage` confines `get_by_hash`, `update_memory_metadata` and delete-by-hash to `store` (#1879, part of #1683).** `/api/sync/capabilities` now advertises `store_scoped_access`, taken from the server storage's `get_by_hash_is_store_scoped`. The HTTP client reads it when it initializes (and on each sync handshake) and sends a named store as the `store` query parameter, so a memory in another store comes back as not found. A peer that does not advertise the field (every server before this release) ignores the query parameter, so against it a call naming a store is refused without a request and logged once per peer. **Upgrade the hub before the clients:** once a caller passes a named store to an HTTP peer, an older hub refuses every such call. `None`, `"default"` and `"all"` keep working against an older hub: `"default"` is not sent because the server resolves a missing `store` to `"default"` itself, and `"all"` is passed through for reads.
+@@ -0,0 +1,6 @@
++- **`utils/debug.py` logs with lazy `%`-style arguments (#1146).**
++  `exact_match_retrieve()`, which backs the `exact_match_retrieve` MCP tool,
++  logged the backend's exception through an f-string. A backend error that
++  echoed the caller's content could forge a second log line. The error now
++  goes through `_sanitize_log_value`, and the backend class name is a `%s`
++  argument. The module is added to `GUARDED_MODULES`.
 ```
 
-**File**: `src/mcp_memory_service/storage/remote_http.py` (modified, +126/-11)
+**File**: `src/mcp_memory_service/utils/debug.py` (modified, +4/-2)
 ```diff
-@@ -113,8 +113,38 @@ def _read_sync_embedding_identity(
-     return remote_model, remote_dimension
+@@ -15,6 +15,8 @@
+ """Debug utilities for memory service."""
+ from typing import Dict, Any, List
+ import logging
++
++from ..compat import _sanitize_log_value
+ from ..models.memory import Memory, MemoryQueryResult
  
+ logger = logging.getLogger(__name__)
+@@ -135,9 +137,9 @@ async def exact_match_retrieve(storage, content: str) -> List[Memory]:
+             return memories
  
-+_UNSCOPED_PEER_MESSAGE = (
-+    "Remote peer does not advertise store_scoped_access; "
-+    "upgrade it before sending store-scoped operations"
-+)
-+
-+
-+def _is_named_store(store: Optional[str]) -> bool:
-+    """Whether ``store`` asks a hash-addressed call to be confined to one store.
-+
-+    ``None`` and ``"all"`` are unscoped. ``"default"`` is not sent either: a peer
-+    that confines resolves a missing ``store`` to ``"default"`` itself, and an
-+    older peer keeps serving it as before, so default-store sync keeps working
-+    against a hub that has not been upgraded yet.
-+    """
-+    return store not in (None, "default", "all")
-+
-+
-+def _store_params(store: Optional[str]) -> Dict[str, Any]:
-+    """Request kwargs that pass ``store`` to the peer when the call names one."""
-+    if store in (None, "default"):
-+        return {}
-+    return {"params": {"store": store}}
-+
-+
- class RemoteHTTPStorage(MemoryStorage):
--    """Remote HTTP storage backend using REST API calls."""
-+    """Remote HTTP storage backend using REST API calls.
-+
-+    ``get_by_hash_is_store_scoped`` starts False and becomes True only after the
-+    peer advertises ``store_scoped_access`` on ``/api/sync/capabilities``. Until
-+    then a call that names a store is refused here, without a request: an older
-+    peer ignores the ``store`` query parameter and would answer from every store.
-+    """
+         # No suitable method available
+-        logger.warning(f"Storage backend {type(storage).__name__} does not support exact content match")
++        logger.warning("Storage backend %s does not support exact content match", type(storage).__name__)
+         return []
  
-     @property
-     def max_content_length(self) -> Optional[int]:
-@@ -167,6 +197,14 @@ def __init__(self, base_url: str, api_key: Optional[str] = None, timeout: float
-         self.basic_user = basic_user
-         self.basic_pass = basic_pass
-         self.expected_embedding_model = expected_embedding_model
-+        self.get_by_hash_is_store_scoped = False
-+        # The capabilities response, or the error that stopped it, read by
-+        # initialize() and handed to the check_sync_compatibility() that the
-+        # scheduler calls right after it, so the peer is asked once per cycle
-+        # and a timeout is waited through once.
-+        self._capabilities_response: Optional[httpx.Response] = None
-+        self._capabilities_error: Optional[Exception] = None
-+        self._unscoped_peer_logged = False
- 
-         # Set up HTTP client with headers
-         headers = {}
-@@ -219,8 +257,63 @@ async def _request(self, method: str, path: str, **kwargs) -> httpx.Response:
-             )
-             raise
- 
-+    def _peer_label(self) -> str:
-+        """The peer's URL without credentials, for log lines."""
-+        try:
-+            url = httpx.URL(self.base_url).copy_with(
-+                username="", password="", query=None, fragment=None
-+            )
-+        except Exception:
-+            return "remote peer"
-+        return _sanitize_log_value(str(url))
-+
-+    def _note_store_scoping(self, capabilities: Dict[str, Any]) -> None:
-+        """Trust store scoping only when the peer says so explicitly."""
-+        self.get_by_hash_is_store_scoped = capabilities.get("store_scoped_access") is True
-+
-+    async def _probe_store_scoping(self) -> None:
-+        """Read the peer's capabilities and set ``get_by_hash_is_store_scoped``.
-+
-+        Any failure leaves the flag False, so store-scoped calls fail closed.
-+        A request error is kept, not retried: check_sync_compatibility() raises
-+        it, so a peer that times out is waited for once, not twice.
-+        """
-+        self.get_by_hash_is_store_scoped = False
-+        self._capabilities_response = None
-+        self._capabilities_error = None
-+        try:
-+            response = await self._request("GET", "/api/sync/capabilities")
-+        except Exception as e:
-+            # _request() has already logged it.
-+            self._capabilities_error = e
-+            return
-+        self._capabilities_response = response
-+        if response.status_code != 200:
-+            return
-+        try:
-+            capabilities = response.json()
-+        except (ValueError, TypeError):
-+            return
-+        if isinstance(capabilities, dict):
-+            self._note_store_scoping(capabilities)
-+
-+    def _refuses_store(self, store: Optional[str], operation: str) -> bool:
-+        """Fail closed on a named store the peer has not confirmed it confines."""
-+        if not _is_named_store(store) or self.get_by_hash_is_store_scoped:
-+            return False
-+        if not self._unscoped_peer_logged:
-+            self._unscoped_peer_logged = True
-+            logger.warning(
-+                "%s does not advertise store_scoped_access; refusing store-scoped "
-+                "%s and every later store-scoped call to it. Upgrade the peer.",
-+                self._peer_label(), operation,
-+            )
-+        return True
-+
-     async def initialize(self) -> None:
-         """Initialize the HTTP storage backend and validate embedding model if expected."""
-+        await self._probe_store_scoping(
+     except Exception as e:
+-        logger.error(f"Error in exact_match_retrieve: {str(e)}")
++        logger.error("Error in exact_match_retrieve: %s", _sanitize_log_value(e))
+         return []
+\ No newline at end of file
 ```
 
-**File**: `src/mcp_memory_service/web/api/sync.py` (modified, +8/-0)
+**File**: `tests/unit/test_log_injection_guard.py` (modified, +1/-0)
 ```diff
-@@ -61,6 +61,13 @@ class SyncCapabilitiesResponse(BaseModel):
-     embedding_model: str = Field(description="Embedding model used by the vector storage")
-     embedding_dimension: int = Field(description="Vector dimension used by the storage")
-     version: str = Field(description="Installed MCP Memory Service package version")
-+    store_scoped_access: bool = Field(
-+        default=False,
-+        description=(
-+            "Whether get, update and delete by content hash honor the store "
-+            "query parameter. An older server omits the field, which reads as False."
-+        ),
-+    )
- 
- 
- @router.get("/sync/capabilities", response_model=SyncCapabilitiesResponse)
-@@ -77,6 +84,7 @@ async def get_sync_capabilities(
-         embedding_model=embedding_model,
-         embedding_dimension=embedding_dimension,
-         version=__version__,
-+        store_scoped_access=bool(getattr(storage, "get_by_hash_is_store_scoped", False)),
-     )
- 
- 
-```
-
-**File**: `src/mcp_memory_service/web/oauth/middleware.py` (modified, +3/-2)
-```diff
-@@ -112,8 +112,9 @@ def require_store_scope(self, operation: str, store: Optional[str]) -> None:
-         """Raise 403 if ``operation`` on ``store`` is not permitted.
- 
-         A grant that holds only through ``operation:<store>`` additionally needs
--        a backend that confines hash lookups to the store. cloudflare, milvus
--        and remote_http accept ``store`` on get_by_hash and ignore it, so there
-+        a backend that confines hash lookups to the store. cloudflare and
-+        milvus accept ``store`` on get_by_hash and ignore it (remote_http honors
-+        it only against a peer that advertises ``store_scoped_access``), so there
-         a store-restricted credential would read or delete another partition's
-         memory by hash; it is refused until the storage layer enforces
-         ``store`` (#1683). Global grants are unaffected.
-```
-
-**File**: `tests/test_delta_sync_handshake.py` (modified, +48/-0)
-```diff
-@@ -153,6 +153,39 @@ async def test_startup_probe_checks_capabilities_without_syncing(local_storage):
-     assert status["last_sync_at"] is None
- 
- 
-+@pytest.mark.parametrize("advertised", [True, False, None])
-+@pytest.mark.asyncio
-+async def test_startup_probe_reads_store_scoping_with_one_request(local_storage, advertised):
-+    overrides = {} if advertised is None else {"store_scoped_access": advertised}
-+    peer, requested = await _remote_peer(_capabilities(local_storage, **overrides))
-+    scheduler = _scheduler(local_storage, peer)
-+
-+    await scheduler._probe_sync_peers()
-+
-+    assert requested == [("GET", "/api/sync/capabilities")]
-+    assert peer.get_by_hash_is_store_scoped is (advertised is True)
-+
-+
-+@pytest.mark.asyncio
-+async def test_startup_probe_waits_for_an_unreachable_peer_once(local_storage):
-+    requested = []
-+
-+    def handler(request):
-+        requested.append((request.method, request.url.path))
-+        raise httpx.ConnectTimeout("timed out", request=request)
-+
-+    peer = RemoteHTTPStorage("https://peer.test")
-+    await peer.client.aclose()
-+    peer.client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
-+    scheduler = _scheduler(local_storage, peer)
-+
-+    await scheduler._probe_sync_peers()
-+
-+    assert requested == [("GET", "/api/sync/capabilities")]
-+    status = scheduler.get_sync_peer_status()[0]
-+    assert status["status"] == "unavailable"
-+
-+
- @pytest.mark.parametrize("pull_failed,push_failed", [(1, 0), (0, 2)])
- @pytest.mark.asyncio
- async def test_cycle_reports_event_failures_and_preserves_last_success(
-@@ -422,6 +455,7 @@ async def test_capabilities_endpoint_and_sync_status_expose_versions_and_peer_re
-     assert data["embedding_model"] == expected_embedding_model
-     assert data["embedding_dimension"] == expected_embedding_dimension
-     assert data["version"]
-+    assert data["store_scoped_access"] is True
-     assert status_response.status_code == 200
-     status = status_response.json()
-     assert status["is_hybrid"] is False
-@@ -433,3 +467,17 @@ async def test_capabilities_endpoint_and_sync_status_expose_versions_and_peer_re
-         model_health_response.json()["embedding_dimension"]
-         == data["embedding_dimension"]
-     )
-+
-+
-+@pytest.mark.asyncio
-+async def test_capabilities_endpoint_reports_unconfined_storage(local_storage, monkeypatch):
-+    monkeypatch.setattr(local_storage, "get_by_hash_is_store_scoped", False, raising=False)
-+    app = FastAPI()
-+    app.include_router(sync_router, prefix="/api")
-+    app.dependency_overrides[get_storage] = lambda: local_storage
-+    app.dependency_overrides[require_read_access] = lambda: None
-+    with TestClient(app) as client:
-+        response = client.get("/api/sync/capabilities")
-+
-+    assert response.status_code == 200
-+    assert response.json()["store_scoped_access"] is False
-```
-
-**File**: `tests/test_remote_http_store_scope.py` (added, +235/-0)
-```diff
-@@ -0,0 +1,235 @@
-+"""RemoteHTTPStorage confines hash-addressed calls to ``store`` (#1879, part of #1683).
-+
-+The peer is simulated with an httpx MockTransport that answers like the REST API:
-+a missing ``store`` query parameter means ``"default"``, ``"all"`` means every
-+store, and a memory in another store is a 404. The older peer ignores ``store``
-+and does not advertise ``store_scoped_access``.
-+"""
-+
-+import logging
-+
-+import httpx
-+import pytest
-+
-+from mcp_memory_service.storage.remote_http import RemoteHTTPStorage
-+
-+HASH_WORK = "a" * 64
-+HASH_DEFAULT = "b" * 64
-+
-+BASE_CAPABILITIES = {
-+    "sync_protocol": 2,
-+    "sync_protocol_min": 1,
-+    "event_schema_version": 1,
-+    "embedding_model": "test-model",
-+    "embedding_dimension": 384,
-+    "version": "11.14.0",
-+}
-+
-+
-+def _memory_json(content_hash, store):
-+    return {
-+        "content": f"memory in {store}",
-+        "content_hash": content_hash,
-+        "tags": [],
-+        "memory_type": "observation",
-+        "metadata": {},
-+    }
-+
-+
-+async def _peer(*, scoped):
-+    """A peer holding HASH_WORK in store "work" and HASH_DEFAULT in "default"."""
-+    stores = {HASH_WORK: "work", HASH_DEFAULT: "default"}
-+    requested = []
-+
-+    def handler(request):
-+        store_param = request.url.params.get("store")
-+        requested.append((request.method, request.url.path, store_param))
-+        path = request.url.path
-+        if path == "/api/sync/capabilities":
-+            capabilities = dict(BASE_CAPABILITIES)
-+            if scoped:
-+                capabilities["store_scoped_access"] = True
-+            return httpx.Response(200, json=capabilities, request=request)
-+        if path.startswith("/api/memories/"):
-+            content_hash = path.rsplit("/", 1)[1]
-+            owner = stores.get(content_hash)
-+            wanted = store_param or "default"
-+            if scoped and request.method in ("PUT", "DELETE") and wanted == "all":
-+                return httpx.Response(400, json={"detail": "read scopes only"}, request=request)
-+            visible = owner is not None and (
-+                not scoped or wanted == "all" or owner == wanted
-+            )
-+            if not visible:
-+                return httpx.Response(404, json={"detail": "Memory not found"}, request=request)
-+            if request.method == "GET":
-+                return httpx.Response(200, json=_memory_json(content_hash, owner), request=request)
-+            if request.method == "PUT":
-+                return httpx.Response(200, json={"success": True}, request=request)
-+            if request.method == "DELETE":
-+                del stores[content_hash]
-+                return httpx.Response(200, json={"success": True}, request=request)
-+        return httpx.Response(404, json={"detail": "not found"}, request=request)
-+
-+    storage = RemoteHTTPStorage("https://peer.test")
-+    await storage.client.aclose()
-+    storage.client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
-+    return storage, requested, stores
-+
-+
-+def _memory_calls(requested):
-+    return [r for r in requested if r[1].startswith("/api/memories/")]
-+
-+
-+@pytest.mark.asyncio
-+async def test_flag_follows_the_peer_advertisement():
-+    scoped, _, _ = await _peer(scoped=True)
-+    older, _, _ = await _peer(scoped=False)
-+    assert scoped.get_by_hash_is_store_scoped is False
-+    await scoped.initialize()
-+    await older.initialize()
-+    assert scoped.get_by_hash_is_store_scoped is True
-+    assert older.get_by_hash_is_store_scoped is False
-+
-+
-+@pytest.mark.asyncio
-+async def test_scoped_peer_receives_store_and_refuses_cross_store_access():
-+    storage, requested, stores = await _peer(scoped=True)
-+    await storage.initialize()
-+
-+    assert (await storage.get_by_hash(HASH_WORK, store="work")).content_hash == HASH_WORK
-+    assert await storage.get_by_hash(HASH_WORK, store="other") is None
-+
-+    ok, _ = await storage.update_memory_metadata(HASH_WORK, {"tags": ["x"]}, store="work")
-+    assert ok is True
-+    ok, message = await storage.update_memory_metadata(HASH_WORK, {"tags": ["x"]}, store="other")
-+    assert ok is False and "404" in message
-+
-+    ok, message = await storage.delete(HASH_WORK, store="other")
-+    assert ok is False and "404" in message
-+    assert HASH_WORK in stores
-+
-+    assert _memory_calls(requested) == [
-+        ("GET", f"/api/memories/{HASH_WORK}", "work"),
-+        ("GET", f"/api/memories/{HASH_WORK}", "other"),
-+        ("PUT", f"/api/memories/{HASH_WORK}", "work"),
-+        ("PUT", f"/api/memories/{HASH_WORK}", "other"),
-+        ("DELETE", f"/api/memories/{HASH_WORK}", "other"),
-+    ]
-+
-+
-+@pytest.mark.asyncio
-+async def test_older_peer_refuses_named_store_without_a_request(caplog):
-+    storage, requested, stores = await _peer(scoped=False)
-+    await storage.initialize()
-+
-+    with caplog.at_level(logging.WARNING, logger="mcp_memory_service.storage.remote_http"):
-+        assert await storage.get_by_hash(HASH_WORK, store="work") is None
-+     
+@@ -71,6 +71,7 @@
+     "mcp_memory_service/storage/mixins/store.py",
+     "mcp_memory_service/utils/db_utils.py",
+     "mcp_memory_service/utils/health_check.py",
++    "mcp_memory_service/utils/debug.py",
+     "mcp_memory_service/server/handlers/utility.py",
+     "mcp_memory_service/server/handlers/documents.py",
+     "mcp_memory_service/web/api/server.py",
 ```
 
 ---
 
-### Incident Patch 2: `bb34002a` (2026-11-08)
-**Commit Message**: fix(web): add Cache-Control: no-cache to static assets and dashboard (#1892) (#1900)
+### Incident Patch 2: `799fd323` (2026-11-10)
+**Commit Message**: feat(ontology): store retention periods per type in the memory DB (#1897, phase 4) (#1939)
 
-* fix(web): add Cache-Control: no-cache to static assets and dashboard
+* feat(ontology): store retention periods per type in the memory DB (#1897, phase 4)
 
-* test(web): assert Cache-Control no-cache on dashboard and static assets (#1892)
+A base type added through the ontology overlay has no key in
+retention_periods, so its memories decayed on the 30-day fallback.
 
-Add the regression test Greptile asked for and the changelog fragment.
+set_retention()/clear_retention() on SqliteVecMemoryStorage write a
+'retention' row to ontology_entries and bump ontology_version. The
+overlay source reads those rows next to the memory types, and the decay
+calculator merges them under the consolidation config: built-in periods
+and MCP_RETENTION_* still win, and set_retention() refuses those types
+so a row never sits there without effect. Subtypes without their own
+entry inherit their parent's period. Malformed rows are skipped on read.
+
+Also moves two f-string logger calls in decay.py to %-style so the
+log-injection guard passes for the touched file.
+
+* fix(ontology): keep a removed subtype's stored parent for retention (#1897, phase 4)
+
+Greptile on #1939: after remove_memory_type("legal"), get_parent_type
+("contract") returns None, so stored contract memories decayed on the
+30-day fallback although legal still had a 400-day peri
+
+**File**: `changelog.d/1897-retention.added.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **Retention periods for custom memory types, stored in the memory database (#1897, phase 4).**
++  A base type added through the ontology overlay had no key in `retention_periods`, so its
++  memories decayed on the 30-day fallback. `SqliteVecMemoryStorage.set_retention()` and
++  `clear_retention()` store a period (1..3650 days) as a `retention` row in `ontology_entries`,
++  and the decay calculator uses it for any type the consolidation config does not name.
++  Subtypes without their own entry inherit their parent's period. The overlay only fills gaps:
++  built-in periods and `MCP_RETENTION_*` overrides still win, and `set_retention()` refuses
++  those types. Like the rest of the overlay, the rows are local to sqlite_vec for now.
+```
+
+**File**: `docs/memory-ontology.md` (modified, +11/-0)
+```diff
+@@ -132,6 +132,17 @@ await storage.remove_memory_type("contract")                # tombstone
+   it moved.
+ - Removing a type does not touch stored memories. They keep the type; only
+   new writes with it fall back to `observation`.
++- A new base type has no retention period in the consolidation config, so
++  its memories decay on the 30-day fallback. Store one next to the type:
++
++  ```python
++  await storage.set_retention("legal", 400)     # days, 1..3650
++  await storage.clear_retention("legal")        # back to the fallback
++  ```
++
++  Subtypes without their own entry use their parent's period. The overlay
++  only fills gaps: a type that has a built-in period or an
++  `MCP_RETENTION_*` override keeps it, and `set_retention` refuses it.
+ - **Limit:** the table exists only in the local SQLite database. Cloudflare
+   (D1) does not carry it, and it is not yet synced through the hub. On the
+   `cloudflare` backend, and to keep several `hybrid` or hub nodes in
+```
+
+**File**: `src/mcp_memory_service/consolidation/decay.py` (modified, +15/-7)
+```diff
+@@ -19,9 +19,10 @@
+ from datetime import datetime, timezone
+ from dataclasses import dataclass
+ 
++from ..compat import _sanitize_log_value
+ from .base import ConsolidationBase, ConsolidationConfig
+ from ..models.memory import Memory
+-from ..models.ontology import get_parent_type
++from ..models.ontology import get_parent_type, get_retention_overlay, get_stored_parent
+ 
+ @dataclass
+ class RelevanceScore:
+@@ -65,7 +66,7 @@ async def process(self, memories: List[Memory], **kwargs) -> List[RelevanceScore
+             )
+             scores.append(score)
+         
+-        self.logger.info(f"Calculated relevance scores for {len(scores)} memories")
++        self.logger.info("Calculated relevance scores for %d memories", len(scores))
+         return scores
+     
+     async def _calculate_memory_relevance(
+@@ -98,12 +99,17 @@ async def _calculate_memory_relevance(
+         # so they inherit the base retention period instead of the 30-day
+         # fallback. Legacy names stay in retention_periods and skip resolution.
+         # The parent only selects the period; memory_type keeps the stored
+-        # subtype for the score metadata.
++        # subtype for the score metadata. Periods stored in the DB overlay
++        # (#1897) cover types the config has no key for; the config wins. A
++        # removed overlay subtype keeps the parent it was stored with.
+         memory_type = self._extract_memory_type(memory)
++        retention_periods = {**get_retention_overlay(), **self.retention_periods}
+         retention_type = memory_type
+-        if retention_type not in self.retention_periods:
+-            retention_type = get_parent_type(memory_type) or memory_type
+-        retention_period = self.retention_periods.get(retention_type, 30)
++        if retention_type not in retention_periods:
++            retention_type = (
++                get_parent_type(memory_type) or get_stored_parent(memory_type) or memory_type
++            )
++        retention_period = retention_periods.get(retention_type, 30)
+ 
+         # Calculate exponential decay factor
+         decay_factor = math.exp(-age_days / retention_period)
+@@ -197,7 +203,9 @@ def _get_base_importance(self, memory: Memory) -> float:
+                 score = float(memory.metadata['importance_score'])
+                 return max(0.0, min(2.0, score))  # Clamp between 0 and 2
+             except (ValueError, TypeError):
+-                self.logger.warning(f"Invalid importance_score in memory {memory.content_hash}")
++                self.logger.warning(
++                    "Invalid importance_score in memory %s", _sanitize_log_value(memory.content_hash)
++                )
+         
+         # Derive importance from tags
+         tag_importance = {
+```
+
+**File**: `src/mcp_memory_service/models/ontology.py` (modified, +37/-6)
+```diff
+@@ -52,12 +52,16 @@ def clear_ontology_caches():
+     _ALLOWED_PAIRS_CACHE = None
+ 
+ 
+-# DB overlay (#1897). The sqlite_vec storage registers a source with two
+-# methods, read_ontology_version() and read_memory_type_overlay(). Readers poll
++# DB overlay (#1897). The sqlite_vec storage registers a source with three
++# methods, read_ontology_version(), read_memory_type_overlay() and
++# read_retention_overlay(). Readers poll
+ # the version and reload the overlay when it moved, so a write by the HTTP
+ # server reaches the MCP server sharing the same database file.
+ _OVERLAY_SOURCE = None
+ _OVERLAY_ENTRIES: List[Tuple[str, Optional[str]]] = []
++_OVERLAY_RETENTION: Dict[str, int] = {}
++# Parent of every overlay subtype ever stored, removed ones included (retention only).
++_OVERLAY_STORED_PARENTS: Dict[str, str] = {}
+ _OVERLAY_VERSION: Optional[int] = None
+ _OVERLAY_CHECKED_AT = float("-inf")
+ # ponytail: polled at most once per second, so a write in another process can
+@@ -67,9 +71,12 @@ def clear_ontology_caches():
+ 
+ def set_overlay_source(source) -> None:
+     """Register the DB overlay source. The last storage to register wins."""
+-    global _OVERLAY_SOURCE, _OVERLAY_ENTRIES, _OVERLAY_VERSION
++    global _OVERLAY_SOURCE, _OVERLAY_ENTRIES, _OVERLAY_RETENTION, _OVERLAY_VERSION
++    global _OVERLAY_STORED_PARENTS
+     _OVERLAY_SOURCE = source
+     _OVERLAY_ENTRIES = []
++    _OVERLAY_RETENTION = {}
++    _OVERLAY_STORED_PARENTS = {}
+     _OVERLAY_VERSION = None
+     invalidate_overlay()
+ 
+@@ -89,7 +96,8 @@ def invalidate_overlay() -> None:
+ 
+ def _refresh_overlay() -> None:
+     """Reload the overlay when the stored ontology_version has moved."""
+-    global _OVERLAY_ENTRIES, _OVERLAY_VERSION, _OVERLAY_CHECKED_AT
++    global _OVERLAY_ENTRIES, _OVERLAY_RETENTION, _OVERLAY_VERSION, _OVERLAY_CHECKED_AT
++    global _OVERLAY_STORED_PARENTS
+     source = _OVERLAY_SOURCE
+     now = time.monotonic()
+     if source is None or now - _OVERLAY_CHECKED_AT < _OVERLAY_POLL_SECONDS:
+@@ -99,13 +107,16 @@ def _refresh_overlay() -> None:
+         version = source.read_ontology_version()
+         if version == _OVERLAY_VERSION:
+             return
+-        entries = list(source.read_memory_type_overlay())
++        rows = list(source.read_memory_type_overlay())
++        retention = dict(source.read_retention_overlay())
+     except Exception as e:  # keep the last overlay we had; retry on the next poll
+         logging.getLogger(__name__).warning(
+             "Could not read the ontology overlay: %s", _sanitize_log_value(e)
+         )
+         return
+-    _OVERLAY_ENTRIES = entries
++    _OVERLAY_ENTRIES = [(key, parent) for key, parent, live in rows if live]
++    _OVERLAY_STORED_PARENTS = {key: parent for key, parent, _ in rows if parent}
++    _OVERLAY_RETENTION = retention
+     _OVERLAY_VERSION = version
+     clear_ontology_caches()
+ 
+@@ -131,6 +142,26 @@ def _merge_overlay(merged: Dict[str, List[str]]) -> None:
+         known.add(key)
+ 
+ 
++def get_retention_overlay() -> Dict[str, int]:
++    """Retention days per memory type from the DB overlay (#1897, phase 4).
++
++    These only fill gaps: the consolidation config (built-in defaults and
++    ``MCP_RETENTION_*``) wins for any type it names.
++    """
++    _refresh_overlay()
++    return dict(_OVERLAY_RETENTION)
++
++
++def get_stored_parent(memory_type: str) -> Optional[str]:
++    """The parent an overlay subtype was stored with, even after it or its parent was removed.
++
++    For retention only: stored memories keep a removed type, and should keep
++    decaying on their base type's period instead of the 30-day fallback.
++    """
++    _refresh_overlay()
++    return _OVERLAY_STORED_PARENTS.get(memory_type)
++
++
+ class BaseMemoryType(str, Enum):
+     """
+     Base memory types forming the top-level ontology.
+```
+
+**File**: `src/mcp_memory_service/storage/ontology_overlay.py` (modified, +113/-15)
+```diff
+@@ -1,7 +1,8 @@
+-"""Ontology overlay stored in the memory DB (#1897, phase 1).
++"""Ontology overlay stored in the memory DB (#1897, phases 1 and 4).
+ 
+ The overlay adds memory types on top of the built-in ontology and
+-``MCP_CUSTOM_MEMORY_TYPES``. It lives in the ``ontology_entries`` table, and
++``MCP_CUSTOM_MEMORY_TYPES``, and retention periods for types that have none
++in ``CONSOLIDATION_CONFIG``. It lives in the ``ontology_entries`` table, and
+ every write bumps ``metadata.ontology_version``. ``models.ontology`` polls that
+ counter and reloads the overlay when it moved.
+ 
+@@ -10,29 +11,72 @@
+ is still the way to share custom types.
+ """
+ 
++import json
+ import sqlite3
+ import time
+ from pathlib import Path
+-from typing import List, Optional, Tuple
++from typing import Dict, List, Optional, Tuple
+ 
++from ..config.consolidation import CONSOLIDATION_CONFIG
+ from ..models import ontology
+ 
++# Same bounds as the MCP_RETENTION_* variables.
++RETENTION_MIN_DAYS = 1
++RETENTION_MAX_DAYS = 3650
++
+ 
+ def read_ontology_version(conn: sqlite3.Connection) -> int:
+     row = conn.execute("SELECT value FROM metadata WHERE key = 'ontology_version'").fetchone()
+     return int(row[0]) if row else 0
+ 
+ 
+-def read_memory_type_overlay(conn: sqlite3.Connection) -> List[Tuple[str, Optional[str]]]:
++def read_memory_type_overlay(conn: sqlite3.Connection) -> List[Tuple[str, Optional[str], bool]]:
++    """All memory type rows as (key, parent, live), tombstoned ones included.
++
++    Only live rows extend the ontology. Tombstoned rows still say which base
++    type a removed subtype belonged to, which retention needs for the stored
++    memories that keep that type.
++    """
+     try:
+-        return conn.execute(
+-            "SELECT key, parent FROM ontology_entries "
+-            "WHERE kind = 'memory_type' AND deleted_at IS NULL"
+-        ).fetchall()
++        return [
++            (key, parent, bool(live))
++            for key, parent, live in conn.execute(
++                "SELECT key, parent, deleted_at IS NULL FROM ontology_entries "
++                "WHERE kind = 'memory_type'"
++            )
++        ]
+     except sqlite3.OperationalError:  # migration 022 not applied (yet)
+         return []
+ 
+ 
++def _valid_retention_days(days) -> bool:
++    return (
++        isinstance(days, int)
++        and not isinstance(days, bool)
++        and RETENTION_MIN_DAYS <= days <= RETENTION_MAX_DAYS
++    )
++
++
++def read_retention_overlay(conn: sqlite3.Connection) -> Dict[str, int]:
++    """Retention days per memory type. Rows with a malformed payload are skipped."""
++    try:
++        rows = conn.execute(
++            "SELECT key, payload_json FROM ontology_entries "
++            "WHERE kind = 'retention' AND deleted_at IS NULL"
++        ).fetchall()
++    except sqlite3.OperationalError:  # migration 022 not applied (yet)
++        return {}
++    periods = {}
++    for key, payload in rows:
++        try:
++            days = json.loads(payload)["days"]
++        except (TypeError, ValueError, KeyError):
++            continue
++        if _valid_retention_days(days):
++            periods[key] = days
++    return periods
++
++
+ def _bump_version(conn: sqlite3.Connection) -> None:
+     conn.execute(
+         "INSERT INTO metadata (key, value) VALUES ('ontology_version', '1') "
+@@ -83,20 +127,67 @@ def upsert_memory_type(conn: sqlite3.Connection, name: str, parent: Optional[str
+         _bump_version(conn)
+ 
+ 
+-def tombstone_memory_type(conn: sqlite3.Connection, name: str) -> bool:
+-    """Tombstone an overlay memory type. Built-in and env types are not in the table."""
++def _tombstone(conn: sqlite3.Connection, kind: str, key: str) -> bool:
+     now = time.time()
+     with conn:
+         cursor = conn.execute(
+             "UPDATE ontology_entries SET deleted_at = ?, updated_at = ? "
+-            "WHERE kind = 'memory_type' AND key = ? AND deleted_at IS NULL",
+-            (now, now, name),
++            "WHERE kind = ? AND key = ? AND deleted_at IS NULL",
++            (now, now, kind, key),
+         )
+         if cursor.rowcount:
+             _bump_version(conn)
+     return bool(cursor.rowcount)
+ 
+ 
++def tombstone_memory_type(conn: sqlite3.Connection, name: str) -> bool:
++    """Tombstone an overlay memory type. Built-in and env types are not in the table."""
++    return _tombstone(conn, "memory_type", name)
++
++
++def validate_retention_entry(memory_type: str, days) -> Tuple[str, int]:
++    """Canonicalize a retention entry and check it against the ontology and config.
++
++    Raises ValueError for an unknown type, for days outside 1..3650, or for a
++    type that already has a period in ``CONSOLIDATION_CONFIG`` (built-in
++    default or ``MCP_RETENTION_*``): the overlay only fills gaps, so such a
++    row would never take effect.
++    """
++    memory_type = ontology.canonicalize_memory_type(memory_type)
++    if not ontology.validate_memory_type(memory_type):
++        raise ValueError(f"'{memory_type}' is not a memory type")
++    if memory_type in CONSOLIDAT
+```
+
+**File**: `src/mcp_memory_service/storage/sqlite_vec.py` (modified, +20/-0)
+```diff
+@@ -26,8 +26,11 @@
+ from .ontology_overlay import (
+     OverlaySource,
+     tombstone_memory_type,
++    tombstone_retention,
+     upsert_memory_type,
++    upsert_retention,
+     validate_memory_type_entry,
++    validate_retention_entry,
+ )
+ from .mixins import (
+     BaseMixin,
+@@ -141,3 +144,20 @@ async def remove_memory_type(self, name: str) -> bool:
+         """
+         name = ontology.canonicalize_memory_type(name)
+         return await self._write_ontology(lambda conn: tombstone_memory_type(conn, name))
++
++    async def set_retention(self, memory_type: str, days: int) -> str:
++        """Store the retention period (days) of a memory type and return its canonical name.
++
++        For types the consolidation config has no period for, such as an
++        overlay base type that would otherwise decay on the 30-day fallback.
++        Raises ValueError for an unknown type, a type the config already
++        covers, or days outside 1..3650.
++        """
++        memory_type, days = validate_retention_entry(memory_type, days)
++        await self._write_ontology(lambda conn: upsert_retention(conn, memory_type, days))
++        return memory_type
++
++    async def clear_retention(self, memory_type: str) -> bool:
++        """Tombstone a stored retention period; the type falls back to its parent's."""
++        memory_type = ontology.canonicalize_memory_type(memory_type)
++        return await self._write_ontology(lambda conn: tombstone_retention(conn, memory_type))
+```
+
+**File**: `tests/storage/test_1897_ontology_retention.py` (added, +141/-0)
+```diff
+@@ -0,0 +1,141 @@
++"""Retention per type in the ontology overlay (#1897, phase 4).
++
++A base type added through the overlay has no key in ``retention_periods``, so
++its memories decayed on the 30-day fallback. ``set_retention`` stores a period
++next to the type; the decay calculator reads it for types the consolidation
++config does not name.
++"""
++
++import sqlite3
++from datetime import datetime, timedelta
++
++import pytest
++
++from mcp_memory_service.consolidation.base import ConsolidationConfig
++from mcp_memory_service.consolidation.decay import ExponentialDecayCalculator
++from mcp_memory_service.models import ontology
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.ontology_overlay import upsert_retention
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++
++
++@pytest.fixture
++async def storage(temp_db_path, monkeypatch):
++    monkeypatch.delenv("MCP_CUSTOM_MEMORY_TYPES", raising=False)
++    monkeypatch.setattr(ontology, "_OVERLAY_POLL_SECONDS", 0)
++    s = SqliteVecMemoryStorage(f"{temp_db_path}/test_1897_retention.db")
++    await s.initialize()
++    await s.add_memory_type("legal")
++    await s.add_memory_type("contract", parent="legal")
++    yield s
++    await s.close()
++    ontology.clear_ontology_caches()
++
++
++async def _retention_period(memory_type):
++    now = datetime.now()
++    created = now - timedelta(days=100)
++    memory = Memory(
++        content=f"{memory_type} memory",
++        content_hash=f"hash-{memory_type}",
++        tags=[],
++        memory_type=memory_type,
++        created_at=created.timestamp(),
++        created_at_iso=created.isoformat() + "Z",
++    )
++    calc = ExponentialDecayCalculator(ConsolidationConfig())
++    score = await calc._calculate_memory_relevance(memory, now, {}, {})
++    return score.metadata["retention_period"]
++
++
++async def test_overlay_base_type_and_its_subtypes_use_the_stored_period(storage):
++    assert await _retention_period("legal") == 30  # the fallback this fixes
++
++    assert await storage.set_retention("Legal", 400) == "legal"
++
++    assert await _retention_period("legal") == 400
++    assert await _retention_period("contract") == 400  # inherited from the parent
++
++
++async def test_a_subtype_entry_overrides_its_parent_and_clear_falls_back(storage):
++    await storage.set_retention("legal", 400)
++    await storage.set_retention("contract", 60)
++    await storage.set_retention("insight", 90)  # built-in subtype, no config key
++
++    assert await _retention_period("contract") == 60
++    assert await _retention_period("insight") == 90
++
++    assert await storage.clear_retention("contract")
++    assert not await storage.clear_retention("contract")
++    assert await _retention_period("contract") == 400
++
++
++async def test_removed_types_keep_decaying_on_their_stored_parent(storage):
++    """Greptile on #1939: removing 'legal' left 'contract' memories without a
++    parent, so they fell back to 30 days although 'legal' still has 400."""
++    await storage.set_retention("legal", 400)
++    await storage.add_memory_type("postmortem", parent="learning")
++
++    assert await storage.remove_memory_type("legal")
++    assert await storage.remove_memory_type("postmortem")
++    assert ontology.get_parent_type("contract") is None  # no new writes with it
++
++    assert await _retention_period("contract") == 400
++    assert await _retention_period("postmortem") == 180  # built-in parent's period
++
++
++@pytest.mark.parametrize(
++    "memory_type, days",
++    [
++        ("nope", 90),        # not a memory type
++        ("decision", 90),    # the config already has a period for it
++        ("temporary", 90),   # legacy config key
++        ("legal", 0),
++        ("legal", 3651),
++        ("legal", True),
++        ("legal", "90"),
++    ],
++)
++async def test_rejects_entries_that_would_not_apply(storage, memory_type, days):
++    with pytest.raises(ValueError):
++        await storage.set_retention(memory_type, days)
++
++
++async def test_write_by_another_process_is_picked_up(storage):
++    other = sqlite3.connect(storage.db_path)
++    try:
++        upsert_retention(other, "legal", 250)
++    finally:
++        other.close()
++
++    assert await _retention_period("legal") == 250
++
++
++async def test_malformed_rows_are_skipped(storage):
++    other = sqlite3.connect(storage.db_path)
++    try:
++        with other:
++            other.executemany(
++                "INSERT INTO ontology_entries (kind, key, payload_json, updated_at) "
++                "VALUES ('retention', ?, ?, 0)",
++                [("legal", "not json"), ("contract", '{"days": -5}'), ("insight", '{"days": 45}')],
++            )
++            other.execute("UPDATE metadata SET value = value + 1 WHERE key = 'ontology_version'")
++    finally:
++        other.close()
++
++    assert ontology.get_retention_overlay() == {"insight": 45}
++
++
++async def test_in_memory_database_retention_loads(monkeypatch):
++    monkeypatch.delenv("MCP_CUSTOM_MEMORY_TYPES", raising=False)
++    mo
+```
+
+---
+
+### Incident Patch 3: `a14f19d4` (2026-11-10)
+**Commit Message**: fix(cloudflare): match % and _ in a tag literally in the tag deletes (#1948)
+
+* fix(cloudflare): match % and _ in a tag literally in the tag deletes
+
+delete_by_tags, delete_by_timeframe and delete_before_date built D1 tags LIKE patterns from the raw tag, so % and _ acted as wildcards. Escape them and add ESCAPE '\', as the sqlite-vec deletes do.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* chore: name changelog fragment after PR #1948
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(cloudflare): cover multi-tag matches for %, _ and backslash tags
+
+Single-tag rows only reach the tags = ? arm. Add rows with the tag in the first, middle and last position, plus lookalikes, so the escaped LIKE arms must still delete valid matches.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
+Co-authored-by: goranai <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/1892.fixed.md` (added, +1/-0)
+**File**: `changelog.d/1948.fixed.md` (added, +6/-0)
 ```diff
-@@ -0,0 +1 @@
-+- **The dashboard and its static files are served with `Cache-Control: no-cache` (#1892).** Browsers kept running a stale `app.js` after an upgrade because nothing told them to check for a newer copy. They now revalidate every request against the ETag and get a `304` when the file is unchanged.
+@@ -0,0 +1,6 @@
++- **Cloudflare tag deletes treated `%` and `_` in a tag as wildcards and deleted memories that did not have the tag (#1948).**
++  `delete_by_tags`, `delete_by_timeframe` and `delete_before_date` built their D1
++  `tags LIKE ?` patterns from the raw tag, so deleting the tag `%` deleted every memory
++  with two or more tags, and `snake_case` also deleted a memory tagged `snakeXcase`. The
++  patterns are escaped now and carry `ESCAPE '\'`, as the sqlite-vec deletes and the
++  Cloudflare exact-content search already do.
 ```
 
-**File**: `src/mcp_memory_service/web/app.py` (modified, +2/-1)
+**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +25/-8)
 ```diff
-@@ -114,6 +114,7 @@ async def get_response(self, path: str, scope: Scope):
-                 response.headers["Content-Security-Policy"] = _DASHBOARD_CSP
-             elif path == "sse_test.html":
-                 response.headers["Content-Security-Policy"] = _SAME_ORIGIN_DASHBOARD_CSP
-+        response.headers["Cache-Control"] = "no-cache"
-         return response
+@@ -179,6 +179,23 @@ def _store_clause(store: Optional[str], column: str = "store") -> Tuple[str, Lis
+     return f" AND {column} = ?", [store]
  
- # Global storage instance
-@@ -516,7 +517,7 @@ async def dashboard():
-                 )
-                 return HTMLResponse(
-                     content=dashboard_html,
--                    headers={"Content-Security-Policy": _DASHBOARD_CSP},
-+                    headers={"Content-Security-Policy": _DASHBOARD_CSP, "Cache-Control": "no-cache"},
-                 )
+ 
++def _escape_like(value: str) -> str:
++    """Escape LIKE wildcards so ``value`` matches literally under ``ESCAPE '\\'``."""
++    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
++
++
++# Matches one tag in a comma-separated ``tags`` column: first, middle, last or only.
++_TAG_MATCH_SQL = (
++    "(tags LIKE ? ESCAPE '\\' OR tags LIKE ? ESCAPE '\\' "
++    "OR tags LIKE ? ESCAPE '\\' OR tags = ?)"
++)
++
++
++def _tag_match_params(tag: str) -> List[str]:
++    escaped = _escape_like(tag)
++    return [f"{escaped},%", f"%,{escaped},%", f"%,{escaped}", tag]
++
++
+ class CloudflareStorage(MemoryStorage):
+     """Cloudflare-based storage backend using Vectorize, D1, and R2."""
+ 
+@@ -1671,8 +1688,8 @@ async def delete_by_tags(self, tags: List[str], store: Optional[str] = None) ->
+             params = []
+             for tag in tags:
+                 stripped_tag = tag.strip()
+-                conditions.append("(tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)")
+-                params.extend([f"{stripped_tag},%", f"%,{stripped_tag},%", f"%,{stripped_tag}", stripped_tag])
++                conditions.append(_TAG_MATCH_SQL)
++                params.extend(_tag_match_params(stripped_tag))
+ 
+             where_clause = " OR ".join(conditions)
+             store_sql, store_params = _store_clause(store)
+@@ -1719,13 +1736,13 @@ async def delete_by_timeframe(self, start_date: date, end_date: date, tag: Optio
+ 
+             if tag:
+                 # Delete with tag filter
+-                sql = '''
++                sql = f'''
+                     SELECT content_hash FROM memories
+                     WHERE created_at >= ? AND created_at <= ?
+-                    AND (tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)
++                    AND {_TAG_MATCH_SQL}
+                     AND deleted_at IS NULL
+                 '''
+-                params = (start_ts, end_ts, f"{tag},%", f"%,{tag},%", f"%,{tag}", tag)
++                params = (start_ts, end_ts, *_tag_match_params(tag))
              else:
-                 # Fallback to original template if dashboard not found
+                 # Delete all in timeframe
+                 sql = '''
+@@ -1766,13 +1783,13 @@ async def delete_before_date(self, before_date: date, tag: Optional[str] = None)
+ 
+             if tag:
+                 # Delete with tag filter
+-                sql = '''
++                sql = f'''
+                     SELECT content_hash FROM memories
+                     WHERE created_at < ?
+-                    AND (tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)
++                    AND {_TAG_MATCH_SQL}
+                     AND deleted_at IS NULL
+                 '''
+-                params = (before_ts, f"{tag},%", f"%,{tag},%", f"%,{tag}", tag)
++                params = (before_ts, *_tag_match_params(tag))
+             else:
+                 # Delete all before date
+                 sql = '''
 ```
 
-**File**: `tests/web/test_dashboard_csp.py` (modified, +11/-0)
+**File**: `tests/unit/test_cloudflare_tag_delete_like_wildcards.py` (added, +127/-0)
 ```diff
-@@ -33,6 +33,17 @@ def test_dashboard_html_routes_receive_csp_but_api_json_does_not():
-     assert "content-security-policy" not in client.get("/api/docs").headers
- 
- 
-+def test_dashboard_and_static_assets_are_revalidated_after_upgrades():
-+    """Browsers must revalidate app.js instead of reusing a stale copy (#1892)."""
-+    client = TestClient(app_module.create_app())
+@@ -0,0 +1,127 @@
++"""Cloudflare tag deletes match ``%``, ``_`` and a backslash in a tag literally.
 +
-+    for path in ("/", "/static/index.html", "/static/app.js"):
-+        response = client.get(path)
++delete_by_tags, delete_by_timeframe and delete_before_date put the tag into
++LIKE patterns, where ``%`` and ``_`` are wildcards, so deleting the tag ``%``
++also deleted every memory with two or more tags. The tests run the real SQL
++against the in-memory SQLite database that stands in for D1.
++"""
 +
-+        assert response.status_code == 200
-+        assert response.headers.get("cache-control") == "no-cache", path
++from datetime import date
++from unittest.mock import AsyncMock
++
++import pytest
++
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.cloudflare import CloudflareStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
++from tests.unit.test_cloudflare_store_scope import _FakeD1
++
++BACKSLASH_TAG = "dir" + chr(92) + "new"
++MULTI_BACKSLASH_TAG = "lib" + chr(92) + "x"
++
++# A wildcard match would also delete the *_lookalike memories.
++TAGS = {
++    "underscore": ["snake_case"],
++    "underscore_lookalike": ["snakexcase", "x"],
++    "percent": ["100%"],
++    "percent_lookalike": ["1000", "x"],
++    "backslash": [BACKSLASH_TAG],
++    "backslash_lookalike": ["dirxnew", "x"],
++    "pair": ["keep", "other"],
++    "single": ["solo"],
++    "three": ["a", "b", "c"],
++    # Multi-tag rows go through the LIKE arms, so a valid match must still be
++    # deleted with the tag in the first, middle and last position.
++    "us_first": ["multi_tag", "p1"],
++    "us_mid": ["p2", "multi_tag", "p3"],
++    "us_last": ["p4", "multi_tag"],
++    "us_lookalike": ["multixtag", "p5"],
++    "pct_first": ["50%", "q1"],
++    "pct_mid": ["q2", "50%", "q3"],
++    "pct_last": ["q4", "50%"],
++    "pct_lookalike": ["500", "q5"],
++    "bs_first": [MULTI_BACKSLASH_TAG, "r1"],
++    "bs_mid": ["r2", MULTI_BACKSLASH_TAG, "r3"],
++    "bs_last": ["r4", MULTI_BACKSLASH_TAG],
++    "bs_lookalike": ["libyx", "r5"],
++}
++
++CASES = [
++    ("snake_case", ["underscore"]),
++    ("100%", ["percent"]),
++    ("%", []),
++    ("_", []),
++    (BACKSLASH_TAG, ["backslash"]),
++    ("solo", ["single"]),
++    ("other", ["pair"]),
++    ("b", ["three"]),
++    ("multi_tag", ["us_first", "us_last", "us_mid"]),
++    ("50%", ["pct_first", "pct_last", "pct_mid"]),
++    (MULTI_BACKSLASH_TAG, ["bs_first", "bs_last", "bs_mid"]),
++]
 +
 +
- def test_index_import_map_is_the_only_hashed_inline_script():
-     client = TestClient(app_module.create_app())
-     response = client.get("/")
-```
-
----
-
-### Incident Patch 3: `e65a62fa` (2026-11-08)
-**Commit Message**: test(hybrid): build the mocked-primary hybrid tests on tmp_path, drop stale xfails (#1918)
-
-test_hybrid_relationship_distribution_with_mock_primary and
-test_hybrid_graph_visualization_with_mock_primary constructed
-HybridMemoryStorage("/fake/path"), which fails with PermissionError for
-any non-root user and was hidden behind an xfail marker. When the suite
-runs as root the first test XPASSes and leaves a /fake directory behind.
-
-Use pytest's tmp_path instead and remove both markers. With the path fixed,
-the visualization test exposed a stale assertion: hybrid now forwards
-store=None to the primary, so the expected call includes it.
-
-Co-authored-by: Walid Zeggane <[REDACTED_EMAIL]>
-
-**File**: `tests/storage/test_hybrid_graph_methods.py` (modified, +5/-7)
-```diff
-@@ -166,9 +166,8 @@ async def test_hybrid_relationship_distribution_returns_primary_data(hybrid_with
-     assert distribution["follows"] == 1  # Directed
- 
- 
--@pytest.mark.xfail(reason="Pre-existing bug: Permission denied accessing '/fake' path")
- @pytest.mark.asyncio
--async def test_hybrid_relationship_distribution_with_mock_primary():
-+async def test_hybrid_relationship_distribution_with_mock_primary(tmp_path):
-     """Test delegation using fully mocked primary storage.
- 
-     Validates:
-@@ -184,7 +183,7 @@ async def test_hybrid_relationship_distribution_with_mock_primary():
-     mock_secondary = AsyncMock()
- 
-     # Create hybrid with mocks
--    hybrid = HybridMemoryStorage("/fake/path")
-+    hybrid = HybridMemoryStorage(str(tmp_path / "memory.db"))
-     hybrid.primary = mock_primary
-     hybrid.secondary = mock_secondary
- 
-@@ -251,9 +250,8 @@ async def test_hybrid_graph_visualization_returns_primary_data(hybrid_with_graph
-     assert "fixes" in rel_types
- 
- 
--@pytest.mark.xfail(reason="Pre-existing bug: Permission denied accessing '/fake' path")
- @pytest.mark.asyncio
--async def test_hybrid_graph_visualization_with_mock_primary():
-+async def test_hybrid_graph_visualization_with_mock_primary(tmp_path):
-     """Test delegation using fully mocked primary storage.
- 
-     Validates:
-@@ -273,15 +271,15 @@ async def test_hybrid_graph_visualization_with_mock_primary():
-     mock_secondary = AsyncMock()
- 
-     # Create hybrid with mocks
--    hybrid = HybridMemoryStorage("/fake/path")
-+    hybrid = HybridMemoryStorage(str(tmp_path / "memory.db"))
-     hybrid.primary = mock_primary
-     hybrid.secondary = mock_secondary
- 
-     # Call method with parameters
-     result = await hybrid.get_graph_visualization_data(limit=100, min_connections=1)
- 
-     # Verify delegation with correct parameters
--    mock_primary.get_graph_visualization_data.assert_called_once_with(100, 1)
-+    mock_primary.get_graph_visualization_data.assert_called_once_with(100, 1, store=None)
-     assert result == mock_data
- 
- 
++@pytest.fixture
++async def cloudflare(monkeypatch):
++    """Cloudflare storage on a fake D1, holding one memory per entry in TAGS."""
++    storage = CloudflareStorage(
++        api_token="test-token",
++        account_id="test-account",
++        vectorize_index="test-index",
++        d1_database_id="test-db",
++    )
++    fake_d1 = _FakeD1(storage)
++    monkeypatch.setattr(storage, "_retry_request", fake_d1)
++    for name in (
++        "_store_vectorize_vector",
++        "_delete_vectorize_vector",
++        "_store_r2_content",
++        "_delete_r2_content",
++    ):
++        monkeypatch.setattr(storage, name, AsyncMock())
++    monkeypatch.setattr(storage, "_generate_embedding", AsyncMock(return_value=[0.1]))
++    await storage._initialize_d1_schema()
++
++    hashes = {}
++    for name, tags in TAGS.items():
++        content = f"Memory {name} for the tag delete tests."
++        memory = Memory(
++            content=content, content_hash=generate_content_hash(content), tags=tags
++        )
++        ok, msg = await storage.store(memory)
++        assert ok, msg
++        hashes[name] = memory.content_hash
++
++    def deleted():
++        return sorted(
++            name
++            for name, content_hash in hashes.items()
++            if fake_d1.row(content_hash)["deleted_at"] is not None
++        )
++
++    yield storage, deleted
++    fake_d1.db.close()
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("tag, expected", CASES)
++async def test_delete_by_tags_matches_the_tag_literally(cloudflare, tag, expected):
++    storage, deleted = cloudflare
++    await storage.delete_by_tags([tag])
++    assert deleted() == expected
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("tag, expected", CASES)
++async def test_delete_by_timeframe_matches_the_tag_literally(cloudflare, tag, expected):
++    storage, deleted = cloudflare
++    await storage.delete_by_timeframe(date(2000, 1, 1), date(2100, 1, 1), tag=tag)
++    assert deleted() == expected
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("tag, expected", CASES)
++async def test_delete_before_date_matches_the_tag_literally(cloudflare, tag, expected):
++    storage, deleted = cloudflare
++    await storage.delete_before_date(date(2100, 1, 1), tag=tag)
++    assert deleted() == expected
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1922** (2026-11-08): fix(remote_http): honor store in get_by_hash, update and delete (#1879) (@massimiliano1991)
-- **PR #1920** (2026-11-08): Feat/export entity vault (@minaamulhaq)
-- **PR #1919** (2026-11-08): refactor(logging): lazy %-style logger calls in web/oauth/storage/sqlite.py (#1146) (@zegganewalid)
-- **PR #1918** (2026-11-08): test(hybrid): build the mocked-primary hybrid tests on tmp_path, drop stale xfails (@zegganewalid)
-- **PR #1917** (2026-11-08): refactor(logging): lazy %-style logger calls in lm_studio_compat.py (#1146) (@zegganewalid)
-- **PR #1916** (2026-11-08): ci: merge train that updates one auto-merge PR at a time (@doobidoo)
+- **PR #1961** (2026-11-11): fix(web): resolve the installer before git pull so update works without pip (part of #1943) (@munjikesh)
+- **PR #1960** (2026-11-11): chore(deps): bump the uv group with 9 updates (@dependabot[bot])
+- **PR #1959** (2026-11-11): chore(deps): bump the actions group with 2 updates (@dependabot[bot])
+- **PR #1957** (2026-11-11): fix(sync): restore winning recreation before later metadata edits (@dailyun)
+- **PR #1956** (2026-11-11): feat(ontology): sync the ontology overlay between nodes (#1897, phase 2) (@Dhruv-Sharma29)
+- **PR #1955** (2026-11-11): fix(nli): explicit backend and unlabeled-row support in the labeling harness score (@Yoel-qin)
 
 ---
 
@@ -3488,21 +3784,26 @@ Co-authored-by: Walid Zeggane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remote_http): honor store in get_by_hash, update and delete (#1879) (#1922)
+## X. logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)
 
 **RULE**:
-When implementing operations in `changelog.d/1879.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1146-utils-debug.internal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c37639d3`: remote_http): honor store in get_by_hash, update and delete (#1879) (#1922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5bddbfc9`: logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1879.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1146-utils-debug.internal.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`RemoteHTTPStorage` confines `get_by_hash`, `update_memory_metadata` and delete-by-hash to `store` (#1879, part of #1683).** `/api/sync/capabilities` now advertises `store_scoped_access`, taken from the server storage's `get_by_hash_is_store_scoped`. The HTTP client reads it when it initializes (and on each sync handshake) and sends a named store as the `store` query parameter, so a memory in another store comes back as not found. A peer that does not advertise the field (every server before this release) ignores the query parameter, so against it a call naming a store is refused without a request and logged once per peer. **Upgrade the hub before the clients:** once a caller passes a named store to an HTTP peer, an older hub refuses every such call. `None`, `"default"` and `"all"` keep working against an older hub: `"default"` is not sent because the server resolves a missing `store` to `"default"` itself, and `"all"` is passed through for reads.
+- **`utils/debug.py` logs with lazy `%`-style arguments (#1146).**
+  `exact_match_retrieve()`, which backs the `exact_match_retrieve` MCP tool,
+  logged the backend's exception through an f-string. A backend error that
+  echoed the caller's content could forge a second log line. The error now
+  goes through `_sanitize_log_value`, and the backend class name is a `%s`
+  argument. The module is added to `GUARDED_MODULES`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3512,4 +3813,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c37639d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5bddbfc9` are properly handled with clean fallback behavior.

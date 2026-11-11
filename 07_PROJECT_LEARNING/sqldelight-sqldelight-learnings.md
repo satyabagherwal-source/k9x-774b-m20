@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source**: github ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
-> **Source Version**: `6f07e305`  
+> **Source Version**: `21ce991b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T23:01:36.985Z  
+> **Timestamp**: 2026-11-11T10:35:00.627Z  
 > **Learning ID**: `learn-github-sqldelight-sqldelight`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T23:01:35.842Z  
+> **Harvest Timestamp**: 2026-11-11T10:35:00.620Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SQLDelight - Generates typesafe Kotlin APIs from SQL
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6898 stars
+- **Stars / Engagement**: 6906 stars
 
 ---
 
@@ -511,327 +511,84 @@ expect fun createDefaultWebWorkerDriver(): SqlDriver
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f07e305` (2026-10-25)
-**Commit Message**: Update Gradle to v9.8.1 (#6389)
+### Incident Patch 1: `21ce991b` (2026-11-10)
+**Commit Message**: Fix ReflectiveKotlinFindUsagesFactory exceptions (#6355)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+* Fix ReflectiveKotlinFindUsagesFactory exceptions
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
+Rethrow the original exception so it propagates as if the call were direct
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,7 +1,7 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
-+distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+@@ -30,6 +30,7 @@
+ ### Fixed
+ 
+ - [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 #6368 by @griffio)
++- [Intellij Plugin] Improve stability when typing by trapping unhandled errors. (#6355 by @griffio)
+ 
+ 
+ ## [2.4.0] - 2026-09-17
 ```
 
-**File**: `gradlew.bat` (modified, +41/-11)
+**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/usages/ReflectiveKotlinFindUsagesFactory.kt` (modified, +4/-3)
 ```diff
-@@ -26,6 +26,33 @@
- @rem Set local scope for the variables, and ensure extensions are enabled
- setlocal EnableExtensions
+@@ -1,5 +1,6 @@
+ package app.cash.sqldelight.intellij.usages
  
-+@rem Catch executions from older scripts and ensure they exit cleanly.
-+@rem This can be removed once we can be reasonably confident that few people
-+@rem will be migrating directly to this new wrapper.
-+goto afterSafetyNet
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+goto exitWithErrorLevel
-+:afterSafetyNet
++import app.cash.sqldelight.intellij.util.unwrappingInvocationTarget
+ import com.intellij.find.findUsages.FindUsagesHandler
+ import com.intellij.find.findUsages.FindUsagesHandlerFactory
+ import com.intellij.find.findUsages.FindUsagesOptions
+@@ -16,8 +17,8 @@ class ReflectiveKotlinFindUsagesFactory private constructor(
+   private val findFunctionOptionsMethod: Method = wrapped.javaClass.getMethod("getFindFunctionOptions")
+   private val findPropertyOptionsMethod: Method = wrapped.javaClass.getMethod("getFindPropertyOptions")
+ 
+-  val findFunctionOptions get() = findFunctionOptionsMethod.invoke(wrapped) as FindUsagesOptions
+-  val findPropertyOptions get() = findPropertyOptionsMethod.invoke(wrapped) as FindUsagesOptions
++  val findFunctionOptions get() = unwrappingInvocationTarget { findFunctionOptionsMethod.invoke(wrapped) } as FindUsagesOptions
++  val findPropertyOptions get() = unwrappingInvocationTarget { findPropertyOptionsMethod.invoke(wrapped) } as FindUsagesOptions
+ 
+   fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
+     return wrapped.createFindUsagesHandler(element, forHighlightUsages)!!
+@@ -50,7 +51,7 @@ class ReflectiveKotlinFindUsagesFactory private constructor(
+ 
+     private fun createKotlinFindUsagesHandlerFactory(project: Project): FindUsagesHandlerFactory {
+       val ctor = factoryClass.getConstructor(Project::class.java)
+-      return ctor.newInstance(project) as FindUsagesHandlerFactory
++      return unwrappingInvocationTarget { ctor.newInstance(project) } as FindUsagesHandlerFactory
+     }
+   }
+ }
+```
+
+**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/util/Reflection.kt` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++package app.cash.sqldelight.intellij.util
 +
- set DIRNAME=%~dp0
- if "%DIRNAME%"=="" set DIRNAME=.
- @rem This is normally unused
-@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
- %JAVA_EXE% -version >NUL 2>&1
- if %ERRORLEVEL% equ 0 goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :findJavaFromJavaHome
- set JAVA_HOME=%JAVA_HOME:"=%
- set JAVA_EXE=%JAVA_HOME%/bin/java.exe
- 
- if exist "%JAVA_EXE%" goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :execute
- @rem Setup the command line
-@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
- @rem Execute gradlew
- @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
- @rem which allows us to clear the local environment before executing the java command
--endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
-+endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
- 
-+@rem This label must not be changed. We rely on old scripts being able to jump to this point.
- :exitWithErrorLevel
- @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
- "%COMSPEC%" /c exit %ERRORLEVEL%
-```
-
-**File**: `sample-web/gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
-+distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
-```
-
-**File**: `sample-web/gradlew.bat` (modified, +41/-11)
-```diff
-@@ -26,6 +26,33 @@
- @rem Set local scope for the variables, and ensure extensions are enabled
- setlocal EnableExtensions
- 
-+@rem Catch executions from older scripts and ensure they exit cleanly.
-+@rem This can be removed once we can be reasonably confident that few people
-+@rem will be migrating directly to this new wrapper.
-+goto afterSafetyNet
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+goto exitWithErrorLevel
-+:afterSafetyNet
++import java.lang.reflect.InvocationTargetException
 +
- set DIRNAME=%~dp0
- if "%DIRNAME%"=="" set DIRNAME=.
- @rem This is normally unused
-@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
- %JAVA_EXE% -version >NUL 2>&1
- if %ERRORLEVEL% equ 0 goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :findJavaFromJavaHome
- set JAVA_HOME=%JAVA_HOME:"=%
- set JAVA_EXE=%JAVA_HOME%/bin/java.exe
- 
- if exist "%JAVA_EXE%" goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :execute
- @rem Setup the command line
-@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
- @rem Execute gradlew
- @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
- @rem which allows us to clear the local environment before executing the java command
--endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
-+endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
- 
-+@rem This label must not be changed. We rely on old scripts being able to jump to this point.
- :exitWithErrorLevel
- @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
- "%COMSPEC%" /c exit %ERRORLEVEL%
-```
-
-**File**: `sample/gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
-+distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
-```
-
-**File**: `sample/gradlew.bat` (modified, +41/-11)
-```diff
-@@ -26,6 +26,33 @@
- @rem Set local scope for the variables, and ensure extensions are enabled
- setlocal EnableExtensions
- 
-+@rem Catch executions from older scripts and ensure they exit cleanly.
-+@rem This can be removed once we can be reasonably confident that few people
-+@rem will be migrating directly to this new wrapper.
-+goto afterSafetyNet
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+goto exitWithErrorLevel
-+:afterSafetyNet
-+
- set DIRNAME=%~dp0
- if "%DIRNAME%"=="" set DIRNAME=.
- @rem This is normally unused
-@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
- %JAVA_EXE% -version >NUL 2>&1
- if %ERRORLEVEL% equ 0 goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :findJavaFromJavaHome
- set JAVA_HOME=%JAVA_HOME:"=%
- set JAVA_EXE=%JAVA_HOME%/bin/java.exe
- 
- if exist "%JAVA_EXE%" goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :execute
- @rem Setup the command line
-@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
- @rem Execute gradlew
- @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
- @rem which allows us to clear the local environment before executing the java command
--endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
-+endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
- 
-+@rem This label must not be changed. We rely on old scripts being able to jump to this point.
- :exitWithErrorLevel
- @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
- "%COMSPEC%" /c exit %ERRORLEVEL%
++/**
++ * Reflective calls wrap anything thrown by the target in [InvocationTargetException], which hides
++ * exceptions such as [com.intellij.openapi.progress.ProcessCanceledException] from callers that
++ * need to see them. Rethrow the original exception so it propagates as if the call were direct.
++ */
++internal inline fun <T> unwrappingInvocationTarget(block: () -> T): T {
++  try {
++    return block()
++  } catch (e: InvocationTargetException) {
++    throw e.targetException ?: e
++  }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6395** (2026-11-10): Update CI Runner to use macOS-15 (@griffio)
+- **PR #6394** (2026-11-10): Remove isVisible from configurations (@griffio)
 - **PR #6389** (2026-10-25): Update Gradle to v9.8.1 (@renovate[bot])
 - **PR #6388** (2026-10-25): Update dependency org.postgresql:postgresql to v42.7.14 (@renovate[bot])
 - **PR #6387** (2026-10-23): Let the bad times roll (@pyricau)
 - **PR #6386** (2026-10-06): Update sql-psi to 0.8.1 (@JakeWharton)
-- **PR #6381** (2026-10-06): Improve docs for Android transactions.md (@griffio)
-- **PR #6380** (2026-10-03): Update plugin spotless to v8.10.3 (@renovate[bot])
 
 ---
 
@@ -851,30 +608,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Gradle to v9.8.1 (#6389)
+## X. ReflectiveKotlinFindUsagesFactory exceptions (#6355)
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f07e305`: Update Gradle to v9.8.1 (#6389). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21ce991b`: ReflectiveKotlinFindUsagesFactory exceptions (#6355). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
+- [Intellij Plugin] Improve stability when typing by trapping unhandled errors. (#6355 by @griffio)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f07e305` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21ce991b` are properly handled with clean fallback behavior.

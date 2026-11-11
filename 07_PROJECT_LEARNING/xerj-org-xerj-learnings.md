@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `f73bbd95`  
+> **Source Version**: `50e4ffde`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T05:26:10.105Z  
+> **Timestamp**: 2026-11-11T12:53:27.964Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T05:26:10.099Z  
+> **Harvest Timestamp**: 2026-11-11T12:53:27.957Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 18616 stars
+- **Stars / Engagement**: 18826 stars
 
 ---
 
@@ -1757,177 +1757,20 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f73bbd95` (2026-11-08)
-**Commit Message**: Merge pull request #3037 from xerj-org/fix/3036-bulk-put
+### Incident Patch 1: `50e4ffde` (2026-11-09)
+**Commit Message**: chore(metrics): release downloads 2026-11-09 — 55271 assets, 45404 binaries [skip ci]
 
-**File**: `engine/crates/xerj-api/src/authz.rs` (modified, +12/-0)
-```diff
-@@ -2410,6 +2410,8 @@ mod tests {
-         let cases: &[(&str, &str, BodyShape)] = &[
-             ("POST", "/_bulk", BodyShape::Bulk),
-             ("POST", "/logs/_bulk", BodyShape::Bulk),
-+            ("PUT", "/_bulk", BodyShape::Bulk),
-+            ("PUT", "/logs/_bulk", BodyShape::Bulk),
-             ("POST", "/_msearch", BodyShape::MsearchHeaders),
-             ("POST", "/logs/_msearch", BodyShape::MsearchHeaders),
-             ("POST", "/_msearch/template", BodyShape::MsearchHeaders),
-@@ -2644,6 +2646,16 @@ mod tests {
-         // is the default write path for every ES client and must work.
-         let ok = "{\"index\":{\"_index\":\".xerj-memory-alice-edges\",\"_id\":\"a\"}}\n{\"src\":\"x\"}\n";
-         assert!(check(&alice, Method::POST, "/_bulk", ok));
-+        // PUT is the same door (#3036): the Python client sends it.
-+        assert!(!check(&alice, Method::PUT, "/_bulk", forge));
-+        assert!(!check(
-+            &alice,
-+            Method::PUT,
-+            "/.xerj-memory-alice-edges/_bulk",
-+            forge
-+        ));
-+        assert!(!check(&alice, Method::PUT, "/_bulk", destroy));
-+        assert!(check(&alice, Method::PUT, "/_bulk", ok));
- 
-         // _mget: docs[]._index overrides the path index.
-         let mget = "{\"docs\":[{\"_index\":\".xerj-memory-bob-edges\",\"_id\":\"1\"}]}";
-```
+Automated daily snapshot (.github/workflows/release-metrics.yml). GitHub keeps no history for download_count; this line is the history.
 
-**File**: `engine/crates/xerj-api/src/router.rs` (modified, +11/-4)
-```diff
-@@ -227,7 +227,7 @@ pub fn build_native_router(state: AppState) -> Router {
- /// GET    /_cluster/health                   cluster_health
- /// GET    /_cat/indices                      cat_indices
- /// GET    /_cat/indices/:pattern             cat_indices_pattern
--/// POST   /_bulk                             global_bulk
-+/// POST   /_bulk                             global_bulk (PUT too)
- /// PUT    /:index                            create_index
- /// DELETE /:index                            delete_index
- /// GET    /:index                            get_index
-@@ -240,7 +240,7 @@ pub fn build_native_router(state: AppState) -> Router {
- /// DELETE /:index/_doc/:id                   delete_doc
- /// POST   /:index/_search                    search
- /// GET    /:index/_search                    search (GET with body)
--/// POST   /:index/_bulk                      bulk_ops
-+/// POST   /:index/_bulk                      bulk_ops (PUT too)
- /// ```
- pub fn build_es_compat_router(state: AppState) -> Router {
-     let hub = hub_api::HubShared::new(state.clone());
-@@ -308,7 +308,11 @@ pub fn build_es_compat_router_with_hub(
-         .route("/_cat/aliases", get(es_compat::cat_aliases))
-         .route("/_cat/count/:index", get(es_compat::cat_count))
-         .route("/_cat/shards", get(es_compat::cat_shards))
--        .route("/_bulk", post(es_compat::global_bulk))
-+        // Elasticsearch takes POST and PUT here; the Python client sends PUT (#3036).
-+        .route(
-+            "/_bulk",
-+            post(es_compat::global_bulk).put(es_compat::global_bulk),
-+        )
-         // The audit twin of /v1/systemone: same vote, named index, neighbours
-         // and abstain instead of a wire-shaped error.
-         .route("/_decide", post(systemone_api::decide))
-@@ -416,7 +420,10 @@ pub fn build_es_compat_router_with_hub(
-             post(es_compat::validate_query).get(es_compat::validate_query),
-         )
-         // ── Bulk ───────────────────────────────────────────────────────────
--        .route("/:index/_bulk", post(es_compat::bulk_ops))
-+        .route(
-+            "/:index/_bulk",
-+            post(es_compat::bulk_ops).put(es_compat::bulk_ops),
-+        )
-         // ── Aliases ────────────────────────────────────────────────────────
-         .route(
-             "/_aliases",
-```
 
-**File**: `engine/crates/xerj-api/tests/bulk_accepts_put.rs` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+//! `PUT /_bulk` and `PUT /{index}/_bulk` write, as in Elasticsearch 8 (#3036).
-+//!
-+//! The rest-api-spec lists both POST and PUT for bulk, and the official Python
-+//! client 8.x sends PUT from `helpers.bulk`. XERJ registered POST only, so that
-+//! client got 405 Method Not Allowed and wrote nothing.
-+
-+use axum::body::Body;
-+use axum::http::{Request, StatusCode};
-+use serde_json::Value;
-+use tower::ServiceExt;
-+
-+async fn app() -> (axum::Router, tempfile::TempDir) {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let mut config = xerj_common::config::Config::default();
-+    config.server.data_dir = dir.path().to_string_lossy().into_owned();
-+    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
-+    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
-+    let state = xerj_api::state::AppState::new(config, engine, metrics);
-+    (xerj_api::router::build_es_compat_router(state), dir)
-+}
-+
-+async fn send(app: &axum::Router, method: &str, path: &str, body: &str) -> (StatusCode, Value) {
-+    let req = Request::builder()
-+        .method(method)
-+        .uri(path)
-+        .header("content-type", "application/x-ndjson")
-+        .body(Body::from(body.to_owned()))
-+        .expect("request");
-+    let response = app.clone().oneshot(req).await.expect("response");
-+    let status = response.status();
-+    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
-+        .await
-+        .expect("body");
-+    (
-+        status,
-+        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
-+    )
-+}
-+
-+async fn doc_exists(app: &axum::Router, index: &str, id: &str) -> bool {
-+    let (status, _) = send(app, "GET", &format!("/{index}/_doc/{id}"), "").await;
-+    status == StatusCode::OK
-+}
-+
-+fn assert_written(status: StatusCode, got: &Value) {
-+    assert_eq!(status, StatusCode::OK, "{got}");
-+    assert_eq!(got["errors"], false, "{got}");
-+}
-+
-+#[tokio::test]
-+async fn put_global_bulk_writes() {
-+    let (app, _dir) = app().await;
-+    let body = "{\"index\":{\"_index\":\"t\",\"_id\":\"1\"}}\n{\"f\":\"v\"}\n";
-+    let (status, got) = send(&app, "PUT", "/_bulk?refresh=true", body).await;
-+    assert_written(status, &got);
-+    assert!(doc_exists(&app, "t", "1").await);
-+}
-+
-+#[tokio::test]
-+async fn put_index_bulk_writes() {
-+    let (app, _dir) = app().await;
-+    let body = "{\"index\":{\"_id\":\"1\"}}\n{\"f\":\"v\"}\n";
-+    let (status, got) = send(&app, "PUT", "/t/_bulk?refresh=true", body).await;
-+    assert_written(status, &got);
-+    assert!(doc_exists(&app, "t", "1").await);
-+}
-+
-+#[tokio::test]
-+async fn post_bulk_still_writes() {
-+    let (app, _dir) = app().await;
-+    let body = "{\"index\":{\"_index\":\"t\",\"_id\":\"1\"}}\n{\"f\":\"v\"}\n";
-+    let (status, got) = send(&app, "POST", "/_bulk?refresh=true", body).await;
-+    assert_written(status, &got);
-+    let body = "{\"index\":{\"_id\":\"2\"}}\n{\"f\":\"v\"}\n";
-+    let (status, got) = send(&app, "POST", "/t/_bulk?refresh=true", body).await;
-+    assert_written(status, &got);
-+    assert!(doc_exists(&app, "t", "1").await);
-+    assert!(doc_exists(&app, "t", "2").await);
-+}
-```
 
 #### Recent Merged Pull Requests:
-- **PR #3053** (closed): Agent field report: Decoupled folder icon and collapse indicator colors from colorText in Colorful Folders (@RohitNahar-Offical)
-- **PR #3048** (closed): docs: add llms.txt index for AI agent discovery (addresses #3021) (@LBCron)
-- **PR #3039** (closed): Agent field report: xerj_search/xerj_def (MCP) over a re-indexed Rust Cloudflare Worker to trace the pending-list KV write path and find why free-tier usage exceeded 50% (@Galaxy-VN)
-- **PR #3038** (2026-11-07): site(home): lead the hero with the neurosymbolic model (@xerj-org)
-- **PR #3037** (2026-11-08): fix(es-compat): accept PUT on /_bulk and /{index}/_bulk (#3036) (@xerj-org)
-- **PR #3034** (2026-11-07): site: home page redesign (one CTA, use-case blocks, aligned layout) (@xerj-org)
+- **PR #3104** (closed): Agent field report: re-index sol-interview monorepo after XERJ data dir moved from C: to D: (@Galaxy-VN)
+- **PR #3103** (closed): Agent field report: rewriting a Node (node:http + node:sqlite) auth backend in Rust (axum + rusqlite bundled + scrypt), porting its selftest to a Rust HTTP integration test, and re-indexing the monorepo (@Galaxy-VN)
+- **PR #3099** (2026-11-11): hub: CATALOGUE menu opens a catalogue page, not llms.txt (@xerj-team)
+- **PR #3097** (2026-11-10): hub site: every contributor page description names the person (@xerj-team)
+- **PR #3096** (2026-11-10): hub home: contributors added today on the contributors card (@xerj-team)
+- **PR #3095** (2026-11-10): hub: author-approved contribution candidates (12216 repos) (@xerj-team)
 
 ---
 
@@ -1941,45 +1784,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge pull request #3037 from xerj-org/fix/3036-bulk-put
-
-**RULE**:
-When implementing operations in `engine/crates/xerj-api/src/authz.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `f73bbd95`: Merge pull request #3037 from xerj-org/fix/3036-bulk-put. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-api/src/authz.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-            ("PUT", "/_bulk", BodyShape::Bulk),
-            ("PUT", "/logs/_bulk", BodyShape::Bulk),
-        // PUT is the same door (#3036): the Python client sends it.
-        assert!(!check(&alice, Method::PUT, "/_bulk", forge));
-        assert!(!check(
-            &alice,
-            Method::PUT,
-            "/.xerj-memory-alice-edges/_bulk",
-            forge
-        ));
-        assert!(!check(&alice, Method::PUT, "/_bulk", destroy));
-        assert!(check(&alice, Method::PUT, "/_bulk", ok));
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f73bbd95` are properly handled with clean fallback behavior.

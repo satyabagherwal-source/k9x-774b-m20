@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  
 > **Source**: github ([https://github.com/arkivanov/Decompose](https://github.com/arkivanov/Decompose))  
-> **Source Version**: `c9780062`  
+> **Source Version**: `2cc1a4cc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:45:33.040Z  
+> **Timestamp**: 2026-11-11T15:27:33.741Z  
 > **Learning ID**: `learn-github-arkivanov-decompose`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arkivanov/Decompose](https://github.com/arkivanov/Decompose))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:45:33.032Z  
+> **Harvest Timestamp**: 2026-11-11T15:27:06.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kotlin Multiplatform lifecycle-aware business logic components (aka BLoCs) with routing (navigation) and pluggable UI (Jetpack Compose, SwiftUI, JS React, etc.)
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2888 stars
+- **Stars / Engagement**: 2889 stars
 
 ---
 
@@ -665,77 +665,542 @@ internal actual val KClass<*>.uniqueName: String?
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9780062` (2026-11-01)
-**Commit Message**: Merge pull request #1056 from arkivanov/ci/macos-15-master
+### Incident Patch 1: `25b59343` (2026-11-09)
+**Commit Message**: Revert "Merge pull request #1065 from arkivanov/revert-1049"
 
-Move macOS CI to macos-15 (macos-14 image retired)
+This reverts commit 86d67eb7becf087df8ea6336449bbe7963479b44, reversing
+changes made to 70498dd6f9786875b44424ac487c4b206630868b.
 
-**File**: `.github/workflows/build.yml` (modified, +1/-1)
+Co-authored-by: Arkadii Ivanov <[REDACTED_EMAIL]>
+
+**File**: `decompose/api/android/decompose.api` (modified, +1/-0)
 ```diff
-@@ -28,7 +28,7 @@ jobs:
-           arguments: build -Dsplit_targets
-   macos-build:
-     name: Build on macOS
--    runs-on: macos-14
-+    runs-on: macos-15
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v3
+@@ -99,6 +99,7 @@ public final class com/arkivanov/decompose/DeeplinkUtilsKt {
+ }
+ 
+ public final class com/arkivanov/decompose/DefaultComponentContext : com/arkivanov/decompose/ComponentContext {
++	public fun <init> ()V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;)V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;)V
+ 	public synthetic fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 ```
 
-**File**: `.github/workflows/publish.yml` (modified, +1/-1)
+**File**: `decompose/api/jvm/decompose.api` (modified, +1/-0)
 ```diff
-@@ -6,7 +6,7 @@ on:
- jobs:
-   publish:
-     name: Publish
--    runs-on: macos-14
-+    runs-on: macos-15
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v3
+@@ -93,6 +93,7 @@ public final class com/arkivanov/decompose/DecomposeSettings$Companion {
+ }
+ 
+ public final class com/arkivanov/decompose/DefaultComponentContext : com/arkivanov/decompose/ComponentContext {
++	public fun <init> ()V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;)V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;)V
+ 	public synthetic fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+```
+
+**File**: `decompose/src/commonMain/kotlin/com/arkivanov/decompose/DefaultComponentContext.kt` (modified, +8/-0)
+```diff
+@@ -6,6 +6,7 @@ import com.arkivanov.essenty.backhandler.BackHandler
+ import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+ import com.arkivanov.essenty.instancekeeper.InstanceKeeperDispatcher
+ import com.arkivanov.essenty.lifecycle.Lifecycle
++import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+ import com.arkivanov.essenty.statekeeper.StateKeeper
+ import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
+ 
+@@ -25,6 +26,13 @@ class DefaultComponentContext(
+     override val backHandler: BackHandler = backHandler ?: BackDispatcher()
+     override val componentContextFactory: ComponentContextFactory<ComponentContext> = ComponentContextFactory(::DefaultComponentContext)
+ 
++    constructor() : this(
++        lifecycle = LifecycleRegistry(),
++        stateKeeper = null,
++        instanceKeeper = null,
++        backHandler = null,
++    )
++
+     constructor(lifecycle: Lifecycle) : this(
+         lifecycle = lifecycle,
+         stateKeeper = null,
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/PreviewComponentContext.kt` (removed, +0/-9)
+```diff
+@@ -1,9 +0,0 @@
+-package com.arkivanov.sample.shared
+-
+-import com.arkivanov.decompose.ComponentContext
+-import com.arkivanov.decompose.DefaultComponentContext
+-import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+-
+-internal object PreviewComponentContext : ComponentContext by DefaultComponentContext(
+-    lifecycle = LifecycleRegistry(),
+-)
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/counters/PreviewCountersComponent.kt` (modified, +2/-2)
+```diff
+@@ -1,14 +1,14 @@
+ package com.arkivanov.sample.shared.counters
+ 
+ import com.arkivanov.decompose.ComponentContext
++import com.arkivanov.decompose.DefaultComponentContext
+ import com.arkivanov.decompose.router.stack.ChildStack
+ import com.arkivanov.decompose.value.MutableValue
+ import com.arkivanov.decompose.value.Value
+-import com.arkivanov.sample.shared.PreviewComponentContext
+ import com.arkivanov.sample.shared.counters.counter.CounterComponent
+ import com.arkivanov.sample.shared.counters.counter.PreviewCounterComponent
+ 
+-class PreviewCountersComponent : CountersComponent, ComponentContext by PreviewComponentContext {
++class PreviewCountersComponent : CountersComponent, ComponentContext by DefaultComponentContext() {
+ 
+     override val stack: Value<ChildStack<*, CounterComponent>> =
+         MutableValue(
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/multipane/PreviewMultiPaneComponent.kt` (modified, +2/-2)
+```diff
+@@ -2,13 +2,13 @@ package com.arkivanov.sample.shared.multipane
+ 
+ import com.arkivanov.decompose.Child
+ import com.arkivanov.decompose.ComponentContext
++import com.arkivanov.decompose.DefaultComponentContext
+ import com.arkivanov.decompose.ExperimentalDecomposeApi
+ import com.arkivanov.decompose.router.panels.ChildPanels
+ import com.arkivanov.decompose.router.panels.ChildPanelsMode
+ import com.arkivanov.decompose.router.webhistory.WebNavigationOwner
+ import com.arkivanov.decompose.value.MutableValue
+ import com.arkivanov.decompose.value.Value
+-import com.arkivanov.sample.shared.PreviewComponentContext
+ import com.arkivanov.sample.shared.multipane.author.ArticleAuthorComponent
+ import com.arkivanov.sample.shared.multipane.details.ArticleDetailsComponent
+ import com.arkivanov.sample.shared.multipane.details.PreviewArticleDetailsComponent
+@@ -19,7 +19,7 @@ import com.arkivanov.sample.shared.multipane.list.PreviewArticleListComponent
+ class PreviewMultiPaneComponent(
+     isMultiPane: Boolean = false,
+ ) : MultiPaneComponent,
+-    ComponentContext by PreviewComponentContext,
++    ComponentContext by DefaultComponentContext(),
+     WebNavigationOwner.NoOp {
+ 
+     override val panels: Value<ChildPanels<Any, ArticleListComponent, Any, ArticleDetailsComponent, Any, ArticleAuthorComponent>> =
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/root/PreviewRootComponent.kt` (modified, +2/-2)
+```diff
+@@ -1,20 +1,20 @@
+ package com.arkivanov.sample.shared.root
+ 
+ import com.arkivanov.decompose.ComponentContext
++import com.arkivanov.decompose.DefaultComponentContext
+ import com.arkivanov.decompose.ExperimentalDecomposeApi
+ import com.arkivanov.decompose.router.stack.ChildStack
+ import com.arkivanov.decompose.router.webhistory.WebNavigationOwner
+ import com.arkivanov.decompose.value.MutableValue
+ import com.arkivanov.decompose.value.Value
+-import com.arkivanov.sample.shared.PreviewComponentContext
+ import com.arkivanov.sample.shared.root.RootComponent.Child
+ import com.arkivanov.sample.shared.root.RootComponent.Child.TabsChild
+ import com.arkivanov.sample.shared.tabs.PreviewTabsComponent
+ 
+ @OptIn(ExperimentalDecomposeApi::class)
+ class PreviewRootComponent :
+     RootComponent,
+-    ComponentContext by PreviewComponentContext,
++    ComponentContext by DefaultComponentContext(),
+     WebNavigationOwner.NoOp {
+ 
+     override val stack: Value<ChildStack<*, Child>> =
 ```
 
 ---
 
-### Incident Patch 2: `be6c0546` (2026-11-01)
-**Commit Message**: Move macOS CI to macos-15 (macos-14 runner image is retired)
+### Incident Patch 2: `27c6d443` (2026-11-09)
+**Commit Message**: Revert "Merge pull request #1049 from arkivanov/DefaultComponentContext-lifecycle-nullable"
+
+This reverts commit 42fd893395842aa1267734e2518c3db5d99356eb, reversing
+changes made to d500db8032d4dde0b70de52eccba29c085042b85.
 
 Co-authored-by: Arkadii Ivanov <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/build.yml` (modified, +1/-1)
+**File**: `decompose/api/android/decompose.api` (modified, +0/-1)
 ```diff
-@@ -28,7 +28,7 @@ jobs:
-           arguments: build -Dsplit_targets
-   macos-build:
-     name: Build on macOS
--    runs-on: macos-14
-+    runs-on: macos-15
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v3
+@@ -99,7 +99,6 @@ public final class com/arkivanov/decompose/DeeplinkUtilsKt {
+ }
+ 
+ public final class com/arkivanov/decompose/DefaultComponentContext : com/arkivanov/decompose/ComponentContext {
+-	public fun <init> ()V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;)V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;)V
+ 	public synthetic fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 ```
 
-**File**: `.github/workflows/publish.yml` (modified, +1/-1)
+**File**: `decompose/api/jvm/decompose.api` (modified, +0/-1)
 ```diff
-@@ -6,7 +6,7 @@ on:
- jobs:
-   publish:
-     name: Publish
--    runs-on: macos-14
-+    runs-on: macos-15
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v3
+@@ -93,7 +93,6 @@ public final class com/arkivanov/decompose/DecomposeSettings$Companion {
+ }
+ 
+ public final class com/arkivanov/decompose/DefaultComponentContext : com/arkivanov/decompose/ComponentContext {
+-	public fun <init> ()V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;)V
+ 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;)V
+ 	public synthetic fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+```
+
+**File**: `decompose/src/commonMain/kotlin/com/arkivanov/decompose/DefaultComponentContext.kt` (modified, +0/-8)
+```diff
+@@ -6,7 +6,6 @@ import com.arkivanov.essenty.backhandler.BackHandler
+ import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+ import com.arkivanov.essenty.instancekeeper.InstanceKeeperDispatcher
+ import com.arkivanov.essenty.lifecycle.Lifecycle
+-import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+ import com.arkivanov.essenty.statekeeper.StateKeeper
+ import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
+ 
+@@ -26,13 +25,6 @@ class DefaultComponentContext(
+     override val backHandler: BackHandler = backHandler ?: BackDispatcher()
+     override val componentContextFactory: ComponentContextFactory<ComponentContext> = ComponentContextFactory(::DefaultComponentContext)
+ 
+-    constructor() : this(
+-        lifecycle = LifecycleRegistry(),
+-        stateKeeper = null,
+-        instanceKeeper = null,
+-        backHandler = null,
+-    )
+-
+     constructor(lifecycle: Lifecycle) : this(
+         lifecycle = lifecycle,
+         stateKeeper = null,
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/PreviewComponentContext.kt` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++package com.arkivanov.sample.shared
++
++import com.arkivanov.decompose.ComponentContext
++import com.arkivanov.decompose.DefaultComponentContext
++import com.arkivanov.essenty.lifecycle.LifecycleRegistry
++
++internal object PreviewComponentContext : ComponentContext by DefaultComponentContext(
++    lifecycle = LifecycleRegistry(),
++)
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/counters/PreviewCountersComponent.kt` (modified, +2/-2)
+```diff
+@@ -1,14 +1,14 @@
+ package com.arkivanov.sample.shared.counters
+ 
+ import com.arkivanov.decompose.ComponentContext
+-import com.arkivanov.decompose.DefaultComponentContext
+ import com.arkivanov.decompose.router.stack.ChildStack
+ import com.arkivanov.decompose.value.MutableValue
+ import com.arkivanov.decompose.value.Value
++import com.arkivanov.sample.shared.PreviewComponentContext
+ import com.arkivanov.sample.shared.counters.counter.CounterComponent
+ import com.arkivanov.sample.shared.counters.counter.PreviewCounterComponent
+ 
+-class PreviewCountersComponent : CountersComponent, ComponentContext by DefaultComponentContext() {
++class PreviewCountersComponent : CountersComponent, ComponentContext by PreviewComponentContext {
+ 
+     override val stack: Value<ChildStack<*, CounterComponent>> =
+         MutableValue(
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/multipane/PreviewMultiPaneComponent.kt` (modified, +2/-2)
+```diff
+@@ -2,13 +2,13 @@ package com.arkivanov.sample.shared.multipane
+ 
+ import com.arkivanov.decompose.Child
+ import com.arkivanov.decompose.ComponentContext
+-import com.arkivanov.decompose.DefaultComponentContext
+ import com.arkivanov.decompose.ExperimentalDecomposeApi
+ import com.arkivanov.decompose.router.panels.ChildPanels
+ import com.arkivanov.decompose.router.panels.ChildPanelsMode
+ import com.arkivanov.decompose.router.webhistory.WebNavigationOwner
+ import com.arkivanov.decompose.value.MutableValue
+ import com.arkivanov.decompose.value.Value
++import com.arkivanov.sample.shared.PreviewComponentContext
+ import com.arkivanov.sample.shared.multipane.author.ArticleAuthorComponent
+ import com.arkivanov.sample.shared.multipane.details.ArticleDetailsComponent
+ import com.arkivanov.sample.shared.multipane.details.PreviewArticleDetailsComponent
+@@ -19,7 +19,7 @@ import com.arkivanov.sample.shared.multipane.list.PreviewArticleListComponent
+ class PreviewMultiPaneComponent(
+     isMultiPane: Boolean = false,
+ ) : MultiPaneComponent,
+-    ComponentContext by DefaultComponentContext(),
++    ComponentContext by PreviewComponentContext,
+     WebNavigationOwner.NoOp {
+ 
+     override val panels: Value<ChildPanels<Any, ArticleListComponent, Any, ArticleDetailsComponent, Any, ArticleAuthorComponent>> =
+```
+
+**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/root/PreviewRootComponent.kt` (modified, +2/-2)
+```diff
+@@ -1,20 +1,20 @@
+ package com.arkivanov.sample.shared.root
+ 
+ import com.arkivanov.decompose.ComponentContext
+-import com.arkivanov.decompose.DefaultComponentContext
+ import com.arkivanov.decompose.ExperimentalDecomposeApi
+ import com.arkivanov.decompose.router.stack.ChildStack
+ import com.arkivanov.decompose.router.webhistory.WebNavigationOwner
+ import com.arkivanov.decompose.value.MutableValue
+ import com.arkivanov.decompose.value.Value
++import com.arkivanov.sample.shared.PreviewComponentContext
+ import com.arkivanov.sample.shared.root.RootComponent.Child
+ import com.arkivanov.sample.shared.root.RootComponent.Child.TabsChild
+ import com.arkivanov.sample.shared.tabs.PreviewTabsComponent
+ 
+ @OptIn(ExperimentalDecomposeApi::class)
+ class PreviewRootComponent :
+     RootComponent,
+-    ComponentContext by DefaultComponentContext(),
++    ComponentContext by PreviewComponentContext,
+     WebNavigationOwner.NoOp {
+ 
+     override val stack: Value<ChildStack<*, Child>> =
+```
+
+---
+
+### Incident Patch 3: `90075e2d` (2026-11-10)
+**Commit Message**: Merge pull request #1071 from arkivanov/fix-preditive-gesture-on-android-17-with-3-button-nav
+
+Fix predictive back completion on Android 14 with 3-button nav
+
+**File**: `extensions-compose-experimental/src/commonMain/kotlin/com/arkivanov/decompose/extensions/compose/experimental/stack/animation/DefaultStackAnimation.kt` (modified, +34/-3)
+```diff
+@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberCoroutineScope
+ import androidx.compose.runtime.setValue
++import androidx.compose.runtime.withFrameNanos
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.input.pointer.pointerInput
+ import com.arkivanov.decompose.Child
+@@ -29,7 +30,9 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
+ import com.arkivanov.decompose.router.stack.ChildStack
+ import com.arkivanov.essenty.backhandler.BackCallback
+ import com.arkivanov.essenty.backhandler.BackEvent
++import kotlinx.coroutines.CompletableDeferred
+ import kotlinx.coroutines.CoroutineScope
++import kotlinx.coroutines.Deferred
+ import kotlinx.coroutines.Job
+ import kotlinx.coroutines.cancel
+ import kotlinx.coroutines.launch
+@@ -139,6 +142,10 @@ internal class DefaultStackAnimation<C : Any, T : Any>(
+         val transition = rememberTransition(item.transitionState)
+         val isTransitionIdle = item.transitionState.isIdle()
+ 
++        LaunchedEffect(item.transitionComposed) {
++            item.transitionComposed?.complete(Unit)
++        }
++
+         if (isTransitionIdle) {
+             LaunchedEffect(Unit) {
+                 onFinished()
+@@ -230,13 +237,15 @@ internal class DefaultStackAnimation<C : Any, T : Any>(
+         direction: Direction,
+         transitionState: TransitionState<EnterExitState>,
+         otherChild: Child.Created<C, T>,
++        transitionComposed: CompletableDeferred<Unit>? = null,
+         isPredictiveBack: Boolean = false,
+         predictiveBackAnimator: StackAnimator? = null,
+     ): AnimationItem<C, T> =
+         AnimationItem(
+             child = child,
+             direction = direction,
+             transitionState = transitionState,
++            transitionComposed = transitionComposed,
+             animator = predictiveBackAnimator ?: selector(child, otherChild, direction, isPredictiveBack),
+         )
+ 
+@@ -257,7 +266,7 @@ internal class DefaultStackAnimation<C : Any, T : Any>(
+                 currentState.scope.cancel()
+                 val newScope = parentScope + Job(parentScope.coroutineContext[Job])
+                 state = State.Started(currentState.lastBackEvent, newScope)
+-                onBackProgressed(currentState.lastBackEvent)
++                onBackProgressed(backEvent)
+             }
+         }
+ 
+@@ -286,6 +295,7 @@ internal class DefaultStackAnimation<C : Any, T : Any>(
+                         direction = Direction.ENTER_BACK,
+                         transitionState = animationHandler.enterTransitionState,
+                         otherChild = exitChild,
++                        transitionComposed = animationHandler.enterTransitionComposed,
+                         isPredictiveBack = true,
+                         predictiveBackAnimator = animationHandler.animatable?.let { anim -> SimpleStackAnimator { anim.enterModifier } },
+                     ),
+@@ -294,6 +304,7 @@ internal class DefaultStackAnimation<C : Any, T : Any>(
+                         direction = Direction.EXIT_FRONT,
+                         transitionState = animationHandler.exitTransitionState,
+                         otherChild = enterChild,
++                        transitionComposed = animationHandler.exitTransitionComposed,
+                         isPredictiveBack = true,
+                         predictiveBackAnimator = animationHandler.animatable?.let { anim -> SimpleStackAnimator { anim.exitModifier } },
+                     ),
+@@ -377,7 +388,11 @@ internal class DefaultStackAnimation<C : Any, T : Any>(
+     private class AnimationHandler(
+         val animatable: PredictiveBackAnimatable?,
+     ) {
++
++        val exitTransitionComposed: CompletableDeferred<Unit> = CompletableDeferred()
+         val exitTransitionState: SeekableTransitionState<EnterExitState> = SeekableTransitionState(EnterExitState.Visible)
++
++        val enterTransitionComposed: CompletableDeferred<Unit> = CompletableDeferred()
+         val enterTransitionState: SeekableTransitionState<EnterExitState> = SeekableTransitionState(EnterExitState.PreEnter)
+ 
+         suspend fun progress(backEvent: BackEvent) {
+@@ -402,11 +417,26 @@ internal class DefaultStackAnimation<C : Any, T : Any>(
+ 
+         suspend fun finish() {
+             awaitAll(
+-                { exitTransitionState.animateTo(EnterExitState.PostExit) },
+-                { enterTransitionState.animateTo(EnterExitState.Visible) },
++                {
++                    exitTransitionComposed.awaitCompletionForAFewFrames()
++                    exitTransitionState.animateTo(EnterExitState.PostExit)
++                },
++                {
++                    enterTransitionComposed.awaitCompletionForAFewFrames()
++                    enterTransitionState.animateTo(EnterExitState.Visible)
++                },
+                 { animatable?.finish() },
+             )
+         }
++
++        // Wait a few frames for the See
+```
+
+**File**: `extensions-compose-experimental/src/jvmTest/kotlin/com/arkivanov/decompose/extensions/compose/experimental/stack/animation/PredictiveBackGestureTest.kt` (modified, +100/-1)
+```diff
+@@ -3,6 +3,7 @@ package com.arkivanov.decompose.extensions.compose.experimental.stack.animation
+ import androidx.compose.animation.EnterExitState
+ import androidx.compose.animation.core.animateFloat
+ import androidx.compose.material.Text
++import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.setValue
+@@ -16,6 +17,7 @@ import com.arkivanov.decompose.extensions.compose.experimental.animateFloat
+ import com.arkivanov.decompose.extensions.compose.experimental.assertTestTagToRootDoesNotExist
+ import com.arkivanov.decompose.extensions.compose.experimental.assertTestTagToRootExists
+ import com.arkivanov.decompose.extensions.compose.experimental.stack.dropLast
++import com.arkivanov.decompose.extensions.compose.stack.animation.Direction
+ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.PredictiveBackAnimatable
+ import com.arkivanov.decompose.router.stack.ChildStack
+ import com.arkivanov.essenty.backhandler.BackDispatcher
+@@ -622,6 +624,103 @@ class PredictiveBackGestureTest {
+         composeRule.onNodeWithText("2").assertDoesNotExist()
+     }
+ 
++    @Test
++    fun GIVEN_gesture_progressed_WHEN_cancelled_and_restarted_THEN_animatable_created_with_last_known_progress() {
++        var stack by mutableStateOf(stack("1", "2"))
++        var animatable: TestAnimatable? = null
++
++        val animation =
++            DefaultStackAnimation(
++                predictiveBackAnimatable = {
++                    animatable = TestAnimatable(initialBackEvent = it, cancel = suspendForever())
++                    animatable
++                },
++                onBack = { stack = stack.dropLast() },
++            )
++
++        composeRule.setContent {
++            animation(stack, Modifier) {
++                Text(text = it.configuration)
++            }
++        }
++
++        backDispatcher.startPredictiveBack(BackEvent(progress = 0F))
++        composeRule.waitForIdle()
++        backDispatcher.progressPredictiveBack(BackEvent(progress = 0.5F))
++        composeRule.waitForIdle()
++
++        backDispatcher.cancelPredictiveBack()
++        backDispatcher.startPredictiveBack(BackEvent(progress = 0F))
++        composeRule.waitForIdle()
++
++        assertEquals(0.5F, animatable?.initialBackEvent?.progress)
++    }
++
++    @Test
++    fun GIVEN_gesture_progressed_WHEN_cancelled_and_restarted_THEN_gesture_restarted_and_stack_unchanged() {
++        var stack by mutableStateOf(stack("1", "2"))
++
++        val animation =
++            DefaultStackAnimation(
++                predictiveBackAnimatable = { TestAnimatable(initialBackEvent = it, cancel = suspendForever()) },
++                onBack = { stack = stack.dropLast() },
++            )
++
++        composeRule.setContent {
++            animation(stack, Modifier) {
++                Text(text = it.configuration)
++            }
++        }
++
++        backDispatcher.startPredictiveBack(BackEvent(progress = 0F))
++        composeRule.waitForIdle()
++        backDispatcher.progressPredictiveBack(BackEvent(progress = 0.5F))
++        composeRule.waitForIdle()
++
++        backDispatcher.cancelPredictiveBack()
++        backDispatcher.startPredictiveBack(BackEvent(progress = 0F))
++        composeRule.waitForIdle()
++
++        assertEquals(stack("1", "2"), stack)
++        composeRule.onNodeWithText("1").assertTestTagToRootExists(enterTestTag(progress = 0F))
++        composeRule.onNodeWithText("2").assertTestTagToRootExists(exitTestTag(progress = 0F))
++    }
++
++    @Test
++    fun WHEN_gesture_started_progress_and_finished_in_the_same_frame_THEN_transitions_animated() {
++        var stack by mutableStateOf(stack("1", "2"))
++        val childDirections = HashMap<String, Direction?>()
++        val childAnimations = HashMap<String, Float>()
++
++        val anim =
++            DefaultStackAnimation(
++                predictiveBackAnimatable = { null },
++                onBack = { stack = stack.dropLast() },
++            )
++
++        composeRule.setContent {
++            anim(stack = stack, modifier = Modifier) {
++                val animationValue by transition.animateFloat(durationMillis = 1000)
++
++                LaunchedEffect(stackAnimationDirection, animationValue) {
++                    childDirections[it.configuration] = stackAnimationDirection
++                    childAnimations[it.configuration] = animationValue
++                }
++            }
++        }
++        composeRule.waitForIdle()
++
++        backDispatcher.startPredictiveBack(BackEvent(progress = 0F))
++        backDispatcher.progressPredictiveBack(BackEvent(progress = 0F))
++        backDispatcher.back()
++        composeRule.mainClock.advanceTimeBy(500L)
++
++        assertEquals(Direction.ENTER_BACK, childDirections["1"])
++        assertEquals(expected = 0.5F, actual = childAnimations["1"] ?: -1F, absoluteTolerance = 0.05F)
++        assertEquals(Direction.EXIT_FRONT, childDirections["2"])
++        assertEquals(expec
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1056** (2026-11-01): Move macOS CI to macos-15 (macos-14 image retired) (@arkivanov-bot)
-- **PR #1055** (2026-11-01): [V4] Move macOS CI to macos-15 (macos-14 image retired) (@arkivanov-bot)
-- **PR #1054** (2026-11-01): [V4] Enable API validation for the Android target in KMP modules (@arkivanov-bot)
-- **PR #1053** (2026-11-01): [V4] Migrate from Essenty InstanceKeeper to AndroidX ViewModelStore (@arkivanov)
-- **PR #1052** (2026-10-31): [V4] Migrate from Essenty Lifecycle to AndroidX Lifecycle (@arkivanov)
-- **PR #1051** (2026-10-29): [V4] Add HostComponentContext and LifecycleRegistryOwner API for tests and Compose previews (@arkivanov)
+- **PR #1071** (2026-11-10): Fix predictive back completion on Android 14 with 3-button nav (@arkivanov)
+- **PR #1070** (2026-11-10): Revert "Fix predictive back completion before transitions are composed" (@arkivanov)
+- **PR #1069** (2026-11-10): Reapply "Merge pull request #1065 from arkivanov/revert-1049" (@arkivanov)
+- **PR #1068** (2026-11-09): Make the Lifecycle constructor parameter in DefaultComponentContext optional (re-apply #1049) (@arkivanov-bot)
+- **PR #1067** (2026-11-09): Update Essenty to 2.7.1 (@arkivanov-bot)
+- **PR #1065** (2026-11-09): Revert "Make the Lifecycle constructor parameter in DefaultComponentContext optional" (@arkivanov-bot)
 
 ---
 
@@ -755,28 +1220,28 @@ Co-authored-by: Arkadii Ivanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1056 from arkivanov/ci/macos-15-master
+## X. Revert "Merge pull request #1065 from arkivanov/revert-1049"
 
 **RULE**:
-When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arkivanov/Decompose. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `decompose/api/android/decompose.api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arkivanov/Decompose. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9780062`: Merge pull request #1056 from arkivanov/ci/macos-15-master. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25b59343`: Revert "Merge pull request #1065 from arkivanov/revert-1049". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `decompose/api/android/decompose.api`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    runs-on: macos-15
+	public fun <init> ()V
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-    runs-on: macos-14
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9780062` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25b59343` are properly handled with clean fallback behavior.

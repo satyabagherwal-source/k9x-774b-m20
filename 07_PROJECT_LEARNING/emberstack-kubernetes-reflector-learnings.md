@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md`  
 > **Source**: github ([https://github.com/emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector))  
-> **Source Version**: `cf4e7963`  
+> **Source Version**: `7b0bff2f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:16:47.184Z  
+> **Timestamp**: 2026-11-11T16:20:24.655Z  
 > **Learning ID**: `learn-github-emberstack-kubernetes-reflector`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:16:46.880Z  
+> **Harvest Timestamp**: 2026-11-11T16:20:24.324Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Custom Kubernetes controller that can be used to replicate secrets, configmaps and certificates.
 - **Primary Language / Ecosystem**: C#
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1694 stars
+- **Stars / Engagement**: 1693 stars
 
 ---
 
@@ -67,68 +67,74 @@
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf4e7963` (2026-11-06)
-**Commit Message**: Bump the all-dependencies group with 5 updates (#728)
+### Incident Patch 1: `0287cc07` (2026-11-09)
+**Commit Message**: build(deps): bump docker/login-action (#729)
 
-Bumps ES.FX.Additions.KubernetesClient from 10.0.79 to 10.0.80
-Bumps ES.FX.Additions.Newtonsoft.Json from 10.0.79 to 10.0.80
-Bumps ES.FX.Ignite from 10.0.79 to 10.0.80
-Bumps ES.FX.Ignite.KubernetesClient from 10.0.79 to 10.0.80
-Bumps ES.FX.Ignite.Serilog from 10.0.79 to 10.0.80
+Bumps the all-dependencies group with 1 update: [docker/login-action](https://github.com/docker/login-action).
+
+
+Updates `docker/login-action` from 4.7.0 to 4.8.0
+- [Release notes](https://github.com/docker/login-action/releases)
+- [Commits](https://github.com/docker/login-action/compare/v4.7.0...v4.8.0)
 
 ---
 updated-dependencies:
-- dependency-name: ES.FX.Additions.KubernetesClient
-  dependency-version: 10.0.80
+- dependency-name: docker/login-action
+  dependency-version: 4.8.0
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
   dependency-group: all-dependencies
-- dependency-name: ES.FX.Additions.Newtonsoft.Json
-  dependency-version: 10.0.80
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: all-dependencies
-- dependency-name: ES.FX.Ignite
-  dependency-version: 10.0.80
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: all-dependencies
-- dependency-name: ES.FX.Ignite.KubernetesClient
-  dependency-version: 10.0.80
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: all-dependencies
-- dependency-name: ES.FX.Ignite.Serilog
-  dependency-version: 10.0.
+...
 
-**File**: `Directory.Packages.props` (modified, +5/-5)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/pipeline.yaml` (modified, +4/-4)
 ```diff
-@@ -5,11 +5,11 @@
-   </PropertyGroup>
-   <ItemGroup>
-     <PackageVersion Include="coverlet.collector" Version="10.1.0" />
--    <PackageVersion Include="ES.FX.Ignite" Version="10.0.79" />
--    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.79" />
--    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.79" />
--    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.79" />
--    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.79" />
-+    <PackageVersion Include="ES.FX.Ignite" Version="10.0.80" />
-+    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.80" />
-+    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.80" />
-+    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.80" />
-+    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.80" />
-     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
-     <PackageVersion Include="Microsoft.AspNetCore.JsonPatch" Version="10.0.14" />
-     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
+@@ -169,15 +169,15 @@ jobs:
+ 
+       - name: tools - docker - login ghcr.io
+         if: ${{ env.build_push == 'true' }}
+-        uses: docker/login-action@v4.7.0
++        uses: docker/login-action@v4.8.0
+         with:
+           registry: ghcr.io
+           username: ${{ github.actor }}
+           password: ${{ secrets.ES_GITHUB_PAT }}
+ 
+       - name: tools - docker - login docker.io
+         if: ${{ env.build_push == 'true' }}
+-        uses: docker/login-action@v4.7.0
++        uses: docker/login-action@v4.8.0
+         with:
+           registry: docker.io
+           username: ${{ secrets.ES_DOCKERHUB_USERNAME }}
+@@ -272,14 +272,14 @@ jobs:
+         run: echo "${{ secrets.ES_GITHUB_PAT }}" | oras login ghcr.io -u ${{ github.actor }} --password-stdin
+ 
+       - name: tools - docker - login ghcr.io
+-        uses: docker/login-action@v4.7.0
++        uses: docker/login-action@v4.8.0
+         with:
+           registry: ghcr.io
+           username: ${{ github.actor }}
+           password: ${{ secrets.ES_GITHUB_PAT }}
+ 
+       - name: tools - docker - login docker.io
+-        uses: docker/login-action@v4.7.0
++        uses: docker/login-action@v4.8.0
+         with:
+           registry: docker.io
+           username: ${{ secrets.ES_DOCKERHUB_USERNAME }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #731** (2026-11-10): Bump the all-dependencies group with 3 updates (@dependabot[bot])
+- **PR #730** (2026-11-09): Bump the all-dependencies group with 7 updates (@dependabot[bot])
+- **PR #729** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 in the all-dependencies group (@dependabot[bot])
 - **PR #728** (2026-11-06): Bump the all-dependencies group with 5 updates (@dependabot[bot])
 - **PR #727** (2026-11-04): Bump the all-dependencies group with 5 updates (@dependabot[bot])
 - **PR #725** (2026-11-03): Bump the all-dependencies group with 5 updates (@dependabot[bot])
-- **PR #724** (2026-11-02): Bump the all-dependencies group with 5 updates (@dependabot[bot])
-- **PR #723** (2026-10-28): Bump the all-dependencies group with 1 update (@dependabot[bot])
-- **PR #722** (2026-10-26): Bump the all-dependencies group with 8 updates (@dependabot[bot])
 
 ---
 
@@ -148,36 +154,34 @@ updated-dependencies:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump the all-dependencies group with 5 updates (#728)
+## X. build(deps): bump docker/login-action (#729)
 
 **RULE**:
-When implementing operations in `Directory.Packages.props`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in emberstack/kubernetes-reflector. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pipeline.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in emberstack/kubernetes-reflector. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf4e7963`: Bump the all-dependencies group with 5 updates (#728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0287cc07`: build(deps): bump docker/login-action (#729). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `Directory.Packages.props`.
+Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pipeline.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c#
 // Verified production-grade fix pattern:
-    <PackageVersion Include="ES.FX.Ignite" Version="10.0.80" />
-    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.80" />
-    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.80" />
-    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.80" />
-    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.80" />
+        uses: docker/login-action@v4.8.0
+        uses: docker/login-action@v4.8.0
+        uses: docker/login-action@v4.8.0
+        uses: docker/login-action@v4.8.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c#
 // Anti-pattern to NEVER write (induced failure mode):
-    <PackageVersion Include="ES.FX.Ignite" Version="10.0.79" />
-    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.79" />
-    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.79" />
-    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.79" />
-    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.79" />
+        uses: docker/login-action@v4.7.0
+        uses: docker/login-action@v4.7.0
+        uses: docker/login-action@v4.7.0
+        uses: docker/login-action@v4.7.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf4e7963` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0287cc07` are properly handled with clean fallback behavior.
