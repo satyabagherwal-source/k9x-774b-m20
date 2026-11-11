@@ -8871,3 +8871,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-conwayresearch-underdog-woof` | `https://huggingface.co/ConwayResearch/Underdog-Woof` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-11T07:08:07.263Z |
 | `learn-dom-d-170ae1cf` | `project://hf-cactus-compute-mirage` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | 2026-11-11T07:08:24.911Z |
 | `learn-dom-h-ff5be5ce` | `project://zoontek-react-native-permissions` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md` | 2026-11-11T07:08:45.496Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `150910f8` | Multi-dimensional audit evidence | 2026-11-11T07:27:49.603Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e91a85c4` | Multi-dimensional audit evidence | 2026-11-11T07:27:55.070Z |
+| `learn-dom-d-12383e4d` | `project://checkmarx-kics` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md` | 2026-11-11T07:28:14.638Z |
+| `learn-dom-d-06fc3249` | `project://t8y2-dbx` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md` | 2026-11-11T07:28:35.217Z |

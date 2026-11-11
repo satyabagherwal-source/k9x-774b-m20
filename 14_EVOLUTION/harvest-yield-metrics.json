@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T07:08:07.281Z",
-  "total_cycles_completed": 8726,
-  "total_learnings_persisted": 8726,
-  "total_rules_promoted": 8577,
+  "last_updated": "2026-11-11T07:27:55.076Z",
+  "total_cycles_completed": 8728,
+  "total_learnings_persisted": 8728,
+  "total_rules_promoted": 8579,
   "history": [
-    {
-      "timestamp": "2026-11-09T10:07:45.480Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T10:07:49.541Z",
-      "repository": "mattermost/mattermost",
-      "learningId": "learn-github-mattermost-mattermost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T10:07:57.079Z",
       "repository": "risingwavelabs/risingwave",
@@ -1403,6 +1389,20 @@
       "repository": "ConwayResearch/Underdog-Woof",
       "learningId": "learn-huggingface-conwayresearch-underdog-woof",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:27:49.609Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:27:55.076Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

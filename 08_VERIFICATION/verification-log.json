@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-H84I",
-    "timestamp": "2026-11-08T08:25:04.098Z",
-    "repository": "SwiftWebUI/SwiftWebUI",
-    "learningId": "learn-github-swiftwebui-swiftwebui",
-    "contentHash": "19aa7b3443e7851ca4fcaeee6bcd57b64ce93e8a457b4a324bf829b852beea55",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-C08O",
-    "timestamp": "2026-11-08T08:49:00.216Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "f59277d5c0d595c3f1a376767ff3bfd998cad714eb4f012bc58e5f17e77186b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-O0HJ",
     "timestamp": "2026-11-08T08:58:20.407Z",
     "repository": "BAAI/bge-small-en-v1.5",
@@ -7492,6 +7462,36 @@
     "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-R61R",
+    "timestamp": "2026-11-11T07:27:49.599Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-RA9N",
+    "timestamp": "2026-11-11T07:27:55.067Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

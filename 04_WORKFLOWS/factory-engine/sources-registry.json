@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T07:08:11.970Z",
-    "lastVerified": "2026-11-11T07:08:11.970Z",
+    "lastChecked": "2026-11-11T07:28:01.506Z",
+    "lastVerified": "2026-11-11T07:28:01.506Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,12 +253,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T06:13:40.642Z",
-    "lastVerified": "2026-11-11T06:13:40.642Z",
+    "lastChecked": "2026-11-11T07:27:41.686Z",
+    "lastVerified": "2026-11-11T07:27:41.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -267,7 +267,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "85dbb6b4"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1477,8 +1478,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:52:40.155Z",
-    "lastVerified": "2026-11-09T23:52:40.155Z",
+    "lastChecked": "2026-11-11T07:27:36.664Z",
+    "lastVerified": "2026-11-11T07:27:36.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -1577,14 +1578,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:46:47.371Z",
-    "lastVerified": "2026-11-09T01:46:47.371Z",
+    "lastChecked": "2026-11-11T07:27:43.553Z",
+    "lastVerified": "2026-11-11T07:27:43.553Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "1e978e9dc7a58da8c4e6dc54b5a0446d20d3188f89822303fde165fe7c3e5e88",
+    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6216,12 +6217,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "shoutem-ui": {
-    "name": "shoutem/ui",
+    "name": "ui",
     "officialUrl": "https://github.com/shoutem/ui",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T18:09:40.816Z",
-    "lastVerified": "2026-11-07T18:09:40.816Z",
+    "lastChecked": "2026-11-11T07:27:31.666Z",
+    "lastVerified": "2026-11-11T07:27:31.666Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shoutem-ui",
@@ -6230,7 +6231,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cfc3bc8a"
   },
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
@@ -6461,22 +6463,21 @@
     "lastVerified": "2026-11-07T18:42:23.330Z"
   },
   "checkmarx-kics": {
-    "name": "kics",
+    "name": "Checkmarx/kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-09T02:28:01.722Z",
-    "lastVerified": "2026-11-09T02:28:01.722Z",
+    "lastChecked": "2026-11-11T07:27:38.962Z",
+    "lastVerified": "2026-11-11T07:27:38.962Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
+    "contentHash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "434d3e0b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -8501,9 +8502,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-08T21:06:40.419Z",
+    "lastChecked": "2026-11-11T07:27:26.649Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-08T21:06:40.419Z"
+    "lastVerified": "2026-11-11T07:27:26.649Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",
@@ -10149,9 +10150,9 @@
   "logiover-website-seo-audit-crawler": {
     "name": "website-seo-audit-crawler",
     "officialUrl": "https://github.com/logiover/website-seo-audit-crawler",
-    "lastChecked": "2026-11-06T13:07:43.493Z",
+    "lastChecked": "2026-11-11T07:27:29.173Z",
     "revisionIdentifier": "9b22241e56",
-    "lastVerified": "2026-11-06T13:07:43.493Z"
+    "lastVerified": "2026-11-11T07:27:29.173Z"
   },
   "leetcode-mafia-cheetah": {
     "name": "cheetah",

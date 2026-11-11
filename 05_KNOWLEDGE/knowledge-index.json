@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T07:08:07.142Z",
+  "last_updated": "2026-11-11T07:27:54.956Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7339,14 +7339,19 @@
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "434d3e0b",
-      "content_hash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
+      "source_version": "150910f8",
+      "content_hash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ci(release): use a GitHub App token for release automation pushes (#8164)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "actions): deploy docs latest alias as copy instead of symlink (#8178)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7390,7 +7395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:21:45.413Z",
+      "verified_at": "2026-11-11T07:27:49.387Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60533,8 +60538,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "0d01dff9",
-      "content_hash": "1e978e9dc7a58da8c4e6dc54b5a0446d20d3188f89822303fde165fe7c3e5e88",
+      "source_version": "e91a85c4",
+      "content_hash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -60551,6 +60556,11 @@
         {
           "number": null,
           "title": "release): retry agent R2 uploads and resume driver sync",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "iotdb): honor unlimited query timeout across paged fetches",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -60649,7 +60659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:46:49.157Z",
+      "verified_at": "2026-11-11T07:27:54.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

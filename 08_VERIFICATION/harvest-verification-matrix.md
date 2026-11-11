@@ -8862,3 +8862,7 @@
 | `CYCLE-20261111-1TQZ` | `2026-11-11T07:08:07.259Z` | `ConwayResearch/Underdog-Woof` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b106b3ed...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:08:24.911Z` | `hf-cactus-compute-mirage` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-170AE1CF` [Domain D] | Yes (`be786757...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:08:45.496Z` | `zoontek-react-native-permissions` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-FF5BE5CE` [Domain H] | Yes (`639ecd42...`) |
+| `CYCLE-20261111-R61R` | `2026-11-11T07:27:49.599Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`49773ce1...`) |
+| `CYCLE-20261111-RA9N` | `2026-11-11T07:27:55.067Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`057c1881...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:28:14.638Z` | `checkmarx-kics` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-12383E4D` [Domain D] | Yes (`625bc82a...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:28:35.217Z` | `t8y2-dbx` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-06FC3249` [Domain D] | Yes (`3d456dc9...`) |

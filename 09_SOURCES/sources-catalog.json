@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "434d3e0b",
+    "sourceVersion": "150910f8",
     "license": "Apache-2.0",
-    "contentHash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
-    "lastHarvestedAt": "2026-11-07T03:21:45.547Z",
+    "contentHash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
+    "lastHarvestedAt": "2026-11-11T07:27:49.603Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "0d01dff9",
+    "sourceVersion": "e91a85c4",
     "license": "Apache-2.0",
-    "contentHash": "1e978e9dc7a58da8c4e6dc54b5a0446d20d3188f89822303fde165fe7c3e5e88",
-    "lastHarvestedAt": "2026-11-09T01:46:49.282Z",
+    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
+    "lastHarvestedAt": "2026-11-11T07:27:55.070Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
