@@ -8923,3 +8923,7 @@
 | `CYCLE-20261111-GH0K` | `2026-11-11T10:35:27.908Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2a5f232e...`) |
 | `CYCLE-20261111-QMZK` | `2026-11-11T10:43:22.208Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`55b7f9ea...`) |
 | `CYCLE-20261111-QWZ5` | `2026-11-11T10:43:35.153Z` | `CaviraOSS/LongMemory` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5d8720b6...`) |
+| `CYCLE-20261111-27ZR` | `2026-11-11T10:52:22.647Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`db757ba3...`) |
+| `CYCLE-20261111-2B3M` | `2026-11-11T10:52:26.674Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9159e517...`) |
+| `CYCLE-20261111-2E6J` | `2026-11-11T10:52:30.667Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ffc8c9a...`) |
+| `CYCLE-20261111-2FOL` | `2026-11-11T10:52:32.613Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`79f88559...`) |

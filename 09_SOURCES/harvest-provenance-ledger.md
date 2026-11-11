@@ -8932,3 +8932,7 @@ Every entry in this ledger must capture:
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `a8583bc5` | Multi-dimensional audit evidence | 2026-11-11T10:35:27.912Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `763ed8b0` | Multi-dimensional audit evidence | 2026-11-11T10:43:22.212Z |
 | `learn-github-caviraoss-longmemory` | `https://github.com/CaviraOSS/LongMemory` | `aec98ced` | Multi-dimensional audit evidence | 2026-11-11T10:43:35.158Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `6a841463` | Multi-dimensional audit evidence | 2026-11-11T10:52:22.657Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `0fb8b8f8` | Multi-dimensional audit evidence | 2026-11-11T10:52:26.678Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `81a399b8` | Multi-dimensional audit evidence | 2026-11-11T10:52:30.672Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `f7d204bd` | Multi-dimensional audit evidence | 2026-11-11T10:52:32.664Z |

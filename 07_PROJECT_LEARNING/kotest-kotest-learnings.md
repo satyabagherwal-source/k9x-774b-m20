@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source**: github ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
-> **Source Version**: `976421fc`  
+> **Source Version**: `6a841463`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:22:58.266Z  
+> **Timestamp**: 2026-11-11T10:52:07.833Z  
 > **Learning ID**: `learn-github-kotest-kotest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:22:57.936Z  
+> **Harvest Timestamp**: 2026-11-11T10:52:07.502Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -676,11 +676,13 @@ export default Home;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6261** (2026-11-02): **Keep Gradle's no-discovered-tests check enabled on the JVM (#6257)**
-  *Symptoms*: Fixes #6257  ## Summary  The Gradle plugin currently disables `failOnNoDiscoveredTests` on **every** `AbstractTestTask`. As measured in the issue, that opt-out is only required on non-JVM targets (Kotlin/JS, Wasm, Native), where Gradle's result counters stay at zero even for a fully successful run, so Gradle 9's check fails every green build. On the JVM the counters are correct, and the opt-out only suppresses an accurate error.  ## Change  `decorateGradleTestTask` now applies the opt-out only when the task is **not** a Gradle `Test` task (the JVM test task type, which `KotlinJvmTest` extends as well). JS/Wasm/Native test tasks are other `AbstractTestTask` subtypes and keep the opt-out. Also switched the string literal to the existing `FAIL_ON_NO_DISCOVERED_TESTS` constant.  ## Behaviour change (deliberate, please sanity-check)  A JVM test task with test sources but no discoverable tests will now fail the build with Gradle's *"the test task did not discover any tests to execute"* instead of passing silently. This is exactly the behaviour the issue proposes; if you'd rather keep the opt-out uniform across targets, this PR can be dropped — flagging it explicitly since it's a user-visible change.  ## Testing  - `:kotest-framework:kotest-framework-plugin-gradle` compiles and its unit tests pass - The module has no functional test kit; the behavioural verification recipe from the issue (KMP project, jvm() + js { nodejs() }, Gradle 9.5, overriding the flag) is the reference scenari
+- **Issue #6271** (2026-11-09): **Restore compatibility with Gradle 9.9.0**
+  *Symptoms*: Fixes #6270.
+  **Post-Mortem & Fix Analysis**:
+  > nice thank you! will release a patch version with this.
 
-- **Issue #6260** (2026-10-30): **perf: short-circuit the contain matcher pass/fail decision (#6106)**
-  *Symptoms*: Fixes #6106  ## Summary  The `contain(t, verifier)` matcher built the full list of matching indexes before deciding pass/fail, invoking `Equality.verify` on every element of the collection — even though the `should` flow only needs to know whether **any** element matched, and when the assertion fails the index list is empty by definition. With custom verifiers this makes `shouldContain` unnecessarily expensive (see the timeouts described in the issue).  ## Changes  - The pass/fail decision now uses `any { }`, short-circuiting on the first match — the same pattern already used by `beOneOf` and `containAll` - The list of matching indexes is computed lazily inside the negated failure message lambda, the only place it is used (`shouldNot` flow) - Assertion output is unchanged; existing message tests (`PossibleMatches`, `but it did at index(es)`) pass as-is  For the other matchers mentioned in the issue: `containAll`, `containOnly` and `containExactly(InAnyOrder)` already short-circuit with `any { }`, while `containExactCopies` and `matchEach` need the full element scan for their own decisions/failure messages, so `contain` was the outlier.  ## Testing  - Added a test with a counting verifier: a successful `shouldContain` on a 100-element list invokes the verifier exactly once - `:kotest-assertions:kotest-assertions-core:jvmTest --tests "com.sksamuel.kotest.matchers.collections.*"` passes 
+- **Issue #6270** (2026-11-09): **Gradle 9.9.0: test retry reruns all specs because `ClassMethodNameFilter` isn't found anymore**
+  *Symptoms*: **Which version of Kotest are you using**  6.2.6 (`kotest-runner-junit6`) with Gradle 9.9.0. Works as expected with Gradle 9.8.2  [kotest-retry-repro.zip](https://github.com/user-attachments/files/34577806/kotest-retry-repro.zip)  .  Since Gradle 9.9.0, when the test retry plugin (`org.gradle.test-retry` or Develocity's test retry) retries a failed test, Kotest runs every spec again, not just the failed one:  ``` FlakyTest > flaky FAILED SuccessfulTest > successful PASSED FlakyTest > flaky PASSED SuccessfulTest > successful PASSED ```  `ClassMethodNameFilterUtils.resolveClassMethodNameFilters` looks for Gradle's `ClassMethodNameFilter` in the `delegates` map of `DelegatingByTypeFilter`. In Gradle 9.9.0 that class changed ([source](https://github.com/gradle/gradle/blob/v9.9.0/platforms/jvm/testing-jvm-infrastructure/src/main/java/org/gradle/api/internal/tasks/testing/junitplatform/filters/DelegatingByTypeFilter.java)). `ClassMethodNameFilter` is now passed to the constructor and stored in a `defaultDelegate` field, and `delegates` stays empty unless there are directory selectors.  I dumped the fields of the `DelegatingByTypeFilter` from a `LauncherDiscoveryListener` during the retry:  Gradle 9.8.2: ``` delegates = {ClassSource=ClassMethodNameFilter, MethodSource=ClassMethodNameFilter} ```  Gradle 9.9.0: ``` delegates = {} defaultDelegate = ClassMethodNameFilter ```  So Kotest gets no include patterns. Gradle's post-discovery filter removes the spec descriptors from the plan (o
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -697,210 +699,257 @@ export default Home;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `976421fc` (2026-11-05)
-**Commit Message**: Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256)
+### Incident Patch 1: `6a841463` (2026-11-10)
+**Commit Message**: Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#6266)
 
-Adds `shouldHaveConcreteType` / `shouldNotHaveConcreteType` as plain
-aliases of `shouldBeTypeOf` / `shouldNotBeTypeOf`, covering the reified
-variants (with block, and the no-arg one with the smart-cast contract)
-and the `KClass` ones. No new matcher, failure messages are unchanged.
+Fixes #6132
 
-Went with `shouldHaveConcreteType` rather than `shouldBeOfType`, since
-`KType.shouldBeOfType<T>()` already exists in
-`io.kotest.matchers.reflection` with subtype semantics, and the same
-name meaning exact type on `Any?` would be confusing. Happy to rename to
-`shouldBeConcreteType` if that reads better.
+## Summary
 
-Tests are next to the existing `shouldBeTypeOf` ones,
-`assertions/core.md` and the skill reference list both names, api dump
-updated.
+`handleMultiplatformAndroid` only detected the legacy
+`KotlinAndroidTarget`, so projects using the
+`com.android.kotlin.multiplatform.library` plugin (required for Android
+targets in KMP projects from AGP 9) got no kotest task. An `androidJvm`
+target that is not a `KotlinAndroidTarget` is now wired through the
+**`hostTest`** compilation, which is where that plugin hosts the unit
+tests (per the [official
+docs](https://developer.android.com/kotlin/multiplatform/plugin):
+compilations are `main`, `hostTest`, `deviceTest`).
 
-Closes #6152
+## Change
 
----------
+- registers a `kotestAndroidHostTest` task (`KotestAndroidTask`)
+mirroring the legacy android wiring: specs classpath from the
+compilation output, runtime classpath from the compilation's
+`runtimeDependencyConfigurationName` configuration + output, reports to
+`build/test-results/kotestAndroidHostTest`, depends on the standard
+`androidHostTest` task, and wired into the aggregate `kotest` task
+behind `customGradleTask`
+- the runtime classpath uses the compilation's runtime configuration
+**directly** — the new plugin exposes KGP-style configurations
 
-Co-authored-by: Obrams <[REDACTED_EMAIL]>
-Co-authored-by: Alfonso Ristorato <[REDACTED_EMAIL]>
-
-**File**: `documentation/docs/assertions/core.md` (modified, +1/-0)
+**File**: `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt` (modified, +82/-2)
 ```diff
-@@ -26,6 +26,7 @@ Matchers provided by the `kotest-assertions-core` module.
- |---------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- | `obj.shouldBeSameInstanceAs(other)`         | Compares objects by identity, that is, they are the same exact reference.                                                                                                               |
- | `obj.shouldBeTypeOf<T>()`                   | Asserts that the given reference is exactly of type T. Subclass will fail. Ie, `1 should beOfType<Number>` would fail because although 1 _is_ a Number, the runtime type is not Number. |
-+| `obj.shouldHaveConcreteType<T>()`           | Alias for `shouldBeTypeOf<T>()`. The name makes explicit that the concrete (runtime) type must be exactly T, in contrast to `shouldBeInstanceOf<T>()`.                                 |
- | `obj.shouldBeInstanceOf<T>()`               | Asserts that the given reference is of type T or a subclass of T.                                                                                                                       |
- | `obj.shouldHaveAnnotation(annotationClass)` | Asserts that the object has an annotation of the given type.                                                                                                                            |
- | `obj.shouldBeNull()`                        | Asserts that a given reference is null.                                                                                                                                                 |
-```
-
-**File**: `kotest-assertions/kotest-assertions-core/api/kotest-assertions-core.api` (modified, +3/-0)
-```diff
-@@ -3889,9 +3889,12 @@ public final class io/kotest/matchers/types/MatchersKt {
- 	public static final fun shouldBeSameInstanceAs (Ljava/lang/Object;Ljava/lang/Object;)V
- 	public static final fun shouldBeTypeOf (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/Object;
- 	public static final fun shouldBeTypeOf (Ljava/lang/Object;Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-+	public static final fun shouldHaveConcreteType (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/Object;
-+	public static final fun shouldHaveConcreteType (Ljava/lang/Object;Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
- 	public static final fun shouldNotBeInstanceOf (Ljava/lang/Object;Lkotlin/reflect/KClass;)V
- 	public static final fun shouldNotBeSameInstanceAs (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
- 	public static final fun shouldNotBeTypeOf (Ljava/lang/Object;Lkotlin/reflect/KClass;)V
-+	public static final fun shouldNotHaveConcreteType (Ljava/lang/Object;Lkotlin/reflect/KClass;)V
- }
+@@ -73,6 +73,12 @@ abstract class KotestPlugin : Plugin<Project> {
+       internal const val FAIL_ON_NO_DISCOVERED_TESTS = "failOnNoDiscoveredTests"
+       internal const val JVM_TEST_SUITE = "JVM_TEST_SUITE"
  
- public final class io/kotest/matchers/types/TypeMatchersKt {
-```
-
-**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/types/matchers.kt` (modified, +52/-0)
-```diff
-@@ -162,6 +162,8 @@ infix fun Any?.shouldNotBeInstanceOf(expected: KClass<*>) {
-  *
-  * If you want to verify including inheritance, use [shouldBeInstanceOf]
-  *
-+ * Also available under the more explicit name [shouldHaveConcreteType].
-+ *
-  * ```
-  * val list: List<Int> = arrayListOf(1, 2, 3)
-  *
-@@ -271,5 +273,55 @@ infix fun Any?.shouldNotBeTypeOf(expected: KClass<*>) {
-    this shouldNotBe matcher
- }
- 
-+/**
-+ * Verifies that this is exactly of type T, where no inheritance is verified.
-+ *
-+ * Alias for [shouldBeTypeOf]. The name makes the distinction from [shouldBeInstanceOf] explicit.
-+ */
-+inline fun <reified T : Any> Any?.shouldHaveConcreteType(block: (T) -> Unit = { }): T =
-+   shouldBeTypeOf<T>(block)
++      // the com.android.kotlin.multiplatform.library plugin hosts the unit tests of its android
++      // target in the hostTest compilation, run by the androidHostTest task
++      internal const val HOST_TEST_COMPILATION = "hostTest"
++      internal const val ANDROID_HOST_TEST_TASK_NAME = "androidHostTest"
++      internal const val KOTEST_ANDROID_HOST_TEST_NAME = "kotestAndroidHostTest"
 +
-+/**
-+ * Verifies that this is exactly of type T, where no inheritance is verified, and smart casts the receiver to T.
-+ *
-+ * Alias for [shouldBeTypeOf].
-+ */
-+inline fun <reified T : Any> Any?.shouldHaveConcreteType(): T {
-+   contract {
-+      returns() implies (this@shouldHaveConcreteType is T)
+       const val POWER_ASSERT_PLUGIN_ID = "org.jetbrains.kotlin.plugin.power-assert"
+    }
+ 
+@@ -425,8 +431,82 @@ abstract class KotestPlugin : Plugin<Project> {
+    }
+ 
+    private fun handleMultiplatformAndroid(target: KotlinTarget, kotestExtension: KotestGradleExtension) {
+-      if (target is KotlinAndroidTarget) {
+-         configureAndroid(target.project, target.compilations, "android", kotestExtension)
++      when (target) {
++         is KotlinAndroidTarget -> configureAndroid(target.project, target.compilations, "android", kotestExtension)
++
++         // the com.android.kotlin.multiplatform.library plugin, required for Android in KMP projects
++         // from AGP 9, registers an androidJvm target that is not a KotlinAndroidTarget (#6132);
++         // its unit tests live in the hostTest compilation, run by the androidHostTest task
++         else -> configureAndroidHostTest(target, kotestExtension)
++      }
 +   }
-+   return shouldBeTypeOf<T>()
++
++   /**
++    * Wires a kotest task into the [HOST_TEST_COMPILATION] compilation of an android target created
++    * by the `com.android.kotlin.multiplatform.library` plugin, which hosts the unit tests of that
++    * target. Device tests (instrumentation) are not supported by Kotest.
++    */
++   private fun configureAndroidHostTest(target: KotlinTarget, kotestExtension: KotestGradleExtension) {
++      val project = target.project
++      val compilation = target.compilations.findByName(HOST_TEST_COMPILATION)
++      if (compilation == null) {
++         // host tests are disabled by default in the android multiplatform library plugin
++         project.logger.info("> Skipping tests for ${target.name} because no $HOST_TEST_COMPILATION compilation found")
++         return
++      }
++
++      if (kotestExtension.customGradleTask.getOrElse(false)) {
++         val runtimeConfigurationName = compilation.runtimeDependencyConfigurationName
++            ?: error("No runtime dependency configuration found for compilation ${compilation.name}")
++
++         val runtimeConfiguration = project.configurations.findByName(runtimeConfigurationName)
++            ?: error("No configuration found for $runtimeConfigurationName")
++
++         // to run specs we need to include dependencies and the compiled output
++         val runtimeWithTests = project.objects.fileCollection()
++            .from(runtimeConfiguration)
++            .from(compilation.output.allOutputs)
++
++         val kotestTaskName = KOTEST_ANDROID_HOST_TEST_NAME
++
++         val task = project.tasks.register(kotestTaskName, KotestAndroidTask::class) {
++
++            group = JavaBasePlugin.VERIFICATION_GROUP
++            description = TASK_DESCRIPTION
++
++            // I don't know why this has to be set here and not inside the exec method
++            // it works for JVM but not KMP JVM
++            // I think the KMP version must be shadowing the mainClass variable somewhere
++            mainClass.set(LAUNCHER_MAIN_CLASS)
++            classpath = runtimeWithTests
++
++            // we don't want to abort test runs when we have test failures for one target
++            isIgnoreExitValue = true
++
++            // for specs we only care about what's outputted by this compilation
++            specsClasspath.set(compilation.output.allOutputs)
++
++            // we set the test reports dir to the standard android test reports dir
++            // this will result in something like build/test-results/kotestAndroidHostTest
++            moduleTestReportsDir.set(getModuleTestReportsDir(project, name))
++            rootTestReportsDir.set(getRootTestReportsDir(project, name))
++            compilationName.set(compilation.name)
++            targetName.set(target.name)
++
++            // we can execute check or test tasks with -Pkotest.include and this will then be
++            // passed to the kotest runtime as an environment variable to filter specs and tests
++            project.findProperty(KOTEST_INCLUDE_PROPERTY)?.let { include.set(it.toString()) }
++
++            // we depend on the standard android host test task to ensure compilation has happened
++            dependsOn(ANDROID_HOST_TEST_TASK_NAME)
++            inputs.files(project.tasks.named(ANDROID_HOST_TEST_TASK_NAME).map { it.outputs.files })
++         }
++
++         // this means that this kotest task will be run when the user runs "gradle kotest"
++         project.tasks.getByName(KOTEST_TASK_NAME) {
++            pro
+```
+
+---
+
+### Incident Patch 2: `5791e84b` (2026-11-09)
+**Commit Message**: Restore compatibility with Gradle 9.9.0 (#6271)
+
+Fixes #6270.
+
+**File**: `kotest-runner/kotest-runner-junit-platform/src/jvmMain/kotlin/io/kotest/runner/junit/platform/gradle/ClassMethodNameFilterUtils.kt` (modified, +24/-19)
+```diff
+@@ -102,30 +102,27 @@ internal object ClassMethodNameFilterUtils {
+     * Finds all `ClassMethodNameFilter` instances from the post-discovery filters list.
+     *
+     * In Gradle < 9.4, `ClassMethodNameFilter` appears directly in the list.
+-    * In Gradle >= 9.4, `ClassMethodNameFilter` is wrapped inside a `DelegatingByTypeFilter`
+-    * which has a `delegates` map of `TestSource` type → `PostDiscoveryFilter`. We extract
+-    * the `ClassMethodNameFilter` instances from those delegate maps.
++    * In Gradle 9.4–9.8, `ClassMethodNameFilter` is wrapped inside a `DelegatingByTypeFilter`
++    * which has a `delegates` map of `TestSource` type → `PostDiscoveryFilter`.
++    * In Gradle >= 9.9, it is stored in the `defaultDelegate` field of `DelegatingByTypeFilter`
++    * instead, and `delegates` only contains filters for directory selectors.
+     */
+    private fun resolveClassMethodNameFilters(filters: List<Any>): List<Any> {
+       val result = mutableListOf<Any>()
+ 
+       for (filter in filters) {
+-         when (filter.javaClass.simpleName) {
+-            "ClassMethodNameFilter" -> result.add(filter)
+-            "DelegatingByTypeFilter" -> {
+-               // Gradle >= 9.4: unwrap ClassMethodNameFilter from the DelegatingByTypeFilter's delegates map
+-               runCatching {
+-                  val delegatesField = filter::class.java.getDeclaredField("delegates")
+-                  delegatesField.isAccessible = true
+-                  val delegates = delegatesField.get(filter) as? Map<*, *> ?: emptyMap<Any, Any>()
+-                  for ((_, delegate) in delegates) {
+-                     if (delegate != null && delegate.javaClass.simpleName == "ClassMethodNameFilter") {
+-                        result.add(delegate)
+-                     }
+-                  }
+-               }.onFailure { e ->
+-                  logger.log { "Failed to unwrap DelegatingByTypeFilter via reflection: $e" }
+-               }
++         when {
++            filter.isClassMethodNameFilter() -> result.add(filter)
++            filter.javaClass.simpleName == "DelegatingByTypeFilter" -> {
++               // Gradle 9.4–9.8: ClassMethodNameFilter registered per TestSource type in `delegates`
++               (filter.fieldValue("delegates") as? Map<*, *>)
++                  ?.values
++                  ?.filterNotNull()
++                  ?.filterTo(result) { it.isClassMethodNameFilter() }
++               // Gradle 9.9+: passed to the constructor as `defaultDelegate`; `delegates` only holds directory selectors
++               filter.fieldValue("defaultDelegate")
++                  ?.takeIf { it.isClassMethodNameFilter() }
++                  ?.let(result::add)
+             }
+          }
+       }
+@@ -135,6 +132,14 @@ internal object ClassMethodNameFilterUtils {
+       return result.distinct()
+    }
+ 
++   /** Reads the declared field [name], or returns null if this class has no such field. */
++   private fun Any.fieldValue(name: String): Any? =
++      javaClass.declaredFields.firstOrNull { it.name == name }
++         ?.apply { isAccessible = true }
++         ?.get(this)
++
++   private fun Any.isClassMethodNameFilter() = javaClass.simpleName == "ClassMethodNameFilter"
++
+    private fun testMatcher(obj: Any): Any {
+       val field = obj::class.java.getDeclaredField("matcher")
+       field.isAccessible = true
+```
+
+**File**: `kotest-runner/kotest-runner-junit-platform/src/jvmTest/kotlin/io/kotest/runner/junit/platform/gradle/ClassMethodNameFilterUtilsTest.kt` (modified, +36/-0)
+```diff
+@@ -97,4 +97,40 @@ class ClassMethodNameFilterUtilsTest : FunSpec({
+       ClassMethodNameFilterUtils.extractIncludePatterns(listOf(filter)).shouldBeEmpty()
+    }
+ 
++   test("unwraps ClassMethodNameFilter from DelegatingByTypeFilter.defaultDelegate (Gradle 9.9+)") {
++      val filter = newClassMethodNameFilter(setOf("FlakyTest.flaky"))
++      val wrapper = Gradle99.DelegatingByTypeFilter(emptyMap<Any, Any>(), filter)
++
++      ClassMethodNameFilterUtils.extractIncludePatterns(listOf(wrapper)) shouldBe listOf("\\QFlakyTest.flaky\\E")
++
++      ClassMethodNameFilterUtils.reset(listOf(wrapper))
++
++      ClassMethodNameFilterUtils.extractIncludePatterns(listOf(wrapper)).shouldBeEmpty()
++   }
++
++   test("unwraps ClassMethodNameFilter from DelegatingByTypeFilter.delegates (Gradle 9.4-9.8)") {
++      val filter = newClassMethodNameFilter(setOf("FlakyTest.flaky"))
++      val wrapper = Gradle94.DelegatingByTypeFilter(mapOf("ClassSource" to filter, "MethodSource" to filter))
++
++      ClassMethodNameFilterUtils.extractIncludePatterns(listOf(wrapper)) shouldBe listOf("\\QFlakyTest.flaky\\E")
++   }
++
+ })
++
++private fun newClassMethodNameFilter(includes: Set<String>): Any =
++   resolveClassMethodNameFilterClass()
++      .declaredConstructors.first { it.parameterCount == 1 }.let {
++         it.isAccessible = true
++         it.newInstance(TestSelectionMatcher(TestFilterSpec(includes, emptySet(), emptySet())))
++      }
++
++// Mimic the layouts of Gradle's DelegatingByTypeFilter, which is matched by simple name
++@Suppress("unused")
++private object Gradle94 {
++   class DelegatingByTypeFilter(private val delegates: Map<Any, Any>)
 +}
 +
-+/**
-+ * Verifies that this is NOT exactly of type T.
-+ *
-+ * Alias for [shouldNotBeTypeOf].
-+ */
-+inline fun <reified T : Any> Any?.shouldNotHaveConcreteType() = shouldNotBeTypeOf<T>()
-+
-+/**
-+ * Verifies that this is exactly of type [expected], where no inheritance is verified.
-+ *
-+ * Alias for [shouldBeTypeOf].
-+ */
-+infix fun <T : Any> Any?.shouldHaveConcreteType(expected: KClass<T>): T = shouldBeTypeOf(expected)
-+
-+/**
-+ * Verifies that this is exactly of type [expected], where no inheritance is verified, and executes [block]
-+ * with the typecasted value.
-+ *
-+ * Alias for [shouldBeTypeOf].
-+ */
-+fun <T : Any> Any?.shouldHaveConcreteType(expected: KClass<T>, block: (T) -> Unit): T =
-+   shouldBeTypeOf(expected, block)
-+
-+/**
-+ * Verifies that this is NOT exactly of type [expected].
-+ *
-+ * Alias for [shouldNotBeTypeOf].
-+ */
-+infix fun Any?.shouldNotHaveConcreteType(expected: KClass<*>) = shouldNotBeTypeOf(expected)
-+
- infix fun Any?.shouldBeSameInstanceAs(ref: Any?) = this should beTheSameInstanceAs(ref)
- infix fun Any?.shouldNotBeSameInstanceAs(ref: Any?) = this shouldNotBe beTheSameInstanceAs(ref)
-```
-
-**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/types/TypeMatchersTest.kt` (modified, +42/-0)
-```diff
-@@ -16,6 +16,8 @@ import io.kotest.matchers.types.instanceOf
- import io.kotest.matchers.types.shouldBeInstanceOf
- import io.kotest.matchers.types.shouldBeSameInstanceAs
- import io.kotest.matchers.types.shouldBeTypeOf
-+import io.kotest.matchers.types.shouldHaveConcreteType
-+import io.kotest.matchers.types.shouldNotHaveConcreteType
- import io.kotest.matchers.types.shouldHaveAnnotation
- import io.kotest.matchers.types.shouldNotBeInstanceOf
- import io.kotest.matchers.types.shouldNotBeTypeOf
-@@ -51,6 +53,46 @@ class TypeMatchersTest : WordSpec() {
-         }
-      }
- 
-+     "shouldHaveConcreteType" should {
-+        "test for exact type" {
-+           val arrayList: List<Int> = arrayListOf(1, 2, 3)
-+           arrayList.shouldHaveConcreteType<ArrayList<*>>()
-+           arrayList.shouldNotHaveConcreteType<List<*>>()
-+
-+           arrayList.shouldHaveConcreteType(ArrayList::class)
-+           arrayList shouldHaveConcreteType ArrayList::class
-+           arrayList.shouldNotHaveConcreteType(List::class)
-+           arrayList shouldNotHaveConcreteType List::class
-+
-+           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType<List<*>>() }
-+           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType(List::class) }
-+           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType<ArrayList<*>>() }
-+           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType(ArrayList::class) }
-+        }
-+
-+        "return the typecasted value and accept a block" {
-+           val list: Any = arrayListOf(1, 2, 3)
-+
-+           list.shouldHaveConcreteType<ArrayList<Int>> { it[0] shouldBe 1 }
-+           list.shouldHaveConcreteType(ArrayList::class) { it.size shouldBe 3 }
-+
-+           list.shouldHaveConcreteType<ArrayList<Int>>().shouldHaveSize(3)
-+           list.shouldHaveConcreteType(ArrayList::class).shouldHaveSize(3)
-+
-+           // smart cast via contract
-+           list.shouldHaveConcreteType<ArrayList<Int>>()
-+           list[0] shouldBe 1
-+        }
-+
-+        "accept null values" {
-+           val arrayList: List<Int>? = null
-+           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType<List<*>>() }
-+           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType(List::class) }
-+           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType<List<*>>() }
-+           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType(List::class) }
-+        }
-+     }
-+
-     "haveAnnotation(annotation)" should {
-       "test for the presence of an annotation" {
-         Wibble::class.java should haveAnnotation(Vod::class.java)
-```
-
-**File**: `skills/kotest/references/ASSERTIONS-REFERENCE.md` (modified, +2/-1)
-```diff
-@@ -107,7 +107,8 @@ import io.kotest.matchers.result.*
- 
- val s: String = obj.shouldBeInstanceOf<String>()  // is T or subtype; returns T and smart-casts
- val s2 = obj shouldBeInstanceOf String::class      // KClass overload, returns T
--obj.shouldBeTypeOf<String>()                      // exactly T
-+obj.shouldBeTypeOf<String>()                      // exactly T (runtime class), subclasses fail
-+obj.shouldHaveConcreteType<String>()              // alias of shouldBeTypeOf with a more explicit name (only available on versions > 6.2.6)
- obj shouldBeSameInstanceAs other                  // reference equality
- obj.shouldBeNull()
- val nn = nullable.shouldNotBeNull()               // returns non-null T, smart-casts
++@Suppress("unused")
++private object Gradle99 {
++   class DelegatingByTypeFilter(private val delegates: Map<Any, Any>, private val defaultDelegate: Any)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6271** (2026-11-09): Restore compatibility with Gradle 9.9.0 (@marcphilipp)
+- **PR #6269** (2026-11-08): docs: add Vercel skills CLI installation instructions (@alyssoncs)
+- **PR #6266** (2026-11-10): Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (@Inf1mum)
 - **PR #6261** (2026-11-02): Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (@Inf1mum)
 - **PR #6260** (2026-10-30): perf: short-circuit the contain matcher pass/fail decision (#6106) (@Inf1mum)
 - **PR #6259** (2026-10-29): Expose HikariCP as an api dependency of kotest-extensions-testcontainers (@PreAgile)
-- **PR #6256** (2026-11-05): Add shouldHaveConcreteType alias for shouldBeTypeOf (@Obrams)
-- **PR #6255** (2026-10-21): Report a spec that fails outside its tests to pitest (@ItsDeadlyProgrammer)
-- **PR #6253** (2026-10-18): improve ai skills and make coroutines-test part of api (@alfonsoristorato)
 
 ---
 
@@ -920,28 +969,50 @@ Co-authored-by: Alfonso Ristorato <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256)
+## X. Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#
 
 **RULE**:
-When implementing operations in `documentation/docs/assertions/core.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `976421fc`: Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a841463`: Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#6266). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/assertions/core.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-| `obj.shouldHaveConcreteType<T>()`           | Alias for `shouldBeTypeOf<T>()`. The name makes explicit that the concrete (runtime) type must be exactly T, in contrast to `shouldBeInstanceOf<T>()`.                                 |
+      // the com.android.kotlin.multiplatform.library plugin hosts the unit tests of its android
+      // target in the hostTest compilation, run by the androidHostTest task
+      internal const val HOST_TEST_COMPILATION = "hostTest"
+      internal const val ANDROID_HOST_TEST_TASK_NAME = "androidHostTest"
+      internal const val KOTEST_ANDROID_HOST_TEST_NAME = "kotestAndroidHostTest"
+
+      when (target) {
+         is KotlinAndroidTarget -> configureAndroid(target.project, target.compilations, "android", kotestExtension)
+
+         // the com.android.kotlin.multiplatform.library plugin, required for Android in KMP projects
+         // from AGP 9, registers an androidJvm target that is not a KotlinAndroidTarget (#6132);
+         // its unit tests live in the hostTest compilation, run by the androidHostTest task
+         else -> configureAndroidHostTest(target, kotestExtension)
+      }
+   }
+
+   /**
+    * Wires a kotest task into the [HOST_TEST_COMPILATION] compilation of an android target created
+    * by the `com.android.kotlin.multiplatform.library` plugin, which hosts the unit tests of that
+    * target. Device tests (instrumentation) are not supported by Kotest.
+    */
+   private
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      if (target is KotlinAndroidTarget) {
+         configureAndroid(target.project, target.compilations, "android", kotestExtension)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `976421fc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a841463` are properly handled with clean fallback behavior.

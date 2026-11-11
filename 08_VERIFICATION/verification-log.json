@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-D4ZQ",
-    "timestamp": "2026-11-08T15:21:47.654Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "c62b2da6121903c735b64f13ab5f71820cec1387ca78465d5cc1a2bc4682c766",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-LEOJ",
-    "timestamp": "2026-11-08T15:28:13.459Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "10773ca168140b70ad473eef453b446af1c8c3a121d373ce23e0ebc1cf791179",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-LJ85",
-    "timestamp": "2026-11-08T15:28:19.349Z",
-    "repository": "ShiftHackZ/SDAI-KMP",
-    "learningId": "learn-github-shifthackz-sdai-kmp",
-    "contentHash": "2468b0562564b2b6df22c66148ebbd5c8ac9f4bf694b242261cba725187f42ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-LKPP",
-    "timestamp": "2026-11-08T15:28:21.277Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "10512f9a14a239e8ecb4b06bc857260e493de51709ec29c69765be1a7d7a3799",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-LLRI",
     "timestamp": "2026-11-08T15:28:22.638Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7430,66 @@
     "repository": "CaviraOSS/LongMemory",
     "learningId": "learn-github-caviraoss-longmemory",
     "contentHash": "5d8720b6b6b7f59c92ce48711128c77972e5ad34a5e9efc67e3e70abd6b03fb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-27ZR",
+    "timestamp": "2026-11-11T10:52:22.647Z",
+    "repository": "kotest/kotest",
+    "learningId": "learn-github-kotest-kotest",
+    "contentHash": "db757ba36434e5cbb78f5cc17611a47a03aea2352085f31e9a27b9a93365f3e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-2B3M",
+    "timestamp": "2026-11-11T10:52:26.674Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-2E6J",
+    "timestamp": "2026-11-11T10:52:30.667Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-2FOL",
+    "timestamp": "2026-11-11T10:52:32.613Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

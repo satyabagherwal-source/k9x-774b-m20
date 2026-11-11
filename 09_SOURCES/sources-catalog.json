@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "48f04e5a",
+    "sourceVersion": "81a399b8",
     "license": "MIT",
-    "contentHash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
-    "lastHarvestedAt": "2026-11-09T21:05:59.391Z",
+    "contentHash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
+    "lastHarvestedAt": "2026-11-11T10:52:30.672Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "31875da1",
+    "sourceVersion": "f7d204bd",
     "license": "Apache-2.0",
-    "contentHash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
-    "lastHarvestedAt": "2026-11-05T14:22:52.692Z",
+    "contentHash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
+    "lastHarvestedAt": "2026-11-11T10:52:32.664Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "90d45251",
+    "sourceVersion": "0fb8b8f8",
     "license": "MPL-2.0",
-    "contentHash": "6038654eb3b2f2b78ed5ebb41df5f182fa823b77329ae27af5766f1980f6c088",
-    "lastHarvestedAt": "2026-11-07T05:37:05.678Z",
+    "contentHash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
+    "lastHarvestedAt": "2026-11-11T10:52:26.678Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "976421fc",
+    "sourceVersion": "6a841463",
     "license": "Apache-2.0",
-    "contentHash": "7804969aa1cae232d67b79dbca0ab81fd07a975ae2df58e8f7607fd5d966226d",
-    "lastHarvestedAt": "2026-11-07T20:22:59.843Z",
+    "contentHash": "db757ba36434e5cbb78f5cc17611a47a03aea2352085f31e9a27b9a93365f3e4",
+    "lastHarvestedAt": "2026-11-11T10:52:22.657Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:43:41.585Z",
+  "last_updated": "2026-11-11T10:52:42.162Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4675,6 +4675,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8EAC7D-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-F72364",
+      "directive_title": "Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kotest-kotest",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F72364-support-com-android-kotlin-multiplatform.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AAF4EC",
+      "directive_title": "Update dependencies to fix high severity security issues (#4828)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "opentofu-opentofu",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AAF4EC-update-dependencies-to-fix-high-severity.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-A2AA91",
+      "directive_title": "deps-dev): Update pydantic requirement (#4558)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-agent-governance-toolkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A2AA91-deps-dev-update-pydantic-requirement-455.md",
       "staged_date": "2026-11-11"
     }
   ]

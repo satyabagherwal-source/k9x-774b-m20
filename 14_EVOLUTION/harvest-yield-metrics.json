@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:43:35.164Z",
-  "total_cycles_completed": 8771,
-  "total_learnings_persisted": 8771,
-  "total_rules_promoted": 8635,
+  "last_updated": "2026-11-11T10:52:32.753Z",
+  "total_cycles_completed": 8775,
+  "total_learnings_persisted": 8775,
+  "total_rules_promoted": 8639,
   "history": [
-    {
-      "timestamp": "2026-11-09T14:05:33.559Z",
-      "repository": "vllm-sr/d3",
-      "learningId": "learn-huggingface-vllm-sr-d3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T14:18:04.457Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T14:18:11.101Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T14:35:38.440Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T14:35:41.283Z",
       "repository": "black-forest-labs/flux-3-image-klein",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-11T10:43:35.164Z",
       "repository": "CaviraOSS/LongMemory",
       "learningId": "learn-github-caviraoss-longmemory",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:52:22.704Z",
+      "repository": "kotest/kotest",
+      "learningId": "learn-github-kotest-kotest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:52:26.686Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:52:30.681Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:52:32.753Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

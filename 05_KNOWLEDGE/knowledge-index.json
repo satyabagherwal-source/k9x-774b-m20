@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T10:43:35.004Z",
+  "last_updated": "2026-11-11T10:52:32.480Z",
   "total_verified_learnings": 1254,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9326,11 +9326,16 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "31875da1",
-      "content_hash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
+      "source_version": "f7d204bd",
+      "content_hash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add release note entries for released security fixes",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1706,
           "title": "Disable optimizer_reorder_nested_loop_join rule by default",
@@ -9402,7 +9407,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:22:52.577Z",
+      "verified_at": "2026-11-11T10:52:32.441Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39401,14 +39406,19 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "976421fc",
-      "content_hash": "7804969aa1cae232d67b79dbca0ab81fd07a975ae2df58e8f7607fd5d966226d",
+      "source_version": "6a841463",
+      "content_hash": "db757ba36434e5cbb78f5cc17611a47a03aea2352085f31e9a27b9a93365f3e4",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39437,7 +39447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:22:59.709Z",
+      "verified_at": "2026-11-11T10:52:22.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44182,8 +44192,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "48f04e5a",
-      "content_hash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
+      "source_version": "81a399b8",
+      "content_hash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -44205,6 +44215,11 @@
         {
           "number": null,
           "title": "agent-os): reject max_attempts below 1 and negative backoff in retry (#4492)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps-dev): Update pydantic requirement (#4558)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44338,7 +44353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T21:05:59.311Z",
+      "verified_at": "2026-11-11T10:52:30.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50298,8 +50313,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "90d45251",
-      "content_hash": "6038654eb3b2f2b78ed5ebb41df5f182fa823b77329ae27af5766f1980f6c088",
+      "source_version": "0fb8b8f8",
+      "content_hash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -50311,6 +50326,11 @@
         {
           "number": null,
           "title": "symbol libraries in plan snapshot",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update dependencies to fix high severity security issues (#4828)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50384,7 +50404,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:37:05.549Z",
+      "verified_at": "2026-11-11T10:52:26.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

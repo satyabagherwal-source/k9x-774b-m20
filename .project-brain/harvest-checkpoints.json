@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T10:43:35.169Z",
+  "last_updated": "2026-11-11T10:52:32.771Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
-      "verified_at": "2026-11-09T21:05:59.407Z",
+      "content_hash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
+      "verified_at": "2026-11-11T10:52:30.685Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T21:05:59.407Z"
+      "last_updated": "2026-11-11T10:52:30.685Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
-      "verified_at": "2026-11-05T14:22:52.710Z",
+      "content_hash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
+      "verified_at": "2026-11-11T10:52:32.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:22:52.710Z"
+      "last_updated": "2026-11-11T10:52:32.770Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "6038654eb3b2f2b78ed5ebb41df5f182fa823b77329ae27af5766f1980f6c088",
-      "verified_at": "2026-11-07T05:37:05.687Z",
+      "content_hash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
+      "verified_at": "2026-11-11T10:52:26.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:37:05.687Z"
+      "last_updated": "2026-11-11T10:52:26.691Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",
@@ -10236,14 +10236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kotest-kotest",
-      "content_hash": "7804969aa1cae232d67b79dbca0ab81fd07a975ae2df58e8f7607fd5d966226d",
-      "verified_at": "2026-11-07T20:22:59.859Z",
+      "content_hash": "db757ba36434e5cbb78f5cc17611a47a03aea2352085f31e9a27b9a93365f3e4",
+      "verified_at": "2026-11-11T10:52:22.715Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:22:59.859Z"
+      "last_updated": "2026-11-11T10:52:22.715Z"
     },
     "projectcontour/contour": {
       "repository": "projectcontour/contour",

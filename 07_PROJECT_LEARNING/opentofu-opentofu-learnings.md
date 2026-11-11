@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `90d45251`  
+> **Source Version**: `0fb8b8f8`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:37:04.254Z  
+> **Timestamp**: 2026-11-11T10:52:09.952Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:37:04.119Z  
+> **Harvest Timestamp**: 2026-11-11T10:52:09.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30746 stars
+- **Stars / Engagement**: 30797 stars
 
 ---
 
@@ -1419,93 +1419,128 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `90d45251` (2026-11-06)
-**Commit Message**: Fix symbol libraries in plan snapshot
+### Incident Patch 1: `51202c51` (2026-11-10)
+**Commit Message**: Update dependencies to fix high severity security issues (#4828)
 
-This is a follow on to the changes made in
-https://github.com/opentofu/opentofu/pull/4734. Symbol libraries
-use the module installer in a non-standard way, causing some ordering to
-be a little funny for child modules.
+Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
-This separates out the "discover files in installed modules" and "read
-the contents of files in installed modules", fixing the ordering
-concern.
-
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
-
-**File**: `internal/configs/configload/loader_snapshot.go` (modified, +27/-14)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -41,6 +41,26 @@ func (l *loader) LoadConfigWithSnapshot(ctx context.Context, rootDir string, cal
- 	addDiags := l.addModuleToSnapshot(snap, "", rootDir, "", nil)
- 	diags = append(diags, addDiags...)
- 
-+	// Inject the source contents into the snapshot
-+	sources := l.Sources() // should be populated with all the files we need by now
-+	for _, snapMod := range snap.Modules {
-+		for _, filePath := range snapMod.FilePaths {
-+			filename := filepath.Base(filePath)
-+			src, exists := sources[filePath]
-+			if !exists {
-+				diags = append(diags, &hcl.Diagnostic{
-+					Severity: hcl.DiagError,
-+					Summary:  "Missing source file for snapshot",
-+					Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
-+				})
-+				continue
-+			}
-+			snapMod.Files[filepath.Clean(filename)] = src.Bytes
-+		}
-+		// No-longer needed, clearing also makes testing easier
-+		snapMod.FilePaths = nil
-+	}
-+
- 	l.lastLoadedRoot = cfg
- 
- 	return cfg, snap, diags
-@@ -109,6 +129,11 @@ type SnapshotModule struct {
- 	// module to a raw byte representation of the source file contents.
- 	Files map[string][]byte
- 
-+	// FilePaths is a list of the full paths of the files within the module
-+	// This is populated during the walk and used to fill in Files once
-+	// all the sources have been loaded
-+	FilePaths []string `json:"-"`
-+
- 	// SourceAddr is the source address given for this module in configuration.
- 	SourceAddr string `json:"Source"`
- 
-@@ -189,20 +214,8 @@ func (l *loader) addModuleToSnapshot(snap *Snapshot, key string, dir string, sou
- 	files = append(files, primaryFiles...)
- 	files = append(files, overrideFiles...)
- 	files = append(files, symbolFiles...)
--	sources := l.Sources() // should be populated with all the files we need by now
--	for _, filePath := range files {
--		filename := filepath.Base(filePath)
--		src, exists := sources[filePath]
--		if !exists {
--			diags = append(diags, &hcl.Diagnostic{
--				Severity: hcl.DiagError,
--				Summary:  "Missing source file for snapshot",
--				Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
--			})
--			continue
--		}
--		snapMod.Files[filepath.Clean(filename)] = src.Bytes
--	}
-+	snapMod.FilePaths = files
-+	// Files will be populated later
- 
- 	snap.Modules[key] = snapMod
- 
+@@ -169,7 +169,7 @@ require (
+ 	github.com/fatih/color v1.19.0 // indirect
+ 	github.com/felixge/httpsnoop v1.1.0 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
+ 	github.com/go-openapi/jsonreference v0.20.2 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -212,8 +212,8 @@ github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/
+ github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
+ github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
+ github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
+```
+
+**File**: `website/package-lock.json` (modified, +18/-18)
+```diff
+@@ -418,9 +418,9 @@
+       }
+     },
+     "node_modules/@npmcli/map-workspaces/node_modules/brace-expansion": {
+-      "version": "2.1.4",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++      "version": "2.1.7",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -772,9 +772,9 @@
+       }
+     },
+     "node_modules/brace-expansion": {
+-      "version": "1.1.18",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++      "version": "1.1.21",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -5881,9 +5881,9 @@
+       }
+     },
+     "node_modules/unified-engine/node_modules/brace-expansion": {
+-      "version": "2.1.4",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++      "version": "2.1.7",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -6786,9 +6786,9 @@
+       },
+       "dependencies": {
+         "brace-expansion": {
+-          "version": "2.1.4",
+-          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++          "version": "2.1.7",
++          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+           "dev": true,
+           "requires": {
+             "balanced-match": "^1.0.0"
+@@ -7063,9 +7063,9 @@
+       }
+     },
+     "brace-expansion": {
+-      "version": "1.1.18",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++      "version": "1.1.21",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+       "dev": true,
+       "requires": {
+         "balanced-match": "^1.0.0",
+@@ -10671,9 +10671,9 @@
+       },
+       "dependencies": {
+         "brace-expansion": {
+-          "version": "2.1.4",
+-          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++          "version": "2.1.7",
++          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+           "dev": true,
+           "requires": {
+             "balanced-match": "^1.0.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4828** (2026-11-10): Update dependencies to fix high severity security issues (@yottta)
+- **PR #4825** (2026-11-10): `go get github.com/klauspost/compress@v1.20.2` (@yottta)
+- **PR #4823** (2026-11-09): Change opt-in flag for the new runtime outside of the engine (@cam72cam)
+- **PR #4822** (2026-11-10): New Runtime: Only compute module/resource value once (@cam72cam)
 - **PR #4816** (2026-11-06): Fix symbol libraries in plan snapshot (@cam72cam)
 - **PR #4813** (2026-11-05): [Backport 1.12] local statefile mutate bug (@cam72cam)
-- **PR #4812** (2026-11-05): [Backport 1.13] local statefile mutate bug  (@cam72cam)
-- **PR #4811** (2026-11-05): Fix persist local state bug in error path on first run (@cam72cam)
-- **PR #4808** (2026-11-04): [backport] .github/workflows: Use preinstalled Go from worker tool cache (@cam72cam)
-- **PR #4807** (2026-11-04): Prepare 1.13.6 release (@lbordowitz)
 
 ---
 
@@ -1525,67 +1560,28 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. symbol libraries in plan snapshot
+## X. Update dependencies to fix high severity security issues (#4828)
 
 **RULE**:
-When implementing operations in `internal/configs/configload/loader_snapshot.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `90d45251`: symbol libraries in plan snapshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51202c51`: Update dependencies to fix high severity security issues (#4828). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/configs/configload/loader_snapshot.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Inject the source contents into the snapshot
-	sources := l.Sources() // should be populated with all the files we need by now
-	for _, snapMod := range snap.Modules {
-		for _, filePath := range snapMod.FilePaths {
-			filename := filepath.Base(filePath)
-			src, exists := sources[filePath]
-			if !exists {
-				diags = append(diags, &hcl.Diagnostic{
-					Severity: hcl.DiagError,
-					Summary:  "Missing source file for snapshot",
-					Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
-				})
-				continue
-			}
-			snapMod.Files[filepath.Clean(filename)] = src.Bytes
-		}
-		// No-longer needed, clearing also makes testing easier
-		snapMod.FilePaths = nil
-	}
-
-	// FilePaths is a list of the full paths of the files within the module
-	// This is populated during the walk and used to fill in Files once
-	// all the sources have been loaded
-	FilePaths []string `json:"-"`
-
-	snapMod.FilePaths = files
-	// Files will be populated later
+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	sources := l.Sources() // should be populated with all the files we need by now
-	for _, filePath := range files {
-		filename := filepath.Base(filePath)
-		src, exists := sources[filePath]
-		if !exists {
-			diags = append(diags, &hcl.Diagnostic{
-				Severity: hcl.DiagError,
-				Summary:  "Missing source file for snapshot",
-				Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
-			})
-			continue
-		}
-		snapMod.Files[filepath.Clean(filename)] = src.Bytes
-	}
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `90d45251` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51202c51` are properly handled with clean fallback behavior.

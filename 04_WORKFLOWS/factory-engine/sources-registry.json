@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T10:43:41.451Z",
-    "lastVerified": "2026-11-11T10:43:41.451Z",
+    "lastChecked": "2026-11-11T10:52:42.045Z",
+    "lastVerified": "2026-11-11T10:52:42.045Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T10:17:23.007Z",
-    "lastVerified": "2026-11-11T10:17:23.007Z",
+    "lastChecked": "2026-11-11T10:52:12.975Z",
+    "lastVerified": "2026-11-11T10:52:12.975Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -328,22 +328,21 @@
     "lastVerified": "2026-11-09T06:45:51.651Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T04:51:46.448Z",
-    "lastVerified": "2026-11-10T04:51:46.448Z",
+    "lastChecked": "2026-11-11T10:52:12.701Z",
+    "lastVerified": "2026-11-11T10:52:12.701Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
+    "contentHash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "48f04e5a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -2847,22 +2846,21 @@
     "revisionIdentifier": "81819b84"
   },
   "crate-crate": {
-    "name": "crate",
+    "name": "crate/crate",
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T04:20:15.846Z",
-    "lastVerified": "2026-11-09T04:20:15.846Z",
+    "lastChecked": "2026-11-11T10:52:14.422Z",
+    "lastVerified": "2026-11-11T10:52:14.422Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
-    "contentHash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
+    "contentHash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "31875da1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -7256,12 +7254,12 @@
     "officialUrl": "https://github.com/kotest/kotest",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-07T20:22:57.936Z",
-    "lastVerified": "2026-11-07T20:22:57.936Z",
+    "lastChecked": "2026-11-11T10:52:07.502Z",
+    "lastVerified": "2026-11-11T10:52:07.502Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kotest-kotest",
-    "contentHash": "7804969aa1cae232d67b79dbca0ab81fd07a975ae2df58e8f7607fd5d966226d",
+    "contentHash": "db757ba36434e5cbb78f5cc17611a47a03aea2352085f31e9a27b9a93365f3e4",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7486,22 +7484,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "opentofu-opentofu": {
-    "name": "opentofu",
+    "name": "opentofu/opentofu",
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T05:07:07.001Z",
-    "lastVerified": "2026-11-09T05:07:07.001Z",
+    "lastChecked": "2026-11-11T10:52:09.947Z",
+    "lastVerified": "2026-11-11T10:52:09.947Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "6038654eb3b2f2b78ed5ebb41df5f182fa823b77329ae27af5766f1980f6c088",
+    "contentHash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "90d45251"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "genkit-ai-genkit": {
     "name": "genkit-ai/genkit",
@@ -9184,9 +9181,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-11-08T23:50:31.668Z",
+    "lastChecked": "2026-11-11T10:51:57.902Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-11-08T23:50:31.668Z"
+    "lastVerified": "2026-11-11T10:51:57.902Z"
   },
   "hf-liquidai-lfm2.5-24b-a2b-gguf": {
     "name": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -10394,9 +10391,9 @@
   "adobe-structured-data-validator": {
     "name": "structured-data-validator",
     "officialUrl": "https://github.com/adobe/structured-data-validator",
-    "lastChecked": "2026-11-06T15:05:37.688Z",
+    "lastChecked": "2026-11-11T10:52:00.407Z",
     "revisionIdentifier": "66e7610a",
-    "lastVerified": "2026-11-06T15:05:37.688Z"
+    "lastVerified": "2026-11-11T10:52:00.407Z"
   },
   "rainbow-me-rainbow": {
     "name": "rainbow-me/rainbow",
