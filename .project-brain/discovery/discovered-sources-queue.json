@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T19:28:51.310Z",
+  "updated_at": "2026-11-11T19:46:38.257Z",
   "stats": {
-    "total_discovered": 236,
-    "approved_pending_harvest": 208,
+    "total_discovered": 255,
+    "approved_pending_harvest": 227,
     "harvested_count": 0,
     "rejected_count": 28,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 214,
+      "COMMUNITY_AND_EXPERT": 233,
       "OFFICIAL_DOCUMENTATION": 10,
       "STANDARDS_AND_SPECIFICATIONS": 11,
       "ENGINEERING_BLOGS": 1
@@ -5011,6 +5011,424 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
         "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-2A7F0FDDD2DA": {
+      "id": "SRC-2A7F0FDDD2DA",
+      "url": "https://github.com/1jehuang/jcode",
+      "title": "https://github.com/1jehuang/jcode",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.209Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
+        "fileName": "1jehuang-jcode-learnings.md"
+      }
+    },
+    "SRC-DCACB1CCF428": {
+      "id": "SRC-DCACB1CCF428",
+      "url": "https://github.com/mrkai77/Loop",
+      "title": "https://github.com/mrkai77/Loop",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-C548229FB593": {
+      "id": "SRC-C548229FB593",
+      "url": "https://github.com/sponsors/MrKai77",
+      "title": "https://github.com/sponsors/MrKai77",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.220Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-7DD4B9580BFA": {
+      "id": "SRC-7DD4B9580BFA",
+      "url": "https://github.com/user-attachments/assets/6ea7eef1-87b4-4d8a-9f52-9dae8f3317ec",
+      "title": "https://github.com/user-attachments/assets/6ea7eef1-87b4-4d8a-9f52-9dae8f3317ec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-2585755FED15": {
+      "id": "SRC-2585755FED15",
+      "url": "https://github.com/typedb/typedb",
+      "title": "https://github.com/typedb/typedb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.229Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-F13CDCC5E4D6": {
+      "id": "SRC-F13CDCC5E4D6",
+      "url": "https://mozilla.org/MPL/2.0",
+      "title": "https://mozilla.org/MPL/2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-081A5BE62977": {
+      "id": "SRC-081A5BE62977",
+      "url": "https://tokio.rs/tokio/topics/shutdown",
+      "title": "https://tokio.rs/tokio/topics/shutdown",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-AAC996B2AB74": {
+      "id": "SRC-AAC996B2AB74",
+      "url": "https://github.com/typedb/typeql",
+      "title": "https://github.com/typedb/typeql",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-69689B2E0166": {
+      "id": "SRC-69689B2E0166",
+      "url": "https://github.com/typedb/typedb-protocol",
+      "title": "https://github.com/typedb/typedb-protocol",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-A62BC6444663": {
+      "id": "SRC-A62BC6444663",
+      "url": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.14.0/typedb-console-linux-arm64-3.14.0.tar.gz",
+      "title": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.14.0/typedb-console-linux-arm64-3.14.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.239Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-950230A99BC6": {
+      "id": "SRC-950230A99BC6",
+      "url": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz",
+      "title": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-4BA693850051": {
+      "id": "SRC-4BA693850051",
+      "url": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.14.0/typedb-console-linux-x86_64-3.14.0.tar.gz",
+      "title": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.14.0/typedb-console-linux-x86_64-3.14.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-41DBBFBAAA2E": {
+      "id": "SRC-41DBBFBAAA2E",
+      "url": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz",
+      "title": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.244Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-5861A85F0493": {
+      "id": "SRC-5861A85F0493",
+      "url": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.14.0/typedb-console-mac-arm64-3.14.0.zip",
+      "title": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.14.0/typedb-console-mac-arm64-3.14.0.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-213061C9F3EC": {
+      "id": "SRC-213061C9F3EC",
+      "url": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip",
+      "title": "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-7AF562D7DBD7": {
+      "id": "SRC-7AF562D7DBD7",
+      "url": "https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.2",
+      "title": "https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-26A423893CE2": {
+      "id": "SRC-26A423893CE2",
+      "url": "https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc0",
+      "title": "https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.253Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-59AC434F15D7": {
+      "id": "SRC-59AC434F15D7",
+      "url": "https://host:8000/v1/version%60",
+      "title": "https://host:8000/v1/version%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-ED30291D01F5": {
+      "id": "SRC-ED30291D01F5",
+      "url": "https://github.com/typedb/typedb-behaviour",
+      "title": "https://github.com/typedb/typedb-behaviour",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:46:38.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
       }
     }
   }

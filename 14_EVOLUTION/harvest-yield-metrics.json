@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:28:45.063Z",
-  "total_cycles_completed": 8849,
-  "total_learnings_persisted": 8849,
-  "total_rules_promoted": 8705,
+  "last_updated": "2026-11-11T19:46:32.242Z",
+  "total_cycles_completed": 8852,
+  "total_learnings_persisted": 8852,
+  "total_rules_promoted": 8708,
   "history": [
-    {
-      "timestamp": "2026-11-09T23:17:46.577Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T23:17:47.190Z",
-      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T23:17:49.687Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T23:17:52.996Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T19:28:45.063Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T19:46:17.203Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T19:46:23.714Z",
+      "repository": "mrkai77/Loop",
+      "learningId": "learn-github-mrkai77-loop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T19:46:32.242Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

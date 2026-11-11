@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-XS2A",
-    "timestamp": "2026-11-08T20:45:46.450Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "5d4af4930b771a8cdd08f1b216401893ec4ed3e2df69f29f6e8553737ca06537",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-6YZ6",
-    "timestamp": "2026-11-08T20:52:55.314Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "87e7cbc4a975c14e504e1afb73210cad4e823fa7df317ab889b140222ca86d94",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-73TP",
-    "timestamp": "2026-11-08T20:53:01.597Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-FUQJ",
     "timestamp": "2026-11-08T20:59:49.723Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7490,6 +7445,51 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-4U04",
+    "timestamp": "2026-11-11T19:46:17.188Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-4Z0Z",
+    "timestamp": "2026-11-11T19:46:23.699Z",
+    "repository": "mrkai77/Loop",
+    "learningId": "learn-github-mrkai77-loop",
+    "contentHash": "c86f06af578c860a35da29746c5d01261576911246ff5bd9e10a09ed060151a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-55LZ",
+    "timestamp": "2026-11-11T19:46:32.231Z",
+    "repository": "typedb/typedb",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "c8157f2b1df0dac673230fbd82148c4f1a0358afd461b9a3d981d75e00de5225",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:28:51.293Z",
+  "last_updated": "2026-11-11T19:46:38.226Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5502,6 +5502,33 @@
       "source_repo": "nolabs-ai-nono",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BB4BC0-proxy-distinguish-credential-capture-fai.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-41B0CD",
+      "directive_title": "tui): keep the terminal in TUI mode when a draw panic is recovered",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "1jehuang-jcode",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-41B0CD-tui-keep-the-terminal-in-tui-mode-when-a.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-3F1992",
+      "directive_title": "✨ Track the original radial menu gesture in the session",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mrkai77-loop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3F1992--track-the-original-radial-menu-gesture-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-933D5B",
+      "directive_title": "Prepare release 3.15.0-rc0 (#8055)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "typedb-typedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-933D5B-prepare-release-3-15-0-rc0-8055-.md",
       "staged_date": "2026-11-11"
     }
   ]

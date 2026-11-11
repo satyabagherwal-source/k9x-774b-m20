@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T19:28:45.068Z",
+  "last_updated": "2026-11-11T19:46:32.246Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "dd639d46a09d2363ca1e77802267d72791f24ba998c8419890a208c02135e798",
-      "verified_at": "2026-11-09T04:49:31.719Z",
+      "content_hash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
+      "verified_at": "2026-11-11T19:46:17.210Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:49:31.719Z"
+      "last_updated": "2026-11-11T19:46:17.210Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -6606,14 +6606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
-      "verified_at": "2026-11-07T18:24:58.718Z",
+      "content_hash": "c8157f2b1df0dac673230fbd82148c4f1a0358afd461b9a3d981d75e00de5225",
+      "verified_at": "2026-11-11T19:46:32.246Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:24:58.718Z"
+      "last_updated": "2026-11-11T19:46:32.246Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",
@@ -11676,14 +11676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mrkai77-loop",
-      "content_hash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
-      "verified_at": "2026-10-19T10:41:16.987Z",
+      "content_hash": "c86f06af578c860a35da29746c5d01261576911246ff5bd9e10a09ed060151a7",
+      "verified_at": "2026-11-11T19:46:23.720Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:41:16.987Z"
+      "last_updated": "2026-11-11T19:46:23.720Z"
     },
     "tokio-rs/tokio": {
       "repository": "tokio-rs/tokio",

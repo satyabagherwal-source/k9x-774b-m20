@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "47e426e5",
+    "sourceVersion": "02152f3a",
     "license": "MIT",
-    "contentHash": "dd639d46a09d2363ca1e77802267d72791f24ba998c8419890a208c02135e798",
-    "lastHarvestedAt": "2026-11-09T04:49:31.710Z",
+    "contentHash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
+    "lastHarvestedAt": "2026-11-11T19:46:17.194Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "145de9c4",
+    "sourceVersion": "a99f0e28",
     "license": "MPL-2.0",
-    "contentHash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
-    "lastHarvestedAt": "2026-11-07T18:24:58.700Z",
+    "contentHash": "c8157f2b1df0dac673230fbd82148c4f1a0358afd461b9a3d981d75e00de5225",
+    "lastHarvestedAt": "2026-11-11T19:46:32.235Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -7753,10 +7753,10 @@
     "repository": "mrkai77/Loop",
     "platform": "github",
     "sourceUrl": "https://github.com/mrkai77/Loop",
-    "sourceVersion": "573ace30",
+    "sourceVersion": "b041fcbb",
     "license": "GPL-3.0",
-    "contentHash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
-    "lastHarvestedAt": "2026-10-19T10:41:16.980Z",
+    "contentHash": "c86f06af578c860a35da29746c5d01261576911246ff5bd9e10a09ed060151a7",
+    "lastHarvestedAt": "2026-11-11T19:46:23.705Z",
     "learningId": "learn-github-mrkai77-loop"
   },
   "tokio-rs-tokio": {

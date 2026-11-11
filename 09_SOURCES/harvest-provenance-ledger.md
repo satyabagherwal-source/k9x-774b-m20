@@ -9016,3 +9016,6 @@ Every entry in this ledger must capture:
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `f7b1fd3f` | Multi-dimensional audit evidence | 2026-11-11T19:28:34.380Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `35a006bd` | Multi-dimensional audit evidence | 2026-11-11T19:28:42.115Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `cecd9f55` | Multi-dimensional audit evidence | 2026-11-11T19:28:45.041Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `02152f3a` | Multi-dimensional audit evidence | 2026-11-11T19:46:17.194Z |
+| `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `b041fcbb` | Multi-dimensional audit evidence | 2026-11-11T19:46:23.705Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `a99f0e28` | Multi-dimensional audit evidence | 2026-11-11T19:46:32.235Z |

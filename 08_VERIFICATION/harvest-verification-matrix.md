@@ -9007,3 +9007,6 @@
 | `CYCLE-20261111-I1XK` | `2026-11-11T19:28:34.376Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e0fac2a...`) |
 | `CYCLE-20261111-I7WD` | `2026-11-11T19:28:42.109Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`305cbe11...`) |
 | `CYCLE-20261111-IA5P` | `2026-11-11T19:28:45.037Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5addd544...`) |
+| `CYCLE-20261111-4U04` | `2026-11-11T19:46:17.188Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`45f9398e...`) |
+| `CYCLE-20261111-4Z0Z` | `2026-11-11T19:46:23.699Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c86f06af...`) |
+| `CYCLE-20261111-55LZ` | `2026-11-11T19:46:32.231Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c8157f2b...`) |
