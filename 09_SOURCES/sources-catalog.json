@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "6d79729a",
+    "sourceVersion": "2e22f49a",
     "license": "AGPL-3.0",
-    "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
-    "lastHarvestedAt": "2026-11-07T19:09:35.174Z",
+    "contentHash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
+    "lastHarvestedAt": "2026-11-11T09:15:42.085Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "ee8fd5f1",
+    "sourceVersion": "b7839b71",
     "license": "Apache-2.0",
-    "contentHash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
-    "lastHarvestedAt": "2026-11-06T23:02:49.033Z",
+    "contentHash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
+    "lastHarvestedAt": "2026-11-11T09:15:56.833Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "47daf1c2",
+    "sourceVersion": "52257b30",
     "license": "MIT",
-    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
-    "lastHarvestedAt": "2026-11-08T22:00:48.639Z",
+    "contentHash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
+    "lastHarvestedAt": "2026-11-11T09:14:30.398Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

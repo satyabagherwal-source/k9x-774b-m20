@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T08:28:21.217Z",
+  "last_updated": "2026-11-11T09:15:56.685Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4039,8 +4039,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "47daf1c2",
-      "content_hash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
+      "source_version": "52257b30",
+      "content_hash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -4058,6 +4058,16 @@
           "number": null,
           "title": "FreeBSD source builds with libc 0.2.190 (#30176)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Decoupled Semantic Lookup During MRO & Metaclass Resolution",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Monotonic Terminal Line-Truncation and Margin Budgeting",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2482,
@@ -4110,7 +4120,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:00:48.563Z",
+      "verified_at": "2026-11-11T09:14:30.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40445,8 +40455,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "ee8fd5f1",
-      "content_hash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
+      "source_version": "b7839b71",
+      "content_hash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -40454,6 +40464,16 @@
           "number": null,
           "title": "Make async agents implicitly fire-and-forget when their output is not required b",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Atomic Chat Memory Tool Invariant: Result-Before-Return Protocol",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Threaded Lazy Resolution and In-Flight Request Deduplication",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2430,
@@ -40526,7 +40546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:02:48.941Z",
+      "verified_at": "2026-11-11T09:15:56.652Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49520,8 +49540,8 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "6d79729a",
-      "content_hash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
+      "source_version": "2e22f49a",
+      "content_hash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
@@ -49529,6 +49549,21 @@
           "number": null,
           "title": "analytics): auto_select_done 补回丢失的属性, source_failed 按平台的参数预算分条, 数据源改记搜索地址的域名 (#3",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Composite Key Cardinality Completeness in Normalized Junction Tables",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Post-Migration Cache Invalidation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Cross-Process Settings Propagation via Serialized State Bridges",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2197,
@@ -49576,7 +49611,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:09:35.055Z",
+      "verified_at": "2026-11-11T09:15:41.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

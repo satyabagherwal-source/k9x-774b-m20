@@ -8883,3 +8883,8 @@
 | `CYCLE-20261111-X0B4` | `2026-11-11T08:28:21.328Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26e7004d...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T08:28:41.359Z` | `zama-ai-tfhe-rs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-32FEBC73` [Domain H] | Yes (`b17bb61a...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T08:29:02.044Z` | `zama-ai-tfhe-rs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-1CC83E41` [Domain B] | Yes (`65f44bec...`) |
+| `CYCLE-20261111-KCXM` | `2026-11-11T09:14:30.394Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`66faf61b...`) |
+| `CYCLE-20261111-LW8Y` | `2026-11-11T09:15:42.082Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a03f15f2...`) |
+| `CYCLE-20261111-M7ML` | `2026-11-11T09:15:56.829Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`523f8f27...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:16:22.421Z` | `astral-sh-ruff` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-57AD88EF` [Domain H] | Yes (`809fbba1...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:16:41.360Z` | `open-ani-animeko` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-BF0A22A6` [Domain I] | Yes (`92632747...`) |

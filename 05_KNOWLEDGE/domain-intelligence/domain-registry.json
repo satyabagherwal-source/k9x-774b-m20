@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T08:29:02.043Z",
-  "total_records": 39,
+  "last_updated": "2026-11-11T09:16:41.359Z",
+  "total_records": 41,
   "domains": {
     "A": {
       "total": 1,
@@ -61,7 +61,7 @@
       ]
     },
     "H": {
-      "total": 11,
+      "total": 12,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -73,13 +73,15 @@
         "DOM-H-0B5C2EE9",
         "DOM-H-FF5BE5CE",
         "DOM-H-A79F59EB",
-        "DOM-H-32FEBC73"
+        "DOM-H-32FEBC73",
+        "DOM-H-57AD88EF"
       ]
     },
     "I": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-I-16F011E5"
+        "DOM-I-16F011E5",
+        "DOM-I-BF0A22A6"
       ]
     },
     "J": {
@@ -1590,6 +1592,72 @@
       },
       "confidence": 1,
       "created_at": "2026-11-11T08:29:02.041Z"
+    },
+    "DOM-H-57AD88EF": {
+      "record_id": "DOM-H-57AD88EF",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Stale Lockfile Dependencies Breaking Workspace Compilation (BUG-CARGO-LOCK-02)",
+      "content": "High-velocity multi-crate workspaces must enforce a mandatory CI check running `cargo check --locked --workspace --all-targets` alongside git tree clean assertions (`git diff --exit-code Cargo.lock`).",
+      "content_hash": "809fbba1203811e03b1dfc7717e6ba555f58cf8f3a07b22a50396dd59eb038e7",
+      "summary": "Desynchronization between workspace root resolver updates and internal transitive member specifications when individual crate PRs bump depen -> High-velocity multi-crate workspaces must enforce a mandatory CI check running `cargo check --locked --workspace --all-targets` alongside gi",
+      "provenance": {
+        "source_uri": "project://astral-sh-ruff/astral-sh-ruff-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T09:16:09.801Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (astral-sh-ruff)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `d86f7b12`, PR `#30321`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T09:16:22.419Z"
+    },
+    "DOM-I-BF0A22A6": {
+      "record_id": "DOM-I-BF0A22A6",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Silent Overwrite of Animation Directors in SQLite Cache (BUG-ANIMEKO-01)",
+      "content": "Primary keys on local cache tables must mirror the full tuple of distinct semantic identity from upstream APIs, not just relational identity. Schema fixes that allow missing data to be stored must proactively invalidate cache markers (`cachedStaffUpdated = 0`) to trigger recovery network fetches.",
+      "content_hash": "92632747a8da8cede644a5edd02b2d836eebf53a87b014739836e42fa242a6bf",
+      "summary": "In SQLite table `subject_person`, the primary key was defined strictly as `PRIMARY KEY (subjectId, personId)`.\n  When the remote Bangumi API -> Primary keys on local cache tables must mirror the full tuple of distinct semantic identity from upstream APIs, not just relational identity",
+      "provenance": {
+        "source_uri": "project://open-ani-animeko/open-ani-animeko-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T09:16:22.422Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (open-ani-animeko)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `a9763126`, PR `#3695`. DB Version bumped from 28 to 29."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T09:16:41.358Z"
     }
   }
 }

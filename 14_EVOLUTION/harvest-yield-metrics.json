@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T08:28:21.339Z",
-  "total_cycles_completed": 8738,
-  "total_learnings_persisted": 8738,
-  "total_rules_promoted": 8594,
+  "last_updated": "2026-11-11T09:15:56.838Z",
+  "total_cycles_completed": 8741,
+  "total_learnings_persisted": 8741,
+  "total_rules_promoted": 8601,
   "history": [
-    {
-      "timestamp": "2026-11-09T11:16:36.956Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-facebook-sam3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T11:31:10.124Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T11:31:13.418Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T11:31:31.441Z",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:14:30.416Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:15:42.104Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:15:56.838Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

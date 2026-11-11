@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-NX1E",
-    "timestamp": "2026-11-08T10:22:14.786Z",
-    "repository": "exyte/PopupView",
-    "learningId": "learn-github-exyte-popupview",
-    "contentHash": "9e41ea7da501a370710effa179510d9ff0c022d656aa271b0b17f77bebe085c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-RGWH",
-    "timestamp": "2026-11-08T10:25:00.497Z",
-    "repository": "audio-cpp/audio.cpp-gguf",
-    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-    "contentHash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-WJLT",
-    "timestamp": "2026-11-08T10:28:57.281Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "137fa529a86fd4c9f80563bb7b02e15f19638e7d757c80a51c0df3b587bff532",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-LOMS",
     "timestamp": "2026-11-08T10:48:30.196Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7492,6 +7447,51 @@
     "contentHash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-KCXM",
+    "timestamp": "2026-11-11T09:14:30.394Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-LW8Y",
+    "timestamp": "2026-11-11T09:15:42.082Z",
+    "repository": "open-ani/animeko",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-M7ML",
+    "timestamp": "2026-11-11T09:15:56.829Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

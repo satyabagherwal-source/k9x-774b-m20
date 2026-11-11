@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T08:28:26.458Z",
-    "lastVerified": "2026-11-11T08:28:26.458Z",
+    "lastChecked": "2026-11-11T09:16:09.699Z",
+    "lastVerified": "2026-11-11T09:16:09.699Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,9 +368,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T07:37:46.071Z",
+    "lastChecked": "2026-11-11T09:12:21.910Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T07:37:46.071Z"
+    "lastVerified": "2026-11-11T09:12:21.910Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1900,12 +1900,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
-    "name": "sigstore/cosign",
+    "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T01:19:26.936Z",
-    "lastVerified": "2026-11-10T01:19:26.936Z",
+    "lastChecked": "2026-11-11T09:12:16.963Z",
+    "lastVerified": "2026-11-11T09:12:16.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1914,7 +1914,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c8a4781a"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -2021,22 +2022,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
-    "name": "langchain4j",
+    "name": "langchain4j/langchain4j",
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T02:28:06.765Z",
-    "lastVerified": "2026-11-09T02:28:06.765Z",
+    "lastChecked": "2026-11-11T09:12:23.374Z",
+    "lastVerified": "2026-11-11T09:12:23.374Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ee8fd5f1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -6602,14 +6602,14 @@
     "officialUrl": "https://github.com/open-ani/animeko",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-07T19:04:31.863Z",
-    "lastVerified": "2026-11-07T19:04:31.863Z",
+    "lastChecked": "2026-11-11T09:12:16.074Z",
+    "lastVerified": "2026-11-11T09:12:16.074Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-ani-animeko",
-    "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "contentHash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6803,9 +6803,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-09T03:35:21.451Z",
+    "lastChecked": "2026-11-11T09:12:14.466Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-09T03:35:21.451Z"
+    "lastVerified": "2026-11-11T09:12:14.466Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -8720,14 +8720,14 @@
     "officialUrl": "https://github.com/astral-sh/ruff",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T22:00:47.712Z",
-    "lastVerified": "2026-11-08T22:00:47.712Z",
+    "lastChecked": "2026-11-11T09:12:11.695Z",
+    "lastVerified": "2026-11-11T09:12:11.695Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10227,9 +10227,9 @@
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
     "officialUrl": "https://github.com/indexcraft/ai-seo-audit-agent",
-    "lastChecked": "2026-11-06T13:51:51.344Z",
+    "lastChecked": "2026-11-11T09:12:09.488Z",
     "revisionIdentifier": "20d2e73081",
-    "lastVerified": "2026-11-06T13:51:51.344Z"
+    "lastVerified": "2026-11-11T09:12:09.488Z"
   },
   "sayaka-sh-spmp": {
     "name": "spmp",

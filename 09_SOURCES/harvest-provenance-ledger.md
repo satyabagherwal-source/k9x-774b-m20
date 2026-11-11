@@ -8892,3 +8892,8 @@ Every entry in this ledger must capture:
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `d61530f2` | Multi-dimensional audit evidence | 2026-11-11T08:28:21.333Z |
 | `learn-dom-h-32febc73` | `project://zama-ai-tfhe-rs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | 2026-11-11T08:28:41.359Z |
 | `learn-dom-b-1cc83e41` | `project://zama-ai-tfhe-rs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | 2026-11-11T08:29:02.044Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `52257b30` | Multi-dimensional audit evidence | 2026-11-11T09:14:30.398Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `2e22f49a` | Multi-dimensional audit evidence | 2026-11-11T09:15:42.085Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `b7839b71` | Multi-dimensional audit evidence | 2026-11-11T09:15:56.833Z |
+| `learn-dom-h-57ad88ef` | `project://astral-sh-ruff` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | 2026-11-11T09:16:22.421Z |
+| `learn-dom-i-bf0a22a6` | `project://open-ani-animeko` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md` | 2026-11-11T09:16:41.360Z |
