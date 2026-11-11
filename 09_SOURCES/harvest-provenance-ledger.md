@@ -8847,3 +8847,23 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cba01064` | Multi-dimensional audit evidence | 2026-11-10T05:21:57.343Z |
 | `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-10T06:05:22.262Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `6498ec79` | Multi-dimensional audit evidence | 2026-11-10T06:12:51.600Z |
+| `learn-dom-d-adad1ee4` | `project://zulip-zulip` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md` | 2026-11-11T06:04:57.291Z |
+| `learn-dom-d-0fba7fa8` | `project://zvec-ai-zvec-grep` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md` | 2026-11-11T06:05:08.677Z |
+| `learn-huggingface-comfy-org-minimax-h3-image` | `https://huggingface.co/Comfy-Org/MiniMax-H3-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-11T06:13:25.217Z |
+| `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-11T06:13:27.802Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `f8228b6a` | Multi-dimensional audit evidence | 2026-11-11T06:13:35.581Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `85dbb6b4` | Multi-dimensional audit evidence | 2026-11-11T06:13:56.562Z |
+| `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-11T06:16:20.764Z |
+| `learn-dom-d-61bbf9fb` | `project://hf-comfy-org-minimax-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | 2026-11-11T06:16:41.048Z |
+| `learn-github-marker-inc-korea-autorag` | `https://github.com/Marker-Inc-Korea/AutoRAG` | `111d035d` | Multi-dimensional audit evidence | 2026-11-11T06:23:40.340Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b2bfa52b` | Multi-dimensional audit evidence | 2026-11-11T06:24:00.804Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `0b6f11ab` | Multi-dimensional audit evidence | 2026-11-11T06:24:02.920Z |
+| `learn-dom-d-dfc8fc98` | `project://marker-inc-korea-autorag` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md` | 2026-11-11T06:24:18.513Z |
+| `learn-dom-d-b5a201fb` | `project://provablehq-snarkos` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | 2026-11-11T06:24:35.090Z |
+| `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `103af812` | Multi-dimensional audit evidence | 2026-11-11T06:33:33.890Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `c42c4fa3` | Multi-dimensional audit evidence | 2026-11-11T06:33:42.045Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `653af09c` | Multi-dimensional audit evidence | 2026-11-11T06:33:46.439Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `9833b0f7` | Multi-dimensional audit evidence | 2026-11-11T06:33:49.340Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e2ade2a2` | Multi-dimensional audit evidence | 2026-11-11T06:33:49.999Z |
+| `learn-dom-h-0b5c2ee9` | `project://react-native-webrtc-react-native-webrtc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-11T06:34:12.030Z |
+| `learn-dom-d-a94752ef` | `project://dnscontrol-dnscontrol` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md` | 2026-11-11T06:34:33.447Z |

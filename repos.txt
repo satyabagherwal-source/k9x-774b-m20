@@ -4982,3 +4982,17 @@ https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16
 # --- Automatically Discovered by AI Scout Engine [2026-11-10T06:04:56.535Z] ---
 # [HUGGINGFACE-AI-MODELS] VideoRebirthAI/hyperflow-h3-flash (3380 score) - Verified Hugging Face Model: VideoRebirthAI/hyperflow-h3-flash (138 likes, 64221
 https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-11T06:13:14.403Z] ---
+# [HIGH-PERF-SYSTEMS] yyjeqhc/webcodex (1671 score) - Give cloud AI agents a real development environment on your own machines.
+https://github.com/yyjeqhc/webcodex
+# [HUGGINGFACE-AI-MODELS] MiniMaxAI/MiniMax-H3-Image (5607 score) - Verified Hugging Face Model: MiniMaxAI/MiniMax-H3-Image (494 likes, 667 download
+https://huggingface.co/MiniMaxAI/MiniMax-H3-Image
+# [HUGGINGFACE-AI-MODELS] Comfy-Org/MiniMax-H3-Image (1878 score) - Verified Hugging Face Model: Comfy-Org/MiniMax-H3-Image (186 likes, 18 downloads
+https://huggingface.co/Comfy-Org/MiniMax-H3-Image
+# [HUGGINGFACE-AI-MODELS] mradermacher/gemma-4-31B-it-ARA-heretic-GGUF (3840 score) - Verified Hugging Face Model: mradermacher/gemma-4-31B-it-ARA-heretic-GGUF (184 l
+https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-11T06:23:27.723Z] ---
+# [AI-AGENTS] Marker-Inc-Korea/AutoRAG (3391 score) - Your Personal Librarian Agent. Ask anything on your computer, organize files, re
+https://github.com/Marker-Inc-Korea/AutoRAG

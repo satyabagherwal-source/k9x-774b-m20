@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-09T14:46:22.218Z",
-  "total_records": 21,
+  "last_updated": "2026-11-11T06:34:33.447Z",
+  "total_records": 28,
   "domains": {
     "A": {
       "total": 1,
@@ -23,10 +23,16 @@
       ]
     },
     "D": {
-      "total": 2,
+      "total": 8,
       "record_ids": [
         "DOM-D-C76D1D36",
-        "DOM-D-29BA113A"
+        "DOM-D-29BA113A",
+        "DOM-D-ADAD1EE4",
+        "DOM-D-0FBA7FA8",
+        "DOM-D-61BBF9FB",
+        "DOM-D-DFC8FC98",
+        "DOM-D-B5A201FB",
+        "DOM-D-A94752EF"
       ]
     },
     "E": {
@@ -48,7 +54,7 @@
       ]
     },
     "H": {
-      "total": 7,
+      "total": 8,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -56,7 +62,8 @@
         "DOM-H-2007DF83",
         "DOM-H-7D0B9F17",
         "DOM-H-C2A738D4",
-        "DOM-H-1B2AC6F8"
+        "DOM-H-1B2AC6F8",
+        "DOM-H-0B5C2EE9"
       ]
     },
     "I": {
@@ -852,6 +859,293 @@
       },
       "confidence": 1,
       "created_at": "2026-11-09T13:27:01.513Z"
+    },
+    "DOM-D-ADAD1EE4": {
+      "record_id": "DOM-D-ADAD1EE4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  \n> **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  \n> **Source Version**: `f0f02bcb`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **T",
+      "content_hash": "6d97f4ad03988f175be31d1c7a0ef9de6d403ce1d44fc4a7708d9d1102fbc143",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  \n> **Source**: github ([https://github.com/zulip/zulip](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  \n> **Source**: github ([https://github.com/zulip/zulip](h",
+      "provenance": {
+        "source_uri": "project://zulip-zulip/zulip-zulip-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:04:47.019Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zulip-zulip)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zulip-zulip"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:04:57.289Z"
+    },
+    "DOM-D-0FBA7FA8": {
+      "record_id": "DOM-D-0FBA7FA8",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zvec-ai/zvec-grep",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  \n> **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  \n> **Source Version**: `e06ff066`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-s",
+      "content_hash": "90151f6d2beaa46b66e87573f9a5577b18c1aea33897e0173dbf0683b4ec0948",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  \n> **Source**: github ([https://github.com/zvec-ai/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  \n> **Source**: github ([https://github.com/zvec-ai/",
+      "provenance": {
+        "source_uri": "project://zvec-ai-zvec-grep/zvec-ai-zvec-grep-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:04:57.292Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zvec-ai-zvec-grep)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zvec-ai-zvec-grep"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:05:08.676Z"
+    },
+    "DOM-D-61BBF9FB": {
+      "record_id": "DOM-D-61BBF9FB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/MiniMax-H3-Image",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/MiniMax-H3-Image](https://huggingface.co/Comfy-Org/MiniMax-H3-Image))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source",
+      "content_hash": "d71003fa6f9579a1fb39f6a0878e7a1661d0505fd8b552ae5126bd79a2e03378",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-minimax-h3-image/hf-comfy-org-minimax-h3-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:16:25.827Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-minimax-h3-image)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-minimax-h3-image"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T06:16:41.046Z"
+    },
+    "DOM-D-DFC8FC98": {
+      "record_id": "DOM-D-DFC8FC98",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Marker-Inc-Korea/AutoRAG",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md`  \n> **Source**: github ([https://github.com/Marker-Inc-Korea/AutoRAG](https://github.com/Marker-Inc-Korea/AutoRAG))  \n> **Source Version**: `111d035d`  \n> **License**: Apache-2.0  \n> **Synthesized By**: ze",
+      "content_hash": "fd2340d55591d6507d16acbe0c2be3a5c4a90083a12c01f2bf503761d3131a08",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md`  \n> **Source**: github ([https://github.com/M -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md`  \n> **Source**: github ([https://github.com/M",
+      "provenance": {
+        "source_uri": "project://marker-inc-korea-autorag/marker-inc-korea-autorag-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:24:08.795Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (marker-inc-korea-autorag)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of marker-inc-korea-autorag"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:24:18.512Z"
+    },
+    "DOM-D-B5A201FB": {
+      "record_id": "DOM-D-B5A201FB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): aleo-labs-protocol/snarkOS",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  \n> **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  \n> **Source Version**: `b2bfa52b`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structura",
+      "content_hash": "ceb01dbfe684aa51aa7c459c5454e0d57c1b41ca76a18a7d9b6a90fe2f1b4f90",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  \n> **Source**: github ([https://github.com/Provabl -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  \n> **Source**: github ([https://github.com/Provabl",
+      "provenance": {
+        "source_uri": "project://provablehq-snarkos/provablehq-snarkos-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:24:18.514Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (provablehq-snarkos)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of provablehq-snarkos"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:24:35.088Z"
+    },
+    "DOM-H-0B5C2EE9": {
+      "record_id": "DOM-H-0B5C2EE9",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): react-native-webrtc/react-native-webrtc",
+      "content": "- **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pipeline introduced in #1681.  `VideoFrameProcessor.process()` returns a caller-owned frame. With a single processor, the current implementation releases both the retained input and the final output. With two or more processors, each loop iteration overwrites `outputFrame` without releasing the previous returned frame.  | Reference | Acquired from | Released by the current code | | --- | --- | --- | | `F0` | Initial `frame.retain()` | `frame.release()` | | `F1` | First processor result | No | | `F2` | Second processor result | `outputFrame.release()` |  As a result, the intermediate `F1` reference remains retained after each captured frame.  This change keeps the current input in a local variable and releases it after the processor returns. The returned frame then becomes the single owned reference carried to the next stage.  Returning the same frame remains supported when the processor calls `retain()` before returning it, as required by the existing [`VideoFrameProcessor` ownership contract](https://github.com/react-native-webrtc/react-native-webrtc/blob/cf6101cdfecff24ad2f57374dccd3026e5a11e4d/android/src/main/java/com/oney/WebRTCModule/videoEffects/VideoFrameProcessor.java#L6-L18).  This also keeps an empty processor list balanced: the final `outputFrame.release()` matches the initial `frame.retain()`.  ### Validation  - `git diff --check` - Compiled `VideoFrameProcessor.java` and `VideoEffectProcessor.java` against   the WebRTC M124 Java",
+      "content_hash": "077420af9cf4bbb475819dbf9f1b9ab6b8fc5091cd9dd04be9f2451bae8e3b37",
+      "summary": "- **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pi -> - **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pi",
+      "provenance": {
+        "source_uri": "project://react-native-webrtc-react-native-webrtc/react-native-webrtc-react-native-webrtc-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:33:57.342Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-native-webrtc-react-native-webrtc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-native-webrtc-react-native-webrtc"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T06:34:12.028Z"
+    },
+    "DOM-D-A94752EF": {
+      "record_id": "DOM-D-A94752EF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): DNSControl/dnscontrol",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  \n> **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  \n> **Source Version**: `c42c4fa3`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structu",
+      "content_hash": "9cdc3293af495089f54410121c9c66e8c6e6490aabae73ffb1bc6df1e56febb8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  \n> **Source**: github ([https://github.com/DNSC -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  \n> **Source**: github ([https://github.com/DNSC",
+      "provenance": {
+        "source_uri": "project://dnscontrol-dnscontrol/dnscontrol-dnscontrol-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:34:12.031Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dnscontrol-dnscontrol)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of dnscontrol-dnscontrol"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:34:33.446Z"
     }
   }
 }

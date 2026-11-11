@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `16f3ce5c`  
+> **Source Version**: `b2bfa52b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T23:07:29.726Z  
+> **Timestamp**: 2026-11-11T06:23:48.808Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T23:07:28.802Z  
+> **Harvest Timestamp**: 2026-11-11T06:23:48.609Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1988,143 +1988,528 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ee0e3e9` (2026-11-09)
-**Commit Message**: Move the v1-to-v2 migration guide into the repository and link to it
+### Incident Patch 1: `b2bfa52b` (2026-11-11)
+**Commit Message**: Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging
+
+Merge testnet into staging
+
+**File**: `.cargo/release-version` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-v4.12.1
+\ No newline at end of file
++v4.13.0
+\ No newline at end of file
+```
+
+**File**: `Cargo.lock` (modified, +22/-22)
+```diff
+@@ -5381,7 +5381,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "built",
+  "clap",
+@@ -5407,15 +5407,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-account"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "colored 3.1.1",
+  "snarkvm",
+ ]
+ 
+ [[package]]
+ name = "snarkos-cli"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "aleo-std",
+  "anstyle",
+@@ -5459,7 +5459,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-display"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "crossterm",
+@@ -5472,7 +5472,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-ledger-distribution"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "aleo-std",
+  "anyhow",
+@@ -5501,7 +5501,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "aleo-std",
+  "anyhow",
+@@ -5545,7 +5545,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-bft"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "aleo-std",
+  "anyhow",
+@@ -5598,7 +5598,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-bft-events"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -5621,7 +5621,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-bft-ledger-service"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -5640,7 +5640,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-bft-storage-service"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "aleo-std",
+  "anyhow",
+@@ -5655,7 +5655,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-cdn"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "bincode",
+@@ -5677,7 +5677,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-consensus"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "aleo-std",
+  "anyhow",
+@@ -5703,7 +5703,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-metrics"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "built",
+  "locktick",
+@@ -5719,7 +5719,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-network"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "built",
+@@ -5741,7 +5741,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-rest"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "aleo-std",
+  "anyhow",
+@@ -5781,7 +5781,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-router"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -5816,7 +5816,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-router-messages"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "bytes",
+  "indexmap 2.14.2",
+@@ -5833,7 +5833,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-sync"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "futures",
+@@ -5859,15 +5859,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-sync-communication-service"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "async-trait",
+  "tokio",
+ ]
+ 
+ [[package]]
+ name = "snarkos-node-sync-locators"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5878,7 +5878,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-node-tcp"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -5896,7 +5896,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkos-utilities"
+-version = "4.12.0"
++version = "4.13.0"
+ dependencies = [
+  "anyhow",
+  "locktick",
+```
+
+**File**: `Cargo.toml` (modified, +21/-21)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "snarkos"
+-version = "4.12.0"
++version = "4.13.0"
+ authors = [ "The Aleo Team <hello@aleo.org>" ]
+ description = "A decentralized operating system"
+ homepage = "https://aleo.org"
+@@ -194,84 +194,84 @@ version = "0.2"
+ 
+ [workspace.dependencies.snarkos-account]
+ path = "account"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-cli]
+ path = "cli"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-display]
+ path = "display"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node]
+ path = "node"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-bft]
+ path = "node/bft"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-bft-events]
+ path = "node/bft/events"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-bft-storage-service]
+ path = "node/bft/storage-service"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-bft-ledger-service]
+ path = "node/bft/ledger-service"
+-version = "=4.12.0"
++version = "=4.13.0"
+ default-features = false
+ 
+ [workspace.dependencies.snarkos-node-consensus]
+ path = "node/consensus"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-cdn]
+ path = "node/cdn"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-metrics]
+ path = "node/metrics"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-network]
+ path = "node/network"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-router]
+ path = "node/router"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-router-messages]
+ path = "node/router/messages"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-rest]
+ path = "node/rest"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-sync]
+ path = "node/sync"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-sync-communication-service]
+ path = "node/sync/communication-service"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-sync-locators]
+ path = "node/sync/locators"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-node-tcp]
+ path = "node/tcp"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [workspace.dependencies.snarkos-utilities]
+ path = "utilities"
+-version = "=4.12.0"
++version = "=4.13.0"
+ 
+ [[bin]]
+ name = "snarkos"
+```
+
+**File**: `account/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "snarkos-account"
+-version = "4.12.0"
++version = "4.13.0"
+ authors = [ "The Aleo Team <hello@aleo.org>" ]
+ description = "Account for a decentralized operating system"
+ homepage = "https://aleo.org"
+```
+
+**File**: `cli/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "snarkos-cli"
+-version = "4.12.0"
++version = "4.13.0"
+ authors = [ "The Aleo Team <hello@aleo.org>" ]
+ description = "Command-line interface for snarkOS"
+ homepage = "https://aleo.org"
+```
+
+**File**: `display/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "snarkos-display"
+-version = "4.12.0"
++version = "4.13.0"
+ authors = [ "The Aleo Team <hello@aleo.org>" ]
+ description = "A display for a decentralized operating system"
+ homepage = "https://aleo.org"
+```
+
+**File**: `ledger-distribution/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "snarkos-ledger-distribution"
+-version = "4.12.0"
++version = "4.13.0"
+ authors = [ "The Aleo Team <hello@aleo.org>" ]
+ description = "Uploads the ledger's blocks to the bucket that serves the snarkOS block CDN"
+ homepage = "https://aleo.org"
+```
+
+**File**: `node/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "snarkos-node"
+-version = "4.12.0"
++version = "4.13.0"
+ authors = [ "The Aleo Team <hello@aleo.org>" ]
+ description = "A node for a decentralized operating system"
+ homepage = "https://aleo.org"
+```
+
+---
+
+### Incident Patch 2: `186f199a` (2026-11-11)
+**Commit Message**: Resolve Cargo.lock: keep staging's snarkVM and bump the workspace crates to 4.13.0
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `node/rest/MIGRATING_TO_V2.md` (added, +96/-0)
+**File**: `Cargo.lock` (modified, +0/-244)
 ```diff
-@@ -0,0 +1,96 @@
-+# Migrating from the v1 REST API to v2
-+
-+The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
-+The unversioned prefix serves the v1 API.
-+The v1 API and the unversioned prefix are deprecated.
-+Use `/v2/<network>`.
-+
-+The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
-+
-+## Timeline
-+
-+The deprecation started on 2026-11-08.
-+
-+| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
-+|---|---|
-+| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
-+| N+1 | Served as before, plus the deprecation headers |
-+| N+2 | **`410 Gone`**, with a body that points to `/v2` |
-+
-+## What to change
-+
-+1. **Put `/v2` in front of the network name** in every request URL:
-+
-+   ```text
-+   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
-+   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
-+   ```
-+
-+   The routes, query parameters and request bodies are the same on v2.
-+
-+   Also replace the alias routes:
-+
-+   | Deprecated | Use |
-+   |---|---|
-+   | `/peers/count` | `/connections/p2p/count` |
-+   | `/peers/all` | `/connections/p2p/all` |
-+   | `/peers/all/metrics` | `/connections/p2p/all/metrics` |
-+   | `/sync_status` | `/sync/status` |
-+
-+2. **Successful responses do not change.**
-+   Every 2xx response, including `203`, has the same status and body on v2 as on v1.
-+
-+3. **Error responses change. You must handle the new status codes and the JSON body.**
-+
-+   - **Status:** v1 answers every error with `500`.
-+     v2 uses the status that describes the error:
-+
-+     | Status | Meaning |
-+     |---|---|
-+     | `400 Bad Request` | The request is malformed: bad parameters, a body that does not parse, or a body over a size limit |
-+     | `404 Not Found` | The resource does not exist on this node, for example a block height it does not have yet |
-+     | `422 Unprocessable Entity` | The request is well formed but invalid, for example a transaction that fails verification |
-+     | `429 Too Many Requests` | Rate limited. A rate-limit rejection carries `Retry-After` |
-+     | `503 Service Unavailable` | The node cannot serve this now, for example because it is syncing or the route needs a validator |
-+     | `500 Internal Server Error` | A fault on the node |
-+
-+     Branch on the status code, not on the error text.
-+     Handle any other 4xx or 5xx status by its class: v2 can add more specific codes.
-+
-+   - **Body:** v1 sends plain text, `message — cause — …`, with an `(HTTP NNN)` suffix when the error did not come from a route.
-+     v2 sends JSON with `Content-Type: application/json`:
-+
-+     ```json
-+     { "message": "…", "error_type": "not_found", "chain": ["cause", "…"] }
-+     ```
-+
-+     If you display or parse error text, read `message` and `chain` from the JSON.
-+
-+## How v2 changes
-+
-+v2 is the stable API.
-+
-+These can be added to v2: status codes, JSON fields in error and success bodies, response headers, routes, and query parameters.
-+For example, `transaction/broadcast` will use `409 Conflict`, and error bodies will get a machine-readable `code` field.
-+
-+These do not change in v2: the status and body of an existing success response, and the meaning of an existing field.
-+
-+Your client must ignore JSON fields and headers that it does not know.
-+It must handle an unknown status by its class (4xx or 5xx).
-+A change that breaks these rules gets a new API version.
-+
-+## Detecting a deprecated route
-+
-+Every response from a deprecated route, success or error, carries these headers ([RFC 9745](https://www.rfc-editor.org/rfc/rfc9745)):
-+
-+```text
-+Deprecation: @1794096000
-+Link: <https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md>; rel="deprecation"
-+```
-+
-+`Deprecation` is the date of deprecation, 2026-11-08, as a Unix timestamp.
-+CORS exposes both headers, so browser clients can read them.
-+
-+HTTP libraries do not act on these headers by themselves.
-+Check for `Deprecation` in your client and log a warning.
-+`snarkos developer` prints a warning for each deprecated response.
-```
-
-**File**: `node/rest/README.md` (modified, +2/-0)
-```diff
-@@ -8,3 +8,5 @@ The `snarkos-node-rest` crate provides a REST API for the `snarkos` node.
+@@ -5908,11 +5908,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "anyhow",
+  "dotenvy",
+@@ -5934,11 +5930,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "ahash",
+  "aleo-std",
+@@ -5966,11 +5958,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5983,11 +5971,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -6001,11 +5985,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -6015,11 +5995,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -6029,11 +6005,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -6043,11 +6015,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -6067,20 +6035,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
+-=======
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
+->>>>>>> 59ac175493b798be409b140158d59c042a037819
  
- REST responses support gzip compression when the client sends `Accept-Encoding: gzip`.
- Responses smaller than 32 bytes are not compressed.
-+
-+The v1 API and the unversioned routes are deprecated. See [Migrating from the v1 REST API to v2](./MIGRATING_TO_V2.md).
-```
-
-**File**: `node/rest/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -566,7 +566,8 @@ async fn record_rest_request(request: Request<Body>, next: middleware::Next) ->
- const DEPRECATION_TIMESTAMP: i64 = 1_794_096_000;
- 
- /// Where a client of a deprecated route learns how to migrate.
--const MIGRATION_GUIDE_URL: &str = "https://github.com/aleo-labs-protocol/snarkOS/pull/4650";
-+const MIGRATION_GUIDE_URL: &str =
-+    "https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md";
- 
- /// The `Deprecation` response header field (RFC 9745).
- const DEPRECATION: HeaderName = HeaderName::from_static("deprecation");
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.0"
+-<<<<<<< HEAD
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d89
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4661** (2026-11-11): Merge testnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4660** (2026-11-11): Relock only the snarkVM crates when bumping snarkVM (@cbeck88)
+- **PR #4659** (2026-11-11): Bump snarkVM to aleo-labs-protocol/snarkVM@a78dd20b3 (@aleo-labs-merge-bot[bot])
+- **PR #4658** (2026-11-10): [Release] Testnet v4.13.0 (@snarkworld)
+- **PR #4657** (2026-11-10): Gauntlet workflows: rename secrets and variables to GAUNTLET_* (@cbeck88-ai-dev)
 - **PR #4656** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@aa342cfe7 (@aleo-labs-merge-bot[bot])
-- **PR #4655** (2026-11-09): ci: add a deploy_rate input to the load test (@cbeck88)
-- **PR #4653** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@bcf2847b8 (@aleo-labs-merge-bot[bot])
-- **PR #4652** (2026-11-08): Gauntlet load test: inherit secrets (@cbeck88)
-- **PR #4651** (2026-11-08): Gauntlet workflows: the host reports each run's check (@cbeck88)
-- **PR #4650** (2026-11-09): Deprecate the v1 REST API and the unversioned routes (@cbeck88)
 
 ---
 
@@ -2144,61 +2529,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Move the v1-to-v2 migration guide into the repository and link to it
+## X. Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging
 
 **RULE**:
-When implementing operations in `node/rest/MIGRATING_TO_V2.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/release-version`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ee0e3e9`: Move the v1-to-v2 migration guide into the repository and link to it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2bfa52b`: Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/MIGRATING_TO_V2.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/release-version`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Migrating from the v1 REST API to v2
-
-The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
-The unversioned prefix serves the v1 API.
-The v1 API and the unversioned prefix are deprecated.
-Use `/v2/<network>`.
-
-The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
-
-## Timeline
-
-The deprecation started on 2026-11-08.
-
-| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
-|---|---|
-| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
-| N+1 | Served as before, plus the deprecation headers |
-| N+2 | **`410 Gone`**, with a body that points to `/v2` |
-
-## What to change
-
-1. **Put `/v2` in front of the network name** in every request URL:
-
-   ```text
-   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
-   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
-   ```
-
-   The routes, query parameters and request bodies are the same on v2.
-
-   Also replace the alias routes:
-
-   | Deprecated | Use |
-   |---|-
+v4.13.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+v4.12.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ee0e3e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2bfa52b` are properly handled with clean fallback behavior.

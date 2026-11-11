@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "6bc0c3f1",
+    "sourceVersion": "e2ade2a2",
     "license": "Apache-2.0",
-    "contentHash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
-    "lastHarvestedAt": "2026-11-10T05:06:35.844Z",
+    "contentHash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
+    "lastHarvestedAt": "2026-11-11T06:33:49.999Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "e00b7fde",
+    "sourceVersion": "85dbb6b4",
     "license": "NOASSERTION",
-    "contentHash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
-    "lastHarvestedAt": "2026-11-10T01:58:36.688Z",
+    "contentHash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
+    "lastHarvestedAt": "2026-11-11T06:13:56.562Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "7c445c0c",
+    "sourceVersion": "653af09c",
     "license": "NOASSERTION",
-    "contentHash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
-    "lastHarvestedAt": "2026-11-09T23:17:52.990Z",
+    "contentHash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
+    "lastHarvestedAt": "2026-11-11T06:33:46.439Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "16f3ce5c",
+    "sourceVersion": "b2bfa52b",
     "license": "Apache-2.0",
-    "contentHash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
-    "lastHarvestedAt": "2026-11-09T23:07:30.086Z",
+    "contentHash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
+    "lastHarvestedAt": "2026-11-11T06:24:00.804Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "d0885b8c",
+    "sourceVersion": "c42c4fa3",
     "license": "MIT",
-    "contentHash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
-    "lastHarvestedAt": "2026-11-09T02:08:11.686Z",
+    "contentHash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
+    "lastHarvestedAt": "2026-11-11T06:33:42.045Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -5953,10 +5953,10 @@
     "repository": "react-native-webrtc/react-native-webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "sourceVersion": "fb662c9d",
+    "sourceVersion": "103af812",
     "license": "MIT",
-    "contentHash": "572383bc0d730e8216e197108d446703974a4f3afe2eb5f8dd5a3dbb635ddff0",
-    "lastHarvestedAt": "2026-10-20T16:57:17.024Z",
+    "contentHash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
+    "lastHarvestedAt": "2026-11-11T06:33:33.890Z",
     "learningId": "learn-github-react-native-webrtc-react-native-webrtc"
   },
   "rook-rook": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "e520c28d",
+    "sourceVersion": "9833b0f7",
     "license": "MIT",
-    "contentHash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
-    "lastHarvestedAt": "2026-11-09T01:26:25.216Z",
+    "contentHash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
+    "lastHarvestedAt": "2026-11-11T06:33:49.340Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "39bf8539",
+    "sourceVersion": "0b6f11ab",
     "license": "NOASSERTION",
-    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
-    "lastHarvestedAt": "2026-11-08T03:54:26.896Z",
+    "contentHash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
+    "lastHarvestedAt": "2026-11-11T06:24:02.920Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -12278,5 +12278,55 @@
     "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
     "lastHarvestedAt": "2026-11-10T06:05:22.262Z",
     "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash"
+  },
+  "hf-comfy-org-minimax-h3-image": {
+    "repository": "Comfy-Org/MiniMax-H3-Image",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+    "sourceVersion": "hf-comfy-org-minimax-h3-image",
+    "license": "Open-Source",
+    "contentHash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
+    "lastHarvestedAt": "2026-11-11T06:13:25.217Z",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3-image"
+  },
+  "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf": {
+    "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "sourceVersion": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+    "license": "Open-Source",
+    "contentHash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
+    "lastHarvestedAt": "2026-11-11T06:13:27.802Z",
+    "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf"
+  },
+  "yyjeqhc-webcodex": {
+    "repository": "yyjeqhc/webcodex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yyjeqhc/webcodex",
+    "sourceVersion": "f8228b6a",
+    "license": "Apache-2.0",
+    "contentHash": "d0ca4f23593c5bd95843a7d308d66d80e6e3c849a7f76659956cc28f7d47f74d",
+    "lastHarvestedAt": "2026-11-11T06:13:35.581Z",
+    "learningId": "learn-github-yyjeqhc-webcodex"
+  },
+  "hf-minimaxai-minimax-h3-image": {
+    "repository": "MiniMaxAI/MiniMax-H3-Image",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+    "sourceVersion": "hf-minimaxai-minimax-h3-image",
+    "license": "Open-Source",
+    "contentHash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
+    "lastHarvestedAt": "2026-11-11T06:16:20.764Z",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image"
+  },
+  "marker-inc-korea-autorag": {
+    "repository": "Marker-Inc-Korea/AutoRAG",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Marker-Inc-Korea/AutoRAG",
+    "sourceVersion": "111d035d",
+    "license": "Apache-2.0",
+    "contentHash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
+    "lastHarvestedAt": "2026-11-11T06:23:40.340Z",
+    "learningId": "learn-github-marker-inc-korea-autorag"
   }
 }

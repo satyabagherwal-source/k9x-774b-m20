@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T06:12:54.193Z",
-    "lastVerified": "2026-11-10T06:12:54.193Z",
+    "lastChecked": "2026-11-11T06:33:57.224Z",
+    "lastVerified": "2026-11-11T06:33:57.224Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T05:14:24.720Z",
-    "lastVerified": "2026-11-10T05:14:24.720Z",
+    "lastChecked": "2026-11-11T06:04:46.906Z",
+    "lastVerified": "2026-11-11T06:04:46.906Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -253,22 +253,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T05:21:58.210Z",
-    "lastVerified": "2026-11-10T05:21:58.210Z",
+    "lastChecked": "2026-11-11T06:13:40.642Z",
+    "lastVerified": "2026-11-11T06:13:40.642Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
+    "contentHash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e00b7fde"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -368,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-10T06:05:17.398Z",
+    "lastChecked": "2026-11-11T06:23:48.094Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-10T06:05:17.398Z"
+    "lastVerified": "2026-11-11T06:23:48.094Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -458,22 +457,21 @@
     "revisionIdentifier": "fe107aab"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T06:12:45.320Z",
-    "lastVerified": "2026-11-10T06:12:45.320Z",
+    "lastChecked": "2026-11-11T06:33:26.441Z",
+    "lastVerified": "2026-11-11T06:33:26.441Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
+    "contentHash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6bc0c3f1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1010,8 +1008,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T22:48:23.057Z",
-    "lastVerified": "2026-11-09T22:48:23.057Z",
+    "lastChecked": "2026-11-11T06:04:41.917Z",
+    "lastVerified": "2026-11-11T06:04:41.917Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -1113,16 +1111,16 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-09T22:55:30.630Z",
+    "lastChecked": "2026-11-11T06:13:29.909Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-09T22:55:30.630Z"
+    "lastVerified": "2026-11-11T06:13:29.909Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-09T01:01:28.075Z",
+    "lastChecked": "2026-11-11T06:04:44.427Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-09T01:01:28.075Z"
+    "lastVerified": "2026-11-11T06:04:44.427Z"
   },
   "burntsushi-ripgrep": {
     "name": "ripgrep",
@@ -1188,14 +1186,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:07:28.802Z",
-    "lastVerified": "2026-11-09T23:07:28.802Z",
+    "lastChecked": "2026-11-11T06:23:48.609Z",
+    "lastVerified": "2026-11-11T06:23:48.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1205,8 +1203,8 @@
     "officialUrl": "https://github.com/chroma-core/chroma",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:12:41.966Z",
-    "lastVerified": "2026-11-09T01:12:41.966Z",
+    "lastChecked": "2026-11-11T06:13:32.393Z",
+    "lastVerified": "2026-11-11T06:13:32.393Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chroma-core-chroma",
@@ -1282,35 +1280,34 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:17:50.969Z",
-    "lastVerified": "2026-11-09T23:17:50.969Z",
+    "lastChecked": "2026-11-11T06:33:21.608Z",
+    "lastVerified": "2026-11-11T06:33:21.608Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
+    "contentHash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "clockworklabs-spacetimedb": {
-    "name": "SpacetimeDB",
+    "name": "clockworklabs/SpacetimeDB",
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:19:26.246Z",
-    "lastVerified": "2026-11-09T01:19:26.246Z",
+    "lastChecked": "2026-11-11T06:23:50.710Z",
+    "lastVerified": "2026-11-11T06:23:50.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+    "contentHash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "39bf8539"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
     "name": "fd",
@@ -1404,14 +1401,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:26:23.582Z",
-    "lastVerified": "2026-11-09T01:26:23.582Z",
+    "lastChecked": "2026-11-11T06:33:24.652Z",
+    "lastVerified": "2026-11-11T06:33:24.652Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
+    "contentHash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5921,9 +5918,9 @@
   "itinance-react-native-fs": {
     "name": "react-native-fs",
     "officialUrl": "https://github.com/itinance/react-native-fs",
-    "lastChecked": "2026-11-07T06:24:19.280Z",
+    "lastChecked": "2026-11-11T06:04:36.901Z",
     "revisionIdentifier": "64aa755c",
-    "lastVerified": "2026-11-07T06:24:19.280Z"
+    "lastVerified": "2026-11-11T06:04:36.901Z"
   },
   "gocd-gocd": {
     "name": "gocd/gocd",
@@ -6014,9 +6011,9 @@
   "rcbyr-keen-slider": {
     "name": "keen-slider",
     "officialUrl": "https://github.com/rcbyr/keen-slider",
-    "lastChecked": "2026-11-07T17:22:25.757Z",
+    "lastChecked": "2026-11-11T06:23:38.157Z",
     "revisionIdentifier": "520c757a",
-    "lastVerified": "2026-11-07T17:22:25.757Z"
+    "lastVerified": "2026-11-11T06:23:38.157Z"
   },
   "aquasecurity-tfsec": {
     "name": "tfsec",
@@ -6077,11 +6074,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "react-native-webrtc-react-native-webrtc": {
-    "name": "react-native-webrtc",
+    "name": "react-native-webrtc/react-native-webrtc",
     "officialUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "lastChecked": "2026-11-07T17:47:53.720Z",
-    "revisionIdentifier": "fb662c9d",
-    "lastVerified": "2026-11-07T17:47:53.720Z"
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-11-11T06:33:15.116Z",
+    "lastVerified": "2026-11-11T06:33:15.116Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
+    "contentHash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "goss-org-goss": {
     "name": "goss",
@@ -6152,9 +6159,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-09T01:53:15.583Z",
+    "lastChecked": "2026-11-11T06:04:39.432Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-09T01:53:15.583Z"
+    "lastVerified": "2026-11-11T06:04:39.432Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -6228,9 +6235,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-09T02:01:02.067Z",
+    "lastChecked": "2026-11-11T06:23:40.705Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-09T02:01:02.067Z"
+    "lastVerified": "2026-11-11T06:23:40.705Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -6305,14 +6312,14 @@
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T02:08:10.470Z",
-    "lastVerified": "2026-11-09T02:08:10.470Z",
+    "lastChecked": "2026-11-11T06:33:19.159Z",
+    "lastVerified": "2026-11-11T06:33:19.159Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
+    "contentHash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8381,9 +8388,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-08T20:52:50.535Z",
+    "lastChecked": "2026-11-11T06:04:31.913Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-08T20:52:50.535Z"
+    "lastVerified": "2026-11-11T06:04:31.913Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -8453,9 +8460,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-11-08T20:59:45.362Z",
+    "lastChecked": "2026-11-11T06:33:06.374Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-11-08T20:59:45.362Z"
+    "lastVerified": "2026-11-11T06:33:06.374Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",
@@ -10090,9 +10097,9 @@
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
     "officialUrl": "https://github.com/kaiopiola/SEOCheck",
-    "lastChecked": "2026-11-05T23:48:47.037Z",
+    "lastChecked": "2026-11-11T06:04:34.392Z",
     "revisionIdentifier": "a1e13f715f",
-    "lastVerified": "2026-11-05T23:48:47.037Z"
+    "lastVerified": "2026-11-11T06:04:34.392Z"
   },
   "kudoleh-ios-clean-architecture-mvvm": {
     "name": "iOS-Clean-Architecture-MVVM",
@@ -10104,9 +10111,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-11-05T23:55:23.093Z",
+    "lastChecked": "2026-11-11T06:23:35.643Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-11-05T23:55:23.093Z"
+    "lastVerified": "2026-11-11T06:23:35.643Z"
   },
   "emergetools-pow": {
     "name": "Pow",
@@ -10118,9 +10125,9 @@
   "codetot-web-schema-test": {
     "name": "schema-test",
     "officialUrl": "https://github.com/codetot-web/schema-test",
-    "lastChecked": "2026-11-06T00:02:39.592Z",
+    "lastChecked": "2026-11-11T06:33:08.465Z",
     "revisionIdentifier": "f395034cc2",
-    "lastVerified": "2026-11-06T00:02:39.592Z"
+    "lastVerified": "2026-11-11T06:33:08.465Z"
   },
   "swiftwebui-swiftwebui": {
     "name": "SwiftWebUI/SwiftWebUI",
@@ -14628,6 +14635,91 @@
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-minimax-h3-image": {
+    "name": "Comfy-Org/MiniMax-H3-Image",
+    "officialUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-11T06:13:24.806Z",
+    "lastVerified": "2026-11-11T06:13:24.806Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
+    "contentHash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf": {
+    "name": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "officialUrl": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-11T06:13:27.390Z",
+    "lastVerified": "2026-11-11T06:13:27.390Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+    "contentHash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yyjeqhc-webcodex": {
+    "name": "yyjeqhc/webcodex",
+    "officialUrl": "https://github.com/yyjeqhc/webcodex",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-11T06:13:23.335Z",
+    "lastVerified": "2026-11-11T06:13:23.335Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "d0ca4f23593c5bd95843a7d308d66d80e6e3c849a7f76659956cc28f7d47f74d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-minimaxai-minimax-h3-image": {
+    "name": "MiniMaxAI/MiniMax-H3-Image",
+    "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-11T06:13:22.311Z",
+    "lastVerified": "2026-11-11T06:13:22.311Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
+    "contentHash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "marker-inc-korea-autorag": {
+    "name": "Marker-Inc-Korea/AutoRAG",
+    "officialUrl": "https://github.com/Marker-Inc-Korea/AutoRAG",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-11T06:23:32.582Z",
+    "lastVerified": "2026-11-11T06:23:32.582Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-marker-inc-korea-autorag",
+    "contentHash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

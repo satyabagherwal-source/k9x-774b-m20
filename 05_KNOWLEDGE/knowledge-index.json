@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T06:12:51.499Z",
-  "total_verified_learnings": 1246,
+  "last_updated": "2026-11-11T06:33:49.821Z",
+  "total_verified_learnings": 1251,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8404,14 +8404,19 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "39bf8539",
-      "content_hash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+      "source_version": "0b6f11ab",
+      "content_hash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Skip CI builds and tests for docs-only changes (#6515)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "LLM benchmark health-check timeouts and C# references (#6408)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8510,7 +8515,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:54:26.767Z",
+      "verified_at": "2026-11-11T06:24:02.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10242,8 +10247,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "e00b7fde",
-      "content_hash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
+      "source_version": "85dbb6b4",
+      "content_hash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10340,6 +10345,11 @@
         {
           "number": null,
           "title": "deps): note the compact_bytes big-endian caveat for crates.io builds",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "viz): load map panels in sandboxed frames without allow-same-origin (#5033)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10693,7 +10703,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:58:36.570Z",
+      "verified_at": "2026-11-11T06:13:56.378Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11528,8 +11538,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "d0885b8c",
-      "content_hash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
+      "source_version": "c42c4fa3",
+      "content_hash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -11541,6 +11551,11 @@
         {
           "number": null,
           "title": "p/LUADNS): batch record changes into bulk API calls (#5047)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "share one builderOptions() for the options-object builders (#5072)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11589,7 +11604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:08:11.588Z",
+      "verified_at": "2026-11-11T06:33:41.672Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15604,8 +15619,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "7c445c0c",
-      "content_hash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
+      "source_version": "653af09c",
+      "content_hash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15662,6 +15677,11 @@
         {
           "number": null,
           "title": "test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "conformance): report a merge refusal that leaves peers apart (#6178)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15880,7 +15900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:17:52.753Z",
+      "verified_at": "2026-11-11T06:33:46.164Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47996,8 +48016,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "6bc0c3f1",
-      "content_hash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
+      "source_version": "e2ade2a2",
+      "content_hash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48164,6 +48184,11 @@
         {
           "number": null,
           "title": "Draft NUC 102 Implicit Receiver Properties",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Draft NUC 105 List and Population Sorting by Key",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48457,7 +48482,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T05:06:35.735Z",
+      "verified_at": "2026-11-11T06:33:49.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54133,11 +54158,16 @@
       "slug": "react-native-webrtc-react-native-webrtc",
       "platform": "github",
       "source_url": "https://github.com/react-native-webrtc/react-native-webrtc",
-      "source_version": "fb662c9d",
-      "content_hash": "572383bc0d730e8216e197108d446703974a4f3afe2eb5f8dd5a3dbb635ddff0",
+      "source_version": "103af812",
+      "content_hash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
       "dossier_path": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "android: stop RTCView drawing the previous track after a stream switch (#1857)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2148,
           "title": "android): guard against duplicate onActivityResult in screen capture",
@@ -54154,7 +54184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:57:16.949Z",
+      "verified_at": "2026-11-11T06:33:33.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63566,13 +63596,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "a7ce4ee0",
-      "content_hash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "9833b0f7",
+      "content_hash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -63597,6 +63627,11 @@
         {
           "number": null,
           "title": "Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark'",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "core/vdbe: make built-in scalar functions a function of their arguments",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63750,7 +63785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:41:39.931Z",
+      "verified_at": "2026-11-11T06:33:49.068Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77341,13 +77376,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "5c7d169f",
-      "content_hash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "b2bfa52b",
+      "content_hash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -77417,6 +77452,11 @@
         {
           "number": null,
           "title": "Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -77545,7 +77585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:43:58.143Z",
+      "verified_at": "2026-11-11T06:24:00.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190068,6 +190108,169 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-10T06:05:22.138Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-comfy-org-minimax-h3-image": {
+      "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/MiniMax-H3-Image",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "slug": "hf-comfy-org-minimax-h3-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+      "source_version": "hf-comfy-org-minimax-h3-image",
+      "content_hash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:13:25.058Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf": {
+      "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "slug": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "source_version": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "content_hash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:13:27.630Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-yyjeqhc-webcodex": {
+      "learning_id": "learn-github-yyjeqhc-webcodex",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yyjeqhc/webcodex",
+      "repository": "yyjeqhc/webcodex",
+      "slug": "yyjeqhc-webcodex",
+      "platform": "github",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "f8228b6a",
+      "content_hash": "d0ca4f23593c5bd95843a7d308d66d80e6e3c849a7f76659956cc28f7d47f74d",
+      "dossier_path": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "test(auth): make the blocking-boundary regression fail without hanging (#1399)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:13:35.433Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-minimaxai-minimax-h3-image": {
+      "learning_id": "learn-huggingface-minimaxai-minimax-h3-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MiniMaxAI/MiniMax-H3-Image",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "slug": "hf-minimaxai-minimax-h3-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+      "source_version": "hf-minimaxai-minimax-h3-image",
+      "content_hash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
+      "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Spatial Latent Dimensional Divisibility and Aspect Ratio Bucketing",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Region API Failover and Asynchronous Task Polling Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "VAE Latent Denormalization and Clamping Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:16:20.615Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-marker-inc-korea-autorag": {
+      "learning_id": "learn-github-marker-inc-korea-autorag",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Marker-Inc-Korea/AutoRAG",
+      "repository": "Marker-Inc-Korea/AutoRAG",
+      "slug": "marker-inc-korea-autorag",
+      "platform": "github",
+      "source_url": "https://github.com/Marker-Inc-Korea/AutoRAG",
+      "source_version": "111d035d",
+      "content_hash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
+      "dossier_path": "07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "calculator): treat a zone abbreviation as a fixed offset, never a daylight-savin",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:23:40.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
