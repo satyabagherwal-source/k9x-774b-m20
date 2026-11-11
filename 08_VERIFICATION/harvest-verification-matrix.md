@@ -8951,3 +8951,4 @@
 | `CYCLE-20261111-NVRB` | `2026-11-11T13:29:11.303Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e7a4d897...`) |
 | `CYCLE-20261111-NWTL` | `2026-11-11T13:29:12.681Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1589357b...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T13:29:30.753Z` | `hf-baidu-ernie-5.5-flash-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BA155874` [Domain D] | Yes (`a8651b5d...`) |
+| `CYCLE-20261111-HU2R` | `2026-11-11T13:52:28.803Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f29c3443...`) |

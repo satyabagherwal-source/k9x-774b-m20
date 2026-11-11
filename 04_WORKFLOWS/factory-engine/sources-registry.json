@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T13:29:19.389Z",
-    "lastVerified": "2026-11-11T13:29:19.389Z",
+    "lastChecked": "2026-11-11T13:52:33.936Z",
+    "lastVerified": "2026-11-11T13:52:33.936Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -363,9 +363,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T12:41:25.266Z",
+    "lastChecked": "2026-11-11T13:52:21.133Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T12:41:25.266Z"
+    "lastVerified": "2026-11-11T13:52:21.133Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -515,8 +515,8 @@
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T07:13:21.367Z",
-    "lastVerified": "2026-11-09T07:13:21.367Z",
+    "lastChecked": "2026-11-11T13:52:13.709Z",
+    "lastVerified": "2026-11-11T13:52:13.709Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -1037,8 +1037,8 @@
     "officialUrl": "https://github.com/ducaale/xh",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:19:13.597Z",
-    "lastVerified": "2026-11-09T01:19:13.597Z",
+    "lastChecked": "2026-11-11T13:52:06.165Z",
+    "lastVerified": "2026-11-11T13:52:06.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ducaale-xh",
@@ -1271,12 +1271,12 @@
     "revisionIdentifier": "cf4e7963"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T06:33:21.608Z",
-    "lastVerified": "2026-11-11T06:33:21.608Z",
+    "lastChecked": "2026-11-11T13:52:16.263Z",
+    "lastVerified": "2026-11-11T13:52:16.263Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1285,7 +1285,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "653af09c"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -3534,9 +3535,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-09T06:00:15.056Z",
+    "lastChecked": "2026-11-11T13:52:18.684Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-09T06:00:15.056Z"
+    "lastVerified": "2026-11-11T13:52:18.684Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -7922,14 +7923,14 @@
     "officialUrl": "https://github.com/necolas/react-native-web",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T21:43:53.059Z",
-    "lastVerified": "2026-11-07T21:43:53.059Z",
+    "lastChecked": "2026-11-11T13:52:16.692Z",
+    "lastVerified": "2026-11-11T13:52:16.692Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "19c97b00f8ddd7eec54113d9a96869cdc2f21fce3e2e182a061f0d67d64f2355",
+    "contentHash": "f29c3443459d9977ce812f4806fbeb13e980734ba878aa8bec72a9d440771c20",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10541,9 +10542,9 @@
   "crawlcove-crawlcove-sitemap-validator": {
     "name": "crawlcove-sitemap-validator",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-    "lastChecked": "2026-11-06T20:30:35.388Z",
+    "lastChecked": "2026-11-11T13:52:08.631Z",
     "revisionIdentifier": "8aeca12b",
-    "lastVerified": "2026-11-06T20:30:35.388Z"
+    "lastVerified": "2026-11-11T13:52:08.631Z"
   },
   "simonschubert-kai": {
     "name": "SimonSchubert/Kai",

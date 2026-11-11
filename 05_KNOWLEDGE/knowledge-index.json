@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T13:29:12.582Z",
+  "last_updated": "2026-11-11T13:52:28.676Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46946,14 +46946,19 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "4ccb5f41",
-      "content_hash": "19c97b00f8ddd7eec54113d9a96869cdc2f21fce3e2e182a061f0d67d64f2355",
+      "source_version": "dcfd464f",
+      "content_hash": "f29c3443459d9977ce812f4806fbeb13e980734ba878aa8bec72a9d440771c20",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[fix] ScrollView: don't set touch-action when scroll is disabled",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[fix] Pressable: remove keyup listener on unmount",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46992,7 +46997,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:43:54.773Z",
+      "verified_at": "2026-11-11T13:52:28.639Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

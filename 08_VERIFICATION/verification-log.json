@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-TT4F",
-    "timestamp": "2026-11-08T16:58:44.271Z",
-    "repository": "mikepenz/multiplatform-markdown-renderer",
-    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
-    "contentHash": "97e30a4570059ae3ef3e87b9de2016fad65bb3f037e4a00bf5c6b05966cd1f52",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-TUFZ",
     "timestamp": "2026-11-08T16:58:45.983Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7490,6 +7475,21 @@
     "repository": "nginx/kubernetes-ingress",
     "learningId": "learn-github-nginx-kubernetes-ingress",
     "contentHash": "1589357b742d71f29758d68e60c56ca69b6858b50b625e0ebaaaf4aeaef97df3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-HU2R",
+    "timestamp": "2026-11-11T13:52:28.803Z",
+    "repository": "necolas/react-native-web",
+    "learningId": "learn-github-necolas-react-native-web",
+    "contentHash": "f29c3443459d9977ce812f4806fbeb13e980734ba878aa8bec72a9d440771c20",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

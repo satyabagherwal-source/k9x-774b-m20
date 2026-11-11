@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "4ccb5f41",
+    "sourceVersion": "dcfd464f",
     "license": "MIT",
-    "contentHash": "19c97b00f8ddd7eec54113d9a96869cdc2f21fce3e2e182a061f0d67d64f2355",
-    "lastHarvestedAt": "2026-11-07T21:43:54.894Z",
+    "contentHash": "f29c3443459d9977ce812f4806fbeb13e980734ba878aa8bec72a9d440771c20",
+    "lastHarvestedAt": "2026-11-11T13:52:28.807Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {

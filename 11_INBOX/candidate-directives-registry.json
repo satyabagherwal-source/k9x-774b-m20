@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T13:29:30.756Z",
+  "last_updated": "2026-11-11T13:52:34.069Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4929,6 +4929,33 @@
       "source_repo": "shifthackz-sdai-kmp",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-027C1A-prepare-sdai-1-2-0-220-release-731-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4BC28C",
+      "directive_title": "[fix] Pressable: remove keyup listener on unmount",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "necolas-react-native-web",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4BC28C--fix-pressable-remove-keyup-listener-on-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0A0FB5",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0A0FB5-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0E8CB4",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0E8CB4-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-11"
     }
   ]
