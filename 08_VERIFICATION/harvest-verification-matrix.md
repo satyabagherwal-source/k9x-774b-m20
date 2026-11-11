@@ -8874,3 +8874,6 @@
 | `CYCLE-20261111-F3NE` | `2026-11-11T07:46:26.234Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`61f6c6fe...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:46:47.081Z` | `biomejs-biome` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5BF650C7` [Domain D] | Yes (`9e3609a8...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:47:08.933Z` | `hf-microsoft-florence-2-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C4D2B996` [Domain D] | Yes (`23fb6926...`) |
+| `CYCLE-20261111-UTV2` | `2026-11-11T07:58:40.046Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`322415d5...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:59:01.646Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-A79F59EB` [Domain H] | Yes (`954a7bb5...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:59:25.573Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-76C43650` [Domain K] | Yes (`7381df26...`) |

@@ -8883,3 +8883,6 @@ Every entry in this ledger must capture:
 | `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `1d4b1380` | Multi-dimensional audit evidence | 2026-11-11T07:46:26.238Z |
 | `learn-dom-d-5bf650c7` | `project://biomejs-biome` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md` | 2026-11-11T07:46:47.081Z |
 | `learn-dom-d-c4d2b996` | `project://hf-microsoft-florence-2-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | 2026-11-11T07:47:08.933Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `523a0639` | Multi-dimensional audit evidence | 2026-11-11T07:58:40.050Z |
+| `learn-dom-h-a79f59eb` | `project://oxc-project-oxc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-11T07:59:01.646Z |
+| `learn-dom-k-76c43650` | `project://oxc-project-oxc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-11T07:59:25.573Z |

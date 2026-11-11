@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T07:47:08.932Z",
-  "total_records": 35,
+  "last_updated": "2026-11-11T07:59:25.572Z",
+  "total_records": 37,
   "domains": {
     "A": {
       "total": 1,
@@ -60,7 +60,7 @@
       ]
     },
     "H": {
-      "total": 9,
+      "total": 10,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -70,7 +70,8 @@
         "DOM-H-C2A738D4",
         "DOM-H-1B2AC6F8",
         "DOM-H-0B5C2EE9",
-        "DOM-H-FF5BE5CE"
+        "DOM-H-FF5BE5CE",
+        "DOM-H-A79F59EB"
       ]
     },
     "I": {
@@ -87,9 +88,10 @@
       ]
     },
     "K": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-K-353B93D6"
+        "DOM-K-353B93D6",
+        "DOM-K-76C43650"
       ]
     },
     "L": {
@@ -1446,6 +1448,80 @@
       },
       "confidence": 0.64,
       "created_at": "2026-11-11T07:47:08.931Z"
+    },
+    "DOM-H-A79F59EB": {
+      "record_id": "DOM-H-A79F59EB",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Severed CFG Edge Phi Node Invariant Failure in React Compiler (BUG-OXC-01)",
+      "content": "SSA and CFG mutations must always be parameterized by the local incidence matrix (predecessors/successors), never by global vertex sets.",
+      "content_hash": "954a7bb5f60cd958eb68d7cd09866e1761eae06a4b7ccfdf2ff83092406e3333",
+      "summary": "Conflating basic block existence with edge existence. A block can remain in the CFG while a specific outgoing branch is eliminated. -> SSA and CFG mutations must always be parameterized by the local incidence matrix (predecessors/successors), never by global vertex sets.",
+      "provenance": {
+        "source_uri": "project://oxc-project-oxc/oxc-project-oxc-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:58:45.132Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oxc-project-oxc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `6e6bd61f`, Issue `#28879`, PR `#29018`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T07:59:01.644Z"
+    },
+    "DOM-K-76C43650": {
+      "record_id": "DOM-K-76C43650",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Type Stripping Regression in Exported Ambient Declarations (BUG-OXC-02)",
+      "content": "Even if an AST node is copied verbatim without mutation, it must traverse the semantic symbol dependency analyzer before codegen.",
+      "content_hash": "7381df260a8c999d91906074d7c9bdc5f19cf95eaf95186053ef9b0976917b22",
+      "summary": "Bypassing semantic graph traversal during optimization or \"no-op\" bypass branches. -> Even if an AST node is copied verbatim without mutation, it must traverse the semantic symbol dependency analyzer before codegen.",
+      "provenance": {
+        "source_uri": "project://oxc-project-oxc/oxc-project-oxc-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:58:45.133Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oxc-project-oxc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `19b1691a`, Issue `#28976`, PR `#28996`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T07:59:25.571Z"
     }
   }
 }

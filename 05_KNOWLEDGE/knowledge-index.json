@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T07:46:26.124Z",
+  "last_updated": "2026-11-11T07:58:39.939Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50825,8 +50825,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "a74b7cdb",
-      "content_hash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
+      "source_version": "523a0639",
+      "content_hash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -50844,6 +50844,21 @@
           "number": null,
           "title": "linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#2904",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Concurrency Runtime Bridging Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "CFG Phi-Operand Invariant on Edge Pruning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Worker Pool Signed 32-bit Integer Overflow & Singleton Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2494,
@@ -50911,7 +50926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:33:25.105Z",
+      "verified_at": "2026-11-11T07:58:39.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

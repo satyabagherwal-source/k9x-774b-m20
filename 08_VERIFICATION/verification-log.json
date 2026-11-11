@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-ZFUR",
-    "timestamp": "2026-11-08T09:35:13.155Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "58d129d40903f5cf5ab22c8303b71b10b8df11374a9f253c3129d9fa37e05e30",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-NZUX",
     "timestamp": "2026-11-08T09:54:18.825Z",
     "repository": "untitleduico/react",
@@ -7492,6 +7477,21 @@
     "contentHash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-UTV2",
+    "timestamp": "2026-11-11T07:58:40.046Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

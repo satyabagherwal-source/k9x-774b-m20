@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T07:46:26.244Z",
-  "total_cycles_completed": 8733,
-  "total_learnings_persisted": 8733,
-  "total_rules_promoted": 8583,
+  "last_updated": "2026-11-11T07:58:40.070Z",
+  "total_cycles_completed": 8734,
+  "total_learnings_persisted": 8734,
+  "total_rules_promoted": 8586,
   "history": [
-    {
-      "timestamp": "2026-11-09T10:59:42.004Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T11:04:02.296Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1403,6 +1396,13 @@
       "repository": "SeaQL/sea-orm",
       "learningId": "learn-github-seaql-sea-orm",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:58:40.070Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
