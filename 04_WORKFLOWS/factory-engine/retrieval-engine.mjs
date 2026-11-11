@@ -160,11 +160,26 @@ export function computeSourceFilesHash(customRoot = null, forceFresh = false) {
   const p = getRetrievalPaths(customRoot);
   const hash = crypto.createHash('sha256');
   hash.update('v2.1.0-pac004-complete-indexing');
-  if (fs.existsSync(p.patternsFile)) hash.update(fs.statSync(p.patternsFile).mtimeMs.toString());
-  if (fs.existsSync(p.coreRulesFile)) hash.update(fs.statSync(p.coreRulesFile).mtimeMs.toString());
-  if (fs.existsSync(p.knowledgeIndexFile)) hash.update(fs.statSync(p.knowledgeIndexFile).mtimeMs.toString());
-  if (p.capabilityRegistryFile && fs.existsSync(p.capabilityRegistryFile)) hash.update(fs.statSync(p.capabilityRegistryFile).mtimeMs.toString());
-  if (p.domainRegistryFile && fs.existsSync(p.domainRegistryFile)) hash.update(fs.statSync(p.domainRegistryFile).mtimeMs.toString());
+  if (fs.existsSync(p.patternsFile)) {
+    const s = fs.statSync(p.patternsFile);
+    hash.update(`${s.mtimeMs}:${s.size}`);
+  }
+  if (fs.existsSync(p.coreRulesFile)) {
+    const s = fs.statSync(p.coreRulesFile);
+    hash.update(`${s.mtimeMs}:${s.size}`);
+  }
+  if (fs.existsSync(p.knowledgeIndexFile)) {
+    const s = fs.statSync(p.knowledgeIndexFile);
+    hash.update(`${s.mtimeMs}:${s.size}`);
+  }
+  if (p.capabilityRegistryFile && fs.existsSync(p.capabilityRegistryFile)) {
+    const s = fs.statSync(p.capabilityRegistryFile);
+    hash.update(`${s.mtimeMs}:${s.size}`);
+  }
+  if (p.domainRegistryFile && fs.existsSync(p.domainRegistryFile)) {
+    const s = fs.statSync(p.domainRegistryFile);
+    hash.update(`${s.mtimeMs}:${s.size}`);
+  }
   if (p.learningDir && fs.existsSync(p.learningDir)) {
     hash.update(computeDossierDirHash(p.learningDir, forceFresh));
   }
@@ -172,7 +187,8 @@ export function computeSourceFilesHash(customRoot = null, forceFresh = false) {
     try {
       const skills = fs.readdirSync(p.skillsDir).filter(f => f.endsWith('.md'));
       for (const f of skills) {
-        hash.update(fs.statSync(path.join(p.skillsDir, f)).mtimeMs.toString());
+        const s = fs.statSync(path.join(p.skillsDir, f));
+        hash.update(`${f}:${s.mtimeMs}:${s.size}`);
       }
     } catch (e) { }
   }
@@ -1361,6 +1377,35 @@ export function normalizeCachedDocuments(documents) {
 /**
  * Builds the complete BM25 & Lexical Inverted Index
  */
+/**
+ * Clears in-memory retrieval index cache for a custom root or globally
+ * @param {string|null} customRoot - Target root path or null for all
+ */
+export function clearInMemoryIndexCache(customRoot = null) {
+  if (customRoot) {
+    const normalizedRoot = path.resolve(customRoot);
+    _indexCacheByRoot.delete(normalizedRoot);
+    _indexCacheByRoot.delete(customRoot);
+    _persistenceStateByRoot.delete(customRoot);
+    _persistenceStateByRoot.delete(normalizedRoot);
+  } else {
+    _indexCacheByRoot.clear();
+    _persistenceStateByRoot.clear();
+    _inMemoryIndex = null;
+    _inMemoryHash = null;
+  }
+}
+
+/**
+ * Invalidates both in-memory cache and cached directory hashes to force fresh re-evaluation
+ * @param {string|null} customRoot - Target root path or null for all
+ */
+export function invalidateRetrievalCache(customRoot = null) {
+  clearInMemoryIndexCache(customRoot);
+  _cachedDossierHash = null;
+  _lastDossierHashCheck = 0;
+}
+
 export function buildSearchIndex(forceRebuild = false, customRoot = null, options = {}) {
   // Support options object as 2nd argument: buildSearchIndex(forceRebuild, options)
   let resolvedRoot = customRoot;
@@ -1386,7 +1431,14 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
     try {
       const raw = fs.readFileSync(p.cacheIndexFile, 'utf-8');
       const cached = JSON.parse(raw);
-      if (cached && cached.sourceHash === currentHash && Array.isArray(cached.documents) && cached.invertedIndex) {
+      const isStructurallyValid = cached &&
+        cached.sourceHash === currentHash &&
+        Array.isArray(cached.documents) &&
+        cached.documents.length > 0 &&
+        typeof cached.invertedIndex === 'object' &&
+        typeof cached.idf === 'object';
+
+      if (isStructurallyValid) {
         // Enforce Fix A (indexingStatus) and Fix B (template detection/source independence) on cached docs
         normalizeCachedDocuments(cached.documents);
 
@@ -1577,7 +1629,6 @@ export function searchBrain(query, options = {}) {
   const k1 = 1.5;
   const b = 0.75;
   const scores = new Float64Array(index.totalDocuments);
-  const matchDetails = new Map();
   const matchedDocIndices = new Set();
 
   // Check for specific rule number intent (e.g. "Rule 15", "15", "rule24")
@@ -1614,12 +1665,6 @@ export function searchBrain(query, options = {}) {
       }
 
       scores[docIdx] += termScore;
-      let details = matchDetails.get(docIdx);
-      if (!details) {
-        details = [];
-        matchDetails.set(docIdx, details);
-      }
-      details.push({ term, termScore });
     }
   }
 
@@ -1646,12 +1691,6 @@ export function searchBrain(query, options = {}) {
       const denominator = freq + k1 * (1 - b + b * (docLen / index.avgdl));
       const termScore = (termIdf * (numerator / denominator)) * 0.4;
       scores[docIdx] += termScore;
-      let details = matchDetails.get(docIdx);
-      if (!details) {
-        details = [];
-        matchDetails.set(docIdx, details);
-      }
-      details.push({ term, termScore });
     }
   }
 
@@ -1744,9 +1783,11 @@ export function searchBrain(query, options = {}) {
     }
   }
 
+  const allSearchTerms = queryTokens.concat(additionalTerms);
   const results = deduplicatedIndices.map(docIdx => {
     const doc = index.documents[docIdx];
-    const matchedTerms = matchDetails.has(docIdx) ? matchDetails.get(docIdx).map(m => m.term) : [];
+    const docText = `${doc.title || ''} ${doc.summary || ''} ${doc.ruleText || ''} ${doc.whyText || ''} ${doc.fullContent || ''}`.toLowerCase();
+    const matchedTerms = allSearchTerms.filter(t => docText.includes(t));
     const evidenceExcerpt = extractEvidenceExcerpt(doc.fullContent || doc.summary, matchedTerms);
 
     return {
