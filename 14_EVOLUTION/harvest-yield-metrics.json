@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:43:02.294Z",
-  "total_cycles_completed": 8822,
-  "total_learnings_persisted": 8822,
-  "total_rules_promoted": 8683,
+  "last_updated": "2026-11-11T16:56:00.340Z",
+  "total_cycles_completed": 8824,
+  "total_learnings_persisted": 8824,
+  "total_rules_promoted": 8684,
   "history": [
-    {
-      "timestamp": "2026-11-09T18:11:21.881Z",
-      "repository": "i18next/react-i18next",
-      "learningId": "learn-github-i18next-react-i18next",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T18:11:37.153Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T18:11:38.259Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T16:43:02.294Z",
       "repository": "LLPhant/LLPhant",
       "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:55:57.493Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:56:00.340Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

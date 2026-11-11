@@ -8977,3 +8977,6 @@
 | `CYCLE-20261111-C6QS` | `2026-11-11T16:36:02.980Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fb28f5c...`) |
 | `CYCLE-20261111-L0YH` | `2026-11-11T16:42:55.385Z` | `linkwarden/linkwarden` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fba74864...`) |
 | `CYCLE-20261111-L6A6` | `2026-11-11T16:43:02.286Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b1d1b24a...`) |
+| `CYCLE-20261111-1SFF` | `2026-11-11T16:55:57.483Z` | `goharbor/harbor` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/goharbor-harbor-learnings.md` | Yes (`3b35e68e...`) |
+| `CYCLE-20261111-1UMI` | `2026-11-11T16:56:00.330Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`526830c2...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T16:56:20.049Z` | `goharbor-harbor` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-62E0908D` [Domain D] | Yes (`2a954f55...`) |

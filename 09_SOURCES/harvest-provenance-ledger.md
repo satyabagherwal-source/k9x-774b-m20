@@ -8986,3 +8986,6 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `32a53ec1` | Multi-dimensional audit evidence | 2026-11-11T16:36:02.983Z |
 | `learn-github-linkwarden-linkwarden` | `https://github.com/linkwarden/linkwarden` | `24adcc14` | Multi-dimensional audit evidence | 2026-11-11T16:42:55.391Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `d0a94b30` | Multi-dimensional audit evidence | 2026-11-11T16:43:02.289Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `fac9abd1` | Multi-dimensional audit evidence | 2026-11-11T16:55:57.487Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `f28032b1` | Multi-dimensional audit evidence | 2026-11-11T16:56:00.334Z |
+| `learn-dom-d-62e0908d` | `project://goharbor-harbor` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md` | 2026-11-11T16:56:20.049Z |

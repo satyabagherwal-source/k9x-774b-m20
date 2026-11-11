@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T16:43:02.297Z",
+  "last_updated": "2026-11-11T16:56:00.345Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
-      "verified_at": "2026-11-09T03:05:11.680Z",
+      "content_hash": "526830c2fd8321a1c8b9fef5e3faff3943b65b1ed41527e5a1637b448f293106",
+      "verified_at": "2026-11-11T16:56:00.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:05:11.680Z"
+      "last_updated": "2026-11-11T16:56:00.344Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
-      "verified_at": "2026-11-09T10:59:36.002Z",
+      "content_hash": "3b35e68ee600c29af308e51a03367308387e658024111782a1d0bf088f717a47",
+      "verified_at": "2026-11-11T16:55:57.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T10:59:36.002Z"
+      "last_updated": "2026-11-11T16:55:57.496Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",

@@ -1,0 +1,808 @@
+{
+  "version": "1.0.0",
+  "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
+  "created_at": "2026-11-11T16:56:05.344Z",
+  "updated_at": "2026-11-11T16:56:20.077Z",
+  "stats": {
+    "total_discovered": 40,
+    "approved_pending_harvest": 27,
+    "harvested_count": 0,
+    "rejected_count": 13,
+    "category_distribution": {
+      "COMMUNITY_AND_EXPERT": 37,
+      "OFFICIAL_DOCUMENTATION": 3
+    }
+  },
+  "sources": {
+    "SRC-9B03D029BE8E": {
+      "id": "SRC-9B03D029BE8E",
+      "url": "https://github.com/metalbear-co/mirrord",
+      "title": "https://github.com/metalbear-co/mirrord",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-899F136F7511": {
+      "id": "SRC-899F136F7511",
+      "url": "https://github.com/metalbear-co/mirrord/commit/56da9828ad2553e6c5a11124c5d65f4d4b00e6e6",
+      "title": "https://github.com/metalbear-co/mirrord/commit/56da9828ad2553e6c5a11124c5d65f4d4b00e6e6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-9341176B0BCF": {
+      "id": "SRC-9341176B0BCF",
+      "url": "https://docs.rs/arc-swap/latest/arc_swap",
+      "title": "https://docs.rs/arc-swap/latest/arc_swap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-8EBEE8CE4AAF": {
+      "id": "SRC-8EBEE8CE4AAF",
+      "url": "https://github.com/metalbear-co/mirrord/blob/747cc39839876068bbd031cf1d31cdf3ced70f34/mirrord/layer-go/src/linux_aarch64.rs",
+      "title": "https://github.com/metalbear-co/mirrord/blob/747cc39839876068bbd031cf1d31cdf3ced70f34/mirrord/layer-go/src/linux_aarch64.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-D2739252B3CD": {
+      "id": "SRC-D2739252B3CD",
+      "url": "https://github.com/golang/go/blob/6885bad7dd86880be6929c02085e5c7a67ff2887/src/runtime/asm_arm64.s",
+      "title": "https://github.com/golang/go/blob/6885bad7dd86880be6929c02085e5c7a67ff2887/src/runtime/asm_arm64.s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.349Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-4D300FA0946D": {
+      "id": "SRC-4D300FA0946D",
+      "url": "https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/README.md",
+      "title": "https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.349Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-B5EF75633AB0": {
+      "id": "SRC-B5EF75633AB0",
+      "url": "https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/config/src/agent.rs",
+      "title": "https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/config/src/agent.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.350Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-A1AFE56862EF": {
+      "id": "SRC-A1AFE56862EF",
+      "url": "https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/kube/src/api/container/util.rs",
+      "title": "https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/kube/src/api/container/util.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:05.350Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-C848EB89631B": {
+      "id": "SRC-C848EB89631B",
+      "url": "https://github.com/goharbor/harbor",
+      "title": "https://github.com/goharbor/harbor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-0BF5F459E8D3": {
+      "id": "SRC-0BF5F459E8D3",
+      "url": "https://golang.org/pkg/database/sql",
+      "title": "https://golang.org/pkg/database/sql",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-AFAF66C9900D": {
+      "id": "SRC-AFAF66C9900D",
+      "url": "http://portal:8080/",
+      "title": "http://portal:8080/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.052Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-C7BAD0268765": {
+      "id": "SRC-C7BAD0268765",
+      "url": "http://registry:5000/",
+      "title": "http://registry:5000/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.052Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-011C1703F8EF": {
+      "id": "SRC-011C1703F8EF",
+      "url": "http://registryctl:8080/",
+      "title": "http://registryctl:8080/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.053Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-B57CAD8E73CB": {
+      "id": "SRC-B57CAD8E73CB",
+      "url": "http://core:8080/",
+      "title": "http://core:8080/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.053Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-0BC3C2F13CCD": {
+      "id": "SRC-0BC3C2F13CCD",
+      "url": "http://127.0.0.1:8080/",
+      "title": "http://127.0.0.1:8080/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-55DEC0952AC3": {
+      "id": "SRC-55DEC0952AC3",
+      "url": "http://core:8080/service/token",
+      "title": "http://core:8080/service/token",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-F2016DB217A9": {
+      "id": "SRC-F2016DB217A9",
+      "url": "http://jobservice:8080/",
+      "title": "http://jobservice:8080/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-C1B9FDEECEA7": {
+      "id": "SRC-C1B9FDEECEA7",
+      "url": "http://trivy-adapter:8080/",
+      "title": "http://trivy-adapter:8080/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-07F7AFDBD6CD": {
+      "id": "SRC-07F7AFDBD6CD",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24361?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24361?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-C723F74BC6A9": {
+      "id": "SRC-C723F74BC6A9",
+      "url": "https://docs.codecov.com/docs/codecov-uploader",
+      "title": "https://docs.codecov.com/docs/codecov-uploader",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-332D448AB205": {
+      "id": "SRC-332D448AB205",
+      "url": "https://docs.codecov.io/docs/error-reference",
+      "title": "https://docs.codecov.io/docs/error-reference",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-FACCE8A5C1F5": {
+      "id": "SRC-FACCE8A5C1F5",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24361/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24361/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-DCE7A15B7DCB": {
+      "id": "SRC-DCE7A15B7DCB",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24361?src=pr&el=tree&utm=",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24361?src=pr&el=tree&utm=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-D15F19559CE6": {
+      "id": "SRC-D15F19559CE6",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24360?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24360?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.059Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-2DECC6C2FEA5": {
+      "id": "SRC-2DECC6C2FEA5",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24360/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24360/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.059Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-C9ECE9EF1D33": {
+      "id": "SRC-C9ECE9EF1D33",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24360?src=pr&el=tree&utm=",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24360?src=pr&el=tree&utm=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-AE1B95251452": {
+      "id": "SRC-AE1B95251452",
+      "url": "https://reg.mydomain.com:8433/",
+      "title": "https://reg.mydomain.com:8433/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-7DD28B6131AB": {
+      "id": "SRC-7DD28B6131AB",
+      "url": "https://github.com/ZSeven-W/openpencil",
+      "title": "https://github.com/ZSeven-W/openpencil",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.069Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-27EBAB1430BC": {
+      "id": "SRC-27EBAB1430BC",
+      "url": "https://op.zseven.cn/",
+      "title": "https://op.zseven.cn/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-36C7DDD6CC0E": {
+      "id": "SRC-36C7DDD6CC0E",
+      "url": "https://op.zseven.tech/",
+      "title": "https://op.zseven.tech/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-A53A1372C4C3": {
+      "id": "SRC-A53A1372C4C3",
+      "url": "http://127.0.0.1:18081`",
+      "title": "http://127.0.0.1:18081`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-DF57DE235775": {
+      "id": "SRC-DF57DE235775",
+      "url": "http://127.0.0.1/*%60",
+      "title": "http://127.0.0.1/*%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-2BF986391F8A": {
+      "id": "SRC-2BF986391F8A",
+      "url": "https://`/",
+      "title": "https://`/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-777F89B0236F": {
+      "id": "SRC-777F89B0236F",
+      "url": "https://127.0.0.1:8443`",
+      "title": "https://127.0.0.1:8443`",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-BF9C1DF8CA58": {
+      "id": "SRC-BF9C1DF8CA58",
+      "url": "http://`/",
+      "title": "http://`/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-8F52F665E4D8": {
+      "id": "SRC-8F52F665E4D8",
+      "url": "http://{endpoint/",
+      "title": "http://{endpoint/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T16:56:20.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-530252D41B04": {
+      "id": "SRC-530252D41B04",
+      "url": "https://gateway.example.test/v1",
+      "title": "https://gateway.example.test/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-16C97E2CE193": {
+      "id": "SRC-16C97E2CE193",
+      "url": "https://sso.example.test/",
+      "title": "https://sso.example.test/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-7D7BA1146C23": {
+      "id": "SRC-7D7BA1146C23",
+      "url": "https://developer.apple.com/app-store/review/guidelines",
+      "title": "https://developer.apple.com/app-store/review/guidelines",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-D39C474FD93C": {
+      "id": "SRC-D39C474FD93C",
+      "url": "https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion",
+      "title": "https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T16:56:20.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    }
+  }
+}

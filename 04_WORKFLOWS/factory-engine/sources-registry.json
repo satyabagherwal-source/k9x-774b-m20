@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T16:43:08.598Z",
-    "lastVerified": "2026-11-11T16:43:08.598Z",
+    "lastChecked": "2026-11-11T16:56:05.217Z",
+    "lastVerified": "2026-11-11T16:56:05.217Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,8 +253,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T16:05:07.524Z",
-    "lastVerified": "2026-11-11T16:05:07.524Z",
+    "lastChecked": "2026-11-11T16:55:59.025Z",
+    "lastVerified": "2026-11-11T16:55:59.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1554,13 +1554,13 @@
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T10:59:34.436Z",
-    "lastVerified": "2026-11-09T10:59:34.436Z",
+    "lastChecked": "2026-11-11T16:55:57.133Z",
+    "lastVerified": "2026-11-11T16:55:57.133Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
-    "promotedRulesCount": 1,
+    "contentHash": "3b35e68ee600c29af308e51a03367308387e658024111782a1d0bf088f717a47",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -2042,14 +2042,14 @@
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T03:03:29.137Z",
-    "lastVerified": "2026-11-09T03:03:29.137Z",
+    "lastChecked": "2026-11-11T16:55:48.328Z",
+    "lastVerified": "2026-11-11T16:55:48.328Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
-    "promotedRulesCount": 2,
-    "recentFixesCount": 0,
+    "contentHash": "526830c2fd8321a1c8b9fef5e3faff3943b65b1ed41527e5a1637b448f293106",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2305,12 +2305,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T10:00:05.225Z",
-    "lastVerified": "2026-11-11T10:00:05.225Z",
+    "lastChecked": "2026-11-11T16:55:54.062Z",
+    "lastVerified": "2026-11-11T16:55:54.062Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2319,7 +2319,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7b2c32b9"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -4260,9 +4261,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-09T08:37:57.766Z",
+    "lastChecked": "2026-11-11T16:55:56.579Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-09T08:37:57.766Z"
+    "lastVerified": "2026-11-11T16:55:56.579Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -8486,9 +8487,9 @@
   "oblador-react-native-vector-icons": {
     "name": "react-native-vector-icons",
     "officialUrl": "https://github.com/oblador/react-native-vector-icons",
-    "lastChecked": "2026-11-07T23:47:00.777Z",
+    "lastChecked": "2026-11-11T16:55:48.935Z",
     "revisionIdentifier": "666a7437",
-    "lastVerified": "2026-11-07T23:47:00.777Z"
+    "lastVerified": "2026-11-11T16:55:48.935Z"
   },
   "imsnif-diskonaut": {
     "name": "diskonaut",
@@ -10788,9 +10789,9 @@
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",
     "officialUrl": "https://github.com/jafforgehq/site-analytics-tool",
-    "lastChecked": "2026-11-06T21:59:19.945Z",
+    "lastChecked": "2026-11-11T16:55:46.472Z",
     "revisionIdentifier": "1788648c",
-    "lastVerified": "2026-11-06T21:59:19.945Z"
+    "lastVerified": "2026-11-11T16:55:46.472Z"
   },
   "chrisbanes-skills": {
     "name": "skills",

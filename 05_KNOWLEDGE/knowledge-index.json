@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T16:43:02.173Z",
+  "last_updated": "2026-11-11T16:56:00.193Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17427,8 +17427,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "bc458019",
-      "content_hash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
+      "source_version": "fac9abd1",
+      "content_hash": "3b35e68ee600c29af308e51a03367308387e658024111782a1d0bf088f717a47",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -17518,7 +17518,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T10:59:35.854Z",
+      "verified_at": "2026-11-11T16:55:57.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43985,8 +43985,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "ba0b4a85",
-      "content_hash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
+      "source_version": "f28032b1",
+      "content_hash": "526830c2fd8321a1c8b9fef5e3faff3943b65b1ed41527e5a1637b448f293106",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -44004,6 +44004,11 @@
           "number": null,
           "title": "Backpressure-Bounded Asynchronous IO Streams via Semaphore Permits",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Enable linux fs fixes for all users (#5214)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1787,
@@ -44071,7 +44076,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:05:11.496Z",
+      "verified_at": "2026-11-11T16:56:00.156Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

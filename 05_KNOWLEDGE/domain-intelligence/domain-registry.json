@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T13:29:30.753Z",
-  "total_records": 49,
+  "last_updated": "2026-11-11T16:56:20.047Z",
+  "total_records": 50,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 19,
+      "total": 20,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -44,7 +44,8 @@
         "DOM-D-11562009",
         "DOM-D-00269E5B",
         "DOM-D-40589951",
-        "DOM-D-BA155874"
+        "DOM-D-BA155874",
+        "DOM-D-62E0908D"
       ]
     },
     "E": {
@@ -1970,6 +1971,47 @@
       },
       "confidence": 0.64,
       "created_at": "2026-11-11T13:29:30.751Z"
+    },
+    "DOM-D-62E0908D": {
+      "record_id": "DOM-D-62E0908D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): goharbor/harbor",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  \n> **Source Version**: `fac9abd1`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthes",
+      "content_hash": "2a954f5580808cfeb9b1e18edcf046fc738a753afdbf79d362db197faed4f06f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/h",
+      "provenance": {
+        "source_uri": "project://goharbor-harbor/goharbor-harbor-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T16:56:05.352Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (goharbor-harbor)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of goharbor-harbor"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T16:56:20.046Z"
     }
   }
 }

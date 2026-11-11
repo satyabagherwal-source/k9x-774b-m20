@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "ba0b4a85",
+    "sourceVersion": "f28032b1",
     "license": "MIT",
-    "contentHash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
-    "lastHarvestedAt": "2026-11-09T03:05:11.671Z",
+    "contentHash": "526830c2fd8321a1c8b9fef5e3faff3943b65b1ed41527e5a1637b448f293106",
+    "lastHarvestedAt": "2026-11-11T16:56:00.334Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "bc458019",
+    "sourceVersion": "fac9abd1",
     "license": "Apache-2.0",
-    "contentHash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
-    "lastHarvestedAt": "2026-11-09T10:59:35.994Z",
+    "contentHash": "3b35e68ee600c29af308e51a03367308387e658024111782a1d0bf088f717a47",
+    "lastHarvestedAt": "2026-11-11T16:55:57.487Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
