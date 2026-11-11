@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:00:26.533Z",
+  "last_updated": "2026-11-11T10:09:35.591Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T07:59:25.580Z",
@@ -121,9 +121,24 @@
       "processed_at": "2026-11-11T10:00:26.533Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "apache-arrow-learnings.md": {
+      "processed_at": "2026-11-11T10:09:35.579Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-liconstudio-minimax-h3-vbvr-learnings.md": {
+      "processed_at": "2026-11-11T10:09:35.585Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rook-rook-learnings.md": {
+      "processed_at": "2026-11-11T10:09:35.591Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 27,
+  "total_dossiers_evaluated": 30,
   "total_canonical_promoted": 12,
-  "total_staged_for_review": 12
+  "total_staged_for_review": 15
 }

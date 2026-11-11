@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `7299fdcc`  
+> **Source Version**: `976779b2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T23:12:30.573Z  
+> **Timestamp**: 2026-11-11T10:08:04.386Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T23:12:30.455Z  
+> **Harvest Timestamp**: 2026-11-11T10:08:04.215Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17278 stars
+- **Stars / Engagement**: 17290 stars
 
 ---
 
@@ -1377,13 +1377,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55438** (2026-11-07): **GH-55429: [C++] Avoid unavailable libc++ utilities in CRAN builds**
-  *Symptoms*: Closes #55429.  Closes #55430.  ### Rationale for this change  The CRAN macOS build uses the macOS 11.3 SDK, whose libc++ lacks std::invocable and std::in_range.  The std::invocable failure occurs first and masks the std::in_range failure, so both need to be addressed for this build configuration.  ### What changes are included in this PR?  Replace std::invocable with std::is_invocable_v in the two transform constraints in codegen_internal.h, and remove the unused `<concepts>` include.  Replace the endpoint-based std::in_range checks in Parquet’s can_hold_v with a comparison of numeric_limits::digits and signedness. The predicate continues to determine whether the destination integer type can represent the source type’s complete range.  ### Are these changes tested?  A Linux GCC 13 source build succeeds with the patch.  The targeted suites pass:  - Kernel utility tests: 6 passed. - Parquet reader tests: 180 passed, 10 skipped.  The integer-range predicate was also checked against the previous expression for 64 signed and unsigned integer-type pairs. Formatting passes with the repository’s pinned clang-format 18.1.8.  The macOS 11.3 SDK was unavailable in the validation environment, so the exact test-r-macos-as-cran build still needs CI verification.  ### Are there any user-facing changes?  This addresses compilation failures with the older libc++ used by the CRAN build. No public API or intended runtime behavior changes.  ### Was AI used for this PR?  AI tools assisted with i
-  **Post-Mortem & Fix Analysis**:
-  > :warning: GitHub issue #55429 **has been automatically assigned in GitHub** to PR creator.
+- **Issue #55482** (2026-11-11): **MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0**
+  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
 
-- **Issue #55437** (2026-11-07): **GH-55428: [C++][S3] Preserve retryable errors when ranged-read buffers overflow**
-  *Symptoms*: Closes #55428.  ### Rationale for this change  A ranged GetObject response currently writes into a buffer sized to the requested read. An S3 error document can be larger than that buffer, even when the requested object is small.  When this happens, the response stream fails before the AWS SDK can classify the error. A SlowDown response becomes INTERNAL_FAILURE with “Failed to flush response stream”, preventing the expected retry behavior.  ### What changes are included in this PR?  Introduce a GET-specific response stream that writes successful reads directly into the caller’s buffer.  If a response exceeds that buffer, the stream retains a prefix of up to 64 KiB for SDK error parsing and consumes subsequent bytes without growing the retained buffer. This lets the SDK classify and retry throttling responses.  After a successful SDK result, check whether the response overflowed. Oversized successful responses return an IOError instead of being accepted as a valid ranged read.  The upload stream is unchanged.  ### Are these changes tested?  Six new C++ tests cover normal and short writes, bulk and split overflow, character writes, direct put-area writes, rewinding, spill-cap boundaries, and overflow detection.  Eleven Python integration cases use a local HTTP server to cover:  - HTTP 429 and 503 SlowDown responses larger than the requested range. - A control case where the error body fits. - Recovery after throttling, verifying the returned bytes. - Oversized HTTP 200 and 206 r
+- **Issue #55481** (2026-11-11): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
+  *Symptoms*: Updates the requirements on [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions) to permit the latest version. Updates `apache/infrastructure-actions/stash/restore` to 5a4eaabe6c43770c9df95875a513a6b8362be5eb <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/commits/5a4eaabe6c43770c9df95875a513a6b8362be5eb">compare view</a></li> </ul> </details> <br />  Updates `apache/infrastructure-actions/stash/save` to 5a4eaabe6c43770c9df95875a513a6b8362be5eb <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/commits/5a4eaabe6c43770c9df95875a513a6b8362be5eb">compare view</a></li> </ul> </details> <br />   Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the sp
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1400,182 +1398,495 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7299fdcc` (2026-11-08)
-**Commit Message**: GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)
+### Incident Patch 1: `bea76d64` (2026-11-11)
+**Commit Message**: GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optimization disabled (#55278)
 
 ### Rationale for this change
-
-While reading the Substrait relation conversion I noticed that `GetEmitInfo` and `ProcessEmitProject` take the `emit.output_mapping` values straight from the plan and use them to index `input_schema->field(map_id)` and the project expression vector, with no range check. `Schema::field` only has debug assertions, so a deserialised plan carrying an out-of-bounds or negative mapping index reads past the end of those vectors (and in the project case moves an out-of-bounds `compute::Expression`). This is reachable from the public `DeserializePlan` entry point, which parses untrusted plan bytes, and it applies to essentially every relation kind that goes through the emit path. The neighbouring `ProcessExtensionEmit` already range-checks the same index, so the two emit helpers were simply missing the equivalent guard.
-
-### What changes are included in this PR?
-
-A range check on `map_id` in both `GetEmitInfo` and `ProcessEmitProject` that returns `Status::Invalid` for negative or out-of-bounds indices, matching the existing check in `ProcessExtensionEmit`. For a ProjectRel the em
-
-**File**: `cpp/src/arrow/engine/substrait/relation_internal.cc` (modified, +6/-0)
-```diff
-@@ -85,6 +85,9 @@ Result<EmitInfo> GetEmitInfo(const RelMessage& rel,
-   FieldVector emit_fields(emit_size);
-   for (int i = 0; i < emit_size; i++) {
-     int32_t map_id = emit.output_mapping(i);
-+    if (map_id < 0 || map_id >= input_schema->num_fields()) {
-+      return Status::Invalid("Out of bounds emit index ", map_id);
-+    }
-     proj_field_refs[i] = compute::field_ref(FieldRef(map_id));
-     emit_fields[i] = input_schema->field(map_id);
-   }
-@@ -111,6 +114,9 @@ Result<DeclarationInfo> ProcessEmitProject(
-         std::vector<compute::Expression> emit_proj_exprs(emit_size);
-         for (int i = 0; i < emit_size; i++) {
-           int32_t map_id = emit.output_mapping(i);
-+          if (map_id < 0 || map_id >= input_schema->num_fields()) {
-+            return Status::Invalid("Out of bounds emit index ", map_id);
-+          }
-           emit_fields[i] = input_schema->field(map_id);
-           emit_proj_exprs[i] = std::move(proj_options.expressions[map_id]);
-         }
-```
-
-**File**: `cpp/src/arrow/engine/substrait/serde_test.cc` (modified, +68/-0)
-```diff
-@@ -3147,6 +3147,74 @@ TEST(SubstraitRoundTrip, ReadRelWithEmit) {
-                        /*include_columns=*/{}, conversion_options);
- }
- 
-+void CheckInvalidEmitIndex(const std::string& rel_json) {
-+  std::string substrait_json = R"({
-+  "version": { "major_number": 9999, "minor_number": 9999, "patch_number": 9999 },
-+  "relations": [{
-+    "rel": )" + rel_json + R"(
-+  }]
-+  })";
-+
-+  ASSERT_OK_AND_ASSIGN(auto buf,
-+                       internal::SubstraitFromJSON("Plan", substrait_json,
-+                                                   /*ignore_unknown_fields=*/false));
-+  auto dummy_schema =
-+      schema({field("A", int32()), field("B", int32()), field("C", int32())});
-+  ConversionOptions conversion_options;
-+  conversion_options.named_table_provider =
-+      AlwaysProvideSameTable(TableFromJSON(dummy_schema, {"[[1, 2, 3]]"}));
-+  std::shared_ptr<ExtensionIdRegistry> sp_ext_id_reg = MakeExtensionIdRegistry();
-+  ExtensionIdRegistry* ext_id_reg = sp_ext_id_reg.get();
-+  ExtensionSet ext_set(ext_id_reg);
-+  EXPECT_THAT(
-+      DeserializePlans(
-+          *buf, [] { return kNullConsumer; }, ext_id_reg, &ext_set, conversion_options),
-+      Raises(StatusCode::Invalid, HasSubstr("Out of bounds emit index")));
-+}
-+
-+TEST(Substrait, ReadRelWithOutOfBoundsEmit) {
-+  for (const char* mapping : {"[0, 3]", "[-1, 1]"}) {
-+    ARROW_SCOPED_TRACE("outputMapping: ", mapping);
-+    CheckInvalidEmitIndex(R"({
-+      "read": {
-+        "common": {"emit": {"outputMapping": )" +
-+                          std::string(mapping) + R"(}},
-+        "base_schema": {
-+          "names": ["A", "B", "C"],
-+          "struct": {"types": [{"i32": {}}, {"i32": {}}, {"i32": {}}]}
-+        },
-+        "namedTable": {"names": ["A"]}
-+      }
-+    })");
-+  }
-+}
-+
-+TEST(Substrait, ProjectRelWithOutOfBoundsEmit) {
-+  // The project emits the 3 input fields plus 1 expression, so 4 is out of range
-+  for (const char* mapping : {"[0, 4]", "[-1, 3]"}) {
-+    ARROW_SCOPED_TRACE("outputMapping: ", mapping);
-+    CheckInvalidEmitIndex(R"({
-+      "project": {
-+        "common": {"emit": {"outputMapping": )" +
-+                          std::string(mapping) + R"(}},
-+        "expressions": [
-+          {"selection": {"directReference": {"structField": {"field": 0}},
-+                         "rootReference": {}}}
-+        ],
-+        "input": {
-+          "read": {
-+            "base_schema": {
-+              "names": ["A", "B", "C"],
-+              "struct": {"types": [{"i32": {}}, {"i32": {}}, {"i32": {}}]}
-+            },
-+            "namedTable": {"names": ["A"]}
-+          }
-+        }
-+      }
-+    })");
-+  }
-+}
-+
- TEST(SubstraitRoundTrip, FilterRelWithEmit) {
-   auto dummy_schema = schema({field("A", int32()), field("B", int32()),
-                               field("C", int32()), field("D", int32())});
-```
-
----
-
-### Incident Patch 2: `19f5e06a` (2026-11-08)
-**Commit Message**: GH-55356: [C++] Compare mtime at second precision in `GetFileInfoSelector` test (#55433)
-
-### Rationale for this change
-#55356 - `TestS3FSGeneric.GetFileInfoSelector` fails with AWS SDK 1.11.900 and newer.
-See https://github.com/aws/aws-sdk-cpp/pull/3934
-`ListObjectsV2` results keep milliseconds while `HeadObject`'s `Last-Modified` header only has seconds.
+Gandiva can exhaust the stack when evaluating decimal expressions with JIT optimization disabled. Decimal return slots are allocated inside the record loop, so each row uses more stack. The stack is only released when the function returns.
 
 ### What changes are included in this PR?
-Floor the listing `mtime` from milliseconds to seconds in `GetFileInfoSelector` test when the single file `mtime` has only seconds.
+Move return-slot allocations to the function entry block in `CallDecimalFunction` and `AddLarge`.
 
 ### Are these changes tested?
-Locally on macOS arm64 with AWS SDK 1.11.900 and MinIO.
+Locally, the large-batch test crashes before the fix (SIGSEGV, exit 139) and passes afterward. It checks negative values and nulls, with optimization off and on.
 
 ### Are there any user-facing changes?
 No.
 
+**This PR contains a "Critical Fix".** It fixes a native process crash.
+
 ### Was AI used for this PR?
+AI tools helped investigate the crash and write the fix, tests, and description.
 
 **PR code and description written by:**
-
-- [X] Human
-- [X] AI
+- [x] Human
+- [x] AI
 
 **Reviewed before submission by:**
-
-- [X] Human
+- [x] Human
 - [ ] AI
-- [ ] Not reviewed
 
-* GitHub Issue: #55356
+GitHub Issue: #55277
 
-Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
-Co-authored-by: tadeja <[REDACTED_EMAIL]>
-Co-authored-by: Rok Mihevc <[REDACTED_EMAIL]>
-Signed-off-by: Sutou Kouhei <[REDACTED_EMAIL]>
+P.S. The first commit contains only the regression test. The second commit contains only the fix.
+* GitHub Issue: #5527
 
-**File**: `cpp/src/arrow/filesystem/test_util.cc` (modified, +5/-0)
+**File**: `cpp/src/gandiva/decimal_ir.cc` (modified, +12/-6)
 ```diff
-@@ -811,6 +811,11 @@ void GenericFileSystemTest::TestGetFileInfoSelector(FileSystem* fs) {
-   ASSERT_OK_AND_ASSIGN(info, fs->GetFileInfo("AB"));
-   AssertFileInfo(info, "AB", FileType::Directory, first_dir_time);
-   ASSERT_OK_AND_ASSIGN(info, fs->GetFileInfo("AB/CD/ghi"));
-+  // aws-sdk-cpp >= 1.11.900 keeps ms in S3 listings, but HeadObject only has seconds
-+  if (info.mtime() == std::chrono::floor<std::chrono::seconds>(info.mtime()) &&
-+      first_file_time == std::chrono::floor<std::chrono::milliseconds>(first_file_time)) {
-+    first_file_time = std::chrono::floor<std::chrono::seconds>(first_file_time);
-+  }
-   AssertFileInfo(info, "AB/CD/ghi", FileType::File, first_file_time, 15);
+@@ -243,12 +243,18 @@ DecimalIR::ValueWithOverflow DecimalIR::AddWithOverflowCheck(const ValueFull& x,
+   return ValueWithOverflow(sum_descaled, overflow);
+ }
  
-   // Doesn't exist
++std::pair<llvm::AllocaInst*, llvm::AllocaInst*> DecimalIR::CreateEntryBlockReturnSlots() {
++  auto& entry = ir_builder()->GetInsertBlock()->getParent()->getEntryBlock();
++  llvm::IRBuilder<> entry_builder(&entry, entry.begin());
++  auto out_high_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_hi");
++  auto out_low_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_low");
++  return {out_high_ptr, out_low_ptr};
++}
++
+ // This is pretty complex, so use CPP fns.
+ llvm::Value* DecimalIR::AddLarge(const ValueFull& x, const ValueFull& y,
+                                  const ValueFull& out) {
+-  auto block = ir_builder()->GetInsertBlock();
+-  auto out_high_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_hi", block);
+-  auto out_low_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_low", block);
++  auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
+   auto x_split = ValueSplit::MakeFromInt128(this, x.value());
+   auto y_split = ValueSplit::MakeFromInt128(this, y.value());
+ 
+@@ -454,9 +460,9 @@ llvm::Value* DecimalIR::CallDecimalFunction(const std::string& function_name,
+   llvm::Value* result = nullptr;
+   if (return_type == i128) {
+     // for i128 ret, replace with two int64* args, and join them.
+-    auto block = ir_builder()->GetInsertBlock();
+-    auto out_high_ptr = new llvm::AllocaInst(i64, 0, "out_hi", block);
+-    auto out_low_ptr = new llvm::AllocaInst(i64, 0, "out_low", block);
++    // Decimal calls can be emitted inside the record loop or a CASE branch.
++    // Allocate return slots once per invocation, rather than once per row.
++    auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
+     dis_assembled_args.push_back(out_high_ptr);
+     dis_assembled_args.push_back(out_low_ptr);
+ 
+```
+
+**File**: `cpp/src/gandiva/decimal_ir.h` (modified, +4/-0)
+```diff
+@@ -19,6 +19,7 @@
+ 
+ #include <memory>
+ #include <string>
++#include <utility>
+ #include <vector>
+ 
+ #include "gandiva/function_ir_builder.h"
+@@ -137,6 +138,9 @@ class DecimalIR : public FunctionIRBuilder {
+   ValueWithOverflow AddWithOverflowCheck(const ValueFull& x, const ValueFull& y,
+                                          const ValueFull& out);
+ 
++  // Allocate decimal return slots in the current function's entry block.
++  std::pair<llvm::AllocaInst*, llvm::AllocaInst*> CreateEntryBlockReturnSlots();
++
+   // Do addition of large integers (both positive and negative).
+   llvm::Value* AddLarge(const ValueFull& x, const ValueFull& y, const ValueFull& out);
+ 
+```
+
+**File**: `cpp/src/gandiva/tests/decimal_test.cc` (modified, +36/-0)
+```diff
+@@ -67,6 +67,42 @@ std::vector<Decimal128> TestDecimal::MakeDecimalVector(std::vector<std::string>
+   return ret;
+ }
+ 
++TEST_F(TestDecimal, CastLargeBatch) {
++  // Allocating decimal return slots in the record loop can exhaust the stack
++  // when optimization is disabled. A single int32-to-decimal cast is sufficient.
++  constexpr int kNumRecords = 1 << 19;
++  auto input_field = arrow::field("large_batch_decimal", arrow::int32());
++  auto schema = arrow::schema({input_field});
++  auto decimal_type = arrow::decimal128(10, 0);
++  auto decimal = TreeExprBuilder::MakeFunction(
++      "castDECIMAL", {TreeExprBuilder::MakeField(input_field)}, decimal_type);
++  auto expression =
++      TreeExprBuilder::MakeExpression(decimal, arrow::field("result", decimal_type));
++
++  std::vector<int32_t> values(kNumRecords);
++  std::vector<bool> validity(kNumRecords);
++  std::vector<Decimal128> expected_values(kNumRecords);
++  for (int i = 0; i < kNumRecords; ++i) {
++    values[i] = i % 17 - 8;
++    validity[i] = i % 11 != 0;
++    expected_values[i] = Decimal128(values[i]);
++  }
++  auto batch = arrow::RecordBatch::Make(schema, kNumRecords,
++                                        {MakeArrowArrayInt32(values, validity)});
++  auto expected = MakeArrowArrayDecimal(decimal_type, expected_values, validity);
++
++  for (bool optimize : {false, true}) {
++    SCOPED_TRACE(optimize);
++    auto config = std::make_shared<Configuration>(optimize);
++    std::shared_ptr<Projector> projector;
++    ASSERT_OK(Projector::Make(schema, {expression}, config, &projector));
++    arrow::ArrayVector output;
++    ASSERT_OK(projector->Evaluate(*batch, pool_, &output));
++    ASSERT_EQ(output.size(), 1);
++    EXPECT_ARROW_ARRAY_EQUALS(expected, output[0]);
++  }
++}
++
+ TEST_F(TestDecimal, TestSimple) {
+   // schema for input fields
+   constexpr int32_t precision = 36;
+```
+
+---
+
+### Incident Patch 2: `16900e3b` (2026-11-10)
+**Commit Message**: GH-49884: [C++] Fix integer overflow in BufferBuilder reachable from JSON parsing (#49883)
+
+### Rationale for this change
+
+`BufferBuilder` and `TypedBufferBuilder` perform size calculations that are reachable from JSON parsing of untrusted input. These calculations previously used unchecked integer arithmetic (e.g., `size_ + additional_bytes`, `num_elements * sizeof(T)`), which can overflow.
+
+Since the JSON parser constructs arrays, strings, and offsets based on input data, an attacker can influence these values. Overflow in these calculations can result in incorrect buffer sizing and unsafe memory operations.
+
+### What changes are included in this PR?
+
+- Added overflow-safe arithmetic using `internal::AddWithOverflow` and `internal::MultiplyWithOverflow` for:
+  - `size_ + additional_bytes`
+  - `num_elements * sizeof(T)`
+  - capacity growth logic
+
+- Centralised the negative / too-large capacity check in a single `ValidateBufferCapacity` helper in `memory_pool.cc`, used by `PoolBuffer::Reserve`, `PoolBuffer::Resize` and `AllocateResizableBuffer`
+
+- Hardened `GrowByFactor` to prevent overflow when doubling capacity
+
+- Updated `TypedBufferBuilder` to safely compute byte sizes from ele
+
+**File**: `cpp/src/arrow/buffer_builder.h` (modified, +54/-14)
+```diff
+@@ -29,6 +29,7 @@
+ #include "arrow/util/bit_util.h"
+ #include "arrow/util/bitmap_generate.h"
+ #include "arrow/util/bitmap_ops.h"
++#include "arrow/util/int_util_overflow.h"
+ #include "arrow/util/macros.h"
+ #include "arrow/util/ubsan.h"
+ #include "arrow/util/visibility.h"
+@@ -91,7 +92,12 @@ class ARROW_EXPORT BufferBuilder {
+   /// \param[in] additional_bytes number of additional bytes to make space for
+   /// \return Status
+   Status Reserve(const int64_t additional_bytes) {
+-    auto min_capacity = size_ + additional_bytes;
++    int64_t min_capacity;
++    if (ARROW_PREDICT_FALSE(
++            internal::AddWithOverflow(size_, additional_bytes, &min_capacity))) {
++      return Status::CapacityError("Reserve: capacity overflow: ", size_, " + ",
++                                   additional_bytes);
++    }
+     if (min_capacity <= capacity_) {
+       return Status::OK();
+     }
+@@ -104,15 +110,24 @@ class ARROW_EXPORT BufferBuilder {
+     // (versus 1.5x) seems to have slightly better performance when using
+     // jemalloc, but significantly better performance when using the system
+     // allocator. See ARROW-6450 for further discussion
+-    return std::max(new_capacity, current_capacity * 2);
++    int64_t doubled;
++    if (ARROW_PREDICT_FALSE(
++            internal::AddWithOverflow(current_capacity, current_capacity, &doubled))) {
++      return new_capacity;
++    }
++    return std::max(new_capacity, doubled);
+   }
+ 
+   /// \brief Append the given data to the buffer
+   ///
+   /// The buffer is automatically expanded if necessary.
+   Status Append(const void* data, const int64_t length) {
+-    if (ARROW_PREDICT_FALSE(size_ + length > capacity_)) {
+-      ARROW_RETURN_NOT_OK(Resize(GrowByFactor(capacity_, size_ + length), false));
++    int64_t new_size;
++    if (ARROW_PREDICT_FALSE(internal::AddWithOverflow(size_, length, &new_size))) {
++      return Status::CapacityError("Append: size overflow: ", size_, " + ", length);
++    }
++    if (ARROW_PREDICT_FALSE(new_size > capacity_)) {
++      ARROW_RETURN_NOT_OK(Resize(GrowByFactor(capacity_, new_size), false));
+     }
+     UnsafeAppend(data, length);
+     return Status::OK();
+@@ -250,12 +265,13 @@ class TypedBufferBuilder<
+   }
+ 
+   Status Append(const T* values, int64_t num_elements) {
+-    return bytes_builder_.Append(reinterpret_cast<const uint8_t*>(values),
+-                                 num_elements * sizeof(T));
++    int64_t num_bytes = 0;
++    ARROW_RETURN_NOT_OK(ElementsToBytes("Append", num_elements, &num_bytes));
++    return bytes_builder_.Append(reinterpret_cast<const uint8_t*>(values), num_bytes);
+   }
+ 
+   Status Append(const int64_t num_copies, T value) {
+-    ARROW_RETURN_NOT_OK(Reserve(num_copies + length()));
++    ARROW_RETURN_NOT_OK(Reserve(num_copies));
+     UnsafeAppend(num_copies, value);
+     return Status::OK();
+   }
+@@ -284,15 +300,21 @@ class TypedBufferBuilder<
+   }
+ 
+   Status Resize(const int64_t new_capacity, bool shrink_to_fit = true) {
+-    return bytes_builder_.Resize(new_capacity * sizeof(T), shrink_to_fit);
++    int64_t num_bytes = 0;
++    ARROW_RETURN_NOT_OK(ElementsToBytes("Resize", new_capacity, &num_bytes));
++    return bytes_builder_.Resize(num_bytes, shrink_to_fit);
+   }
+ 
+   Status Reserve(const int64_t additional_elements) {
+-    return bytes_builder_.Reserve(additional_elements * sizeof(T));
++    int64_t num_bytes = 0;
++    ARROW_RETURN_NOT_OK(ElementsToBytes("Reserve", additional_elements, &num_bytes));
++    return bytes_builder_.Reserve(num_bytes);
+   }
+ 
+   Status Advance(const int64_t length) {
+-    return bytes_builder_.Advance(length * sizeof(T));
++    int64_t num_bytes = 0;
++    ARROW_RETURN_NOT_OK(ElementsToBytes("Advance", length, &num_bytes));
++    return bytes_builder_.Advance(num_bytes);
+   }
+ 
+   void UnsafeAdvance(const int64_t length) {
+@@ -316,7 +338,9 @@ class TypedBufferBuilder<
+   /// only for memory allocation).
+   Result<std::shared_ptr<Buffer>> FinishWithLength(int64_t final_length,
+                                                    bool shrink_to_fit = true) {
+-    return bytes_builder_.FinishWithLength(final_length * sizeof(T), shrink_to_fit);
++    int64_t num_bytes = 0;
++    ARROW_RETURN_NOT_OK(ElementsToBytes("FinishWithLength", final_length, &num_bytes));
++    return bytes_builder_.FinishWithLength(num_bytes, shrink_to_fit);
+   }
+ 
+   void Reset() { bytes_builder_.Reset(); }
+@@ -327,6 +351,18 @@ class TypedBufferBuilder<
+   T* mutable_data() { return reinterpret_cast<T*>(bytes_builder_.mutable_data()); }
+ 
+  private:
++  // Convert a number of elements to a number of bytes, erroring out on
++  // byte size overflow.
++  static Status ElementsToBytes(const char* operation, int64_t num_elements,
++                                int64_t* num_bytes) {
++    if (ARROW_PREDICT_FALSE(internal::MultiplyWithOverflow(
++            num_elements, static_cast<int64_t>(sizeof(T)), num_bytes))) {
++      return Status::CapacityError(operation, ": byte size overflow: ", num_elements,
++                            
+```
+
+**File**: `cpp/src/arrow/buffer_test.cc` (modified, +24/-0)
+```diff
+@@ -726,6 +726,21 @@ TEST(TestBufferBuilder, ResizeReserve) {
+   ASSERT_EQ(9, builder.length());
+ }
+ 
++TEST(TestBufferBuilder, ReserveAndAppendOverflow) {
++  const std::string data = "x";
++  auto data_ptr = data.c_str();
++  BufferBuilder builder;
++
++  const int64_t overflow_add = std::numeric_limits<int64_t>::max() - 8;
++  ASSERT_RAISES(OutOfMemory, builder.Reserve(overflow_add));
++
++  ASSERT_OK(builder.Append(data_ptr, 1));
++  constexpr int64_t kMaxLength = std::numeric_limits<int64_t>::max();
++  ASSERT_RAISES(CapacityError, builder.Reserve(kMaxLength));
++  ASSERT_RAISES(CapacityError, builder.Append(data_ptr, kMaxLength));
++  ASSERT_EQ(1, builder.length());
++}
++
+ TEST(TestBufferBuilder, Alignment) {
+   const std::string data = "some data";
+   auto data_ptr = data.c_str();
+@@ -862,6 +877,15 @@ TYPED_TEST(TypedTestBufferBuilder, AppendCopies) {
+   }
+ }
+ 
++TYPED_TEST(TypedTestBufferBuilder, OverflowAppend) {
++  TypedBufferBuilder<TypeParam> builder;
++
++  const int64_t max_num_elements =
++      std::numeric_limits<int64_t>::max() / static_cast<int64_t>(sizeof(TypeParam)) + 1;
++  ASSERT_RAISES(CapacityError,
++                builder.Append(max_num_elements, static_cast<TypeParam>(0)));
++}
++
+ TEST(TestBoolBufferBuilder, Basics) {
+   TypedBufferBuilder<bool> builder;
+ 
+```
+
+**File**: `cpp/src/arrow/memory_pool.cc` (modified, +14/-9)
+```diff
+@@ -64,6 +64,17 @@ namespace {
+ 
+ constexpr char kDefaultBackendEnvVar[] = "ARROW_DEFAULT_MEMORY_POOL";
+ constexpr char kDebugMemoryEnvVar[] = "ARROW_DEBUG_MEMORY_POOL";
++constexpr int64_t kMaxBufferCapacity = std::numeric_limits<int64_t>::max() - 63;
++
++Status ValidateBufferCapacity(int64_t capacity, const char* operation) {
++  if (ARROW_PREDICT_FALSE(capacity < 0)) {
++    return Status::Invalid(operation, ": negative capacity: ", capacity);
++  }
++  if (ARROW_PREDICT_FALSE(capacity > kMaxBufferCapacity)) {
++    return Status::OutOfMemory(operation, ": capacity too large: ", capacity);
++  }
++  return Status::OK();
++}
+ 
+ enum class MemoryPoolBackend : uint8_t { System, Jemalloc, Mimalloc };
+ 
+@@ -915,9 +926,7 @@ class PoolBuffer final : public ResizableBuffer {
+   }
+ 
+   Status Reserve(const int64_t capacity) override {
+-    if (capacity < 0) {
+-      return Status::Invalid("Negative buffer capacity: ", capacity);
+-    }
++    RETURN_NOT_OK(ValidateBufferCapacity(capacity, "Reserve"));
+     uint8_t* ptr = mutable_data();
+     if (!ptr || capacity > capacity_) {
+       ARROW_ASSIGN_OR_RAISE(int64_t new_capacity, RoundCapacity(capacity));
+@@ -933,9 +942,7 @@ class PoolBuffer final : public ResizableBuffer {
+   }
+ 
+   Status Resize(const int64_t new_size, bool shrink_to_fit = true) override {
+-    if (ARROW_PREDICT_FALSE(new_size < 0)) {
+-      return Status::Invalid("Negative buffer resize: ", new_size);
+-    }
++    RETURN_NOT_OK(ValidateBufferCapacity(new_size, "Resize"));
+     uint8_t* ptr = mutable_data();
+     if (ptr && shrink_to_fit && new_size <= size_) {
+       // Buffer is non-null and is not growing, so shrink to the requested size without
+@@ -979,9 +986,7 @@ class PoolBuffer final : public ResizableBuffer {
+ 
+  private:
+   static Result<int64_t> RoundCapacity(int64_t capacity) {
+-    if (capacity > std::numeric_limits<int64_t>::max() - 63) {
+-      return Status::OutOfMemory("capacity too large");
+-    }
++    DCHECK_LE(capacity, kMaxBufferCapacity);
+     return bit_util::RoundUpToMultipleOf64(capacity);
+   }
+ 
+```
+
+---
+
+### Incident Patch 3: `87eb47ec` (2026-11-09)
+**Commit Message**: GH-53500: [Python][Parquet] Prevent crashes when comparing metadata with None (#55168)
+
+### Rationale for this change
+Five Parquet metadata/schema `equals()` wrappers (`Statistics`, `ColumnChunkMetaData`, `RowGroupMetaData`, `ParquetSchema`, `ColumnSchema`) accept `None` for their typed `other` argument and then dereference a native pointer on it, which can crash the interpreter. This follows the existing `FileMetaData.equals()` pattern, which already declares `other not None`.
+
+### What changes are included in this PR?
+- Require non-null typed arguments in the five affected Cython `equals()` methods. `__eq__` already catches the resulting `TypeError` and returns `NotImplemented`, so `obj == None` is `False` and `obj != None` is `True`.
+- Add a regression test covering `==`, `!=` and direct `.equals(None)` for all five wrappers.
+
+### Are these changes tested?
+Yes. I added a regression test and ran it locally: it passes with the fix and segfaults without it (details in the comment below). `flake8` and `cython-lint` pass on the changed files.
+
+See comment for detailed testing evidence.
+
+### Are there any user-facing changes?
+`obj.equals(None)` now raises `TypeError` instead of riskin
+
+**File**: `python/pyarrow/_parquet.pyx` (modified, +5/-5)
+```diff
+@@ -108,7 +108,7 @@ cdef class Statistics(_Weakrefable):
+         except TypeError:
+             return NotImplemented
+ 
+-    def equals(self, Statistics other):
++    def equals(self, Statistics other not None):
+         """
+         Return whether the two column statistics objects are equal.
+ 
+@@ -521,7 +521,7 @@ cdef class ColumnChunkMetaData(_Weakrefable):
+         except TypeError:
+             return NotImplemented
+ 
+-    def equals(self, ColumnChunkMetaData other):
++    def equals(self, ColumnChunkMetaData other not None):
+         """
+         Return whether the two column chunk metadata objects are equal.
+ 
+@@ -919,7 +919,7 @@ cdef class RowGroupMetaData(_Weakrefable):
+         except TypeError:
+             return NotImplemented
+ 
+-    def equals(self, RowGroupMetaData other):
++    def equals(self, RowGroupMetaData other not None):
+         """
+         Return whether the two row group metadata objects are equal.
+ 
+@@ -1295,7 +1295,7 @@ cdef class ParquetSchema(_Weakrefable):
+         except TypeError:
+             return NotImplemented
+ 
+-    def equals(self, ParquetSchema other):
++    def equals(self, ParquetSchema other not None):
+         """
+         Return whether the two schemas are equal.
+ 
+@@ -1350,7 +1350,7 @@ cdef class ColumnSchema(_Weakrefable):
+     def __reduce__(self):
+         return ColumnSchema, (self.parent, self.index)
+ 
+-    def equals(self, ColumnSchema other):
++    def equals(self, ColumnSchema other not None):
+         """
+         Return whether the two column schemas are equal.
+ 
+```
+
+**File**: `python/pyarrow/tests/parquet/test_metadata.py` (modified, +21/-0)
+```diff
+@@ -724,6 +724,27 @@ def test_metadata_equals():
+         original_metadata.equals(None)
+ 
+ 
++def test_parquet_metadata_equals_none(tempdir):
++    table = pa.table({"a": [1, 2, 3]})
++    path = tempdir / "metadata_equals_none.parquet"
++    pq.write_table(table, path)
++
++    metadata = pq.read_metadata(path)
++    row_group = metadata.row_group(0)
++    column_chunk = row_group.column(0)
++    objects = [
++        column_chunk.statistics,
++        column_chunk,
++        row_group,
++        metadata.schema,
++        metadata.schema[0],
++    ]
++
++    for obj in objects:
++        with pytest.raises(TypeError):
++            obj.equals(None)
++
++
+ @pytest.mark.parametrize("t1,t2,expected_error", (
+     ({'col1': range(10)}, {'col1': range(10)}, None),
+     ({'col1': range(10)}, {'col2': range(10)},
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55438** (closed): GH-55429: [C++] Avoid unavailable libc++ utilities in CRAN builds (@JonSnow1807)
-- **PR #55437** (closed): GH-55428: [C++][S3] Preserve retryable errors when ranged-read buffers overflow (@JonSnow1807)
-- **PR #55436** (closed): Gh 48269 enable flight sql test msvc (@alinaliBQ)
-- **PR #55433** (2026-11-08): GH-55356: [C++] Compare mtime at second precision in `GetFileInfoSelector` test (@tadeja)
-- **PR #55422** (closed): GH-55418: [Python] Accept tuple of arrays in RecordBatch.from_arrays (@ump45nose)
-- **PR #55417** (2026-11-07): GH-55416: [CI][C++] Update Emscripten to 5.0.3 (@tadeja)
+- **PR #55482** (2026-11-11): MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #55481** (2026-11-11): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
+- **PR #55477** (closed): GH-35721: [Python] Recognize pandas arrays in the array() constructor for the from_pandas argument (@jay23606)
+- **PR #55472** (2026-11-11): GH-55471: [Dev] Stop clearing non-existent PR workflow labels on merge script (@raulcd)
+- **PR #55469** (2026-11-10): GH-55468: [CI][Packaging] Add libarrow-s3 to the list of allow-downgrades (@raulcd)
+- **PR #55466** (2026-11-11): MINOR: [R] Update backwards compatibility matrix for 26.0.1 release (@amoeba)
 
 ---
 
@@ -1595,33 +1906,44 @@ Signed-off-by: Sutou Kouhei <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)
+## X. GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optim
 
 **RULE**:
-When implementing operations in `cpp/src/arrow/engine/substrait/relation_internal.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/gandiva/decimal_ir.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7299fdcc`: GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bea76d64`: GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optimization disabled (#55278). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/engine/substrait/relation_internal.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/gandiva/decimal_ir.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    if (map_id < 0 || map_id >= input_schema->num_fields()) {
-      return Status::Invalid("Out of bounds emit index ", map_id);
-    }
-          if (map_id < 0 || map_id >= input_schema->num_fields()) {
-            return Status::Invalid("Out of bounds emit index ", map_id);
-          }
+std::pair<llvm::AllocaInst*, llvm::AllocaInst*> DecimalIR::CreateEntryBlockReturnSlots() {
+  auto& entry = ir_builder()->GetInsertBlock()->getParent()->getEntryBlock();
+  llvm::IRBuilder<> entry_builder(&entry, entry.begin());
+  auto out_high_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_hi");
+  auto out_low_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_low");
+  return {out_high_ptr, out_low_ptr};
+}
+
+  auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
+    // Decimal calls can be emitted inside the record loop or a CASE branch.
+    // Allocate return slots once per invocation, rather than once per row.
+    auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  auto block = ir_builder()->GetInsertBlock();
+  auto out_high_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_hi", block);
+  auto out_low_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_low", block);
+    auto block = ir_builder()->GetInsertBlock();
+    auto out_high_ptr = new llvm::AllocaInst(i64, 0, "out_hi", block);
+    auto out_low_ptr = new llvm::AllocaInst(i64, 0, "out_low", block);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7299fdcc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bea76d64` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T10:00:21.051Z",
+  "last_updated": "2026-11-11T10:09:30.183Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2452,8 +2452,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "7299fdcc",
-      "content_hash": "34d9ef05bba70dfed3818b84850c8b09a9ff5e23864f671c06a03c7ed0bf094f",
+      "source_version": "976779b2",
+      "content_hash": "6923469fc70e78aaeae0e14896ca4924e758f78f1e503e4743f3fa374dcf9db4",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2470,6 +2470,11 @@
         {
           "number": null,
           "title": "GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optim",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2528,7 +2533,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T23:12:31.641Z",
+      "verified_at": "2026-11-11T10:08:18.290Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10044,8 +10049,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "057efa66",
-      "content_hash": "bd735ff0b84eed8c4acc68eacc6fdd3ece40692734a4d834cb639da10086a369",
+      "source_version": "fdcf2d37",
+      "content_hash": "62fed4452bccce51ae36532779be903e6a52d6ffd15fc87099ff0af073a77029",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -10062,6 +10067,11 @@
         {
           "number": null,
           "title": "query): segment zone map for fuse tables, built by recluster (#21021)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "query): defer transaction maintenance until after commit (#21020)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10130,7 +10140,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:35:31.941Z",
+      "verified_at": "2026-11-11T10:08:35.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45255,14 +45265,19 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "80e1ef5e",
-      "content_hash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
+      "source_version": "af5d1570",
+      "content_hash": "5b7e0587531287278abe69aa8fb9edf8daaa85869081b8d7040673823c594cae",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs: fix links that go to a 404 on docs.mitmproxy.org (#8584)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "mitmweb: add quiet zone around WireGuard QR code (#8585)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45386,7 +45401,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:31:49.968Z",
+      "verified_at": "2026-11-11T10:08:31.808Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55400,8 +55415,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "ad6e6fc9",
-      "content_hash": "ba3809d7926c71fa1da3fcd169f975c7d45e1953fe785a1b93c6289ec8022a14",
+      "source_version": "6616e134",
+      "content_hash": "13d4a86932f2913c0a2f2b72ef32ff6ca63b6fe4386112d9372dd599e25db401",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -55413,6 +55428,11 @@
         {
           "number": null,
           "title": "Merge pull request #18702 from travisn/fix-flaky-waitfornostandbys",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: fix flaky and racy mgr module configuration tests",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55471,7 +55491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:44:26.736Z",
+      "verified_at": "2026-11-11T10:08:29.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163451,7 +163471,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
       "source_version": "hf-liconstudio-minimax-h3-vbvr",
-      "content_hash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
+      "content_hash": "b19d7edfd3df9a25d71c30d4b1f10c87c7e721e6c425c9ae3324622ef9bc3342",
       "dossier_path": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "promoted_rules": [
@@ -163463,6 +163483,16 @@
         {
           "number": null,
           "title": "Video Generation Temporal Consistency Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Zero-Copy Tensor Deserialization & Memory Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Spatiotemporal Linear LoRA Rank Invariant & Scaling Formula",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -163491,7 +163521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:33:58.427Z",
+      "verified_at": "2026-11-11T10:09:30.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

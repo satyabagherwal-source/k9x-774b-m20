@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T10:00:21.217Z",
+  "last_updated": "2026-11-11T10:09:30.316Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
-      "verified_at": "2026-11-10T02:31:50.169Z",
+      "content_hash": "5b7e0587531287278abe69aa8fb9edf8daaa85869081b8d7040673823c594cae",
+      "verified_at": "2026-11-11T10:08:31.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:31:50.169Z"
+      "last_updated": "2026-11-11T10:08:31.974Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "ba3809d7926c71fa1da3fcd169f975c7d45e1953fe785a1b93c6289ec8022a14",
-      "verified_at": "2026-11-07T04:44:26.877Z",
+      "content_hash": "13d4a86932f2913c0a2f2b72ef32ff6ca63b6fe4386112d9372dd599e25db401",
+      "verified_at": "2026-11-11T10:08:30.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:44:26.877Z"
+      "last_updated": "2026-11-11T10:08:30.013Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "bd735ff0b84eed8c4acc68eacc6fdd3ece40692734a4d834cb639da10086a369",
-      "verified_at": "2026-11-09T03:35:32.078Z",
+      "content_hash": "62fed4452bccce51ae36532779be903e6a52d6ffd15fc87099ff0af073a77029",
+      "verified_at": "2026-11-11T10:08:35.844Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:35:32.078Z"
+      "last_updated": "2026-11-11T10:08:35.844Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "34d9ef05bba70dfed3818b84850c8b09a9ff5e23864f671c06a03c7ed0bf094f",
-      "verified_at": "2026-11-08T23:12:31.822Z",
+      "content_hash": "6923469fc70e78aaeae0e14896ca4924e758f78f1e503e4743f3fa374dcf9db4",
+      "verified_at": "2026-11-11T10:08:18.531Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:12:31.822Z"
+      "last_updated": "2026-11-11T10:08:18.531Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",
@@ -17331,14 +17331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "content_hash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
-      "verified_at": "2026-11-06T14:33:58.571Z",
+      "content_hash": "b19d7edfd3df9a25d71c30d4b1f10c87c7e721e6c425c9ae3324622ef9bc3342",
+      "verified_at": "2026-11-11T10:09:30.316Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:33:58.571Z"
+      "last_updated": "2026-11-11T10:09:30.316Z"
     },
     "yuezhiai/jonex": {
       "repository": "yuezhiai/jonex",

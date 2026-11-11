@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "80e1ef5e",
+    "sourceVersion": "af5d1570",
     "license": "MIT",
-    "contentHash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
-    "lastHarvestedAt": "2026-11-10T02:31:50.144Z",
+    "contentHash": "5b7e0587531287278abe69aa8fb9edf8daaa85869081b8d7040673823c594cae",
+    "lastHarvestedAt": "2026-11-11T10:08:31.964Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "ad6e6fc9",
+    "sourceVersion": "6616e134",
     "license": "Apache-2.0",
-    "contentHash": "ba3809d7926c71fa1da3fcd169f975c7d45e1953fe785a1b93c6289ec8022a14",
-    "lastHarvestedAt": "2026-11-07T04:44:26.859Z",
+    "contentHash": "13d4a86932f2913c0a2f2b72ef32ff6ca63b6fe4386112d9372dd599e25db401",
+    "lastHarvestedAt": "2026-11-11T10:08:29.999Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "057efa66",
+    "sourceVersion": "fdcf2d37",
     "license": "Apache-2.0",
-    "contentHash": "bd735ff0b84eed8c4acc68eacc6fdd3ece40692734a4d834cb639da10086a369",
-    "lastHarvestedAt": "2026-11-09T03:35:32.069Z",
+    "contentHash": "62fed4452bccce51ae36532779be903e6a52d6ffd15fc87099ff0af073a77029",
+    "lastHarvestedAt": "2026-11-11T10:08:35.830Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "7299fdcc",
+    "sourceVersion": "976779b2",
     "license": "Apache-2.0",
-    "contentHash": "34d9ef05bba70dfed3818b84850c8b09a9ff5e23864f671c06a03c7ed0bf094f",
-    "lastHarvestedAt": "2026-11-08T23:12:31.804Z",
+    "contentHash": "6923469fc70e78aaeae0e14896ca4924e758f78f1e503e4743f3fa374dcf9db4",
+    "lastHarvestedAt": "2026-11-11T10:08:18.515Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -11525,8 +11525,8 @@
     "sourceUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceVersion": "hf-liconstudio-minimax-h3-vbvr",
     "license": "Open-Source",
-    "contentHash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
-    "lastHarvestedAt": "2026-11-06T14:33:58.551Z",
+    "contentHash": "b19d7edfd3df9a25d71c30d4b1f10c87c7e721e6c425c9ae3324622ef9bc3342",
+    "lastHarvestedAt": "2026-11-11T10:09:30.294Z",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
   },
   "yuezhiai-jonex": {

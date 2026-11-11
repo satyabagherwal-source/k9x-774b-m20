@@ -8913,3 +8913,8 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `d9e5ab1a` | Multi-dimensional audit evidence | 2026-11-11T10:00:09.529Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `e7b31f31` | Multi-dimensional audit evidence | 2026-11-11T10:00:18.974Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `7b2c32b9` | Multi-dimensional audit evidence | 2026-11-11T10:00:21.192Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `976779b2` | Multi-dimensional audit evidence | 2026-11-11T10:08:18.515Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `6616e134` | Multi-dimensional audit evidence | 2026-11-11T10:08:29.999Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `af5d1570` | Multi-dimensional audit evidence | 2026-11-11T10:08:31.964Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `fdcf2d37` | Multi-dimensional audit evidence | 2026-11-11T10:08:35.830Z |
+| `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-11T10:09:30.294Z |

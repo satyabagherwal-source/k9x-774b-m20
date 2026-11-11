@@ -8904,3 +8904,8 @@
 | `CYCLE-20261111-72GJ` | `2026-11-11T10:00:09.523Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`193da855...`) |
 | `CYCLE-20261111-79QX` | `2026-11-11T10:00:18.969Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4139ce80...`) |
 | `CYCLE-20261111-7BGK` | `2026-11-11T10:00:21.188Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c5442239...`) |
+| `CYCLE-20261111-HJRI` | `2026-11-11T10:08:18.510Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6923469f...`) |
+| `CYCLE-20261111-HSMG` | `2026-11-11T10:08:29.992Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`13d4a869...`) |
+| `CYCLE-20261111-HU54` | `2026-11-11T10:08:31.960Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b7e0587...`) |
+| `CYCLE-20261111-HX4G` | `2026-11-11T10:08:35.824Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62fed445...`) |
+| `CYCLE-20261111-J35E` | `2026-11-11T10:09:30.290Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`b19d7edf...`) |
