@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "4613dae4",
+    "sourceVersion": "576278c9",
     "license": "Apache-2.0",
-    "contentHash": "ef569a41abbc6b68065d7d0b64c6ebcb393089475ba8b79eed10ced2699b3a70",
-    "lastHarvestedAt": "2026-11-05T23:39:59.400Z",
+    "contentHash": "aa233740ca5006e04310c3f265afbf20788dad9d6ee6ffcff02079220935d99a",
+    "lastHarvestedAt": "2026-11-11T20:18:40.325Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "c0010d32",
+    "sourceVersion": "9457c528",
     "license": "Apache-2.0",
-    "contentHash": "5026c055df172b98d0fb5aa1c51d4ef7881e0a03cb8cf5cdb3ccb7ddd70b0137",
-    "lastHarvestedAt": "2026-11-09T05:13:58.023Z",
+    "contentHash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
+    "lastHarvestedAt": "2026-11-11T20:23:35.896Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -7793,10 +7793,10 @@
     "repository": "MohamedRejeb/compose-rich-editor",
     "platform": "github",
     "sourceUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
-    "sourceVersion": "b972d50f",
+    "sourceVersion": "3254ff75",
     "license": "Apache-2.0",
-    "contentHash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
-    "lastHarvestedAt": "2026-10-19T10:54:42.521Z",
+    "contentHash": "0abf8a1babb8ae033e462bd814c63bec2429d3f2c3f8da89bfacb26271c5268a",
+    "lastHarvestedAt": "2026-11-11T20:23:08.756Z",
     "learningId": "learn-github-mohamedrejeb-compose-rich-editor"
   },
   "codewhale-hq-codewhale": {

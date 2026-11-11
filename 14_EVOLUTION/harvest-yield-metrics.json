@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:53:46.598Z",
-  "total_cycles_completed": 8853,
-  "total_learnings_persisted": 8853,
-  "total_rules_promoted": 8709,
+  "last_updated": "2026-11-11T20:23:35.901Z",
+  "total_cycles_completed": 8856,
+  "total_learnings_persisted": 8856,
+  "total_rules_promoted": 8712,
   "history": [
-    {
-      "timestamp": "2026-11-09T23:17:55.269Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T23:40:39.748Z",
-      "repository": "margelo/react-native-mmkv",
-      "learningId": "learn-github-margelo-react-native-mmkv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T23:40:51.436Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T23:45:25.474Z",
       "repository": "dalance/procs",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T19:53:46.598Z",
       "repository": "SimonSchubert/LinuxCommandLibrary",
       "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T20:18:40.331Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T20:23:08.777Z",
+      "repository": "MohamedRejeb/compose-rich-editor",
+      "learningId": "learn-github-mohamedrejeb-compose-rich-editor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T20:23:35.901Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

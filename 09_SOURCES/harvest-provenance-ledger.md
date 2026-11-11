@@ -9020,3 +9020,6 @@ Every entry in this ledger must capture:
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `b041fcbb` | Multi-dimensional audit evidence | 2026-11-11T19:46:23.705Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `a99f0e28` | Multi-dimensional audit evidence | 2026-11-11T19:46:32.235Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `026a4532` | Multi-dimensional audit evidence | 2026-11-11T19:53:46.579Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `576278c9` | Multi-dimensional audit evidence | 2026-11-11T20:18:40.325Z |
+| `learn-github-mohamedrejeb-compose-rich-editor` | `https://github.com/MohamedRejeb/compose-rich-editor` | `3254ff75` | Multi-dimensional audit evidence | 2026-11-11T20:23:08.756Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `9457c528` | Multi-dimensional audit evidence | 2026-11-11T20:23:35.896Z |

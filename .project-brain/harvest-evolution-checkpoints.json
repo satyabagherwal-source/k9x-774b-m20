@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:53:51.737Z",
+  "last_updated": "2026-11-11T20:23:41.025Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T19:53:51.731Z",
@@ -566,9 +566,24 @@
       "processed_at": "2026-11-11T19:53:51.695Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "orange-opensource-hurl-learnings.md": {
+      "processed_at": "2026-11-11T20:23:40.963Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "mohamedrejeb-compose-rich-editor-learnings.md": {
+      "processed_at": "2026-11-11T20:23:41.003Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "authzed-spicedb-learnings.md": {
+      "processed_at": "2026-11-11T20:23:41.011Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 141,
+  "total_dossiers_evaluated": 144,
   "total_canonical_promoted": 19,
-  "total_staged_for_review": 119
+  "total_staged_for_review": 122
 }

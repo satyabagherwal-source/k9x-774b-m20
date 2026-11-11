@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-OQHQ",
-    "timestamp": "2026-11-08T21:06:44.126Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "eb20ce7b4b38acd9a8d785cb4f462ed954a77cb18c7892e5d8729f211a6ca2aa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-P2WJ",
-    "timestamp": "2026-11-08T21:07:00.211Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-1EMG",
-    "timestamp": "2026-11-08T21:16:35.272Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "4777313f0d1485f9d8ec44cf24be6186cb57b75cf21c7fd712842670af2d5acc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-1FVO",
     "timestamp": "2026-11-08T21:16:36.900Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7490,6 +7445,51 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
     "contentHash": "cb94dc1e1a0f35afe6d32520600e7538b546d7c14e64264a50205874a6c80736",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-AHC1",
+    "timestamp": "2026-11-11T20:18:40.321Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "aa233740ca5006e04310c3f265afbf20788dad9d6ee6ffcff02079220935d99a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-G8GG",
+    "timestamp": "2026-11-11T20:23:08.752Z",
+    "repository": "MohamedRejeb/compose-rich-editor",
+    "learningId": "learn-github-mohamedrejeb-compose-rich-editor",
+    "contentHash": "0abf8a1babb8ae033e462bd814c63bec2429d3f2c3f8da89bfacb26271c5268a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-GTEC",
+    "timestamp": "2026-11-11T20:23:35.892Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

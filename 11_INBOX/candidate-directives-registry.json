@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:53:51.730Z",
+  "last_updated": "2026-11-11T20:23:41.010Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5556,6 +5556,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C4BF9F-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4BBD05",
+      "directive_title": "Align Ubuntu versions between build and package anatomy",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4BBD05-align-ubuntu-versions-between-build-and-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-42D964",
+      "directive_title": "Merge pull request #860 from MohamedRejeb/fix/issue-857-exit-list-paragraph-belo",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mohamedrejeb-compose-rich-editor",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-42D964-merge-pull-request-860-from-mohamedrejeb.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AC816F",
+      "directive_title": "postgres): stop read-only SpiceDB from writing heartbeat rows (#3479)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "authzed-spicedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC816F-postgres-stop-read-only-spicedb-from-wri.md",
       "staged_date": "2026-11-11"
     }
   ]

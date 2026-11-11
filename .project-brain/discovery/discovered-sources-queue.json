@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T19:53:51.736Z",
+  "updated_at": "2026-11-11T20:23:41.024Z",
   "stats": {
-    "total_discovered": 264,
-    "approved_pending_harvest": 235,
+    "total_discovered": 288,
+    "approved_pending_harvest": 257,
     "harvested_count": 0,
-    "rejected_count": 29,
+    "rejected_count": 31,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 242,
-      "OFFICIAL_DOCUMENTATION": 10,
+      "COMMUNITY_AND_EXPERT": 262,
+      "OFFICIAL_DOCUMENTATION": 14,
       "STANDARDS_AND_SPECIFICATIONS": 11,
       "ENGINEERING_BLOGS": 1
     }
@@ -5620,6 +5620,520 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
         "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-61BD52114EE9": {
+      "id": "SRC-61BD52114EE9",
+      "url": "https://github.com/Orange-OpenSource/hurl",
+      "title": "https://github.com/Orange-OpenSource/hurl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-C5F79818BE5B": {
+      "id": "SRC-C5F79818BE5B",
+      "url": "https://hurl.dev/",
+      "title": "https://hurl.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-D2957929B495": {
+      "id": "SRC-D2957929B495",
+      "url": "https://github.com/rust-lang/cargo/blob/master/crates/cargo-util/src/paths.rs",
+      "title": "https://github.com/rust-lang/cargo/blob/master/crates/cargo-util/src/paths.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-59D3E7CFDBCE": {
+      "id": "SRC-59D3E7CFDBCE",
+      "url": "https://doc.rust-lang.org/std/io/struct.Stdout.html",
+      "title": "https://doc.rust-lang.org/std/io/struct.Stdout.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.975Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-A3EF127A6EEE": {
+      "id": "SRC-A3EF127A6EEE",
+      "url": "https://en.wikipedia.org/wiki/ANSI_escape_code",
+      "title": "https://en.wikipedia.org/wiki/ANSI_escape_code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.976Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-E630D89382B6": {
+      "id": "SRC-E630D89382B6",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/URL/searchParams",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/URL/searchParams",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-FE908C36A31F": {
+      "id": "SRC-FE908C36A31F",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-851664A7C918": {
+      "id": "SRC-851664A7C918",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cookie",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cookie",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-6A58606C7845": {
+      "id": "SRC-6A58606C7845",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.984Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-8028D19B6B2E": {
+      "id": "SRC-8028D19B6B2E",
+      "url": "https://hurl.dev/docs/request.html",
+      "title": "https://hurl.dev/docs/request.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-9FE9EB93214C": {
+      "id": "SRC-9FE9EB93214C",
+      "url": "https://example.org/api/cats",
+      "title": "https://example.org/api/cats",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-312E63870AAE": {
+      "id": "SRC-312E63870AAE",
+      "url": "https://hurl.dev/docs/grammar.html",
+      "title": "https://hurl.dev/docs/grammar.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-9931966BEDBC": {
+      "id": "SRC-9931966BEDBC",
+      "url": "https://gitlab.com/",
+      "title": "https://gitlab.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:40.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-07F3FB533BD4": {
+      "id": "SRC-07F3FB533BD4",
+      "url": "http://localhost:8000/x",
+      "title": "http://localhost:8000/x",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T20:23:40.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-89AD2AE10D23": {
+      "id": "SRC-89AD2AE10D23",
+      "url": "http://127.0.0.1:8000/x",
+      "title": "http://127.0.0.1:8000/x",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T20:23:40.996Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-56DADE58A89A": {
+      "id": "SRC-56DADE58A89A",
+      "url": "https://github.com/MohamedRejeb/compose-rich-editor",
+      "title": "https://github.com/MohamedRejeb/compose-rich-editor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.005Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md",
+        "fileName": "mohamedrejeb-compose-rich-editor-learnings.md"
+      }
+    },
+    "SRC-BC85C3F1DF9F": {
+      "id": "SRC-BC85C3F1DF9F",
+      "url": "https://compose-richeditor.netlify.app/",
+      "title": "https://compose-richeditor.netlify.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md",
+        "fileName": "mohamedrejeb-compose-rich-editor-learnings.md"
+      }
+    },
+    "SRC-24D3BC9A9E0D": {
+      "id": "SRC-24D3BC9A9E0D",
+      "url": "https://github.com/authzed/spicedb",
+      "title": "https://github.com/authzed/spicedb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.012Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-49B04BE21413": {
+      "id": "SRC-49B04BE21413",
+      "url": "https://www.shayon.dev/post/2024/225/stop-relying-on-if-not-exists-for-concurrent-index-creation-in-postgresql",
+      "title": "https://www.shayon.dev/post/2024/225/stop-relying-on-if-not-exists-for-concurrent-index-creation-in-postgresql",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-2E807A0ECB43": {
+      "id": "SRC-2E807A0ECB43",
+      "url": "https://keepachangelog.com/en/1.0.0",
+      "title": "https://keepachangelog.com/en/1.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-C37AA41E76B2": {
+      "id": "SRC-C37AA41E76B2",
+      "url": "https://github.com/authzed/spicedb/pull/3452",
+      "title": "https://github.com/authzed/spicedb/pull/3452",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.017Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-C9B60C1D6F0A": {
+      "id": "SRC-C9B60C1D6F0A",
+      "url": "https://github.com/authzed/spicedb/pull/3479",
+      "title": "https://github.com/authzed/spicedb/pull/3479",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.020Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-27B2218FE90E": {
+      "id": "SRC-27B2218FE90E",
+      "url": "https://github.com/authzed/spicedb/issues/3412",
+      "title": "https://github.com/authzed/spicedb/issues/3412",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.022Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-31766894EC3F": {
+      "id": "SRC-31766894EC3F",
+      "url": "https://github.com/authzed/spicedb/issues/3433",
+      "title": "https://github.com/authzed/spicedb/issues/3433",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T20:23:41.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
       }
     }
   }
