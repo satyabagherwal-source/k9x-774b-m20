@@ -8847,3 +8847,5 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cba01064` | Multi-dimensional audit evidence | 2026-11-10T05:21:57.343Z |
 | `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-10T06:05:22.262Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `6498ec79` | Multi-dimensional audit evidence | 2026-11-10T06:12:51.600Z |
+| `learn-dom-d-adad1ee4` | `project://zulip-zulip` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md` | 2026-11-11T06:04:57.291Z |
+| `learn-dom-d-0fba7fa8` | `project://zvec-ai-zvec-grep` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md` | 2026-11-11T06:05:08.677Z |

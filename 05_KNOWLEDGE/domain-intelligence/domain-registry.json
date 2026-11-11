@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-09T14:46:22.218Z",
-  "total_records": 21,
+  "last_updated": "2026-11-11T06:05:08.677Z",
+  "total_records": 23,
   "domains": {
     "A": {
       "total": 1,
@@ -23,10 +23,12 @@
       ]
     },
     "D": {
-      "total": 2,
+      "total": 4,
       "record_ids": [
         "DOM-D-C76D1D36",
-        "DOM-D-29BA113A"
+        "DOM-D-29BA113A",
+        "DOM-D-ADAD1EE4",
+        "DOM-D-0FBA7FA8"
       ]
     },
     "E": {
@@ -852,6 +854,88 @@
       },
       "confidence": 1,
       "created_at": "2026-11-09T13:27:01.513Z"
+    },
+    "DOM-D-ADAD1EE4": {
+      "record_id": "DOM-D-ADAD1EE4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  \n> **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  \n> **Source Version**: `f0f02bcb`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **T",
+      "content_hash": "6d97f4ad03988f175be31d1c7a0ef9de6d403ce1d44fc4a7708d9d1102fbc143",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  \n> **Source**: github ([https://github.com/zulip/zulip](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  \n> **Source**: github ([https://github.com/zulip/zulip](h",
+      "provenance": {
+        "source_uri": "project://zulip-zulip/zulip-zulip-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:04:47.019Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zulip-zulip)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zulip-zulip"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:04:57.289Z"
+    },
+    "DOM-D-0FBA7FA8": {
+      "record_id": "DOM-D-0FBA7FA8",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zvec-ai/zvec-grep",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  \n> **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  \n> **Source Version**: `e06ff066`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-s",
+      "content_hash": "90151f6d2beaa46b66e87573f9a5577b18c1aea33897e0173dbf0683b4ec0948",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  \n> **Source**: github ([https://github.com/zvec-ai/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  \n> **Source**: github ([https://github.com/zvec-ai/",
+      "provenance": {
+        "source_uri": "project://zvec-ai-zvec-grep/zvec-ai-zvec-grep-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:04:57.292Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zvec-ai-zvec-grep)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zvec-ai-zvec-grep"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:05:08.676Z"
     }
   }
 }

@@ -8838,3 +8838,5 @@
 | `CYCLE-20261110-TG0R` | `2026-11-10T05:21:57.339Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`197e4103...`) |
 | `CYCLE-20261110-D9ZM` | `2026-11-10T06:05:22.258Z` | `VideoRebirthAI/hyperflow-h3-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5a57b913...`) |
 | `CYCLE-20261110-MWP8` | `2026-11-10T06:12:51.596Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7446a3dd...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:04:57.291Z` | `zulip-zulip` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ADAD1EE4` [Domain D] | Yes (`6d97f4ad...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:05:08.677Z` | `zvec-ai-zvec-grep` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0FBA7FA8` [Domain D] | Yes (`90151f6d...`) |
