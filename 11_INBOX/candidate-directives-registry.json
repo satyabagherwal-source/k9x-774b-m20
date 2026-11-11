@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T17:13:20.330Z",
+  "last_updated": "2026-11-11T17:51:42.083Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5282,6 +5282,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E785F7-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-66B763",
+      "directive_title": "mutation): add the opt-in nullish-fallback operator (#4507)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fallow-rs-fallow",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-66B763-mutation-add-the-opt-in-nullish-fallback.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-B32300",
+      "directive_title": ":bug: post notifications to Notification Center on macOS while the main window i",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crosspaste-crosspaste-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B32300--bug-post-notifications-to-notification-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-89B0F9",
+      "directive_title": "[FIXED] Filestore metadata and new directories not crash-safe (#8887)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-89B0F9--fixed-filestore-metadata-and-new-direct.md",
       "staged_date": "2026-11-11"
     }
   ]

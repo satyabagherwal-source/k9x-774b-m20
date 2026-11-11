@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T17:13:14.582Z",
+  "last_updated": "2026-11-11T17:51:35.462Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "4012181ab373527484ac65f57b27e81e00a3527d9bc035d945e85df6faa3b719",
-      "verified_at": "2026-11-09T03:35:19.211Z",
+      "content_hash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
+      "verified_at": "2026-11-11T17:51:16.271Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:35:19.211Z"
+      "last_updated": "2026-11-11T17:51:16.271Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "b1d6860ab9acd76ac0f6cdcf24aef9b2a7e3909c381d4aa1249734549aab84e5",
-      "verified_at": "2026-11-08T14:00:00.610Z",
+      "content_hash": "039f0bb677fd5da847981474126aa0e5caa9fad8eba707bc3e46adb196968a1d",
+      "verified_at": "2026-11-11T17:46:24.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T14:00:00.611Z"
+      "last_updated": "2026-11-11T17:46:24.897Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "1756b1d3992fd0063b1b83e0091780d81a9d800c6cff0b10f91828bba2f6b512",
-      "verified_at": "2026-11-09T11:31:13.420Z",
+      "content_hash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
+      "verified_at": "2026-11-11T17:51:35.461Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:31:13.420Z"
+      "last_updated": "2026-11-11T17:51:35.461Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "a176072a8155b99a37a7a3552912f5f70e89d506f0fadf6ef5c91573e653a45a",
-      "verified_at": "2026-11-08T00:02:39.015Z",
+      "content_hash": "cd232e3053530f38bc6494bf7e5a9740d5c6f46926b97163e51f6571d101988e",
+      "verified_at": "2026-11-11T17:46:20.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:02:39.015Z"
+      "last_updated": "2026-11-11T17:46:20.594Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

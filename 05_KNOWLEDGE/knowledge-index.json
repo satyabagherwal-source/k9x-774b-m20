@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T17:13:14.444Z",
+  "last_updated": "2026-11-11T17:51:35.292Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9527,14 +9527,19 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "a3cdce35",
-      "content_hash": "a176072a8155b99a37a7a3552912f5f70e89d506f0fadf6ef5c91573e653a45a",
+      "source_version": "c3c5fe6a",
+      "content_hash": "cd232e3053530f38bc6494bf7e5a9740d5c6f46926b97163e51f6571d101988e",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": ":bug: show notifications as tray balloons on Windows while the main window is hi",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": ":bug: post notifications to Notification Center on macOS while the main window i",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9573,7 +9578,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:02:38.888Z",
+      "verified_at": "2026-11-11T17:46:20.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14792,8 +14797,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "479c0a15",
-      "content_hash": "4012181ab373527484ac65f57b27e81e00a3527d9bc035d945e85df6faa3b719",
+      "source_version": "7016f77b",
+      "content_hash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -14810,6 +14815,11 @@
         {
           "number": null,
           "title": "extract): bound nested type-argument candidates before parsing (#4365)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "mutation): add the opt-in nullish-fallback operator (#4507)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14888,7 +14898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:35:19.072Z",
+      "verified_at": "2026-11-11T17:51:16.116Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46875,8 +46885,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "c1a97cbd",
-      "content_hash": "1756b1d3992fd0063b1b83e0091780d81a9d800c6cff0b10f91828bba2f6b512",
+      "source_version": "0d4956f3",
+      "content_hash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -46893,6 +46903,11 @@
         {
           "number": null,
           "title": "ATS worker shutdown synchronization (#8794)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[FIXED] Filestore metadata and new directories not crash-safe (#8887)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46956,7 +46971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:31:13.324Z",
+      "verified_at": "2026-11-11T17:51:35.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52292,14 +52307,19 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "c23311a8",
-      "content_hash": "b1d6860ab9acd76ac0f6cdcf24aef9b2a7e3909c381d4aa1249734549aab84e5",
+      "source_version": "df52b4fe",
+      "content_hash": "039f0bb677fd5da847981474126aa0e5caa9fad8eba707bc3e46adb196968a1d",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "openrouter): forward parallel_tool_calls=False to the API (#1895)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Iceberg replace cleanup after catalog swap failure (#1889)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52353,7 +52373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:00:00.513Z",
+      "verified_at": "2026-11-11T17:46:24.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

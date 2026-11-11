@@ -8982,3 +8982,7 @@
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T16:56:20.049Z` | `goharbor-harbor` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-62E0908D` [Domain D] | Yes (`2a954f55...`) |
 | `CYCLE-20261111-NWZD` | `2026-11-11T17:13:09.817Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3dc7fd12...`) |
 | `CYCLE-20261111-O0N2` | `2026-11-11T17:13:14.558Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fd0a48d5...`) |
+| `CYCLE-20261111-UL2E` | `2026-11-11T17:46:20.582Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cd232e30...`) |
+| `CYCLE-20261111-UODS` | `2026-11-11T17:46:24.880Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`039f0bb6...`) |
+| `CYCLE-20261111-0X7O` | `2026-11-11T17:51:16.260Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fffa3d5...`) |
+| `CYCLE-20261111-1C0F` | `2026-11-11T17:51:35.439Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8b7ef6f1...`) |

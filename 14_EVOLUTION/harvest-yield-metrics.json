@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T17:13:14.579Z",
-  "total_cycles_completed": 8826,
-  "total_learnings_persisted": 8826,
-  "total_rules_promoted": 8686,
+  "last_updated": "2026-11-11T17:51:35.458Z",
+  "total_cycles_completed": 8830,
+  "total_learnings_persisted": 8830,
+  "total_rules_promoted": 8690,
   "history": [
-    {
-      "timestamp": "2026-11-09T21:05:59.404Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T21:06:03.008Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T21:27:04.962Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T21:27:05.773Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T21:27:18.092Z",
       "repository": "LiquidAI/d1-2B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-11T17:13:14.579Z",
       "repository": "microsoft/react-native-windows",
       "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T17:46:20.591Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T17:46:24.893Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T17:51:16.268Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T17:51:35.458Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

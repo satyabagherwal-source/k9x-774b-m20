@@ -2,15 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T17:13:20.328Z",
+  "updated_at": "2026-11-11T17:51:42.158Z",
   "stats": {
-    "total_discovered": 61,
-    "approved_pending_harvest": 48,
+    "total_discovered": 80,
+    "approved_pending_harvest": 65,
     "harvested_count": 0,
-    "rejected_count": 13,
+    "rejected_count": 15,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 53,
-      "OFFICIAL_DOCUMENTATION": 8
+      "COMMUNITY_AND_EXPERT": 69,
+      "OFFICIAL_DOCUMENTATION": 8,
+      "STANDARDS_AND_SPECIFICATIONS": 3
     }
   },
   "sources": {
@@ -1264,6 +1265,410 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
         "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-8A8D4974D4BE": {
+      "id": "SRC-8A8D4974D4BE",
+      "url": "https://github.com/fallow-rs/fallow",
+      "title": "https://github.com/fallow-rs/fallow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-AA3CF3A13789": {
+      "id": "SRC-AA3CF3A13789",
+      "url": "https://fallow.tools/docs/cli/architecture",
+      "title": "https://fallow.tools/docs/cli/architecture",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.063Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-8C772A67FEF0": {
+      "id": "SRC-8C772A67FEF0",
+      "url": "https://fallow.tools/docs/cli/security-agent-verification",
+      "title": "https://fallow.tools/docs/cli/security-agent-verification",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.063Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-BE540F639E9E": {
+      "id": "SRC-BE540F639E9E",
+      "url": "https://github.com/fallow-rs/fallow/issues/4491",
+      "title": "https://github.com/fallow-rs/fallow/issues/4491",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-B7ED14A2DC1D": {
+      "id": "SRC-B7ED14A2DC1D",
+      "url": "https://fallow.tools/docs/explanations/dead-code",
+      "title": "https://fallow.tools/docs/explanations/dead-code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-F7D253A01B6F": {
+      "id": "SRC-F7D253A01B6F",
+      "url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "title": "https://github.com/CrossPaste/crosspaste-desktop",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
+        "fileName": "crosspaste-crosspaste-desktop-learnings.md"
+      }
+    },
+    "SRC-0572964BF25F": {
+      "id": "SRC-0572964BF25F",
+      "url": "https://github.com/nats-io/nats-server",
+      "title": "https://github.com/nats-io/nats-server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.087Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-652AB88CD07A": {
+      "id": "SRC-652AB88CD07A",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0",
+      "title": "http://www.apache.org/licenses/LICENSE-2.0",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T17:51:42.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-80A87CFB773B": {
+      "id": "SRC-80A87CFB773B",
+      "url": "https://staticcheck.io/docs/checks",
+      "title": "https://staticcheck.io/docs/checks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-87AF605EBAFB": {
+      "id": "SRC-87AF605EBAFB",
+      "url": "https://github.com/golang/go/issues/14768",
+      "title": "https://github.com/golang/go/issues/14768",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-2C826ECE7A9B": {
+      "id": "SRC-2C826ECE7A9B",
+      "url": "https://github.com/BurntSushi/toml/blob/master/lex.go",
+      "title": "https://github.com/BurntSushi/toml/blob/master/lex.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.090Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-6526A235C4B5": {
+      "id": "SRC-6526A235C4B5",
+      "url": "http://cuddle.googlecode.com/hg/talk/lex.html",
+      "title": "http://cuddle.googlecode.com/hg/talk/lex.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T17:51:42.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-7CCD4FF5F323": {
+      "id": "SRC-7CCD4FF5F323",
+      "url": "https://tools.ietf.org/html/rfc4514",
+      "title": "https://tools.ietf.org/html/rfc4514",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-38634DEFD547": {
+      "id": "SRC-38634DEFD547",
+      "url": "https://www.ietf.org/rfc/rfc2560.txt",
+      "title": "https://www.ietf.org/rfc/rfc2560.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.153Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-D2C8A5DA304E": {
+      "id": "SRC-D2C8A5DA304E",
+      "url": "https://github.com/nats-io/natscli/issues/724",
+      "title": "https://github.com/nats-io/natscli/issues/724",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.154Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-FA5B85570E8D": {
+      "id": "SRC-FA5B85570E8D",
+      "url": "https://github.com/nats-io/nats-server/assets/719156/a90fb3b2-b3b7-4712-997c-976e82953e8b",
+      "title": "https://github.com/nats-io/nats-server/assets/719156/a90fb3b2-b3b7-4712-997c-976e82953e8b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.155Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-36A533A6E013": {
+      "id": "SRC-36A533A6E013",
+      "url": "https://www.rfc-editor.org/rfc/rfc4514",
+      "title": "IETF RFC 4514",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.155Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-A2C257C5A5DE": {
+      "id": "SRC-A2C257C5A5DE",
+      "url": "https://www.rfc-editor.org/rfc/rfc4517",
+      "title": "IETF RFC 4517",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-23546401FA7C": {
+      "id": "SRC-23546401FA7C",
+      "url": "https://www.rfc-editor.org/rfc/rfc2560",
+      "title": "IETF RFC 2560",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:51:42.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
       }
     }
   }

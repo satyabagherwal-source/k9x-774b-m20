@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T17:13:20.334Z",
+  "last_updated": "2026-11-11T17:51:42.158Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T16:43:08.691Z",
@@ -446,9 +446,24 @@
       "processed_at": "2026-11-11T17:13:20.321Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "fallow-rs-fallow-learnings.md": {
+      "processed_at": "2026-11-11T17:51:42.058Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "crosspaste-crosspaste-desktop-learnings.md": {
+      "processed_at": "2026-11-11T17:51:42.079Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nats-io-nats-server-learnings.md": {
+      "processed_at": "2026-11-11T17:51:42.086Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 111,
+  "total_dossiers_evaluated": 114,
   "total_canonical_promoted": 17,
-  "total_staged_for_review": 91
+  "total_staged_for_review": 94
 }

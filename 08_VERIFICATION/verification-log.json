@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-F52A",
-    "timestamp": "2026-11-08T19:07:17.986Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "68d4da4254d12c0e1de89fba7308b713d3900ebdb3858a4ee801a123bd141371",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-KE78",
-    "timestamp": "2026-11-08T19:11:23.108Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "4d36e8c0930817074e77f323f3b4592a68bcc952563043712e887da28f8bf958",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-9SXL",
-    "timestamp": "2026-11-08T19:31:08.601Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "b3d0bb21ea65cf0676c94bac43b829eeffd4db5c14849f6050bed8acc17d1f6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-9T7R",
-    "timestamp": "2026-11-08T19:31:08.967Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "f5a79e573ee5d9be66760dfd31902345b2db94d540bf6143863756c6ea4f3e10",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-9W4S",
     "timestamp": "2026-11-08T19:31:12.748Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7430,66 @@
     "repository": "microsoft/react-native-windows",
     "learningId": "learn-github-microsoft-react-native-windows",
     "contentHash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-UL2E",
+    "timestamp": "2026-11-11T17:46:20.582Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "cd232e3053530f38bc6494bf7e5a9740d5c6f46926b97163e51f6571d101988e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-UODS",
+    "timestamp": "2026-11-11T17:46:24.880Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "039f0bb677fd5da847981474126aa0e5caa9fad8eba707bc3e46adb196968a1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-0X7O",
+    "timestamp": "2026-11-11T17:51:16.260Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-1C0F",
+    "timestamp": "2026-11-11T17:51:35.439Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

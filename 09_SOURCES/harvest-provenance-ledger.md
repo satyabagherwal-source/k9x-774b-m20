@@ -8991,3 +8991,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-62e0908d` | `project://goharbor-harbor` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md` | 2026-11-11T16:56:20.049Z |
 | `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `b993537c` | Multi-dimensional audit evidence | 2026-11-11T17:13:09.821Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `5ba45344` | Multi-dimensional audit evidence | 2026-11-11T17:13:14.562Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `c3c5fe6a` | Multi-dimensional audit evidence | 2026-11-11T17:46:20.585Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `df52b4fe` | Multi-dimensional audit evidence | 2026-11-11T17:46:24.885Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `7016f77b` | Multi-dimensional audit evidence | 2026-11-11T17:51:16.263Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `0d4956f3` | Multi-dimensional audit evidence | 2026-11-11T17:51:35.443Z |
