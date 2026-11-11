@@ -8867,3 +8867,14 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e2ade2a2` | Multi-dimensional audit evidence | 2026-11-11T06:33:49.999Z |
 | `learn-dom-h-0b5c2ee9` | `project://react-native-webrtc-react-native-webrtc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-11T06:34:12.030Z |
 | `learn-dom-d-a94752ef` | `project://dnscontrol-dnscontrol` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md` | 2026-11-11T06:34:33.447Z |
+| `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-11T07:03:08.634Z |
+| `learn-huggingface-conwayresearch-underdog-woof` | `https://huggingface.co/ConwayResearch/Underdog-Woof` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-11T07:08:07.263Z |
+| `learn-dom-d-170ae1cf` | `project://hf-cactus-compute-mirage` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | 2026-11-11T07:08:24.911Z |
+| `learn-dom-h-ff5be5ce` | `project://zoontek-react-native-permissions` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md` | 2026-11-11T07:08:45.496Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `150910f8` | Multi-dimensional audit evidence | 2026-11-11T07:27:49.603Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e91a85c4` | Multi-dimensional audit evidence | 2026-11-11T07:27:55.070Z |
+| `learn-dom-d-12383e4d` | `project://checkmarx-kics` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md` | 2026-11-11T07:28:14.638Z |
+| `learn-dom-d-06fc3249` | `project://t8y2-dbx` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md` | 2026-11-11T07:28:35.217Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `ecfbdbcc` | Multi-dimensional audit evidence | 2026-11-11T07:37:49.436Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `45e1372f` | Multi-dimensional audit evidence | 2026-11-11T07:37:55.682Z |
+| `learn-dom-d-bc0a19f3` | `project://codewhale-hq-codewhale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md` | 2026-11-11T07:38:16.421Z |

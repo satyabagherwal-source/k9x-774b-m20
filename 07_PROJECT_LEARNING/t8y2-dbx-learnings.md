@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `0d01dff9`  
+> **Source Version**: `e91a85c4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:46:47.380Z  
+> **Timestamp**: 2026-11-11T07:27:43.559Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:46:47.371Z  
+> **Harvest Timestamp**: 2026-11-11T07:27:43.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 29581 stars
+- **Stars / Engagement**: 29986 stars
 
 ---
 
@@ -1991,17 +1991,14 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14525** (2026-11-07): **[Bug] PostgreSQL创建表无法选中安装的扩展类型**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 18.6  ### 问题描述 / Problem description  我在PostgreSQL 安装了扩展vector 但是创建表的时候无法找到这个下拉选项  <img width="1209" height="255" alt="Image" src="https://github.com/user-attachments/assets/9ef912d0-e9d8-4e75-8034-1e81efec3928" />  但是通过SQL创建的   显示这个类型 但是下拉选项依旧没有这类型  ### 支持信息 / Support information  <img width="403" height="426" alt="Image" src="https://github.com/user-attachments/assets/63531858-8728-4f99-afe2-1591d002258e" />  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
+- **Issue #14709** (2026-11-11): **[Bug] 主键使用触发器实现的自增，无法保存**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Firebird 0.1.91  ### 问题描述 / Problem description  <img width="1335" height="396" alt="Image" src="https://github.com/user-attachments/assets/40f0e1e9-02b7-428e-b6f2-38b75f03e890" /> 如图，主键是触发器实现的自增保存会提示保存失败`Column "REPORT_DID" does not allow NULL.` ，在dbeaver中是可以正常保存的  ### 支持信息 / Support information  dbx v0.6.68  Windows11  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
   > /claim
-  > ✅ @dienaso 已认领 #14525，开始处理吧！
+  > ✅ @thailoc-dev 已认领 #14709，开始处理吧！
 
-- **Issue #14518** (2026-11-07): **[Bug] 修改存储过程中使用了未定义的变量任然可以执行成功**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL server  ### 问题描述 / Problem description  修改存储过程中使用了未定义的变量任然可以执行成功  <img width="1518" height="651" alt="Image" src="https://github.com/user-attachments/assets/d24cbe7c-6ec5-43a7-aea8-dbb7f1dbeb49" />  ### 支持信息 / Support information  修改存储过程中使用了未定义的变量任然可以执行成功  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > /claim
-  > ✅ @Acd-kk 已认领 #14518，开始处理吧！
+- **Issue #14698** (2026-11-11): **[Bug] 快捷键中给接受补全设置的是tab，在写SQL时需要敲空格还是自动补全了**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL Server 2019  ### 问题描述 / Problem description  快捷键中给接受补全设置的是tab，在写SQL时需要敲空格还是自动补全了，每次inner join后的条件on想补个空格 自动补全了  <img width="1575" height="967" alt="Image" src="https://github.com/user-attachments/assets/95459018-3c60-40dd-b51e-e0de5cdbe948" />  <img width="1552" height="694" alt="Image" src="https://github.com/user-attachments/assets/fb0aec58-561f-4943-86c8-893c0a52b693" />  ### 支持信息 / Support information  DBX 版本: v0.6.68 (0.6.68-beta.20261107.4) 运行环境: 桌面端 操作系统: Windows 11 (10.0.26200.9168) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 数据库类型: mysql, plugin, sqlserver  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2018,607 +2015,1623 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fd5f9c3` (2026-11-08)
-**Commit Message**: fix(release): retry agent R2 uploads and resume driver sync
+### Incident Patch 1: `b62e570a` (2026-11-10)
+**Commit Message**: fix(iotdb): honor unlimited query timeout across paged fetches
 
-The first attempt of the agents release uploaded the JRE tarballs in one
-unretried `aws s3 cp`, so a single R2 response timeout failed the whole
-release after every build had succeeded. Retry each upload, and sync the
-version-scoped driver packages by size so a retry only sends what is missing.
-
-**File**: `.github/workflows/agents-release.yml` (modified, +19/-5)
+**File**: `agents/drivers/iotdb/driver.go` (modified, +24/-6)
 ```diff
-@@ -1879,23 +1879,37 @@ jobs:
-           R2_ENDPOINT: "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
-           R2_BUCKET: "s3://${{ secrets.R2_BUCKET_NAME }}"
-         run: |
-+          set -euo pipefail
-+          retry() {
-+            local attempt
-+            for attempt in 1 2 3; do
-+              if "$@"; then
-+                return 0
-+              fi
-+              echo "::warning::R2 upload attempt ${attempt}/3 failed: $*"
-+              sleep $((attempt * 15))
-+            done
-+            return 1
-+          }
-           # Always upload the current registry.
--          aws s3 cp release/agent-registry.json \
-+          retry aws s3 cp release/agent-registry.json \
-             "$R2_BUCKET/agents/agent-registry.json" \
-             --endpoint-url "$R2_ENDPOINT"
-           echo "Uploaded agent-registry.json"
+@@ -22,16 +22,34 @@ type iotdbSession interface {
+ 	Close() error
+ }
  
--          # Upload all single-driver packages concurrently.
--          aws s3 cp release/ "$R2_BUCKET/agents/drivers/" \
--            --recursive \
-+          # Upload all single-driver packages concurrently. Package names carry
-+          # the driver version, so the size check makes a retry resume after a
-+          # transient R2 failure instead of re-uploading every driver again.
-+          retry aws s3 sync release/ "$R2_BUCKET/agents/drivers/" \
-             --exclude "*" \
-             --include "dbx-agent-*.tar.zst" \
-             --include "dbx-agent-*.tar.zst.delta" \
-+            --size-only \
-             --endpoint-url "$R2_ENDPOINT"
-           echo "Uploaded single-driver packages"
++// The narrow surface nativeIoTDBSession needs from the vendored client.
++// Keeping it an interface lets adapter tests assert that the per-query
++// timeout reaches the session layer instead of being dropped (#13935).
++type clientQuerySession interface {
++	ExecuteQueryStatementWithContext(context.Context, string, *int64) (*client.SessionDataSet, error)
++	ExecuteStatementWithContext(context.Context, string) (*client.SessionDataSet, error)
++	Close() error
++}
++
+ type nativeIoTDBSession struct {
+-	session *client.Session
++	session clientQuerySession
+ }
  
-           # Upload JRE packages concurrently, always overwriting the stable names.
--          aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
-+          retry aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
-             --recursive \
-             --exclude "*" \
-             --include "dbx-jre-*.tar.zst" \
+-func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, _ *int64) (*client.SessionDataSet, error) {
+-	return executeIoTDBStatement(ctx, s.session, sql)
++func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, timeoutMs *int64) (*client.SessionDataSet, error) {
++	return executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
++		// #13935: the timeout must ride inside the RPC — an omitted value
++		// falls back to the server's query_timeout_threshold (60 s default),
++		// so whatever timeoutMilliseconds produced (the 100-year no-limit
++		// budget, or a positive bound) reaches the request. The old adapter
++		// dropped it here.
++		return s.session.ExecuteQueryStatementWithContext(ctx, sql, timeoutMs)
++	})
+ }
+ 
+ func (s *nativeIoTDBSession) ExecuteNonQueryStatement(ctx context.Context, sql string) error {
+-	dataset, err := executeIoTDBStatement(ctx, s.session, sql)
++	dataset, err := executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
++		return s.session.ExecuteStatementWithContext(ctx, sql)
++	})
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -45,7 +63,7 @@ func (s *nativeIoTDBSession) Close() error {
+ 	return s.session.Close()
+ }
+ 
+-func executeIoTDBStatement(ctx context.Context, session *client.Session, sql string) (dataset *client.SessionDataSet, err error) {
++func executeIoTDBStatement(ctx context.Context, run func() (*client.SessionDataSet, error)) (dataset *client.SessionDataSet, err error) {
+ 	defer func() {
+ 		if recovered := recover(); recovered != nil {
+ 			if ctxErr := ctx.Err(); ctxErr != nil {
+@@ -57,7 +75,7 @@ func executeIoTDBStatement(ctx context.Context, session *client.Session, sql str
+ 			err = fmt.Errorf("IoTDB Go client panicked while executing statement: %v", recovered)
+ 		}
+ 	}()
+-	return session.ExecuteStatementWithContext(ctx, sql)
++	return run()
+ }
+ 
+ type connectionConfig struct {
+```
+
+**File**: `agents/drivers/iotdb/integration_test.go` (modified, +149/-0)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"bufio"
+ 	"context"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"os"
+ 	"os/exec"
+@@ -13,6 +14,8 @@ import (
+ 	"sync"
+ 	"testing"
+ 	"time"
++
++	"github.com/apache/iotdb-client-go/v2/client"
+ )
+ 
+ func TestLiveIoTDBAgentTreeAndTable(t *testing.T) {
+@@ -406,3 +409,149 @@ func (b *synchronizedBuffer) String() string {
+ 	defer b.mu.Unlock()
+ 	return b.builder.String()
+ }
++
++// #13935 review round 3: self-contained live verification against IoTDB 1.3.7.
++//
++// Preconditions: a real IoTDB server reachable via DBX_IOTDB_HOST/PORT with
++//   query_timeout_threshold = 1   (1 ms, in conf/iotdb-system.properties)
++// The test creates its own database/timeseries, asserts the tightened server
++// timeout is actually in effect (a nil-timeout read must fail with the server
++// timeout error), then proves that:
++//   * timeoutSecs=0 (the 100-year no-limit budget) survives every paged fetch
++//     on the agent's session path (executeQueryPage/fetchQueryPage), and
++//   * a cancelled context stops a paged read instead of waiting for the
++//     blocking fetch RPC (client-level NextWithContext).
++func TestLiveIoTDBNoLimitQueryCarriesBudgetThroughFetchPages(t *testing.T) {
++	if os.Getenv("DBX_IOTDB_LIVE") != "1" {
++		t.Skip("set DBX_IOTDB_LIVE=1 to run against a real IoTDB server")
++	}
++	database := fmt.Sprintf("root.dbx_timeout_%d", os.Getpid())
++	device := database + ".d1"
++	seedRows := 50000
++
++	admin := liveIoTDBServer(t, connectParams{})
++	mustExecuteNonQuery(t, admin, "CREATE DATABASE "+database, "")
++	defer func() { _ = admin.executeNonQuery("DELETE DATABASE "+database, "", 0) }()
++	mustExecuteNonQuery(t, admin, "CREATE TIMESERIES "+device+".s0 WITH DATATYPE=INT64, ENCODING=RLE", "")
++	admin.disconnect()
++
++	// Seed 50000 rows through a direct client session so every paged read spans
++	// fetchSize 1000 → 50 fetch pages.
++	seedSession := client.NewSession(&client.Config{
++		Host:      envOr("DBX_IOTDB_HOST", "127.0.0.1"),
++		Port:      strconv.Itoa(envIntOr("DBX_IOTDB_PORT", defaultIoTDBPort)),
++		UserName:  envOr("DBX_IOTDB_USER", "root"),
++		Password:  envOr("DBX_IOTDB_PASSWORD", "root"),
++		FetchSize: 1000,
++		TimeZone:  client.DefaultTimeZone,
++	})
++	if err := seedSession.Open(false, 10000); err != nil {
++		t.Fatalf("seed session: %v", err)
++	}
++	defer func() { _ = seedSession.Close() }()
++	tabletRows := 5000
++	tablet, tabletErr := client.NewTablet(device, []*client.MeasurementSchema{
++		{Measurement: "s0", DataType: client.INT64},
++	}, tabletRows)
++	if tabletErr != nil {
++		t.Fatalf("seed tablet: %v", tabletErr)
++	}
++	for batch := 0; batch < seedRows/tabletRows; batch++ {
++		for index := 0; index < tabletRows; index++ {
++			tablet.SetTimestamp(int64(batch)*int64(tabletRows)+int64(index), index)
++			if err := tablet.SetValueAt(int64(batch*tabletRows+index), 0, index); err != nil {
++				t.Fatalf("seed value: %v", err)
++			}
++		}
++		tablet.RowSize = tabletRows
++		if err := seedSession.InsertTablet(tablet, true); err != nil {
++			t.Fatalf("seed tablet %d: %v", batch, err)
++		}
++		tablet.Reset()
++	}
++
++	server := liveIoTDBServer(t, connectParams{Database: database})
++	defer server.disconnect()
++
++	// 1. Precondition check: a nil (absent) timeout falls back to the server's
++	// query_timeout_threshold. With the documented 1 ms value this paged read
++	// must be aborted by the server; otherwise the environment is misconfigured
++	// and the comparison below proves nothing.
++	started := time.Now()
++	_, err := server.executeQuery(queryOptions{SQL: "SELECT s0 FROM " + device, MaxRows: seedRows, TimeoutSecs: -1})
++	elapsed := time.Since(started)
++	if err == nil {
++		t.Fatalf("server query_timeout_threshold is not tightened: a nil-timeout %d-row read succeeded in %v; set query_timeout_threshold = 1 in conf/iotdb-system.properties", seedRows, elapsed)
++	}
++	lowered := strings.ToLower(err.Error())
++	if !strings.Contains(lowered, "time out") && !strings.Contains(lowered, "timeout") {
++		t.Fatalf("expected the server timeout error for a nil-timeout read, got: %v", err)
++	}
++	t.Logf("precondition ok: nil-timeout paged read failed after %v with: %v", elapsed, err)
++
++	// 2. timeoutSecs=0 maps to the 100-year budget: the same paged read now
++	// returns every row, and each fetch page carries that budget.
++	started = time.Now()
++	result, err := server.executeQuery(queryOptions{SQL: "SELECT s0 FROM " + device, MaxRows: seedRows, TimeoutSecs: 0})
++	if err != nil {
++		t.Fatalf("timeoutSecs=0 must carry the budget through every fetch page: %v", err)
++	}
++	if len(result.Rows) != seedRows {
++		t.Fatalf("expected %d rows through all fetch pages, got %d", seedRows, len(result.Rows))
++	}
++	t.Logf("queryValues path: %d rows in %v", len(result.Rows), time.Since(started))
++
++	// 3. The agent's session pagination path (executeQueryPage/fetchQueryPage)
++	// must also survive the tightened threshold page after page.
++	page, err := server.executeQueryPage(queryOptions{SQL: "SELECT s0 FROM " + device, MaxRows: seedRows, TimeoutSec
+```
+
+**File**: `agents/drivers/iotdb/main_test.go` (modified, +101/-0)
+```diff
+@@ -376,3 +376,104 @@ func (s *blockingIoTDBSession) Close() error {
+ 	}
+ 	return nil
+ }
++
++func TestTimeoutMillisecondsMapsNoLimitToABoundedHugeBudget(t *testing.T) {
++	// dbx's "no limit" setting is 0. Probing 1.3.7 shows IoTDB's per-query
++	// timeout has no wire-level "disable": 0 and negatives fall back to the
++	// server's query_timeout_threshold (60 s default), so the no-limit setting
++	// maps to a 100-year budget that can never fire within int64 deadline
++	// arithmetic (#13935).
++	noLimit := timeoutMilliseconds(0)
++	if noLimit == nil || *noLimit != hundredYearsMs {
++		t.Fatalf("timeoutMilliseconds(0) = %v, want pointer to %d", noLimit, hundredYearsMs)
++	}
++	positive := timeoutMilliseconds(90)
++	if positive == nil || *positive != 90000 {
++		t.Fatalf("timeoutMilliseconds(90) = %v, want pointer to 90000", positive)
++	}
++	if negative := timeoutMilliseconds(-1); negative != nil {
++		t.Fatalf("timeoutMilliseconds(-1) = %v, want nil", *negative)
++	}
++}
++
++const hundredYearsMs = 100 * 365 * 24 * int64(time.Hour) / int64(time.Millisecond)
++
++type timeoutRecordingSession struct {
++	received []*int64
++}
++
++func (s *timeoutRecordingSession) ExecuteQueryStatement(_ context.Context, _ string, timeoutMs *int64) (*client.SessionDataSet, error) {
++	s.received = append(s.received, timeoutMs)
++	return nil, errors.New("recorded")
++}
++
++func (s *timeoutRecordingSession) ExecuteNonQueryStatement(context.Context, string) error {
++	return errors.New("not implemented")
++}
++
++func (s *timeoutRecordingSession) Close() error { return nil }
++
++func TestQueryValuesSendsHugeBudgetForNoLimit(t *testing.T) {
++	recording := &timeoutRecordingSession{}
++	connected := &sessionClient{session: recording, dialect: client.TreeSqlDialect}
++	server := &server{client: connected}
++
++	_, _ = server.queryValues("SELECT value FROM root.dbx_13935.d", "", 10, 0)
++
++	if len(recording.received) != 1 {
++		t.Fatalf("ExecuteQueryStatement calls = %d, want 1", len(recording.received))
++	}
++	timeout := recording.received[0]
++	if timeout == nil || *timeout != hundredYearsMs {
++		t.Fatalf("query timeout = %v, want the 100-year no-limit budget", timeout)
++	}
++}
++
++type timeoutCaptureSession struct {
++	capturedTimeout []*int64
++	capturedContext []context.Context
++}
++
++func (s *timeoutCaptureSession) ExecuteQueryStatementWithContext(ctx context.Context, _ string, timeoutMs *int64) (*client.SessionDataSet, error) {
++	s.capturedTimeout = append(s.capturedTimeout, timeoutMs)
++	s.capturedContext = append(s.capturedContext, ctx)
++	return nil, errors.New("recorded")
++}
++
++func (s *timeoutCaptureSession) ExecuteStatementWithContext(context.Context, string) (*client.SessionDataSet, error) {
++	return nil, errors.New("not implemented")
++}
++
++func (s *timeoutCaptureSession) Close() error { return nil }
++
++// The production adapter must forward the per-query timeout to the session
++// layer instead of dropping it: whatever timeoutMilliseconds produced (a
++// positive budget, or the 100-year no-limit budget) has to reach the session
++// call untouched, together with the caller's context (#13935).
++func TestNativeSessionForwardsQueryTimeoutToClient(t *testing.T) {
++	recording := &timeoutCaptureSession{}
++	session := &nativeIoTDBSession{session: recording}
++
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	zero := int64(0)
++	for _, timeout := range []*int64{nil, &zero} {
++		if _, err := session.ExecuteQueryStatement(ctx, "SELECT value FROM root.dbx.d", timeout); err == nil {
++			t.Fatal("expected the recorded error to surface")
++		}
++	}
++	if len(recording.capturedTimeout) != 2 {
++		t.Fatalf("ExecuteQueryStatementWithContext calls = %d, want 2", len(recording.capturedTimeout))
++	}
++	if recording.capturedTimeout[0] != nil {
++		t.Fatalf("first call timeout = %v, want nil passthrough", *recording.capturedTimeout[0])
++	}
++	if recording.capturedTimeout[1] == nil || *recording.capturedTimeout[1] != 0 {
++		t.Fatalf("second call timeout = %v, want pointer to 0 (no limit)", recording.capturedTimeout[1])
++	}
++	for _, captured := range recording.capturedContext {
++		if captured != ctx {
++			t.Fatal("the caller's context must reach the session layer for cancellation")
++		}
++	}
++}
+```
+
+**File**: `agents/drivers/iotdb/query.go` (modified, +16/-4)
+```diff
+@@ -273,7 +273,7 @@ func (s *server) nextDatasetRow(ctx context.Context, state *querySession) ([]any
+ 	if err := ctx.Err(); err != nil {
+ 		return nil, false, err
+ 	}
+-	hasNext, err := state.dataset.Next()
++	hasNext, err := state.dataset.NextWithContext(ctx)
+ 	if err != nil || !hasNext {
+ 		return nil, false, err
+ 	}
+@@ -388,7 +388,7 @@ func readDataset(ctx context.Context, dataset *client.SessionDataSet, connected
+ 		if err := ctx.Err(); err != nil {
+ 			return nil, false, err
+ 		}
+-		hasNext, err := dataset.Next()
++		hasNext, err := dataset.NextWithContext(ctx)
+ 		if err != nil {
+ 			return nil, false, err
+ 		}
+@@ -407,7 +407,7 @@ func readDataset(ctx context.Context, dataset *client.SessionDataSet, connected
+ 	if err := ctx.Err(); err != nil {
+ 		return nil, false, err
+ 	}
+-	hasNext, err := dataset.Next()
++	hasNext, err := dataset.NextWithContext(ctx)
+ 	return rows, hasNext, err
+ }
+ 
+@@ -527,10 +527,22 @@ func isTreeTimeColumn(dialect string, columns []string, index int) bool {
+ 	return dialect == client.TreeSqlDialect && index == 0 && len(columns) > 0 && strings.EqualFold(columns[0], "Time")
+ }
+ 
++// noLimitTimeoutMs is what dbx's "no limit" setting (timeoutSecs = 0) maps to.
++// IoTDB's per-query timeout has no true "disable" value on the wire: probing
++// 1.3.7 shows 0 and negatives both fall back to the server's
++// query_timeout_threshold (60 s default — the cause of #13935), so a no-limit
++// run sends a 100-year budget instead, which bounds deadline arithmetic far
++// below int64 overflow while never firing.
++const noLimitTimeoutMs = int64(100 * 365 * 24 * time.Hour / time.Millisecond)
++
+ func timeoutMilliseconds(timeoutSecs int) *int64 {
+-	if timeoutSecs <= 0 {
++	if timeoutSecs < 0 {
+ 		return nil
+ 	}
++	if timeoutSecs == 0 {
++		value := noLimitTimeoutMs
++		return &value
++	}
+ 	value := int64(timeoutSecs) * 1000
+ 	return &value
+ }
+```
+
+**File**: `agents/drivers/iotdb/query_cancel_socket_test.go` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++package main
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"net"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/apache/thrift/lib/go/thrift"
++
++	"github.com/apache/iotdb-client-go/v2/client"
++	"github.com/apache/iotdb-client-go/v2/common"
++	"github.com/apache/iotdb-client-go/v2/rpc"
++)
++
++// cancelSocketHandler is a minimal real-socket IoTDB endpoint whose query RPC
++// never answers, so the client parks in a Thrift socket read. It exists to
++// prove that the agent's cancel_session path (cancelActiveQuery) can interrupt
++// that read instead of waiting for the server.
++type cancelSocketHandler struct {
++	rpc.IClientRPCService
++
++	queryStarted     chan struct{}
++	queryStartedOnce sync.Once
++	release          chan struct{}
++	releaseOnce      sync.Once
++}
++
++func newCancelSocketHandler() *cancelSocketHandler {
++	return &cancelSocketHandler{queryStarted: make(chan struct{}), release: make(chan struct{})}
++}
++
++func (h *cancelSocketHandler) releaseAll() {
++	h.releaseOnce.Do(func() { close(h.release) })
++}
++
++func (h *cancelSocketHandler) OpenSession(context.Context, *rpc.TSOpenSessionReq) (*rpc.TSOpenSessionResp, error) {
++	resp := rpc.NewTSOpenSessionResp()
++	resp.Status = &common.TSStatus{Code: client.SuccessStatus}
++	sessionID := int64(5)
++	resp.SessionId = &sessionID
++	resp.Configuration = map[string]string{}
++	return resp, nil
++}
++
++func (h *cancelSocketHandler) RequestStatementId(context.Context, int64) (int64, error) {
++	return 9, nil
++}
++
++func (h *cancelSocketHandler) CloseSession(context.Context, *rpc.TSCloseSessionReq) (*common.TSStatus, error) {
++	return &common.TSStatus{Code: client.SuccessStatus}, nil
++}
++
++func (h *cancelSocketHandler) ExecuteQueryStatementV2(context.Context, *rpc.TSExecuteStatementReq) (*rpc.TSExecuteStatementResp, error) {
++	h.queryStartedOnce.Do(func() { close(h.queryStarted) })
++	<-h.release
++	return nil, fmt.Errorf("query was never answered")
++}
++
++func TestCancelActiveQueryInterruptsBlockedSocket(t *testing.T) {
++	handler := newCancelSocketHandler()
++	ln, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatalf("listen: %v", err)
++	}
++	processor := rpc.NewIClientRPCServiceProcessor(handler)
++	serveCtx, stopServing := context.WithCancel(context.Background())
++	var wg sync.WaitGroup
++	wg.Add(1)
++	go func() {
++		defer wg.Done()
++		for {
++			conn, err := ln.Accept()
++			if err != nil {
++				return
++			}
++			wg.Add(1)
++			go func(conn net.Conn) {
++				defer wg.Done()
++				defer conn.Close()
++				conf := &thrift.TConfiguration{}
++				trans := thrift.NewTFramedTransportConf(thrift.NewTSocketFromConnConf(conn, conf), conf)
++				iprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtocol(trans)
++				oprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtocol(trans)
++				for serveCtx.Err() == nil {
++					if _, err := processor.Process(serveCtx, iprot, oprot); err != nil {
++						return
++					}
++				}
++			}(conn)
++		}
++	}()
++	t.Cleanup(func() {
++		handler.releaseAll()
++		stopServing()
++		_ = ln.Close()
++		wg.Wait()
++	})
++
++	addr := ln.Addr().(*net.TCPAddr)
++	session := client.NewSession(&client.Config{
++		Host:            addr.IP.String(),
++		Port:            fmt.Sprintf("%d", addr.Port),
++		UserName:        "root",
++		Password:        "root",
++		FetchSize:       16,
++		TimeZone:        client.DefaultTimeZone,
++		ConnectRetryMax: 3,
++	})
++	if err := session.Open(false, 2000); err != nil {
++		t.Fatalf("open session: %v", err)
++	}
++	connected := &sessionClient{session: &nativeIoTDBSession{session: &session}, dialect: client.TreeSqlDialect}
++	server := &server{client: connected}
++
++	done := make(chan error, 1)
++	go func() {
++		_, err := runCancelable(server, 0, connected, func(ctx context.Context) (struct{}, error) {
++			_, err := connected.session.ExecuteQueryStatement(ctx, "select v from root.s", nil)
++			return struct{}{}, err
++		})
++		done <- err
++	}()
++
++	select {
++	case <-handler.queryStarted:
++	case <-time.After(5 * time.Second):
++		t.Fatal("query RPC was never issued")
++	}
++	started := time.Now()
++	server.cancelActiveQuery()
++
++	select {
++	case err := <-done:
++		if !errors.Is(err, context.Canceled) {
++			t.Fatalf("runCancelable() error = %v, want context.Canceled", err)
++		}
++		if elapsed := time.Since(started); elapsed > 5*time.Second {
++			t.Fatalf("cancel_session took %s to interrupt the blocked RPC", elapsed)
++		}
++	case <-time.After(5 * time.Second):
++		t.Fatal("cancel_session did not interrupt the blocked socket read")
++	}
++}
+```
+
+**File**: `agents/go-common/iotdb-client-go/client/rpcdataset.go` (modified, +31/-4)
+```diff
+@@ -51,9 +51,15 @@ type IoTDBRpcDataSet struct {
+ 	timeFormat    string
+ 	timeFactor    int32
+ 	timePrecision string
++
++	// interrupt closes the owning session's transport so a paged Fetch that is
++	// blocked in a Thrift socket read returns when its context is cancelled.
++	interrupt func()
+ }
+ 
+-func NewIoTDBRpcDataSet(sql string, columnNameList []string, columnTypeList []string, columnNameIndex map[string]int32, ignoreTimestamp bool, moreData bool, queryId int64, statementId int64, client *rpc.IClientRPCServiceClient, sessionId int64, queryResult [][]byte, fetchSize int32, timeout *int64, zoneId string, timeFormat string, timeFactor int32, columnIndex2TsBlockColumnIndexList []int32) (rpcDataSet *IoTDBRpcDataSet, err error) {
++// NewIoTDBRpcDataSet builds a result set. The optional interrupt func is
++// variadic to keep upstream call sites source-compatible.
++func NewIoTDBRpcDataSet(sql string, columnNameList []string, columnTypeList []string, columnNameIndex map[string]int32, ignoreTimestamp bool, moreData bool, queryId int64, statementId int64, client *rpc.IClientRPCServiceClient, sessionId int64, queryResult [][]byte, fetchSize int32, timeout *int64, zoneId string, timeFormat string, timeFactor int32, columnIndex2TsBlockColumnIndexList []int32, interrupt ...func()) (rpcDataSet *IoTDBRpcDataSet, err error) {
+ 	ds := &IoTDBRpcDataSet{
+ 		sessionId:                        sessionId,
+ 		statementId:                      statementId,
+@@ -70,6 +76,9 @@ func NewIoTDBRpcDataSet(sql string, columnNameList []string, columnTypeList []st
+ 		columnOrdinalMap:                 make(map[string]int32),
+ 		columnName2TsBlockColumnIndexMap: make(map[string]int32),
+ 	}
++	if len(interrupt) > 0 {
++		ds.interrupt = interrupt[0]
++	}
+ 	columnStartIndex := int32(1)
+ 	resultSetColumnSize := int32(len(columnNameList))
+ 	// newly generated or updated columnIndex2TsBlockColumnIndexList.size() may not be equal to
+@@ -186,6 +195,16 @@ func (s *IoTDBRpcDataSet) Close() (err error) {
+ }
+ 
+ func (s *IoTDBRpcDataSet) Next() (result bool, err error) {
++	return s.NextWithContext(context.Background())
++}
++
++// NextWithContext reads the next row, driving fetchResults with the caller's
++// context so a cancelled or timed-out query stops paging instead of waiting
++// for the blocking Thrift call to return (#13935 review round 3).
++func (s *IoTDBRpcDataSet) NextWithContext(ctx context.Context) (result bool, err error) {
++	if err = ctx.Err(); err != nil {
++		return false, err
++	}
+ 	if s.hasCachedBlock() {
+ 		s.lastReadWasNull = false
+ 		err = s.constructOneRow()
+@@ -200,7 +219,7 @@ func (s *IoTDBRpcDataSet) Next() (result bool, err error) {
+ 	}
+ 
+ 	if s.moreData {
+-		hasResultSet, err := s.fetchResults()
++		hasResultSet, err := s.fetchResults(ctx)
+ 		if err != nil {
+ 			return false, err
+ 		}
+@@ -219,10 +238,15 @@ func (s *IoTDBRpcDataSet) Next() (result bool, err error) {
+ 	return false, nil
+ }
+ 
+-func (s *IoTDBRpcDataSet) fetchResults() (bool, error) {
++func (s *IoTDBRpcDataSet) fetchResults(ctx context.Context) (bool, error) {
+ 	if s.isClosed {
+ 		return false, fmt.Errorf("this data set is already closed")
+ 	}
++	// FetchResultsV2 is a blocking Thrift read that does not observe ctx; the
++	// session watcher closes the transport so cancellation/deadline returns
++	// instead of waiting for the page (#13935 review round 3).
++	stop := watchContextDone(ctx, s.interrupt)
++	defer stop()
+ 	req := rpc.TSFetchResultsReq{
+ 		SessionId: s.sessionId,
+ 		Statement: s.sql,
+@@ -232,8 +256,11 @@ func (s *IoTDBRpcDataSet) fetchResults() (bool, error) {
+ 	}
+ 	req.Timeout = s.timeout
+ 
+-	resp, err := s.client.FetchResultsV2(context.Background(), &req)
++	resp, err := s.client.FetchResultsV2(ctx, &req)
+ 
++	if ctxErr := ctx.Err(); ctxErr != nil {
++		return false, ctxErr
++	}
+ 	if err != nil {
+ 		return false, err
+ 	}
+```
+
+**File**: `agents/go-common/iotdb-client-go/client/session.go` (modified, +258/-44)
+```diff
+@@ -29,6 +29,7 @@ import (
+ 	"net"
+ 	"reflect"
+ 	"sort"
++	"sync"
+ 	"time"
+ 
+ 	"github.com/apache/thrift/lib/go/thrift"
+@@ -74,11 +75,114 @@ type Session struct {
+ 	config             *Config
+ 	client             *rpc.IClientRPCServiceClient
+ 	sessionId          int64
+-	trans              thrift.TTransport
+ 	requestStatementId int64
+ 	protocolFactory    thrift.TProtocolFactory
+ 	endPointList       []endPoint
+ 	timeFactor         int32
++
++	// Session is a value type across the client API, so the mutable transport
++	// state lives behind a pointer: embedding sync.Mutex directly would make
++	// every copy a copylocks vet failure. A blocked Thrift RPC cannot be
++	// stopped through its context (TSocket.Read waits on net.Conn.Read), so
++	// cancellation closes the socket instead; see Interrupt (#13935 review
++	// round 3).
++	transport *sessionTransportState
++}
++
++type sessionTransportState struct {
++	mu          sync.Mutex
++	trans       thrift.TTransport
++	interrupted bool
++}
++
++func (s *Session) transportState() *sessionTransportState {
++	if s.transport == nil {
++		s.transport = &sessionTransportState{}
++	}
++	return s.transport
++}
++
++// setTransport installs the transport used by the next RPC. If the session was
++// interrupted while the transport was being dialed, the fresh transport is
++// closed immediately so a cancellation that raced with reconnect cannot leave
++// a live socket behind.
++func (s *Session) setTransport(trans thrift.TTransport) error {
++	state := s.transportState()
++	state.mu.Lock()
++	state.trans = trans
++	interrupted := state.interrupted
++	state.mu.Unlock()
++	if interrupted {
++		_ = trans.Close()
++		return fmt.Errorf("IoTDB session was interrupted")
++	}
++	return nil
++}
++
++func (s *Session) currentTransport() thrift.TTransport {
++	if s.transport == nil {
++		return nil
++	}
++	state := s.transportState()
++	state.mu.Lock()
++	defer state.mu.Unlock()
++	return state.trans
++}
++
++func (s *Session) wasInterrupted() bool {
++	if s.transport == nil {
++		return false
++	}
++	state := s.transportState()
++	state.mu.Lock()
++	defer state.mu.Unlock()
++	return state.interrupted
++}
++
++// Interrupt closes the transport that a blocked RPC is reading from, so the
++// call returns instead of waiting for a server response that the caller no
++// longer wants. It permanently disables the session: callers must discard it
++// afterwards (the agent drops the whole client on cancellation).
++func (s *Session) Interrupt() {
++	state := s.transportState()
++	state.mu.Lock()
++	state.interrupted = true
++	trans := state.trans
++	state.mu.Unlock()
++	if trans != nil {
++		_ = trans.Close()
++	}
++}
++
++// watchContext calls Interrupt when ctx is cancelled or its deadline passes
++// before stop is called. Thrift's blocking socket read ignores ctx, so closing
++// the transport is the only way to abort an in-flight RPC. The returned stop
++// function must be called once the RPC finishes; it waits for the watcher so a
++// normal completion cannot race with a late interrupt.
++func (s *Session) watchContext(ctx context.Context) (stop func()) {
++	return watchContextDone(ctx, s.Interrupt)
++}
++
++// watchContextDone is the transport-independent half of Session.watchContext;
++// SessionDataSet reuses it for paged Fetch RPCs.
++func watchContextDone(ctx context.Context, interrupt func()) (stop func()) {
++	if ctx.Done() == nil || interrupt == nil {
++		return func() {}
++	}
++	done := make(chan struct{})
++	finished := make(chan struct{})
++	go func() {
++		defer close(finished)
++		select {
++		case <-ctx.Done():
++			interrupt()
++		case <-done:
++		}
++	}()
++	return func() {
++		close(done)
++		<-finished
++	}
+ }
+ 
+ type endPoint struct {
+@@ -100,19 +204,22 @@ func (s *Session) Open(enableRPCCompression bool, connectionTimeoutInMs int) err
+ 
+ 	var err error
+ 
+-	s.trans, err = newTransport(s.config.Host, s.config.Port, connectionTimeoutInMs, s.config.TLSConfig)
++	trans, err := newTransport(s.config.Host, s.config.Port, connectionTimeoutInMs, s.config.TLSConfig)
+ 	if err != nil {
+ 		return err
+ 	}
+-	if !s.trans.IsOpen() {
+-		err = s.trans.Open()
++	if err = s.setTransport(trans); err != nil {
++		return err
++	}
++	if !trans.IsOpen() {
++		err = trans.Open()
+ 		if err != nil {
+ 			return err
+ 		}
+ 	}
+ 	s.protocolFactory = getProtocolFactory(enableRPCCompression)
+-	iprot := s.protocolFactory.GetProtocol(s.trans)
+-	oprot := s.protocolFactory.GetProtocol(s.trans)
++	iprot := s.protocolFactory.GetProtocol(trans)
++	oprot := s.protocolFactory.GetProtocol(trans)
+ 	s.client = rpc.NewIClientRPCServiceClient(thrift.NewTStandardClient(iprot, oprot))
+ 	req := rpc.TSOpenSessionReq{
+ 		ClientProtocol: rpc.TSProtocolVersion_IOTDB_SERVICE_PROTOCOL_V3, ZoneId: s.config.TimeZone, Username: s.config.UserName,
+@@ -168,9 +275,13 @@ func (s *Session) OpenCluster(enableRPCCompression bool) error {
+ 
+ 	var err error
+ 
++	trans := s.currentTransport()
++	if trans == nil {
++		return fmt.Errorf("IoTDB cluster session has no transport")
++	}
+ 	s.protocolFactory = getProtocolFactory(enableRPCCompression)
+
+```
+
+**File**: `agents/go-common/iotdb-client-go/client/session_interrupt_test.go` (added, +310/-0)
+```diff
+@@ -0,0 +1,310 @@
++package client
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"net"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/apache/thrift/lib/go/thrift"
++
++	"github.com/apache/iotdb-client-go/v2/common"
++	"github.com/apache/iotdb-client-go/v2/rpc"
++)
++
++// blockingIoTServer is a minimal real-socket IoTDB endpoint. Handlers can block
++// selected RPCs forever, which reproduces the situation the context cannot fix:
++// the client is parked inside net.Conn.Read when the query is cancelled.
++type blockingIoTServer struct {
++	ln        net.Listener
++	handler   *blockingIoTDBHandler
++	processor thrift.TProcessor
++	cancel    context.CancelFunc
++	wg        sync.WaitGroup
++}
++
++type blockingIoTDBHandler struct {
++	rpc.IClientRPCService // embedded nil: unimplemented RPCs panic if called
++
++	mu             sync.Mutex
++	openSessions   int
++	executeCalls   int
++	fetchCalls     int
++	blockOpenAfter int
++	failFirstQuery bool
++	blockExecute   bool
++	blockFetch     bool
++
++	release          chan struct{}
++	releaseOnce      sync.Once
++	openBlocked      chan struct{}
++	openBlockedOnce  sync.Once
++	queryStarted     chan struct{}
++	queryStartedOnce sync.Once
++	fetchStarted     chan struct{}
++	fetchStartedOnce sync.Once
++}
++
++func newBlockingIoTDBHandler() *blockingIoTDBHandler {
++	return &blockingIoTDBHandler{
++		release:      make(chan struct{}),
++		openBlocked:  make(chan struct{}),
++		queryStarted: make(chan struct{}),
++		fetchStarted: make(chan struct{}),
++	}
++}
++
++func (h *blockingIoTDBHandler) releaseAll() {
++	h.releaseOnce.Do(func() { close(h.release) })
++}
++
++func (h *blockingIoTDBHandler) counts() (opens, executes, fetches int) {
++	h.mu.Lock()
++	defer h.mu.Unlock()
++	return h.openSessions, h.executeCalls, h.fetchCalls
++}
++
++func (h *blockingIoTDBHandler) OpenSession(context.Context, *rpc.TSOpenSessionReq) (*rpc.TSOpenSessionResp, error) {
++	h.mu.Lock()
++	h.openSessions++
++	block := h.blockOpenAfter > 0 && h.openSessions > h.blockOpenAfter
++	h.mu.Unlock()
++	if block {
++		h.openBlockedOnce.Do(func() { close(h.openBlocked) })
++		<-h.release
++	}
++	resp := rpc.NewTSOpenSessionResp()
++	resp.Status = &common.TSStatus{Code: SuccessStatus}
++	sessionID := int64(7)
++	resp.SessionId = &sessionID
++	resp.Configuration = map[string]string{}
++	return resp, nil
++}
++
++func (h *blockingIoTDBHandler) RequestStatementId(context.Context, int64) (int64, error) {
++	return 11, nil
++}
++
++func (h *blockingIoTDBHandler) CloseSession(context.Context, *rpc.TSCloseSessionReq) (*common.TSStatus, error) {
++	return &common.TSStatus{Code: SuccessStatus}, nil
++}
++
++func (h *blockingIoTDBHandler) ExecuteQueryStatementV2(context.Context, *rpc.TSExecuteStatementReq) (*rpc.TSExecuteStatementResp, error) {
++	h.mu.Lock()
++	h.executeCalls++
++	call := h.executeCalls
++	block := h.blockExecute
++	h.mu.Unlock()
++	if h.failFirstQuery && call == 1 {
++		// Returning an error makes the test server drop the connection, which
++		// is what the client sees when a server disappears mid-query.
++		return nil, fmt.Errorf("simulated connection loss")
++	}
++	if block {
++		h.queryStartedOnce.Do(func() { close(h.queryStarted) })
++		<-h.release
++	}
++	ignoreTimestamp := false
++	moreData := true
++	queryID := int64(3)
++	resp := rpc.NewTSExecuteStatementResp()
++	resp.Status = &common.TSStatus{Code: SuccessStatus}
++	resp.QueryId = &queryID
++	resp.MoreData = &moreData
++	resp.IgnoreTimeStamp = &ignoreTimestamp
++	resp.Columns = []string{"v"}
++	resp.DataTypeList = []string{"INT64"}
++	return resp, nil
++}
++
++func (h *blockingIoTDBHandler) FetchResultsV2(context.Context, *rpc.TSFetchResultsReq) (*rpc.TSFetchResultsResp, error) {
++	h.mu.Lock()
++	h.fetchCalls++
++	block := h.blockFetch
++	h.mu.Unlock()
++	if block {
++		h.fetchStartedOnce.Do(func() { close(h.fetchStarted) })
++		<-h.release
++	}
++	status := &common.TSStatus{Code: SuccessStatus}
++	return &rpc.TSFetchResultsResp{Status: status, HasResultSet: false, IsAlign: true}, nil
++}
++
++func startBlockingIoTServer(t *testing.T, handler *blockingIoTDBHandler) (host string, port string) {
++	t.Helper()
++	ln, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatalf("listen: %v", err)
++	}
++	ctx, cancel := context.WithCancel(context.Background())
++	server := &blockingIoTServer{ln: ln, handler: handler, processor: rpc.NewIClientRPCServiceProcessor(handler), cancel: cancel}
++	go server.serve(ctx)
++	t.Cleanup(func() {
++		handler.releaseAll()
++		server.stop()
++	})
++	addr := ln.Addr().(*net.TCPAddr)
++	return addr.IP.String(), fmt.Sprintf("%d", addr.Port)
++}
++
++func (s *blockingIoTServer) serve(ctx context.Context) {
++	for {
++		conn, err := s.ln.Accept()
++		if err != nil {
++			return
++		}
++		s.wg.Add(1)
++		go func(conn net.Conn) {
++			defer s.wg.Done()
++			defer conn.Close()
++			conf := &thrift.TConfiguration{}
++			trans := thrift.NewTFramedTransportConf(thrift.NewTSocketFromConnConf(conn, conf), conf)
++			iprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtocol(trans)
++			oprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtoco
 ```
 
 ---
 
-### Incident Patch 2: `5f1b876d` (2026-11-08)
-**Commit Message**: fix(oracle): scope trigger listings by TABLE_OWNER
+### Incident Patch 2: `48f3ed1d` (2026-11-11)
+**Commit Message**: fix(plugin-stats): store the archive as one KV document
 
-Closes #13498
+The archive kept one KV key per counter and rewrote each touched key on every
+aggregation pass. The free plan caps writes to different keys at 1,000/day, so
+a catch-up window spent the day's allowance, later retries failed mid-pass, and
+the backlog kept growing. A pass now reads, mutates and writes a single
+document, so the number of distinct keys is constant regardless of how many
+plugins exist.
 
-**File**: `agents/common/src/main/java/com/dbx/agent/OracleTriggerReader.java` (modified, +19/-0)
+migrate-archive.mjs converts the legacy keys, verifies every value against the
+document, and leaves the old keys in place as a read-only backup.
+
+**File**: `deploy/plugin-stats-worker/README.md` (modified, +41/-27)
 ```diff
-@@ -77,6 +77,25 @@ private static void attach(ObjectInfo object, TriggerInfo trigger) {
-         object.setParent_name(parent == null ? null : parent.name());
-     }
+@@ -61,35 +61,49 @@ AE retains only three months, so cron triggers aggregate the trailing window
+ into the `plugin_stats_archive` KV namespace — the permanent layer future UI
+ reads:
  
-+    /**
-+     * Schema-level trigger objects for the object tree's "触发器" group.
-+     *
-+     * <p>Unlike {@link #listTriggers}, this returns every trigger owned by the schema,
-+     * including schema- and database-scoped triggers, as lightweight {@link ObjectInfo}
-+     * rows that the tree expands and enriches on demand. The generic JDBC table/routine
-+     * metadata never lists triggers, so the JDBC agent's schema object group is otherwise
-+     * empty for Oracle connections (#13498).</p>
-+     */
-+    public List<ObjectInfo> listSchemaObjects(String owner) throws SQLException {
-+        List<ObjectInfo> objects = new ArrayList<>();
-+        for (TriggerInfo trigger : summaries("t.OWNER = ?", List.of(owner), false)) {
-+            ObjectInfo object = new ObjectInfo(trigger.getName(), "TRIGGER", owner, null);
-+            attach(object, trigger);
-+            objects.add(object);
-+        }
-+        return objects;
-+    }
+-- `total:{kind}:{pluginId}:{version}` — all-time cumulative events
++- `archive:v2` — **one** JSON document holding every counter:
++  `{v:2, lastSuccess, total:{"kind:pluginId:version": n}, uniqd:{"kind:pluginId:day": n}}`
++  (plus `kind:pluginId` rollups inside `total`). A pass reads it once, folds in
++  the window, writes it back — the number of distinct keys touched per pass is
++  constant (archive + summary + lock) no matter how many plugins exist.
+ - `summary` — one JSON blob `{dl: {pluginId: n}, inst: {...}, updt: {...}}` for
+   single-read display; `inst` carries the pre-2026-09-19 mixed install+update
+-  base (the switch to classified kinds), so treat it as the display number
+-- `uniqd:{kind}:{pluginId}:{day}` — per-day distinct identities (machines for
+-  classified inst/updt events; no longer written for dl)
+-- `meta:last-success` — window marker; only advanced after all writes land, so a
+-  failed run retries the same window on the next cron
+-- `agg:state` / `agg:tuning` / `agg:lock` — resumable-pass cursor, adaptive
+-  chunk size, and best-effort mutex (see below)
+-
+-**Chunked resumable passes** (added 2026-10-20). The original single-shot loop
+-needed one KV get+put pair per aggregated key; once a failed window grew the
+-retry backlog past the Workers per-invocation subrequest ceiling (1000 paid /
+-50 free), every run died mid-loop and the watermark never advanced — the
+-aggregation stalled silently for three weeks (2026-09-28 → 2026-10-20) while
+-raw AE data kept flowing. Now every invocation processes at most `chunk` keys
+-(tuning halves on failure, creeps up on success, 8–400), persists its cursor in
+-`agg:state`, and completes the summary write + watermark advance only when the
+-pass finishes. Crons: `30 0 * * *` opens the day's window, `0 * * * *`
+-resumes any in-flight pass (a normal window finishes in a few ticks ≈ hours;
+-the hourly cadence keeps daily KV writes under the free-plan 1000/day alert
+-line — freshness is a decorative concern here, raise the frequency only if
+-display latency starts to matter). AE row order is normalized with a JS sort because
+-the offset cursor must index identically across invocations. Required
+-subrequests per invocation: `chunk`-bounded (~2·chunk + 6) — never the whole
+-backlog. After deploying schema-affecting changes, or to backfill from scratch,
+-pass `x-archive-from: reset` (totals are additive — only safe when the
+-archive is known-empty).
++  base (the switch to classified kinds), so treat it as the display number.
++- `agg:lock` — best-effort mutex; overlapping crons would otherwise
++  read-modify-write the same document and lose one side of the update.
 +
-     private TriggerInfo unavailable(ObjectInfo object, String owner, OracleTriggerMetadata.ReadState failure) {
-         TriggerInfo trigger = new TriggerInfo(object.getName(), "", "");
-         Map<String, OracleTriggerMetadata.ReadState> reads = new LinkedHashMap<>();
++**Why one document** (2026-11-10). The previous layout used one key per counter
++(`total:{kind}:{pluginId}:{version}`, `uniqd:{kind}:{pluginId}:{day}`) and
++rewrote each touched key per pass. The Workers free plan caps writes to
++*different keys* at 1,000/day, so a catch-up window that touched a few hundred
++counters consumed the day's allowance; every later retry then failed mid-pass,
++the resumable cursor could not advance, the window kept growing, and the next
++day blew the cap earlier still. On 2026-11-10 the 12:00 UTC pass hit the cap
++after ~800 distinct keys and the archive stalled with a growing backlog. Under
++the single-document model a pass needs `get` + `put` on one value, so history
++cannot starve the quota.
++
++The remaining ceiling is the value, not the key count: the document is ~450 KiB
++today (4,279 counters + 7,213 unique-days) and a full read-modify-write costs
++roughly 4–5 ms of the free plan's 10 ms CPU budget. Past ~1–2 MB (a few thousand
++plugins) split `archive:v2` by kind into separate documents, and past that move
++the per-version detail to D1. Pruning `uniqd:` entries older than ~90 days
++reclaims most of the growth in the meantime.
++
++**Migrating the legacy keys.** `migrate-archive.mjs` reads every legacy key
++(bulk get), builds the document, verifies every value, and — with `--apply` —
++uploads it and re-reads it to diff. It never deletes the legacy keys, so the old
++layout stays as a read-only backup:
++
++```sh
++node migrate-archive.mjs              # dry run: verify + dump the document
++node migrate-archive.mjs --apply      # write archive:v2 and verify read-back
++```
++
++Run the migration *before* deploying a Worker whose aggregation expects
++`archive:v2`; the new code refuses to aggregate when the document is missing
++(`{"skipped":"unmigrated"}`) instead of silently starting from zero. Legacy keys
++can be deleted later at 1,000 deletes/day (free plan) or left in place.
+ 
+ Required secret (SQL API access; OAuth login does not carry analytics scope):
+ 
 ```
 
-**File**: `agents/common/src/main/java/com/dbx/agent/StandardJdbcMetadata.java` (modified, +34/-0)
+**File**: `deploy/plugin-stats-worker/migrate-archive.mjs` (added, +300/-0)
 ```diff
-@@ -151,11 +151,45 @@ public List<ObjectInfo> listObjects(
-                 && !configuredDatabase.trim().isEmpty()) {
-                 appendRoutines(result, meta, profile.getEscapeSchemaWildcards(), configuredDatabase, schema, schema);
-             }
-+            // The generic JDBC table/routine metadata never lists Oracle triggers, so the
-+            // schema "触发器" group is empty for JDBC Oracle connections unless we read them
-+            // directly from the dictionary (#13498). Non-Oracle databases either lack the
-+            // dictionary views or don't expose triggers this way, so the query is Oracle-only.
-+            if (isOracle(meta)) {
-+                try {
-+                    result.addAll(new OracleTriggerReader(conn, oracleEngine(meta)).listSchemaObjects(schema));
-+                } catch (Exception | AbstractMethodError ignored) {
-+                    // Trigger metadata is best-effort; never fail the whole object group.
-+                }
-+            }
-             result.sort(Comparator.comparing(ObjectInfo::getName));
-             return normalized.filterObjects(result);
-         });
-     }
- 
-+    private static boolean isOracle(DatabaseMetaData meta) {
-+        try {
-+            String productName = meta.getDatabaseProductName();
-+            return productName != null
-+                && (productName.toLowerCase(Locale.ROOT).contains("oracle")
-+                    || productName.toLowerCase(Locale.ROOT).contains("oceanbase"));
-+        } catch (Exception | AbstractMethodError ignored) {
-+            return false;
-+        }
-+    }
+@@ -0,0 +1,300 @@
++#!/usr/bin/env node
++// One-shot migration: legacy per-counter KV keys -> the single archive document.
++//
++// Legacy layout (one KV key per counter, what filled the free-plan
++// "1,000 different keys per day" quota):
++//   total:{kind}:{plugin}:{version}  -> cumulative events
++//   uniqd:{kind}:{plugin}:{day}      -> per-day distinct identities
++//   meta:last-success                -> window watermark
++//   summary                          -> public {kind: {plugin: count}} blob
++//
++// New layout (read/modified/written by worker.ts as one value):
++//   archive:v2 = {v:2, lastSuccess, total:{"kind:plugin:version": n},
++//                 uniqd:{"kind:plugin:day": n}}
++//
++// The legacy keys are never deleted here, so a bad run cannot lose history:
++// the only write is the new document, and --apply re-reads it and compares.
++//
++// Usage:
++//   node migrate-archive.mjs            # dry run: read everything, verify, print
++//   node migrate-archive.mjs --apply    # write archive:v2, verify read-back
++//   node migrate-archive.mjs --apply --force   # overwrite an existing archive:v2
++// Flags: --out=<file> --account=<id> --namespace=<id>
++// Auth: CLOUDFLARE_API_TOKEN, or the wrangler OAuth refresh token (the script
++// refreshes it and writes the new tokens back to the wrangler config file).
 +
-+    private static String oracleEngine(DatabaseMetaData meta) {
-+        try {
-+            String productName = meta.getDatabaseProductName();
-+            if (productName != null && productName.toLowerCase(Locale.ROOT).contains("oceanbase")) {
-+                return "oceanbase-oracle";
-+            }
-+        } catch (Exception | AbstractMethodError ignored) {
-+            // fall through to plain oracle
-+        }
-+        return "oracle";
-+    }
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++import crypto from "node:crypto";
++import { pathToFileURL } from "node:url";
 +
-     public List<String> listDataTypes(Connection conn) {
-         return unchecked(() -> {
-             Set<String> seen = new LinkedHashSet<>();
++const API = "https://api.cloudflare.com/client/v4";
++const ARCHIVE_KEY = "archive:v2";
++const ARCHIVE_VERSION = 2;
++const SUMMARY_KEY = "summary";
++const META_KEY = "meta:last-success";
++const LEGACY_PREFIXES = ["total:", "uniqd:"];
++const BULK_GET_BATCH = 100;
++const WRANGLER_CLIENT_ID = "54d11594-84e4-41aa-b438-e81b8fa78ee7";
++
++function parseArgs(argv) {
++  const args = { apply: false, force: false, out: null, account: "7ad3349ede62c17968a90108d39fd4d0", namespace: "0cc9e49a117f4edeb931464fa0256834" };
++  for (const arg of argv) {
++    if (arg === "--apply") args.apply = true;
++    else if (arg === "--force") args.force = true;
++    else if (arg.startsWith("--out=")) args.out = arg.slice(6);
++    else if (arg.startsWith("--account=")) args.account = arg.slice(10);
++    else if (arg.startsWith("--namespace=")) args.namespace = arg.slice(12);
++    else if (arg === "--help" || arg === "-h") {
++      console.log(fs.readFileSync(new URL(import.meta.url), "utf8").split("\n").slice(1, 22).join("\n"));
++      process.exit(0);
++    } else throw new Error(`unknown argument: ${arg}`);
++  }
++  return args;
++}
++
++/** Legacy key -> document key. `total:`/`uniqd:` are both 6 chars. */
++export function documentKey(legacyKey) {
++  if (legacyKey.startsWith("total:")) return { section: "total", key: legacyKey.slice("total:".length) };
++  if (legacyKey.startsWith("uniqd:")) return { section: "uniqd", key: legacyKey.slice("uniqd:".length) };
++  return null;
++}
++
++/**
++ * Pure builder: legacy {key: value} entries -> archive document.
++ * Throws on a malformed legacy key or value instead of skipping it silently.
++ */
++export function buildArchive(entries) {
++  const doc = { v: ARCHIVE_VERSION, lastSuccess: "", total: {}, uniqd: {} };
++  const problems = [];
++  for (const [legacyKey, rawValue] of entries) {
++    if (legacyKey === META_KEY) {
++      doc.lastSuccess = String(rawValue).trim();
++      continue;
++    }
++    const mapped = documentKey(legacyKey);
++    if (!mapped) continue; // agg:*, summary, archive:v2 — handled separately
++    const value = Number.parseInt(String(rawValue), 10);
++    if (!/^\d+$/.test(String(rawValue).trim()) || !Number.isSafeInteger(value)) {
++      problems.push(`${legacyKey}: non-integer value ${JSON.stringify(rawValue)}`);
++      continue;
++    }
++    // `total:` holds both shapes written by the old aggregator: the
++    // per-version counters (`kind:plugin:version`) and the plugin rollups
++    // (`kind:plugin`). `uniqd:` is always `kind:plugin:day`.
++    const parts = mapped.key.split(":");
++    const validLengths = mapped.section === "total" ? [2, 3] : [3];
++    if (!validLengths.includes(parts.length)) {
++      problems.push(`${legacyKey}: unexpected shape ${JSON.stringify(mapped.key)}`);
++      continue;
++    }
++    if (mapped.section === "total") doc.total[mapped.key] = value;
++    else doc.uniqd[mapped.key] = value;
++  }
++  if (problems.length) throw new Error(`malformed legacy entries:\n  ${problems.slice(0, 20).join("\n  ")}`);
++  return doc;
++}
++
++/** Every legacy entry must survive into the document with the same value. */
++export function verifyArchive(doc, entries) {
++  const problems = [];
++  const expected = { total: new Map(), uniqd: new Map() };
++  for (const [legacyKey, rawValue] of entries) {
++    const mapped = documentKey(legacyKey);
++    if (!mapped) {
++      if (legacyKey === META_KEY && String(rawValue).trim() !== doc.lastSuccess) {
++        problems.push(`lastSuccess mismatch: legacy ${JSON.stringi
 ```
 
-**File**: `agents/common/src/test/java/com/dbx/agent/OracleTriggerReaderTest.java` (modified, +17/-0)
+**File**: `deploy/plugin-stats-worker/migrate-archive.test.mjs` (added, +81/-0)
 ```diff
-@@ -59,6 +59,23 @@ void enrichesOnlyTheSelectedPageWithoutLoadingSourceOrRewritingOtherRows() throw
-         }
-     }
- 
-+    @Test
-+    void listsSchemaLevelTriggerObjectsForTheTreeGroup() throws Exception {
-+        try (Connection connection = fixture()) {
-+            OracleTriggerReader reader = new OracleTriggerReader(connection, "oceanbase-oracle");
-+            List<ObjectInfo> objects = reader.listSchemaObjects(OWNER);
-+            assertEquals(1, objects.size());
-+            ObjectInfo trigger = objects.get(0);
-+            assertEquals("TRIGGER", trigger.getObject_type());
-+            assertEquals(NAME, trigger.getName());
-+            assertEquals(OWNER, trigger.getSchema());
-+            assertNotNull(trigger.getTrigger());
-+            assertEquals(PARENT_OWNER, trigger.getParent_schema());
-+            assertEquals(" Parent ", trigger.getParent_name());
-+            assertFalse(trigger.getValid());
-+        }
-+    }
+@@ -0,0 +1,81 @@
++// Unit tests for the legacy -> single-document archive migration.
++// Run: node --test deploy/plugin-stats-worker/migrate-archive.test.mjs
++import assert from "node:assert/strict";
++import test from "node:test";
 +
-     @Test
-     void missingColumnsStayUnknownRatherThanDisabledOrValid() throws Exception {
-         try (Connection connection = fixture()) {
++import { buildArchive, documentKey, verifyArchive } from "./migrate-archive.mjs";
++
++const SAMPLE = new Map([
++  ["total:inst:foo:1.0.0", "12"],
++  ["total:inst:foo:1.1.0", "37"],
++  ["total:updt:foo:1.1.0", "4"],
++  ["total:dl:bar:0.2.0", "1034"],
++  ["total:dl:bar", "1050"],
++  ["uniqd:inst:foo:2026-11-09", "5"],
++  ["uniqd:updt:foo:2026-11-09", "2"],
++  ["meta:last-success", "2026-11-10 04:00:42"],
++  ["summary", '{"inst":{"foo":49}}'],
++  ["agg:tuning", "400"],
++]);
++
++test("documentKey strips the legacy prefix and ignores unrelated keys", () => {
++  assert.deepEqual(documentKey("total:inst:foo:1.0.0"), { section: "total", key: "inst:foo:1.0.0" });
++  assert.deepEqual(documentKey("uniqd:updt:foo:2026-11-09"), { section: "uniqd", key: "updt:foo:2026-11-09" });
++  assert.equal(documentKey("summary"), null);
++  assert.equal(documentKey("agg:lock"), null);
++  assert.equal(documentKey("archive:v2"), null);
++});
++
++test("buildArchive copies every counter and the watermark", () => {
++  const doc = buildArchive(SAMPLE);
++  assert.equal(doc.v, 2);
++  assert.equal(doc.lastSuccess, "2026-11-10 04:00:42");
++  assert.deepEqual(doc.total, {
++    "inst:foo:1.0.0": 12,
++    "inst:foo:1.1.0": 37,
++    "updt:foo:1.1.0": 4,
++    "dl:bar:0.2.0": 1034,
++    "dl:bar": 1050,
++  });
++  assert.deepEqual(doc.uniqd, { "inst:foo:2026-11-09": 5, "updt:foo:2026-11-09": 2 });
++});
++
++test("buildArchive keeps a missing watermark empty instead of inventing one", () => {
++  const doc = buildArchive(new Map([["total:inst:foo:1.0.0", "1"]]));
++  assert.equal(doc.lastSuccess, "");
++});
++
++test("buildArchive rejects a non-integer counter instead of dropping it", () => {
++  assert.throws(() => buildArchive(new Map([["total:inst:foo:1.0.0", "12x"]])), /non-integer value/);
++  assert.throws(() => buildArchive(new Map([["total:inst:foo:1.0.0", "-3"]])), /non-integer value/);
++});
++
++test("buildArchive accepts plugin rollups and rejects a key without a plugin", () => {
++  assert.deepEqual(buildArchive(new Map([["total:inst:foo", "49"]])).total, { "inst:foo": 49 });
++  assert.throws(() => buildArchive(new Map([["total:inst", "1"]])), /unexpected shape/);
++});
++
++test("verifyArchive accepts a faithful document", () => {
++  assert.deepEqual(verifyArchive(buildArchive(SAMPLE), SAMPLE), []);
++});
++
++test("verifyArchive reports a missing counter", () => {
++  const doc = buildArchive(SAMPLE);
++  delete doc.total["inst:foo:1.1.0"];
++  const problems = verifyArchive(doc, SAMPLE);
++  assert.ok(problems.some((problem) => problem.includes("total: doc has")), problems.join("; "));
++});
++
++test("verifyArchive reports a wrong counter value", () => {
++  const doc = buildArchive(SAMPLE);
++  doc.uniqd["inst:foo:2026-11-09"] = 6;
++  const problems = verifyArchive(doc, SAMPLE);
++  assert.ok(problems.some((problem) => problem.includes("uniqd[inst:foo:2026-11-09]")), problems.join("; "));
++});
++
++test("verifyArchive reports a diverged watermark", () => {
++  const doc = buildArchive(SAMPLE);
++  doc.lastSuccess = "2026-11-10 05:00:00";
++  const problems = verifyArchive(doc, SAMPLE);
++  assert.ok(problems.some((problem) => problem.includes("lastSuccess mismatch")), problems.join("; "));
++});
 ```
 
-**File**: `agents/common/src/test/java/com/dbx/agent/StandardJdbcMetadataTest.java` (modified, +149/-0)
+**File**: `deploy/plugin-stats-worker/worker.ts` (modified, +138/-117)
 ```diff
-@@ -5,6 +5,7 @@
- import org.junit.jupiter.params.provider.CsvSource;
+@@ -35,9 +35,11 @@
+ //
+ // Storage:
+ // - Workers Analytics Engine (binding PLUGIN_STATS) — one datapoint per event.
+-//   AE only retains three months, so a daily cron aggregates the trailing
+-//   window into the `plugin_stats_archive` KV namespace, which holds the
+-//   permanent totals. KV is fine here: ~1 write per active key per day.
++//   AE only retains three months, so cron aggregates the trailing window into
++//   the `plugin_stats_archive` KV namespace, which holds the permanent totals
++//   as ONE document (see ARCHIVE_KEY). A pass therefore writes a constant
++//   number of distinct keys, which keeps it inside the free plan's
++//   1,000-different-keys/day cap no matter how many plugins exist.
  
- import java.lang.reflect.InvocationHandler;
-+import java.lang.reflect.InvocationTargetException;
- import java.lang.reflect.Method;
- import java.lang.reflect.Proxy;
- import java.sql.Connection;
-@@ -20,9 +21,11 @@
- import java.util.Map;
- import java.util.concurrent.atomic.AtomicReference;
- import java.util.concurrent.atomic.AtomicInteger;
-+import java.util.stream.Collectors;
- 
- import static org.junit.jupiter.api.Assertions.assertEquals;
- import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertNotNull;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- 
- class StandardJdbcMetadataTest {
-@@ -878,6 +881,152 @@ void completionEscapesExactParentTable(String escape, String table, String expec
-         assertEquals(table, result.getCandidates().get(0).getParent_name());
-     }
- 
-+    @Test
-+    void listsOracleTriggersInTheSchemaObjectGroup() throws Exception {
-+        try (Connection connection = oracleFixture()) {
-+            List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
-+                connection, oracleProfile(), "ORCL", "APP", MetadataListConstraints.NONE);
-+
-+            List<ObjectInfo> triggers = objects.stream()
-+                .filter(object -> "TRIGGER".equals(object.getObject_type()))
-+                .collect(Collectors.toList());
-+            assertEquals(1, triggers.size());
-+            ObjectInfo trigger = triggers.get(0);
-+            assertEquals("Trigger A", trigger.getName());
-+            assertEquals("APP", trigger.getSchema());
-+            assertNotNull(trigger.getTrigger());
-+            assertEquals("Trigger A", trigger.getTrigger().getName());
-+            assertEquals("PARENT_OWNER", trigger.getParent_schema());
-+            assertEquals("PARENT_TABLE", trigger.getParent_name());
-+        }
-+    }
-+
-+    @Test
-+    void nonOracleConnectionsNeverReadTheOracleTriggerDictionary() {
-+        AtomicInteger preparedStatements = new AtomicInteger();
-+        DatabaseMetaData meta = proxy(DatabaseMetaData.class, new MethodHandler() {
-+            @Override
-+            public Object handle(Method method, Object[] args) {
-+                if ("getTables".equals(method.getName())) {
-+                    return rows(row("TABLE_NAME", "T", "TABLE_TYPE", "TABLE", "REMARKS", null));
-+                }
-+                if ("getDatabaseProductName".equals(method.getName())) {
-+                    return "PostgreSQL";
-+                }
-+                if ("getTableTypes".equals(method.getName())) {
-+                    return rows(row("TABLE_TYPE", "TABLE"));
-+                }
-+                return defaultValue(method.getReturnType());
-+            }
-+        });
-+        Connection conn = proxy(Connection.class, new MethodHandler() {
-+            @Override
-+            public Object handle(Method method, Object[] args) {
-+                if ("getMetaData".equals(method.getName())) {
-+                    return meta;
-+                }
-+                if ("prepareStatement".equals(method.getName())) {
-+                    preparedStatements.incrementAndGet();
-+                }
-+                return defaultValue(method.getReturnType());
-+            }
-+        });
-+
-+        List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
-+            conn, profile, "postgres", "public", MetadataListConstraints.NONE);
-+        assertEquals(0, preparedStatements.get());
-+        assertTrue(objects.stream().noneMatch(object -> "TRIGGER".equals(object.getObject_type())));
-+    }
-+
-+    @Test
-+    void oracleTriggerReadFailureKeepsTheRestOfTheObjectGroup() throws Exception {
-+        try (Connection h2 = oracleH2Fixture()) {
-+            h2.createStatement().execute("DROP TABLE ALL_TRIGGERS");
-+            List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
-+                asOracleConnection(h2), oracleProfile(), "ORCL", "APP", MetadataListConstraints.NONE);
-+            assertTrue(objects.stream().noneMatch(object -> "TRIGGER".equals(object.getObject_type())));
-+        }
-+    }
-+
-+    private static JdbcAgentProfile oracleProfile() {
-+        return new JdbcAgentProfile(
-+            "oracle.jdbc.OracleDriver",
-+            "jdbc:oracle:thin:@{host}:{port}/{database}",
-+            1521,
-+            false,
-+            Collections.singleton("SYS"),
-+            Arrays.asList("TABLE", "VIEW")
-+        );
-+    }
-+
-+    /**
-+     * An Oracle-flavoured connection whose ALL_TRIGGERS dictionary answers the
-+     * schema-level trigger query used by the object tree's 触发器 group.
-+     */
-+    private static Connection oracleFixture() throws Exception {
-+        return asOracleConnection(oracleH2Fixture());
-+    }
-+
-+    private static Connection oracleH2Fixture() throws Exception {
-+        Connection h2 = java.sql.DriverManager.getConnection(
-+            "jdbc:h2:mem:" + java.util.UUID.randomUUID() + ";MODE=Oracle
-```
-
-**File**: `agents/drivers/oracle-go/main.go` (modified, +1/-1)
-```diff
-@@ -262,7 +262,7 @@ LEFT JOIN ALL_SOURCE s
-   ON s.OWNER = t.OWNER
-  AND s.NAME = t.TRIGGER_NAME
-  AND s.TYPE = 'TRIGGER'
--WHERE t.OWNER = :1
-+WHERE t.TABLE_OWNER = :1
-   AND t.TABLE_NAME = :2
-   AND t.BASE_OBJECT_TYPE IN ('TABLE', 'VIEW')
- ORDER BY t.TRIGGER_NAME, s.LINE`
-```
-
-**File**: `agents/drivers/oracle-go/main_test.go` (modified, +7/-2)
-```diff
-@@ -2750,8 +2750,13 @@ func TestOracleListTriggersSQLLoadsSourceWithoutLongColumns(t *testing.T) {
- 	if strings.Contains(sqlText, "TRIGGER_BODY") {
- 		t.Fatalf("trigger listing should avoid Oracle LONG trigger bodies, got: %s", oracleListTriggersSQL)
- 	}
--	if !strings.Contains(sqlText, "T.OWNER = :1") || !strings.Contains(sqlText, "T.TABLE_NAME = :2") {
--		t.Fatalf("trigger listing should stay scoped to the selected schema and table, got: %s", oracleListTriggersSQL)
-+	// Strict TABLE_OWNER scoping matches every sibling trigger path (the Rust
-+	// reader, the Java agent, the DDL loader in this file, DBeaver) and keeps
-+	// oracle_table_triggers' inventory OWNER match intact; an OR OWNER branch
-+	// would list same-named tables in other schemas and then hard-fail that
-+	// inventory check (#13498 review).
-+	if !strings.Contains(sqlText, "T.TABLE_OWNER = :1") || !strings.Contains(sqlText, "T.TABLE_NAME = :2") || strings.Contains(sqlText, "T.OWNER = :1") {
-+		t.Fatalf("trigger listing should scope strictly by the base table owner and table, got: %s", oracleListTriggersSQL)
- 	}
+ type AnalyticsEngineBinding = {
+   writeDataPoint(event: { blobs?: string[]; doubles?: number[]; indexes?: string[] }): void;
+@@ -290,133 +292,152 @@ async function fetchWindowCounts(env: Env, from: Date, to: Date): Promise<Window
+     .sort((a, b) => `${a.kind}:${a.plugin}:${a.version}`.localeCompare(`${b.kind}:${b.plugin}:${b.version}`));
  }
  
-```
-
-**File**: `crates/dbx-core/src/schema/oracle_table_triggers.rs` (modified, +18/-13)
-```diff
-@@ -1,6 +1,6 @@
- use super::*;
- use dbx_sql::object_source_sql::{
--    oracle_trigger_ddl_sources, oracle_trigger_enabled, oracle_trigger_metadata_matches,
-+    oracle_trigger_ddl_sources_with_table_owner, oracle_trigger_enabled, oracle_trigger_metadata_matches,
-     oracle_trigger_source_with_create,
- };
+-// Aggregates events in (last-success, now] into permanent KV totals, chunked
+-// and resumable. The pre-2026-10 unchunked loop died mid-run once the window
+-// grew past the Workers per-invocation subrequest ceiling (1000 paid / 50
+-// free; every versioned total costs a get+put pair). A single failed run then
+-// left the watermark behind, the next window grew larger, and the aggregation
+-// stalled permanently (2026-09-28 → 2026-10-20). Now every trigger processes
+-// at most `chunk` keys, persists a cursor in `agg:state`, and the next cron
+-// (daily start + */10 continue) resumes until the pass completes; only then
+-// are the summary written and the watermark advanced. `agg:tuning` carries
+-// the chunk size across passes — it halves on failure and creeps up on
+-// progress, so the worker adapts to whatever subrequest/KV limits the
+-// account has. A crash mid-chunk can double-count that chunk's additive
+-// totals; acceptable for decorative stats (same stance as v1).
+-type AggPhase = "counts" | "pluginTotals" | "uniques";
+-type AggState = { windowFrom: string; windowTo: string; phase: AggPhase; offset: number; chunk: number };
+-
+-const AGG_STATE_KEY = "agg:state";
++// ---------------------------------------------------------------------------
++// Permanent archive: ONE KV value holds every cumulative counter.
++//
++// The previous model stored one key per counter (`total:kind:plugin:version`,
++// `uniqd:kind:plugin:day`). Every aggregation pass then wrote one *different*
++// key per counter it touched. On the free plan the cap is "writes to different
++// keys: 1,000/day", so a catch-up window touching a few hundred counters ate
++// the day's allowance; after that every retry failed mid-pass, the resumable
++// cursor could not advance, the window kept growing, and the next day blew the
++// cap earlier still. Now a pass reads one value, mutates it in memory and
++// writes it back, so the number of distinct keys it touches (archive, summary,
++// lock) is constant and independent of the plugin count. The remaining ceiling
++// is value size / JSON CPU cost, not the key count (see README).
++export const ARCHIVE_KEY = "archive:v2";
++const ARCHIVE_VERSION = 2;
++const ARCHIVE_EPOCH = "1970-01-01 00:00:00";
++
++export type ArchiveDoc = {
++  v: number;
++  /** SQL timestamp of the last completed window; "" until the first pass. */
++  lastSuccess: string;
++  /** "kind:plugin:version" -> cumulative events. */
++  total: Record<string, number>;
++  /** "kind:plugin:day" -> distinct identities seen that day. */
++  uniqd: Record<string, number>;
++};
++
++/** `{kind: {plugin: count}}`, exactly what the website reads. */
++export type Summary = Record<string, Record<string, number>>;
++
+ const AGG_LOCK_KEY = "agg:lock";
+-const AGG_TUNING_KEY = "agg:tuning";
+-const AGG_MIN_CHUNK = 8; // keeps get+put pairs + AE fetches under the free plan's 50 subrequests
+-const AGG_MAX_CHUNK = 400; // 400×2 + fetches + state writes stays under the paid plan's 1000
+ const AGG_LOCK_TTL_SECONDS = 300;
  
-@@ -36,18 +36,20 @@ pub(super) async fn enrich(
-         }
-     };
-     for trigger in triggers.iter_mut().filter(|trigger| incomplete(trigger)) {
--        let mut rows = inventory.rows.iter().filter(|row| {
--            row.first().and_then(serde_json::Value::as_str) == Some(schema)
--                && row.get(1).and_then(serde_json::Value::as_str) == Some(trigger.name.as_str())
--        });
-+        // The listing admits triggers owned by other schemas (TABLE_OWNER
-+        // match), so rows are keyed by name here and the row's actual OWNER is
-+        // recorded instead of being required to equal the queried schema
-+        // (#13498 review).
-+        let mut rows = inventory
-+            .rows
-+            .iter()
-+            .filter(|row| row.get(1).and_then(serde_json::Value::as_str) == Some(trigger.name.as_str()));
-         let row =
-             rows.next().ok_or_else(|| format!("{schema}.{}: trigger identity changed; compare again", trigger.name))?;
--        if rows.next().is_some()
--            || row.get(2).and_then(serde_json::Value::as_str) != Some(schema)
--            || row.get(3).and_then(serde_json::Value::as_str) != Some(table)
--        {
-+        if rows.next().is_some() || row.get(3).and_then(serde_json::Value::as_str) != Some(table) {
-             return Err(format!("{schema}.{}: trigger table identity changed; compare again", trigger.name));
-         }
-+        let trigger_owner = row.first().and_then(serde_json::Value::as_str).unwrap_or(schema);
-         let enabled = match row.get(4).and_then(serde_json::Value::as_str) {
-             Some("ENABLED") => true,
-             Some("DISABLED") => false,
-@@ -63,12 +65,15 @@ pub(super) async fn enrich(
-             return Err(format!("{schema}.{}: trigger firing state changed; compare again", trigger.name));
-         }
-         let missing_source = trigger.statement.as_deref().is_none_or(|source| source.trim().is_empty());
-+        // A cross-schema trigger's ALL_SOURCE rows live under its actual OWNER,
-+        // so both the source lookup and the identity check use trigger_owner
-+        // rather than the queried schema (#13498 review).
-         let source = if missing_source {
-             match get_object_source_core(
-                 state,
-                 connection_id,
-                 database,
--                schema,
-+                trigger_owner,
-                 &trigger.name,
-                 db::ObjectSourceKind::Trigger,
-                 None,
-@@ -97,7 +102,7 @@ pub(super) async fn enrich(
-             }
-         };
-         if source.name != trigger.name
--            || source.schema.as_deref() != Some(schema)
-+            || source.schema.as_deref() != Some(trigger_owner)
-             || source.object_type != db::ObjectSourceKind::Trigger
-         {
-             return Err(format!("{schema}.{}: trigger source identity changed; compare again", trigger.name));
-@@ -112,15 +117,15 @@ pub(super) async fn enrich(
-                 continue;
-             }
-         };
--        let definitions = match oracle_trigger_ddl_sources(&full, schema) {
-+        let definitions = match oracle_trigger_ddl_sources_with_table_owner(&full, trigger_owner, schema) {
-             Ok(definitions) => definitions,
-             Err(_) => {
-                 log::warn!("Trigger metadata remains incomplete for {schema}.{}: invalid declaration", trigger.name);
-                 continue;
-             }
-         };
-         if definitions.len() != 1
--            || definitions[0].owner != schema
-+            || definitions[0].owner != trigger_owner
-             || definitions[0].name != trigger.name
-             || definitions[0].table_owner != schema
-             || definitions[0].table != table
-```
-
-**File**: `crates/dbx-sql-core/src/object_source_sql.rs` (modified, +7/-6)
-```diff
-@@ -17,12 +17,13 @@ pub use oracle_trigger::{
- mod oracle_routines;
- pub use oracle_indexes::{
-     extract_oracle_table_triggers, oracle_index_ddl_sources, oracle_table_created_index_identities,
--    oracle_trigger_ddl_sources, oracle_trigger_definitions_match, oracle_trigger_enabled,
--    oracle_trigger_metadata_matches, oracle_trigger_source_with_create, order_oracle_trigger_sources,
--    parse_oracle_table_ddl, rebase_oracle_table_ddl, rebase_oracle_trigger_ddl, separate_oracle_supporting_indexes,
--    separate_oracle_supporting_indexes_with_retained, split_oracle_table_ddl, split_oracle_table_ddl_with_retained,
--    OracleDdlNameMapping, OracleIndexDdlSource, OracleSupportingIndexDdl, OracleSupportingIndexIdentity,
--    OracleTableConstraintSource, OracleTableDdlParts, OracleTableDdlSource, OracleTriggerDdlSource,
-+    oracle_trigger_ddl_sources, oracle_trigger_ddl_sources_with_table_owner, oracle_trigger_definitions_match,
-+    oracle_trigger_enabled, oracle_trigger_metadata_matches, oracle_trigger_source_with_create,
-+    order_oracle_trigger_sources, parse_oracle_table_ddl, rebase_oracle_table_ddl, rebase_oracle_trigger_ddl,
-+    separate_oracle_supporting_indexes, separate_oracle_supporting_indexes_with_retained, split_oracle_table_ddl,
-+    split_oracle_table_ddl_with_retained, OracleDdlNameMapping, OracleIndexDdlSource, OracleSupportingIndexDdl,
-+    OracleSupportingIndexIdentity, OracleTableConstraintSource, OracleTableDdlParts, OracleTableDdlSource,
-+    OracleTriggerDdlSource,
- };
- pub use oracle_routines::{
-     analyze_oracle_package_body_draft, analyze_oracle_routine_draft, compact_oracle_ddl,
+-async function readChunkSize(env: Env): Promise<number> {
+-  const chunk = Number.parseInt((await env.PLUGIN_ARCHIVE.get(AGG_TUNING_KEY)) ?? "", 10);
+-  return Number.isFinite(chunk) && chunk >= AGG_MIN_CHUNK && chunk <= AGG_MAX_CHUNK ? chunk : AGG_MAX_CHUNK;
++export function emptyArchive(): ArchiveDoc {
++  return { v: ARCHIVE_VERSION, lastSuccess: "", total: {}, uniqd: {} };
++}
++
++/** Parse a stored archive; an unknown schema throws instead of resetting data. */
++export function parseArchive(raw: string): ArchiveDoc {
++  const parsed = JSON.parse(raw) as Partial<ArchiveDoc> | null;
++  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("archive: stored value is not an object");
++  if (parsed.v !== ARCHIVE_VERSION) throw new Error(`archive: unsupported version ${String(parsed.v)}`);
++  const total = parsed.total ?? {};
++  const uniqd = parsed.uniqd ?? {};
++  if (typeo
 ```
 
 ---
 
-### Incident Patch 3: `9eb7dfb9` (2026-11-08)
-**Commit Message**: fix(postgres): surface underlying server errors
+### Incident Patch 3: `e91a85c4` (2026-11-11)
+**Commit Message**: fix(sqlserver): keep stored-procedure header comments in module batches
 
-Closes #13016
-
-**File**: `Cargo.lock` (modified, +3/-3)
+**File**: `apps/desktop/src/lib/__tests__/sql/executableStatementRangeCache.spec.ts` (modified, +11/-0)
 ```diff
-@@ -7200,7 +7200,7 @@ dependencies = [
- [[package]]
- name = "postgres-protocol"
- version = "0.6.12"
--source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
-+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
- dependencies = [
-  "base64 0.23.0",
-  "byteorder",
-@@ -7219,7 +7219,7 @@ dependencies = [
- [[package]]
- name = "postgres-types"
- version = "0.2.14"
--source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
-+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
- dependencies = [
-  "bytes",
-  "chrono",
-@@ -10291,7 +10291,7 @@ dependencies = [
- [[package]]
- name = "tokio-postgres"
- version = "0.7.18"
--source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
-+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
- dependencies = [
-  "async-trait",
-  "byteorder",
+@@ -71,6 +71,17 @@ describe("executableStatementRangeCacheForDoc", () => {
+     expect(executableStatementRangeStartingAt(cache, doc.line(1).from)?.sql).toBe(sql.slice(0, -1));
+   });
+ 
++  it.each(["-- 存储过程说明\n-- 作者 : 张三", "/* 说明 /* 内部说明 */\nGO\n保留完整注释 */"])("includes SQL Server procedure header comments when running from the CREATE line: %s", (header) => {
++    const procedure = `${header}\nCREATE PROCEDURE dbo.p AS\nBEGIN\n    SELECT 1;\n    SELECT 2;\nEND;`;
++    const sql = `${procedure}\nGO\nSELECT 3;`;
++    const doc = Text.of(sql.split("\n"));
++    const cache = executableStatementRangeCacheForDoc(null, doc, "sqlserver");
++
++    expect(executableStatementRangeStartingAt(cache, doc.lineAt(sql.indexOf("CREATE PROCEDURE")).from)?.sql).toBe(procedure);
++    expect(executableStatementRangeStartingAt(cache, doc.lineAt(sql.indexOf("SELECT 1")).from)).toBeNull();
++    expect(executableStatementRangeAtCursor(cache, sql.indexOf("SELECT 2"))?.sql).toBe(procedure);
++  });
++
+   it("keeps a valid placeholder-only line executable and respects disabled MyBatis syntax", () => {
+     const sql = ["SELECT *", "FROM t", "#{where_clause};"].join("\n");
+     const doc = Text.of(sql.split("\n"));
 ```
 
-**File**: `Cargo.toml` (modified, +3/-3)
+**File**: `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts` (modified, +44/-0)
 ```diff
-@@ -36,9 +36,9 @@ pageant = { path = "vendor/pageant" }
- # (MicrosoftEdge/WebView2Feedback#5650, see
- # vendor/wry/src/webview2/clipboard_history.rs).
- wry = { path = "vendor/wry" }
--tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
--postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
--postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
-+tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
-+postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
-+postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
- # Temporary compatibility patches for deprecated sha256_password accounts and
- # rustls dangerous-mode connections to legacy certificates. Remove after upstream support lands.
- mysql_async = { git = "https://github.com/t8y2/mysql_async.git", rev = "4cd84d86bb86b060320ce3459561e8093e4422fa" }
+@@ -659,6 +659,50 @@ describe("splitSqlStatementRanges", () => {
+     expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 'GO'\n-- GO\nSELECT 2", "SELECT 3"]);
+   });
+ 
++  it("preserves the SQL Server procedure documentation header in execution ranges", () => {
++    const procedure = `-- =============================================================
++-- 存储过程名 : usp_GetUserById
++-- 功能描述   : 根据用户ID查询单个用户信息
++-- 参数说明   : @UserId  INT  用户唯一标识
++-- 返回值     : 结果集(UserId, UserName, Email, CreatedAt)
++-- 作者       : 张三
++-- 创建日期   : 2026-11-10
++-- 修改记录   : 2026-11-10  张三  初始创建
++-- 备注       : 无
++-- =============================================================
++CREATE PROCEDURE usp_GetUserById
++    @UserId INT
++AS
++BEGIN
++    SET NOCOUNT ON;
++
++    -- 查询用户信息
++    SELECT UserId, UserName, Email, CreatedAt
++    FROM dbo.Users
++    WHERE UserId = @UserId;
++END`;
++    const sql = `SELECT 0;\nGO\n\n${procedure}\nGO\nSELECT 2;`;
++    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 0", procedure, "SELECT 2"]);
++    expect(rangeSqlTexts(executableStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 0", procedure, "SELECT 2"]);
++    for (const marker of ["CREATE PROCEDURE", "SET NOCOUNT", "WHERE UserId"]) {
++      const cursor = sql.indexOf(marker);
++      expect(currentExecutableStatementRange(sql, cursor, "sqlserver")?.sql).toBe(procedure);
++      expect(buildExecutionCandidates(sql, cursor, "sqlserver")[0]?.sql).toBe(procedure);
++    }
++  });
++
++  it.each(["CREATE PROCEDURE", "ALTER PROC", "CREATE OR ALTER PROCEDURE"])("keeps header comments and internal semicolons in a SQL Server %s batch", (operation) => {
++    for (const header of ["-- 作者 : 张三", "/* 根据用户ID查询\nGO\n保留完整注释 */", "/* 说明 /* 内部说明 */\nGO\n保留完整注释 */"]) {
++      const procedure = `${header}\n${operation} dbo.p AS\nBEGIN\n    SELECT 1;\n    SELECT 2;\nEND;`;
++      expect(rangeSqlTexts(executableStatementRanges(`${procedure}\nGO\nSELECT 3;`, "sqlserver"))).toEqual([procedure, "SELECT 3"]);
++    }
++  });
++
++  it("keeps SQL Server nested comment-only batches non-executable", () => {
++    const sql = "/* 说明 /* CREATE PROCEDURE fake AS SELECT 0; */\nGO\n仍是注释 */\nGO\n-- 普通查询说明\nSELECT 1;";
++    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 1"]);
++  });
++
+   it("keeps Oracle PL/SQL blocks together and treats slash lines as delimiters", () => {
+     const ranges = splitSqlStatementRanges(oraclePlSqlFixture, "oracle");
+     expect(rangeSqlTexts(ranges)).toEqual([oraclePlSqlFixture.slice(0, oraclePlSqlFixture.indexOf("\n/")), "SELECT 1"]);
 ```
 
-**File**: `crates/dbx-driver-postgres/src/postgres.rs` (modified, +119/-9)
+**File**: `apps/desktop/src/lib/sql/executableStatementRangeCache.ts` (modified, +6/-5)
 ```diff
-@@ -82,7 +82,7 @@ pub fn gaussdb_identifier_quote_for_compatibility_mode(compatibility_mode: &str)
- pub async fn opengauss_compatibility_mode(pool: &Pool) -> Result<Option<String>, String> {
-     let client = checkout_postgres_client(pool, None, super::connection_timeout()).await?;
-     let client = &EncodingClient::new(&client);
--    let row = postgres_query_one_cached(client, GAUSSDB_COMPATIBILITY_SQL, &[]).await.map_err(|e| e.to_string())?;
-+    let row = postgres_query_one_cached(client, GAUSSDB_COMPATIBILITY_SQL, &[]).await.map_err(pg_error_to_string)?;
-     Ok(row.try_get::<_, Option<String>>(0).ok().flatten().filter(|value| !value.trim().is_empty()))
+@@ -1,7 +1,7 @@
+ import { RangeSet, RangeValue, type ChangeSet, type Text } from "@codemirror/state";
+ import type { DatabaseType } from "@/types/database";
+ import type { SqlParameterOptions } from "@/lib/sql/sqlParameters";
+-import { executableStatementRanges, startsHashLineComment, statementParsingDatabaseType, type SqlTextRange } from "@/lib/sql/sqlStatementRanges";
++import { executableStatementRanges, findSqlBlockCommentEnd, startsHashLineComment, statementParsingDatabaseType, type SqlTextRange } from "@/lib/sql/sqlStatementRanges";
+ import { cursorBelongsToTrailingStatementDelimiter } from "@/lib/sql/statementDelimiter";
+ 
+ export interface ExecutableStatementRangeCache {
+@@ -87,26 +87,27 @@ export function executableStatementRangeCacheForDoc(
+     if (doc.sliceString(currentLine.from, range.from).trim() === "") {
+       byExecutableLineStart.set(currentLine.from, range);
+     }
+-    const executableStart = executableStartAfterLeadingDirective(sql, range, databaseType, parameterOptions);
++    const executableStart = executableStartAfterLeadingComments(sql, range, databaseType, parameterOptions);
+     if (executableStart !== null) {
+       byExecutableLineStart.set(doc.lineAt(executableStart).from, range);
+     }
+   }
+   return { doc, databaseType, parameterOptions, parameterSyntaxKey, byStart, byExecutableLineStart, ranges };
  }
  
-@@ -1558,9 +1558,9 @@ fn escape_tsvector_lexeme(value: &str) -> String {
- fn pg_error_to_string(err: impl Into<PgError>) -> String {
-     let err = err.into();
-     let Some(db_error) = err.as_db_error() else {
--        return err.to_string();
-+        return error_with_sources_to_string(&err);
+-function executableStartAfterLeadingDirective(sql: string, range: SqlTextRange, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): number | null {
++function executableStartAfterLeadingComments(sql: string, range: SqlTextRange, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): number | null {
+   databaseType = statementParsingDatabaseType(databaseType, parameterOptions);
+   const text = range.sql;
+   const hasExecutableDirective = text.startsWith("/*+") || text.startsWith("/*@") || text.startsWith("/*&") || (databaseType === "mysql" && text.startsWith("/*proxy*/"));
+-  if (!hasExecutableDirective) return null;
++  const hasModuleComment = databaseType === "sqlserver" && (text.startsWith("--") || text.startsWith("/*"));
++  if (!hasExecutableDirective && !hasModuleComment) return null;
+ 
+   let offset = 0;
+   while (offset < text.length) {
+     while (/\s/.test(text[offset] ?? "")) offset += 1;
+ 
+     if (text.startsWith("/*", offset)) {
+-      const close = text.indexOf("*/", offset + 2);
++      const close = findSqlBlockCommentEnd(text, offset, databaseType);
+       if (close < 0) return null;
+       offset = close + 2;
+       continue;
+```
+
+**File**: `apps/desktop/src/lib/sql/sqlStatementRanges.ts` (modified, +45/-2)
+```diff
+@@ -431,6 +431,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
+   let singleQuoteBackslashEscapes = false;
+   let dollarTag = "";
+   let postgresDollarQuotedRoutine = false;
++  let sqlServerModuleBatch = false;
+   let oraclePlSqlStatementEnd: number | null | undefined;
+   let i = 0;
+ 
+@@ -471,6 +472,12 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
+       // exact /*proxy*/ directive also keeps its historical multiline support.
+       const directiveStart = pendingMysqlDirectiveStart !== -1 && (sql.startsWith("/*proxy*/", pendingMysqlDirectiveStart) || pos < pendingMysqlDirectiveLineEnd) ? pendingMysqlDirectiveStart : -1;
+       statementStart = directiveStart !== -1 ? directiveStart : pendingHintStart === -1 ? pos : pendingHintStart;
++      sqlServerModuleBatch = databaseType === "sqlserver" && startsWithSqlServerModuleDdl(sql, pos, parameterOptions);
++      if (sqlServerModuleBatch) {
++        // SQL Server stores the module's leading comments in its definition.
++        statementStart = statementHitStart;
++        while (isWhitespace(sql[statementStart])) statementStart += 1;
++      }
+       pendingHintStart = -1;
+       pendingMysqlDirectiveStart = -1;
+       pendingMysqlDirectiveLineEnd = -1;
+@@ -485,6 +492,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
+       pendingMysqlDirectiveStart = -1;
+       pendingMysqlDirectiveLineEnd = -1;
+       postgresDollarQuotedRoutine = false;
++      sqlServerModuleBatch = false;
+       oraclePlSqlStatementEnd = undefined;
+       return;
+     }
+@@ -498,6 +506,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
+     pendingMysqlDirectiveStart = -1;
+     pendingMysqlDirectiveLineEnd = -1;
+     postgresDollarQuotedRoutine = false;
++    sqlServerModuleBatch = false;
+     oraclePlSqlStatementEnd = undefined;
+     mysqlRoutineScan = null;
+   };
+@@ -622,7 +631,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
+     if (ch === "/" && next === "*") {
+       const hintMarker = sql[i + 2];
+       if (statementStart === -1 && pendingHintStart === -1 && (hintMarker === "+" || hintMarker === "@" || hintMarker === "&")) pendingHintStart = i;
+-      const close = sql.indexOf("*/", i + 2);
++      const close = findSqlBlockCommentEnd(sql, i, databaseType);
+       if (statementStart === -1) {
+         if (databaseType === "mysql") {
+           if (pendingMysqlDirectiveStart === -1 || i > pendingMysqlDirectiveLineEnd) {
+@@ -694,6 +703,11 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
+         continue;
+       }
+     } else if (ch === ";" && !isXmlEntityReferenceSemicolon(sql, i)) {
++      if (sqlServerModuleBatch) {
++        markContent(i);
++        i += 1;
++        continue;
++      }
+       const routineTokensBeforeSemicolon = isMysqlRoutineBlockDatabase(databaseType) && statementStart !== -1 ? mysqlRoutineTokensUpTo(i) : null;
+       const isMysqlRoutineBlock = routineTokensBeforeSemicolon !== null && isMysqlRoutineDdlStartFromWords(mysqlRoutineDdlStartWords(routineTokensBeforeSemicolon)) && mysqlRoutineTokensContainBegin(routineTokensBeforeSemicolon);
+       if (isMysqlRoutineBlock) {
+@@ -857,6 +871,7 @@ function splitStatementRangeAtSoftStarts(sql: string, statement: RawStatement, d
+   if (isFirebirdRoutineBlockStatement(statement.sql, databaseType)) return [statement];
+   // Routine bodies contain top-level-looking SET/INSERT/SELECT lines that are not independent statements.
+   if (isMysqlRoutineBlockDatabase(databaseType) && startsWithMysqlRoutineBlock(statement.sql, parameterOptions)) return [statement];
++  if (databaseType === "sqlserver" && startsWithSqlServerModuleDdl(sql, statement.from, parameterOptions)) return [statement];
+   // SQL Server control-flow batches use line-oriented BEGIN/EXEC tokens inside one IF/ELSE statement.
+   if (isSqlServerControlFlowBatch(sql, statement, databaseType, parameterOptions)) return [statement];
+ 
+@@ -1056,6 +1071,18 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
+   return { openBlocks, closedAt, wordAfterClose, sawBlockBegin, hasControlFlowElse };
+ }
+ 
++function startsWithSqlServerModuleDdl(sql: string, from: number, parameterOptions?: SqlParameterOptions): boolean {
++  const operation = nextSqlWordToken(sql, from, "sqlserver", parameterOptions);
++  if (operation?.word !== "CREATE" && operation?.word !== "ALTER") return false;
++  let kind = nextSqlWordToken(sql, operation.end, "sqlserver", parameterOptions);
++  if (operation.word === "CREATE" && kind?.word === "OR") {
++    const alter = nextSqlWordToken(sql, kind.end, "sqlserver", parameterOptions);
++    if (alter?.word !== "ALTER") return false;
++    kind = nextSqlWordToken(sql, alter.end, "sqlserver", parameterOptions);
++  }
++  return kind != null && ["PROC", "PROCEDURE", "FUNCTION", "TRIGGER", "VIEW"].includes(kind.word);
++}
++
+ /**
+  * T
+```
+
+**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +46/-8)
+```diff
+@@ -2002,8 +2002,8 @@ fn split_sql_batch_ranges(sql: &str, profile: SqlDialectProfile) -> Vec<SqlState
+ }
+ 
+ fn push_batch_range(ranges: &mut Vec<SqlStatementRange>, sql: &str, start: usize, end: usize) {
+-    let Some((relative_start, relative_end)) = executable_sql_bounds(&sql[start..end], SqlParsingOptions::default())
+-    else {
++    let options = SqlParsingOptions::for_database_type(DatabaseType::SqlServer);
++    let Some((relative_start, relative_end)) = executable_sql_bounds(&sql[start..end], options) else {
+         return;
      };
--    let mut message = pg_db_error_to_string(db_error);
-+    let mut message = db_error.to_string();
-     // Carry the server-reported cursor position across the `db` layer's
-     // `Result<_, String>` boundary; `query.rs` resolves it against the executed
-     // statement and strips the suffix before the message reaches any client.
-@@ -1577,7 +1577,7 @@ fn pg_error_to_string(err: impl Into<PgError>) -> String {
- /// be resolved against the user's SQL and point at the wrong place.
- fn pg_error_to_string_plain(err: impl Into<PgError>) -> String {
-     let err = err.into();
--    err.as_db_error().map(pg_db_error_to_string).unwrap_or_else(|| err.to_string())
-+    err.as_db_error().map(pg_db_error_to_string).unwrap_or_else(|| error_with_sources_to_string(&err))
+     let statement_start = start + relative_start;
+@@ -2326,7 +2326,9 @@ fn starts_with_sqlserver_control_flow_batch(sql: &str) -> bool {
  }
  
- /// Tries each SQL tier in `tiers` in order (most-capable first), via `run`,
-@@ -1816,7 +1816,11 @@ fn pg_pool_error_to_string(err: PoolError) -> String {
+ pub fn starts_with_sqlserver_module_ddl(sql: &str) -> bool {
+-    let tokens = first_sql_tokens(sql, 4);
++    let executable =
++        leading_executable_sql_with_options(sql, SqlParsingOptions::for_database_type(DatabaseType::SqlServer));
++    let tokens = first_sql_tokens(executable, 4);
+     if tokens.len() >= 4
+         && tokens[0].eq_ignore_ascii_case("CREATE")
+         && tokens[1].eq_ignore_ascii_case("OR")
+@@ -4817,11 +4819,15 @@ fn executable_sql_bounds(statement: &str, options: SqlParsingOptions) -> Option<
+         return None;
+     }
+     let executable_start = trimmed.len() - executable.len();
+-    let start = if options.profile.preserves_tdsql_leading_directives {
+-        crate::tdsql_mysql::leading_directive_start(trimmed, executable_start).unwrap_or(executable_start)
+-    } else {
+-        executable_start
+-    };
++    let start =
++        if options.profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(executable) {
++            // SQL Server stores a module's leading comments as part of its definition.
++            trimmed.len() - trimmed.trim_start().len()
++        } else if options.profile.preserves_tdsql_leading_directives {
++            crate::tdsql_mysql::leading_directive_start(trimmed, executable_start).unwrap_or(executable_start)
++        } else {
++            executable_start
++        };
+     Some((start, trimmed_end))
  }
  
- fn should_retry_postgres_text_query(err: &PgError) -> bool {
--    let message = err.as_db_error().map(ToString::to_string).unwrap_or_else(|| err.to_string()).to_ascii_lowercase();
-+    let message = err
-+        .as_db_error()
-+        .map(ToString::to_string)
-+        .unwrap_or_else(|| error_with_sources_to_string(err))
-+        .to_ascii_lowercase();
-     should_retry_postgres_text_query_message(&message)
- }
- 
-@@ -1834,7 +1838,8 @@ fn should_retry_postgres_stale_cache(err: &PgError) -> bool {
-             db_error.message(),
+@@ -6180,6 +6186,38 @@ mod tests {
          );
      }
--    should_retry_postgres_stale_cache_fields(None, None, &err.to_string())
-+    let message = error_with_sources_to_string(err);
-+    should_retry_postgres_stale_cache_fields(None, None, &message)
- }
  
- fn should_retry_postgres_stale_cache_fields(sqlstate: Option<&str>, routine: Option<&str>, message: &str) -> bool {
-@@ -1850,7 +1855,8 @@ fn should_fallback_postgres_missing_prepared_statement(err: &PgError) -> bool {
-             db_error.message(),
-         );
-     }
--    should_fallback_postgres_missing_prepared_statement_fields(None, &err.to_string())
-+    let message = error_with_sources_to_string(err);
-+    should_fallback_postgres_missing_prepared_statement_fields(None, &message)
- }
++    #[test]
++    fn sqlserver_batches_preserve_module_header_comments() {
++        for header in [
++            "-- 存储过程名 : usp_GetUserById\n-- 作者 : 张三",
++            "/* 根据用户ID查询用户信息 */",
++            "/* 说明 /* 内部说明 */\nGO\n保留完整注释 */",
++        ] {
++            for operation in ["CREATE PROCEDURE", "ALTER PROC", "CREATE OR ALTER PROCEDURE"] {
++                let procedure = format!(
++                    "{header}\n{operation} dbo.usp_GetUserById @UserId INT AS\nBEGIN\n    SET NOCOUNT ON;\n    -- 查询用户\n    SELECT UserId FROM dbo.Users WHERE UserId = @UserId;\nEND;"
++                );
++                let sql = format!("SELECT 0;\nGO\n\n{procedure}\nGO\nSELECT 2;");
++
++                assert_eq!(super::split_sql_batches(&sql), vec!["SELECT 0;", &procedure, "SELECT 2;"]);
++                for marker in [header, operation, "WHERE UserId"] {
++                    let cursor = sql[..sql.find(marker).unwrap()].encode_utf16().count();
++                    assert_eq!(
++                        super::find_statement_at_cursor_for_database(&sql, cursor, DatabaseType::SqlServer),
++                        procedure,
++                        "{operation}: cursor on {marker}"
++                    );
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn sqlserver_batch_headers_keep_comment_only_batches_non_executable() {
++        let sql = "-- CREATE PROCEDURE fake AS SELECT 0;\nGO\n/* 说明 /* CREATE PROC fake */ 仍是注释 */\nGO\n-- 普通查询说明\nSELECT 1;";
++        assert_eq!(super::split_sql_batches(sql), vec!["SELECT 1;"]);
++    }
++
+     // --- DELIMITER support ---
  
- fn should_fallback_postgres_missing_prepared_statement_fields(sqlstate: Option<&str>, message: &str) -> bool {
-@@ -3932,7 +3938,7 @@ fn database_storage_sql() -> &'static str {
- pub async fn list_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>, String> {
-     let client = checkout_postgres_client(pool, None, super::connection_timeout()).await?;
-     let client = &EncodingClient::new(&client);
--    let rows = postgres_query_cached(client, list_databases_sql(), &[]).await.map_err(|e| e.to_string())?;
-+    let rows = postgres_query_cached(client, list_databases_sql(), &[]).await.map_err(pg_error_to_string)?;
- 
-     Ok(rows.iter().map(|row| DatabaseInfo { name: pg_row_try_string(row, 0), ..Default::default() }).collect())
- }
-@@ -3943,7 +3949,7 @@ pub async fn list_opengauss_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>,
-     let rows = match postgres_query_cached(client, list_opengauss_databases_sql(), &[]).await {
-         Ok(rows) => rows,
-         Err(primary_error) => {
--            let primary_error = primary_error.to_string();
-+            let primary_error = pg_error_to_string(primary_error);
-             return postgres_query_cached(client, list_databases_sql(), &[])
-                 .await
-                 .map(|rows| {
-@@ -3952,6 +3958,7 @@ pub async fn list_opengauss_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>,
-                         .collect()
-                 })
-                 .map_err(|fallback_error| {
-+                    let fallback_error = pg_error_to_string(fallback_error);
-                     format!(
-                         "openGauss database compatibility lookup failed: {primary_error}; database list fallback failed: {fallback_error}"
-                     )
-@@ -17877,6 +17884,109 @@ mod tests {
-         let other_schema = format!("CREATE OR REPLACE PROCEDURE oth
-```
-
-**File**: `flake.nix` (modified, +2/-2)
-```diff
-@@ -217,8 +217,8 @@
-                 "sha256-8lWgsdTuLTgOmzP7tXmA9LnomOE0wjxXsCBw9NEMt2o=";
-               "git+https://github.com/t8y2/mysql_async.git?rev=2be6e392eb9b06d20dcd2d8ed8eae748d413c9ec#2be6e392eb9b06d20dcd2d8ed8eae748d413c9ec" =
-                 "sha256-tMFvmypIBh1GHg3cLFWmLf6N1wrwKPlzx2G/MHwtlFM=";
--              "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=115f9fef10f0fc3669b5337955e4eb461fc349a6#115f9fef10f0fc3669b5337955e4eb461fc349a6" =
--                "sha256-HRbYVSD7iIwG3m1tOGoIZy0xAZwALWIpTtakVSYPIYI=";
-+              "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" =
-+                "sha256-NkSST+xuE8NCVobwmX5j87WY+zXU6aWHMSR0LFjn8UA=";
-             };
-           };
- 
+     #[test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14556** (2026-11-08): feat(editor): save routine definitions to database (@Acd-kk)
-- **PR #14553** (2026-11-08): feat(elasticsearch): add per-connection index search (@ThugKd)
-- **PR #14545** (2026-11-08): feat(query): add configurable shortcut to copy the active result (@imcman)
-- **PR #14542** (2026-11-07): fix(grid): Oracle 无主键查询结果与表数据页签对齐 keyless 可编辑性 (@dienaso)
-- **PR #14541** (2026-11-07): fix(export): TDengine 标识符改用反引号，双引号在 TDengine 中是字符串字面量 (@dienaso)
-- **PR #14539** (2026-11-07): fix(mcp): dbx_add_connection 补齐 Nacos external_config 与桌面端默认上下文 (@dienaso)
+- **PR #14734** (2026-11-11): fix(kingbase): return result sets when executing stored procedures (@thailoc-dev)
+- **PR #14731** (2026-11-11): fix(grid): allow Firebird triggers to populate omitted NOT NULL columns on insert (@thailoc-dev)
+- **PR #14730** (2026-11-11): fix(saphana): support view object source lookup and DDL formatting (@thailoc-dev)
+- **PR #14720** (2026-11-11): fix(sqlserver): 保留存储过程头部注释 (@onceMisery)
+- **PR #14719** (2026-11-11): feat(plugin): 支持将插件生成的 PNG 复制到系统剪贴板 (@CSXFanMeng)
+- **PR #14718** (2026-11-11): fix(teradata): keep user queries free of the unsupported LIMIT clause (#14604) (@xiaou61)
 
 ---
 
@@ -2638,50 +3651,53 @@ Closes #13016
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): retry agent R2 uploads and resume driver sync
+## X. iotdb): honor unlimited query timeout across paged fetches
 
 **RULE**:
-When implementing operations in `.github/workflows/agents-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agents/drivers/iotdb/driver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fd5f9c3`: release): retry agent R2 uploads and resume driver sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b62e570a`: iotdb): honor unlimited query timeout across paged fetches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/agents-release.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/iotdb/driver.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          set -euo pipefail
-          retry() {
-            local attempt
-            for attempt in 1 2 3; do
-              if "$@"; then
-                return 0
-              fi
-              echo "::warning::R2 upload attempt ${attempt}/3 failed: $*"
-              sleep $((attempt * 15))
-            done
-            return 1
-          }
-          retry aws s3 cp release/agent-registry.json \
-          # Upload all single-driver packages concurrently. Package names carry
-          # the driver version, so the size check makes a retry resume after a
-          # transient R2 failure instead of re-uploading every driver again.
-          retry aws s3 sync release/ "$R2_BUCKET/agents/drivers/" \
-            --size-only \
-          retry aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
+// The narrow surface nativeIoTDBSession needs from the vendored client.
+// Keeping it an interface lets adapter tests assert that the per-query
+// timeout reaches the session layer instead of being dropped (#13935).
+type clientQuerySession interface {
+	ExecuteQueryStatementWithContext(context.Context, string, *int64) (*client.SessionDataSet, error)
+	ExecuteStatementWithContext(context.Context, string) (*client.SessionDataSet, error)
+	Close() error
+}
+
+	session clientQuerySession
+func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, timeoutMs *int64) (*client.SessionDataSet, error) {
+	return executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
+		// #13935: the timeout must ride inside the RPC — an omitted value
+		// falls back to the server's query_timeout_threshold (60 s default),
+		// so whatever timeoutMilliseconds produced (the 100-year no-limit
+		// budget, or a positive bound) reaches the request. The old adapter
+		// dropped it here.
+		return s.session.ExecuteQueryStatementWithContext(ctx, sql, timeoutMs)
+	})
+	dataset, err := executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
+		return s.session.ExecuteStatementWith
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          aws s3 cp release/agent-registry.json \
-          # Upload all single-driver packages concurrently.
-          aws s3 cp release/ "$R2_BUCKET/agents/drivers/" \
-            --recursive \
-          aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
+	session *client.Session
+func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, _ *int64) (*client.SessionDataSet, error) {
+	return executeIoTDBStatement(ctx, s.session, sql)
+	dataset, err := executeIoTDBStatement(ctx, s.session, sql)
+func executeIoTDBStatement(ctx context.Context, session *client.Session, sql string) (dataset *client.SessionDataSet, err error) {
+	return session.ExecuteStatementWithContext(ctx, sql)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fd5f9c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b62e570a` are properly handled with clean fallback behavior.

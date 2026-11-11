@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T06:33:57.224Z",
-    "lastVerified": "2026-11-11T06:33:57.224Z",
+    "lastChecked": "2026-11-11T07:38:01.189Z",
+    "lastVerified": "2026-11-11T07:38:01.189Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T06:04:46.906Z",
-    "lastVerified": "2026-11-11T06:04:46.906Z",
+    "lastChecked": "2026-11-11T07:03:20.665Z",
+    "lastVerified": "2026-11-11T07:03:20.665Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -253,12 +253,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T06:13:40.642Z",
-    "lastVerified": "2026-11-11T06:13:40.642Z",
+    "lastChecked": "2026-11-11T07:27:41.686Z",
+    "lastVerified": "2026-11-11T07:27:41.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -267,7 +267,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "85dbb6b4"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -367,9 +368,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T06:23:48.094Z",
+    "lastChecked": "2026-11-11T07:37:46.071Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T06:23:48.094Z"
+    "lastVerified": "2026-11-11T07:37:46.071Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1383,8 +1384,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:35:38.667Z",
-    "lastVerified": "2026-11-09T23:35:38.667Z",
+    "lastChecked": "2026-11-11T07:03:15.670Z",
+    "lastVerified": "2026-11-11T07:03:15.670Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -1477,8 +1478,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:52:40.155Z",
-    "lastVerified": "2026-11-09T23:52:40.155Z",
+    "lastChecked": "2026-11-11T07:27:36.664Z",
+    "lastVerified": "2026-11-11T07:27:36.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -1493,9 +1494,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-09T01:38:33.199Z",
+    "lastChecked": "2026-11-11T07:03:18.181Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-09T01:38:33.199Z"
+    "lastVerified": "2026-11-11T07:03:18.181Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "ajeetdsouza/zoxide",
@@ -1568,23 +1569,23 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-10T00:10:14.388Z",
+    "lastChecked": "2026-11-11T07:37:41.090Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-10T00:10:14.388Z"
+    "lastVerified": "2026-11-11T07:37:41.090Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:46:47.371Z",
-    "lastVerified": "2026-11-09T01:46:47.371Z",
+    "lastChecked": "2026-11-11T07:27:43.553Z",
+    "lastVerified": "2026-11-11T07:27:43.553Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "1e978e9dc7a58da8c4e6dc54b5a0446d20d3188f89822303fde165fe7c3e5e88",
+    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1650,8 +1651,8 @@
     "officialUrl": "https://github.com/valeriansaliou/sonic",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:53:20.399Z",
-    "lastVerified": "2026-11-09T01:53:20.399Z",
+    "lastChecked": "2026-11-11T07:37:43.535Z",
+    "lastVerified": "2026-11-11T07:37:43.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-valeriansaliou-sonic",
@@ -6152,9 +6153,9 @@
   "tiajinsha-jkvideo": {
     "name": "JKVideo",
     "officialUrl": "https://github.com/tiajinsha/JKVideo",
-    "lastChecked": "2026-11-07T17:57:37.509Z",
+    "lastChecked": "2026-11-11T07:03:10.700Z",
     "revisionIdentifier": "3592d036",
-    "lastVerified": "2026-11-07T17:57:37.509Z"
+    "lastVerified": "2026-11-11T07:03:10.700Z"
   },
   "diggerhq-digger": {
     "name": "digger",
@@ -6216,12 +6217,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "shoutem-ui": {
-    "name": "shoutem/ui",
+    "name": "ui",
     "officialUrl": "https://github.com/shoutem/ui",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T18:09:40.816Z",
-    "lastVerified": "2026-11-07T18:09:40.816Z",
+    "lastChecked": "2026-11-11T07:27:31.666Z",
+    "lastVerified": "2026-11-11T07:27:31.666Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shoutem-ui",
@@ -6230,7 +6231,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cfc3bc8a"
   },
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
@@ -6295,14 +6297,14 @@
     "officialUrl": "https://github.com/callstack/agent-device",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T18:17:05.338Z",
-    "lastVerified": "2026-11-07T18:17:05.338Z",
+    "lastChecked": "2026-11-11T07:37:41.040Z",
+    "lastVerified": "2026-11-11T07:37:41.040Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
+    "contentHash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6389,8 +6391,8 @@
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T02:14:36.771Z",
-    "lastVerified": "2026-11-09T02:14:36.771Z",
+    "lastChecked": "2026-11-11T07:03:13.193Z",
+    "lastVerified": "2026-11-11T07:03:13.193Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",
@@ -6461,22 +6463,21 @@
     "lastVerified": "2026-11-07T18:42:23.330Z"
   },
   "checkmarx-kics": {
-    "name": "kics",
+    "name": "Checkmarx/kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-09T02:28:01.722Z",
-    "lastVerified": "2026-11-09T02:28:01.722Z",
+    "lastChecked": "2026-11-11T07:27:38.962Z",
+    "lastVerified": "2026-11-11T07:27:38.962Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
+    "contentHash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "434d3e0b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -6539,9 +6540,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-09T02:34:39.735Z",
+    "lastChecked": "2026-11-11T07:37:38.496Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-09T02:34:39.735Z"
+    "lastVerified": "2026-11-11T07:37:38.496Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -8501,9 +8502,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-08T21:06:40.419Z",
+    "lastChecked": "2026-11-11T07:27:26.649Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-08T21:06:40.419Z"
+    "lastVerified": "2026-11-11T07:27:26.649Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",
@@ -8544,14 +8545,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T21:16:35.650Z",
-    "lastVerified": "2026-11-08T21:16:35.650Z",
+    "lastChecked": "2026-11-11T07:37:35.618Z",
+    "lastVerified": "2026-11-11T07:37:35.618Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "11be18443b3612d162e9c77da41e374c0e570a0d1de8c549bd85401b372f68a6",
+    "contentHash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10149,9 +10150,9 @@
   "logiover-website-seo-audit-crawler": {
     "name": "website-seo-audit-crawler",
     "officialUrl": "https://github.com/logiover/website-seo-audit-crawler",
-    "lastChecked": "2026-11-06T13:07:43.493Z",
+    "lastChecked": "2026-11-11T07:27:29.173Z",
     "revisionIdentifier": "9b22241e56",
-    "lastVerified": "2026-11-06T13:07:43.493Z"
+    "lastVerified": "2026-11-11T07:27:29.173Z"
   },
   "leetcode-mafia-cheetah": {
     "name": "cheetah",
@@ -10163,9 +10164,9 @@
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",
     "officialUrl": "https://github.com/janreges/siteone-crawler",
-    "lastChecked": "2026-11-06T13:20:11.060Z",
+    "lastChecked": "2026-11-11T07:37:33.517Z",
     "revisionIdentifier": "f3d967b190",
-    "lastVerified": "2026-11-06T13:20:11.060Z"
+    "lastVerified": "2026-11-11T07:37:33.517Z"
   },
   "jellyfin-swiftfin": {
     "name": "jellyfin/Swiftfin",
@@ -14720,6 +14721,40 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cactus-compute-mirage": {
+    "name": "Cactus-Compute/mirage",
+    "officialUrl": "https://huggingface.co/Cactus-Compute/mirage",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-11T07:03:08.166Z",
+    "lastVerified": "2026-11-11T07:03:08.166Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-cactus-compute-mirage",
+    "contentHash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-conwayresearch-underdog-woof": {
+    "name": "ConwayResearch/Underdog-Woof",
+    "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-11T07:03:05.693Z",
+    "lastVerified": "2026-11-11T07:03:05.693Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-conwayresearch-underdog-woof",
+    "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

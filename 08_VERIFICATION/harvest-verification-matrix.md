@@ -8858,3 +8858,14 @@
 | `CYCLE-20261111-TQCP` | `2026-11-11T06:33:49.993Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2f9cd8ef...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:34:12.030Z` | `react-native-webrtc-react-native-webrtc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0B5C2EE9` [Domain H] | Yes (`077420af...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:34:33.447Z` | `dnscontrol-dnscontrol` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A94752EF` [Domain D] | Yes (`9cdc3293...`) |
+| `CYCLE-20261111-VFBQ` | `2026-11-11T07:03:08.630Z` | `Cactus-Compute/mirage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | Yes (`cee3ae7d...`) |
+| `CYCLE-20261111-1TQZ` | `2026-11-11T07:08:07.259Z` | `ConwayResearch/Underdog-Woof` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b106b3ed...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:08:24.911Z` | `hf-cactus-compute-mirage` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-170AE1CF` [Domain D] | Yes (`be786757...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:08:45.496Z` | `zoontek-react-native-permissions` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-FF5BE5CE` [Domain H] | Yes (`639ecd42...`) |
+| `CYCLE-20261111-R61R` | `2026-11-11T07:27:49.599Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`49773ce1...`) |
+| `CYCLE-20261111-RA9N` | `2026-11-11T07:27:55.067Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`057c1881...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:28:14.638Z` | `checkmarx-kics` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-12383E4D` [Domain D] | Yes (`625bc82a...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:28:35.217Z` | `t8y2-dbx` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-06FC3249` [Domain D] | Yes (`3d456dc9...`) |
+| `CYCLE-20261111-40VR` | `2026-11-11T07:37:49.431Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5097ed16...`) |
+| `CYCLE-20261111-45PA` | `2026-11-11T07:37:55.678Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8bb0e757...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:38:16.421Z` | `codewhale-hq-codewhale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BC0A19F3` [Domain D] | Yes (`446e0ecc...`) |

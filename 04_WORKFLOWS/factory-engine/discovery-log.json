@@ -20851,5 +20851,29 @@
     "qualityScore": 3391,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-11T06:19:43.992Z"
+  },
+  {
+    "name": "ConwayResearch/Underdog-Woof",
+    "fullName": "ConwayResearch/Underdog-Woof",
+    "url": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ConwayResearch/Underdog-Woof (151 likes, 10 downloads)",
+    "likes": 151,
+    "downloads": 10,
+    "qualityScore": 1520,
+    "discoveredAt": "2026-11-11T07:00:52.019Z"
+  },
+  {
+    "name": "Cactus-Compute/mirage",
+    "fullName": "Cactus-Compute/mirage",
+    "url": "https://huggingface.co/Cactus-Compute/mirage",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Cactus-Compute/mirage (136 likes, 12844 downloads)",
+    "likes": 136,
+    "downloads": 12844,
+    "qualityScore": 3360,
+    "discoveredAt": "2026-11-11T07:00:52.019Z"
   }
 ]

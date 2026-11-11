@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T06:34:33.447Z",
-  "total_records": 28,
+  "last_updated": "2026-11-11T07:38:16.420Z",
+  "total_records": 33,
   "domains": {
     "A": {
       "total": 1,
@@ -23,7 +23,7 @@
       ]
     },
     "D": {
-      "total": 8,
+      "total": 12,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -32,7 +32,11 @@
         "DOM-D-61BBF9FB",
         "DOM-D-DFC8FC98",
         "DOM-D-B5A201FB",
-        "DOM-D-A94752EF"
+        "DOM-D-A94752EF",
+        "DOM-D-170AE1CF",
+        "DOM-D-12383E4D",
+        "DOM-D-06FC3249",
+        "DOM-D-BC0A19F3"
       ]
     },
     "E": {
@@ -54,7 +58,7 @@
       ]
     },
     "H": {
-      "total": 8,
+      "total": 9,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -63,7 +67,8 @@
         "DOM-H-7D0B9F17",
         "DOM-H-C2A738D4",
         "DOM-H-1B2AC6F8",
-        "DOM-H-0B5C2EE9"
+        "DOM-H-0B5C2EE9",
+        "DOM-H-FF5BE5CE"
       ]
     },
     "I": {
@@ -1146,6 +1151,217 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-11T06:34:33.446Z"
+    },
+    "DOM-D-170AE1CF": {
+      "record_id": "DOM-D-170AE1CF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Cactus-Compute/mirage",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Cactus-Compute/mirage](https://huggingface.co/Cactus-Compute/mirage))  \n> **Source Version**: `hf-cactus-co`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "be786757177d33387a7cc7587958936688db98dc51a748d00873c6da8aeac408",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-cactus-compute-mirage/hf-cactus-compute-mirage-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:08:12.078Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cactus-compute-mirage)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-cactus-compute-mirage"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T07:08:24.910Z"
+    },
+    "DOM-H-FF5BE5CE": {
+      "record_id": "DOM-H-FF5BE5CE",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zoontek/react-native-permissions",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  \n> **Source**: github ([https://github.com/zoontek/react-native-permissions](https://github.com/zoontek/react-native-permissions))  \n> **Source Version**: `4f9f820e`  \n> **License**: MIT  \n> **Syn",
+      "content_hash": "639ecd4275ecf6e19936fa919448dcc7ba9081b487c633355a1215e4e8b5437f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  \n> **Source**: github ([https://gith -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  \n> **Source**: github ([https://gith",
+      "provenance": {
+        "source_uri": "project://zoontek-react-native-permissions/zoontek-react-native-permissions-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:08:24.912Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zoontek-react-native-permissions)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zoontek-react-native-permissions"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.68,
+      "created_at": "2026-11-11T07:08:45.494Z"
+    },
+    "DOM-D-12383E4D": {
+      "record_id": "DOM-D-12383E4D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Checkmarx/kics",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  \n> **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  \n> **Source Version**: `150910f8`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesize",
+      "content_hash": "625bc82a8fdd5eeecbba8cc89d8ed64eeb3c9bdf14db048565f848767e7791fa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  \n> **Source**: github ([https://github.com/Checkmarx/k -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  \n> **Source**: github ([https://github.com/Checkmarx/k",
+      "provenance": {
+        "source_uri": "project://checkmarx-kics/checkmarx-kics-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:28:01.604Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (checkmarx-kics)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of checkmarx-kics"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T07:28:14.636Z"
+    },
+    "DOM-D-06FC3249": {
+      "record_id": "DOM-D-06FC3249",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): t8y2/dbx",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  \n> **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  \n> **Source Version**: `e91a85c4`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **Timestamp*",
+      "content_hash": "3d456dc9569b8ae0cd8c8d549e27190914dfa435b8d54d9bf3cc2521cd6b038b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  \n> **Source**: github ([https://github.com/t8y2/dbx](https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  \n> **Source**: github ([https://github.com/t8y2/dbx](https:/",
+      "provenance": {
+        "source_uri": "project://t8y2-dbx/t8y2-dbx-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:28:14.639Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (t8y2-dbx)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of t8y2-dbx"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T07:28:35.215Z"
+    },
+    "DOM-D-BC0A19F3": {
+      "record_id": "DOM-D-BC0A19F3",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): codewhale-hq/Codewhale",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  \n> **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  \n> **Source Version**: `ecfbdbcc`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-stru",
+      "content_hash": "446e0ecc1fe09619124a8655053377bb60058d7d49e0614387cc0d6cf65d5783",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  \n> **Source**: github ([https://github.com/cod -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  \n> **Source**: github ([https://github.com/cod",
+      "provenance": {
+        "source_uri": "project://codewhale-hq-codewhale/codewhale-hq-codewhale-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:38:01.308Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (codewhale-hq-codewhale)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of codewhale-hq-codewhale"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T07:38:16.418Z"
     }
   }
 }

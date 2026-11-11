@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T06:33:50.014Z",
+  "last_updated": "2026-11-11T07:37:55.706Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "c94837453fdb7f2848813ac39618b6b473db9f961d3061d56a6bf1879e06fe15",
-      "verified_at": "2026-11-09T01:53:15.873Z",
+      "content_hash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
+      "verified_at": "2026-11-11T07:37:49.447Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:53:15.873Z"
+      "last_updated": "2026-11-11T07:37:49.447Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
-      "verified_at": "2026-11-07T03:21:45.555Z",
+      "content_hash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
+      "verified_at": "2026-11-11T07:27:49.612Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:21:45.555Z"
+      "last_updated": "2026-11-11T07:27:49.612Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
-      "verified_at": "2026-11-07T18:17:08.537Z",
+      "content_hash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
+      "verified_at": "2026-11-11T07:37:55.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:17:08.537Z"
+      "last_updated": "2026-11-11T07:37:55.705Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "1e978e9dc7a58da8c4e6dc54b5a0446d20d3188f89822303fde165fe7c3e5e88",
-      "verified_at": "2026-11-09T01:46:49.292Z",
+      "content_hash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
+      "verified_at": "2026-11-11T07:27:55.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:46:49.292Z"
+      "last_updated": "2026-11-11T07:27:55.080Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -18554,6 +18554,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-11T06:23:40.348Z"
+    },
+    "Cactus-Compute/mirage": {
+      "repository": "Cactus-Compute/mirage",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-cactus-compute-mirage",
+      "content_hash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
+      "verified_at": "2026-11-11T07:03:08.642Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T07:03:08.642Z"
+    },
+    "ConwayResearch/Underdog-Woof": {
+      "repository": "ConwayResearch/Underdog-Woof",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-conwayresearch-underdog-woof",
+      "content_hash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
+      "verified_at": "2026-11-11T07:08:07.285Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T07:08:07.285Z"
     }
   },
   "repos": {

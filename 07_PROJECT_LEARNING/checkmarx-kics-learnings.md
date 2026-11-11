@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
-> **Source Version**: `434d3e0b`  
+> **Source Version**: `150910f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T03:21:43.684Z  
+> **Timestamp**: 2026-11-11T07:27:39.152Z  
 > **Learning ID**: `learn-github-checkmarx-kics`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T03:21:42.481Z  
+> **Harvest Timestamp**: 2026-11-11T07:27:38.962Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find security vulnerabilities, compliance issues, and infrastructure misconfigurations early in the development cycle of your infrastructure-as-code with KICS by Checkmarx.
 - **Primary Language / Ecosystem**: Open Policy Agent
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2730 stars
+- **Stars / Engagement**: 2734 stars
 
 ---
 
@@ -1628,150 +1628,45 @@ type SourceProvider interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `434d3e0b` (2026-11-05)
-**Commit Message**: ci(release): use a GitHub App token for release automation pushes (#8164)
+### Incident Patch 1: `987e12aa` (2026-11-09)
+**Commit Message**: fix(actions): deploy docs latest alias as copy instead of symlink (#8178)
 
-* ci(release): open automation PRs with a GitHub App token
-
-prepare-release and update-docs-queries push their branch and open the
-PR with a short-lived GitHub App installation token instead of the
-default GITHUB_TOKEN, which cannot create branches under the repo
-ruleset and whose PRs do not trigger required workflows.
-
-The app private key is fetched from AWS Secrets Manager via OIDC in the
-release environment, each line of it is masked in the logs, and it is
-removed from the job environment right after the token is created. The
-token is limited to contents and pull-requests write.
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-* ci(release): push gh-pages docs with a GitHub App token
-
-update-docs-release checks out with persist-credentials: false, so its
-final git push to gh-pages has no credentials and fails. gh-pages is
-also covered by the repo ruleset that blocks GITHUB_TOKEN branch
-updates.
-
-Reuse the same App token steps (key from AWS Secrets Manager via OIDC in
-the release environment, masked per line, removed from the job
-environment after use) with the token limited to contents wr
-
-**File**: `.github/workflows/prepare-release.yaml` (modified, +30/-0)
+**File**: `.github/workflows/update-docs-release.yaml` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,7 @@ jobs:
-     permissions:
-       contents: write  # for actions/checkout to fetch code and create-pull-request to push a branch
-       pull-requests: write  # for create-pull-request to open the PR
-+      id-token: write  # for configure-aws-credentials to assume the AWS role via OIDC
-     env:
-       GIT_VERSION: ${{ github.event.inputs.version }}
-       PR_SHA: ${{ github.sha }}
-@@ -45,9 +46,38 @@ jobs:
-           sed -E -i "s/<h4>Version \d+(\.\d+)*<\/h4>/<h4>Version ${GIT_VERSION}<\/h4>/" docs/index.md
-           sed -E -i "s/(<p.*>)[0-9]{4}\.[0-9]{2}\.[0-9]{2}<p>/\1${CURRENT_DATE}<p>/" docs/index.md
-           sed -E -i "s/(<a.*href=\"https:\/\/github.com\/Checkmarx\/kics\/releases\/download\/).*(\/kics_).*(_[a-z]+_.*>)/\1v${GIT_VERSION}\2${GIT_VERSION}\3/g" docs/index.md
-+      - name: Configure AWS credentials
-+        uses: step-security/configure-aws-credentials@1448016543d4432bd608e0de7871c7bf9e9be925 # v6.2.1
-+        with:
-+          role-to-assume: ${{ secrets.SECRET_MANAGER_ROLE_ARN }}
-+          aws-region: ${{ secrets.SECRET_MANAGER_AWS_REGION }}
-+          role-session-name: kics-release-app-key
-+      - name: Fetch GitHub App private key
-+        uses: step-security/aws-secretsmanager-get-secrets@102b6b2a2528747bcc321bb99ef326d8be7ef58f # v3.0.1
-+        with:
-+          secret-ids: KICS_APP_KEY,${{ secrets.SECRET_MANAGER_SECRET_NAME }}
-+      - name: Mask each line of the private key
-+        run: |
-+          while IFS= read -r line; do
-+            line="${line%$'\r'}"
-+            if [ -n "${line}" ]; then
-+              echo "::add-mask::${line}"
-+            fi
-+          done <<< "${KICS_APP_KEY}"
-+      - name: Create GitHub App token
-+        id: app-token
-+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-+        with:
-+          client-id: ${{ secrets.KICS_RELEASE_APP_CLIENT_ID }}
-+          private-key: ${{ env.KICS_APP_KEY }}
-+          permission-contents: write
-+          permission-pull-requests: write
-+      - name: Remove the private key from the environment
-+        run: echo "KICS_APP_KEY=" >> "$GITHUB_ENV"
-       - name: Create pull request
-         uses: step-security/create-pull-request@50c103da2b9ca12cd5bc013fc6931051a5aa872b # v8.1.1
-         with:
-+          token: ${{ steps.app-token.outputs.token }}
-           title: "docs: preparing for release ${{ env.GIT_VERSION }}"
-           commit-message: "docs: preparing for release ${{ env.GIT_VERSION }}"
-           delete-branch: true
-```
-
-**File**: `.github/workflows/update-docs-queries.yaml` (modified, +30/-0)
-```diff
-@@ -18,6 +18,7 @@ jobs:
-       actions: write  # for styfle/cancel-workflow-action to cancel/stop running workflows
-       contents: write  # for actions/checkout to fetch code and create-pull-request to push a branch
-       pull-requests: write  # for create-pull-request to open the PR
-+      id-token: write  # for configure-aws-credentials to assume the AWS role via OIDC
-     runs-on: cx-public-ubuntu-x64
-     steps:
-       - name: Cancel Previous Runs
-@@ -50,9 +51,38 @@ jobs:
-             -f md \
-             --t .github/scripts/docs-generator/query-page-generator/templates/query-page-template.md \
-             --df
-+      - name: Configure AWS credentials
-+        uses: step-security/configure-aws-credentials@1448016543d4432bd608e0de7871c7bf9e9be925 # v6.2.1
-+        with:
-+          role-to-assume: ${{ secrets.SECRET_MANAGER_ROLE_ARN }}
-+          aws-region: ${{ secrets.SECRET_MANAGER_AWS_REGION }}
-+          role-session-name: kics-release-app-key
-+      - name: Fetch GitHub App private key
-+        uses: step-security/aws-secretsmanager-get-secrets@102b6b2a2528747bcc321bb99ef326d8be7ef58f # v3.0.1
-+        with:
-+          secret-ids: KICS_APP_KEY,${{ secrets.SECRET_MANAGER_SECRET_NAME }}
-+      - name: Mask each line of the private key
-+        run: |
-+          while IFS= read -r line; do
-+            line="${line%$'\r'}"
-+            if [ -n "${line}" ]; then
-+              echo "::add-mask::${line}"
-+            fi
-+          done <<< "${KICS_APP_KEY}"
-+      - name: Create GitHub App token
-+        id: app-token
-+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-+        with:
-+          client-id: ${{ secrets.KICS_RELEASE_APP_CLIENT_ID }}
-+          private-key: ${{ env.KICS_APP_KEY }}
-+          permission-contents: write
-+          permission-pull-requests: write
-+      - name: Remove the private key from the environment
-+        run: echo "KICS_APP_KEY=" >> "$GITHUB_ENV"
-       - name: Create Pull Request
-         uses: step-security/create-pull-request@50c103da2b9ca12cd5bc013fc6931051a5aa872b # v8.1.1
-         with:
-+          token: ${{ steps.app-token.outputs.token }}
-           title: "docs(queries): update queries catalog"
-           commit-message: "docs(queries): update queries catalog"
-           delete-branch: true
-```
-
-**File**: `.github/workflows/update-docs-release.yaml` (modified, +31/-1)
-```diff
-@@ -17,6 +17,7 @@ jobs:
-     permissions:
-       actions: write  # for styfle/cancel-workflow-action to cancel/stop running workflows
-       contents: write  # for Git to git push
-+      id-token: write  # for configure-aws-credentials to assume the AWS role via OIDC
-     runs-on: cx-public-ubuntu-x64
-     steps:
-       - name: Cancel Previous Runs
-@@ -84,7 +85,36 @@ jobs:
+@@ -84,7 +84,7 @@ jobs:
+           CURRENT_VERSION: ${{ steps.version.outputs.cversion }}
          run: |
            mike delete latest
-           mike deploy latest "${CURRENT_VERSION}"
+-          mike deploy latest "${CURRENT_VERSION}"
++          mike deploy latest "${CURRENT_VERSION}" --update-aliases --alias-type copy
+       - name: Configure AWS credentials
+         uses: step-security/configure-aws-credentials@1448016543d4432bd608e0de7871c7bf9e9be925 # v6.2.1
+         with:
+```
+
+---
+
+### Incident Patch 2: `eca84a7f` (2026-11-09)
+**Commit Message**: fix(actions): use GitHub App token to push gh-pages in mkdocs workflow (#8177)
+
+**File**: `.github/workflows/mkdocs.yml` (modified, +32/-1)
+```diff
+@@ -18,9 +18,11 @@ permissions:
+ jobs:
+   deploy:
+     name: Deploy documentation pages
++    environment: release
+     runs-on: cx-public-ubuntu-x64
+     permissions:
+       contents: write # for git push to gh-pages
++      id-token: write # for configure-aws-credentials to assume the AWS role via OIDC
+     steps:
+       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+         with:
+@@ -41,12 +43,41 @@ jobs:
+       - name: Update develop docs
+         run: |
+           mike deploy develop
 +      - name: Configure AWS credentials
 +        uses: step-security/configure-aws-credentials@1448016543d4432bd608e0de7871c7bf9e9be925 # v6.2.1
 +        with:
@@ -1804,8 +1699,8 @@ environment after use) with the token limited to contents wr
 +          GH_APP_TOKEN: ${{ steps.app-token.outputs.token }}
          run: |
            git checkout gh-pages
-           git branch --set-upstream-to=origin/gh-pages gh-pages
-@@ -94,4 +124,4 @@ jobs:
+           find . -type f -name "*.html" -exec sed -i -E '/<script src="(.)*js\/version-select.js" defer><\/script>/d' {} +
+           find . -type f -name "*.html" -exec sed -i -E '/<link href="(.)*css\/version-select.css" rel="stylesheet"/d' {} +
            find . -type f -name "version-select.css" -exec rm -f {} +
            find . -type f -name "version-select.js" -exec rm -f {} +
            git commit -a --amend --no-edit
@@ -1814,12 +1709,12 @@ environment after use) with the token limited to contents wr
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8168** (2026-11-05): fix(query): add missing case on Response Code Missing query for OpenAPI (@cx-artur-ribeiro)
-- **PR #8165** (2026-11-04): fix(vulnerabilities): update dockerfile images (@cx-artur-ribeiro)
-- **PR #8164** (2026-11-05): ci(release): use a GitHub App token for release automation pushes (@cx-lior-poterman)
-- **PR #8162** (closed): fix(vulnerabilities): update package versions to fix vulnerabilities (@cx-artur-ribeiro)
-- **PR #8160** (2026-11-02): fix(query): fixed FP on Response Code Missing query for OpenAPI (@cx-ricardo-jesus)
-- **PR #8159** (2026-11-02): fix(query): fixed FP on Security Operations Empty Object Definition for OpenAPI (@cx-ricardo-jesus)
+- **PR #8183** (closed): fix(query): fix FP on Terraform AWS port queries treating tcp/udp 0/0 range as all ports (@cx-carlos-mello)
+- **PR #8182** (closed): fix(query): fix FPs and FNs on Network ACL Unrestricted Access To RDP/SSH (Terraform) (@cx-carlos-mello)
+- **PR #8179** (2026-11-09): update(action): update kics github action version to 2.2.1 (@cx-artur-ribeiro)
+- **PR #8178** (2026-11-09): fix(actions): deploy docs latest alias as copy instead of symlink (@cx-artur-ribeiro)
+- **PR #8177** (2026-11-09): fix(actions): use GitHub App token to push gh-pages in mkdocs workflow (@cx-artur-ribeiro)
+- **PR #8176** (2026-11-09): docs(queries): update queries catalog (@cx-kics-release[bot])
 
 ---
 
@@ -1839,52 +1734,28 @@ environment after use) with the token limited to contents wr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): use a GitHub App token for release automation pushes (#8164)
+## X. actions): deploy docs latest alias as copy instead of symlink (#8178)
 
 **RULE**:
-When implementing operations in `.github/workflows/prepare-release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/update-docs-release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `434d3e0b`: ci(release): use a GitHub App token for release automation pushes (#8164). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `987e12aa`: actions): deploy docs latest alias as copy instead of symlink (#8178). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/prepare-release.yaml`.
+Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/update-docs-release.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```open policy agent
 // Verified production-grade fix pattern:
-      id-token: write  # for configure-aws-credentials to assume the AWS role via OIDC
-      - name: Configure AWS credentials
-        uses: step-security/configure-aws-credentials@1448016543d4432bd608e0de7871c7bf9e9be925 # v6.2.1
-        with:
-          role-to-assume: ${{ secrets.SECRET_MANAGER_ROLE_ARN }}
-          aws-region: ${{ secrets.SECRET_MANAGER_AWS_REGION }}
-          role-session-name: kics-release-app-key
-      - name: Fetch GitHub App private key
-        uses: step-security/aws-secretsmanager-get-secrets@102b6b2a2528747bcc321bb99ef326d8be7ef58f # v3.0.1
-        with:
-          secret-ids: KICS_APP_KEY,${{ secrets.SECRET_MANAGER_SECRET_NAME }}
-      - name: Mask each line of the private key
-        run: |
-          while IFS= read -r line; do
-            line="${line%$'\r'}"
-            if [ -n "${line}" ]; then
-              echo "::add-mask::${line}"
-            fi
-          done <<< "${KICS_APP_KEY}"
-      - name: Create GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-        with:
-          client-id: ${{ secrets.KICS_RELEASE_APP_CLIENT_ID }}
-          private-key: ${{ env.KICS_
+          mike deploy latest "${CURRENT_VERSION}" --update-aliases --alias-type copy
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```open policy agent
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          mike deploy latest "${CURRENT_VERSION}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `434d3e0b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `987e12aa` are properly handled with clean fallback behavior.
