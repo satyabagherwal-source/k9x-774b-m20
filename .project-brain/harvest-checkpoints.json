@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T18:16:58.952Z",
+  "last_updated": "2026-11-11T18:28:49.931Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
-      "verified_at": "2026-11-09T12:29:45.458Z",
+      "content_hash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
+      "verified_at": "2026-11-11T18:23:49.005Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:29:45.458Z"
+      "last_updated": "2026-11-11T18:23:49.005Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -11526,14 +11526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-msasikanth-twine",
-      "content_hash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
-      "verified_at": "2026-11-08T00:34:21.618Z",
+      "content_hash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
+      "verified_at": "2026-11-11T18:28:49.930Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:34:21.618Z"
+      "last_updated": "2026-11-11T18:28:49.930Z"
     },
     "facebook/folly": {
       "repository": "facebook/folly",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T18:16:58.948Z",
-  "total_cycles_completed": 8834,
-  "total_learnings_persisted": 8834,
-  "total_rules_promoted": 8694,
+  "last_updated": "2026-11-11T18:28:49.925Z",
+  "total_cycles_completed": 8836,
+  "total_learnings_persisted": 8836,
+  "total_rules_promoted": 8696,
   "history": [
-    {
-      "timestamp": "2026-11-09T21:59:31.744Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T21:59:35.829Z",
-      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
-      "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T22:14:48.800Z",
       "repository": "yvgude/lean-ctx",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T18:16:58.948Z",
       "repository": "flox/flox",
       "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T18:23:49.002Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T18:28:49.925Z",
+      "repository": "msasikanth/twine",
+      "learningId": "learn-github-msasikanth-twine",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T18:17:05.129Z",
+  "last_updated": "2026-11-11T18:28:55.911Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5363,6 +5363,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0FDA5F-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-BC9420",
+      "directive_title": "Animate screen corner radius during predictive back gesture",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "msasikanth-twine",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC9420-animate-screen-corner-radius-during-pred.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-CD35C4",
+      "directive_title": "give the mdadm runtime map directory a dedicated SELinux type",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "siderolabs-talos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CD35C4-give-the-mdadm-runtime-map-directory-a-d.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-CB302D",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB302D-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-11"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T18:16:58.814Z",
+  "last_updated": "2026-11-11T18:28:49.797Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46343,11 +46343,16 @@
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "baf8d83c",
-      "content_hash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
+      "source_version": "15d06cbe",
+      "content_hash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Animate screen corner radius during predictive back gesture",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2485,
           "title": "Bundle SQLite native libraries for macOS App Store builds",
@@ -46379,7 +46384,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:34:21.475Z",
+      "verified_at": "2026-11-11T18:28:49.781Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57920,8 +57925,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "0297b7e9",
-      "content_hash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
+      "source_version": "ca4d8fa9",
+      "content_hash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -57943,6 +57948,11 @@
         {
           "number": null,
           "title": "security): let machined kexec into the new kernel",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "give the mdadm runtime map directory a dedicated SELinux type",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58021,7 +58031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T12:29:45.333Z",
+      "verified_at": "2026-11-11T18:23:48.853Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

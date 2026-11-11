@@ -8990,3 +8990,5 @@
 | `CYCLE-20261111-HAK1` | `2026-11-11T18:04:00.049Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a726fba...`) |
 | `CYCLE-20261111-RMES` | `2026-11-11T18:12:01.972Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0bd23d27...`) |
 | `CYCLE-20261111-XZJK` | `2026-11-11T18:16:58.928Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1a49d37...`) |
+| `CYCLE-20261111-6RY9` | `2026-11-11T18:23:48.993Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`99da69b2...`) |
+| `CYCLE-20261111-D859` | `2026-11-11T18:28:49.917Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d94b7d64...`) |

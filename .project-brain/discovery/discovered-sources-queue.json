@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T18:17:05.126Z",
+  "updated_at": "2026-11-11T18:28:55.909Z",
   "stats": {
-    "total_discovered": 133,
-    "approved_pending_harvest": 112,
+    "total_discovered": 139,
+    "approved_pending_harvest": 117,
     "harvested_count": 0,
-    "rejected_count": 21,
+    "rejected_count": 22,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 118,
+      "COMMUNITY_AND_EXPERT": 124,
       "OFFICIAL_DOCUMENTATION": 8,
       "STANDARDS_AND_SPECIFICATIONS": 7
     }
@@ -2793,6 +2793,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
         "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-8E2CEFECD58E": {
+      "id": "SRC-8E2CEFECD58E",
+      "url": "https://github.com/msasikanth/twine",
+      "title": "https://github.com/msasikanth/twine",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:28:55.899Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-1B79220A341B": {
+      "id": "SRC-1B79220A341B",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.en.html",
+      "title": "https://www.gnu.org/licenses/gpl-3.0.en.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:28:55.900Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-5D3C871EA056": {
+      "id": "SRC-5D3C871EA056",
+      "url": "https://github.com/user-attachments/assets/8a4e4197-1ff9-4bfe-8677-aeb01c7831b0",
+      "title": "https://github.com/user-attachments/assets/8a4e4197-1ff9-4bfe-8677-aeb01c7831b0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:28:55.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-858784D74F47": {
+      "id": "SRC-858784D74F47",
+      "url": "https://github.com/user-attachments/assets/af6c2f5a-a215-4a46-aaa8-115e787fa3a3",
+      "title": "https://github.com/user-attachments/assets/af6c2f5a-a215-4a46-aaa8-115e787fa3a3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:28:55.902Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-244A9A14A72D": {
+      "id": "SRC-244A9A14A72D",
+      "url": "https://github.com/siderolabs/talos",
+      "title": "https://github.com/siderolabs/talos",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:28:55.908Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-C241BEE56E77": {
+      "id": "SRC-C241BEE56E77",
+      "url": "http://mozilla.org/MPL/2.0",
+      "title": "http://mozilla.org/MPL/2.0",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T18:28:55.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
       }
     }
   }

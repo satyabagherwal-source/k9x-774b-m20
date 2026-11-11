@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "0297b7e9",
+    "sourceVersion": "ca4d8fa9",
     "license": "MPL-2.0",
-    "contentHash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
-    "lastHarvestedAt": "2026-11-09T12:29:45.450Z",
+    "contentHash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
+    "lastHarvestedAt": "2026-11-11T18:23:48.997Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7653,10 +7653,10 @@
     "repository": "msasikanth/twine",
     "platform": "github",
     "sourceUrl": "https://github.com/msasikanth/twine",
-    "sourceVersion": "baf8d83c",
+    "sourceVersion": "15d06cbe",
     "license": "GPL-3.0",
-    "contentHash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
-    "lastHarvestedAt": "2026-11-08T00:34:21.601Z",
+    "contentHash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
+    "lastHarvestedAt": "2026-11-11T18:28:49.921Z",
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {

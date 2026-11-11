@@ -8999,3 +8999,5 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `26236216` | Multi-dimensional audit evidence | 2026-11-11T18:04:00.053Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `c5e9027e` | Multi-dimensional audit evidence | 2026-11-11T18:12:01.976Z |
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `9a1a9e7c` | Multi-dimensional audit evidence | 2026-11-11T18:16:58.932Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `ca4d8fa9` | Multi-dimensional audit evidence | 2026-11-11T18:23:48.997Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `15d06cbe` | Multi-dimensional audit evidence | 2026-11-11T18:28:49.921Z |

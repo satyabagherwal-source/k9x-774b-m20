@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-YN98",
-    "timestamp": "2026-11-08T19:50:27.644Z",
-    "repository": "duongductrong/Snapzy",
-    "learningId": "learn-github-duongductrong-snapzy",
-    "contentHash": "32ce289fab711615bf23bebf456f65221d22dcb8d38c31c3c0465250c6ffbb9e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-EKZC",
-    "timestamp": "2026-11-08T20:02:51.192Z",
-    "repository": "signerlabs/ShipSwift",
-    "learningId": "learn-github-signerlabs-shipswift",
-    "contentHash": "8d0e04041733aa33237b56efa7716fa0b404d49a7dd608273a2c6342fd062d1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-EN45",
     "timestamp": "2026-11-08T20:02:53.957Z",
     "repository": "skyhook-io/radar",
@@ -7490,6 +7460,36 @@
     "repository": "flox/flox",
     "learningId": "learn-github-flox-flox",
     "contentHash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-6RY9",
+    "timestamp": "2026-11-11T18:23:48.993Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-D859",
+    "timestamp": "2026-11-11T18:28:49.917Z",
+    "repository": "msasikanth/twine",
+    "learningId": "learn-github-msasikanth-twine",
+    "contentHash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

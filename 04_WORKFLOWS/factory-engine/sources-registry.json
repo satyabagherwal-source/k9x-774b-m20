@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T18:17:04.987Z",
-    "lastVerified": "2026-11-11T18:17:04.987Z",
+    "lastChecked": "2026-11-11T18:28:55.809Z",
+    "lastVerified": "2026-11-11T18:28:55.809Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -228,9 +228,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-11T10:43:17.077Z",
+    "lastChecked": "2026-11-11T18:23:37.573Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-11T10:43:17.077Z"
+    "lastVerified": "2026-11-11T18:23:37.573Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -364,9 +364,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T17:13:09.550Z",
+    "lastChecked": "2026-11-11T18:23:42.604Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T17:13:09.550Z"
+    "lastVerified": "2026-11-11T18:23:42.604Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1993,14 +1993,14 @@
     "officialUrl": "https://github.com/siderolabs/talos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T12:29:43.820Z",
-    "lastVerified": "2026-11-09T12:29:43.820Z",
+    "lastChecked": "2026-11-11T18:23:40.308Z",
+    "lastVerified": "2026-11-11T18:23:40.308Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
+    "contentHash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2502,8 +2502,8 @@
     "officialUrl": "https://github.com/tach-org/tach",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T04:00:29.793Z",
-    "lastVerified": "2026-11-09T04:00:29.793Z",
+    "lastChecked": "2026-11-11T18:23:27.709Z",
+    "lastVerified": "2026-11-11T18:23:27.709Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tach-org-tach",
@@ -4625,9 +4625,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-09T10:59:34.664Z",
+    "lastChecked": "2026-11-11T18:23:40.053Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-09T10:59:34.664Z"
+    "lastVerified": "2026-11-11T18:23:40.053Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -8695,12 +8695,12 @@
     "officialUrl": "https://github.com/msasikanth/twine",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T00:34:20.522Z",
-    "lastVerified": "2026-11-08T00:34:20.522Z",
+    "lastChecked": "2026-11-11T18:23:36.917Z",
+    "lastVerified": "2026-11-11T18:23:36.917Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-msasikanth-twine",
-    "contentHash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
+    "contentHash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -10913,9 +10913,9 @@
   "agamm-pseo-next": {
     "name": "pseo-next",
     "officialUrl": "https://github.com/agamm/pseo-next",
-    "lastChecked": "2026-11-06T22:35:59.362Z",
+    "lastChecked": "2026-11-11T18:23:30.098Z",
     "revisionIdentifier": "2f816d2c",
-    "lastVerified": "2026-11-06T22:35:59.362Z"
+    "lastVerified": "2026-11-11T18:23:30.098Z"
   },
   "aakira-napier": {
     "name": "Napier",
