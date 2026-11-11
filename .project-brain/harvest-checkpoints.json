@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T09:40:54.400Z",
+  "last_updated": "2026-11-11T09:49:21.216Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
-      "verified_at": "2026-11-09T09:25:08.082Z",
+      "content_hash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
+      "verified_at": "2026-11-11T09:49:10.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T09:25:08.082Z"
+      "last_updated": "2026-11-11T09:49:10.443Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
-      "verified_at": "2026-11-07T04:29:42.794Z",
+      "content_hash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
+      "verified_at": "2026-11-11T09:49:21.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:29:42.794Z"
+      "last_updated": "2026-11-11T09:49:21.216Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
-      "verified_at": "2026-11-08T22:52:33.124Z",
+      "content_hash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
+      "verified_at": "2026-11-11T09:49:13.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:52:33.124Z"
+      "last_updated": "2026-11-11T09:49:13.088Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

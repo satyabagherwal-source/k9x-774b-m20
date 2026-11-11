@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T09:41:14.924Z",
-  "total_records": 44,
+  "last_updated": "2026-11-11T09:49:41.481Z",
+  "total_records": 45,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 14,
+      "total": 15,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -39,7 +39,8 @@
         "DOM-D-06FC3249",
         "DOM-D-BC0A19F3",
         "DOM-D-5BF650C7",
-        "DOM-D-C4D2B996"
+        "DOM-D-C4D2B996",
+        "DOM-D-CB6BA6DF"
       ]
     },
     "E": {
@@ -1760,6 +1761,47 @@
       },
       "confidence": 1,
       "created_at": "2026-11-11T09:41:14.922Z"
+    },
+    "DOM-D-CB6BA6DF": {
+      "record_id": "DOM-D-CB6BA6DF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Clean up Hugging Face source logging for per-source debug (#5523)",
+      "content": "When implementing operations in `pkg/sources/huggingface/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "94c44b7492226262cd7e4029e7fa44e27d206d1a95896d53121a434fc1181ceb",
+      "summary": "Prevents defects observed in production commit `5dce9d48`: Clean up Hugging Face source logging for per-source debug (#5523). Unvalidated ex -> When implementing operations in `pkg/sources/huggingface/README.md`, engineers MUST enforce rigorous boundary validation, safe state transit",
+      "provenance": {
+        "source_uri": "project://trufflesecurity-trufflehog/trufflesecurity-trufflehog-learnings.md",
+        "source_version": "18876676",
+        "observed_at": "2026-11-11T09:49:09.787Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trufflesecurity-trufflehog)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of trufflesecurity-trufflehog"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.55,
+      "created_at": "2026-11-11T09:49:41.479Z"
     }
   }
 }

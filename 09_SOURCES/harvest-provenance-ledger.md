@@ -8906,3 +8906,7 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `34e8b808` | Multi-dimensional audit evidence | 2026-11-11T09:40:00.416Z |
 | `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-11T09:40:54.378Z |
 | `learn-dom-f-83d565c2` | `project://hf-webai-official-twil-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | 2026-11-11T09:41:14.924Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `18876676` | Multi-dimensional audit evidence | 2026-11-11T09:49:10.425Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `f45ea9bd` | Multi-dimensional audit evidence | 2026-11-11T09:49:13.077Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `d48ec29e` | Multi-dimensional audit evidence | 2026-11-11T09:49:21.206Z |
+| `learn-dom-d-cb6ba6df` | `project://trufflesecurity-trufflehog` | `18876676` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | 2026-11-11T09:49:41.481Z |

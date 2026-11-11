@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T09:40:54.261Z",
+  "last_updated": "2026-11-11T09:49:21.091Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3599,8 +3599,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "45e810c8",
-      "content_hash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
+      "source_version": "d48ec29e",
+      "content_hash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3612,6 +3612,11 @@
         {
           "number": null,
           "title": "deps): update module github.com/klauspost/compress to v1.20.2 [security] (main)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "controller): keep an ended node's message while it holds its lock (#17391)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3680,7 +3685,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:29:42.661Z",
+      "verified_at": "2026-11-11T09:49:21.065Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4137,8 +4142,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "3e2f08f8",
-      "content_hash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
+      "source_version": "f45ea9bd",
+      "content_hash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -4155,6 +4160,11 @@
         {
           "number": null,
           "title": "Respect negative extra markers on constraints (#23144)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update Rust crate uuid to v1.28.0 (#23182)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4243,7 +4253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:52:32.994Z",
+      "verified_at": "2026-11-11T09:49:12.910Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63541,8 +63551,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "75259fdd",
-      "content_hash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
+      "source_version": "18876676",
+      "content_hash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -63662,7 +63672,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T09:25:07.944Z",
+      "verified_at": "2026-11-11T09:49:10.145Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

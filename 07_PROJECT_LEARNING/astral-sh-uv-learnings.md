@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `3e2f08f8`  
+> **Source Version**: `f45ea9bd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:52:31.681Z  
+> **Timestamp**: 2026-11-11T09:48:59.971Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:52:31.562Z  
+> **Harvest Timestamp**: 2026-11-11T09:48:58.937Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91780 stars
+- **Stars / Engagement**: 91933 stars
 
 ---
 
@@ -1496,13 +1496,11 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23147** (2026-11-08): **uv aborts (SIGABRT, "failed to create UnixStream: Function not implemented") in the i686 manylinux container on GitHub's ubuntu-26.04 runner**
-  *Symptoms*: ### Summary  `uv pip install` aborts with SIGABRT inside the 32-bit `quay.io/pypa/manylinux_2_28_i686` container (started by cibuildwheel, which runs `python -m build --installer=uv`) when the host is a GitHub-hosted `ubuntu-26.04` runner. The same job with the same container image digest passed on `ubuntu-24.04` (last green run 2026-10-29). The x86_64 container on the same ubuntu-26.04 runner works.  Full output of uv:  ``` + python -m build /project --wheel --outdir=/tmp/cibuildwheel/built_wheel --installer=uv * Creating isolated environment: venv+uv...   Using external uv from /usr/local/bin/uv * Installing packages in isolated environment:   - cython>=3.2.9   - setuptools-scm>=8   - setuptools>=84   - wheel   - ziglang>=0.17.1 < failed to create UnixStream: Os { code: 38, kind: Unsupported, message: "Function not implemented" } ERROR Command '['/usr/local/bin/uv', 'pip', 'install', 'ziglang>=0.17.1', 'setuptools-scm>=8', 'cython>=3.2.9', 'setuptools>=84', 'wheel', '--python', '/tmp/build-env-gyaxuj3k/bin/python']' died with <Signals.SIGABRT: 6>. ```  Errno 38 is ENOSYS: a syscall the 32-bit process makes is not implemented/allowed. On i386 sockets go through `socketcall` or separate `socket`/`socketpair` syscalls, so my guess is a seccomp-profile or kernel-config difference on the new runner image / Docker version (the `UnixStream` creation looks like a socketpair, e.g. a signal/wakeup pipe in the async runtime). I have not confirmed this, and I cannot rule out that uv it
-  **Post-Mortem & Fix Analysis**:
-  > It looks like this is an upstream bug, resolved in `29.4.3`: https://github.com/actions/runner-images/issues/14790#issuecomment-5868616762
+- **Issue #23209** (2026-11-10): **Restrict Unix plaintext credential store permissions**
+  *Symptoms*: ## Summary  Fixes astral-sh/uv#23202.  Create the credentials directory with mode `0700` and its lock with mode `0600`. Write the TOML file atomically through a `0600` temporary file, following existing credential-file symlinks. On the next write, tighten the default credentials directory. An existing directory supplied via `UV_CREDENTIALS_DIR` can also hold unrelated files and keeps its permissions.  ## Test plan  The existing `auth::login_text_store` test checks all three modes after the first login, restores the legacy permissions, then checks that the second login repairs them. All 5,666 Linux tests passed. [CI run](https://github.com/astral-sh/uv-dev/actions/runs/42849443139)
 
-- **Issue #23144** (2026-11-08): **Respect negative extra markers on constraints**
-  *Symptoms*: This PR fixes what I think is a bug: an `extra != 'unused'` was being ignored in a constraint requirement but not in an ordinary dependency requirement. As a result, it was possible to end up with a lock file whose package versions were inconsistent with the requirements in `pyproject.toml`. (See the regression test in this PR for an example.)  I'm not sure if this is a real bug that users will hit, but I found it as part of my work on #12276.  Reviewers should read this PR commit-by-commit. The first commit is just a small refactor.
+- **Issue #23149** (2026-11-10): **activate.bat sets wrong VIRTUAL_ENV when the path contains an apostrophe**
+  *Symptoms*: ### Summary  When the venv path contains an apostrophe, activate.bat writes VIRTUAL_ENV with bash-style escaping ('"'"'), so the venv doesn't actually activate in cmd.  ``` C:\Tools\it's a test> uv venv Using CPython 3.15.2 interpreter at: C:\Users\Lewis\AppData\Local\Python\pythoncore-3.15-64\python.exe Creating virtual environment at: .venv Activate with: .venv\Scripts\activate  C:\Tools\it's a test> .venv\Scripts\activate.bat  C:\Tools\it's a test> echo %VIRTUAL_ENV% C:\Tools\it'"'"'s a test\.venv ```  ### Platform  Windows 11 x86_64  ### Version  uv 0.13.7 (316c827e0 2026-11-03 x86_64-pc-windows-msvc)  ### Python version  3.15.2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1519,257 +1517,189 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3e2f08f8` (2026-11-08)
-**Commit Message**: Respect negative extra markers on constraints (#23144)
+### Incident Patch 1: `6b7f0a4e` (2026-11-09)
+**Commit Message**: Update Rust crate uuid to v1.28.0 (#23182)
 
-This PR fixes what I think is a bug: an `extra != 'unused'` was being
-ignored in a constraint requirement but not in an ordinary dependency
-requirement. As a result, it was possible to end up with a lock file
-whose package versions were inconsistent with the requirements in
-`pyproject.toml`. (See the regression test in this PR for an example.)
+This PR contains the following updates:
 
-I'm not sure if this is a real bug that users will hit, but I found it
-as part of my work on #12276.
+| Package | Type | Update | Change | Pending |
+|---|---|---|---|---|
+| [uuid](https://redirect.github.com/uuid-rs/uuid) |
+workspace.dependencies | minor | `1.27.0` → `1.28.0` | `1.29.2` (+2) |
 
-Reviewers should read this PR commit-by-commit. The first commit is just
-a small refactor.
+---
 
-**File**: `crates/uv-resolver/src/resolver/requirements.rs` (modified, +27/-114)
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/2658) for more information.
+
+---
+
+### Release Notes
+
+<details>
+<summary>uuid-rs/uuid (uuid)</summary>
+
+###
+[`v1.28.0`](https://redirect.github.com/uuid-rs/uuid/releases/tag/v1.28.0)
+
+[Compare
+Source](https://redirect.github.com/uuid-rs/uuid/compare/v1.27.0...v1.28.0)
+
+#### What's Changed
+
+- Add optional serde format adapters by
+[@&#8203;RanaPriyansh](https://redirect.github.com/RanaPriyansh) in
+[#&#8203;916](https://redirect.github.com/uuid-rs/uuid/pull/916)
+- Prepare for 1.28.0 release by
+[@&#8203;KodrAus](https://redirect.github.com/KodrAus) in
+[#&#8203;918](https://redirect.github.com/uuid-rs/uuid/pull/918)
+
+#### New Contributors
+
+- [@&#8203;RanaPriyansh](https://redirect.github.com/RanaPriyansh) made
+their first contribution in
+[#&#8203;916](https://redirect.github.com/uuid-rs/uuid/pull/916)
+
+**Full C
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -263,22 +263,14 @@ impl<'a> RequirementExpander<'a> {
-         let python_marker = self.python_marker;
-         let python_requirement = self.python_requirement;
-         // If the requirement isn't relevant for the current platform, skip it.
--        match extra {
--            Some(source_extra) => {
--                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
--                    return false;
--                }
--
--                if !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
--                {
--                    return false;
--                }
--            }
--            None => {
--                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
--                    return false;
--                }
--            }
-+        let extras = extra.map_or(&[][..], slice::from_ref);
-+        if !requirement.evaluate_markers(env.marker_environment(), extras) {
-+            return false;
-+        }
-+        if let Some(source_extra) = extra
-+            && !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
-+        {
-+            return false;
-         }
+@@ -5636,9 +5636,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
  
-         // If the requirement would not be selected with any Python version
-@@ -311,113 +303,34 @@ impl<'a> RequirementExpander<'a> {
-     where
-         'data: 'parameters,
-     {
--        let env = self.env;
--        let python_marker = self.python_marker;
--        let python_requirement = self.python_requirement;
-         self.constraints
-             .get(&requirement.name)
-             .into_iter()
-             .flatten()
-             .filter_map(move |constraint| {
--                // If the requirement would not be selected with any Python version
--                // supported by the root, skip it.
--                let constraint = if constraint.marker.is_true() {
--                    // Additionally, if the requirement is `requests ; sys_platform == 'darwin'`
--                    // and the constraint is `requests ; python_version == '3.6'`, the
--                    // constraint should only apply when _both_ markers are true.
--                    if requirement.marker.is_true() {
--                        Cow::Borrowed(constraint)
--                    } else {
--                        let mut marker = constraint.marker;
--                        marker = marker.and(requirement.marker);
--
--                        if marker.is_false() {
--                            trace!(
--                                "Skipping {constraint} because of disjoint markers: `{:?}` vs. `{:?}`",
--                                constraint.marker,
--                                requirement.marker,
--                            );
--                            return None;
--                        }
--
--                        Cow::Owned(Requirement {
--                            name: constraint.name.clone(),
--                            extras: constraint.extras.clone(),
--                            groups: constraint.groups.clone(),
--                            source: constraint.source.clone(),
--                            scope: constraint.scope.clone(),
--                            origin: constraint.origin.clone(),
--                            marker,
--                        })
--                    }
--                } else {
--                    let requires_python = python_requirement.target();
--
--                    let mut marker = constraint.marker;
--                    marker = marker.and(requirement.marker);
--
--                    if marker.is_false() {
--                        trace!(
--                            "Skipping {constraint} because of disjoint markers: `{:?}` vs. `{:?}`",
--                            constraint.marker,
--                            requirement.marker,
--                        );
--                        return None;
--                    }
--
--                    // Additionally, if the requirement is `requests ; sys_platform == 'darwin'`
--                    // and the constraint is `requests ; python_version == '3.6'`, the
--                    // constraint should only apply when _both_ markers are true.
--                    if python_marker.is_disjoint(marker) {
--                        trace!(
--                            "Skipping constraint {requirement} because of Requires-Python: {requires_python}"
--                        );
--                        return None;
--                    }
--
--                    if marker == constraint.marker {
--                        Cow::Borrowed(constraint)
--                    } else {
--                        Cow::Owned(Requirement {
--                            name: constraint.name.clone(),
--                            extras: constraint.extras.clone(),
--                            groups: constraint.groups.clone(),
--                            source: constraint.source.clone(),
--                            scope: constraint.scope.clone(),
--                            origin: constr
+ [[package]]
+ name = "uuid"
+-version = "1.27.0"
++version = "1.28.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "97277d36b9c3ace13e58fa6e753f8b0bbbf302a18dd193240d70f9e29681059a"
++checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
+ dependencies = [
+  "getrandom 0.4.3",
+  "js-sys",
 ```
 
-**File**: `crates/uv/tests/lock/lock.rs` (modified, +82/-2)
+---
+
+### Incident Patch 2: `cb44dfa2` (2026-11-10)
+**Commit Message**: fix: preserve apostrophes in Windows activation paths (#23152)
+
+Fixes #23149
+
+## Summary
+When a virtual environment path contains an apostrophe, the generated
+`activate.bat` script currently receives the POSIX single-quote escape
+sequence `'"'"'`. Batch files use double-quoted paths, so that sequence
+becomes part of `VIRTUAL_ENV` and activation points at the wrong
+directory.
+
+The Windows batch template now receives the plain normalized path, while
+POSIX activators keep their existing escaping. Regression coverage
+checks the generated batch script for apostrophe-containing paths on
+Unix and Windows.
+
+## Test Plan
+- `git diff --check`
+- Full Rust test suite is left to CI because this Windows worker does
+not have Cargo installed.
+
+Signed-off-by: 2301_80183707 <[REDACTED_EMAIL]>
+
+**File**: `crates/uv-virtualenv/src/virtualenv.rs` (modified, +3/-0)
 ```diff
-@@ -4876,6 +4876,82 @@ fn lock_project_with_constraints() -> Result<()> {
-     Ok(())
- }
+@@ -496,6 +496,9 @@ pub(crate) fn create(
+                 r#"'"$(dirname -- "$(dirname -- "$(realpath -- "$SCRIPT_PATH")")")"'"#,
+             ),
+             (true, "activate.bat") => Cow::Borrowed(r"%~dp0.."),
++            // Batch files use double-quoted paths, so POSIX single-quote escaping
++            // would become part of the value (for example, around apostrophes).
++            (false, "activate.bat") => Cow::Borrowed(location_string),
+             (true, "activate.fish") => {
+                 Cow::Borrowed(r"'(dirname -- (dirname -- (realpath -- (status -f))))'")
+             }
+```
+
+**File**: `crates/uv/tests/python/venv.rs` (modified, +24/-0)
+```diff
+@@ -2175,6 +2175,30 @@ fn create_venv_apostrophe() {
  
-+/// With no active extra, `extra != 'unused'` applies the version constraint.
-+///
-+/// This is a regression test added for a bug where we weren't properly
-+/// propagating extras from constraints in the resolver. Without the bug
-+/// fixed, the lock file selects `ok==2.0.0` even though there is an
-+/// active constraint for `ok<2`.
-+#[cfg(feature = "test-universal")]
-+#[test]
-+fn lock_constraint_with_negative_extra_marker() -> Result<()> {
-+    let context = uv_test::test_context!("3.12");
-+    let pyproject_toml = context.temp_dir.child("pyproject.toml");
-+    pyproject_toml.write_str(indoc! {r#"
-+        [project]
-+        name = "project"
-+        version = "0.1.0"
-+        requires-python = ">=3.12"
-+        dependencies = ["ok"]
+     let stdout = String::from_utf8_lossy(&output.stdout);
+     assert_eq!(stdout.trim(), venv_dir.to_string_lossy());
 +
-+        [tool.uv]
-+        constraint-dependencies = ["ok<2; extra != 'unused'"]
-+    "#})?;
-+
-+    uv_snapshot!(context.filters(), context.lock()
-+        .arg("--offline")
-+        .arg("--no-index")
-+        .arg("--find-links")
-+        .arg(context.workspace_root.join("test/links")), @"
-+    exit_code: 0 (success)
-+    ----- stderr -----
-+    Resolved 2 packages in [TIME]
-+    ");
-+
-+    let lock = context.read("uv.lock");
-+    insta::with_settings!({ filters => context.filters() }, {
-+        assert_snapshot!(lock, @r#"
-+        version = 1
-+        revision = 5
-+        requires-python = ">=3.12"
-+
-+        [options]
-+        exclude-newer = "2024-03-25T00:00:00Z"
-+
-+        [manifest]
-+        constraints = [{ name = "ok", marker = "extra != 'unused'", specifier = "<2" }]
-+
-+        [[package]]
-+        name = "ok"
-+        version = "1.0.0"
-+        source = { registry = "[WORKSPACE]/test/links" }
-+        wheels = [
-+            { path = "[WORKSPACE]/test/links/ok-1.0.0-py3-none-any.whl" },
-+        ]
-+
-+        [[package]]
-+        name = "project"
-+        version = "0.1.0"
-+        source = { virtual = "." }
-+        dependencies = [
-+            { name = "ok" },
-+        ]
-+
-+        [package.metadata]
-+        requires-dist = [{ name = "ok" }]
-+        "#);
-+    });
-+
-+    uv_snapshot!(context.filters(), context.tree().arg("--frozen"), @"
-+    exit_code: 0 (success)
-+    ----- stdout -----
-+    project v0.1.0
-+    └── ok v1.0.0
-+    ");
-+
-+    Ok(())
++    let activate_bat = fs_err::read_to_string(venv_dir.join("bin/activate.bat")).unwrap();
++    assert!(activate_bat.contains(venv_dir.to_string_lossy().as_ref()));
++    assert!(!activate_bat.contains("'\"'\"'"));
 +}
 +
- /// Lock a project with `uv.tool.constraint-dependencies` that reference `tool.uv.sources`.
- #[cfg(feature = "test-universal")]
- #[test]
-@@ -45522,7 +45598,7 @@ fn lock_resolution_inputs_version_constraints() -> Result<()> {
-     ");
-     assert_eq!(context.read("uv.lock"), lock);
- 
--    // Negated extra predicates are dropped during the resolver's package lowering.
-+    // The inactive extra makes the negated marker true, so the constraint selects b 2.0.0.
-     pyproject.write_str(indoc! {r#"
-         [project]
-         name = "project"
-@@ -45541,6 +45617,7 @@ fn lock_resolution_inputs_version_constraints() -> Result<()> {
-     exit_code: 0 (success)
-     ----- stderr -----
-     Resolved 3 packages in [TIME]
-+    Updated b v1.0.0 -> v2.0.0
-     ");
- 
-     let retained_lock = context.read("uv.lock");
-@@ -45557,7 +45634,10 @@ fn lock_resolution_inputs_version_constraints() -> Result<()> {
-     ");
-     assert_eq!(context.read("uv.lock"), retained_lock);
- 
--    // An inactive positive extra marker is also retained when its bound excludes the lock.
-+    // Start the positive marker case from the original lock with b 1.0.0.
-+    context.temp_dir.child("uv.lock").write_str(&lock)?;
++/// Check that the Windows activate script preserves apostrophes in the venv path.
++#[test]
++#[cfg(windows)]
++fn create_venv_apostrophe_bat() {
++    let context = uv_test::test_context_with_versions!(&["3.12"]);
++    let venv_dir = context.temp_dir.join("Testing's");
 +
-+    // An inactive positive extra marker is retained when its bound excludes the lock.
-     pyproject.write_str(indoc! {r#"
-         [project]
-         name = "project"
++    context
++        .venv()
++        .arg(&venv_dir)
++        .arg("--python")
++        .arg("3.12")
++        .assert()
++        .success();
++
++    let activate_bat = fs_err::read_to_string(venv_dir.join("Scripts/activate.bat")).unwrap();
++    assert!(activate_bat.contains(venv_dir.to_string_lossy().as_ref()));
++    assert!(!activate_bat.contains("'\"'\"'"));
+ }
+ 
+ /// Emulate a ksh without ksh93's `${.sh.file}` parameter using a POSIX shell.
+```
+
+---
+
+### Incident Patch 3: `da84b72a` (2026-11-10)
+**Commit Message**: Use the runner’s Buildx to publish Docker images (#23190)
+
+## Summary
+
+We use the Buildx bundled with `ubuntu-latest` to publish Docker images.
+Depot builds the images, and the publish job only uses Buildx to inspect
+and tag the saved image index.
+
+We read the digest of the tagged index from `imagetools create
+--metadata-file` so we can attest exactly what we published. Buildx
+added that flag in v0.32.0, and the runner already includes v0.38.1.
+[Buildx release
+notes](https://github.com/docker/buildx/releases/tag/v0.32.0) · [Runner
+image
+inventory](https://github.com/actions/runner-images/blob/dbf2f009b5e1dcce57cf578ff4fdc1391a4d6d1b/images/ubuntu/Ubuntu2404-Readme.md#installed-software)
+
+Supersedes #23176.
+
+**File**: `.github/workflows/publish-docker-image.yml` (modified, +0/-7)
+```diff
+@@ -80,13 +80,6 @@ jobs:
+ 
+       - uses: depot/setup-action@91bc8495a33ebfc504ffc89e5674379ccf23c29c # v1.7.2
+ 
+-      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+-        with:
+-          # Install a version that supports `imagetools create --metadata-file`
+-          # (https://github.com/docker/buildx/issues/2407).
+-          version: v0.37.2
+-          cache-binary: false
+-
+       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+         if: ${{ !inputs.push-dev }}
+         with:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23148** (closed): Update files with my new changes (@Akarsh-Raju)
-- **PR #23144** (2026-11-08): Respect negative extra markers on constraints (@BurntSushi)
-- **PR #23141** (closed): Use byte searches for raw index filenames (@astral-automations-bot[bot])
-- **PR #23137** (closed): Consider the parent before reusing a capped dependency across forks (@charliermarsh)
-- **PR #23136** (2026-11-06): Represent reclaimed physical space with an enum (@charliermarsh)
-- **PR #23135** (2026-11-06): Model wheel download resumption explicitly (@charliermarsh)
+- **PR #23211** (2026-11-11): Sync latest Python releases, CPython 3.16.0a2 (@astral-automations-bot[bot])
+- **PR #23210** (2026-11-10): Flatten recursive extras introduced by scoped overrides (@BurntSushi)
+- **PR #23209** (2026-11-10): Restrict Unix plaintext credential store permissions (@astral-automations-bot[bot])
+- **PR #23208** (2026-11-10): Link issue artifacts to the workflow's run name (@woodruffw)
+- **PR #23205** (closed): Retry failed downloads in `create-python-mirror.py` (@malikmalikayesha)
+- **PR #23204** (closed): Quote Python requests in the `uv python install` hint (@malikmalikayesha)
 
 ---
 
@@ -1789,60 +1719,30 @@ a small refactor.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Respect negative extra markers on constraints (#23144)
+## X. Update Rust crate uuid to v1.28.0 (#23182)
 
 **RULE**:
-When implementing operations in `crates/uv-resolver/src/resolver/requirements.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3e2f08f8`: Respect negative extra markers on constraints (#23144). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b7f0a4e`: Update Rust crate uuid to v1.28.0 (#23182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-resolver/src/resolver/requirements.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let extras = extra.map_or(&[][..], slice::from_ref);
-        if !requirement.evaluate_markers(env.marker_environment(), extras) {
-            return false;
-        }
-        if let Some(source_extra) = extra
-            && !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
-        {
-            return false;
+version = "1.28.0"
+checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        match extra {
-            Some(source_extra) => {
-                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
-                    return false;
-                }
-
-                if !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
-                {
-                    return false;
-                }
-            }
-            None => {
-                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
-                    return false;
-                }
-            }
-        let env = self.env;
-        let python_marker = self.python_marker;
-        let python_requirement = self.python_requirement;
-                // If the requirement would not be selected with any Python version
-                // supported by the root, skip it.
-                let constraint = if constraint.marker.is_true() {
-                    // Additionally, if the requirement is `requests ; sys_platform == 'darwin'`
-                    // and the constraint is `requests ; python_version == '3.6'`, the
-                    // constraint should only apply when _both_ markers are true.
-                    if requirement.marker.is_true() 
+version = "1.27.0"
+checksum = "97277d36b9c3ace13e58fa6e753f8b0bbbf302a18dd193240d70f9e29681059a"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3e2f08f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b7f0a4e` are properly handled with clean fallback behavior.

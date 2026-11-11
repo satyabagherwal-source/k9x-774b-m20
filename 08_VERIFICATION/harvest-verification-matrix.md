@@ -8897,3 +8897,7 @@
 | `CYCLE-20261111-H5I4` | `2026-11-11T09:40:00.412Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7ba6704...`) |
 | `CYCLE-20261111-IB52` | `2026-11-11T09:40:54.374Z` | `webAI-Official/TwIL-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`bd624a4f...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:41:14.924Z` | `hf-webai-official-twil-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-83D565C2` [Domain F] | Yes (`13a3f947...`) |
+| `CYCLE-20261111-SXW0` | `2026-11-11T09:49:10.416Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`96d3c49f...`) |
+| `CYCLE-20261111-SZXS` | `2026-11-11T09:49:13.072Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`627048d3...`) |
+| `CYCLE-20261111-T67M` | `2026-11-11T09:49:21.202Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`377a4f99...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:49:41.481Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CB6BA6DF` [Domain D] | Yes (`94c44b74...`) |

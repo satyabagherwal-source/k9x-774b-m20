@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:41:14.931Z",
+  "last_updated": "2026-11-11T09:49:26.580Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4493,6 +4493,35 @@
       "source_repo": "projectdiscovery-nuclei",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AA5A18-empirical-invariant-guard-in-shared-resp.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-SXWI",
+      "directive_title": "Clean up Hugging Face source logging for per-source debug (#5523)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "trufflesecurity/trufflehog",
+      "source_commit": "18876676",
+      "date_staged": "2026-11-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-trufflesecurity-trufflehog"
+    },
+    {
+      "id": "CD-REV-539ADB",
+      "directive_title": "Update Rust crate uuid to v1.28.0 (#23182)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-uv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-539ADB-update-rust-crate-uuid-to-v1-28-0-23182-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4D40E2",
+      "directive_title": "controller): keep an ended node's message while it holds its lock (#17391)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "argoproj-argo-workflows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D40E2-controller-keep-an-ended-node-s-message-.md",
       "staged_date": "2026-11-11"
     }
   ]

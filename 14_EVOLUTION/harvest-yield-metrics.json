@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:40:54.395Z",
-  "total_cycles_completed": 8747,
-  "total_learnings_persisted": 8747,
-  "total_rules_promoted": 8612,
+  "last_updated": "2026-11-11T09:49:21.212Z",
+  "total_cycles_completed": 8750,
+  "total_learnings_persisted": 8750,
+  "total_rules_promoted": 8614,
   "history": [
-    {
-      "timestamp": "2026-11-09T12:17:30.719Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T12:29:33.715Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T12:29:37.332Z",
-      "repository": "mtkennerly/ludusavi",
-      "learningId": "learn-github-mtkennerly-ludusavi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T12:29:45.455Z",
       "repository": "siderolabs/talos",
@@ -1403,6 +1382,27 @@
       "repository": "webAI-Official/TwIL-8B",
       "learningId": "learn-huggingface-webai-official-twil-8b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:49:10.438Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:49:13.084Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:49:21.212Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
