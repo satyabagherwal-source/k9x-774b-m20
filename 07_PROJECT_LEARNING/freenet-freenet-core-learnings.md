@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `7c445c0c`  
+> **Source Version**: `653af09c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T23:17:50.977Z  
+> **Timestamp**: 2026-11-11T06:33:21.623Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T23:17:50.969Z  
+> **Harvest Timestamp**: 2026-11-11T06:33:21.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3115 stars
+- **Stars / Engagement**: 3119 stars
 
 ---
 
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6169** (2026-11-09): **build: gate a constant only the panic-injection tests read**
-  *Symptoms*: ## Problem  Windows Check is red on main: `constant COOLING_WARN is never used` at `crates/core/tests/quic_breaker_windows.rs:33`. The constant is read only by `three_quic_panics_keep_quic_off_for_the_cooldown`, which is behind `#[cfg(feature = "quic-panic-injection")]`. #6160 made Windows Check run `cargo clippy --all-targets -- -D warnings` without that feature, so after #6155 and #6160 both merged, the constant is dead code there. Every open PR's Windows Check fails on it.  ## Solution  Gate the constant on the same feature as its only reader.  ## Testing  - `cargo clippy --locked --target x86_64-pc-windows-gnu -p freenet -p fdev --all-targets -- -D warnings`: clean. - `cargo clippy --locked --target x86_64-pc-windows-gnu -p freenet --test quic_breaker_windows --features quic-panic-injection -- -D warnings`: clean (the feature build `windows_unit` runs).  [AI-assisted - Claude] 
+- **Issue #6182** (2026-11-11): **docs(rules): report scope bundling and subject length as INFO**
+  *Symptoms*: ## Problem  The CI rule review (`claude-pr-review.yml`) reads `.claude/rules/git-workflow.md`, which phrases two author expectations as "→ NO: split it" and "→ NO: Shorten it". The reviewer turns those into **WARNING** findings, which its prompt says must be fixed or overridden with `review-override`.  Between 2026-07-17 and 2026-09-27, the last stretch in which the review was running, it reviewed about 250 PRs and flagged 25. I read the findings on 6 of those 25, and "bundles more than one logical change" was among them on four (#5303, #5438, #5513, #4915); a commit subject of 77 characters was flagged on #5513. I did not tabulate the other 19. 13 of the 25 flagged PRs were merged on a `review-override` label.  Being overridden does not mean the finding was wrong: a bundled PR that a maintainer overrides is a true positive that was waved through. What it does show is that these two checks were being treated as advisory in practice while being reported as blocking, and a rule that is overridden about half the time trains everyone to click past it.  ## Solution  One short paragraph in `.claude/rules/git-workflow.md` saying the reviewer reports these two checks as **INFO**, never WARNING, and that they are still expected of authors. The paragraph also says what actually enforces them: the `conventional_commits` job validates the PR **title** only, the opt-in `.githooks/commit-msg` hook checks a commit subject's form, scope is a human-review call, and nothing checks subject leng
 
-- **Issue #6168** (2026-11-09): **test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR)**
-  *Symptoms*: ## Problem  Every PR's **Windows Check** currently fails:  ``` error: constant `COOLING_WARN` is never used   --> crates\core\tests\quic_breaker_windows.rs:33:7 ```  #6155 left `COOLING_WARN` read only by the tests gated on `feature = "quic-panic-injection"`. Windows Check builds without that feature, so `-D warnings` rejects the constant as dead code. main's own CI skips Windows Check, so main stayed green while every PR goes red. Seen on #6145.  ## Approach  Gate the constant on the same feature as its only readers. Nothing else changes.  ## Testing  `cargo clippy -p freenet --test quic_breaker_windows --target x86_64-pc-windows-gnu -- -D warnings`: - before the change: fails with the CI error above; - after: clean.  No new test, because this fixes a compile warning in a test file.  [AI-assisted - Claude]  https://claude.ai/code/session_01VjxvYRDc6DUZFjhryWRHAB 
+- **Issue #6180** (2026-11-11): **ci(rule-review): report a non-run as a failure and track the outage**
+  *Symptoms*: ## Problem  `Claude Rule Review` is failing to run, and a PR that was not reviewed looks the same as one that was. #5628 documents this: the run dies on its first API call (about 2 s, 1 turn, $0, empty `modelUsage`, `is_error: true`), and the workflow still posts `rule-review/warnings` as **success** ("Review failed to run — not blocking merge"). The job is green because the review step is `continue-on-error`.  Current state: all 8 runs I spot-checked from 2026-11-09 and 2026-11-10 fail this way, and I found no retained review comment on a PR created after 2026-09-27 (comments are edited in place, so a later failed re-run overwrites an earlier good review; this is a lower bound on the outage, not a measurement). #5628 records the same failure as intermittent in October (18 of 24 runs failing).  I have **not** established why. The log hides the API error (`show_full_output: false`). The signature points at the credential or account usage rather than the diff. The secret `CLAUDE_CODE_OAUTH_TOKEN` was last set 2025-09-27, which would fit a one-year expiry, but October's intermittent pattern fits a usage limit better. Neither is confirmed.  ## Solution  Follows the resolution #5628 asks for ("do not report `pass` for a review that did not run"), in `.github/workflows/claude-pr-review.yml`:  1. **A non-run is a failure status, not a success.** Every way of not running goes through one `reportNotRun`: the step failed, the execution file is unreadable, there is no report, or the fin
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,800 +1759,839 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7610781` (2026-11-09)
-**Commit Message**: test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR) (#6168)
+### Incident Patch 1: `291950ed` (2026-11-10)
+**Commit Message**: fix(conformance): report a merge refusal that leaves peers apart (#6178)
 
-**File**: `crates/core/tests/quic_breaker_windows.rs` (modified, +3/-0)
+**File**: `crates/core/src/conformance/minimize.rs` (modified, +24/-0)
 ```diff
-@@ -30,6 +30,9 @@ const MARKER_FILE: &str = "quic-crash-breaker.json";
- const TRANSPORT_BOUND: &str = "UDP socket bound successfully";
- const QUIC_BUILT: &str = "QUIC endpoint built";
- const TRIP_WARN: &str = "Several runs in a row with QUIC enabled ended early";
-+/// Only the `quic-panic-injection` tests read it, so it is gated with them:
-+/// without the feature (CI's Windows Check) it is dead code under `-D warnings`.
-+#[cfg(feature = "quic-panic-injection")]
- const COOLING_WARN: &str = "QUIC stays off: several runs in a row with QUIC enabled ended early";
- /// What a run logs when its marker gets no timer, so it could never clear.
- const NO_TIMER_WARN: &str = "No task registrar";
+@@ -278,6 +278,10 @@ mod tests {
+     struct LastWriteWins;
+ 
+     impl ConformanceOracle for LastWriteWins {
++        fn reads_host_clock(&self) -> bool {
++            false
++        }
++
+         fn validate_state(
+             &mut self,
+             _state: &[u8],
+@@ -323,6 +327,10 @@ mod tests {
+     struct AlwaysConforming;
+ 
+     impl ConformanceOracle for AlwaysConforming {
++        fn reads_host_clock(&self) -> bool {
++            false
++        }
++
+         fn validate_state(
+             &mut self,
+             _state: &[u8],
+@@ -442,6 +450,10 @@ mod tests {
+         // Order-dependent apply: concatenation. Any two distinct deltas witness it.
+         struct Concat;
+         impl ConformanceOracle for Concat {
++            fn reads_host_clock(&self) -> bool {
++                false
++            }
++
+             fn validate_state(
+                 &mut self,
+                 _state: &[u8],
+@@ -509,6 +521,10 @@ mod tests {
+         // DeltaPermutationInvariance fails and there is a witness to shrink.
+         struct Append;
+         impl ConformanceOracle for Append {
++            fn reads_host_clock(&self) -> bool {
++                false
++            }
++
+             fn validate_state(
+                 &mut self,
+                 _state: &[u8],
+@@ -623,6 +639,10 @@ mod tests {
+     struct SettlesOnlyWhenShort;
+ 
+     impl ConformanceOracle for SettlesOnlyWhenShort {
++        fn reads_host_clock(&self) -> bool {
++            false
++        }
++
+         fn validate_state(
+             &mut self,
+             _state: &[u8],
+@@ -708,6 +728,10 @@ mod tests {
+     }
+ 
+     impl ConformanceOracle for Flips {
++        fn reads_host_clock(&self) -> bool {
++            false
++        }
++
+         fn validate_state(
+             &mut self,
+             _state: &[u8],
+```
+
+**File**: `crates/core/src/conformance/oracle.rs` (modified, +12/-0)
+```diff
+@@ -102,4 +102,16 @@ pub trait ConformanceOracle {
+     /// leakage reachable again. If that happens, this is where it gets handled, and
+     /// the determinism checks start covering a second class of bug for free.
+     fn reset_instance(&mut self) {}
++
++    /// Does the contract's code import the host clock
++    /// ([`imports_host_clock`](super::imports_host_clock))?
++    ///
++    /// Read by the commutativity check's refusal exchange (#5725): a refusal that
++    /// leaves two peers apart is not reported against a contract that reads the
++    /// clock, because a clock-gated refusal (a timestamp too far in the future)
++    /// reproduces on a re-run and still clears as time passes.
++    ///
++    /// Required, with no default: `false` is the answer that lets a refusal be
++    /// reported, so an oracle must choose it deliberately rather than inherit it.
++    fn reads_host_clock(&self) -> bool;
+ }
+```
+
+**File**: `crates/core/src/conformance/property.rs` (modified, +28/-1)
+```diff
+@@ -15,6 +15,27 @@ pub enum ConformanceProperty {
+     /// `merge(A, A) == A`
+     StateIdempotence,
+     /// `merge(A, B) == merge(B, A)`
++    ///
++    /// When the contract REFUSES one of the two merges (a `ContractError`) for two
++    /// states it validates, the two peers holding them are simulated exchanging
++    /// states until they agree or neither moves (#5725). Each receive tries the delta
++    /// computed from the receiver's summary first, as production does, and then the
++    /// whole state whenever the delta does not get through. That is deliberately
++    /// more generous than the protocol, which sends nothing more after an empty or
++    /// no-op delta, so "stuck" means neither route gets through.
++    /// Agreeing is the honest transient refusal (River's ban-cap skew) and stays
++    /// [`Inconclusive::ContractError`]. Stopping while apart is a stable
++    /// disagreement, the freenet/river#423 class, and is a violation of this law
++    /// between the two states the peers end on, unless the contract reads the host
++    /// clock, where it stays [`Inconclusive::ContractError`] because a clock-gated
++    /// refusal clears as time passes. Running out of `MAX_REFUSAL_EXCHANGE_ROUNDS`
++    /// is [`Inconclusive::RoundLimit`].
++    ///
++    /// Unlike the plain comparison, this part rests on a model of the protocol, the
++    /// same one [`ConformanceProperty::ReconciliationCycle`] uses. It also makes
++    /// [`Inconclusive::InputNotValid`] and [`Inconclusive::RelatedRequired`]
++    /// reachable for a commutativity case whose inputs validate: a state reached
++    /// during the exchange can be invalid or need related state.
+     StateCommutativity,
+     /// `merge(merge(A, B), C) == merge(A, merge(B, C))`, or the two groupings heal:
+     /// they converge in one exchange to a state that, re-merged with both groupings
+@@ -220,7 +241,7 @@ pub enum ConformanceProperty {
+     ///
+     /// # Open decision: is this severity right?
+     ///
+-    /// This is the only check here that is not pure algebra. It rests on a MODEL of
++    /// Unlike the algebraic laws, this check rests on a MODEL of
+     /// how the protocol reconciles — which side sends what, when the full-state
+     /// fallback triggers, how the delta size gate behaves — so a finding depends on
+     /// that model being faithful, not just on the contract being wrong. Two model
+@@ -926,6 +947,12 @@ pub enum Inconclusive {
+     RelatedRequired,
+     /// The contract returned an error. A single rejection is not a conformance
+     /// failure — contracts are supposed to reject updates they consider illegitimate.
++    ///
++    /// Two places report a refusal instead (#5725): a refused associativity
++    /// heal-step merge, and a refused commutativity merge after which the two
++    /// peers, exchanging states, stop moving while still holding different states.
++    /// See [`ConformanceProperty::StateCommutativity`]. A commutativity refusal
++    /// that clears on the exchange is reported here.
+     ContractError(String),
+     /// `update_state` returned neither a new state nor a related-contract request.
+     NoOutputState,
+```
+
+**File**: `crates/core/src/conformance/runtime_oracle.rs` (modified, +17/-0)
+```diff
+@@ -46,6 +46,8 @@ pub struct RuntimeOracle {
+     runtime: Runtime,
+     key: ContractKey,
+     parameters: Parameters<'static>,
++    /// Whether the code imports the host clock, read once at construction.
++    reads_host_clock: bool,
+     /// Kept alive for as long as the oracle runs: dropping it deletes the store the
+     /// runtime reads the contract from.
+     _scratch: Option<tempfile::TempDir>,
+@@ -102,6 +104,7 @@ impl RuntimeOracle {
+         )?;
+ 
+         let parameters = Parameters::from(parameters);
++        let reads_host_clock = super::imports_host_clock(&wasm);
+         let container = ContractContainer::Wasm(ContractWasmAPIVersion::V1(WrappedContract::new(
+             Arc::new(ContractCode::from(wasm)),
+             parameters.clone(),
+@@ -141,6 +144,7 @@ impl RuntimeOracle {
+             runtime,
+             key,
+             parameters,
++            reads_host_clock,
+             _scratch: Some(scratch),
+         })
+     }
+@@ -197,6 +201,10 @@ impl ConformanceOracle for RuntimeOracle {
+             .map(|delta| delta.into_bytes())
+             .map_err(classify)
+     }
++
++    fn reads_host_clock(&self) -> bool {
++        self.reads_host_clock
++    }
+ }
+ 
+ /// An oracle over a runtime someone else owns, for one contract.
+@@ -205,6 +213,11 @@ impl ConformanceOracle for RuntimeOracle {
+ /// ([`super::verifier::associativity_heals`]) on the runtime that just performed the
+ /// merge, so the probe's verdict comes from the same law the verifier checks rather
+ /// than from a second copy of it.
++///
++/// It has no code bytes in hand, so it answers
++/// [`ConformanceOracle::reads_host_clock`] with `false`. That is safe only while its
++/// one caller runs the associativity heal step and never the commutativity refusal
++/// exchange, which is the only reader of that answer.
+ pub(crate) struct BorrowedRuntimeOracle<'a, 'p, R: ?Sized> {
+     runtime: &'a mut R,
+     key: &'a ContractKey,
+@@ -226,6 +239,10 @@ impl<'a, 'p, R: ContractRuntimeInterface + ?Sized> BorrowedRuntimeOracle<'a, 'p,
+ }
+ 
+ impl<R: ContractRuntimeInterface + ?Sized> ConformanceOracle for BorrowedRuntimeOracle<'_, '_, R> {
++    fn reads_host_clock(&self) -> bool {
++        false
++    }
++
+     fn validate_state(
+         &mut self,
+         state: &[u8],
+```
+
+**File**: `crates/core/src/conformance/shadow.rs` (modified, +3/-1)
+```diff
+@@ -99,7 +99,9 @@ const MAX_CASES_PER_PROBE: usize = 64;
+ /// each WASM call traps at the runtime's epoch deadline (`max_execution_seconds`,
+ /// 5s by default), and a reconciliation case drives up to `MAX_RECONCILIATION_ROUNDS`
+ /// rounds of them, so a deliberately-slow contract can hold one case for far longer
+-/// than ten seconds. It cannot run unbounded.
++/// than ten seconds. It cannot run unbounded. A commutativity case whose merge the
++/// contract refuses is the other long case: the refusal exchange (#5725) adds up to
++/// `MAX_REFUSAL_EXCHANGE_ROUNDS` rounds of at most ten contract calls each.
+ ///
+ /// Two reasons this is left as it is rather than tightened. The probe runs on a
+ /// blocking thread, so an overshoot costs CPU rather than event-loop latency, which is
+```
+
+**File**: `crates/core/src/conformance/tests.rs` (modified, +656/-6)
+```diff
+@@ -45,6 +45,7 @@ struct Fake {
+     apply: BinaryFn,
+     summarize: UnaryFn,
+     delta: BinaryFn,
++    reads_clock: bool,
+ }
+ 
+ impl Fake {
+@@ -63,9 +64,22 @@ impl Fake {
+             apply: Box::new(|a, d| Ok(union(a, d))),
+             summarize: Box::new(|a| Ok(a.to_vec())),
+             delta: Box::new(|a, summary| Ok(difference(a, summary))),
++            reads_clock: false,
+         }
+     }
+ 
++    /// No usable delta path, so every update in a refusal exchange travels as a whole
++    /// state. Tests of the exchange's merge logic use this to keep the default
++    /// union delta from carrying the states together.
++    fn full_state_only(self) -> Self {
++        self.deltaing(|_, _| Ok(Vec::new()))
++    }
++
++    fn reading_clock(mut self) -> Self {
++        self.reads_clock = true;
++        self
++    }
++
+     fn merging(
+         mut self,
+         f: impl FnMut(&[u8], &[u8]) -> Result<Vec<u8>, OracleError> + 'static,
+@@ -150,6 +164,10 @@ impl ConformanceOracle for Fake {
+     fn get_state_delta(&mut self, state: &[u8], summary: &[u8]) -> Result<Vec<u8>, OracleError> {
+         (self.delta)(state, summary)
+     }
++
++    fn reads_host_clock(&self) -> bool {
++        self.reads_clock
++    }
+ }
+ 
+ fn is_canonical(state: &[u8]) -> bool {
+@@ -1743,24 +1761,656 @@ fn an_intermediate_the_contract_rejects_is_inconclusive() {
+     );
+ }
+ 
+-/// A contract that rejects an update it considers unauthorized (the River-style
+-/// signature-chain case) returns an error. One rejection is not a merge-law failure.
++/// A contract that refuses to merge two states it validates, in both directions and
++/// by every route (whole state and delta), every time, leaves the two peers holding
++/// them apart for good (#5725, the freenet/river#423 class). Exchanging the states
++/// again changes nothing, so this is a stable disagreement and is reported under
++/// `StateCommutativity`.
++///
++/// Until #5725 this case was pinned as inconclusive ("one rejection is not a
++/// merge-law failure"). That holds for an update the other side can move past, and
++/// is covered below by `a_refusal_that_clears_on_the_next_exchange_is_not_reported`;
++/// it does not hold for a refusal between two valid states that never clears.
+ #[test]
+-fn a_rejected_update_is_inconclusive_not_a_violation() {
+-    let mut fake = Fake::conforming().merging(|_a, _b| {
++fn a_refusal_that_leaves_the_peers_apart_is_a_violation() {
++    let refuse = |_: &[u8], _: &[u8]| -> Result<Vec<u8>, OracleError> {
+         Err(OracleError::contract(
+             "signature does not chain to the owner",
+         ))
+-    });
++    };
++    let mut fake = Fake::conforming().merging(refuse).applying(refuse);
++    let outcome = verify_case(
++        &mut fake,
++        &case(ConformanceProperty::StateCommutativity, &[&[1, 2], &[2, 3]]),
++    );
++    let violation = outcome.violation().cloned();
++    assert_violates(outcome, ConformanceProperty::StateCommutativity);
++    let violation = violation.expect("violation");
++    // The two sides of the finding are the states each peer ends up holding.
++    assert_eq!(violation.left, OutputDigest::of(&[1, 2]));
++    assert_eq!(violation.right, OutputDigest::of(&[2, 3]));
++    assert!(
++        violation
++            .detail
++            .contains("signature does not chain to the owner"),
++        "the finding must name the contract's own refusal: {}",
++        violation.detail
++    );
++}
++
++/// A contract that refuses the WHOLE state but accepts the delta computed from the
++/// receiver's summary converges on the network, because production sends the delta
++/// first. Not a finding: the exchange must follow the same order.
++#[test]
++fn a_refusal_of_the_whole_state_that_the_delta_gets_past_is_not_reported() {
++    let mut fake = Fake::conforming().merging(|_, _| Err(OracleError::contract("no whole states")));
+     assert_inconclusive(
+         verify_case(
+             &mut fake,
+             &case(ConformanceProperty::StateCommutativity, &[&[1, 2], &[2, 3]]),
+         ),
+-        Inconclusive::ContractError("signature does not chain to the owner".into()),
++        Inconclusive::ContractError("no whole states".into()),
++    );
++}
++
++/// A refusal on one side where the other side moves, and the two then agree, is the
++/// honest transient case (River's ban-cap skew): not a finding. It stays
++/// inconclusive with the contract's own reason, as before #5725.
++///
++/// This test guards against OVER-reporting, so it passes with or without the
++/// exchange: what it pins is that the exchange does not turn a transient refusal
++/// into a finding.
++///
++/// Union, except that the holder of `[1]` refuses `[2]` alone. The holder of `[2]`
++/// accepts `[1]` and reaches `[1, 2]`, which the holder of `[1]` then accepts.
++#[test]
++fn a_refusal_that_clears_on_the_next_exchange_is_not_reported() {
++    let mut fake = Fake::conforming()
++        .merging(|a, b| {
++            if a == [1] && b == [2] {
++                return Err(OracleError::contract("ban c
+```
+
+**File**: `crates/core/src/conformance/verifier.rs` (modified, +289/-20)
+```diff
+@@ -463,14 +463,27 @@ fn run<O: ConformanceOracle + ?Sized>(
+ 
+         ConformanceProperty::StateCommutativity => {
+             let (a, b) = (&case.states[0], &case.states[1]);
+-            let ab = merge(oracle, a, b)?;
+-            let ba = merge(oracle, b, a)?;
+-            Ok(compare(
+-                case.property,
+-                &ab,
+-                &ba,
+-                "merge(A, B) must equal merge(B, A)",
+-            ))
++            // A refusal is the contract's own `ContractError`; a runtime or resource
++            // failure still propagates as inconclusive (#5509), in the same order
++            // as before: `merge(A, B)` first.
++            let ab = heal_merge(oracle, a, b)?;
++            let ba = heal_merge(oracle, b, a)?;
++            match (ab, ba) {
++                (Ok(ab), Ok(ba)) => Ok(compare(
++                    case.property,
++                    &ab,
++                    &ba,
++                    "merge(A, B) must equal merge(B, A)",
++                )),
++                (ab, ba) => refused_merge_outcome(
++                    oracle,
++                    case.property,
++                    a,
++                    b,
++                    FirstMerges { ab, ba },
++                    &case.related,
++                ),
++            }
+         }
+ 
+         ConformanceProperty::StateAssociativity => {
+@@ -958,20 +971,280 @@ pub(crate) fn associativity_heals<O: ConformanceOracle + ?Sized>(
+     Ok(Heal::OutOfPasses)
+ }
+ 
+-/// A heal-step merge: the contract's own rejection comes back as `Ok(Err(reason))`
+-/// so the caller can report it, and every other failure as `Err`, inconclusive.
++/// A merge whose refusal the caller acts on (the associativity heal step, and the
++/// commutativity refusal exchange): the contract's own rejection comes back as
++/// `Ok(Err(reason))` so the caller can judge it, and every other failure as `Err`,
++/// inconclusive.
+ fn heal_merge<O: ConformanceOracle + ?Sized>(
+     oracle: &mut O,
+     base: &[u8],
+     other: &[u8],
+ ) -> Result<Result<Vec<u8>, String>, Inconclusive> {
+-    match merge(oracle, base, other) {
++    refusable(merge(oracle, base, other))
++}
++
++/// Split a contract call's result into the contract's own refusal, `Ok(Err(reason))`,
++/// and every other failure, `Err`, which stays inconclusive.
++fn refusable(
++    result: Result<Vec<u8>, Inconclusive>,
++) -> Result<Result<Vec<u8>, String>, Inconclusive> {
++    match result {
+         Ok(state) => Ok(Ok(state)),
+         Err(Inconclusive::ContractError(reason)) => Ok(Err(reason)),
+         Err(other) => Err(other),
+     }
+ }
+ 
++/// What a commutativity case reports when the contract refused `merge(A, B)` or
++/// `merge(B, A)` for two states it validates (#5725).
++///
++/// A refusal on its own is not a finding: a contract may reject an update the other
++/// side then moves past (River's transient ban-cap skew clears after the reverse
++/// merge and one more exchange). What is a finding is a refusal that leaves the two
++/// peers holding different states for good, the freenet/river#423 class. A node
++/// that refuses an update keeps its own state, so if neither peer accepts what the
++/// other sends, by delta or by whole state, they never converge.
++///
++/// So the two peers are simulated exchanging states, see [`refusal_exchange`]:
++///
++/// - They agree: the refusal was transient. Inconclusive with the contract's reason,
++///   as before #5725.
++/// - They stop moving while still apart: a stable disagreement, reported as a
++///   [`ConformanceProperty::StateCommutativity`] violation between the two states
++///   they end on. This is the same law a contract breaks when it keeps its own state
++///   by returning it (mutual rejection, see [`ConformanceProperty`]); refusing by
++///   error is the same behaviour reached by a different return value. It is
++///   checkable from the evidence bytes alone, and `verify_case` re-runs it before
++///   reporting, so the refusal must reproduce with the same outcome.
++/// - The rounds run out: [`Inconclusive::RoundLimit`]. A cycle lands here too,
++///   deliberately: the exchange follows one delivery order, and a different order
++///   might converge. A fixpoint does not have that problem, because two peers
++///   holding states neither will accept from the other stay put under every order.
++///
++/// # A contract that reads the host clock is not accused
++///
++/// A clock-gated refusal (the common shape is rejecting a timestamp more than K
++/// seconds in the future, #5465) reproduces on the re-run, yet the network
++/// converges once time passes. Re-running cannot tell that apart from a permanent
++/// refusal, so when [`ConformanceOracle::reads_host_clock`] says the contract imports
++/// the clock, a stuck exchange stays [`Inconclusive::ContractError`], with a reason
++/// that says why it was not reported. That leaves a residual: a clock-reading
++/// contract whose refusal is permanent is not reported here.
++fn refused_merge_outcome<O: ConformanceOracle
+```
+
+**File**: `crates/core/src/conformance/wasm_tests.rs` (modified, +32/-0)
+```diff
+@@ -128,6 +128,14 @@ async fn verifier_matches_real_wasm_for_every_planted_defect()
+     // non-trivial number of generated cases — the false-positive gate against
+     // real WASM execution, not just against the pure-Rust fakes in `tests.rs`.
+     let mut conforming = RuntimeOracle::standalone(wasm.clone(), vec![CONFORMING]).await?;
++    // The oracle answers `reads_host_clock` from the code it was built over, which
++    // is what keeps a clock-gated refusal from being reported (#5725). This fixture
++    // imports the clock (mode 4 reads it), so the answer must be `true` here.
++    {
++        use super::oracle::ConformanceOracle;
++        assert!(super::imports_host_clock(&wasm));
++        assert!(conforming.reads_host_clock());
++    }
+     let corpus = Corpus {
+         deltas: vec![bytes(&[9]), bytes(&[7])],
+         ..Corpus::from_states(vec![
+@@ -572,3 +580,27 @@ async fn a_contract_sees_the_overridden_clock_through_real_wasm()
+ 
+     Ok(())
+ }
++
++/// `RuntimeOracle` answers `reads_host_clock` from the code: `false` for a module
++/// that does not import the clock. The fixture used elsewhere in this file imports
++/// it, so without this test a hard-coded `true` would pass.
++#[tokio::test(flavor = "multi_thread")]
++async fn a_clock_free_contract_does_not_read_the_host_clock()
++-> Result<(), Box<dyn std::error::Error>> {
++    use super::oracle::ConformanceOracle;
++    // The smallest module `RuntimeOracle::standalone` accepts as a contract: a
++    // memory and the four entry points, and no imports at all.
++    let wasm = wat::parse_str(
++        "(module\n  \
++           (memory (export \"memory\") 1)\n  \
++           (func (export \"validate_state\") (result i32) i32.const 0)\n  \
++           (func (export \"update_state\") (result i32) i32.const 0)\n  \
++           (func (export \"summarize_state\") (result i32) i32.const 0)\n  \
++           (func (export \"get_state_delta\") (result i32) i32.const 0)\n\
++         )\n",
++    )?;
++    assert!(!super::imports_host_clock(&wasm));
++    let oracle = RuntimeOracle::standalone(wasm, vec![]).await?;
++    assert!(!oracle.reads_host_clock());
++    Ok(())
++}
 ```
 
 ---
 
-### Incident Patch 2: `c1d8844a` (2026-11-09)
-**Commit Message**: fix(update): spend a locked-out node's retry only on a check that runs, and let the run wrapper update a crash loop (#6157)
+### Incident Patch 2: `277a308d` (2026-11-10)
+**Commit Message**: feat(transport): make QUIC shadow the default on Windows (#6174)
 
-**File**: `.claude/rules/deployment.md` (modified, +6/-0)
+**File**: `.claude/rules/transport.md` (modified, +22/-15)
 ```diff
-@@ -72,6 +72,12 @@ Its sibling `FREENET_GIT_COMMIT_HASH` has the same empty-means-no-override rule
- and must be <= 40 hex characters. Passing a placeholder such as `unknown` FAILS
- THE BUILD; pass empty instead and let build.rs's own fallback report `unknown`.
- See docs/nix.md.
-+
-+The daily retry of a locked-out node (`claim_update_attempt`) must be spent
-+only on a check that actually runs: the startup check claims AFTER its jitter,
-+and the Windows/macOS run wrapper's crash-loop update (`crash_update_due`, at 3,
-+6, 12, 24 and 48 consecutive failures, at most 10 minutes each) claims right
-+before it runs `freenet update`. `freenet update` itself never claims (#6152).
- ```
+@@ -1117,16 +1117,16 @@ it must not wait unless it is a pacing point.
+ #### QUIC endpoint (`transport/quic.rs`, #5940 step c2)
  
- ### WHEN tightening security (sandbox, CSP, CORS)
+ `transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
+-`QuicMode::default_mode`, shadow on Linux and macOS and off elsewhere, since
+-the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
++`QuicMode::default_mode`, shadow on Linux, macOS and Windows and off
++elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
+ `prefer` negotiates data with the release's share of pairs ("Data slice" below;
+ `upgrade::policy::log_startup` reports the share at INFO once per node), and a pair
+ with both bits sends its data on the path ("QUIC send route" below). At a share of
+ 0, with no `quic-data-percent`, `prefer` differs from `shadow` only by the bit, which
+ stays 0. The release that raises the share above 0 must say in its notes that
+ existing `prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
+-changes. QUIC must stay off by default on Windows until the crash-loop
+-breaker has been confirmed on a real Windows machine (#6031). The default is
++changes. Windows is shadow by default too since its crash-loop breaker was
++confirmed on a real Windows machine (#6031). The default is
+ read, never written to config.toml: a node that did not set the key follows the
+ release it runs, so a default-off release is the kill switch. It does not reach
+ a node that ever ran with `--transport-quic` or `FREENET_TRANSPORT_QUIC`: those
+@@ -1679,24 +1679,31 @@ peer presents a key that is not its transport key.
+ 
+ #### QUIC rollout (#5940)
+ 
+-There are no opt-in stages; releases do the rollout. QUIC stays off by default
+-on Windows throughout, until its breaker is confirmed on a real Windows machine
+-(#6031). Before default-on there, run on real Windows 10 and 11: the
+-`quic_breaker_windows` test; logoff, shutdown and restart with Fast Startup on
+-and off; tray Restart, Stop and Quit; `freenet service stop` and `restart`; an
+-update exit; a real abort; and sleep during a run. Then weigh what that breaker
+-never catches: a crash loop with runs of 10 minutes or more, and a fault that
+-crashes once a day. Every step watches: peers disappearing per version
++There are no opt-in stages; releases do the rollout. Windows is shadow by
++default since its breaker (a short run counts only if it panicked in QUIC code)
++was confirmed on a real Windows machine (#6031: Windows Server 2022, kills, a
++reboot, a logoff, `service restart`/`stop` never counted; injected aborts and a
++crash loop under the run wrapper tripped). Not run on a machine, covered by the
++rule that only a QUIC panic counts: Fast Startup, sleep, tray Restart/Stop/Quit
++and an update exit. What it never catches: a crash not preceded by a QUIC
++panic, a crash loop with runs of 10 minutes or more, and a fault that crashes
++once a day. Every step watches: peers disappearing per version
+ against the previous rollout (a node that dies before reporting is absent from
+ every rate), endpoint-down, panics and breaker trips, RSS against
+ `quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
++From the first release with the Windows default, the release watch also reads
++Windows separately: `quic_adapter_panicked` and `quic_breaker_trips` by version
++against the previous release, and peers with `quic_breaker_suppressed`. A
++Windows QUIC panic in the field is read (location, version) before the next
++release goes out.
+ 
+ - Step 0: the first negotiating release ships with QUIC off. Its nodes answer
+   offers (`Decline{disabled}` with the key off); `upgrade_control_received`
+   stays near 0 and UDP metrics do not change.
+ - Step 1: nova gateways and framework in shadow for 24-48 h. The 24 h gateway
+   A/B runs only if something looks odd. Rollback: set the key to off and restart.
+-- Step 2: shadow on by default on Linux and macOS (`QuicMode::default_mode`). Gate: at least 95% upgrade
++- Step 2: shadow on by default on Linux and macOS, then Windows once its
++  breaker was confirmed on a real machine (`QuicMode::default_mode`). Gate: at least 95% upgrade
+   success by `established_as_offerer / accepted`; fewer than 1 fallback per
+   path-day excluding endpoint and restart causes; memory within the measured
+   terms (about 0.3 to 0.5 MiB per idle path). An abort spike stops the step.
+@@ -2295,7 +2302,7 @@ QUIC send route (#5940 e5b-6, quic/upgrade/data_route.rs,
+   waiting for its source does not count (WatchedSource). It costs a normal
+   backoff.
+   Fast path: Session::routed is an atomic set only while the live attempt holds a
+-  route, so a connection with no route (shadow, the default on Linux and macOS)
++  route, so a connection with no route (shadow, the default on Linux, macOS and Windows)
+   sends without taking the session's lock. enable_
 ```
 
-**File**: `crates/core/src/bin/commands/auto_update.rs` (modified, +101/-0)
+**File**: `crates/core/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -1878,6 +1878,40 @@ pub fn claim_update_attempt() -> Result<UpdateAttempt, ClaimRefused> {
-     }
- }
- 
-+/// Why [`claim_update_attempt`] would refuse an attempt now, or `Ok` if it
-+/// would allow one, without spending anything.
-+pub fn peek_update_attempt() -> Result<(), ClaimRefused> {
-+    match state_dir() {
-+        Some(dir) => {
-+            claim_decision_at(&dir, env!("CARGO_PKG_VERSION"), SystemTime::now()).map(|_| ())
-+        }
-+        None => Err(ClaimRefused::NoStateDir),
-+    }
-+}
-+
-+/// The startup update check, ordered so that a locked-out node's daily retry
-+/// is spent only on a check that runs (#6152): wait out `jitter` first, and
-+/// only then `claim` the attempt and run `check` with it. The startup check
-+/// runs in a task beside the node, so a node that dies during the jitter
-+/// (a crash loop) used to spend its retry without ever asking GitHub, and
-+/// could go days without a check. Dropped during the jitter, this spends
-+/// nothing.
-+pub async fn claim_after_jitter<J, C, F, Fut>(
-+    jitter: J,
-+    claim: C,
-+    check: F,
-+) -> Result<Option<String>, ClaimRefused>
-+where
-+    J: std::future::Future<Output = ()>,
-+    C: FnOnce() -> Result<UpdateAttempt, ClaimRefused>,
-+    F: FnOnce(UpdateAttempt) -> Fut,
-+    Fut: std::future::Future<Output = Option<String>>,
-+{
-+    jitter.await;
-+    let attempt = claim()?;
-+    Ok(check(attempt).await)
-+}
-+
- /// Whether [`claim_update_attempt`] would allow an attempt now, without
- /// spending anything. The version-less triggers check this before staging and
- /// claim only once staging decides to exit (#5799), so a stay does not spend a
-@@ -4863,4 +4897,71 @@ mod tests {
-         let vague = GithubRateLimitedError { retry_after: None }.user_message();
-         assert!(vague.contains("within the hour"), "{vague}");
-     }
-+
-+    /// #6152: a locked-out node whose process dies during the startup
-+    /// jitter spends no retry, so the next start still checks; one that gets
-+    /// through the jitter claims it and runs the check with the claim.
-+    #[tokio::test]
-+    async fn dying_inside_the_startup_jitter_spends_no_retry() {
-+        use std::future::Future;
-+        let tmp = tempfile::tempdir().unwrap();
-+        let dir = tmp.path();
-+        let now = lock_out(dir) + UPDATE_LOCKOUT_COOLDOWN;
-+        assert!(
-+            update_attempt_claimable_at(dir, "0.2.140", now),
-+            "premise: retry due"
-+        );
-+
-+        // The process dies while the jitter is still running: the future is
-+        // dropped part-way.
-+        let checked = std::cell::Cell::new(false);
-+        {
-+            let mut startup = Box::pin(claim_after_jitter(
-+                std::future::pending::<()>(),
-+                || claim_update_attempt_unless_cooling_at(dir, "0.2.140", now),
-+                |_attempt| async {
-+                    checked.set(true);
-+                    None
-+                },
-+            ));
-+            let waker = futures::task::noop_waker();
-+            let mut cx = std::task::Context::from_waker(&waker);
-+            assert!(startup.as_mut().poll(&mut cx).is_pending());
-+        }
-+        assert!(!checked.get());
-+        assert!(!dir.join(LOCKOUT_RETRY_FILE).exists(), "nothing spent");
-+        assert!(
-+            update_attempt_claimable_at(dir, "0.2.140", now),
-+            "still due"
-+        );
-+
-+        // The next start gets through the jitter: claimed, then checked.
-+        let latest = claim_after_jitter(
-+            async {},
-+            || claim_update_attempt_unless_cooling_at(dir, "0.2.140", now),
-+            |_attempt| async {
-+                checked.set(true);
-+                Some("0.2.141".to_string())
-+            },
-+        )
-+        .await;
-+        assert_eq!(latest, Ok(Some("0.2.141".to_string())));
-+        assert!(checked.get());
-+        assert!(dir.join(LOCKOUT_RETRY_FILE).exists(), "spent by the check");
-+        assert!(!update_attempt_claimable_at(dir, "0.2.140", now));
-+
-+        // Spent: a further start refuses after its jitter and checks nothing.
-+        checked.set(false);
-+        let refused = claim_after_jitter(
-+            async {},
-+            || claim_update_attempt_unless_cooling_at(dir, "0.2.140", now),
-+            |_attempt| async {
-+                checked.set(true);
-+                None
-+            },
-+        )
-+        .await;
-+        assert!(refused.is_err());
-+        assert!(!checked.get());
-+    }
- }
+@@ -119,8 +119,8 @@ rustls-native-certs = "0.8.4"
+ # Keep it semver-compatible with reqwest's rustls: os_trust probes certificates
+ # with it on the assumption that reqwest validates them identically.
+ rustls = { version = "0.23", default-features = false, features = ["std"] }
+-# QUIC endpoint (transport/quic.rs, #5940): on in shadow by default on Linux
+-# and macOS, off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
++# QUIC endpoint (transport/quic.rs, #5940): on in shadow by default on Linux,
++# macOS and Windows, off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
+ # crate's own Runtime over TimeSource, so simulation drives it), no
+ # platform-verifier (peers are authenticated by raw public keys, never by a CA
+ # root store), and no aws-lc-rs (deny.toml bans it).
 ```
 
-**File**: `crates/core/src/bin/commands/service.rs` (modified, +363/-3)
+**File**: `crates/core/src/bin/commands/service.rs` (modified, +2/-2)
 ```diff
-@@ -3947,6 +3947,336 @@ echo "RC=$?"
-         assert_eq!(state.consecutive_failures, 7);
-     }
- 
-+    /// #6152: a crash loop run to the wrapper's give-up limit tries an update
-+    /// itself a bounded number of times, never before the third crash, never
-+    /// twice for one failure count, and without resetting the count, so the
-+    /// give-up limit still holds.
-+    #[test]
-+    fn a_crash_loop_triggers_a_bounded_update_attempt() {
-+        let mut state = WrapperState::new();
-+        let mut attempts_at = Vec::new();
-+        let mut gave_up_at = None;
-+        for crash in 1..=200u32 {
-+            match next_wrapper_action(&mut state, 1, false, None) {
-+                WrapperAction::BackoffAndRelaunch { .. } => {}
-+                other @ (WrapperAction::Update
-+                | WrapperAction::Exit
-+                | WrapperAction::KillAndRetry) => {
-+                    panic!("crash {crash}: {other:?}")
-+                }
-+            }
-+            if state.consecutive_failures >= WRAPPER_MAX_CONSECUTIVE_FAILURES {
-+                gave_up_at = Some(crash);
-+                break;
-+            }
-+            if crash_update_due(state.consecutive_failures) {
-+                attempts_at.push(state.consecutive_failures);
-+            }
-+        }
-+        assert_eq!(attempts_at, vec![3, 6, 12, 24, 48]);
-+        assert_eq!(gave_up_at, Some(WRAPPER_MAX_CONSECUTIVE_FAILURES));
-+        assert!(!(0..3).any(crash_update_due), "not before the third crash");
-+    }
-+
-+    /// #6157 review: the crash-loop update runs only after an ordinary crash.
-+    /// Not after an exit 42 or a probation crash (each already ran an update
-+    /// for this exit), and not after a port conflict: the attempt forwards the
-+    /// exit code, which during probation `freenet update` would count as a
-+    /// crash, so a stale process holding the port after an update could roll
-+    /// back and pin a good release.
-+    #[test]
-+    fn the_crash_loop_update_skips_port_conflicts_and_exits_already_updated() {
-+        assert!(
-+            crash_update_wanted(1, false, false, 3),
-+            "an ordinary crash at 3"
-+        );
-+        assert!(
-+            !crash_update_wanted(1, true, false, 3),
-+            "a port conflict must not reach `freenet update` as a crash"
-+        );
-+        assert!(!crash_update_wanted(1, false, true, 3), "a probation crash");
-+        assert!(
-+            !crash_update_wanted(WRAPPER_EXIT_UPDATE_NEEDED, false, false, 3),
-+            "an exit 42 already ran an update"
-+        );
-+        assert!(!crash_update_wanted(1, false, false, 4), "not a due count");
-+    }
-+
-+    /// #6157 review: on the macOS app, `freenet update` exits 44 after staging
-+    /// the bundle updater, which waits for the wrapper to exit before it swaps
-+    /// the bundle. The crash-loop update must exit the wrapper for it, as the
-+    /// other wrapper update paths do; relaunching makes the updater time out
-+    /// and delete the staged bundle. Only a replaced binary re-execs the
-+    /// wrapper, and everything else (including a skipped or stopped attempt)
-+    /// relaunches.
-+    #[test]
-+    fn a_crash_loop_update_that_stages_the_bundle_exits_for_the_updater() {
-+        use crate::commands::update::UpdateSubprocessOutcome as O;
-+        for (outcome, next) in [
-+            (Some(O::BinaryReplaced), CrashLoopUpdateNext::RestartWrapper),
-+            (
-+                Some(O::BundleUpdateStaged),
-+                CrashLoopUpdateNext::ExitForBundleUpdater,
-+            ),
-+            (Some(O::AlreadyUpToDate), CrashLoopUpdateNext::Relaunch),
-+            (Some(O::OtherFailure), CrashLoopUpdateNext::Relaunch),
-+            (Some(O::SpawnFailed), CrashLoopUpdateNext::Relaunch),
-+            (None, CrashLoopUpdateNext::Relaunch),
-+        ] {
-+            assert_eq!(crash_loop_update_next(outcome), next, "{outcome:?}");
-+        }
-+    }
-+
-+    /// The crash-loop update is wired into the backoff branch: after the
-+    /// give-up check, gated by `crash_update_wanted` with the real port-conflict
-+    /// and probation flags, a replaced binary re-execs the wrapper and a staged
-+    /// bundle exits it, and the remaining backoff is shortened by the time the
-+    /// attempt took. Inside the attempt: the node's claim, a bounded
-+    /// `freenet update`, the failure counter driven like every other wrapper
-+    /// update, then the decision. Pinned from the source with comments
-+    /// stripped, since the loop spawns processes.
-+    #[test]
-+    fn the_crash_loop_update_is_wired_into_the_backoff() {
-+        let flat: String = include_str!("service/wrapper.rs")
-+            .lines()
-+            .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+            .collect::<String>()
-+            .split_whitespace()
-+            .collect();
-+        let arm = flat
-+            .find("WrapperAction::BackoffAndRelaunch{secs}=>{")
-+            .expect("the backoff arm");
-+        let body = &flat[arm..];
-+ 
+@@ -3900,8 +3900,8 @@ echo "RC=$?"
+     /// crash-loop breaker's stop note to its child, and records the child's
+     /// pid in it as the statement right before every kill of any form
+     /// (`child.kill()`, `start_kill`, a `taskkill` of `child.id()`), so a
+-    /// tray Restart, Stop, Quit or update is not read as a crash. The breaker
+-    /// is off on Windows.
++    /// tray Restart, Stop, Quit or update is not read as a crash. Windows has
++    /// no stop note: its breaker counts only runs that panicked in QUIC code.
+     #[test]
+     fn wrapper_records_every_deliberate_child_kill_for_the_quic_breaker() {
+         let body = quic_breaker_pin_body(
 ```
 
-**File**: `crates/core/src/bin/commands/service/wrapper.rs` (modified, +371/-4)
+**File**: `crates/core/src/config.rs` (modified, +13/-9)
 ```diff
-@@ -1,4 +1,5 @@
- use anyhow::{Context, Result};
-+use freenet::simulation::{RealTime, TimeSource};
- use std::path::Path;
+@@ -359,7 +359,7 @@ impl Default for ConfigArgs {
+                 ledbat_min_ssthresh: None, // Uses default from NetworkApiConfig
+                 congestion_control: None,  // Default: fixedrate (set in NetworkApiConfig)
+                 bbr_startup_rate: None,    // Uses default from BBR config
+-                transport_quic: None,      // Default: shadow on Linux and macOS
++                transport_quic: None,      // Default: shadow on Linux, macOS and Windows
+                 quic_max_paths: None,      // Default: max-number-of-connections
+                 quic_data_percent: None,   // Default: this release's share of pairs
+                 quic_ignore_crash_breaker: None,
+@@ -2578,7 +2578,7 @@ pub struct NetworkArgs {
+     pub bbr_startup_rate: Option<u64>,
  
- #[cfg(target_os = "macos")]
-@@ -246,6 +247,169 @@ pub(super) fn note_child_runtime(state: &mut WrapperState, runtime_secs: u64) {
+     /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
+-    /// `shadow` on Linux and macOS, and `off` elsewhere, Windows included.
++    /// `shadow` on Linux, macOS and Windows, and `off` elsewhere.
+     ///
+     /// `shadow` builds a QUIC endpoint on the network port and upgrades
+     /// connections to peers that also run it to a QUIC path. The path carries
+@@ -2963,7 +2963,7 @@ pub struct NetworkApiConfig {
+     pub bbr_startup_rate: Option<u64>,
+ 
+     /// QUIC transport (#5940): `off`, `shadow` or `prefer`; unset reads as
+-    /// `QuicMode::default_mode` (shadow on Linux and macOS). Kept as written, so a value from a later release
++    /// `QuicMode::default_mode` (shadow on Linux, macOS and Windows). Kept as written, so a value from a later release
+     /// round-trips; see [`Self::quic_settings`] for how it is read.
+     #[serde(
+         default,
+@@ -7548,16 +7548,20 @@ shutdown-drain-secs = 42
+         assert_seeded_values_bound(&cfg);
      }
- }
  
-+/// The first crash count at which the wrapper tries an update itself
-+/// ([`crash_update_due`], #6152).
-+const CRASH_UPDATE_FIRST_AT: u32 = 3;
-+
-+/// Whether the wrapper tries `freenet update` itself after this many
-+/// consecutive failures: at 3, 6, 12, 24 and 48, so at most five attempts
-+/// before the wrapper gives up at [`WRAPPER_MAX_CONSECUTIVE_FAILURES`], each
-+/// inside one backoff wait. A crash loop whose every run dies before the
-+/// node's own update check otherwise never updates, so a release that fixes
-+/// the crash cannot reach it (#6152). The attempts do not reset the failure
-+/// count: the give-up limit still holds.
-+pub(super) fn crash_update_due(consecutive_failures: u32) -> bool {
-+    consecutive_failures >= CRASH_UPDATE_FIRST_AT
-+        && consecutive_failures % CRASH_UPDATE_FIRST_AT == 0
-+        && (consecutive_failures / CRASH_UPDATE_FIRST_AT).is_power_of_two()
-+}
-+
-+/// Whether the backoff after this exit runs a crash-loop update attempt
-+/// ([`crash_update_due`]). Never after an exit 42 or a probation crash, which
-+/// already ran an update for this exit. Never after a port conflict: the
-+/// attempt forwards the exit code so `freenet update` keeps the supervised
-+/// download budget, and during probation that code would count as a crash, so
-+/// a port held by a stale process after an update (#3967) could roll back and
-+/// pin a good release.
-+pub(super) fn crash_update_wanted(
-+    exit_code: i32,
-+    is_port_conflict: bool,
-+    probation_crash: bool,
-+    consecutive_failures: u32,
-+) -> bool {
-+    exit_code != WRAPPER_EXIT_UPDATE_NEEDED
-+        && !is_port_conflict
-+        && !probation_crash
-+        && crash_update_due(consecutive_failures)
-+}
-+
-+/// The longest a crash-loop update attempt may hold the relaunch. Past it the
-+/// wrapper stops `freenet update` and relaunches the node: the attempt is an
-+/// extra chance to update, and must never keep the node down.
-+const CRASH_UPDATE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10 * 60);
-+
-+/// What the wrapper does after a crash-loop update attempt.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(super) enum CrashLoopUpdateNext {
-+    /// The binary on disk was replaced: re-exec the wrapper from it.
-+    RestartWrapper,
-+    /// The macOS app's bundle updater was staged (exit 44). It waits for this
-+    /// process to exit before it swaps the bundle, so the wrapper exits, as the
-+    /// other wrapper update paths do. Relaunching instead would make the
-+    /// updater time out and delete the staged bundle.
-+    ExitForBundleUpdater,
-+    /// Nothing was installed (skipped, no release, failed or stopped at
-+    /// [`CRASH_UPDATE_TIMEOUT`]): go on with the backoff and relaunch.
-+    Relaunch,
-+}
-+
-+/// [`CrashLoopUpdateNext`] after an attempt stopped at [`CRASH_UPDATE_TIMEOUT`].
-+/// `freenet update` replaces the binary before its slower last steps (the
-+/// service-file update, the fdev download), so a stop can come after a
-+/// successful install. The wrapper must then re-exec: on Windows the running
-+/// wrapper's image is the moved-aside `freenet.old`, and every update it ran
-+/// later would fail to remove that file and count toward the lockout.
-+pub(super) fn crash_loop_update_after_stop(replaced: bool) -> CrashLoopUpdateNext {
-+    if replaced {
-+        CrashLoopUpdateNext::RestartWrapper
-+    } else {
-+        crash_loop_update_next(None)
-+    }
-+}
-+
-+/// [`CrashLoopUpdateNext`] for an attempt's outcome; `None` when the attempt
-+/// was skipped.
-+pub(super) fn crash_loop_update_next(
-+    outcome: Option<super::super::update::UpdateSubprocessOutcome>,
-+) -> CrashLoopUpdateNext {
-+    use super::super::update::UpdateSubprocessOutcome;
-+    match outcome {
-+        Some(UpdateSubprocessOutcome::BinaryReplaced) => CrashLoopUpdateNext::RestartWrapper,
-+        Some(UpdateSubprocessOutcome::BundleUpdateStaged) => {
-+            CrashLoopUpdateNext::ExitForBundleUpdater
-+        }
-+        Some(
-+            UpdateSubprocessOutcome::AlreadyUpToDate
-+            | UpdateSubprocessOutcome::OtherFailure
-+            | UpdateSubprocessOutcome::SpawnFailed,
-+        )
-+        | None => CrashLoopUpdateNext::Relaunch,
-+    }
-+}
-+
-+/// One crash-loop update attempt ([`crash_update_due`]): claim the attempt
-+/// as the node does (a locked-out node spends its daily retry here, even when
-+/// no release is found, or skips if it is spent), run `freenet update` with
-+/// the crash's exit code for at most [`CRASH_UPDATE_TIMEOUT`], and drive the
-+/// failure counter as every other wrapper update path does. A failed, skipped
-+/// or stopped attempt changes nothing else: the wrapper goes on with its
-+/// backoff and relaunch.
-+fn crash_loop_u
+-    /// An unset `transport-quic` is shadow, and off on Windows, which must stay
+-    /// off until its crash-loop breaker has been confirmed on a real Windows
++    /// An unset `transport-quic` is shadow on Linux, macOS and Windows; Windows
++    /// joined once its crash-loop breaker was confirmed on a real Windows
+     /// machine (#6031). The lib tests do not compile on Windows, so
+     /// `tests/quic_breaker_windows.rs` pins the Windows half through the real
+     /// binary. The default is not written into the config, so a default-off
+     /// release turns QUIC off on every node that did not set the key.
+     #[test]
+-    fn quic_is_shadow_by_default_except_on_windows() {
++    fn quic_is_shadow_by_default_on_linux_macos_and_windows() {
+         use crate::transport::quic::QuicMode;
+-        let expected = if cfg!(any(target_os = "linux", target_os = "macos")) {
++        let expected = if cfg!(any(
++            target_os = "linux",
++            target_os = "macos",
++            target_os = "windows"
++        )) {
+             QuicMode::Shadow
+         } else {
+             QuicMode::Off
+@@ -7587,8 +7591,8 @@ shutdown-drain-secs = 42
+         assert_eq!(unset.network_api.transport_quic, None);
+         assert_eq!(
+             unset.network_api.quic_settings().is_some(),
+-            cfg!(any(target_os = "linux", target_os = "macos")),
+-            "an unset key builds an endpoint on Linux and macOS only"
++            crate::transport::quic::QuicMode::default_mode().builds_endpoint(),
++            "an unset key builds an endpoint where the platform default does"
+         );
+         assert!(
+             !toml::to_string(&unset).unwrap().contains("transport-quic"),
 ```
 
-**File**: `crates/core/src/bin/commands/update.rs` (modified, +9/-1)
+**File**: `crates/core/src/transport/quic.rs` (modified, +18/-12)
 ```diff
-@@ -2873,8 +2873,16 @@ fn ensure_service_file_updated(_binary_path: &Path, _quiet: bool) -> Result<()>
+@@ -83,12 +83,12 @@ pub(crate) use liveness::QuicAvailabilityWatch;
+ 
+ /// Whether the node may use QUIC: the `transport-quic` config key.
+ ///
+-/// An unset key is [`QuicMode::default_mode`]: shadow on Linux and macOS, and
+-/// off elsewhere. Windows stays off until the crash-loop breaker has been
+-/// confirmed on a real Windows machine (#6031), and other platforms because
+-/// the breaker reads no boot identity there and so cannot trip. The Windows
+-/// breaker counts short runs that panicked in QUIC code instead of detecting
+-/// crashes ([`breaker`]). The default is decided when the value is read and
++/// An unset key is [`QuicMode::default_mode`]: shadow on Linux, macOS and
++/// Windows, and off elsewhere, because the breaker reads no boot identity
++/// there and so cannot trip. The Windows breaker counts short runs that
++/// panicked in QUIC code instead of detecting crashes ([`breaker`]); it was
++/// confirmed on a real Windows machine before Windows defaulted to shadow
++/// (#6031). The default is decided when the value is read and
+ /// never written to `config.toml`, so a later release can change it
+ /// for every node that did not set the key, which is how a default-off
+ /// release turns QUIC off. A value given with `--transport-quic` or
+@@ -97,7 +97,7 @@ pub(crate) use liveness::QuicAvailabilityWatch;
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum QuicMode {
+     /// No QUIC endpoint is built and no QUIC datagram is read. The default on
+-    /// platforms other than Linux and macOS.
++    /// platforms other than Linux, macOS and Windows.
+     Off,
+     /// The node builds a QUIC endpoint on its UDP port and upgrades a UDP
+     /// session to a QUIC path that carries only control frames: all
+@@ -108,7 +108,8 @@ pub enum QuicMode {
+     /// endpoint driver and one upgrade task per connection run; a promoted
+     /// connection's higher key sends `Upgrade` messages on its UDP session; and
+     /// the endpoint's memory. If the endpoint cannot be built the node logs a
+-    /// warning and runs with QUIC off. The default on Linux and macOS.
++    /// warning and runs with QUIC off. The default on Linux, macOS and
++    /// Windows.
+     Shadow,
+     /// Negotiates data on a path to a peer in the release's slice
+     /// (`upgrade::slice`), and sends its data on a path where both sides did. At a
+@@ -132,11 +133,16 @@ impl QuicMode {
+     /// See [`QuicMode::Prefer`].
+     pub const PREFER: &'static str = "prefer";
+ 
+-    /// What an unset `transport-quic` means on this platform: shadow on Linux
+-    /// and macOS, and off elsewhere (Windows until #6031; other platforms
+-    /// because the crash-loop breaker cannot trip there).
++    /// What an unset `transport-quic` means on this platform: shadow on Linux,
++    /// macOS and Windows, and off elsewhere, because the crash-loop breaker
++    /// cannot trip there. Windows joined once its breaker was confirmed on a
++    /// real Windows machine (#6031).
+     pub const fn default_mode() -> Self {
+-        if cfg!(any(target_os = "linux", target_os = "macos")) {
++        if cfg!(any(
++            target_os = "linux",
++            target_os = "macos",
++            target_os = "windows"
++        )) {
+             Self::Shadow
+         } else {
+             Self::Off
+```
+
+**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +3/-3)
+```diff
+@@ -18,9 +18,9 @@
+ //!
+ //! **Windows is weaker than unix.** There, a crash not preceded by a panic in
+ //! QUIC code is not counted, a crash loop whose runs each last ten minutes or
+-//! more never trips, and neither does a fault that crashes once a day. That must be weighed before QUIC goes on by default on Windows. QUIC
+-//! stays off by default there until the breaker has been confirmed on a real
+-//! Windows machine (#6031).
++//! more never trips, and neither does a fault that crashes once a day. QUIC
++//! became shadow by default on Windows after this breaker was confirmed on a
++//! real Windows machine (#6031), with those limits weighed.
+ //!
+ //! # The marker
+ //!
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +1/-1)
+```diff
+@@ -930,7 +930,7 @@ fn data_route_takes_no_lock(session: &Arc<Session>) -> bool {
+ 
+ /// With no route, as on a path without both data bits, a send reads one atomic
+ /// and never waits for the session's lock, which the driver also takes. Shadow is
+-/// the default on Linux and macOS, so this is every connection there.
++/// the default on Linux, macOS and Windows, so this is every connection there.
+ #[test]
+ fn a_connection_without_a_route_takes_no_lock_to_send() {
+     bounded(|| async move {
+```
+
+**File**: `crates/core/tests/quic_breaker_windows.rs` (modified, +11/-7)
+```diff
+@@ -100,6 +100,9 @@ impl Node {
+             .env_remove("FREENET_DISABLE_LOGS")
+             .env_remove("FREENET_LOG_FORMAT")
+             .env_remove("FREENET_TEST_QUIC_PANIC")
++            // An ambient setting would make the default test pass without
++            // testing the default.
++            .env_remove("FREENET_TRANSPORT_QUIC")
+             .envs(env.iter().copied())
+             .args(["--ws-api-address", "127.0.0.1"])
+             .args(["--ws-api-port", &ws_port])
+@@ -310,14 +313,15 @@ fn three_quic_panics_keep_quic_off_for_the_cooldown() -> anyhow::Result<()> {
      Ok(())
  }
  
-+/// Where [`replace_binary`] moves the binary it replaces before moving the new
-+/// one in. Between those two renames there is no binary at `dest`, so a
-+/// supervisor that kills `freenet update` there puts this one back (the run
-+/// wrapper's crash-loop update, #6152).
-+pub(crate) fn binary_backup_path(dest: &Path) -> PathBuf {
-+    dest.with_extension("old")
-+}
-+
- fn replace_binary(new_binary: &Path, dest: &Path) -> Result<()> {
--    let backup_path = dest.with_extension("old");
-+    let backup_path = binary_backup_path(dest);
-     let parent_dir = dest
-         .parent()
-         .context("Destination path has no parent directory")?;
-```
-
-**File**: `crates/core/src/bin/freenet.rs` (modified, +64/-17)
-```diff
-@@ -582,10 +582,16 @@ async fn run_network_node_with_signals(
-         // #5799: a release that could not be fetched recently is cooling down.
-         // GitHub would only report it again, so the check is skipped, before
-         // any request and before the claim.
-+        //
-+        // #6152: the decision is made here without spending anything
-+        // (`peek_update_attempt`), and the retry is claimed only after the
-+        // jitter, right before GitHub is asked (`claim_after_jitter`). This
-+        // task runs beside the node, so a node that dies during the jitter
-+        // used to spend its daily retry without a check.
-         let cooling = commands::rollback::update_cooldown_pending(build_info::VERSION);
-         let startup_attempt = match &cooling {
-             Some(_) => None,
--            None => Some(commands::auto_update::claim_update_attempt()),
-+            None => Some(commands::auto_update::peek_update_attempt()),
-         };
-         if let Some((version, left)) = &cooling {
-             tracing::warn!(
-@@ -601,22 +607,38 @@ async fn run_network_node_with_signals(
-                 "Startup update check skipped: {reason}. Run `freenet update` to update now."
-             );
-         }
--        let startup_attempt = startup_attempt.and_then(Result::ok);
--        let startup_check_ran = startup_attempt.is_some();
-         let startup_jitter_secs = freenet::config::GlobalRng::random_u64() % 60;
--        if startup_check_ran && startup_jitter_secs > 0 {
--            tokio::time::sleep(std::time::Duration::from_secs(startup_jitter_secs)).await;
--        }
--        let latest = match startup_attempt {
--            Some(attempt) => {
--                tracing::info!(
--                    current = build_info::VERSION,
--                    jitter_secs = startup_jitter_secs,
--                    "Startup update check against GitHub"
--                );
--                startup_update_check(attempt, build_info::VERSION).await
-+        // `startup_check_ran` is true only if the claim, made after the
-+        // jitter, allowed the check.
-+        let (startup_check_ran, latest) = match startup_attempt {
-+            Some(Ok(())) => {
-+                let jitter =
-+                    tokio::time::sleep(std::time::Duration::from_secs(startup_jitter_secs));
-+                let checked = commands::auto_update::claim_after_jitter(
-+                    jitter,
-+                    claim_update_attempt,
-+                    |attempt| {
-+                        tracing::info!(
-+                            current = build_info::VERSION,
-+                            jitter_secs = startup_jitter_secs,
-+                            "Startup update check against GitHub"
-+                        );
-+                        startup_update_check(attempt, build_info::VERSION)
-+                    },
-+                )
-+                .await;
-+                match checked {
-+                    Ok(latest) => (true, latest),
-+                    Err(reason) => {
-+                        tracing::warn!(
-+                            reason = %reason,
-+                            "Startup update check skipped: {reason}. Run `freenet update` to update now."
-+                        );
-+                        (false, None)
-+                    }
-+                }
-             }
--            None => None,
-+            Some(Err(_)) | None => (false, None),
-         };
-         if let Some(new_version) = latest {
-             // #4073: don't auto-update to a version that is locally BLOCKED — a
-@@ -3328,6 +3350,31 @@ mod tests {
-         );
-     }
- 
-+    /// #6152: the startup check decides without spending (`peek`), and claims
-+    /// a locked-out node's retry only after the jitter, inside
-+    /// `claim_after_jitter`, so a node that dies during the jitter spends
-+    /// nothing. `claim_after_jitter` itself is tested in auto_update.rs.
-+    #[test]
-+    fn the_startup_check_claims_after_its_jitter() {
-+        let flat = squeeze(production_region(&strip_line_comments(include_str!(
-+            "freenet.rs"
-+        ))));
-+        let peek = flat
-+            .find("Some(commands::auto_update::peek_update_attempt())")
-+            .expect("the startup check peeks first");
-+        let jitter = flat
-+            .find("letjitter=tokio::time::sleep(std::time::Duration::from_secs(startup_jitter_secs));")
-+            .expect("the jitter");
-+        let claim = flat
-+            .find("commands::auto_update::claim_after_jitter(jitter,claim_update_attempt,")
-+            .expect("claimed after the jitter");
-+        assert!(peek < jitter && jitter < claim);
-+        assert!(
-+            !flat[peek..claim].contains("claim_update_attempt()"),
-+            "nothing claims between the peek and the jitter"
-+        );
-+    }
-+
-     /// #5799: while a newer release cools down, no trigger asks GitHub or
-     /// claims a lockout retry, and every CoolingDown arm keeps its signal and
-     /// does not send. Every gate re-re
+-/// QUIC stays off by default on Windows until the breaker has been confirmed on
+-/// a real Windows machine (#6031). This fails if the default changes.
++/// QUIC is shadow by default on Windows, as on Linux and macOS, now that the
++/// breaker has been confirmed on a real Windows machine (#6031): a node with
++/// no `transport-quic` builds the endpoint and arms the breaker's marker. This
++/// fails if the default changes.
+ #[test]
+-fn quic_is_off_by_default_on_windows() -> anyhow::Result<()> {
++fn quic_is_shadow_by_default_on_windows() -> anyhow::Result<()> {
+     let dir = tempfile::tempdir()?;
+-    let node = Node::start(dir.path(), dir.path().join("logs"), &[])?;
+-    let logs = node.logs();
+-    assert!(!logs.contains(QUIC_BUILT), "{logs}");
+-    assert_eq!(read_marker(dir.path())?, None, "no marker with QUIC off");
++    let mut node = Node::start(dir.path(), dir.path().join("logs"), &[])?;
++    node.wait_for_log(QUIC_BUILT)?;
++    node.wait_for_marker(dir.path(), 0)?;
+     Ok(())
+ }
 ```
 
 ---
 
-### Incident Patch 3: `2339b1da` (2026-11-09)
-**Commit Message**: fix(transport): count only short runs that panicked in QUIC code in the Windows QUIC breaker (#6155)
+### Incident Patch 3: `2a209ef1` (2026-11-10)
+**Commit Message**: ci: list Windows Check among the required contexts (#6172)
 
-**File**: `.claude/rules/transport.md` (modified, +12/-5)
+**File**: `.github/scripts/check_required_check_path_filters.py` (modified, +1/-0)
 ```diff
-@@ -450,7 +450,8 @@ inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
- and no breaker state is left), QUIC crash-loop breaker trips at startup
- (`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
- run, not only a QUIC fault, and on Windows for three runs in a row that ended
--within ten minutes, for any reason, each starting within 24 h of the one before;
-+within ten minutes after recording a panic in QUIC code (quinn, quinn-proto or
-+transport/quic, by panic location), each starting within 24 h of the one before;
- see `quic/breaker.rs`) and whether the breaker keeps QUIC
- off in this process (`quic_breaker_suppressed`, a state that is never reset and
- is not activity by itself) and QUIC connections this node closed, by close code
-@@ -2477,10 +2478,16 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
-     deterministic fault recurs once per start. A panic that is not
-     contained aborts the process. On unix the next start trips the breaker
-     (quic_breaker_trips, see quic/breaker.rs). On Windows the breaker does
--    not look at how a run ended: it counts runs that lasted under 10 minutes,
--    so the fourth start after three such aborts in a row trips it, and an
--    abort after 10 minutes or more never does, nor do aborts a day apart
--    (quic/breaker/short_runs.rs).
-+    not look at how a run ended: a panic hook records a panic located in QUIC
-+    code in the run's marker, and it counts runs that lasted under 10 minutes
-+    and recorded one, so the fourth start after three such aborts in a row
-+    trips it. An ordinary stop records no panic and never counts; an abort
-+    after 10 minutes or more never does, nor do aborts a day apart
-+    (quic/breaker/short_runs.rs). A panic counts as QUIC's when the thread
-+    is inside a QuicCode guard (quinn's driver polls in runtime.rs, the socket
-+    adapter's catch_unwind calls) or, failing that, by location. The hook is
-+    process-global: only a child-process test installs it (the arming tests
-+    pass a no-op installer).
-   → When the node drops its last handle, the availability is Released
-     (final; the first final state stored wins, so a release and a
-     driver return racing never overwrite each other) and the driver's
-```
-
-**File**: `.config/nextest.toml` (modified, +7/-0)
-```diff
-@@ -157,3 +157,10 @@ fail-fast = false
- # (test_get_reliability_with_latency: 100 nodes + fault injection).
- # Allow 15 min per period with 2 periods = 30 min hard cap.
- slow-timeout = { period = "900s", terminate-after = 2 }
-+
-+# The Windows QUIC crash-loop breaker tests (#6031) drive the real binary
-+# through several starts each; a failure is deterministic (an injected panic
-+# is counted or it is not), so a retry only repeats the minutes.
-+[[profile.ci.overrides]]
-+filter = "binary(quic_breaker_windows)"
-+retries = 0
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +7/-4)
-```diff
-@@ -1251,24 +1251,27 @@ jobs:
-           tool: cargo-nextest
-           fallback: none
- 
-+      # Every step here builds with `quic-panic-injection` (test builds only;
-+      # it lets the QUIC breaker test below abort the node on a QUIC panic),
-+      # so the job compiles the crate once.
-       - name: Build freenet bin
--        run: cargo build --locked -p freenet --bin freenet
-+        run: cargo build --locked -p freenet --bin freenet --features quic-panic-injection
- 
-       - name: Test service commands
--        run: cargo nextest run -p freenet --bin freenet --profile ci -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
-+        run: cargo nextest run -p freenet --bin freenet --profile ci --features quic-panic-injection -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
- 
-       # freenet:// scheme handler (#5726). Includes the argument-injection
-       # test: the command line registered in HKCU, with hostile links
-       # substituted for %1 and launched raw, so the real Windows argv parser
-       # splits it.
-       - name: Test freenet:// handler binary
--        run: cargo nextest run -p freenet --profile ci --test url_scheme_handler
-+        run: cargo nextest run -p freenet --profile ci --test url_scheme_handler --features quic-panic-injection
- 
-       # The QUIC crash-loop breaker through the real process (#6031). Its
-       # decision is tested on every platform; only this reaches the Windows
-       # branch in the binary.
-       - name: Test QUIC breaker on Windows
--        run: cargo nextest run -p freenet --profile ci --test quic_breaker_windows
-+        run: cargo nextest run -p freenet --profile ci --test quic_breaker_windows --features quic-panic-injection
- 
-       # And through real protocol activation: Start-Process hands the link to
-       # Windows, which looks up HKCU\Software\Classes\freenet and runs the
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -347,6 +347,10 @@ nightly_tests = []
- jemalloc-prof = ["tikv-jemallocator/profiling", "dep:tikv-jemalloc-ctl"]
- # WASM runtime backend
- wasmtime-backend = ["dep:wasmtime"]
-+# Test builds only, never a release: `FREENET_TEST_QUIC_PANIC` injects a panic
-+# in QUIC code, to exercise the Windows QUIC crash-loop breaker through the
-+# real binary (transport/quic/panic_injection.rs, #6031).
-+quic-panic-injection = []
- 
- # ==============================================================================
- # Lint Configuration
-```
-
-**File**: `crates/core/src/config.rs` (modified, +3/-3)
-```diff
-@@ -2636,9 +2636,9 @@ pub struct NetworkArgs {
-     ///
-     /// On unix, if a run with QUIC enabled ends abnormally, the node starts
-     /// with QUIC off for 24 hours. On Windows the same happens after three
--    /// short runs in a row, whatever ended them. Set this to run QUIC anyway. A
--    /// start with this set erases the trip: removing it later does not bring
--    /// the 24 hours back. Default: false.
-+    /// short runs in a row that each panicked in QUIC code. Set this to run
-+    /// QUIC anyway. A start with this set erases the trip: removing it later
-+    /// does not bring the 24 hours back. Default: false.
-     ///
-     /// Works as a bare flag after the subcommand: `--quic-ignore-crash-breaker`
-     /// turns it on, `--quic-ignore-crash-breaker=false` turns it off. Before
-```
-
-**File**: `crates/core/src/transport/metrics.rs` (modified, +4/-2)
-```diff
-@@ -3138,7 +3138,8 @@ pub struct TransportSnapshot {
-     pub quic_adapter_panicked: u64,
-     /// Times the QUIC crash-loop breaker tripped, so this run started with
-     /// QUIC off (#5940): on unix a run with QUIC enabled ended abnormally, on
--    /// Windows three runs in a row ended within ten minutes for any reason.
-+    /// Windows three runs in a row ended within ten minutes after a panic in
-+    /// QUIC code.
-     pub quic_breaker_trips: u64,
-     /// Sends the QUIC socket refused with `WouldBlock` (egress cap or full
-     /// socket buffer). Chiefly datagrams quinn's endpoint made on its own,
-@@ -3862,7 +3863,8 @@ struct SnapshotExtras {
-     pub quic_adapter_panicked: u64,
-     /// Times the QUIC crash-loop breaker tripped, so this run started with
-     /// QUIC off (#5940): on unix a run with QUIC enabled ended abnormally, on
--    /// Windows three runs in a row ended within ten minutes for any reason.
-+    /// Windows three runs in a row ended within ten minutes after a panic in
-+    /// QUIC code.
-     pub quic_breaker_trips: u64,
-     /// Sends the QUIC socket refused with `WouldBlock` (egress cap or full
-     /// socket buffer). Chiefly datagrams quinn's endpoint made on its own,
-```
-
-**File**: `crates/core/src/transport/quic.rs` (modified, +7/-4)
-```diff
-@@ -44,6 +44,8 @@ pub(crate) mod error;
- pub(crate) mod framing;
- pub(crate) mod identity;
- pub(crate) mod liveness;
-+#[cfg(any(test, feature = "quic-panic-injection"))]
-+pub(crate) mod panic_injection;
- pub(crate) mod path;
- pub(crate) mod recycle;
- pub(crate) mod runtime;
-@@ -83,10 +85,11 @@ pub(crate) use liveness::QuicAvailabilityWatch;
- ///
- /// An unset key is [`QuicMode::default_mode`]: shadow on Linux and macOS, and
- /// off elsewhere. Windows stays off until the crash-loop breaker has been
--/// confirmed on a real Windows machine (#6031), and other platforms because the
--/// breaker reads no boot identity there and so cannot trip. That breaker counts short runs instead of
--/// detecting crashes ([`breaker`]). The default is decided when the value is
--/// read and never written to `config.toml`, so a later release can change it
-+/// confirmed on a real Windows machine (#6031), and other platforms because
-+/// the breaker reads no boot identity there and so cannot trip. The Windows
-+/// breaker counts short runs that panicked in QUIC code instead of detecting
-+/// crashes ([`breaker`]). The default is decided when the value is read and
-+/// never written to `config.toml`, so a later release can change it
- /// for every node that did not set the key, which is how a default-off
- /// release turns QUIC off. A value given with `--transport-quic` or
- /// `FREENET_TRANSPORT_QUIC` is saved to `config.toml` like any other setting,
-```
-
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +56/-22)
-```diff
-@@ -9,14 +9,16 @@
- //! **This module doc describes unix.** Windows does not reliably tell a
- //! process that it is being stopped: every design that tried to tell a crash
- //! from a normal stop there (a logoff, a Fast Startup shutdown, a session end)
--//! got one of them wrong. So Windows does not ask. It counts runs that ended
--//! within ten minutes, for any reason, and three in a row, each starting
--//! within the cooldown of the one before, keep QUIC off for the same cooldown,
--//! with the same state and telemetry. [`short_runs`] describes it.
-+//! got one of them wrong. So Windows does not ask how a run ended. A panic
-+//! hook records a panic located in QUIC code (the failure this breaker is for
-+//! always panics before it aborts), and runs that ended within ten minutes
-+//! after recording one, three in a row, each starting within the cooldown of
-+//! the one before, keep QUIC off for the same cooldown, with the same state
-+//! and telemetry. [`short_runs`] describes it.
- //!
--//! **Windows is weaker than unix.** There, a crash loop whose runs each last
--//! ten minutes or more never trips, and neither does a fault that crashes once
--//! a day. That must be weighed before QUIC goes on by default on Windows. QUIC
-+//! **Windows is weaker than unix.** There, a crash not preceded by a panic in
-+//! QUIC code is not counted, a crash loop whose runs each last ten minutes or
-+//! more never trips, and neither does a fault that crashes once a day. That must be weighed before QUIC goes on by default on Windows. QUIC
- //! stays off by default there until the breaker has been confirmed on a real
- //! Windows machine (#6031).
- //!
-@@ -135,6 +137,7 @@ use serde::{Deserialize, Serialize};
- use crate::node::background_task_monitor::LateRegistrar;
- 
- mod short_runs;
-+pub(crate) use short_runs::QuicCode;
- 
- /// How long QUIC stays off after a run with QUIC enabled ended abnormally.
- pub(crate) const QUIC_BREAKER_COOLDOWN: Duration = Duration::from_secs(24 * 60 * 60);
-@@ -204,6 +207,7 @@ pub fn quic_breaker_signals_ready() {
- /// and the auto-update exit) and on no other.
- pub fn quic_breaker_clean_exit() {
-     if let Some((path, nonce)) = ARMED.get() {
-+        short_runs::note_marker_cleared();
-         if let Err(error) = clear_if_owned(path, *nonce) {
-             tracing::warn!(
-                 %error,
-@@ -247,6 +251,11 @@ pub(crate) enum Marker {
-         short_runs: u32,
-         started_at_secs: u64,
-         nonce: u64,
-+        /// The run recorded a panic in QUIC code (quinn, quinn-proto or this
-+        /// crate's QUIC transport) while it was still short. Only such a run
-+        /// counts. Absent in a marker from an earlier release.
-+        #[serde(default)]
-+        quic_panicked: bool,
-     },
-     /// A state this binary does not know, written by a later release.
-     #[serde(other)]
-@@ -680,12 +689,18 @@ struct Pending {
- /// are installed. Called under the `PENDING` lock from both events, so
- /// whichever comes second writes it, exactly once.
- fn arm_when_ready(pending: &mut Pending) {
--    arm_when_ready_into(pending, &ARMED);
-+    arm_when_ready_into(pending, &ARMED, short_runs::record_quic_panics);
- }
- 
- /// [`arm_when_ready`], recording what was written in `armed`, which is the
--/// static [`ARMED`] outside tests.
--fn arm_when_ready_into(pending: &mut Pending, armed: &OnceLock<(PathBuf, u64)>) {
-+/// static [`ARMED`] outside tests, and installing the Windows panic hook with
-+/// `record_panics`, which tests replace: the real hook is process-global, so
-+/// only a test in a child process may install it.
-+fn arm_when_ready_into(
-+    pending: &mut Pending,
-+    armed: &OnceLock<(PathBuf, u64)>,
-+    record_panics: fn(PathBuf, u64),
-+) {
-     if !(pending.quic_up && pending.signals_ready) {
-         return;
+@@ -105,6 +105,7 @@
+         "Rule Lint",
+         "Claude Rule Review",
+         "macOS bundle-swap E2E",
++        "Windows Check",
      }
-@@ -694,7 +709,12 @@ fn arm_when_ready_into(pending: &mut Pending, armed: &OnceLock<(PathBuf, u64)>)
-     if let Some((path, nonce)) = arm(pending.marker.take()) {
-         if counts_short_runs {
-             short_runs::start_clear_timer(registrar.as_ref(), path.clone(), nonce);
-+            record_panics(path.clone(), nonce);
-         }
-+        // Test builds only: start an injected QUIC panic's countdown now that
-+        // the marker (and on Windows the panic hook) is in place.
-+        #[cfg(feature = "quic-panic-injection")]
-+        super::panic_injection::inject_from_env();
-         // One node per process in production; a second keeps the first.
-         let _first_wins = armed.set((path, nonce));
-     }
-@@ -864,7 +884,7 @@ mod platform {
-         rc == 0 || std::io::Error::last_os_error().raw_os_error() == Some(libc::EPERM)
-     }
+ )
  
--    /// Unused: Windows counts short runs instead.
-+    /// Unused: Windows counts short runs that panicked in QUIC code instead.
-     #[cfg(not(unix))]
-     pub(super) fn pid_alive(_pid: u32) -> bool {
-         false
-@@ -880,6 +900,10 @@ mod tests {
-     const T0: u64 = 1_800_000_000;
-     const BOOT: &str = "boot-a";
- 
-+    /// The pani
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6169** (closed): build: gate a constant only the panic-injection tests read (@sanity)
-- **PR #6168** (2026-11-09): test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR) (@sanity)
-- **PR #6167** (2026-11-09): feat(transport): a fixed QUIC connection charge, buffer budget, OVER_BUDGET close and reset gauge (@sanity)
-- **PR #6166** (2026-11-09): test(config): hold each allocated port while asking for the next (@sanity)
-- **PR #6164** (closed): feat(transport): QUIC fixed charge, buffer budget, OVER_BUDGET and reset gauge (@sanity)
-- **PR #6162** (2026-11-09): ci: install the latest riverctl in river-dev-notify (stop duplicate dev-room posts) (@sanity)
+- **PR #6182** (2026-11-11): docs(rules): report scope bundling and subject length as INFO (@sanity)
+- **PR #6180** (2026-11-11): ci(rule-review): report a non-run as a failure and track the outage (@sanity)
+- **PR #6179** (2026-11-10): docs(conformance): drop the stale install-canonicalisation sequencing note (@sanity)
+- **PR #6178** (2026-11-10): fix(conformance): report a merge refusal that leaves peers apart (@sanity)
+- **PR #6177** (2026-11-10): chore(conformance): delete the unreachable contract-removal path (@sanity)
+- **PR #6175** (2026-11-10): chore(config): add gw3 to the compiled-in fallback gateways (@sanity)
 
 ---
 
@@ -2572,23 +2611,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check
+## X. conformance): report a merge refusal that leaves peers apart (#6178)
 
 **RULE**:
-When implementing operations in `crates/core/tests/quic_breaker_windows.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/conformance/minimize.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7610781`: test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR) (#6168). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `291950ed`: conformance): report a merge refusal that leaves peers apart (#6178). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/tests/quic_breaker_windows.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/conformance/minimize.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Only the `quic-panic-injection` tests read it, so it is gated with them:
-/// without the feature (CI's Windows Check) it is dead code under `-D warnings`.
-#[cfg(feature = "quic-panic-injection")]
+        fn reads_host_clock(&self) -> bool {
+            false
+        }
+
+        fn reads_host_clock(&self) -> bool {
+            false
+        }
+
+            fn reads_host_clock(&self) -> bool {
+                false
+            }
+
+            fn reads_host_clock(&self) -> bool {
+                false
+            }
+
+        fn reads_host_clock(&self) -> bool {
+            false
+        }
+
+        fn reads_host_clock(&self) -> bool {
+            false
+        }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2598,4 +2658,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7610781` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `291950ed` are properly handled with clean fallback behavior.

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "6bc0c3f1",
+    "sourceVersion": "e2ade2a2",
     "license": "Apache-2.0",
-    "contentHash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
-    "lastHarvestedAt": "2026-11-10T05:06:35.844Z",
+    "contentHash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
+    "lastHarvestedAt": "2026-11-11T06:33:49.999Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "7c445c0c",
+    "sourceVersion": "653af09c",
     "license": "NOASSERTION",
-    "contentHash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
-    "lastHarvestedAt": "2026-11-09T23:17:52.990Z",
+    "contentHash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
+    "lastHarvestedAt": "2026-11-11T06:33:46.439Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "d0885b8c",
+    "sourceVersion": "c42c4fa3",
     "license": "MIT",
-    "contentHash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
-    "lastHarvestedAt": "2026-11-09T02:08:11.686Z",
+    "contentHash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
+    "lastHarvestedAt": "2026-11-11T06:33:42.045Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -5953,10 +5953,10 @@
     "repository": "react-native-webrtc/react-native-webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "sourceVersion": "fb662c9d",
+    "sourceVersion": "103af812",
     "license": "MIT",
-    "contentHash": "572383bc0d730e8216e197108d446703974a4f3afe2eb5f8dd5a3dbb635ddff0",
-    "lastHarvestedAt": "2026-10-20T16:57:17.024Z",
+    "contentHash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
+    "lastHarvestedAt": "2026-11-11T06:33:33.890Z",
     "learningId": "learn-github-react-native-webrtc-react-native-webrtc"
   },
   "rook-rook": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "e520c28d",
+    "sourceVersion": "9833b0f7",
     "license": "MIT",
-    "contentHash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
-    "lastHarvestedAt": "2026-11-09T01:26:25.216Z",
+    "contentHash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
+    "lastHarvestedAt": "2026-11-11T06:33:49.340Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

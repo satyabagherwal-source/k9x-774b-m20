@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md`  
 > **Source**: github ([https://github.com/react-native-webrtc/react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc))  
-> **Source Version**: `fb662c9d`  
+> **Source Version**: `103af812`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:57:16.628Z  
+> **Timestamp**: 2026-11-11T06:33:15.343Z  
 > **Learning ID**: `learn-github-react-native-webrtc-react-native-webrtc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-native-webrtc/react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:57:16.621Z  
+> **Harvest Timestamp**: 2026-11-11T06:33:15.116Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -511,152 +511,132 @@ typedef NS_ENUM(NSInteger, RTCVideoViewObjectFit) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `423292b6` (2026-10-20)
-**Commit Message**: android: fix getDisplayMedia crash on API < 31
+### Incident Patch 1: `103af812` (2026-11-11)
+**Commit Message**:    android: stop RTCView drawing the previous track after a stream switch (#1857)
 
-**File**: `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java` (modified, +12/-2)
+**File**: `android/src/main/java/com/oney/WebRTCModule/WebRTCView.java` (modified, +83/-26)
 ```diff
-@@ -8,6 +8,8 @@
- import android.util.DisplayMetrics;
- import android.util.Log;
- import android.os.Build;
-+import android.os.Handler;
-+import android.os.Looper;
+@@ -24,6 +24,8 @@
+ import org.webrtc.RendererCommon.RendererEvents;
+ import org.webrtc.RendererCommon.ScalingType;
+ import org.webrtc.SurfaceViewRenderer;
++import org.webrtc.VideoFrame;
++import org.webrtc.VideoSink;
+ import org.webrtc.VideoTrack;
  
- import androidx.core.util.Consumer;
+ import java.lang.reflect.InvocationTargetException;
+@@ -139,8 +141,43 @@ public void run() {
+     private String streamURL;
  
-@@ -34,7 +36,9 @@
- import java.util.Map;
- import java.util.Objects;
- import java.util.UUID;
-+import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.TimeUnit;
-+import java.util.concurrent.TimeoutException;
- import java.util.stream.Collectors;
- 
- /**
-@@ -92,8 +96,14 @@ public void onActivityResult(Activity activity, int requestCode, int resultCode,
- 
-                     mediaProjectionPermissionResultData = data;
- 
--                    MediaProjectionService.launch(activity)
--                        .orTimeout(10, TimeUnit.SECONDS)
-+                    CompletableFuture<Void> launchFuture = MediaProjectionService.launch(activity);
+     /**
+-     * The {@link View} and {@link VideoSink} implementation which
+-     * actually renders {@link #videoTrack} on behalf of this instance.
++     * The URL most recently passed to {@link #setStreamURL(String)}. The track
++     * lookup is asynchronous, so a callback for an older URL must be ignored.
++     */
++    private String requestedStreamURL;
 +
-+                    // CompletableFuture.orTimeout() requires API 31; this is a no-op if already completed.
-+                    new Handler(Looper.getMainLooper()).postDelayed(
-+                        () -> launchFuture.completeExceptionally(new TimeoutException()),
-+                        TimeUnit.SECONDS.toMillis(10));
++    /**
++     * The sink currently added to {@link #videoTrack}. It forwards frames to
++     * {@link #surfaceViewRenderer} only while it is open, and it is closed on
++     * the UI thread as soon as the track is let go, so frames of a previous
++     * track are never drawn even if the asynchronous removeSink runs late.
++     */
++    private TrackSink trackSink;
 +
-+                    launchFuture
-                         .whenCompleteAsync((value, error) -> {
-                             if (error != null) {
-                                 Log.e(TAG, "Failed to start MediaProjection service", error);
-```
-
----
-
-### Incident Patch 2: `a5c66c72` (2026-10-20)
-**Commit Message**: Revert "ios(RCTWebRTC): enable Center Stage for devices that support it"
-
-This reverts commit 5892a0f54d379605adaf8b44a3c541d45b998ae0.
-
-**File**: `ios/RCTWebRTC/VideoCaptureController.m` (modified, +1/-40)
-```diff
-@@ -51,23 +51,6 @@ - (void)startCapture {
-         return;
-     }
++    private final class TrackSink implements VideoSink {
++        final VideoTrack track;
++        private boolean open = true;
++
++        TrackSink(VideoTrack track) {
++            this.track = track;
++        }
++
++        @Override
++        public synchronized void onFrame(VideoFrame frame) {
++            if (open) {
++                surfaceViewRenderer.onFrame(frame);
++            }
++        }
++
++        synchronized void close() {
++            open = false;
++        }
++    }
++
++    /**
++     * The {@link View} which actually renders {@link #videoTrack} on behalf of
++     * this instance. It is not added to the track directly: frames reach it
++     * through the {@link TrackSink} in {@link #trackSink}.
+      */
+     private final SurfaceViewRenderer surfaceViewRenderer;
  
--    // Enable Center Stage when the device supports it; cooperative with Control Center.
--    if (@available(iOS 16.0, *)) {
--        BOOL centerStageSupported = NO;
--        for (AVCaptureDeviceFormat *fmt in [RTCCameraVideoCapturer supportedFormatsForDevice:self.device]) {
--            if (fmt.isCenterStageSupported) {
--                centerStageSupported = YES;
--                break;
--            }
--        }
--        if (centerStageSupported) {
--            AVCaptureDevice.centerStageControlMode = AVCaptureCenterStageControlModeCooperative;
--            AVCaptureDevice.centerStageEnabled = YES;
--        } else if (AVCaptureDevice.isCenterStageEnabled) {
--            AVCaptureDevice.centerStageEnabled = NO;
--        }
--    }
+@@ -375,14 +412,22 @@ protected void onLayout(boolean changed, int l, int t, int r, int b) {
+      */
+     private void removeRendererFromVideoTrack() {
+         if (rendererAttached) {
+-            if (videoTrack != null) {
++            // Capture the sink now: by the time the executor runs, the
++            // videoTrack field may already be null or the next track.
++            final TrackSink sink = trackSink;
++            trackSink = null;
++            if (sink != null) {
++                sink.close();
+                 ThreadUtils.runOnExecutor(() -> {
+                     try {
+-                        videoTrack.removeSink(surfaceViewRenderer);
+-                    } catch (Throwable tr) {
++                        sink.track.removeSink(sink);
++                    } catch (IllegalStateException e) {
+                         // XXX If WebRTCModule#mediaStreamTrackRelease has already been
+-                        // invoked on videoTrack, then it is no longer safe to call removeSink
+-                        // on the instance, it will throw IllegalStateException.
++                        // invoked on the track this sink was added to, then the track is
++                        // disposed and removeSink throws IllegalStateException. That is
++                        // expected and there is nothing left to remove.
++                    } catch (Throwable tr) {
++                        Log.w(TAG, "Failed to remove renderer", tr);
+                     }
+                 });
+             }
+@@ -477,23 +522,30 @@ private void setScalingType(ScalingType scalingType) {
+      * this {@code WebRTCView} or {@code null}.
+      */
+     void setStreamURL(String streamURL) {
+-        Log.d(TAG, "Set stream URL " + streamURL + " current: " + this.streamURL);
+-        if (Objects.equals(streamURL, this.streamURL)) {
++        Log.d(TAG,
++                "Set stream URL " + streamURL + " requested: " + this.requestedStreamURL
++                        + " applied: " + this.streamURL);
++        // Compare with the last requested URL, not the applied one, which is
++        // only updated once the asynchronous lookup below completes.
++        if (Objects.equals(streamURL, this.requestedStreamURL)) {
+             return;
+         }
 -
-     AVCaptureDeviceFormat *format = [self selectFormatForDevice:self.device
-                                                 withTargetWidth:self.width
-                                                withTargetHeight:self.height];
-@@ -79,17 +62,6 @@ - (void)startCapture {
- 
-     self.selectedFormat = format;
- 
--    // Clamp fps to the range Center Stage allows for this format.
--    int fps = self.frameRate;
--    if (@available(iOS 16.0, *)) {
--        if (AVCaptureDevice.isCenterStageEnabled) {
--            AVFrameRateRange *csRange = format.videoFrameRateRangeForCenterStage;
--            if (csRange) {
--                fps = MAX((int)csRange.minFrameRate, MIN(fps, (int)csRange.maxFrameRate));
--            }
--        }
--    }
--
-     AVCaptureSession *session = self.capturer.captureSession;
-     if (@available(iOS 16.0, *)) {
-         BOOL enable = self.enableMultitaskingCameraAccess;
-@@ -111,7 +83,7 @@ - (void)startCapture {
-     __weak VideoCaptureController *weakSelf = self;
-     [self.capturer startCaptureWithDevice:self.device
-                                    format:format
--                                      fps:fps
-+                                      fps:self.frameRate
-                         completionHandler:^(NSError *err) {
-                             if (err) {
-                                 RCTLogError(@"[VideoCaptureController] Error starting capture: %@", err);
-@@ -298,18 +270,7 @@ - (AVCaptureDeviceFormat *)selectFormatForDevice:(AVCaptureDevice *)device
-     AVCaptureDeviceFormat *selectedFormat = nil;
-     int currentDiff = INT_MAX;
- 
--    BOOL centerStageEnabled = NO;
--    if (@available(iOS 16.0, *)) {
--        centerStageEnabled = AVCaptureDevice.isCenterStageEnabled;
--    }
--
-     for (AVCaptureDeviceFormat *format in formats) {
--        // Center Stage only permits supported formats.
--        if (@available(iOS 16.0, *)) {
--            if (centerStageEnabled && !format.isCenterStageSupported) {
--                continue;
--            }
--        }
-         CMVideoDimensions dimension = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-         FourCharCode pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-         int diff = abs(targetWidth - dimension.width) + abs(targetHeight - dimension.height);
-```
-
----
-
-### Incident Patch 3: `d049d064` (2026-10-20)
-**Commit Message**: android(consumer-rules): cover SDK release builds who run R8
-
-**File**: `android/consumer-rules.pro` (modified, +3/-0)
-```diff
-@@ -1,2 +1,5 @@
- # WebRTC
- -keep class org.webrtc.** { *; }
-+-keep class org.jni_zero.** { *; }
-+-keep class J.N { *; }
-+-dontwarn org.jni_zero.**
+-        // The value of this.streamURL is really changing. Before
+-        // realizing/applying the change, let go of the old videoTrack. Of
+-        // course, that is only necessary if the value of videoTrack will
+-        // really change. Please note though that letting go of the old
+-        // videoTrack before assigning to this.streamURL is vital;
+-        // otherwise, removeRendererFromVideoTrack will fail to remove the
+-        // old videoTrack from the associated videoRenderer, two
+-        // VideoTracks (the old and the new) may start rendering and, most
+-        // importantly the videoRender may eventually crash when the old
+-        // videoTrack is disposed.
++        this.requestedStreamURL = streamURL;
++
++        // The value of this.streamURL is really changing. Look up the new
++        // videoTrack asynchronously and, 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1857** (2026-11-11):    android: stop RTCView drawing the previous track after a stream switch (@shorifulmia85)
+- **PR #1855** (closed): Merge upstream react-native-webrtc@155.0.1 (@davidliu)
+- **PR #1854** (closed): Fix/leveller android 11 (@Arjit0762)
+- **PR #1853** (closed): Add patch queue, self-test app and skills for syncing with upstream (@filipi87)
 - **PR #1852** (2026-10-20): android: fix getDisplayMedia crash on API < 31 (@Calinteodor)
 - **PR #1851** (2026-10-20): Revert "ios(RCTWebRTC): enable Center Stage for devices that support it" (@Calinteodor)
-- **PR #1850** (2026-10-20): android(consumer-rules): cover SDK release builds who run R8 (@Calinteodor)
-- **PR #1847** (closed): ios(RCTWebRTC): leave Center Stage under user control (@Calinteodor)
-- **PR #1846** (2026-10-13): Update WebRTC to M155 (@jallamsetty1)
-- **PR #1845** (closed): ios: keep call audio when other code deactivates the audio session (@Magmusacy)
 
 ---
 
@@ -676,40 +656,83 @@ This reverts commit 5892a0f54d379605adaf8b44a3c541d45b998ae0.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android: fix getDisplayMedia crash on API < 31
+## X. android: stop RTCView drawing the previous track after a stream switch (#1857)
 
 **RULE**:
-When implementing operations in `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-native-webrtc/react-native-webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/oney/WebRTCModule/WebRTCView.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-native-webrtc/react-native-webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `423292b6`: android: fix getDisplayMedia crash on API < 31. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `103af812`: android: stop RTCView drawing the previous track after a stream switch (#1857). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/oney/WebRTCModule/WebRTCView.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import android.os.Handler;
-import android.os.Looper;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeoutException;
-                    CompletableFuture<Void> launchFuture = MediaProjectionService.launch(activity);
+import org.webrtc.VideoFrame;
+import org.webrtc.VideoSink;
+     * The URL most recently passed to {@link #setStreamURL(String)}. The track
+     * lookup is asynchronous, so a callback for an older URL must be ignored.
+     */
+    private String requestedStreamURL;
 
-                    // CompletableFuture.orTimeout() requires API 31; this is a no-op if already completed.
-                    new Handler(Looper.getMainLooper()).postDelayed(
-                        () -> launchFuture.completeExceptionally(new TimeoutException()),
-                        TimeUnit.SECONDS.toMillis(10));
+    /**
+     * The sink currently added to {@link #videoTrack}. It forwards frames to
+     * {@link #surfaceViewRenderer} only while it is open, and it is closed on
+     * the UI thread as soon as the track is let go, so frames of a previous
+     * track are never drawn even if the asynchronous removeSink runs late.
+     */
+    private TrackSink trackSink;
 
-                    launchFuture
+    private final class TrackSink implements VideoSink {
+        final VideoTrack track;
+        private boolean open = true;
+
+        TrackSink(VideoTrack track) {
+            this.track = track;
+        }
+
+        @Override
+        public synchronized void onFrame(VideoFrame frame) {
+            if (open) {
+                surfaceViewRenderer.onFrame(frame);
+            }
+        }
+
+        synchronized void close() {
+            open = false;
+        }
+    }
+
+    /**
+     * The {@link View} which actually renders {@link #videoTrack} on behalf of
+     * this instanc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-                    MediaProjectionService.launch(activity)
-                        .orTimeout(10, TimeUnit.SECONDS)
+     * The {@link View} and {@link VideoSink} implementation which
+     * actually renders {@link #videoTrack} on behalf of this instance.
+            if (videoTrack != null) {
+                        videoTrack.removeSink(surfaceViewRenderer);
+                    } catch (Throwable tr) {
+                        // invoked on videoTrack, then it is no longer safe to call removeSink
+                        // on the instance, it will throw IllegalStateException.
+        Log.d(TAG, "Set stream URL " + streamURL + " current: " + this.streamURL);
+        if (Objects.equals(streamURL, this.streamURL)) {
+
+        // The value of this.streamURL is really changing. Before
+        // realizing/applying the change, let go of the old videoTrack. Of
+        // course, that is only necessary if the value of videoTrack will
+        // really change. Please note though that letting go of the old
+        // videoTrack before assigning to this.streamURL is vital;
+        // otherwise, removeRendererFromVideoTrack will fail to remove the
+        // old videoTrack from the associated videoRenderer, two
+        // VideoTracks (the old and the new) may start rendering and, most
+        // importantly t
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `423292b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `103af812` are properly handled with clean fallback behavior.

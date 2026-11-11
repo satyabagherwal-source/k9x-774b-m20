@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T06:24:35.089Z",
-  "total_records": 26,
+  "last_updated": "2026-11-11T06:34:33.447Z",
+  "total_records": 28,
   "domains": {
     "A": {
       "total": 1,
@@ -23,7 +23,7 @@
       ]
     },
     "D": {
-      "total": 7,
+      "total": 8,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -31,7 +31,8 @@
         "DOM-D-0FBA7FA8",
         "DOM-D-61BBF9FB",
         "DOM-D-DFC8FC98",
-        "DOM-D-B5A201FB"
+        "DOM-D-B5A201FB",
+        "DOM-D-A94752EF"
       ]
     },
     "E": {
@@ -53,7 +54,7 @@
       ]
     },
     "H": {
-      "total": 7,
+      "total": 8,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -61,7 +62,8 @@
         "DOM-H-2007DF83",
         "DOM-H-7D0B9F17",
         "DOM-H-C2A738D4",
-        "DOM-H-1B2AC6F8"
+        "DOM-H-1B2AC6F8",
+        "DOM-H-0B5C2EE9"
       ]
     },
     "I": {
@@ -1062,6 +1064,88 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-11T06:24:35.088Z"
+    },
+    "DOM-H-0B5C2EE9": {
+      "record_id": "DOM-H-0B5C2EE9",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): react-native-webrtc/react-native-webrtc",
+      "content": "- **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pipeline introduced in #1681.  `VideoFrameProcessor.process()` returns a caller-owned frame. With a single processor, the current implementation releases both the retained input and the final output. With two or more processors, each loop iteration overwrites `outputFrame` without releasing the previous returned frame.  | Reference | Acquired from | Released by the current code | | --- | --- | --- | | `F0` | Initial `frame.retain()` | `frame.release()` | | `F1` | First processor result | No | | `F2` | Second processor result | `outputFrame.release()` |  As a result, the intermediate `F1` reference remains retained after each captured frame.  This change keeps the current input in a local variable and releases it after the processor returns. The returned frame then becomes the single owned reference carried to the next stage.  Returning the same frame remains supported when the processor calls `retain()` before returning it, as required by the existing [`VideoFrameProcessor` ownership contract](https://github.com/react-native-webrtc/react-native-webrtc/blob/cf6101cdfecff24ad2f57374dccd3026e5a11e4d/android/src/main/java/com/oney/WebRTCModule/videoEffects/VideoFrameProcessor.java#L6-L18).  This also keeps an empty processor list balanced: the final `outputFrame.release()` matches the initial `frame.retain()`.  ### Validation  - `git diff --check` - Compiled `VideoFrameProcessor.java` and `VideoEffectProcessor.java` against   the WebRTC M124 Java",
+      "content_hash": "077420af9cf4bbb475819dbf9f1b9ab6b8fc5091cd9dd04be9f2451bae8e3b37",
+      "summary": "- **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pi -> - **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pi",
+      "provenance": {
+        "source_uri": "project://react-native-webrtc-react-native-webrtc/react-native-webrtc-react-native-webrtc-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:33:57.342Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-native-webrtc-react-native-webrtc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-native-webrtc-react-native-webrtc"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T06:34:12.028Z"
+    },
+    "DOM-D-A94752EF": {
+      "record_id": "DOM-D-A94752EF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): DNSControl/dnscontrol",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  \n> **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  \n> **Source Version**: `c42c4fa3`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structu",
+      "content_hash": "9cdc3293af495089f54410121c9c66e8c6e6490aabae73ffb1bc6df1e56febb8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  \n> **Source**: github ([https://github.com/DNSC -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  \n> **Source**: github ([https://github.com/DNSC",
+      "provenance": {
+        "source_uri": "project://dnscontrol-dnscontrol/dnscontrol-dnscontrol-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:34:12.031Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dnscontrol-dnscontrol)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of dnscontrol-dnscontrol"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:34:33.446Z"
     }
   }
 }

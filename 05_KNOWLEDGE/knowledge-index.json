@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T06:24:02.801Z",
+  "last_updated": "2026-11-11T06:33:49.821Z",
   "total_verified_learnings": 1251,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11538,8 +11538,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "d0885b8c",
-      "content_hash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
+      "source_version": "c42c4fa3",
+      "content_hash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -11551,6 +11551,11 @@
         {
           "number": null,
           "title": "p/LUADNS): batch record changes into bulk API calls (#5047)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "share one builderOptions() for the options-object builders (#5072)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11599,7 +11604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:08:11.588Z",
+      "verified_at": "2026-11-11T06:33:41.672Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15614,8 +15619,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "7c445c0c",
-      "content_hash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
+      "source_version": "653af09c",
+      "content_hash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15672,6 +15677,11 @@
         {
           "number": null,
           "title": "test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "conformance): report a merge refusal that leaves peers apart (#6178)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15890,7 +15900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:17:52.753Z",
+      "verified_at": "2026-11-11T06:33:46.164Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48006,8 +48016,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "6bc0c3f1",
-      "content_hash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
+      "source_version": "e2ade2a2",
+      "content_hash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48174,6 +48184,11 @@
         {
           "number": null,
           "title": "Draft NUC 102 Implicit Receiver Properties",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Draft NUC 105 List and Population Sorting by Key",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48467,7 +48482,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T05:06:35.735Z",
+      "verified_at": "2026-11-11T06:33:49.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54143,11 +54158,16 @@
       "slug": "react-native-webrtc-react-native-webrtc",
       "platform": "github",
       "source_url": "https://github.com/react-native-webrtc/react-native-webrtc",
-      "source_version": "fb662c9d",
-      "content_hash": "572383bc0d730e8216e197108d446703974a4f3afe2eb5f8dd5a3dbb635ddff0",
+      "source_version": "103af812",
+      "content_hash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
       "dossier_path": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "android: stop RTCView drawing the previous track after a stream switch (#1857)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2148,
           "title": "android): guard against duplicate onActivityResult in screen capture",
@@ -54164,7 +54184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:57:16.949Z",
+      "verified_at": "2026-11-11T06:33:33.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63576,13 +63596,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "a7ce4ee0",
-      "content_hash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "9833b0f7",
+      "content_hash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -63607,6 +63627,11 @@
         {
           "number": null,
           "title": "Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark'",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "core/vdbe: make built-in scalar functions a function of their arguments",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63760,7 +63785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:41:39.931Z",
+      "verified_at": "2026-11-11T06:33:49.068Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

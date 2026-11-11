@@ -8860,3 +8860,10 @@ Every entry in this ledger must capture:
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `0b6f11ab` | Multi-dimensional audit evidence | 2026-11-11T06:24:02.920Z |
 | `learn-dom-d-dfc8fc98` | `project://marker-inc-korea-autorag` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md` | 2026-11-11T06:24:18.513Z |
 | `learn-dom-d-b5a201fb` | `project://provablehq-snarkos` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | 2026-11-11T06:24:35.090Z |
+| `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `103af812` | Multi-dimensional audit evidence | 2026-11-11T06:33:33.890Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `c42c4fa3` | Multi-dimensional audit evidence | 2026-11-11T06:33:42.045Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `653af09c` | Multi-dimensional audit evidence | 2026-11-11T06:33:46.439Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `9833b0f7` | Multi-dimensional audit evidence | 2026-11-11T06:33:49.340Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e2ade2a2` | Multi-dimensional audit evidence | 2026-11-11T06:33:49.999Z |
+| `learn-dom-h-0b5c2ee9` | `project://react-native-webrtc-react-native-webrtc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-11T06:34:12.030Z |
+| `learn-dom-d-a94752ef` | `project://dnscontrol-dnscontrol` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md` | 2026-11-11T06:34:33.447Z |

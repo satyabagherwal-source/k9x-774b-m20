@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `e520c28d`  
+> **Source Version**: `9833b0f7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:26:23.683Z  
+> **Timestamp**: 2026-11-11T06:33:24.674Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:26:23.582Z  
+> **Harvest Timestamp**: 2026-11-11T06:33:24.652Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25196 stars
+- **Stars / Engagement**: 25214 stars
 
 ---
 
@@ -1428,13 +1428,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11577** (2026-11-08): **bindings/rust: expose the progress handler on Connection**
-  *Symptoms*: The core connection already has a step-based progress handler (`sqlite3_progress_handler` semantics), and the C bindings expose it, but the Rust bindings and the SDK kit don't. A Rust caller can only stop a running statement from outside today: `interrupt()` from another thread, or a wall-clock `set_query_timeout`.  This adds `Connection::set_progress_handler(ops, Option<F>)` to the Rust bindings, forwarding through `TursoConnection::set_progress_handler` in the SDK kit. The signature follows rusqlite's `progress_handler`.  Because the callback runs on the thread executing the statement, it stops statements that never yield, such as a scan over cached pages. A caller can tie it to a cancellation signal by checking a token on every call; this is how Android's `SQLiteConnection` implements `CancellationSignal`. We use it to cancel a search query as soon as the user types another character.  Test: `test_progress_handler_interrupts_when_it_returns_true` checks three things: a handler that returns false runs without stopping the statement; flipping the flag it reads from another thread interrupts a runaway statement with `Error::Interrupt`; and removing the handler lets the next statement run normally. 
+- **Issue #11656** (2026-11-10): **testing/whopper: keep nextval values from rolled-back BEGIN CONCURRENT**
+  *Symptoms*: The in-process-mvcc-swarm job failed with `sequence went in wrong direction: seq=seq_87168, value=21, watermark=51, increment=5` ([run](https://github.com/tursodatabase/turso/actions/runs/42782544523/job/129717394398)). It reproduces every time with:  ``` SEED=12039184926679051324 cargo run --release -p turso_whopper -- --mode fast --enable-mvcc --swarm ```  The engine is correct here; the simulator's sequence checker has the wrong model. Under MVCC, nextval inside `BEGIN CONCURRENT` writes the sequence in its own inner transaction that commits before nextval returns. A `ROLLBACK` of the outer transaction therefore does not give the values back, as documented in `create-sequence.mdx`. The checker assumed every rollback undoes nextval and dropped those values.  In the failing run, a `CYCLE` sequence (MAXVALUE 76, INCREMENT 5) wrapped from 76 to 1 inside a `BEGIN CONCURRENT` transaction that then rolled back. The checker never saw the wrap. The next value outside a transaction was 21, and the checker compared it with its last-seen value of 51.  The checker now records which transactions were opened with `BEGIN CONCURRENT` and handles their nextval values like values from outside a transaction. Exclusive transactions keep the old handling.  The second commit fixes the sequence design comment in `core/schema.rs`, which said a rollback always undoes the advance. 
 
-- **Issue #11576** (2026-11-08): **core/dialect: centralize shared SQLite behavior in Dialect defaults**
-  *Symptoms*: #11356  ## Description  Move the shared SQLite parsing, schema handling, catalog registration, table formatting, and builtin function resolution into Dialect trait defaults.  Reduce EngineDialect and SqliteDialect to their dialect names while keeping PostgreSQL-specific overrides in PostgresDialect.  Also remove the production turso_sqlite dependency from turso_pg and call the core table formatter directly. Keep turso_sqlite only for SQLite-specific tests.
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `ebfe20f95959` is [here](https://github.com/tursodatabase/turso/pull/11576#pullrequestreview-5814403163).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer started this review on its own, as it does for pull requests from outside contributors. Push a fix to get a re-review (up to 3 reviews in all); a pull request whose blocking findings stay unaddressed for 7 days is closed. Maintainers: add `autofixer: no-review` to stop these reviews, or `autofixer: review-requested` to review it as requested.</sub>  <!-- autofixer:contributor-review:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-recommends:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU
+- **Issue #11653** (2026-11-10): **testing/sqlancer: build only turso-java dependencies in the image**
+  *Symptoms*: The sqlancer-runner image build has been failing in `cargo chef cook`:  ``` Unable to find libclang: "couldn't find any valid shared libraries matching: ['libclang.so', ...]" ```  `cargo chef cook` built the dependencies of every crate in the workspace. Since the PostgreSQL parser was added, that includes `pg_query`, whose build script runs bindgen and needs libclang. The image ships only the Java binding, so this changes the cook step to build only the dependencies of `turso-java`. That crate doesn't use `pg_query`, so the image doesn't need libclang.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1451,64 +1449,341 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ce98599` (2026-11-08)
-**Commit Message**: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman
+### Incident Patch 1: `2dcfbe24` (2026-11-10)
+**Commit Message**: core/vdbe: make built-in scalar functions a function of their arguments
 
-Fix for #7741.
+exec_scalar_function read and wrote the statement state: it took its arguments
+from state.registers, wrote the result to state.registers[dest], and reached
+for the program and the pager for the connection, the I/O and the clock.
 
-<!-- autofixer:host-part --> Fixes #7741
+call_builtin_scalar takes the registers that hold the arguments and a
+ScalarFuncContext carrying the connection, the I/O, the statement clock and the
+call site's collation, and returns the value. op_function builds the context
+and stores the result. The helpers only this function used (check_arg_count,
+exec_like_converted, execute_sqlite_version) change with it: check_arg_count
+becomes a function over the arguments.
 
-<sub>Opened by Autofixer. To ask for a change, mention @turso-github-
-handyman in a comment.</sub>
+Every arm keeps its behavior; most changes are mechanical, replacing
+'state.registers[*start_reg + n]' with 'args[n]' and 'set_value(v)' with
+returning v.
 
-Co-authored-by: avinassh <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Closes #11504
-
-**File**: `core/storage/btree.rs` (modified, +18/-1)
+**File**: `core/dialect/mod.rs` (modified, +11/-1)
 ```diff
-@@ -9385,7 +9385,11 @@ fn find_free_slot(
- pub fn btree_init_page(page: &PageRef, page_type: PageType, offset: usize, usable_space: usize) {
-     // setup btree page
-     let contents = page.get_contents();
--    contents.overflow_cells.clear();
-+    turso_assert!(
-+        contents.overflow_cells.is_empty(),
-+        "btree_init_page: page still has overflow cells from an earlier insert or balance",
-+        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
-+    );
-     tracing::debug!(
-         "btree_init_page(id={}, offset={}, usable_space={})",
-         page.get().id(),
-@@ -11520,6 +11524,19 @@ mod tests {
-         payload: crate::alloc::Vec<u8>,
+@@ -22,7 +22,7 @@ use crate::{
+     schema::{BTreeTable, RelationKind, Schema},
+     security::roles::RoleId,
+     vdbe::builder::ProgramBuilder,
+-    Connection, Func, LimboError, OpenOptions, Result, Value,
++    Clock, CollationSeq, Connection, Func, LimboError, OpenOptions, Result, Value, IO,
+ };
+ use std::{any::Any, sync::Arc};
+ use turso_parser::ast::{Cmd, CreateTableBody, Grantee, Privilege, QualifiedName, RoleSpec, Stmt};
+@@ -88,6 +88,16 @@ pub enum NewOwner {
+     Role(RoleSpec),
+ }
+ 
++/// What a built-in scalar function may read besides its arguments.
++pub struct ScalarFuncContext<'a> {
++    pub connection: &'a Connection,
++    pub io: &'a dyn IO,
++    /// The statement's clock: every function of one step sees the same time.
++    pub clock: &'a dyn Clock,
++    /// The collation of the call site, for functions that compare arguments.
++    pub collation: CollationSeq,
++}
++
+ /// SQL dialect layered on top of the engine.
+ ///
+ /// Every [`crate::Database`] carries a dialect, supplied explicitly by
+```
+
+**File**: `core/vdbe/execute.rs` (modified, +419/-760)
+```diff
+@@ -3,15 +3,23 @@ use crate::alloc::{
+     TursoTryWithCapacityExt, TursoVecExt,
+ };
+ use crate::cdc::TURSO_CDC_VERSION_TABLE_NAME;
++use crate::dialect::ScalarFuncContext;
+ use crate::error::SQLITE_CONSTRAINT_UNIQUE;
+ use crate::function::{AccumulatorFunc, AlterTableFunc, WindowFunc};
++use crate::functions::datetime::exec_timediff;
++use crate::functions::math::{exec_gcd, exec_lcm};
++use crate::functions::string::{exec_lpad, exec_repeat, exec_rpad};
+ use crate::io::TempFile;
+ use crate::mvcc::cursor::{MvccCursorType, NextRowidResult};
+ use crate::mvcc::database::{
+     BootstrapState, CheckpointReadLockState, CheckpointStateMachine, TxID,
+ };
+ use crate::mvcc::MvccClock;
+ use crate::namespace::{mangle_name, NamespaceId, NamespaceRef};
++use crate::numeric::decimal::{
++    bigdecimal_to_blob, blob_to_bigdecimal, check_numeric_limits, format_numeric,
++    validate_precision_scale,
++};
+ use crate::numeric::decimal::{numeric_from_value, MAX_FRACTION_DIGITS};
+ use crate::numeric::Numeric;
+ use crate::schema::{
+@@ -96,13 +104,14 @@ use crate::{
+     stats::StatAccum,
+     translate::emitter::TransactionMode,
+ };
++use bigdecimal::Zero;
+ use branches::{mark_unlikely, unlikely};
+ use either::Either;
+ use smallvec::SmallVec;
+ use std::any::Any;
++use std::borrow::Cow;
+ use std::str::FromStr;
+ use std::{
+-    borrow::BorrowMut,
+     cell::Cell,
+     num::NonZero,
+     sync::{atomic::Ordering, Arc},
+@@ -230,26 +239,6 @@ macro_rules! return_if_io {
+     };
+ }
+ 
+-use arg_count::check_arg_count;
+-mod arg_count {
+-    use crate::LimboError;
+-
+-    macro_rules! check_arg_count {
+-        ($actual:expr, $expected:expr) => {
+-            if unlikely($actual != $expected) {
+-                return Err(arg_count::wrong_arg_count($expected, $actual));
+-            }
+-        };
+-    }
+-    pub(super) use check_arg_count;
+-
+-    #[cold]
+-    #[inline(never)]
+-    pub(super) fn wrong_arg_count(expected: usize, actual: usize) -> Box<LimboError> {
+-        LimboError::InternalError(format!("expected {expected} argument(s), got {actual}")).into()
+-    }
+-}
+-
+ /// Errors are boxed so an op's whole return value stays small: a LimboError
+ /// is 40 bytes and would otherwise be copied through memory on every executed
+ /// instruction. `?` boxes automatically via `From`; explicit `Err` sites box
+@@ -10410,10 +10399,19 @@ pub fn op_function(
+             state.registers[*dest].set_null();
+         }
+         crate::function::Func::Scalar(scalar_func) => {
+-            match exec_scalar_function(program, state, pager, func, scalar_func, start_reg, dest)? {
+-                InsnFunctionStepResult::Step => {}
+-                other => return Ok(other),
+-            }
++            let clock = StatementClock::new(pager.io.as_ref(), &mut state.current_time);
++            let context = ScalarFuncContext {
++                connection: &program.connection,
++                io: pager.io.as_ref(),
++                clock: &clock,
++                collation: func.collation,
++            };
++            let value = call_builtin_scalar(
++                &context,
++                scalar_func,
++                &state.registers[*start_reg..*start_reg + arg_count],
++            )?;
++            state.registers[*dest].set_value(value);
+         }
+         crate::function::Func::Vector(vector_func) => {
+             let args = &state.registers[*start_reg..*start_reg + arg_count];
+@@ -11289,277 +11287,156 @@ pub fn op_function(
+     Ok(InsnFunctionStepResult::Step)
+ }
+ 
+-fn exec_scalar_function(
+-    program: &Program,
+-    state: &mut ProgramState,
+-    pager: &Arc<Pager>,
+-    func: &crate::function::FuncCtx,
+-    scalar_func: &ScalarFunc,
+-    start_reg: &usize,
+-    dest: &usize,
+-) -> InsnResult {
+-    let arg_count = func.arg_count;
+-
+-    match scalar_func {
++/// Runs built-in scalar function `func` on the registers that hold its
++/// arguments. Shared by every dialect that resolves names onto the built-in
++/// set through [`resolve_builtin_function`].
++pub fn call_builtin_scalar(
++    context: &ScalarFuncContext<'_>,
++    func: &ScalarFunc,
++    args: &[Register],
++) -> crate::Result<Value> {
++    let connection = context.connection;
++    match func {
+         ScalarFunc::Array | ScalarFunc::ArrayElement | ScalarFunc::ArraySetElement => {
+             unreachable!("desugared to dedicated instructions, not Function")
+         }
+-        ScalarFunc::Cast => {
+-            assert_eq!(arg_count, 2);
+-            assert!(*start_reg + 1 < state.registers.len());
+-            let result = {
+-                let Value::Text(cast_type) = state.registers[*start_reg + 1].get_value() else {
+-                    unreachable!("Cast with non-text type");
+-                };
+-                state.registers[*start_reg]
+-                    .get_value()
+-                    .exec_cast(cast_type.as_str())?
+-            };
+-            state.registers[*dest].set_value(result);
+-        }
+-        ScalarFunc::Changes => {
+-            let res = &program.connection.changes;
+-
+```
+
+---
+
+### Incident Patch 2: `214ca686` (2026-11-10)
+**Commit Message**: core/dialect: test that a dialect can change a built-in scalar function
+
+A dialect that overrides call_scalar for upper() sees its version run, while
+the other built-ins keep the shared behavior.
+
+Tests: dialect_owns_builtin_scalar_function_behavior fails when the VDBE calls
+engine::call_builtin_scalar directly and passes through the dialect.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `core/dialect/mod.rs` (modified, +81/-0)
+```diff
+@@ -1045,6 +1045,87 @@ mod tests {
+         }
      }
  
-+    #[test]
-+    #[should_panic(expected = "page still has overflow cells")]
-+    fn btree_init_page_rejects_page_with_overflow_cells() {
-+        let page = get_page(2);
-+        let page_contents = page.get_contents();
-+        let payload = [1u8; 3000];
-+        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
-+        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
-+        assert_eq!(page_contents.overflow_cells.len(), 1);
++    /// A dialect that resolves the built-in names but runs `upper` its own
++    /// way, as a frontend does for a built-in whose behavior differs in its
++    /// dialect.
++    struct ShoutingUpperDialect;
 +
-+        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
++    impl Dialect for ShoutingUpperDialect {
++        fn name(&self) -> &'static str {
++            "shouting"
++        }
++
++        fn parse(&self, sql: &str) -> Result<(Option<Cmd>, usize)> {
++            engine::parse(sql)
++        }
++
++        fn parse_table_sql(&self, sql: &str, root_page: i64) -> Result<BTreeTable> {
++            BTreeTable::from_sql(sql, root_page)
++        }
++
++        fn parse_table_sql_ast(&self, sql: &str) -> Result<Stmt> {
++            engine::parse_table_sql_ast(sql)
++        }
++
++        fn table_sql_for_replay(&self, sql: &str) -> Result<String> {
++            engine::table_sql_for_replay(sql)
++        }
++
++        fn format_table_sql(
++            &self,
++            _input: &str,
++            tbl_name: &QualifiedName,
++            body: &CreateTableBody,
++        ) -> Result<String> {
++            engine::format_table_sql(tbl_name, body)
++        }
++
++        fn register_catalog(&self, schema: &mut Schema, enable_custom_types: bool) -> Result<()> {
++            engine::register_builtin_catalog(schema, enable_custom_types)
++        }
++
++        fn resolve_function(&self, name: &str, arg_count: usize) -> Result<Option<Func>> {
++            engine::resolve_builtin_function(name, arg_count)
++        }
++
++        fn call_scalar(
++            &self,
++            context: &ScalarFuncContext<'_>,
++            func: &ScalarFunc,
++            args: &[Register],
++        ) -> Result<Value> {
++            let value = engine::call_builtin_scalar(context, func, args)?;
++            if !matches!(func, ScalarFunc::Upper) {
++                return Ok(value);
++            }
++            Ok(Value::build_text(format!("{value}!")))
++        }
++    }
++
++    #[test]
++    fn dialect_owns_builtin_scalar_function_behavior() {
++        let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
++        let db = open_db(&io, "dialect-shouting.db", Arc::new(ShoutingUpperDialect)).unwrap();
++        let conn = db.connect(ConnectOpts::new()).unwrap();
++
++        conn.execute("CREATE TABLE t (s TEXT)").unwrap();
++        conn.execute("INSERT INTO t VALUES ('hi')").unwrap();
++        let rows = conn
++            .prepare("SELECT upper(s), lower('ABC'), abs(-7) FROM t")
++            .unwrap()
++            .run_collect_rows()
++            .unwrap();
++        assert_eq!(
++            rows,
++            vec![vec![
++                Value::build_text("HI!"),
++                Value::build_text("abc"),
++                Value::from_i64(7),
++            ]]
++        );
++        conn.close().unwrap();
 +    }
 +
      #[test]
-     fn test_drop_1() {
-         let (db, _temp_dir) = get_database();
+     fn dialect_scalar_function_resolves_and_executes() {
+         let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
+```
+
+---
+
+### Incident Patch 3: `f5293267` (2026-11-10)
+**Commit Message**: Merge 'testing/sqlancer: build only turso-java dependencies in the image' from Pekka Enberg
+
+The sqlancer-runner image build has been failing in `cargo chef cook`:
+
+```
+Unable to find libclang: "couldn't find any valid shared libraries matching: ['libclang.so', ...]"
+```
+
+`cargo chef cook` built the dependencies of every crate in the
+workspace. Since the PostgreSQL parser was added, that includes
+`pg_query`, whose build script runs bindgen and needs libclang. The
+image ships only the Java binding, so this changes the cook step to
+build only the dependencies of `turso-java`. That crate doesn't use
+`pg_query`, so the image doesn't need libclang.
+
+Closes #11653
+
+**File**: `testing/sqlancer/sqlancer-runner/Dockerfile.sqlancer` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ RUN --mount=type=bind,source=.,target=/app \
+ FROM chef AS builder
+ 
+ COPY --from=planner /tmp/recipe.json recipe.json
+-RUN cargo chef cook --release --recipe-path recipe.json
++RUN cargo chef cook --release -p turso-java --recipe-path recipe.json
+ 
+ # Copy full source
+ COPY . .
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11577** (2026-11-08): bindings/rust: expose the progress handler on Connection (@KaiserKarel)
-- **PR #11576** (2026-11-08): core/dialect: centralize shared SQLite behavior in Dialect defaults (@Surajsuthar)
-- **PR #11571** (2026-11-07): tursopg: read hex, octal and binary literals that do not fit in int4 (@gaurav0107)
-- **PR #11566** (2026-11-07): core/time: return an error for a time blob whose seconds overflow (@gaurav0107)
-- **PR #11561** (2026-11-08): core: count changes() and total_changes() like SQLite (@Raviikumar001)
-- **PR #11559** (closed): core: count changes like SQLite for CREATE INDEX, OR FAIL and vtab writes (@1AbdullahButt)
+- **PR #11656** (2026-11-10): testing/whopper: keep nextval values from rolled-back BEGIN CONCURRENT (@penberg)
+- **PR #11653** (2026-11-10): testing/sqlancer: build only turso-java dependencies in the image (@penberg)
+- **PR #11652** (2026-11-10): docs: add Finnish translation of the README (@penberg)
+- **PR #11645** (closed): postgres: cast text to bool through the boolean type (@orangec-at)
+- **PR #11644** (2026-11-10): bindings/c: convert sqlite3_value reads between text, numbers and blobs (@turso-github-handyman[bot])
+- **PR #11630** (2026-11-10): Guide AI agents towards our mode of working (@glommer)
 
 ---
 
@@ -1528,45 +1803,38 @@ Closes #11504
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' 
+## X. core/vdbe: make built-in scalar functions a function of their arguments
 
 **RULE**:
-When implementing operations in `core/storage/btree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/dialect/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ce98599`: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dcfbe24`: core/vdbe: make built-in scalar functions a function of their arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/btree.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    turso_assert!(
-        contents.overflow_cells.is_empty(),
-        "btree_init_page: page still has overflow cells from an earlier insert or balance",
-        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
-    );
-    #[test]
-    #[should_panic(expected = "page still has overflow cells")]
-    fn btree_init_page_rejects_page_with_overflow_cells() {
-        let page = get_page(2);
-        let page_contents = page.get_contents();
-        let payload = [1u8; 3000];
-        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
-        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
-        assert_eq!(page_contents.overflow_cells.len(), 1);
-
-        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
-    }
+    Clock, CollationSeq, Connection, Func, LimboError, OpenOptions, Result, Value, IO,
+/// What a built-in scalar function may read besides its arguments.
+pub struct ScalarFuncContext<'a> {
+    pub connection: &'a Connection,
+    pub io: &'a dyn IO,
+    /// The statement's clock: every function of one step sees the same time.
+    pub clock: &'a dyn Clock,
+    /// The collation of the call site, for functions that compare arguments.
+    pub collation: CollationSeq,
+}
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    contents.overflow_cells.clear();
+    Connection, Func, LimboError, OpenOptions, Result, Value,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ce98599` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dcfbe24` are properly handled with clean fallback behavior.

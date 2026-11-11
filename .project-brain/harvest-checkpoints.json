@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T06:24:02.927Z",
+  "last_updated": "2026-11-11T06:33:50.014Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
-      "verified_at": "2026-11-10T05:06:35.860Z",
+      "content_hash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
+      "verified_at": "2026-11-11T06:33:50.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T05:06:35.860Z"
+      "last_updated": "2026-11-11T06:33:50.013Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
-      "verified_at": "2026-11-09T23:17:52.999Z",
+      "content_hash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
+      "verified_at": "2026-11-11T06:33:46.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T23:17:52.999Z"
+      "last_updated": "2026-11-11T06:33:46.454Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
-      "verified_at": "2026-11-09T02:08:11.703Z",
+      "content_hash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
+      "verified_at": "2026-11-11T06:33:42.087Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:08:11.703Z"
+      "last_updated": "2026-11-11T06:33:42.087Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -9051,14 +9051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
-      "content_hash": "572383bc0d730e8216e197108d446703974a4f3afe2eb5f8dd5a3dbb635ddff0",
-      "verified_at": "2026-10-20T16:57:17.031Z",
+      "content_hash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
+      "verified_at": "2026-11-11T06:33:33.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:57:17.031Z"
+      "last_updated": "2026-11-11T06:33:33.910Z"
     },
     "rook/rook": {
       "repository": "rook/rook",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
-      "verified_at": "2026-11-10T01:41:40.049Z",
+      "content_hash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
+      "verified_at": "2026-11-11T06:33:49.371Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:41:40.049Z"
+      "last_updated": "2026-11-11T06:33:49.371Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

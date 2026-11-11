@@ -8851,3 +8851,10 @@
 | `CYCLE-20261111-H5D1` | `2026-11-11T06:24:02.917Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`964032b5...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:24:18.513Z` | `marker-inc-korea-autorag` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DFC8FC98` [Domain D] | Yes (`fd2340d5...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:24:35.090Z` | `provablehq-snarkos` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B5A201FB` [Domain D] | Yes (`ceb01dbf...`) |
+| `CYCLE-20261111-TDX1` | `2026-11-11T06:33:33.877Z` | `react-native-webrtc/react-native-webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7be113e6...`) |
+| `CYCLE-20261111-TK7R` | `2026-11-11T06:33:42.039Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6d43f52b...`) |
+| `CYCLE-20261111-TNLU` | `2026-11-11T06:33:46.434Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`202ef1b9...`) |
+| `CYCLE-20261111-TPUE` | `2026-11-11T06:33:49.334Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5267b93a...`) |
+| `CYCLE-20261111-TQCP` | `2026-11-11T06:33:49.993Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2f9cd8ef...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:34:12.030Z` | `react-native-webrtc-react-native-webrtc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0B5C2EE9` [Domain H] | Yes (`077420af...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:34:33.447Z` | `dnscontrol-dnscontrol` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A94752EF` [Domain D] | Yes (`9cdc3293...`) |
