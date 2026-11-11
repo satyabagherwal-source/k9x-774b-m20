@@ -8964,3 +8964,5 @@
 | `CYCLE-20261111-SBZW` | `2026-11-11T14:56:37.820Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a8e501d...`) |
 | `CYCLE-20261111-SJ5R` | `2026-11-11T14:56:47.103Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1ff3ee95...`) |
 | `CYCLE-20261111-SMMG` | `2026-11-11T14:56:51.592Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a9ac9d27...`) |
+| `CYCLE-20261111-VWW7` | `2026-11-11T15:27:24.487Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`619c84ba...`) |
+| `CYCLE-20261111-WFIB` | `2026-11-11T15:27:48.611Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5cfd6a0c...`) |

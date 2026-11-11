@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T15:09:01.693Z",
+  "last_updated": "2026-11-11T15:27:53.718Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-11T15:09:01.681Z",
+      "processed_at": "2026-11-11T15:27:53.718Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -366,9 +366,19 @@
       "processed_at": "2026-11-11T14:56:57.873Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "arkivanov-decompose-learnings.md": {
+      "processed_at": "2026-11-11T15:27:53.704Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "doobidoo-mcp-memory-service-learnings.md": {
+      "processed_at": "2026-11-11T15:27:53.711Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 90,
+  "total_dossiers_evaluated": 93,
   "total_canonical_promoted": 16,
-  "total_staged_for_review": 71
+  "total_staged_for_review": 74
 }

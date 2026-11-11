@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T15:09:01.692Z",
+  "last_updated": "2026-11-11T15:27:53.717Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5091,6 +5091,33 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5A70CC-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-B7E529",
+      "directive_title": "Revert \"Merge pull request #1065 from arkivanov/revert-1049\"",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arkivanov-decompose",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B7E529-revert-merge-pull-request-1065-from-arki.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4F09BE",
+      "directive_title": "logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "doobidoo-mcp-memory-service",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4F09BE-logging-lazy-style-logger-calls-in-utils.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-53B093",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-53B093-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-11"
     }
   ]

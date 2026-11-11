@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T14:56:51.470Z",
+  "last_updated": "2026-11-11T15:27:48.503Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3707,11 +3707,16 @@
       "slug": "arkivanov-decompose",
       "platform": "github",
       "source_url": "https://github.com/arkivanov/Decompose",
-      "source_version": "c9780062",
-      "content_hash": "ac2dad4c6b634b7aafbbc3af1e8ab829972f21b2025eb91e8c53afa93ae47115",
+      "source_version": "2cc1a4cc",
+      "content_hash": "5cfd6a0c1154f8ad86a59716bdab78e21dddec70427ac75c48cf10dfe0948f08",
       "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Revert \"Merge pull request #1065 from arkivanov/revert-1049\"",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2427,
           "title": "Guard Stale Completion Callbacks in Asynchronous State Transitions",
@@ -3743,7 +3748,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:45:33.750Z",
+      "verified_at": "2026-11-11T15:27:48.478Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12008,8 +12013,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "c37639d3",
-      "content_hash": "c703dddfb3226782142de84355decdcd4ff996794945b207638c60cbfcca9296",
+      "source_version": "35668fa1",
+      "content_hash": "619c84baa891f9454fa2f2e2348d22cb1f4b792074243450c4d868a716f45365",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -12041,6 +12046,11 @@
         {
           "number": null,
           "title": "remote_http): honor store in get_by_hash, update and delete (#1879) (#1922)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12129,7 +12139,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T07:21:03.678Z",
+      "verified_at": "2026-11-11T15:27:24.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

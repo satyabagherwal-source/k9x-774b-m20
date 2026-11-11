@@ -8973,3 +8973,5 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `1e2106e6` | Multi-dimensional audit evidence | 2026-11-11T14:56:37.826Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `2fd74173` | Multi-dimensional audit evidence | 2026-11-11T14:56:47.107Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `90e547c6` | Multi-dimensional audit evidence | 2026-11-11T14:56:51.597Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `35668fa1` | Multi-dimensional audit evidence | 2026-11-11T15:27:24.491Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `2cc1a4cc` | Multi-dimensional audit evidence | 2026-11-11T15:27:48.615Z |

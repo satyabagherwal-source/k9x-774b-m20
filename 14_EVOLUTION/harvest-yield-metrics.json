@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:56:51.604Z",
-  "total_cycles_completed": 8809,
-  "total_learnings_persisted": 8809,
-  "total_rules_promoted": 8671,
+  "last_updated": "2026-11-11T15:27:48.621Z",
+  "total_cycles_completed": 8811,
+  "total_learnings_persisted": 8811,
+  "total_rules_promoted": 8673,
   "history": [
-    {
-      "timestamp": "2026-11-09T17:12:20.694Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T17:12:20.904Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T17:12:38.152Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T14:56:51.604Z",
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T15:27:24.511Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T15:27:48.621Z",
+      "repository": "arkivanov/Decompose",
+      "learningId": "learn-github-arkivanov-decompose",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
