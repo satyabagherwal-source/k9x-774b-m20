@@ -8957,3 +8957,7 @@
 | `CYCLE-20261111-D17W` | `2026-11-11T14:16:44.396Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e0514c55...`) |
 | `CYCLE-20261111-D8IA` | `2026-11-11T14:16:53.842Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b3350303...`) |
 | `CYCLE-20261111-DA62` | `2026-11-11T14:16:55.994Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5921a11e...`) |
+| `CYCLE-20261111-5HK7` | `2026-11-11T14:38:51.943Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`abe3a6c9...`) |
+| `CYCLE-20261111-5PCA` | `2026-11-11T14:39:02.026Z` | `joreilly/PeopleInSpace` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18f73239...`) |
+| `CYCLE-20261111-64X6` | `2026-11-11T14:39:22.218Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1c910471...`) |
+| `CYCLE-20261111-BWLA` | `2026-11-11T14:43:51.358Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`9b528acf...`) |

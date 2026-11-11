@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:17:01.739Z",
+  "last_updated": "2026-11-11T14:43:56.747Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T13:52:34.067Z",
@@ -336,9 +336,24 @@
       "processed_at": "2026-11-11T14:17:01.738Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "sharkdp-fd-learnings.md": {
+      "processed_at": "2026-11-11T14:43:56.736Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "joreilly-peopleinspace-learnings.md": {
+      "processed_at": "2026-11-11T14:43:56.743Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "kube-rs-kube-learnings.md": {
+      "processed_at": "2026-11-11T14:43:56.746Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 81,
+  "total_dossiers_evaluated": 84,
   "total_canonical_promoted": 16,
-  "total_staged_for_review": 62
+  "total_staged_for_review": 65
 }

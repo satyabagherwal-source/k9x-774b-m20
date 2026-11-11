@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:17:01.737Z",
+  "last_updated": "2026-11-11T14:43:56.745Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5010,6 +5010,33 @@
       "source_repo": "projectcontour-contour",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-126F9E-build-deps-bump-github-com-onsi-ginkgo-v.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-91473B",
+      "directive_title": "Merge pull request #2222 from azchohfi/windows-delay-load",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sharkdp-fd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-91473B-merge-pull-request-2222-from-azchohfi-wi.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-9369E1",
+      "directive_title": "CI: retry the Maestro download and fail the install step if it doesn't land (#57",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "joreilly-peopleinspace",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9369E1-ci-retry-the-maestro-download-and-fail-t.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-984EAE",
+      "directive_title": "Bound watch startup with the watcher idle timeout (#2149)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kube-rs-kube",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-984EAE-bound-watch-startup-with-the-watcher-idl.md",
       "staged_date": "2026-11-11"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `39886c0c`  
+> **Source Version**: `24d90b28`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:48:58.941Z  
+> **Timestamp**: 2026-11-11T14:38:39.806Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:48:57.365Z  
+> **Harvest Timestamp**: 2026-11-11T14:38:29.300Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 45114 stars
+- **Stars / Engagement**: 45090 stars
 
 ---
 
@@ -1809,274 +1809,133 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edc62af8` (2026-11-07)
-**Commit Message**: docs: update Guix package link
+### Incident Patch 1: `24d90b28` (2026-11-09)
+**Commit Message**: Merge pull request #2222 from azchohfi/windows-delay-load
 
-**File**: `README.md` (modified, +1/-1)
+Delay-load shell32, combase and advapi32 on Windows MSVC
+
+**File**: `.cargo/config.toml` (modified, +18/-1)
 ```diff
-@@ -693,7 +693,7 @@ winget install sharkdp.fd
+@@ -6,4 +6,21 @@
+ [target.x86_64-pc-windows-msvc]
+ rustflags = ["-C", "target-feature=+crt-static"]
+ [target.i686-pc-windows-msvc]
+-rustflags = ["-C", "target-feature=+crt-static"]
+\ No newline at end of file
++rustflags = ["-C", "target-feature=+crt-static"]
++
++# On Windows MSVC, delay-load DLLs that most runs never call, so they (and the
++# DLLs they pull in) are not loaded at startup. shell32 and combase are only
++# used to find the AppData folder when APPDATA is not set, advapi32 only by
++# `--type executable`. LNK4199 ("no imports found") is ignored because binaries
++# that don't use one of these DLLs, like the test binaries, would warn.
++#
++# See: https://github.com/sharkdp/fd/issues/2217
++
++[target.'cfg(all(target_os = "windows", target_env = "msvc"))']
++rustflags = [
++    "-C", "link-arg=/DELAYLOAD:shell32.dll",
++    "-C", "link-arg=/DELAYLOAD:combase.dll",
++    "-C", "link-arg=/DELAYLOAD:advapi32.dll",
++    "-C", "link-arg=delayimp.lib",
++    "-C", "link-arg=/IGNORE:4199",
++]
+```
+
+**File**: `CHANGELOG.md` (modified, +13/-0)
+```diff
+@@ -1,3 +1,16 @@
++# Upcoming release
++
++## Features
++
++
++## Bugfixes
++
++
++## Changes
++- Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
++
++## Other
++
+ # 10.5.2
  
- ### On GuixOS
- 
--You can install [the fd package](https://guix.gnu.org/en/packages/fd-8.1.1/) from the official repo:
-+You can install [the fd package](https://packages.guix.gnu.org/packages/fd/) from the official repo:
- ```
- guix install fd
- ```
+ ## Bugfixes
 ```
 
 ---
 
-### Incident Patch 2: `3a8edbec` (2026-11-07)
-**Commit Message**: Merge pull request #2197 from BTF-Kabir-2020/fix/format-raw-bytes-piped
+### Incident Patch 2: `7dc30379` (2026-11-08)
+**Commit Message**: Delay-load shell32, combase and advapi32 on Windows MSVC
 
-fix: write raw bytes for piped --format output on unix
+Most runs never call these DLLs: shell32 and combase are only used to
+find the AppData folder when APPDATA is not set, and advapi32 only by
+--type executable. Delay-loading them means they, and the DLLs they pull
+in (user32, gdi32 and others), are no longer loaded at startup.
 
-**File**: `CHANGELOG.md` (modified, +2/-1)
+The flags go in .cargo/config.toml next to the existing crt-static
+setting, so no build script is needed.
+
+See #2217
+
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+**File**: `.cargo/config.toml` (modified, +18/-1)
 ```diff
-@@ -1,7 +1,8 @@
- # Upcoming Releas
- 
--## Bubfixes
+@@ -6,4 +6,21 @@
+ [target.x86_64-pc-windows-msvc]
+ rustflags = ["-C", "target-feature=+crt-static"]
+ [target.i686-pc-windows-msvc]
+-rustflags = ["-C", "target-feature=+crt-static"]
+\ No newline at end of file
++rustflags = ["-C", "target-feature=+crt-static"]
++
++# On Windows MSVC, delay-load DLLs that most runs never call, so they (and the
++# DLLs they pull in) are not loaded at startup. shell32 and combase are only
++# used to find the AppData folder when APPDATA is not set, advapi32 only by
++# `--type executable`. LNK4199 ("no imports found") is ignored because binaries
++# that don't use one of these DLLs, like the test binaries, would warn.
++#
++# See: https://github.com/sharkdp/fd/issues/2217
++
++[target.'cfg(all(target_os = "windows", target_env = "msvc"))']
++rustflags = [
++    "-C", "link-arg=/DELAYLOAD:shell32.dll",
++    "-C", "link-arg=/DELAYLOAD:combase.dll",
++    "-C", "link-arg=/DELAYLOAD:advapi32.dll",
++    "-C", "link-arg=delayimp.lib",
++    "-C", "link-arg=/IGNORE:4199",
++]
+```
+
+**File**: `CHANGELOG.md` (modified, +13/-0)
+```diff
+@@ -1,3 +1,16 @@
++# Upcoming release
++
++## Features
++
++
 +## Bugfixes
- - Fix invalid syntax in zsh completions. See #2216
-+- Write raw bytes instead of replacing them with U+FFFD when `--format` output goes to a pipe, so filenames that are not valid UTF-8 reach downstream tools unchanged; see #2189.
++
++
++## Changes
++- Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
++
++## Other
++
+ # 10.5.2
  
- # 10.5.1
- 
-```
-
-**File**: `src/output.rs` (modified, +22/-1)
-```diff
-@@ -76,7 +76,28 @@ fn print_entry_format<W: Write>(
-         entry.stripped_path(config),
-         config.path_separator.as_deref(),
-     );
--    // TODO: support writing raw bytes on unix?
-+
-+    #[cfg(not(unix))]
-+    return print_entry_format_base(stdout, &output, config);
-+
-+    #[cfg(unix)]
-+    {
-+        use std::os::unix::ffi::OsStrExt;
-+
-+        if config.interactive_terminal {
-+            print_entry_format_base(stdout, &output, config)
-+        } else {
-+            // Preserve the original path bytes when stdout is not an interactive terminal.
-+            stdout.write_all(output.as_os_str().as_bytes())
-+        }
-+    }
-+}
-+
-+fn print_entry_format_base<W: Write>(
-+    stdout: &mut W,
-+    output: &std::ffi::OsStr,
-+    config: &Config,
-+) -> io::Result<()> {
-     let s = output.to_string_lossy();
-     write!(
-         stdout,
-```
-
-**File**: `tests/tests.rs` (modified, +54/-0)
-```diff
-@@ -2869,6 +2869,60 @@ fn test_exec_invalid_utf8() {
-     );
- }
- 
-+/// --format with non-utf8 paths writes the raw bytes when the output is piped
-+///
-+/// Note:
-+/// - the test is disabled on Darwin/OSX, since it coerces file names to UTF-8,
-+///   even when the requested file name is not valid UTF-8.
-+/// - the test is currently disabled on Windows because I'm not sure how to create
-+///   invalid UTF-8 files on Windows
-+#[cfg(all(unix, not(target_os = "macos")))]
-+#[test]
-+fn test_format_invalid_utf8() {
-+    use std::ffi::OsStr;
-+    use std::os::unix::ffi::OsStrExt;
-+
-+    let dirs = &["test1"];
-+    let files = &[];
-+    let te = TestEnv::new(dirs, files);
-+
-+    fs::File::create(
-+        te.test_root()
-+            .join(OsStr::from_bytes(b"test1/test_\xFEinvalid.txt")),
-+    )
-+    .unwrap();
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{}"],
-+        b"test1/test_\xFEinvalid.txt\n",
-+    );
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{/}"],
-+        b"test_\xFEinvalid.txt\n",
-+    );
-+
-+    te.assert_output_raw(&["", "test1/", "--format", "{//}"], b"test1\n");
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{.}"],
-+        b"test1/test_\xFEinvalid\n",
-+    );
-+
-+    te.assert_output_raw(&["", "test1/", "--format", "{/.}"], b"test_\xFEinvalid\n");
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{}", "--print0"],
-+        b"test1/test_\xFEinvalid.txt\0",
-+    );
-+
-+    // Test with custom path separator
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{}", "--path-separator", "="],
-+        b"test1=test_\xFEinvalid.txt\n",
-+    );
-+}
-+
- #[test]
- fn test_list_details() {
-     let te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
-```
-
----
-
-### Incident Patch 3: `3dcff928` (2026-10-27)
-**Commit Message**: fix: write raw bytes for piped --format output on unix
-
-Invalid UTF-8 filenames were replaced with U+FFFD when written with
---format to a non-terminal stream, so they broke downstream pipes like
-`xargs -0`. Mirror the uncolorized output path and write the raw bytes
-instead.
-
-Fixes: #2189
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
-```diff
-@@ -1,7 +1,8 @@
- # Upcoming Releas
- 
--## Bubfixes
-+## Bugfixes
- - Fix invalid syntax in zsh completions. See #2216
-+- Write raw bytes instead of replacing them with U+FFFD when `--format` output goes to a pipe, so filenames that are not valid UTF-8 reach downstream tools unchanged; see #2189.
- 
- # 10.5.1
- 
-```
-
-**File**: `src/output.rs` (modified, +22/-1)
-```diff
-@@ -76,7 +76,28 @@ fn print_entry_format<W: Write>(
-         entry.stripped_path(config),
-         config.path_separator.as_deref(),
-     );
--    // TODO: support writing raw bytes on unix?
-+
-+    #[cfg(not(unix))]
-+    return print_entry_format_base(stdout, &output, config);
-+
-+    #[cfg(unix)]
-+    {
-+        use std::os::unix::ffi::OsStrExt;
-+
-+        if config.interactive_terminal {
-+            print_entry_format_base(stdout, &output, config)
-+        } else {
-+            // Preserve the original path bytes when stdout is not an interactive terminal.
-+            stdout.write_all(output.as_os_str().as_bytes())
-+        }
-+    }
-+}
-+
-+fn print_entry_format_base<W: Write>(
-+    stdout: &mut W,
-+    output: &std::ffi::OsStr,
-+    config: &Config,
-+) -> io::Result<()> {
-     let s = output.to_string_lossy();
-     write!(
-         stdout,
-```
-
-**File**: `tests/tests.rs` (modified, +54/-0)
-```diff
-@@ -2869,6 +2869,60 @@ fn test_exec_invalid_utf8() {
-     );
- }
- 
-+/// --format with non-utf8 paths writes the raw bytes when the output is piped
-+///
-+/// Note:
-+/// - the test is disabled on Darwin/OSX, since it coerces file names to UTF-8,
-+///   even when the requested file name is not valid UTF-8.
-+/// - the test is currently disabled on Windows because I'm not sure how to create
-+///   invalid UTF-8 files on Windows
-+#[cfg(all(unix, not(target_os = "macos")))]
-+#[test]
-+fn test_format_invalid_utf8() {
-+    use std::ffi::OsStr;
-+    use std::os::unix::ffi::OsStrExt;
-+
-+    let dirs = &["test1"];
-+    let files = &[];
-+    let te = TestEnv::new(dirs, files);
-+
-+    fs::File::create(
-+        te.test_root()
-+            .join(OsStr::from_bytes(b"test1/test_\xFEinvalid.txt")),
-+    )
-+    .unwrap();
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{}"],
-+        b"test1/test_\xFEinvalid.txt\n",
-+    );
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{/}"],
-+        b"test_\xFEinvalid.txt\n",
-+    );
-+
-+    te.assert_output_raw(&["", "test1/", "--format", "{//}"], b"test1\n");
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{.}"],
-+        b"test1/test_\xFEinvalid\n",
-+    );
-+
-+    te.assert_output_raw(&["", "test1/", "--format", "{/.}"], b"test_\xFEinvalid\n");
-+
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{}", "--print0"],
-+        b"test1/test_\xFEinvalid.txt\0",
-+    );
-+
-+    // Test with custom path separator
-+    te.assert_output_raw(
-+        &["", "test1/", "--format", "{}", "--path-separator", "="],
-+        b"test1=test_\xFEinvalid.txt\n",
-+    );
-+}
-+
- #[test]
- fn test_list_details() {
-     let te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
+ ## Bugfixes
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2222** (2026-11-09): Delay-load shell32, combase and advapi32 on Windows MSVC (@azchohfi)
+- **PR #2220** (closed): fix: use native path separator for explicit search paths on Windows (@Hrushikesh-ramilla)
 - **PR #2219** (2026-11-07): v10.5.2 Release (@tmccombs)
 - **PR #2218** (2026-11-07): fix: Zsh completion syntax (@tmccombs)
 - **PR #2214** (2026-11-04): v10.5.1 Release (@tmccombs)
 - **PR #2208** (2026-11-01): fix: keep verbatim Windows paths absolute in --absolute-path (@Duo-ee)
-- **PR #2203** (2026-10-28): Fix changelog location (@tmccombs)
-- **PR #2202** (2026-10-30): ci: release a Windows ARM64 GNU-family (gnullvm) build (@meop)
 
 ---
 
@@ -2096,28 +1955,45 @@ Fixes: #2189
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: update Guix package link
+## X. Merge pull request #2222 from azchohfi/windows-delay-load
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edc62af8`: docs: update Guix package link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24d90b28`: Merge pull request #2222 from azchohfi/windows-delay-load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-You can install [the fd package](https://packages.guix.gnu.org/packages/fd/) from the official repo:
+rustflags = ["-C", "target-feature=+crt-static"]
+
+# On Windows MSVC, delay-load DLLs that most runs never call, so they (and the
+# DLLs they pull in) are not loaded at startup. shell32 and combase are only
+# used to find the AppData folder when APPDATA is not set, advapi32 only by
+# `--type executable`. LNK4199 ("no imports found") is ignored because binaries
+# that don't use one of these DLLs, like the test binaries, would warn.
+#
+# See: https://github.com/sharkdp/fd/issues/2217
+
+[target.'cfg(all(target_os = "windows", target_env = "msvc"))']
+rustflags = [
+    "-C", "link-arg=/DELAYLOAD:shell32.dll",
+    "-C", "link-arg=/DELAYLOAD:combase.dll",
+    "-C", "link-arg=/DELAYLOAD:advapi32.dll",
+    "-C", "link-arg=delayimp.lib",
+    "-C", "link-arg=/IGNORE:4199",
+]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-You can install [the fd package](https://guix.gnu.org/en/packages/fd-8.1.1/) from the official repo:
+rustflags = ["-C", "target-feature=+crt-static"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edc62af8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24d90b28` are properly handled with clean fallback behavior.

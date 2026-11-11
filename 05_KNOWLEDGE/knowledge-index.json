@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T14:16:55.882Z",
+  "last_updated": "2026-11-11T14:43:51.249Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10345,8 +10345,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "85dbb6b4",
-      "content_hash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
+      "source_version": "84c85c1f",
+      "content_hash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10449,6 +10449,21 @@
           "number": null,
           "title": "viz): load map panels in sandboxed frames without allow-same-origin (#5033)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Invariant Handling of Empty vs Default Column Selectors",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Sandbox-Isolated File Resolution for Decompressed/Extracted Inputs",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Synchronous Invariant Guarding in Asynchronous Concurrency Managers",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1719,
@@ -10801,7 +10816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:13:56.378Z",
+      "verified_at": "2026-11-11T14:43:51.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37798,14 +37813,19 @@
       "slug": "joreilly-peopleinspace",
       "platform": "github",
       "source_url": "https://github.com/joreilly/PeopleInSpace",
-      "source_version": "9f9e8336",
-      "content_hash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
+      "source_version": "2db46a03",
+      "content_hash": "18f7323946194b1088f8fd70530db7164c21d40cc2cbc3ba459417985058dade",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "crash on configuration change with a person selected (#566)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "CI: retry the Maestro download and fail the install step if it doesn't land (#57",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -37834,7 +37854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:16:07.735Z",
+      "verified_at": "2026-11-11T14:39:01.877Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39669,8 +39689,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "f0b9c443",
-      "content_hash": "53861e02bc1cbfbca770378a66a146fe86c82da5c83ae9f3ba630608a4ed4d60",
+      "source_version": "b970938d",
+      "content_hash": "1c91047131e5a2f63c3299a79c194bb8d5dc647b2f3a889c6a0b6c52ab835df6",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -39682,6 +39702,11 @@
         {
           "number": null,
           "title": "nightly clippy and rustdoc warnings (#2146)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Bound watch startup with the watcher idle timeout (#2149)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39735,7 +39760,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:17:08.575Z",
+      "verified_at": "2026-11-11T14:39:22.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57411,14 +57436,19 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "39886c0c",
-      "content_hash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
+      "source_version": "24d90b28",
+      "content_hash": "abe3a6c977b4420aa9e7254704b80effd11aec2094121afc8d76eddc04f0064a",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs: update Guix package link",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #2222 from azchohfi/windows-delay-load",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -57472,7 +57502,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:49:00.197Z",
+      "verified_at": "2026-11-11T14:38:51.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

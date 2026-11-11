@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T14:17:01.635Z",
-    "lastVerified": "2026-11-11T14:17:01.635Z",
+    "lastChecked": "2026-11-11T14:43:56.608Z",
+    "lastVerified": "2026-11-11T14:43:56.608Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,22 +249,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T13:29:03.159Z",
-    "lastVerified": "2026-11-11T13:29:03.159Z",
+    "lastChecked": "2026-11-11T14:38:44.156Z",
+    "lastVerified": "2026-11-11T14:38:44.156Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "85dbb6b4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -785,22 +784,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kube-rs-kube": {
-    "name": "kube",
+    "name": "kube-rs/kube",
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T07:43:39.316Z",
-    "lastVerified": "2026-11-09T07:43:39.316Z",
+    "lastChecked": "2026-11-11T14:38:36.898Z",
+    "lastVerified": "2026-11-11T14:38:36.898Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "53861e02bc1cbfbca770378a66a146fe86c82da5c83ae9f3ba630608a4ed4d60",
+    "contentHash": "1c91047131e5a2f63c3299a79c194bb8d5dc647b2f3a889c6a0b6c52ab835df6",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f0b9c443"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "defguard-defguard": {
     "name": "defguard",
@@ -1315,22 +1313,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
-    "name": "fd",
+    "name": "sharkdp/fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:46:28.963Z",
-    "lastVerified": "2026-11-09T01:46:28.963Z",
+    "lastChecked": "2026-11-11T14:38:29.300Z",
+    "lastVerified": "2026-11-11T14:38:29.300Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
+    "contentHash": "abe3a6c977b4420aa9e7254704b80effd11aec2094121afc8d76eddc04f0064a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "39886c0c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -1573,9 +1570,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-11T07:37:41.090Z",
+    "lastChecked": "2026-11-11T14:38:35.590Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-11T07:37:41.090Z"
+    "lastVerified": "2026-11-11T14:38:35.590Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3733,8 +3730,8 @@
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-09T06:45:56.689Z",
-    "lastVerified": "2026-11-09T06:45:56.689Z",
+    "lastChecked": "2026-11-11T14:38:38.069Z",
+    "lastVerified": "2026-11-11T14:38:38.069Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
@@ -8106,14 +8103,14 @@
     "officialUrl": "https://github.com/joreilly/PeopleInSpace",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-07T22:16:06.458Z",
-    "lastVerified": "2026-11-07T22:16:06.458Z",
+    "lastChecked": "2026-11-11T14:38:34.786Z",
+    "lastVerified": "2026-11-11T14:38:34.786Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-joreilly-peopleinspace",
-    "contentHash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
+    "contentHash": "18f7323946194b1088f8fd70530db7164c21d40cc2cbc3ba459417985058dade",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10640,9 +10637,9 @@
   "tmolavi-siteprobe": {
     "name": "siteprobe",
     "officialUrl": "https://github.com/tmolavi/siteprobe",
-    "lastChecked": "2026-11-06T20:52:04.034Z",
+    "lastChecked": "2026-11-11T14:38:28.086Z",
     "revisionIdentifier": "c27bffc3",
-    "lastVerified": "2026-11-06T20:52:04.034Z"
+    "lastVerified": "2026-11-11T14:38:28.086Z"
   },
   "yshrsmz-buildkonfig": {
     "name": "yshrsmz/BuildKonfig",

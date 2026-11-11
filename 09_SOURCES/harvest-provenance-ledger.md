@@ -8966,3 +8966,7 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `8cf33bdd` | Multi-dimensional audit evidence | 2026-11-11T14:16:44.401Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `d54d2ba1` | Multi-dimensional audit evidence | 2026-11-11T14:16:53.847Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `bb06ab91` | Multi-dimensional audit evidence | 2026-11-11T14:16:55.998Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `24d90b28` | Multi-dimensional audit evidence | 2026-11-11T14:38:51.949Z |
+| `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `2db46a03` | Multi-dimensional audit evidence | 2026-11-11T14:39:02.030Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `b970938d` | Multi-dimensional audit evidence | 2026-11-11T14:39:22.223Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `84c85c1f` | Multi-dimensional audit evidence | 2026-11-11T14:43:51.362Z |

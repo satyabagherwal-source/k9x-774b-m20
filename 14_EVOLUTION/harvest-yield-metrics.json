@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:16:56.005Z",
-  "total_cycles_completed": 8802,
-  "total_learnings_persisted": 8802,
-  "total_rules_promoted": 8662,
+  "last_updated": "2026-11-11T14:43:51.381Z",
+  "total_cycles_completed": 8806,
+  "total_learnings_persisted": 8806,
+  "total_rules_promoted": 8668,
   "history": [
-    {
-      "timestamp": "2026-11-09T16:40:18.866Z",
-      "repository": "Xudong-Huang/may",
-      "learningId": "learn-github-xudong-huang-may",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:40:24.974Z",
-      "repository": "software-mansion/react-native-reanimated",
-      "learningId": "learn-github-software-mansion-react-native-reanimated",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:40:29.791Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:40:33.997Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T16:40:34.957Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1375,34 @@
       "repository": "projectcontour/contour",
       "learningId": "learn-github-projectcontour-contour",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:38:51.958Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:39:02.038Z",
+      "repository": "joreilly/PeopleInSpace",
+      "learningId": "learn-github-joreilly-peopleinspace",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:39:22.229Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:43:51.381Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

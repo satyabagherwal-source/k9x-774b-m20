@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T14:16:56.018Z",
+  "last_updated": "2026-11-11T14:43:51.385Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
-      "verified_at": "2026-11-11T06:13:56.571Z",
+      "content_hash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
+      "verified_at": "2026-11-11T14:43:51.384Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T06:13:56.571Z"
+      "last_updated": "2026-11-11T14:43:51.384Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
-      "verified_at": "2026-11-08T00:49:00.325Z",
+      "content_hash": "abe3a6c977b4420aa9e7254704b80effd11aec2094121afc8d76eddc04f0064a",
+      "verified_at": "2026-11-11T14:38:51.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:49:00.325Z"
+      "last_updated": "2026-11-11T14:38:51.964Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "53861e02bc1cbfbca770378a66a146fe86c82da5c83ae9f3ba630608a4ed4d60",
-      "verified_at": "2026-11-07T18:17:08.705Z",
+      "content_hash": "1c91047131e5a2f63c3299a79c194bb8d5dc647b2f3a889c6a0b6c52ab835df6",
+      "verified_at": "2026-11-11T14:39:22.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:17:08.705Z"
+      "last_updated": "2026-11-11T14:39:22.233Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",
@@ -10836,14 +10836,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-peopleinspace",
-      "content_hash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
-      "verified_at": "2026-11-07T22:16:07.819Z",
+      "content_hash": "18f7323946194b1088f8fd70530db7164c21d40cc2cbc3ba459417985058dade",
+      "verified_at": "2026-11-11T14:39:02.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:16:07.819Z"
+      "last_updated": "2026-11-11T14:39:02.042Z"
     },
     "valeriansaliou/sonic": {
       "repository": "valeriansaliou/sonic",

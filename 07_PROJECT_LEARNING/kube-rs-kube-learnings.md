@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `f0b9c443`  
+> **Source Version**: `b970938d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:17:07.064Z  
+> **Timestamp**: 2026-11-11T14:39:05.720Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:17:06.803Z  
+> **Harvest Timestamp**: 2026-11-11T14:38:36.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3855 stars
+- **Stars / Engagement**: 3861 stars
 
 ---
 
@@ -1686,11 +1686,11 @@ fn test_to_plural_native() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2148** (2026-11-11): **Watch recovery regression in kube 5.0 when an HTTP error response body stalls**
+  *Symptoms*: ### Current and expected behavior  In Kube 5.0, a watcher can stop recovering when the API server or a proxy returns HTTP 500 headers but never completes the response body.  With watcher::Config::default().timeout(1), the watcher’s client-side idle timeout is six seconds, including its five-second margin.  Using the same reproduction in kube 4.2.0 I saw it reconnects and receives an event but in kube 5, it never recovered  I would expect a stalled rejection body to produce a bounded failure or allow watch recovery, rather than block before the watchdog becomes active.  ### Possible solution  _No response_  ### Additional context  _No response_  ### Environment  Linux x86_64. Rust 1.99.0 and Tokio 1.53.1.   ### Configuration and features  '''toml kube = { version = "=5.0.0", default-features = false, features = ["client", "runtime", "openssl-tls"] } k8s-openapi = { version = "=0.29.0", default-features = false, features = ["earliest"] } '''  ### YAML  _No response_  ### Affected crates  kube-client, kube-runtime  ### Would you like to work on fixing this bug?  None
+
 - **Issue #2142** (2026-11-06): **NO_PROXY environment variable is not working under regular client setup**
   *Symptoms*: ### Current and expected behavior  Raised initially https://github.com/crust-gather/crust-gather/issues/587, which I believe should be supported by current version per https://github.com/kube-rs/kube/pull/2075, but reported being ineffective.   cc @manderson23  > The K8s clusters I access need to bypass our corporate proxy and this is done via the IP being in the NO_PROXY environment variable.  > kubectl itself respects the environment variables but `kubectl crust-gather collect -v TRACE` fails as follows  ```logs 2026-11-04T09:09:46.798334Z  INFO crust_gather::cli: Initializing client... 2026-11-04T09:09:46.837366Z TRACE tower::buffer::worker: worker polling for next message 2026-11-04T09:09:46.837473Z TRACE collect: tower::buffer::service: sending request to buffer worker 2026-11-04T09:09:46.837723Z TRACE tower::buffer::worker: worker polling for next message 2026-11-04T09:09:46.837822Z TRACE tower::buffer::worker: processing new request 2026-11-04T09:09:46.837915Z TRACE collect: tower::buffer::worker: resumed=false worker received request; waiting for service readiness 2026-11-04T09:09:46.838001Z DEBUG collect: tower::buffer::worker: service.ready=true processing request 2026-11-04T09:09:46.838202Z DEBUG collect:HTTP{http.method=GET http.url=https://10.2.2.5:6443/apis otel.name="HTTP" otel.kind="client"}: kube_client::client::builder: requesting 2026-11-04T09:09:46.838312Z TRACE collect: tower::buffer::worker: returning response future 2026-11-04T09:09:46.838377Z TRACE tow
-
-- **Issue #2112** (2026-10-15): **Backport serde-yaml replacement to v3**
-  *Symptoms*: ### Current and expected behavior  Issue #1770 was opened to address the serde-yaml deprecation in v4, and the work to replace it with serde-saphyr was done in PR #1975.  I'm opening this issue to make the same updates (mostly find & replace it seems) on version v3.  ### Possible solution  Same work as #1975 - find & replace `serde-yaml` with `serde-saphyr`  ### Additional context  This will resolve [RUSTSEC-2024-0449](https://rustsec.org/advisories/RUSTSEC-2024-0449) for projects using v3.  ### Environment  Discovered this via a `cargo audit` vulnerability report due to `gateway-api` using kube v3.  ### Configuration and features  https://github.com/kube-rs/gateway-api-rs/blob/main/Cargo.toml#L16 ```toml [workspace.dependencies] kube = { version = "3.1.0" } ```  ### YAML  _No response_  ### Affected crates  _No response_  ### Would you like to work on fixing this bug?  maybe
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1707,247 +1707,162 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0b9c443` (2026-11-06)
-**Commit Message**: Fix nightly clippy and rustdoc warnings (#2146)
+### Incident Patch 1: `224f8434` (2026-11-11)
+**Commit Message**: Bound watch startup with the watcher idle timeout (#2149)
 
-Move the test modules in tls.rs and params.rs below the prod code so nightly
-clippy's items_after_test_module stops firing. Fix the 30 unresolved intra-doc
-links across the published crates, and make the doc job and `just doc` document
-the whole workspace minus e2e and kube-examples with
-rustdoc::broken_intra_doc_links denied.
+Fixes #2148
 
 Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+Co-authored-by: Eirik A <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `kube-runtime/Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -98,9 +98,9 @@ jobs:
-       - name: Install nightly
-         uses: dtolnay/rust-toolchain@nightly
-       - name: cargo doc
--        run: cargo doc --no-deps --all-features
-+        run: cargo doc --no-deps --all-features --workspace --exclude e2e --exclude kube-examples
-         env:
--          RUSTDOCFLAGS: --cfg docsrs
-+          RUSTDOCFLAGS: --cfg docsrs -D rustdoc::broken_intra_doc_links
+@@ -47,6 +47,9 @@ async-stream.workspace = true
+ hostname.workspace = true
  
-   minimal-versions:
-     runs-on: ubuntu-latest
+ [dev-dependencies]
++http.workspace = true
++http-body-util.workspace = true
++tower.workspace = true
+ kube = { path = "../kube", features = ["derive", "client", "runtime"] }
+ serde_json.workspace = true
+ serde-saphyr.workspace = true
 ```
 
-**File**: `justfile` (modified, +1/-1)
+**File**: `kube-runtime/src/watcher.rs` (modified, +188/-20)
 ```diff
-@@ -17,7 +17,7 @@ fmt:
-   cargo +nightly fmt --all
- 
- doc:
--  RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features --no-deps --open
-+  RUSTDOCFLAGS="--cfg docsrs -D rustdoc::broken_intra_doc_links" cargo +nightly doc --all-features --no-deps --workspace --exclude e2e --exclude kube-examples --open
- 
- deny:
-   # might require rm Cargo.lock first to match CI
-```
-
-**File**: `kube-client/src/api/subresource.rs` (modified, +1/-1)
-```diff
-@@ -619,7 +619,7 @@ fn evict_path() {
- 
- /// Marker trait for objects that can be evicted
- ///
--/// See [`Api::evic`] for usage
-+/// See [`Api::evict`] for usage
- pub trait Evict {}
- 
- impl Evict for k8s_openapi::api::core::v1::Pod {}
-```
-
-**File**: `kube-client/src/client/config_ext.rs` (modified, +2/-2)
-```diff
-@@ -91,7 +91,7 @@ pub trait ConfigExt: private::Sealed {
-     #[cfg(feature = "rustls-tls")]
-     fn rustls_client_config(&self) -> Result<rustls::ClientConfig>;
- 
--    /// Create [`hyper_openssl::HttpsConnector`] based on config.
-+    /// Create [`hyper_openssl::client::legacy::HttpsConnector`] based on config.
-     /// # Example
-     ///
-     /// ```rust
-@@ -107,7 +107,7 @@ pub trait ConfigExt: private::Sealed {
-     fn openssl_https_connector(&self)
-     -> Result<hyper_openssl::client::legacy::HttpsConnector<HttpConnector>>;
- 
--    /// Create [`hyper_openssl::HttpsConnector`] based on config and `connector`.
-+    /// Create [`hyper_openssl::client::legacy::HttpsConnector`] based on config and `connector`.
-     /// # Example
-     ///
-     /// ```rust
-```
-
-**File**: `kube-client/src/client/kubelet_debug.rs` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ use std::fmt::Debug;
- 
- /// Methods to access debug endpoints directly on `kubelet`
- ///
--/// These provide analogous methods to the `Pod` api methods for [`Execute`](crate::api::Exec), [`Attach`](crate::api::Attach), and [`Portforward`](crate::api::Portforward).
-+/// These provide analogous methods to the `Pod` api methods for [`Execute`](crate::api::Execute), [`Attach`](crate::api::Attach), and [`Portforward`](crate::api::Portforward).
- /// Service account must have `nodes/proxy` access, and
- /// the debug handlers must be enabled either via `--enable-debugging-handlers ` or in the [kubelet config](https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-KubeletConfiguration).
- /// See the [kubelet source](https://github.com/kubernetes/kubernetes/blob/b3926d137cd2964cd3a04088ded30845910547b1/pkg/kubelet/server/server.go#L454), and [kubelet reference](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) for more info.
-```
-
-**File**: `kube-client/src/client/tls.rs` (modified, +80/-80)
-```diff
-@@ -212,86 +212,6 @@ pub mod rustls_tls {
-         }
+@@ -530,17 +530,25 @@ async fn next_with_idle_timeout<S, T>(stream: &mut S, timeout: Option<u32>) -> O
+ where
+     S: Stream<Item = T> + Unpin,
+ {
++    with_idle_timeout(stream.next(), timeout).await.flatten()
++}
++
++/// Await `fut` with the same idle timeout, returning `None` on expiry.
++///
++/// Also wraps the watch call, which can stall before a stream exists,
++/// e.g. on an error response whose body never completes.
++async fn with_idle_timeout<F: Future>(fut: F, timeout: Option<u32>) -> Option<F::Output> {
+     if timeout == Some(0) {
+-        return stream.next().await;
++        return Some(fut.await);
      }
  
--    #[cfg(test)]
--    mod tests {
--        use super::*;
--
--        // EC P-256 self-signed CAs, valid until 2126. Regenerate with:
--        //   openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes \
--        //     -keyout /dev/null -out ca.pem -days 36500 -subj "/CN=test-ca-N"
--        const CA1: &str = "-----BEGIN CERTIFICATE-----
--MIIBgDCCASWgAwIBAgIUVrQf5d//S01a0fbXxYRIx9wc0VQwCgYIKoZIzj0EAwIw
--FDESMBAGA1UEAwwJdGVzdC1jYS0xMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
--MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTEwWTATBgcqhkjOPQIBBggqhkjO
--PQMBBwNCAARg57mWJPDsAIEQAgXqMOOfjMQP+PE9HqcZobycO8z94r/uRuV0wKx/
--0SvMsKFtnreut0bjgFtmZaWY+6d87Is9o1MwUTAdBgNVHQ4EFgQUjtGuhkM7LtHB
--gMPCJIxMwbY69OQwHwYDVR0jBBgwFoAUjtGuhkM7LtHBgMPCJIxMwbY69OQwDwYD
--VR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNJADBGAiEAj/WzNVJDg/cBtLqQVM77
--tkB+QyIXLG3Vi9Xj1YfW9QECIQDDFW8yFtgLeCg2Zhr4xQNq3/24r/01kI2rjFPO
--xBkDMw==
-------END CERTIFICATE-----
--";
--        const CA2: &str = "-----BEGIN CERTIFICATE-----
--MIIBfjCCASWgAwIBAgIUZ7Qsiwan2joRz01p25/cy1XNNiwwCgYIKoZIzj0EAwIw
--FDESMBAGA1UEAwwJdGVzdC1jYS0yMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
--MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTIwWTATBgcqhkjOPQIBBggqhkjO
--PQMBBwNCAARJle2/yiOD5zp0UkjZg9Yy6ZHBItTLrqv/uzB2YMQg03frnqEUMzSV
--mFinosBcGpX/dPGfHNPhBMOpHmlocZu9o1MwUTAdBgNVHQ4EFgQUsqG0hSGDYsz2
--eGIsLIwJnCR5SFIwHwYDVR0jBBgwFoAUsqG0hSGDYsz2eGIsLIwJnCR5SFIwDwYD
--VR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNHADBEAiApvLu9DIC3/K/+G9ooOm75
--a72Cjw62aM8NfPe7ILs8SgIgL0VHe6ksTyB176RECCm3MJVnlhOop6b1tNvxjrru
--FRU=
-------END CERTIFICATE-----
--";
--
--        fn expire(v: &ReloadingVerifier) {
--            // Can't move Instant backwards; instead, reach past the guard.
--            // The test pokes private state the same way auth::tests::token_file does.
--            v.inner.write().unwrap().1 = Instant::now().checked_sub(Duration::from_secs(120)).unwrap();
--        }
--
--        #[test]
--        fn reloading_verifier() {
--            #[cfg(feature = "aws-lc-rs")]
--            let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
--
--            let file = tempfile::NamedTempFile::new().unwrap();
--            std::fs::write(file.path(), CA1).unwrap();
--
--            let verifier = ReloadingVerifier::new(file.path().to_path_buf()).unwrap();
--            let first = verifier.current();
--
--            // File changed but we're still within the reload interval: no reload.
--            std::fs::write(file.path(), CA2).unwrap();
--            assert!(Arc::ptr_eq(&verifier.current(), &first));
--
--            // Force expiry: reload picks up CA2.
--            expire(&verifier);
--            let second = verifier.current();
--            assert!(!Arc::ptr_eq(&second, &first));
--
--            // File gone, expired again: keep stale verifier.
--            drop(file);
--            expire(&verifier);
--            assert!(Arc::ptr_eq(&verifier.current(), &second));
--        }
--    }
--
--    #[cfg(all(test, not(feature = "webpki-roots")))]
--    mod platform_verifier_tests {
--        use super::*;
--
--        // With no kubeconfig CA, the client config must fall back to the OS-native
--        // verifier instead of producing an empty (reject-everything) trust store.
--        #[test]
--        fn no_ca_falls_back_to_platform_verifier() {
--            #[cfg(feature = "aws-lc-rs")]
--            let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
--
--            rustls_client_config(None, None, false).expect("platform verifier config should build");
--        }
--    }
--
-     fn client_auth(data: &[u8]) -> Result<(Vec<CertificateDer<'static>>, PrivateKeyDer<'static>), Error> {
-         use rustls::pki_types::pem::{self, SectionKind};
- 
-@@ -373,6 +293,86 @@ FRU=
-             ]
+     let idle_timeout = Duration::from_secs(u64::from(timeout.unwrap_or(290))) + WATCH_IDLE_TIMEOUT_MARGIN;
+-    match tokio::time::timeout(idle_timeout, stream.next()).await {
+-        Ok(item) => item,
++    match tokio::time::timeout(idle_timeout, fut).await {
++        Ok(output) => Some(output),
+         Err(_elapsed) => {
+             debug!(
+                 timeout_secs = idle_timeout.as_secs(),
+-                "watch stream idle timeout, reconnecting"
++                "watch idle timeout, reconnecting"
+             );
+             None
          }
-     }
-+
-+    #[cfg(test)]
-+    mod tests {
-+        use super::*;
-+
-+        // EC P-256 self-signed CAs, valid until 2126. Regenerate with:
-+        //   openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes \
-+        //     -keyout /dev/null -out ca.pem -days 36500 -subj "/CN=test-ca-N"
-+        const CA1: &str = "-----BEGIN CERTIFICATE-----
-+MIIBgDCCASWgAwIBAgIUVrQf5d//S01a0fbXxYRIx9wc0VQwCgYIKoZIzj0EAwIw
-+FDESMBAGA1UEAwwJdGVzdC1jYS0xMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
-+MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTEwWTATBgcqhkjOPQIBBggqhkjO
-+PQMBBwNCAARg57mWJPDsAIEQAgXqMOOfjMQP+PE9HqcZobycO8z94r/uRuV0wKx/
-+0SvMsKFtnreut0bjgFtmZaWY+6d87Is9o1MwUTAdBgNVHQ4EFgQUjtGuhkM7LtHB
-+gMPCJIxMwbY69OQwHwYDVR0jBBgwFoAUjtGuhkM7LtHBgMPCJIxMwbY69OQwDwYD
-+VR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNJADBGAiEAj/WzNVJDg/cBtLqQVM77
-+tkB+QyIXLG3Vi9Xj1YfW9QECIQDDFW8yFtgLeCg2Zhr4xQNq3/24r/01kI2rjFPO
-+xBkDMw==
-+-----END CERTIFICATE-----
-+";
-+        const CA2: &str = "-----BEGIN CERTIFICATE-----
-+MIIBfjCCASWgAwIBAgIUZ7Qsiwan2joRz01p25/cy1XNNiwwCgYIKoZIzj0EAwIw
-+FDESMBAGA1UEAwwJdGVzdC1jYS0yMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
-+MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTIwWTATBgcqhkjOPQIBBggqhkjO
-+PQMBBwNCAARJle2
-```
-
-**File**: `kube-client/src/config/file_config.rs` (modified, +1/-1)
-```diff
-@@ -684,7 +684,7 @@ impl AuthInfo {
+@@ -569,16 +577,22 @@ where
+                 last_bookmark: None,
+             }),
+             InitialListStrategy::StreamingList => {
+-                match api.watch(&wc.to_watch_params(WatchPhase::Initial), "0").await {
+-                    Ok(stream) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
+-                    Err(err) => {
++                match with_idle_timeout(
++                    api.watch(&wc.to_watch_params(WatchPhase::Initial), "0"),
++                    wc.timeout,
++                )
++                .await
++                {
++                    Some(Ok(stream)) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
++                    Some(Err(err)) => {
+                         if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
+                             warn!("watch initlist error with 403: {err:?}");
+                         } else {
+                             debug!("watch initlist error: {err:?}");
+                         }
+                         (Some(Err(Error::WatchStartFailed(err))), State::default())
+                     }
++                    None => (None, State::default()),
+                 }
+             }
+         },
+@@ -676,15 +690,17 @@ where
+             }
+         }
+         State::InitListed { resource_version } => {
+-            match api
+-                .watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version)
+-                .await
++            match with_idle_timeout(
++                api.watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version),
++                wc.timeout,
++            )
++            .await
+             {
+-                Ok(stream) => (None, State::Watching {
++                Some(Ok(stream)) => (None, State::Watching {
+                     resource_version,
+                     stream,
+                 }),
+-                Err(err) => {
++                Some(Err(err)) => {
+                     if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
+                         warn!("watch initlist error with 403: {err:?}");
+                     } else {
+@@ -694,6 +710,7 @@ where
+                         resource_version,
+                     })
+                 }
++                None => (None, State::InitListed { resource_version }),
+             }
+         }
+         State::Watching {
+@@ -1052,22 +1069,30 @@ impl Backoff for DefaultBackoff {
+ mod tests {
+     use std::{collections::BTreeMap, time::Duration};
  
- /// Connection information for auth plugins that have `provideClusterInfo` enabled.
- ///
--/// This is a copy of [`kube::config::Cluster`] with certificate_authority passed as bytes without the path.
-+/// This is a copy of [`Cluster`] with certificate_authority passed as bytes without the path.
- /// Taken from [clientauthentication/types.go#Cluster](https://github.com/kubernetes/client-go/blob/477cb782cf024bc70b7239f0dca91e5774811950/pkg/apis/clientauthentication/types.go#L73-L129)
- #[derive(Clone, Debug, Serialize, Deserialize, Default)]
- #[serde(rename_all = "kebab-case")]
-```
-
-**File**: `kube-core/src/object.rs` (modified, +1/-1)
-```diff
-@@ -177,7 +177,7 @@ pub trait HasStatus {
- /// A standard Kubernetes object with `.spec` and `.status`.
- ///
- /// This is a convenience struct provided for serialization/deserialization.
--/// It is slightly stricter than ['DynamicObject`] in that it enforces the spec/status convention,
-+/// It is slightly stricter than [`DynamicObject`](crate::DynamicObject) in that it enforces the spec/status convention,
- /// and as such will not in general work with all api-discovered resources.
- ///
- /// This can be used to tie existing resources to smaller, local struct variants to optimize for memory use.
+-    use futures::StreamExt;
++    use futures::{StreamExt, TryStreamExt, stream::BoxStream};
++    use http::{Request, Response, StatusCode, header::CONTENT_LENGTH};
++    use http_body_util::{BodyExt, StreamBody};
+     use k8s_openapi::{api::core::v1::ConfigMap, apimachinery::pkg::apis::meta::v1::ObjectMeta};
+     use kube_client::{
+-        api::{TypeMeta, WatchEvent, WatchParams},
++        Api, Client,
++        api::{ListParams, TypeMeta, WatchEvent, WatchParams},
++        client::Body,
+         core::{
+-            Status,
++            ObjectList, Status,
+             watch::{Bookmark, BookmarkMeta},
+         },
+     };
+ 
+-    use crate::watcher::{
+-        ApiMode, Config, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
+-        stub_watcher::{
+-            Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
++    use crate::{
++        WatchStreamExt,
++        watcher::{
++            ApiMode, Config, Error, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
++            step_trampolined,
++            stub_watcher::{
++                Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
++            },
++            watcher, watcher_inner,
+         },
+-        watch
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2149** (2026-11-11): Bound watch startup with the watcher idle timeout (@doxxx93)
 - **PR #2146** (2026-11-06): Fix nightly clippy and rustdoc warnings (@doxxx93)
 - **PR #2145** (2026-11-06): Make kube-client modules visible to rustfmt (@doxxx93)
 - **PR #2144** (2026-11-06): Match NO_PROXY against the apiserver instead of the proxy (@doxxx93)
 - **PR #2143** (2026-11-05): fix parse error messages for LabelSelectorRequirement into Expression (@orangecms)
 - **PR #2141** (2026-11-05): Show missing feature requirements on kube-client items in docs (@doxxx93)
-- **PR #2139** (2026-11-05): Fall back to the status code when Status::reason is not a known reason (@doxxx93)
 
 ---
 
@@ -1967,30 +1882,30 @@ Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. nightly clippy and rustdoc warnings (#2146)
+## X. Bound watch startup with the watcher idle timeout (#2149)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kube-runtime/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0b9c443`: nightly clippy and rustdoc warnings (#2146). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `224f8434`: Bound watch startup with the watcher idle timeout (#2149). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-runtime/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        run: cargo doc --no-deps --all-features --workspace --exclude e2e --exclude kube-examples
-          RUSTDOCFLAGS: --cfg docsrs -D rustdoc::broken_intra_doc_links
+http.workspace = true
+http-body-util.workspace = true
+tower.workspace = true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        run: cargo doc --no-deps --all-features
-          RUSTDOCFLAGS: --cfg docsrs
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0b9c443` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `224f8434` are properly handled with clean fallback behavior.

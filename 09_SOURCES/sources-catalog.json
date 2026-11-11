@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "85dbb6b4",
+    "sourceVersion": "84c85c1f",
     "license": "NOASSERTION",
-    "contentHash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
-    "lastHarvestedAt": "2026-11-11T06:13:56.562Z",
+    "contentHash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
+    "lastHarvestedAt": "2026-11-11T14:43:51.362Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "39886c0c",
+    "sourceVersion": "24d90b28",
     "license": "Apache-2.0",
-    "contentHash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
-    "lastHarvestedAt": "2026-11-08T00:49:00.315Z",
+    "contentHash": "abe3a6c977b4420aa9e7254704b80effd11aec2094121afc8d76eddc04f0064a",
+    "lastHarvestedAt": "2026-11-11T14:38:51.949Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "f0b9c443",
+    "sourceVersion": "b970938d",
     "license": "Apache-2.0",
-    "contentHash": "53861e02bc1cbfbca770378a66a146fe86c82da5c83ae9f3ba630608a4ed4d60",
-    "lastHarvestedAt": "2026-11-07T18:17:08.696Z",
+    "contentHash": "1c91047131e5a2f63c3299a79c194bb8d5dc647b2f3a889c6a0b6c52ab835df6",
+    "lastHarvestedAt": "2026-11-11T14:39:22.223Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
@@ -7193,10 +7193,10 @@
     "repository": "joreilly/PeopleInSpace",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/PeopleInSpace",
-    "sourceVersion": "9f9e8336",
+    "sourceVersion": "2db46a03",
     "license": "Apache-2.0",
-    "contentHash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
-    "lastHarvestedAt": "2026-11-07T22:16:07.813Z",
+    "contentHash": "18f7323946194b1088f8fd70530db7164c21d40cc2cbc3ba459417985058dade",
+    "lastHarvestedAt": "2026-11-11T14:39:02.030Z",
     "learningId": "learn-github-joreilly-peopleinspace"
   },
   "valeriansaliou-sonic": {
