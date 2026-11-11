@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T08:28:21.343Z",
+  "last_updated": "2026-11-11T09:49:21.216Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
-      "verified_at": "2026-11-10T01:41:37.150Z",
+      "content_hash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
+      "verified_at": "2026-11-11T09:29:09.644Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:41:37.150Z"
+      "last_updated": "2026-11-11T09:29:09.644Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
-      "verified_at": "2026-11-10T01:58:32.918Z",
+      "content_hash": "5759c9dec1226de28145439dbb8610563a538338cf73617a37fe83f6433b964b",
+      "verified_at": "2026-11-11T09:39:45.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:58:32.918Z"
+      "last_updated": "2026-11-11T09:39:45.580Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
-      "verified_at": "2026-11-09T09:25:08.082Z",
+      "content_hash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
+      "verified_at": "2026-11-11T09:49:10.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T09:25:08.082Z"
+      "last_updated": "2026-11-11T09:49:10.443Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
-      "verified_at": "2026-11-07T04:29:42.794Z",
+      "content_hash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
+      "verified_at": "2026-11-11T09:49:21.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:29:42.794Z"
+      "last_updated": "2026-11-11T09:49:21.216Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -9576,14 +9576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-ani-animeko",
-      "content_hash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
-      "verified_at": "2026-11-07T19:09:35.183Z",
+      "content_hash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
+      "verified_at": "2026-11-11T09:15:42.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:09:35.183Z"
+      "last_updated": "2026-11-11T09:15:42.108Z"
     },
     "k3s-io/k3s": {
       "repository": "k3s-io/k3s",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
-      "verified_at": "2026-11-06T23:02:49.046Z",
+      "content_hash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
+      "verified_at": "2026-11-11T09:15:56.841Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:02:49.046Z"
+      "last_updated": "2026-11-11T09:15:56.841Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "4600d4940b5b572ca18b66b9f72c8724612114b02ccd512077797d8ecf2bdf20",
-      "verified_at": "2026-11-09T02:44:05.771Z",
+      "content_hash": "f7ba6704927ce71894fb077e3437601df0354adaa3efc3c3226ac57901f57f99",
+      "verified_at": "2026-11-11T09:40:00.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:44:05.771Z"
+      "last_updated": "2026-11-11T09:40:00.425Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
-      "verified_at": "2026-11-08T22:00:48.645Z",
+      "content_hash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
+      "verified_at": "2026-11-11T09:14:30.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:00:48.645Z"
+      "last_updated": "2026-11-11T09:14:30.420Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
-      "verified_at": "2026-11-08T22:36:35.059Z",
+      "content_hash": "050ce85a18a207c5513be2057308746474c4511e8302a09c8a7b2e43cac2affc",
+      "verified_at": "2026-11-11T09:39:48.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:36:35.059Z"
+      "last_updated": "2026-11-11T09:39:48.865Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "cce2f6637c8d183633d58e70d6434f62f2a523a79e0e09891fa0cbaf5d2e7b41",
-      "verified_at": "2026-11-08T22:10:40.325Z",
+      "content_hash": "5829ab15b90b34b402f806e599fba41d637d48dffbb2033f598605f777823025",
+      "verified_at": "2026-11-11T09:28:49.601Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:10:40.325Z"
+      "last_updated": "2026-11-11T09:28:49.601Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
-      "verified_at": "2026-11-08T22:52:33.124Z",
+      "content_hash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
+      "verified_at": "2026-11-11T09:49:13.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:52:33.124Z"
+      "last_updated": "2026-11-11T09:49:13.088Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",
@@ -18156,14 +18156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-webai-official-twil-8b",
-      "content_hash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
-      "verified_at": "2026-11-06T14:05:32.001Z",
+      "content_hash": "bd624a4f33850d0ea73b52034983a5fc2a7302265ed192f132386e53b3aafb1a",
+      "verified_at": "2026-11-11T09:40:54.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:05:32.001Z"
+      "last_updated": "2026-11-11T09:40:54.399Z"
     },
     "unsloth/Qwen3.8-Flash-Next-GGUF": {
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",

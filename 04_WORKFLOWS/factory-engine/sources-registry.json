@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T08:28:26.458Z",
-    "lastVerified": "2026-11-11T08:28:26.458Z",
+    "lastChecked": "2026-11-11T09:49:26.450Z",
+    "lastVerified": "2026-11-11T09:49:26.450Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T07:57:04.518Z",
-    "lastVerified": "2026-11-11T07:57:04.518Z",
+    "lastChecked": "2026-11-11T09:39:45.400Z",
+    "lastVerified": "2026-11-11T09:39:45.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T08:18:01.193Z",
-    "lastVerified": "2026-11-11T08:18:01.193Z",
+    "lastChecked": "2026-11-11T09:49:09.960Z",
+    "lastVerified": "2026-11-11T09:49:09.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -368,9 +368,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T07:37:46.071Z",
+    "lastChecked": "2026-11-11T09:12:21.910Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T07:37:46.071Z"
+    "lastVerified": "2026-11-11T09:12:21.910Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -462,8 +462,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T07:46:10.748Z",
-    "lastVerified": "2026-11-11T07:46:10.748Z",
+    "lastChecked": "2026-11-11T09:27:41.247Z",
+    "lastVerified": "2026-11-11T09:27:41.247Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1900,12 +1900,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
-    "name": "sigstore/cosign",
+    "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T01:19:26.936Z",
-    "lastVerified": "2026-11-10T01:19:26.936Z",
+    "lastChecked": "2026-11-11T09:12:16.963Z",
+    "lastVerified": "2026-11-11T09:12:16.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1914,7 +1914,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c8a4781a"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -2008,35 +2009,34 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T01:41:34.598Z",
-    "lastVerified": "2026-11-10T01:41:34.598Z",
+    "lastChecked": "2026-11-11T09:27:42.629Z",
+    "lastVerified": "2026-11-11T09:27:42.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
-    "name": "langchain4j",
+    "name": "langchain4j/langchain4j",
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T02:28:06.765Z",
-    "lastVerified": "2026-11-09T02:28:06.765Z",
+    "lastChecked": "2026-11-11T09:12:23.374Z",
+    "lastVerified": "2026-11-11T09:12:23.374Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ee8fd5f1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -2112,14 +2112,14 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T01:58:31.092Z",
-    "lastVerified": "2026-11-10T01:58:31.092Z",
+    "lastChecked": "2026-11-11T09:39:44.826Z",
+    "lastVerified": "2026-11-11T09:39:44.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "5759c9dec1226de28145439dbb8610563a538338cf73617a37fe83f6433b964b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2127,9 +2127,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-09T02:34:44.721Z",
+    "lastChecked": "2026-11-11T09:27:38.672Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-11-09T02:34:44.721Z"
+    "lastVerified": "2026-11-11T09:27:38.672Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -2201,36 +2201,35 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T02:06:41.051Z",
-    "lastVerified": "2026-11-10T02:06:41.051Z",
+    "lastChecked": "2026-11-11T09:49:09.778Z",
+    "lastVerified": "2026-11-11T09:49:09.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "75259fdd"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
     "officialUrl": "https://github.com/lancedb/lancedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T02:44:04.382Z",
-    "lastVerified": "2026-11-09T02:44:04.382Z",
+    "lastChecked": "2026-11-11T09:39:48.485Z",
+    "lastVerified": "2026-11-11T09:39:48.485Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "4600d4940b5b572ca18b66b9f72c8724612114b02ccd512077797d8ecf2bdf20",
+    "contentHash": "f7ba6704927ce71894fb077e3437601df0354adaa3efc3c3226ac57901f57f99",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2324,9 +2323,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-09T03:03:38.619Z",
+    "lastChecked": "2026-11-11T09:49:07.362Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-09T03:03:38.619Z"
+    "lastVerified": "2026-11-11T09:49:07.362Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -6602,14 +6601,14 @@
     "officialUrl": "https://github.com/open-ani/animeko",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-07T19:04:31.863Z",
-    "lastVerified": "2026-11-07T19:04:31.863Z",
+    "lastChecked": "2026-11-11T09:12:16.074Z",
+    "lastVerified": "2026-11-11T09:12:16.074Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-ani-animeko",
-    "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "contentHash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6665,9 +6664,9 @@
   "komi-store-komi-store": {
     "name": "komi-store",
     "officialUrl": "https://github.com/komi-store/komi-store",
-    "lastChecked": "2026-11-07T19:16:41.593Z",
+    "lastChecked": "2026-11-11T09:27:31.207Z",
     "revisionIdentifier": "19eb7447",
-    "lastVerified": "2026-11-07T19:16:41.593Z"
+    "lastVerified": "2026-11-11T09:27:31.207Z"
   },
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
@@ -6730,9 +6729,9 @@
   "brianegan-flutter_architecture_samples": {
     "name": "flutter_architecture_samples",
     "officialUrl": "https://github.com/brianegan/flutter_architecture_samples",
-    "lastChecked": "2026-11-07T19:23:36.284Z",
+    "lastChecked": "2026-11-11T09:39:35.313Z",
     "revisionIdentifier": "d898d132",
-    "lastVerified": "2026-11-07T19:23:36.284Z"
+    "lastVerified": "2026-11-11T09:39:35.313Z"
   },
   "kcl-lang-kcl": {
     "name": "kcl",
@@ -6796,16 +6795,16 @@
   "hungps-flutter_pokedex": {
     "name": "flutter_pokedex",
     "officialUrl": "https://github.com/hungps/flutter_pokedex",
-    "lastChecked": "2026-11-07T19:30:34.617Z",
+    "lastChecked": "2026-11-11T09:48:59.785Z",
     "revisionIdentifier": "7e2b6d49",
-    "lastVerified": "2026-11-07T19:30:34.617Z"
+    "lastVerified": "2026-11-11T09:48:59.785Z"
   },
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-09T03:35:21.451Z",
+    "lastChecked": "2026-11-11T09:12:14.466Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-09T03:35:21.451Z"
+    "lastVerified": "2026-11-11T09:12:14.466Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -6848,9 +6847,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-09T03:42:42.283Z",
+    "lastChecked": "2026-11-11T09:27:33.760Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-09T03:42:42.283Z"
+    "lastVerified": "2026-11-11T09:27:33.760Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -6924,9 +6923,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-09T03:50:10.647Z",
+    "lastChecked": "2026-11-11T09:39:37.863Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-09T03:50:10.647Z"
+    "lastVerified": "2026-11-11T09:39:37.863Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -6978,22 +6977,21 @@
     "revisionIdentifier": "d486a5e8"
   },
   "argoproj-argo-workflows": {
-    "name": "argo-workflows",
+    "name": "argoproj/argo-workflows",
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T04:00:37.420Z",
-    "lastVerified": "2026-11-09T04:00:37.420Z",
+    "lastChecked": "2026-11-11T09:49:07.664Z",
+    "lastVerified": "2026-11-11T09:49:07.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
+    "contentHash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "45e810c8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ytsaurus-ytsaurus": {
     "name": "ytsaurus/ytsaurus",
@@ -8720,14 +8718,14 @@
     "officialUrl": "https://github.com/astral-sh/ruff",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T22:00:47.712Z",
-    "lastVerified": "2026-11-08T22:00:47.712Z",
+    "lastChecked": "2026-11-11T09:12:11.695Z",
+    "lastVerified": "2026-11-11T09:12:11.695Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8761,14 +8759,14 @@
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T22:10:38.313Z",
-    "lastVerified": "2026-11-08T22:10:38.313Z",
+    "lastChecked": "2026-11-11T09:27:31.435Z",
+    "lastVerified": "2026-11-11T09:27:31.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "cce2f6637c8d183633d58e70d6434f62f2a523a79e0e09891fa0cbaf5d2e7b41",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "5829ab15b90b34b402f806e599fba41d637d48dffbb2033f598605f777823025",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8802,14 +8800,14 @@
     "officialUrl": "https://github.com/oven-sh/bun",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T22:36:33.669Z",
-    "lastVerified": "2026-11-08T22:36:33.669Z",
+    "lastChecked": "2026-11-11T09:39:36.958Z",
+    "lastVerified": "2026-11-11T09:39:36.958Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
+    "contentHash": "050ce85a18a207c5513be2057308746474c4511e8302a09c8a7b2e43cac2affc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8853,14 +8851,14 @@
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T22:52:31.562Z",
-    "lastVerified": "2026-11-08T22:52:31.562Z",
+    "lastChecked": "2026-11-11T09:48:58.937Z",
+    "lastVerified": "2026-11-11T09:48:58.937Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
+    "contentHash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10227,9 +10225,9 @@
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
     "officialUrl": "https://github.com/indexcraft/ai-seo-audit-agent",
-    "lastChecked": "2026-11-06T13:51:51.344Z",
+    "lastChecked": "2026-11-11T09:12:09.488Z",
     "revisionIdentifier": "20d2e73081",
-    "lastVerified": "2026-11-06T13:51:51.344Z"
+    "lastVerified": "2026-11-11T09:12:09.488Z"
   },
   "sayaka-sh-spmp": {
     "name": "spmp",
@@ -10241,9 +10239,9 @@
   "kaimodev-trivium": {
     "name": "trivium",
     "officialUrl": "https://github.com/KaiMOdev/trivium",
-    "lastChecked": "2026-11-06T13:58:32.685Z",
+    "lastChecked": "2026-11-11T09:27:28.682Z",
     "revisionIdentifier": "6f50e34a69",
-    "lastVerified": "2026-11-06T13:58:32.685Z"
+    "lastVerified": "2026-11-11T09:27:28.682Z"
   },
   "touchlab-xcode-kotlin": {
     "name": "xcode-kotlin",
@@ -10255,9 +10253,9 @@
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
     "officialUrl": "https://github.com/ilamaaa/hreflang-checker",
-    "lastChecked": "2026-11-06T14:05:21.943Z",
+    "lastChecked": "2026-11-11T09:48:57.312Z",
     "revisionIdentifier": "f146b56172",
-    "lastVerified": "2026-11-06T14:05:21.943Z"
+    "lastVerified": "2026-11-11T09:48:57.312Z"
   },
   "touchlab-skie": {
     "name": "SKIE",
@@ -14270,12 +14268,12 @@
     "officialUrl": "https://huggingface.co/webAI-Official/TwIL-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-06T14:05:19.711Z",
-    "lastVerified": "2026-11-06T14:05:19.711Z",
+    "lastChecked": "2026-11-11T09:39:33.217Z",
+    "lastVerified": "2026-11-11T09:39:33.217Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-webai-official-twil-8b",
-    "contentHash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
+    "contentHash": "bd624a4f33850d0ea73b52034983a5fc2a7302265ed192f132386e53b3aafb1a",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

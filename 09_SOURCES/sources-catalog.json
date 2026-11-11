@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "51e49a9a",
+    "sourceVersion": "073bdd96",
     "license": "Apache-2.0",
-    "contentHash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
-    "lastHarvestedAt": "2026-11-10T01:41:37.141Z",
+    "contentHash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
+    "lastHarvestedAt": "2026-11-11T09:29:09.620Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "3fdb5996",
+    "sourceVersion": "b2ea1489",
     "license": "MIT",
-    "contentHash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
-    "lastHarvestedAt": "2026-11-10T01:58:32.909Z",
+    "contentHash": "5759c9dec1226de28145439dbb8610563a538338cf73617a37fe83f6433b964b",
+    "lastHarvestedAt": "2026-11-11T09:39:45.561Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "75259fdd",
+    "sourceVersion": "18876676",
     "license": "AGPL-3.0",
-    "contentHash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
-    "lastHarvestedAt": "2026-11-09T09:25:08.062Z",
+    "contentHash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
+    "lastHarvestedAt": "2026-11-11T09:49:10.425Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "45e810c8",
+    "sourceVersion": "d48ec29e",
     "license": "Apache-2.0",
-    "contentHash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
-    "lastHarvestedAt": "2026-11-07T04:29:42.775Z",
+    "contentHash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
+    "lastHarvestedAt": "2026-11-11T09:49:21.206Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "6d79729a",
+    "sourceVersion": "2e22f49a",
     "license": "AGPL-3.0",
-    "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
-    "lastHarvestedAt": "2026-11-07T19:09:35.174Z",
+    "contentHash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
+    "lastHarvestedAt": "2026-11-11T09:15:42.085Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "ee8fd5f1",
+    "sourceVersion": "b7839b71",
     "license": "Apache-2.0",
-    "contentHash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
-    "lastHarvestedAt": "2026-11-06T23:02:49.033Z",
+    "contentHash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
+    "lastHarvestedAt": "2026-11-11T09:15:56.833Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "1157a070",
+    "sourceVersion": "34e8b808",
     "license": "Apache-2.0",
-    "contentHash": "4600d4940b5b572ca18b66b9f72c8724612114b02ccd512077797d8ecf2bdf20",
-    "lastHarvestedAt": "2026-11-09T02:44:05.752Z",
+    "contentHash": "f7ba6704927ce71894fb077e3437601df0354adaa3efc3c3226ac57901f57f99",
+    "lastHarvestedAt": "2026-11-11T09:40:00.416Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "47daf1c2",
+    "sourceVersion": "52257b30",
     "license": "MIT",
-    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
-    "lastHarvestedAt": "2026-11-08T22:00:48.639Z",
+    "contentHash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
+    "lastHarvestedAt": "2026-11-11T09:14:30.398Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "2596ac5d",
+    "sourceVersion": "89452d2a",
     "license": "NOASSERTION",
-    "contentHash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
-    "lastHarvestedAt": "2026-11-08T22:36:35.049Z",
+    "contentHash": "050ce85a18a207c5513be2057308746474c4511e8302a09c8a7b2e43cac2affc",
+    "lastHarvestedAt": "2026-11-11T09:39:48.786Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "99dbe548",
+    "sourceVersion": "ab0814fc",
     "license": "MIT",
-    "contentHash": "cce2f6637c8d183633d58e70d6434f62f2a523a79e0e09891fa0cbaf5d2e7b41",
-    "lastHarvestedAt": "2026-11-08T22:10:40.318Z",
+    "contentHash": "5829ab15b90b34b402f806e599fba41d637d48dffbb2033f598605f777823025",
+    "lastHarvestedAt": "2026-11-11T09:28:49.580Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "3e2f08f8",
+    "sourceVersion": "f45ea9bd",
     "license": "Apache-2.0",
-    "contentHash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
-    "lastHarvestedAt": "2026-11-08T22:52:33.113Z",
+    "contentHash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
+    "lastHarvestedAt": "2026-11-11T09:49:13.077Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -12065,8 +12065,8 @@
     "sourceUrl": "https://huggingface.co/webAI-Official/TwIL-8B",
     "sourceVersion": "hf-webai-official-twil-8b",
     "license": "Open-Source",
-    "contentHash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
-    "lastHarvestedAt": "2026-11-06T14:05:31.987Z",
+    "contentHash": "bd624a4f33850d0ea73b52034983a5fc2a7302265ed192f132386e53b3aafb1a",
+    "lastHarvestedAt": "2026-11-11T09:40:54.378Z",
     "learningId": "learn-huggingface-webai-official-twil-8b"
   },
   "hf-unsloth-qwen3.8-flash-next-gguf": {

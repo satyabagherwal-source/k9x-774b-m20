@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `45e810c8`  
+> **Source Version**: `d48ec29e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:29:41.394Z  
+> **Timestamp**: 2026-11-11T09:49:07.681Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:29:40.170Z  
+> **Harvest Timestamp**: 2026-11-11T09:49:07.664Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17083 stars
+- **Stars / Engagement**: 17088 stars
 
 ---
 
@@ -767,11 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17459** (2026-11-06): **fix: skip the LogChanges diff unless the patch is logged at debug (cherry-pick #17449 for 4.1)**
-  *Symptoms*: Cherry-picked fix: skip the LogChanges diff unless the patch is logged at debug (#17449)  Signed-off-by: Ian Wormsbecker <iwormsy@gmail.com>
+- **Issue #17484** (2026-11-11): **fix(examples): make the ci WorkflowTemplate example work (cherry-pick #17437 for 4.1)**
+  *Symptoms*: Cherry-picked fix(examples): make the ci WorkflowTemplate example work (#17437)  Signed-off-by: Alan Clucas <alan@clucas.org>
 
-- **Issue #17458** (2026-11-06): **fix: skip the LogChanges diff unless the patch is logged at debug (cherry-pick #17449 for 4.0)**
-  *Symptoms*: Cherry-picked fix: skip the LogChanges diff unless the patch is logged at debug (#17449)  Signed-off-by: Ian Wormsbecker <iwormsy@gmail.com>
+- **Issue #17470** (2026-11-07): **feat: add conditional parameter visibility to workflow submissions**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [[pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/)](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [ ] Signed-off commits with [[Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/)](https://www.conventionalcommits.org/en/v1.0.0/) messages - [ ] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [ ] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  Fixes #TODO  ### Motivation  Currently, workflow parameters cannot be conditionally displayed based on the values of other workflow or template parameters. This makes submission forms less flexible, particularly for workflows with multiple deployment modes or configuration options.  This change introduces conditional parameter visibility through a `when` field, allowing workflow authors to control which parameters are displayed based on parameter values while preserving existing submission and validation behavior.  ### Modifications  - Added an optional `when` field to the Go `Parameter` API model and TypeScript parameter model. - Updated protobuf definitions and generated code, Ope
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,316 +788,451 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44baf67a` (2026-11-06)
-**Commit Message**: chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] (main) (#17452)
+### Incident Patch 1: `0e05902b` (2026-11-10)
+**Commit Message**: fix(controller): keep an ended node's message while it holds its lock (#17391)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `sdks/go/grpc-client/go.mod` (modified, +23/-23)
+**File**: `workflow/controller/operator.go` (modified, +6/-2)
 ```diff
-@@ -24,21 +24,21 @@ require (
- 	github.com/andybalholm/brotli v1.2.7 // indirect
- 	github.com/argoproj/argo-events v1.9.11 // indirect
- 	github.com/argoproj/pkg v0.13.7-0.20250123033407-65f2d4777bfd // indirect
--	github.com/aws/aws-sdk-go-v2 v1.47.3 // indirect
--	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
-+	github.com/aws/aws-sdk-go-v2 v1.47.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/config v1.33.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
- 	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
--	github.com/aws/smithy-go v1.28.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
-+	github.com/aws/smithy-go v1.28.7 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-@@ -56,7 +56,7 @@ require (
- 	github.com/felixge/httpsnoop v1.1.0 // indirect
- 	github.com/fsnotify/fsnotify v1.10.1 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.8 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-openapi/jsonpointer v1.0.2 // indirect
-@@ -101,8 +101,8 @@ require (
- 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/karrick/godirwalk v1.17.0 // indirect
--	github.com/klauspost/compress v1.20.1 // indirect
--	github.com/klauspost/pgzip v1.2.7 // indirect
-+	github.com/klauspost/compress v1.20.3 // indirect
-+	github.com/klauspost/pgzip v1.3.0 // indirect
- 	github.com/kylelemons/godebug v1.1.0 // indirect
- 	github.com/lib/pq v1.12.3 // indirect
- 	github.com/mattn/go-colorable v0.1.15 // indirect
-@@ -121,12 +121,12 @@ require (
- 	github.com/olekukonko/errors v1.3.0 // indirect
- 	github.com/olekukonko/ll v0.1.8 // indirect
- 	github.com/olekukonko/tablewriter v1.1.5 // indirect
--	github.com/pandatix/go-abnf v0.5.1 // indirect
-+	github.com/pandatix/go-abnf v0.5.3 // indirect
- 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/client_golang v1.24.1 // indirect
- 	github.com/prometheus/client_model v0.6.3 // indirect
--	github.com/prometheus/common v0.73.0 // indirect
-+	github.com/prometheus/common v0.73.1 // indirect
- 	github.com/prometheus/otlptranslator v1.0.0 // indirect
- 	github.com/prometheus/procfs v0.22.0 // indirect
- 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-@@ -158,7 +158,7 @@ require (
- 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
--	go.yaml.in/yaml/v3 v3.0.5 // indirect
-+	go.yaml.in/yaml/v3 v3.0.6 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
-@@ -167,9 +167,9 @@ require (
- 	golang.org/x/term v0.47.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
--	google.golang.org/genproto v0.0.0-20260519071638-aa98bba5eb94 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20261005182115-fad411399dd8 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
-+	google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20261104224025-d1e00e9f33ab
-```
-
-**File**: `sdks/go/grpc-client/go.sum` (modified, +46/-46)
-```diff
-@@ -44,36 +44,36 @@ github.com/argoproj/pkg v0.13.7-0.20250123033407-65f2d4777bfd h1:lGvauSky5XrqNhz
- github.com/argoproj/pkg v0.13.7-0.20250123033407-65f2d4777bfd/go.mod h1:UzNnTJT+8Fv5oc1LB2pcgXiUF+n9n+tulbaON2EBgJo=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
--github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
--github.com/aws/aws-sdk-go-v2 v1.47.3/go.mod h1:xSl+OSI5ZUw6bSMupWc218zE5Pl+65MCCu3ySWFY99A=
--github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRDNwrZIYy8yMCYa7oK3WKTJ/I1I=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyXwQRJVE+sC4Wm0qBIKHsk=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
-+github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2LnLS4=
-+github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
-+github.com/aws/aws-sdk-go-v2/config v1.33.13 h1:u52x6ISQOx172tpwM0VRxhJzEsTJYpMcEYUGM2A1wrw=
-+github.com/aws/aws-sdk-go-v2/config v1.33.13/go.mod h1:/ixtz6XPHb42zekjQ0LqD9XjTpTysNWhIGwufY1OzI4=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.13 h1:j4z41OtspmQ3ftQycaDunJ26b69a9SHfaSVUPqgRv8k=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.13/go.mod h1:SgPA1oS3b+dlMxZb618jDmGNscpXSCaxz15igS52OlE=
-+github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 h1:iXjy2SFhGYNB1jWZBhQqq8HbhsbPF23w+/zbMvPXsTg=
-+github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5/go.mod h1:k0RUiBnyXU0AXRJ9tJmY2jQke6XUIX2PNVnWtvgaPtc=
- github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6 h1:oc0NI/Uegp+9UeEEkQrfHhBpLeFKVjB+4CkA5KTFAOY=
- github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6/go.mod h1:X/KPhoB0miTAnZFuC0p6M7++TZExuZwiCmDXGlv6dLQ=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 h1:CqL8NN3p4I0JTwwV5MEoatIl4Y2amZ2X9dRD+0hbRL0=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6/go.mod h1:exdJ32hMqXl0Wyo6NwqEC5yIhtua3+PDaKE8P29m4qE=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 h1:FpBq24TG6WVSObTNhQOv7Q0088rounUUlwn3zlNItkM=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6/go.mod h1:ONzdPVYC95oBOu0VWNEsKEntcoemP3xVKjT+qWml1s4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3VvGMOdbGemtUhX4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 h1:e6YW5uME30TkrElR+4/xcY7NB6CCj2dcv7vtmGXhfhQ=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21/go.mod h1:obpHAMP693+f3/A8PkLhIqfK1C+NWWn8zXzqD3OH520=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 h1:LHHdobjo5le1sjJdolitV7uVvYg3wkaeM1Ju2fDgeZQ=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6/go.mod h1:CBGB0evAiaMD3Lk4wPO7LQCcCZLuhzL5Qf/wfEUHQ5w=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 h1:tvpDjuUvgKURf3Yk4hOaGbZ4QdY+070OWcA5d6LUv2A=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.4/go.mod h1:3ibVKg5Ng82Zby8++jELTD2nHxiPk2DJRLEeW/LKp8M=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 h1:ChCtagixSFOxltv0o6E3NT8F7ksvZtZGPwUBynO5Nmk=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.4/go.mod h1:+FEO9jrVMpc9oN3CdAxJbtlQEu3z8UddDPSedpeM3PY=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 h1:j6c+HA4AoS0EBEjArPjavFEBrucJEryfrQU0TffmACk=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4/go.mod h1:RhghaXUk9q66VtOQUX1FdPddQuHnqQZzbB0fEYXmPRA=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 h1:OKEfbf2tcfsF2pBk/S9QqNpo6alaAtiBs4hysCsBjPw=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.4/go.mod h1:mCd6qGo9b8hTtfjgsmNkFlzwjyce4owd7HDVFnCLXhM=
--github.com/aws/smithy-go v1.28.5 h1:OqbqKtzY9NUnr2yAe9+hiTdFb20tNaK/lI0PMOGXX9k=
--github.com/aws/smithy-go v1.28.5/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 h1:gzIWc3DTPfPbWKrQnmL6BV6WD7NPD1htxzgdk/bQ/Z4=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8/go.mod h1:vvUA5cDAZWGo4R14FZPZfXfJCmgsafOWEq78Kg0D+ug=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 h1:PWv+vG8aCLS8qd+HPdYhK7Vees90aKHWFFQ1AGYD/8E=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8/go.mod h1:xxPZEpflYHJA12366ZGyq66z9dHPCoeCIu99Jck+MPw=
-+github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 h1:WOp5De9iWdEHDPh2Kb0tBP3vGBm/dVAuRGh4a4tqduo=
-+github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8/go.mod h1:z8W8YgfhbWl62XqcTtK+CxPrE+i
-```
-
----
-
-### Incident Patch 2: `bee2c87c` (2026-11-06)
-**Commit Message**: fix: skip the LogChanges diff unless the patch is logged at debug (#17449)
-
-Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
-
-**File**: `util/diff/diff.go` (modified, +5/-2)
-```diff
-@@ -11,8 +11,11 @@ import (
- 
- func LogChanges(ctx context.Context, old, newObj any) {
- 	logger := logging.RequireLoggerFromContext(ctx)
--	// Note: We don't have a direct equivalent to log.IsLevelEnabled(log.DebugLevel)
--	// The logger will handle level filtering internally
-+	// Marshalling both objects and diffing them costs time and memory in
-+	// proportion to the workflow's size, so only do it when the patch is logged.
-+	if logger.Level() != logging.Debug {
-+		return
-+	}
- 	a, _ := json.Marshal(old)
- 	b, _ := json.Marshal(newObj)
- 	patch, _ := jsonpatch.CreateMergePatch(a, b)
-```
-
-**File**: `util/diff/diff_test.go` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+package diff
-+
-+import (
-+	"context"
-+	"io"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+)
-+
-+// countingMarshaler counts how often it is marshalled to JSON.
-+type countingMarshaler struct{ calls *int }
-+
-+func (c countingMarshaler) MarshalJSON() ([]byte, error) {
-+	*c.calls++
-+	return []byte(`{}`), nil
-+}
-+
-+func TestLogChanges(t *testing.T) {
-+	for _, tc := range []struct {
-+		level    logging.Level
-+		marshals int
-+	}{
-+		{level: logging.Info, marshals: 0},
-+		{level: logging.Debug, marshals: 2},
-+	} {
-+		t.Run(string(tc.level), func(t *testing.T) {
-+			calls := 0
-+			ctx := logging.WithLogger(context.Background(), logging.NewSlogLoggerCustom(tc.level, logging.JSON, io.Discard))
-+			LogChanges(ctx, countingMarshaler{&calls}, countingMarshaler{&calls})
-+			assert.Equal(t, tc.marshals, calls)
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `45e810c8` (2026-11-06)
-**Commit Message**: fix(controller): read the deletion timestamp directly in podOrphaned (#17448)
-
-Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
-
-**File**: `workflow/controller/pod/controller.go` (modified, +1/-6)
-```diff
-@@ -163,12 +163,7 @@ func (c *Controller) podOrphaned(ctx context.Context, pod *apiv1.Pod) bool {
- 		log.Warn(ctx, "workflow is not an unstructured")
- 		return true
+@@ -3176,9 +3176,13 @@ func (woc *wfOperationCtx) markNodeWaitingForLock(ctx context.Context, nodeName
  	}
--	wf, err := util.FromUnstructured(un)
--	if err != nil {
--		log.Warn(ctx, "workflow unstructured can't be converted to a workflow")
--		return true
--	}
--	return wf.DeletionTimestamp != nil
-+	return un.GetDeletionTimestamp() != nil
+ 
+ 	if lockName == "" {
+-		// If we are no longer waiting for a lock, nil out the sync status
++		// If we are no longer waiting for a lock, nil out the sync status.
++		// An ended node, re-entered while it holds its lock until its task
++		// result arrives, keeps its message: it says how the node ended.
+ 		node.SynchronizationStatus = nil
+-		node.Message = ""
++		if !node.Phase.Completed() {
++			node.Message = ""
++		}
+ 	} else {
+ 		node.SynchronizationStatus.Waiting = lockName
+ 	}
+```
+
+**File**: `workflow/controller/operator_concurrency_test.go` (modified, +48/-0)
+```diff
+@@ -1311,3 +1311,51 @@ func TestSynchronizationFailedFirstChildReleasesLock(t *testing.T) {
+ 	assert.True(t, nextHolderFound,
+ 		"a sibling must have picked up the lock after the holder failed")
+ }
++
++// TestMutexNodeKeepsItsMessageUntilTaskResult checks that a pod node holding
++// a mutex, whose pod has failed but whose task result hasn't arrived yet,
++// keeps the message its pod gave it while it waits: re-entering the node
++// to check its lock it still holds mustn't clear how it ended.
++func TestMutexNodeKeepsItsMessageUntilTaskResult(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++	cancel, controller := newController(ctx)
++	defer cancel()
++	wf := wfv1.MustUnmarshalWorkflow(`
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: mutex-message
++  namespace: default
++spec:
++  entrypoint: main
++  templates:
++  - name: main
++    synchronization:
++      mutexes:
++      - name: test
++    container:
++      image: busybox
++      command: [sh, -c, exit 1]
++`)
++	wf, err := controller.wfclientset.ArgoprojV1alpha1().Workflows(wf.Namespace).Create(ctx, wf, metav1.CreateOptions{})
++	require.NoError(t, err)
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	woc.operate(ctx)
++	require.NotNil(t, woc.wf.Status.Synchronization, "the mutex is held")
++
++	makePodsPhase(ctx, woc, apiv1.PodFailed)
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.wf.Status.MarkTaskResultIncomplete(ctx, woc.wf.NodeID(wf.Name))
++	woc.operate(ctx)
++	node, err := woc.wf.Status.Nodes.Get(woc.wf.NodeID(wf.Name))
++	require.NoError(t, err)
++	require.Equal(t, wfv1.NodeFailed, node.Phase)
++	require.False(t, node.Fulfilled(), "the node waits for its task result")
++	assert.Equal(t, "Pod failed", node.Message)
++
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.operate(ctx)
++	node, err = woc.wf.Status.Nodes.Get(woc.wf.NodeID(wf.Name))
++	require.NoError(t, err)
++	assert.Equal(t, "Pod failed", node.Message, "still, on the next reconcile")
++}
+```
+
+---
+
+### Incident Patch 2: `d48ec29e` (2026-11-11)
+**Commit Message**: fix(executor): retry transient failures when saving HTTP and Artifactory artifacts (#17275)
+
+Signed-off-by: ashunimh <[REDACTED_EMAIL]>
+
+**File**: `docs/environment-variables.md` (modified, +3/-0)
+```diff
+@@ -140,6 +140,9 @@ Gains may vary under load: if the workflow informer is behind the controller's l
+ | `REMOVE_LOCAL_ART_PATH`                | `bool`          | `false` | Whether to remove local artifacts.                                                                     |
+ | `RESOURCE_STATE_CHECK_INTERVAL`        | `time.Duration` | `5s`    | The time interval between resource status checks against the specified success and failure conditions. |
+ 
++The `EXECUTOR_RETRY_BACKOFF_*` variables also control how the executor retries transient failures when saving S3, HTTP and Artifactory artifacts, including archived logs.
++For HTTP and Artifactory, the executor retries network errors, `408`, `429` and `5xx` responses, and errors matching `TRANSIENT_ERROR_PATTERN` set in the executor `env`.
++
+ You can set environment variables for the Executor in your [`workflow-controller-configmap`](workflow-controller-configmap.md) like the following:
+ 
+ ```yaml
+```
+
+**File**: `workflow/artifacts/http/http.go` (modified, +49/-22)
+```diff
+@@ -10,6 +10,10 @@ import (
+ 
+ 	"github.com/argoproj/argo-workflows/v4/errors"
+ 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
++	errutil "github.com/argoproj/argo-workflows/v4/util/errors"
++	"github.com/argoproj/argo-workflows/v4/util/logging"
++	"github.com/argoproj/argo-workflows/v4/util/retry"
++	waitutil "github.com/argoproj/argo-workflows/v4/util/wait"
+ 	"github.com/argoproj/argo-workflows/v4/workflow/artifacts/common"
+ )
+ 
+@@ -129,41 +133,63 @@ func (h *ArtifactDriver) buildPutRequest(ctx context.Context, body io.Reader, ou
+ 
+ // doPutRequest sends req and fails on a non-2xx response. what describes the
+ // operation in error messages, e.g. "saving file /tmp/x" or "saving stream".
+-func (h *ArtifactDriver) doPutRequest(req *http.Request, url, what string) error {
++// The returned status code is 0 if no response was received.
++func (h *ArtifactDriver) doPutRequest(req *http.Request, url, what string) (int, error) {
+ 	res, err := h.Client.Do(req)
+ 	if err != nil {
+-		return err
++		return 0, err
+ 	}
+ 	defer func() {
+ 		_ = res.Body.Close()
+ 	}()
+ 	if res.StatusCode < 200 || res.StatusCode >= 300 {
+-		return errors.InternalErrorf("%s to %s failed with reason: %s", what, url, res.Status)
++		return res.StatusCode, errors.InternalErrorf("%s to %s failed with reason: %s", what, url, res.Status)
+ 	}
+-	return nil
++	return res.StatusCode, nil
++}
++
++// isTransientSaveErr reports whether a failed upload is worth retrying: a 408,
++// 429 or 5xx response, or an error util/errors classifies as transient (network
++// errors and TRANSIENT_ERROR_PATTERN matches).
++func isTransientSaveErr(ctx context.Context, statusCode int, err error) bool {
++	if statusCode == http.StatusRequestTimeout || statusCode == http.StatusTooManyRequests || (statusCode >= 500 && statusCode < 600) {
++		logging.RequireLoggerFromContext(ctx).WithError(err).Info(ctx, "Transient error")
++		return true
++	}
++	return errutil.IsTransientErr(ctx, err)
  }
  
- func podGCFromPod(pod *apiv1.Pod) wfv1.PodGC {
+-// Save writes the artifact to the URL
++// Save writes the artifact to the URL, retrying transient failures with the
++// EXECUTOR_RETRY_BACKOFF_* backoff.
+ func (h *ArtifactDriver) Save(ctx context.Context, path string, outputArtifact *wfv1.Artifact) error {
+ 	cleanPath := filepath.Clean(path)
+-	f, err := os.Open(cleanPath)
+-	if err != nil {
+-		return err
+-	}
+-	// http.Client.Do closes f once the request is sent; this covers the paths
+-	// where it never is. A second Close is harmless.
+-	defer func() {
+-		_ = f.Close()
+-	}()
+-	req, url, err := h.buildPutRequest(ctx, f, outputArtifact)
++	attempts := 0
++	err := waitutil.Backoff(retry.ExecutorRetry(ctx), func() (bool, error) {
++		attempts++
++		f, err := os.Open(cleanPath)
++		if err != nil {
++			return true, err
++		}
++		// http.Client.Do closes f once the request is sent; this covers the paths
++		// where it never is. A second Close is harmless.
++		defer func() {
++			_ = f.Close()
++		}()
++		req, url, err := h.buildPutRequest(ctx, f, outputArtifact)
++		if err != nil {
++			return true, err
++		}
++		// we set the GetBody func of the request in order to enable following 307 POST/PUT redirects, needed e.g. for webHDFS
++		req.GetBody = func() (io.ReadCloser, error) {
++			return os.Open(cleanPath)
++		}
++		statusCode, err := h.doPutRequest(req, url, fmt.Sprintf("saving file %s", path))
++		return err == nil || !isTransientSaveErr(ctx, statusCode, err), err
++	})
+ 	if err != nil {
+-		return err
+-	}
+-	// we set the GetBody func of the request in order to enable following 307 POST/PUT redirects, needed e.g. for webHDFS
+-	req.GetBody = func() (io.ReadCloser, error) {
+-		return os.Open(cleanPath)
++		return fmt.Errorf("failed after %d attempt(s): %w", attempts, err)
+ 	}
+-	return h.doPutRequest(req, url, fmt.Sprintf("saving file %s", path))
++	return nil
+ }
+ 
+ // SaveStream saves an artifact from an io.Reader to HTTP URL
+@@ -183,7 +209,8 @@ func (h *ArtifactDriver) SaveStream(ctx context.Context, reader io.Reader, outpu
+ 	if err != nil {
+ 		return err
+ 	}
+-	return h.doPutRequest(req, url, "saving stream")
++	_, err = h.doPutRequest(req, url, "saving stream")
++	return err
+ }
+ 
+ // Delete is unsupported for the http artifacts
 ```
 
-**File**: `workflow/controller/pod/orphaned_test.go` (added, +57/-0)
+**File**: `workflow/artifacts/http/http_test.go` (modified, +86/-0)
 ```diff
-@@ -0,0 +1,57 @@
-+package pod
-+
-+import (
-+	"context"
+@@ -2,11 +2,13 @@ package http
+ 
+ import (
+ 	"bytes"
 +	"io"
-+	"testing"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"os"
+ 	"path/filepath"
+ 	"strings"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -262,3 +264,87 @@ func TestSaveInvalidArtifactLocation(t *testing.T) {
+ 		assert.Contains(t, err.Error(), "Either Artifactory or HTTP artifact needs to be configured")
+ 	})
+ }
 +
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	apiv1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/client-go/tools/cache"
++// TestSaveRetry checks that Save retries transient upload failures and stops on permanent ones.
++func TestSaveRetry(t *testing.T) {
++	t.Setenv("EXECUTOR_RETRY_BACKOFF_DURATION", "1ms")
++	t.Setenv("EXECUTOR_RETRY_BACKOFF_STEPS", "3")
++	content := "main container log"
++	tempFile := filepath.Join(t.TempDir(), "main.log")
++	require.NoError(t, os.WriteFile(tempFile, []byte(content), 0o600))
 +
-+	"github.com/argoproj/argo-workflows/v4/pkg/apis/workflow"
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+)
-+
-+func TestPodOrphaned(t *testing.T) {
-+	informer := cache.NewSharedIndexInformer(&cache.ListWatch{}, &unstructured.Unstructured{}, 0, cache.Indexers{})
-+	now := metav1.Now()
-+	for name, deleting := range map[string]bool{"live": false, "deleting": true} {
-+		wf := &unstructured.Unstructured{}
-+		wf.SetKind(workflow.WorkflowKind)
-+		wf.SetNamespace("ns")
-+		wf.SetName(name)
-+		if deleting {
-+			wf.SetDeletionTimestamp(&now)
++	save := func(t *testing.T, url string) error {
++		t.Helper()
++		driver := &ArtifactDriver{Client: &http.Client{}}
++		art := &wfv1.Artifact{
++			ArtifactLocation: wfv1.ArtifactLocation{Artifactory: &wfv1.ArtifactoryArtifact{URL: url}},
 +		}
-+		require.NoError(t, informer.GetIndexer().Add(wf))
++		return driver.Save(logging.TestContext(t.Context()), tempFile, art)
 +	}
-+	c := &Controller{wfInformer: informer, log: logging.NewSlogLoggerCustom(logging.Info, logging.JSON, io.Discard)}
 +
-+	ownedBy := func(kind, name string) *apiv1.Pod {
-+		isController := true
-+		return &apiv1.Pod{ObjectMeta: metav1.ObjectMeta{
-+			Namespace:       "ns",
-+			Name:            "pod",
-+			OwnerReferences: []metav1.OwnerReference{{Kind: kind, Name: name, Controller: &isController}},
-+		}}
-+	}
-+	for _, tc := range []struct {
-+		name string
-+		pod  *apiv1.Pod
-+		want bool
++	tests := []struct {
++		name             string
++		statuses         []int // response status per attempt, the last one repeats
++		transientPattern string
++		wantAttempts     int32
++		wantErr          []string
 +	}{
-+		{name: "no owner", pod: &apiv1.Pod{ObjectMeta: metav1.ObjectMeta{Namespace: "ns", Name: "pod"}}, want: false},
-+		{name: "owned by something else", pod: ownedBy("Job", "live"), want: false},
-+		{name: "workflow is gone", pod: ownedBy(workflow.WorkflowKind, "missing"), want: true},
-+		{name: "workflow is live", pod: ownedBy(workflow.WorkflowKind, "live"), want: false},
-+		{name: "workflow is being deleted", pod: ownedBy(workflow.WorkflowKind, "deleting"), want: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			assert.Equal(t, tc.want, c.podOrphaned(context.Background(), tc.pod))
++		{name: "succeeds after 5xx responses", statuses: []int{http.StatusServiceUnavailable, http.StatusBadGateway, http.StatusCreated}, wantAttempts: 3},
++		{name: "retries 408 and 429", statuses: []int{http.StatusRequestTimeout, http.StatusTooManyRequests, http.StatusCreated}, wantAttempts: 3},
++		{name: "gives up after EXECUTOR_RETRY_BACKOFF_STEPS attempts", statuses: []int{http.StatusInternalServerError}, wantAttempts: 3, wantErr: []string{"failed after 3 attempt(s): timed out waiting for the condition: ", "500 Internal Server Error"}},
++		{name: "does not retry a 4xx", statuses: []int{http.StatusForbidden}, wantAttempts: 1, wantErr: []string{"failed after 1 attempt(s): ", "403 Forbidden"}},
++		{name: "retries a 4xx matching TRANSIENT_ERROR_PATTERN", statuses: []int{http.StatusUnauthorized, http.StatusCreated}, transientPattern: "401 Unauthorized", wantAttempts: 2},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Setenv("TRANSIENT_ERROR_PATTERN", tt.transientPattern)
++			var attempts atomic.Int32
++			svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				// every attempt must re-send the whole file
++				body, err := io.ReadAll(r.Body)
++				assert.NoError(t, err)
++				assert.Equal(t, content, string(body))
++				n := int(attempts.Add(1))
++				w.WriteHeader(tt.statuses[min(n, len(tt.statuses))-1])
++			}))
++			defer svr.Close()
++
++			err := save(t, svr.URL)
++			if len(tt.wantErr) == 0 {
++				require.NoError(t, err)
++			} else {
++				for _, want := range tt.wantErr {
++					require.ErrorContains(t, err, want)
++				}
++			}
++			assert.Equal(t, tt.wantAttempts, attempts.Load())
 +		})
 +	}
++
++	t.Run("retries a dropped connection", func(t *testing.T) {
++		var attempts atomic.Int32
++		svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++			if attempts.Add(1) == 1 {
++				conn, _, err := http.NewResponseController(w).Hijack()
++				if assert.NoError(t, err) {
++					_ = conn.Close()
++				}
++				return
++			}
++			w.WriteHeader(http.StatusCreated)
++		}))
++		defer svr.Close()
++
++		require.NoError(t, save(t, svr.URL))
++		assert.Equal(t, int32(2), attempts.Load())
++	})
++
++	t.Run("does not retry when the file cannot be opened", func(t *testing.T) {
++		driver := &ArtifactDriver{Client: &http.Client{}}
++		art := &wfv1.Artifact{
++			ArtifactLocation: wfv1.ArtifactLocation{Artifactory: &wfv1.ArtifactoryArtifact{URL: "http://127.0.0.1:1/missing.log"}},
++		}
++		err := driver.Save(logging.TestContext(t.Context()), filepath.Join(t.TempDir(), "missing.log"), art)
++		require.ErrorIs(t, err, os.ErrNotExist)
++	})
 +}
+```
+
+---
+
+### Incident Patch 3: `621e9dd4` (2026-11-10)
+**Commit Message**: fix(examples): make the ci WorkflowTemplate example work (#17437)
+
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `examples/ci-workflowtemplate.yaml` (modified, +23/-18)
+```diff
+@@ -67,19 +67,17 @@ spec:
+         volumeMounts:
+           - mountPath: /go/pkg/mod
+             name: work
+-            subPath: mod
++            subPath: GOMODCACHE
+           - mountPath: /root/.cache/go-build
+             name: work
+-            subPath: cache
+-        image: golang:1.18
++            subPath: GOCACHE
++        image: golang:1.27.3
+         workingDir: /go/src/github.com/golang/example
+         command: [ sh, -euxc ]
+         args:
+           - |
+-            mkdir -p $(go env GOMODCACHE)
+-            [ -e /mnt/GOMODCACHE ] && cp -Rf /mnt/GOMODCACHE $(go env GOMODCACHE)
+-            mkdir -p $(go env GOCACHE)
+-            [ -e /mnt/GOCACHE ] &&  cp -Rf /mnt/GOCACHE $(go env GOCACHE)
++            if [ -d /mnt/GOMODCACHE ]; then cp -R /mnt/GOMODCACHE/. "$(go env GOMODCACHE)"; fi
++            if [ -d /mnt/GOCACHE ]; then cp -R /mnt/GOCACHE/. "$(go env GOCACHE)"; fi
+ 
+     - name: cache-store
+       container:
+@@ -90,17 +88,23 @@ spec:
+           - mountPath: /root/.cache/go-build
+             name: work
+             subPath: GOCACHE
+-        image: golang:1.18
+-        workingDir: /go/src/github.com/golang/example
++        image: golang:1.27.3
++        command: [ sh, -euxc ]
++        args:
++          - |
++            # Artifacts on a volume mount aren't saved, so copy the caches off the volume.
++            mkdir -p /tmp/cache
++            cp -R /go/pkg/mod /tmp/cache/GOMODCACHE
++            cp -R /root/.cache/go-build /tmp/cache/GOCACHE
+       outputs:
+         artifacts:
+           - name: GOMODCACHE
+-            path: /go/pkg/mod
++            path: /tmp/cache/GOMODCACHE
+             optional: true
+             s3:
+               key: "github.com/golang/examples/{{workflow.parameters.branch}}/GOMODCACHE"
+           - name: GOCACHE
+-            path: /root/.cache/go-build
++            path: /tmp/cache/GOCACHE
+             optional: true
+             s3:
+               key: "github.com/golang/examples/{{workflow.parameters.branch}}/GOCACHE"
+@@ -117,7 +121,7 @@ spec:
+           - mountPath: /root/.cache/go-build
+             name: work
+             subPath: GOCACHE
+-        image: golang:1.18
++        image: golang:1.27.3
+         workingDir: /go/src/github.com/golang/example
+         command: [ sh, -euxc ]
+         args:
+@@ -126,7 +130,7 @@ spec:
+ 
+     - name: deps
+       container:
+-        image: golang:1.18
++        image: golang:1.27.3
+         volumeMounts:
+           - mountPath: /go/src/github.com/golang/example
+             name: work
+@@ -145,7 +149,7 @@ spec:
+ 
+     - name: build
+       container:
+-        image: golang:1.18
++        image: golang:1.27.3
+         volumeMounts:
+           - mountPath: /go/src/github.com/golang/example
+             name: work
+@@ -164,7 +168,7 @@ spec:
+ 
+     - name: test
+       container:
+-        image: golang:1.18
++        image: golang:1.27.3
+         volumeMounts:
+           - mountPath: /go/src/github.com/golang/example
+             name: work
+@@ -182,13 +186,14 @@ spec:
+             go install github.com/jstemmer/go-junit-report@latest
+             go install github.com/alexec/junit2html@v0.0.2
+ 
+-            trap 'cat test.out | go-junit-report | junit2html > test-report.html' EXIT
++            # Write the report off the work volume: artifacts on a volume mount aren't saved.
++            trap 'cat test.out; go-junit-report < test.out | junit2html > /tmp/test-report.html' EXIT
+ 
+-            go test -v ./... 2>&1 > test.out
++            go test -v ./... > test.out 2>&1
+       outputs:
+         artifacts:
+           - name: test-report
+-            path: /go/src/github.com/golang/example/test-report.html
++            path: /tmp/test-report.html
+             archive:
+               none: { }
+             s3:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17484** (2026-11-11): fix(examples): make the ci WorkflowTemplate example work (cherry-pick #17437 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17470** (closed): feat: add conditional parameter visibility to workflow submissions (@somiljain2006)
+- **PR #17468** (2026-11-08): fix(controller): read the deletion timestamp directly in podOrphaned (cherry-pick #17448 for 4.0) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17467** (2026-11-08): fix(controller): read the deletion timestamp directly in podOrphaned (cherry-pick #17448 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17461** (2026-11-10): docs: update sidecar-injection.md following guidelines (cherry-pick #17405 for 4.1) (@Joibel)
 - **PR #17459** (2026-11-06): fix: skip the LogChanges diff unless the patch is logged at debug (cherry-pick #17449 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17458** (2026-11-06): fix: skip the LogChanges diff unless the patch is logged at debug (cherry-pick #17449 for 4.0) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17457** (2026-11-06): chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] (release-4.1) (@renovate[bot])
-- **PR #17456** (2026-11-06): chore(deps): update module github.com/andybalholm/brotli to v1.2.7 [security] (release-4.1) (@renovate[bot])
-- **PR #17455** (2026-11-06): chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] (release-4.0) (@renovate[bot])
-- **PR #17454** (2026-11-06): chore(deps): update module github.com/andybalholm/brotli to v1.2.7 [security] (release-4.0) (@renovate[bot])
 
 ---
 
@@ -1117,68 +1252,34 @@ Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update module github.com/klauspost/compress to v1.20.2 [security] (main) 
+## X. controller): keep an ended node's message while it holds its lock (#17391)
 
 **RULE**:
-When implementing operations in `sdks/go/grpc-client/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `workflow/controller/operator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44baf67a`: deps): update module github.com/klauspost/compress to v1.20.2 [security] (main) (#17452). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e05902b`: controller): keep an ended node's message while it holds its lock (#17391). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/go/grpc-client/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/operator.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/aws/aws-sdk-go-v2 v1.47.5 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.33.13 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.13 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
-	github.com/aws/smithy-go v1.28.7 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.8 // indirect
-	github.com/klauspost/compress v1.20.3 // indirect
-	github.com/klauspost/pgzip v1.3.0 // indirect
-	github.com/pandatix/go-abnf v0.5.3 // indirect
-	github.com/prometheus/common v0.73.1 // indirect
-	go.yaml.in/yaml/v3 v3.0.6 // indirect
-	googl
+		// If we are no longer waiting for a lock, nil out the sync status.
+		// An ended node, re-entered while it holds its lock until its task
+		// result arrives, keeps its message: it says how the node ended.
+		if !node.Phase.Completed() {
+			node.Message = ""
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/aws/aws-sdk-go-v2 v1.47.3 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
-	github.com/aws/smithy-go v1.28.5 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
-	github.com/klauspost/compress v1.20.1 // indirect
-	github.com/klauspost/pgzip v1.2.7 // indirect
-	github.com/pandatix/go-abnf v0.5.1 // indirect
-	github.com/prometheus/common v0.73.0 // indirect
-	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	google.
+		// If we are no longer waiting for a lock, nil out the sync status
+		node.Message = ""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44baf67a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e05902b` are properly handled with clean fallback behavior.

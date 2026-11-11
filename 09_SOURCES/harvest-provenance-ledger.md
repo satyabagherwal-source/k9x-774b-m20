@@ -8892,3 +8892,21 @@ Every entry in this ledger must capture:
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `d61530f2` | Multi-dimensional audit evidence | 2026-11-11T08:28:21.333Z |
 | `learn-dom-h-32febc73` | `project://zama-ai-tfhe-rs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | 2026-11-11T08:28:41.359Z |
 | `learn-dom-b-1cc83e41` | `project://zama-ai-tfhe-rs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | 2026-11-11T08:29:02.044Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `52257b30` | Multi-dimensional audit evidence | 2026-11-11T09:14:30.398Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `2e22f49a` | Multi-dimensional audit evidence | 2026-11-11T09:15:42.085Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `b7839b71` | Multi-dimensional audit evidence | 2026-11-11T09:15:56.833Z |
+| `learn-dom-h-57ad88ef` | `project://astral-sh-ruff` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | 2026-11-11T09:16:22.421Z |
+| `learn-dom-i-bf0a22a6` | `project://open-ani-animeko` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md` | 2026-11-11T09:16:41.360Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `ab0814fc` | Multi-dimensional audit evidence | 2026-11-11T09:28:49.580Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `073bdd96` | Multi-dimensional audit evidence | 2026-11-11T09:29:09.620Z |
+| `learn-dom-k-232f5ad4` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-11T09:30:20.179Z |
+| `learn-dom-h-03eb2317` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-11T09:30:36.892Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b2ea1489` | Multi-dimensional audit evidence | 2026-11-11T09:39:45.561Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `89452d2a` | Multi-dimensional audit evidence | 2026-11-11T09:39:48.786Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `34e8b808` | Multi-dimensional audit evidence | 2026-11-11T09:40:00.416Z |
+| `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-11T09:40:54.378Z |
+| `learn-dom-f-83d565c2` | `project://hf-webai-official-twil-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | 2026-11-11T09:41:14.924Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `18876676` | Multi-dimensional audit evidence | 2026-11-11T09:49:10.425Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `f45ea9bd` | Multi-dimensional audit evidence | 2026-11-11T09:49:13.077Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `d48ec29e` | Multi-dimensional audit evidence | 2026-11-11T09:49:21.206Z |
+| `learn-dom-d-cb6ba6df` | `project://trufflesecurity-trufflehog` | `18876676` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | 2026-11-11T09:49:41.481Z |

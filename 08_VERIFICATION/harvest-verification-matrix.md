@@ -8883,3 +8883,21 @@
 | `CYCLE-20261111-X0B4` | `2026-11-11T08:28:21.328Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26e7004d...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T08:28:41.359Z` | `zama-ai-tfhe-rs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-32FEBC73` [Domain H] | Yes (`b17bb61a...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T08:29:02.044Z` | `zama-ai-tfhe-rs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-1CC83E41` [Domain B] | Yes (`65f44bec...`) |
+| `CYCLE-20261111-KCXM` | `2026-11-11T09:14:30.394Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`66faf61b...`) |
+| `CYCLE-20261111-LW8Y` | `2026-11-11T09:15:42.082Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a03f15f2...`) |
+| `CYCLE-20261111-M7ML` | `2026-11-11T09:15:56.829Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`523f8f27...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:16:22.421Z` | `astral-sh-ruff` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-57AD88EF` [Domain H] | Yes (`809fbba1...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:16:41.360Z` | `open-ani-animeko` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-BF0A22A6` [Domain I] | Yes (`92632747...`) |
+| `CYCLE-20261111-2RVT` | `2026-11-11T09:28:49.577Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5829ab15...`) |
+| `CYCLE-20261111-37CH` | `2026-11-11T09:29:09.617Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`9a4941dc...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:30:20.179Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-232F5AD4` [Domain K] | Yes (`f6081359...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:30:36.892Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-03EB2317` [Domain H] | Yes (`00d2013a...`) |
+| `CYCLE-20261111-GU1G` | `2026-11-11T09:39:45.556Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`5759c9de...`) |
+| `CYCLE-20261111-GWJ1` | `2026-11-11T09:39:48.781Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`050ce85a...`) |
+| `CYCLE-20261111-H5I4` | `2026-11-11T09:40:00.412Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7ba6704...`) |
+| `CYCLE-20261111-IB52` | `2026-11-11T09:40:54.374Z` | `webAI-Official/TwIL-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`bd624a4f...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:41:14.924Z` | `hf-webai-official-twil-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-83D565C2` [Domain F] | Yes (`13a3f947...`) |
+| `CYCLE-20261111-SXW0` | `2026-11-11T09:49:10.416Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`96d3c49f...`) |
+| `CYCLE-20261111-SZXS` | `2026-11-11T09:49:13.072Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`627048d3...`) |
+| `CYCLE-20261111-T67M` | `2026-11-11T09:49:21.202Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`377a4f99...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:49:41.481Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CB6BA6DF` [Domain D] | Yes (`94c44b74...`) |

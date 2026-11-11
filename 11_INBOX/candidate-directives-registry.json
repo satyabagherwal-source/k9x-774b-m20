@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T08:28:26.583Z",
+  "last_updated": "2026-11-11T09:49:26.580Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4437,6 +4437,91 @@
       "source_repo": "zed-industries-zed",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8AD331-markdown-keep-the-first-rendered-block-a.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-17BE7F",
+      "directive_title": "Permanent Deadlock in Mutex/BatchSemaphore via Cooperative Budget Stranding (BUG-TOKIO-8772)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tokio-rs-tokio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-17BE7F-permanent-deadlock-in-mutex-batchsemapho.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C0FAF1",
+      "directive_title": "Task Orphanage and Queue Corruption on Worker Spawn Failure (BUG-TOKIO-8752)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tokio-rs-tokio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C0FAF1-task-orphanage-and-queue-corruption-on-w.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-GU1V",
+      "directive_title": "Empirical Invariant Guard in shared_responses_test.go",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "b2ea1489",
+      "date_staged": "2026-11-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-projectdiscovery-nuclei"
+    },
+    {
+      "id": "CD-REV-A1C497",
+      "directive_title": "AOT: bun compile, build output, module mocks, fixes and new names (#48436)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "oven-sh-bun",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A1C497-aot-bun-compile-build-output-module-mock.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-E7D5C8",
+      "directive_title": "Attention Scale Divergence in Custom Granite Implementations (BUG-GRANITE-ATTNMULT-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-webai-official-twil-8b",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E7D5C8-attention-scale-divergence-in-custom-gra.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AA5A18",
+      "directive_title": "Empirical Invariant Guard in shared_responses_test.go",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "projectdiscovery-nuclei",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AA5A18-empirical-invariant-guard-in-shared-resp.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-SXWI",
+      "directive_title": "Clean up Hugging Face source logging for per-source debug (#5523)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "trufflesecurity/trufflehog",
+      "source_commit": "18876676",
+      "date_staged": "2026-11-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-trufflesecurity-trufflehog"
+    },
+    {
+      "id": "CD-REV-539ADB",
+      "directive_title": "Update Rust crate uuid to v1.28.0 (#23182)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-uv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-539ADB-update-rust-crate-uuid-to-v1-28-0-23182-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4D40E2",
+      "directive_title": "controller): keep an ended node's message while it holds its lock (#17391)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "argoproj-argo-workflows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D40E2-controller-keep-an-ended-node-s-message-.md",
       "staged_date": "2026-11-11"
     }
   ]
