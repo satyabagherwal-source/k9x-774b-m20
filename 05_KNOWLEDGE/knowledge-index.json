@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T07:37:55.549Z",
+  "last_updated": "2026-11-11T07:46:26.124Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5404,8 +5404,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "7f971edd",
-      "content_hash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
+      "source_version": "f6cf28e3",
+      "content_hash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -5427,6 +5427,11 @@
         {
           "number": null,
           "title": "useWhile): detect and fix infinite for loops (#12788)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "format/md): keep table rows in blockquotes aligned (#13035)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5510,7 +5515,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:24:36.247Z",
+      "verified_at": "2026-11-11T07:46:13.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56598,14 +56603,19 @@
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "85de02c9",
-      "content_hash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
+      "source_version": "1d4b1380",
+      "content_hash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Regenerate sea-orm-sync (from_json test fixtures)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "a MySQL enum being overwritten when two columns share a name (#3237)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56644,7 +56654,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:01:15.009Z",
+      "verified_at": "2026-11-11T07:46:26.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189280,7 +189290,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Florence-2-base",
       "source_version": "hf-microsoft-florence-2-base",
-      "content_hash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
+      "content_hash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
       "promoted_rules": [
@@ -189305,7 +189315,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:27:19.194Z",
+      "verified_at": "2026-11-11T07:45:58.846Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

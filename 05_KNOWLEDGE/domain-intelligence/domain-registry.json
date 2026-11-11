@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T07:38:16.420Z",
-  "total_records": 33,
+  "last_updated": "2026-11-11T07:47:08.932Z",
+  "total_records": 35,
   "domains": {
     "A": {
       "total": 1,
@@ -23,7 +23,7 @@
       ]
     },
     "D": {
-      "total": 12,
+      "total": 14,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -36,7 +36,9 @@
         "DOM-D-170AE1CF",
         "DOM-D-12383E4D",
         "DOM-D-06FC3249",
-        "DOM-D-BC0A19F3"
+        "DOM-D-BC0A19F3",
+        "DOM-D-5BF650C7",
+        "DOM-D-C4D2B996"
       ]
     },
     "E": {
@@ -1362,6 +1364,88 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-11T07:38:16.418Z"
+    },
+    "DOM-D-5BF650C7": {
+      "record_id": "DOM-D-5BF650C7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): biomejs/biome",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  \n> **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  \n> **Source Version**: `f6cf28e3`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "9e3609a88380cb756e33512a47d688f78de297922afb14d23dd47b2d1dc23a7b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  \n> **Source**: github ([https://github.com/biomejs/biom -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  \n> **Source**: github ([https://github.com/biomejs/biom",
+      "provenance": {
+        "source_uri": "project://biomejs-biome/biomejs-biome-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:46:31.709Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (biomejs-biome)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of biomejs-biome"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T07:46:47.078Z"
+    },
+    "DOM-D-C4D2B996": {
+      "record_id": "DOM-D-C4D2B996",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Florence-2-base",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/microsoft/Florence-2-base](https://huggingface.co/microsoft/Florence-2-base))  \n> **Source Version**: `hf-microsoft`  \n> **License**: Open-Source",
+      "content_hash": "23fb692660b20985fe81de930cb033f2b50412798d89bec18199668a9e301701",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-microsoft-florence-2-base/hf-microsoft-florence-2-base-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:46:47.082Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-florence-2-base)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-microsoft-florence-2-base"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T07:47:08.931Z"
     }
   }
 }

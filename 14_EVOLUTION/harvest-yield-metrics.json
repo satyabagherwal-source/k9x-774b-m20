@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T07:37:55.702Z",
-  "total_cycles_completed": 8730,
-  "total_learnings_persisted": 8730,
-  "total_rules_promoted": 8581,
+  "last_updated": "2026-11-11T07:46:26.244Z",
+  "total_cycles_completed": 8733,
+  "total_learnings_persisted": 8733,
+  "total_rules_promoted": 8583,
   "history": [
-    {
-      "timestamp": "2026-11-09T10:31:23.008Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-francisring-prism",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T10:59:33.794Z",
-      "repository": "krishhgg/Insomnia",
-      "learningId": "learn-github-krishhgg-insomnia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T10:59:35.999Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T10:59:42.004Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T07:37:55.702Z",
       "repository": "callstack/agent-device",
       "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:45:58.993Z",
+      "repository": "microsoft/Florence-2-base",
+      "learningId": "learn-huggingface-microsoft-florence-2-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:46:13.517Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:46:26.244Z",
+      "repository": "SeaQL/sea-orm",
+      "learningId": "learn-github-seaql-sea-orm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

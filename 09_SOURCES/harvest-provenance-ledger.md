@@ -8878,3 +8878,8 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `ecfbdbcc` | Multi-dimensional audit evidence | 2026-11-11T07:37:49.436Z |
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `45e1372f` | Multi-dimensional audit evidence | 2026-11-11T07:37:55.682Z |
 | `learn-dom-d-bc0a19f3` | `project://codewhale-hq-codewhale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md` | 2026-11-11T07:38:16.421Z |
+| `learn-huggingface-microsoft-florence-2-base` | `https://huggingface.co/microsoft/Florence-2-base` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-11T07:45:58.987Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `f6cf28e3` | Multi-dimensional audit evidence | 2026-11-11T07:46:13.492Z |
+| `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `1d4b1380` | Multi-dimensional audit evidence | 2026-11-11T07:46:26.238Z |
+| `learn-dom-d-5bf650c7` | `project://biomejs-biome` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md` | 2026-11-11T07:46:47.081Z |
+| `learn-dom-d-c4d2b996` | `project://hf-microsoft-florence-2-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | 2026-11-11T07:47:08.933Z |

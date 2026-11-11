@@ -7243,10 +7243,10 @@
     "repository": "SeaQL/sea-orm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeaQL/sea-orm",
-    "sourceVersion": "85de02c9",
+    "sourceVersion": "1d4b1380",
     "license": "Apache-2.0",
-    "contentHash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
-    "lastHarvestedAt": "2026-11-09T02:01:15.159Z",
+    "contentHash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
+    "lastHarvestedAt": "2026-11-11T07:46:26.238Z",
     "learningId": "learn-github-seaql-sea-orm"
   },
   "mobilenativefoundation-store": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "7f971edd",
+    "sourceVersion": "f6cf28e3",
     "license": "Apache-2.0",
-    "contentHash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
-    "lastHarvestedAt": "2026-11-08T21:24:36.324Z",
+    "contentHash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
+    "lastHarvestedAt": "2026-11-11T07:46:13.492Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -12055,8 +12055,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Florence-2-base",
     "sourceVersion": "hf-microsoft-florence-2-base",
     "license": "Open-Source",
-    "contentHash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
-    "lastHarvestedAt": "2026-11-06T13:27:19.277Z",
+    "contentHash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
+    "lastHarvestedAt": "2026-11-11T07:45:58.987Z",
     "learningId": "learn-huggingface-microsoft-florence-2-base"
   },
   "hf-webai-official-twil-8b": {

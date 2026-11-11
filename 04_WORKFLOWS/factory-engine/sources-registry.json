@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T07:38:01.189Z",
-    "lastVerified": "2026-11-11T07:38:01.189Z",
+    "lastChecked": "2026-11-11T07:46:31.585Z",
+    "lastVerified": "2026-11-11T07:46:31.585Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -458,12 +458,12 @@
     "revisionIdentifier": "fe107aab"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T06:33:26.441Z",
-    "lastVerified": "2026-11-11T06:33:26.441Z",
+    "lastChecked": "2026-11-11T07:46:10.748Z",
+    "lastVerified": "2026-11-11T07:46:10.748Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -472,7 +472,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e2ade2a2"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1642,9 +1643,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-10T00:31:50.860Z",
+    "lastChecked": "2026-11-11T07:46:05.805Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-10T00:31:50.860Z"
+    "lastVerified": "2026-11-11T07:46:05.805Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -1745,14 +1746,14 @@
     "officialUrl": "https://github.com/SeaQL/sea-orm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T02:01:12.901Z",
-    "lastVerified": "2026-11-09T02:01:12.901Z",
+    "lastChecked": "2026-11-11T07:46:13.504Z",
+    "lastVerified": "2026-11-11T07:46:13.504Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seaql-sea-orm",
-    "contentHash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
+    "contentHash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6382,9 +6383,9 @@
   "xinthink-react-native-material-kit": {
     "name": "react-native-material-kit",
     "officialUrl": "https://github.com/xinthink/react-native-material-kit",
-    "lastChecked": "2026-11-07T18:24:41.632Z",
+    "lastChecked": "2026-11-11T07:46:00.857Z",
     "revisionIdentifier": "3a1c7a7e",
-    "lastVerified": "2026-11-07T18:24:41.632Z"
+    "lastVerified": "2026-11-11T07:46:00.857Z"
   },
   "octodns-octodns": {
     "name": "octodns",
@@ -6616,9 +6617,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-09T02:43:54.926Z",
+    "lastChecked": "2026-11-11T07:46:03.271Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-09T02:43:54.926Z"
+    "lastVerified": "2026-11-11T07:46:03.271Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -8586,14 +8587,14 @@
     "officialUrl": "https://github.com/biomejs/biome",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T21:24:35.168Z",
-    "lastVerified": "2026-11-08T21:24:35.168Z",
+    "lastChecked": "2026-11-11T07:46:02.253Z",
+    "lastVerified": "2026-11-11T07:46:02.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-biomejs-biome",
-    "contentHash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
+    "contentHash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14252,13 +14253,13 @@
     "officialUrl": "https://huggingface.co/microsoft/Florence-2-base",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-06T13:27:07.570Z",
-    "lastVerified": "2026-11-06T13:27:07.570Z",
+    "lastChecked": "2026-11-11T07:45:58.458Z",
+    "lastVerified": "2026-11-11T07:45:58.458Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-microsoft-florence-2-base",
-    "contentHash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
-    "promotedRulesCount": 3,
+    "contentHash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

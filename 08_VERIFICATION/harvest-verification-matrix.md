@@ -8869,3 +8869,8 @@
 | `CYCLE-20261111-40VR` | `2026-11-11T07:37:49.431Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5097ed16...`) |
 | `CYCLE-20261111-45PA` | `2026-11-11T07:37:55.678Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8bb0e757...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:38:16.421Z` | `codewhale-hq-codewhale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BC0A19F3` [Domain D] | Yes (`446e0ecc...`) |
+| `CYCLE-20261111-EIMF` | `2026-11-11T07:45:58.983Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | Yes (`3edc255c...`) |
+| `CYCLE-20261111-ETTC` | `2026-11-11T07:46:13.488Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fd859ca2...`) |
+| `CYCLE-20261111-F3NE` | `2026-11-11T07:46:26.234Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`61f6c6fe...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:46:47.081Z` | `biomejs-biome` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5BF650C7` [Domain D] | Yes (`9e3609a8...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:47:08.933Z` | `hf-microsoft-florence-2-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C4D2B996` [Domain D] | Yes (`23fb6926...`) |
