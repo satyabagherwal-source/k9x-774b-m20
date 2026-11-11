@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `1157a070`  
+> **Source Version**: `34e8b808`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T02:44:04.389Z  
+> **Timestamp**: 2026-11-11T09:39:48.494Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T02:44:04.382Z  
+> **Harvest Timestamp**: 2026-11-11T09:39:48.485Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11864 stars
+- **Stars / Engagement**: 11879 stars
 
 ---
 
@@ -1225,11 +1225,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4885** (2026-11-06): **fix(node): upgrade transformers.js to 4.3.2 to pick up patched sharp**
-  *Symptoms*: ## Summary  `@lancedb/lancedb` pins the optional dependency `@huggingface/transformers` at 3.0.2, which requires `sharp ^0.33.5`. Every npm install of LanceDB therefore pulled in a sharp version with critical advisories (GHSA-wq5f-xc86-pv6w, GHSA-rgj7-g3m4-5g8c). No 3.x release of transformers allows a patched sharp, so this upgrades to 4.3.2, which requires `sharp ^0.35.4`. A fresh install resolves that range to 0.35.5, the first release that fixes both advisories.  - `nodejs/package.json`: `@huggingface/transformers` 3.0.2 → 4.3.2. - `nodejs/pnpm-workspace.yaml`: remove the `sharp: ^0.35.4` override. It only covered our own install, not consumers, and transformers now requires that range itself. - `nodejs/examples`: transformers 3.0.2 → 4.3.2, sharp 0.33.5 → 0.35.5. - Both lockfiles resolve sharp to 0.35.5; `pnpm audit` reports no sharp advisories in either.  `TransformersEmbeddingFunction` needed no code changes. The transformers types are only used in private fields, so the published typings don't change.  `docs/web-tests/ts` and `docs/web-tests/blob-v2/ts` are left alone: they resolve transformers through a published `@lancedb/lancedb`, so they pick this up after a release.  ## Evidence  Embeddings from the built-in `huggingface` embedding function (default `Xenova/all-MiniLM-L6-v2`) on 4.3.2, compared with the same mean pooling on 3.0.2, for three sentences:  ``` transformers 4.3.2: 3 x 384 text 0: max|diff|=6.62e-07  cosine=1.00000000 text 1: max|diff|=6.26e-07  cosine
+- **Issue #4948** (2026-11-11): **fix: preserve function freshness across input-preserving writes**
+  *Symptoms*: Updating an unrelated column or merging rows with unchanged Function inputs rewrites fragment files, causing already computed outputs to be treated as stale. Preserve their freshness from the successful write transaction when the inputs and outputs are provably unchanged; keep changed or uncertain inputs eligible for recomputation.  Mixed update/insert writes keep a separate pending-fill proof so retained outputs can be reused while inserted NULL outputs still need computation. Partial refreshes under a new Function definition discard the previous definition’s completed and pending proofs. Preservation uses a version-fenced metadata commit, and an optional preservation failure does not turn a successful data write into an error.  Validation: 67 freshness tests pass, including the new partial-definition regression (confirmed failing before its fix), unrelated updates, identical/mixed merges, NULL/nested/blob inputs, dirty-state preservation, concurrency fences and sidecar retention. `cargo fmt --all` and `cargo clippy --quiet --locked --features remote --tests --examples` pass.  Compatibility: `StalenessPlan` adds a public `pending_fill` field, so direct Rust struct literals must be updated. Refresh consumers must handle pending-fill admission and publication before adopting this behavior; a dependency bump alone does not complete consumer integration. End-to-end consumer validation and deployment remain separate. No latency claim is made for this SDK-only change. 
 
-- **Issue #4880** (2026-11-06): **fix(python): surface Function drop warnings**
-  *Symptoms*: Remote Python `drop_function` currently discards the dependent-view warnings returned by SQL DROP. Both the synchronous and coroutine APIs now emit those warnings through `warnings.warn` while preserving their boolean result and executing DROP once. The server support is already merged in lancedb/sophon#9820.  The Rust decoder reads warnings across every result batch, including an empty first batch. Missing warning columns remain compatible with older servers; malformed or null warning lists are rejected. The hidden binding bridge carries the warnings to Python. The separate `drop_function_async` API and its `(bool, Job)` contract are unchanged. Python warning filters can raise after the catalog mutation has completed.  Validation: a compiled PyO3/public-server reproduction failed before the fix and passed afterward; the public async path also returned `true` with the expected dependent-view warning. Final source passes two focused Rust tests, two Python wrapper tests, strict targeted Clippy, formatting, and Ruff. Three decoder tests cover batch/null/type and older-server behavior. The public runs preceded a two-file simplification of the completed Job projection; focused final-source checks cover that delta. Current-main integration is conflict-free, and its overlapping changes concern independent retry-policy APIs/tests.  Documentation now covers warning filters, the post-removal warnings-as-errors behavior, and silent compatibility with older servers. The follow-up changes
+- **Issue #4947** (2026-11-11): **fix(python): support legacy blob query bytes**
+  *Symptoms*: ## Summary  - Let local plain queries over row-addressable legacy v1 and v2 blob columns use `blob_mode="bytes"` without importing `pylance` through pandas, batch, or Arrow conversion. - Preserve aliases, filters, ordering, limits, null and empty payloads, empty result schemas, and the caller's `_rowid` choice. - Build the hidden row-id query separately so reusing an async builder for lazy reads or non-blob projections cannot retain an automatic `_rowid`. - Keep byte reads closed for blobs inside lists, remote or namespace pushdown, and query shapes whose result rows cannot be matched back to the source. Blob v2 lazy auto-row-id behavior is unchanged.  Fixes #4645  ## Validation  - 26 focused Python tests passed with the test subprocess blocking all `lance` imports. The persisted fixture writes and reopens a storage-v2.1 table, then covers sync and async pandas, batches, and Arrow conversion plus async builder reuse. - The existing unsupported vector and hybrid reranker regressions now assert the current eligibility diagnostic, and the legacy table-level Arrow regression now asserts successful bytes, schema, values, and hidden row IDs. Both focused tests passed. - The runtime receipt records no installed `pylance` distribution and no importable `lance` module. The Python-only change was verified with an existing compatible 0.42.0b9 extension; the relevant query and fetch APIs are unchanged between that source and this 0.42.0b10 base. - Ruff format and lint pass for every chan
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1246,428 +1246,919 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1157a070` (2026-11-08)
-**Commit Message**: Bump version: 0.42.0-beta.8 → 0.42.0-beta.9
+### Incident Patch 1: `34e8b808` (2026-11-11)
+**Commit Message**: fix: preserve function freshness across input-preserving writes (#4948)
 
-**File**: `.bumpversion.toml` (modified, +1/-1)
+Updating an unrelated column or merging rows with unchanged Function
+inputs rewrites fragment files, causing already computed outputs to be
+treated as stale. Preserve their freshness from the successful write
+transaction when the inputs and outputs are provably unchanged; keep
+changed or uncertain inputs eligible for recomputation.
+
+Mixed update/insert writes keep a separate pending-fill proof so
+retained outputs can be reused while inserted NULL outputs still need
+computation. Partial refreshes under a new Function definition discard
+the previous definition’s completed and pending proofs. Preservation
+uses a version-fenced metadata commit, and an optional preservation
+failure does not turn a successful data write into an error.
+
+Validation: 67 freshness tests pass, including the new
+partial-definition regression (confirmed failing before its fix),
+unrelated updates, identical/mixed merges, NULL/nested/blob inputs,
+dirty-state preservation, concurrency fences and sidecar retention.
+`cargo fmt --all` and `cargo clippy --quiet --locked --features remote
+--tests --examples` pass.
+
+Compatibility: `StalenessPlan` a
+
+**File**: `rust/lancedb/src/table/computed_columns.rs` (modified, +5/-0)
 ```diff
-@@ -1,5 +1,5 @@
- [tool.bumpversion]
--current_version = "0.42.0-beta.8"
-+current_version = "0.42.0-beta.9"
- parse = """(?x)
-     (?P<major>0|[1-9]\\d*)\\.
-     (?P<minor>0|[1-9]\\d*)\\.
+@@ -211,6 +211,11 @@ pub const FUNCTION_BINDINGS_VERSION: u32 = 1;
+ /// declared before signatures existed.
+ pub const SOURCE_SIGNATURE_META_KEY: &str = "computed_refresh.source_signature";
+ 
++/// Signatures of input-preserving rewrites whose retained Function outputs
++/// are current but whose inserted rows still need their first computation.
++/// A sidecar reference keeps this separate from completed freshness stamps.
++pub const PENDING_FILL_SIGNATURE_META_KEY: &str = "computed_refresh.pending_fill_signature";
++
+ /// Field metadata key holding the definition digest a column was last
+ /// computed under. A change to it makes every row stale.
+ pub const DEFINITION_VERSION_META_KEY: &str = "computed_refresh.definition_version";
 ```
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `rust/lancedb/src/table/freshness.rs` (modified, +1066/-11)
 ```diff
-@@ -5930,7 +5930,7 @@ dependencies = [
+@@ -25,10 +25,11 @@ use std::io::{Cursor, Read};
+ use std::ops::Range;
  
- [[package]]
- name = "lancedb"
--version = "0.42.0-beta.8"
-+version = "0.42.0-beta.9"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -6041,7 +6041,7 @@ dependencies = [
+ use arrow_array::{Array, UInt64Array};
++use arrow_schema::{DataType, Schema as ArrowSchema};
+ use futures::TryStreamExt;
+ use lance::Dataset;
+ use lance::dataset::refs::Ref;
+-use lance::dataset::transaction::Operation;
++use lance::dataset::transaction::{Operation, UpdateMode};
+ use lance_core::ROW_ADDR;
+ use lance_core::datatypes::{Field as LanceField, Schema as LanceSchema};
+ use lance_io::object_store::{ObjectStore, uri_to_url};
+@@ -40,7 +41,8 @@ use sha2::{Digest, Sha256};
+ use uuid::Uuid;
  
- [[package]]
- name = "lancedb-cli"
--version = "0.42.0-beta.8"
-+version = "0.42.0-beta.9"
- dependencies = [
-  "anyhow",
-  "arrow-array",
-@@ -6084,7 +6084,7 @@ dependencies = [
+ use crate::table::computed_columns::{
+-    DEFINITION_VERSION_META_KEY, RECORDED_AT_VERSION_META_KEY, SOURCE_SIGNATURE_META_KEY,
++    DEFINITION_VERSION_META_KEY, FUNCTION_BINDINGS_META_KEY, PENDING_FILL_SIGNATURE_META_KEY,
++    RECORDED_AT_VERSION_META_KEY, SOURCE_SIGNATURE_META_KEY, field_root, function_bindings,
+ };
+ use crate::{Error, Result};
  
- [[package]]
- name = "lancedb-nodejs"
--version = "0.42.0-beta.8"
-+version = "0.42.0-beta.9"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@ -6109,7 +6109,7 @@ dependencies = [
+@@ -738,12 +740,14 @@ async fn referenced_digests(dataset: &Dataset, into: &mut HashSet<String>) -> Re
+     for version in dataset.versions().await? {
+         let at = dataset.checkout_version(version.version).await?;
+         for field in at.schema().fields_pre_order() {
+-            if let Some(digest) = field
+-                .metadata
+-                .get(SOURCE_SIGNATURE_META_KEY)
+-                .and_then(|value| value.strip_prefix(SIDECAR_REF))
+-            {
+-                into.insert(digest.to_string());
++            for key in [SOURCE_SIGNATURE_META_KEY, PENDING_FILL_SIGNATURE_META_KEY] {
++                if let Some(digest) = field
++                    .metadata
++                    .get(key)
++                    .and_then(|value| value.strip_prefix(SIDECAR_REF))
++                {
++                    into.insert(digest.to_string());
++                }
+             }
+         }
+     }
+@@ -820,6 +824,10 @@ pub struct StalenessPlan {
+     pub dirty: HashSet<u32>,
+     /// Current-signature fragments with only some rows dirty.
+     pub row_dirty: RowStateMap,
++    /// Retained values are current, but unassigned inserted rows need filling.
++    /// These signatures become completed stamps only after a full null-fill.
++    #[serde(default)]
++    pub pending_fill: SignatureMap,
+     /// Fragments a compaction produced from fresh ones, at their current
+     /// signature: not dirty, and for the seal to record.
+     pub inherited: SignatureMap,
+@@ -1174,13 +1182,29 @@ pub async fn staleness_against(
+     let mut inherited = carried.inherited;
+     let mut dirty = carried.dirty_products;
+     let mut row_dirty = RowStateMap::new();
++    let pending = match field_meta(dataset, column, PENDING_FILL_SIGNATURE_META_KEY) {
++        Some(reference) if unrecorded => {
++            let state = match reference.strip_prefix(SIDECAR_REF) {
++                Some(digest) => read_sidecar(dataset, digest).await.ok(),
++                None => None,
++            };
++            state
++                .filter(|state| state.row_state.is_empty() && state.basis.is_empty())
++                .map(|state| state.signatures)
++                .unwrap_or_default()
++        }
++        _ => SignatureMap::new(),
++    };
++    let mut pending_fill = SignatureMap::new();
+     let mut live = HashSet::new();
+     let bases = Bases::of(dataset)?;
+     for fragment in dataset.get_fragments() {
+         let id = fragment.id() as u32;
+         live.insert(id);
+         let current = fragment_input_signature(&bases, fragment.metadata(), inputs)?;
+-        if stored.get(&id).or_else(|| inherited.get(&id)) != Some(&current) {
++        if !stored.contains_key(&id) && !dirty.contains(&id) && pending.get(&id) == Some(&current) {
++            pending_fill.insert(id, current);
++        } else if stored.get(&id).or_else(|| inherited.get(&id)) != Some(&current) {
+             dirty.insert(id);
+         } else if let Some(rows) = row_state.get(&id) {
+             row_dirty.insert(id, rows.clone());
+@@ -1192,6 +1216,7 @@ pub async fn staleness_against(
+         recompute_all: false,
+         dirty,
+         row_dirty,
++        pending_fill,
+         inherited,
+     })
+ }
+@@ -1263,18 +1288,302 @@ pub async fn record_freshness(
+     })
+ }
  
- [[package]]
- name = "lancedb-python"
--version = "0.42.0-beta.8"
-+version = "0.42.0-beta.9"
- dependencies = [
-  "arc-swap",
-  "arrow",
++/// The source of a just-committed write whose retained Function values may
++/// still be fresh. The fields must describe the actual write, including its
++/// join keys; they must not be inferred from a later table snapshot.
++pub enum FunctionWrite<'a> {
++    /// Assignments executed by Lance's update builder.
++    Update { columns: &'a [String] },
++    /// The source schema and join columns executed by Lance's merge builder.
++    Merge {
++        source_schema: &'a ArrowSchema,
++        on: &'a [String],
++        /// The insertion count from the same committed merge result.
++        num_inserted_rows: u64,
++    },
++}
++
++impl FunctionWrite<'_> {
++    fn writes_root(&self, root: &str) -> Result<bool> {
++        match self {
++            Self::Update { columns } => columns.iter().try_fold(false, |found, colu
 ```
 
-**File**: `docs/src/java/java.md` (modified, +1/-1)
+**File**: `rust/lancedb/src/table/merge.rs` (modified, +16/-1)
 ```diff
-@@ -14,7 +14,7 @@ Add the following dependency to your `pom.xml`:
- <dependency>
-     <groupId>com.lancedb</groupId>
-     <artifactId>lancedb-core</artifactId>
--    <version>0.42.0-beta.8</version>
-+    <version>0.42.0-beta.9</version>
- </dependency>
- ```
+@@ -385,6 +385,8 @@ pub(crate) async fn execute_merge_insert(
+     }
  
+     let dataset = table.dataset.get().await?;
++    let source_schema = source.schema();
++    let on = params.on.clone();
+     let mut builder = LanceMergeInsertBuilder::try_new(dataset.clone(), params.on)?;
+     match (
+         params.when_matched_update_all,
+@@ -432,8 +434,21 @@ pub(crate) async fn execute_merge_insert(
+         Either::Right(job.execute(source).map_err(|e| e.into()))
+     };
+     let (new_dataset, stats) = future.await?;
++    let mut new_dataset = new_dataset.as_ref().clone();
++    if let Err(error) = super::freshness::preserve_function_freshness(
++        &mut new_dataset,
++        super::freshness::FunctionWrite::Merge {
++            source_schema: &source_schema,
++            on: &on,
++            num_inserted_rows: stats.num_inserted_rows,
++        },
++    )
++    .await
++    {
++        log::warn!("merge committed but Function freshness could not be preserved: {error}");
++    }
+     let version = new_dataset.manifest().version;
+-    table.dataset.update(new_dataset.as_ref().clone());
++    table.dataset.update(new_dataset);
+     Ok(MergeResult {
+         version,
+         num_updated_rows: stats.num_updated_rows,
 ```
 
-**File**: `java/lancedb-core/pom.xml` (modified, +1/-1)
+**File**: `rust/lancedb/src/table/update.rs` (modified, +19/-2)
 ```diff
-@@ -8,7 +8,7 @@
-     <parent>
-       <groupId>com.lancedb</groupId>
-       <artifactId>lancedb-parent</artifactId>
--      <version>0.42.0-beta.8</version>
-+      <version>0.42.0-beta.9</version>
-       <relativePath>../pom.xml</relativePath>
-     </parent>
+@@ -113,20 +113,37 @@ pub(crate) async fn execute_update(
+     }
  
-```
-
-**File**: `java/pom.xml` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
+     // 4. Apply the columns (SET clause)
++    let written_columns = update
++        .columns
++        .iter()
++        .map(|(column, _)| column.clone())
++        .collect::<Vec<_>>();
+     for (column, value) in update.columns {
+         builder = builder.set(column, &value)?;
+     }
  
-     <groupId>com.lancedb</groupId>
-     <artifactId>lancedb-parent</artifactId>
--    <version>0.42.0-beta.8</version>
-+    <version>0.42.0-beta.9</version>
-     <packaging>pom</packaging>
-     <name>${project.artifactId}</name>
-     <description>LanceDB Java SDK Parent POM</description>
-```
-
-**File**: `nodejs/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [package]
- name = "lancedb-nodejs"
- edition.workspace = true
--version = "0.42.0-beta.8"
-+version = "0.42.0-beta.9"
- publish = false
- license.workspace = true
- description.workspace = true
-```
-
-**File**: `nodejs/npm/darwin-arm64/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
- 	"name": "@lancedb/lancedb-darwin-arm64",
--	"version": "0.42.0-beta.8",
-+	"version": "0.42.0-beta.9",
- 	"os": ["darwin"],
- 	"cpu": ["arm64"],
- 	"main": "lancedb.darwin-arm64.node",
-```
-
-**File**: `nodejs/npm/linux-arm64-gnu/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
- 	"name": "@lancedb/lancedb-linux-arm64-gnu",
--	"version": "0.42.0-beta.8",
-+	"version": "0.42.0-beta.9",
- 	"os": ["linux"],
- 	"cpu": ["arm64"],
- 	"main": "lancedb.linux-arm64-gnu.node",
+     // 5. Execute the operation (Write new files)
+     let operation = builder.build()?;
+     let res = operation.execute().await?;
++    let mut new_dataset = res.new_dataset.as_ref().clone();
++    if let Err(error) = super::freshness::preserve_function_freshness(
++        &mut new_dataset,
++        super::freshness::FunctionWrite::Update {
++            columns: &written_columns,
++        },
++    )
++    .await
++    {
++        log::warn!("update committed but Function freshness could not be preserved: {error}");
++    }
+ 
+     // 6. Update the table's view of the latest version
+-    table.dataset.update(res.new_dataset.as_ref().clone());
++    let version = new_dataset.version().version;
++    table.dataset.update(new_dataset);
+ 
+     Ok(UpdateResult {
+         rows_updated: res.rows_updated,
+-        version: res.new_dataset.version().version,
++        version,
+     })
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `bd8cbfd4` (2026-11-08)
-**Commit Message**: chore: update lance dependency to v15.0.0-beta.14 (#4909)
+### Incident Patch 2: `1e5b6dee` (2026-11-11)
+**Commit Message**: fix(python): support legacy blob query bytes (#4947)
 
-Update the Rust workspace Lance crates and Python test dependency to
-[Lance
-v15.0.0-beta.14](https://github.com/lance-format/lance/releases/tag/v15.0.0-beta.14),
-which includes JSON cache reuse across request stores and stable-row-ID
-JSON index support. The Python lock contains all seven published wheels.
-The independent Java module retains beta.8, as in the previous beta.13
-update; its separate beta.14 publisher repair is outside this Rust
-consumer upgrade.
+## Summary
 
-Preserve all CI coverage while reclaiming completed workspace lancedb
-artifacts before the package-level feature-test build, which otherwise
-exhausted the Linux runner disk. Give only the Linux ARM64 release-wheel
-job two hours after its one-hour timeout, retaining the same runner,
-fat-LTO release profile and build flags.
+- Let local plain queries over row-addressable legacy v1 and v2 blob
+columns use `blob_mode="bytes"` without importing `pylance` through
+pandas, batch, or Arrow conversion.
+- Preserve aliases, filters, ordering, limits, null and empty payloads,
+empty result schemas, and the caller's `_rowid` choice.
+- Build the hidden row-id query separately so reusing an async builder
+for lazy reads or non-blob projections cannot retain an automatic
+`_rowid`.
+- Keep byte reads closed for blobs inside lists, remote or namespace
+pushdown, and query shapes whose result rows cannot be matched back to
+the source. Blob v2 lazy auto-row-id behavior is unchanged.
 
-Validation: 2,280 Rust tests passed (79 existing ignores), strict
-workspace/all-feature Clippy, Rust formatting, and remote example checks
-passed on unchanged Rust source and dependency lock. Python dependency
-guards, lock validation, locked sync, and the published macOS wheel
-import passed. The new Windows ARM64 wheel was downloaded and its
-SHA-256 
+Fixes #4645
 
-**File**: `.github/workflows/pypi-publish.yml` (modified, +2/-1)
+## Validation
+
+- 26 focused Python tests passed with the test subprocess blocking all
+`lance` imports. The persisted fixture writes and reopens a storage-v2.1
+table, then covers sync and async pandas, batches, and Arrow conversion
+plus async builder reuse.
+- The existing unsupported vector and hybrid reranker regressions now
+assert the current eligibility diagnostic, and the legacy table-level
+Arrow regression now asserts successful bytes, schema, values, and
+hidden r
+
+**File**: `docs/web/basics/lance.mdx` (modified, +4/-3)
 ```diff
-@@ -36,7 +36,8 @@ concurrency:
- jobs:
-   linux:
-     name: Python ${{ matrix.config.package_name }} ${{ matrix.config.platform }} manylinux${{ matrix.config.manylinux }}
--    timeout-minutes: 60
-+    # The ARM64 release build can exceed an hour with fat LTO on a cold runner.
-+    timeout-minutes: ${{ matrix.config.platform == 'aarch64' && 120 || 60 }}
-     strategy:
-       matrix:
-         config:
+@@ -49,9 +49,10 @@ tbl = db.open_table("frames")  # opens /data/frames.lance; version=N pins a vers
+ Use `lancedb` for search, retrieval, data curation, multimodal blob access and
+ application code. Install `pylance` (`import lance`) only when building query
+ engines or connectors, calling format-level fragment APIs directly, or
+-converting plain-scan lazy or legacy blob columns with `to_pandas()` (see
+-[Multimodal data and blobs](/management/table#multimodal) for `pylance`-free
+-conversions).
++converting plain-scan lazy blob handles with `to_pandas()`. Legacy plain-scan
++byte conversions use LanceDB's native path without `pylance` (see
++[Multimodal data and blobs](/management/table#multimodal) for conversion
++boundaries).
+ 
+ | `pylance` (`import lance`) | `lancedb` (`import lancedb`) |
+ | --- | --- |
 ```
 
-**File**: `.github/workflows/rust.yml` (modified, +7/-0)
+**File**: `docs/web/management/table.mdx` (modified, +20/-16)
 ```diff
-@@ -241,6 +241,13 @@ jobs:
-           sudo swapon "$swapfile"
-       - name: Build
-         run: cargo build --profile ci --all-features --tests --locked --examples
-+      - name: Reclaim completed workspace build artifacts
-+        run: |
-+          # Package-level tests resolve a different feature graph from the workspace
-+          # build. Reclaim its lancedb outputs before linking the test graph.
-+          df -h .
-+          cargo clean --profile ci -p lancedb
-+          df -h .
-       - name: Run feature tests
-         run: CARGO_ARGS="--profile ci" make -C ./lancedb feature-tests
-       - name: Run examples
+@@ -465,9 +465,11 @@ methods `to_pandas()`, `to_arrow()`, `to_list()`, and `to_batches()` accept a
+ 
+ For supported local v2 blob projections, `to_pandas(blob_mode="bytes")` and
+ `to_pandas(blob_mode="descriptions")` use native Arrow conversion without
+-pylance. Pandas conversions that need the Lance scanner, including plain-scan
+-`"lazy"` handles and legacy blobs, still require pylance. `to_arrow()`,
+-`to_list()`, `to_batches()`, and the fetch methods do not require pylance.
++pylance. Eligible local plain scans also convert row-addressable legacy blob
++bytes without pylance. Pandas conversions that need the Lance scanner,
++including plain-scan `"lazy"` handles and scanner-only options, still require
++pylance. `to_arrow()`, `to_list()`, `to_batches()`, and the fetch methods do
++not require pylance for supported local queries.
+ 
+ `blob_mode="bytes"` requires a LanceDB Embedded table snapshot, so Enterprise
+ and in-memory tables raise `NotImplementedError`. On an Enterprise table,
+@@ -531,28 +533,30 @@ PyArrow.
+ 
+ ###### Stream blob results {#multimodal-blob-batches}
+ 
+-`to_batches(blob_mode="bytes")` fetches blob v2 payloads one batch at a time
+-and returns them as Arrow `large_binary` values. Iterate over the reader and
+-call `batch.to_pandas()` to convert each batch to a DataFrame without collecting
+-all payloads at once.
++`to_batches(blob_mode="bytes")` fetches row-addressable blob v2 payloads and
++eligible local plain-scan legacy v1 payloads one batch at a time and returns
++them as Arrow `large_binary` values. Iterate over the reader and call
++`batch.to_pandas()` to convert each batch to a DataFrame without collecting all
++payloads at once.
+ 
+ For sync queries, call `query.to_batches(batch_size=64, blob_mode="bytes")`
+ and iterate with `for`. For async queries, call
+ `await query.to_batches(max_batch_length=64, blob_mode="bytes")` and iterate
+ with `async for`. Sync full-text and hybrid queries do not support
+ `to_batches()`.
+ 
+-The default `"lazy"` mode returns descriptors and keeps automatic `_rowid`
+-columns visible for manual fetches. `"descriptions"` returns the five-field
+-descriptors. Both `"bytes"` and `"descriptions"` hide automatic row IDs;
+-explicitly requested row IDs remain visible.
++The default `"lazy"` mode returns blob v2 descriptors and keeps their automatic
++`_rowid` columns visible for manual fetches. `"descriptions"` returns the
++five-field descriptors. Both `"bytes"` and `"descriptions"` hide automatic row
++IDs; explicitly requested row IDs remain visible.
+ 
+ Bytes mode has the same restrictions as `to_arrow(blob_mode="bytes")`,
+-including no legacy blobs, blobs inside lists, Enterprise tables, or namespace
+-`QueryTable` pushdown. If concurrent writers can overwrite the table, use a
+-separate reader checked out to a fixed version before querying. Otherwise,
+-an overwrite can invalidate the row IDs used to fetch bytes and raise
+-`ValueError`.
++including no blobs inside lists, Enterprise tables, namespace `QueryTable`
++pushdown, or query shapes that cannot preserve their row results. Legacy v1
++bytes are limited to eligible local plain scans. If concurrent writers can
++overwrite the table, use a separate reader checked out to a fixed version
++before querying. Otherwise, an overwrite can invalidate the row IDs used to
++fetch bytes and raise `ValueError`.
+ 
+ ###### Optional pandas examples {#multimodal-blob-pandas}
+ 
 ```
 
-**File**: `Cargo.lock` (modified, +48/-48)
+**File**: `docs/web/quickstart.mdx` (modified, +3/-2)
 ```diff
-@@ -3765,8 +3765,8 @@ checksum = "42703706b716c37f96a77aea830392ad231f44c9e9a67872fa5548707e11b11c"
+@@ -59,8 +59,9 @@ uv add --prerelease allow --index https://pypi.fury.io/lancedb/ lancedb
  
- [[package]]
- name = "fsst"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow-array",
-  "rand 0.9.5",
-@@ -5243,8 +5243,8 @@ checksum = "e037a2e1d8d5fdbd49b16a4ea09d5d6401c1f29eca5ff29d03d3824dba16256a"
+ Most applications only need `lancedb`. Install the optional `pylance` extra and
+ include the Lance preview index only when building query engines or connectors,
+-calling format-level `lance` APIs directly, or converting plain-scan lazy or
+-legacy blob columns with `to_pandas()`:
++calling format-level `lance` APIs directly, or converting plain-scan lazy blob
++handles with `to_pandas()`. Legacy plain-scan byte conversions use LanceDB's
++native path and do not require `pylance`:
  
- [[package]]
- name = "lance"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arc-swap",
-  "arrow",
-@@ -5319,8 +5319,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-arrow"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@ -5342,7 +5342,7 @@ dependencies = [
- [[package]]
- name = "lance-arrow-scalar"
- version = "59.0.0"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@ -5356,7 +5356,7 @@ dependencies = [
- [[package]]
- name = "lance-arrow-stats"
- version = "59.0.0"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow-array",
-  "arrow-schema",
-@@ -5365,8 +5365,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-bitpacking"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrayref",
-  "crunchy",
-@@ -5376,8 +5376,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-core"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@ -5415,8 +5415,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-datafusion"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow",
-  "arrow-array",
-@@ -5447,8 +5447,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-datafusion-exec"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow",
-  "arrow-array",
-@@ -5473,8 +5473,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-datagen"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "arrow",
-  "arrow-array",
-@@ -5491,8 +5491,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-derive"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -5501,8 +5501,8 @@ dependencies = [
- 
- [[package]]
- name = "lance-encoding"
--version = "15.0.0-beta.13"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
-+version = "15.0.0-beta.14"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta
+ <CodeGroup>
+ ```bash Python (pip) icon="terminal"
 ```
 
-**File**: `Cargo.toml` (modified, +15/-15)
+**File**: `python/python/lancedb/_blob.py` (modified, +30/-6)
 ```diff
-@@ -19,21 +19,21 @@ categories = ["database-implementations"]
- rust-version = "1.95.0"
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright The LanceDB Authors
  
- [workspace.dependencies]
--lance = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-core = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-datagen = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-file = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-io = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-index = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-jsonb = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-linalg = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-namespace = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-namespace-impls = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-table = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-testing = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-datafusion = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-encoding = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
--lance-arrow = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-core = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-datagen = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-file = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-io = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-index = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-jsonb = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-linalg = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-namespace = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-namespace-impls = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-table = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-testing = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-datafusion = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-encoding = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
-+lance-arrow = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
- lancedb = { path = "rust/lancedb", default-features = false }
- ahash = "0.8"
- anyhow = "1"
+-"""Blob fetch API and v2 projection helpers."""
++"""Blob fetch API and projection helpers."""
+ 
+ from __future__ import annotations
+ 
+@@ -13,7 +13,11 @@
+ import pyarrow as pa
+ 
+ from .expr import Expr
+-from .schema import blob_column_paths, row_addressable_blob_v2_paths
++from .schema import (
++    blob_column_paths,
++    row_addressable_blob_paths,
++    row_addressable_blob_v2_paths,
++)
+ from .types import BlobMode, QueryProjection, QueryProjectionSpec
+ 
+ if TYPE_CHECKING:
+@@ -165,6 +169,25 @@ def blob_v2_projection_sources(
+     return _project_blob_paths(row_addressable_blob_v2_paths(schema), projection)
+ 
+ 
++def blob_projection_sources(
++    schema: pa.Schema,
++    projection: QueryProjection,
++    *,
++    include_legacy: bool = False,
++) -> dict[str, str]:
++    """Map projected blob outputs to row-addressable source columns.
++
++    Legacy v1 columns are included only when the caller can safely fetch them
++    through the same row-id path as v2.
++    """
++    paths = (
++        row_addressable_blob_paths(schema)
++        if include_legacy
++        else row_addressable_blob_v2_paths(schema)
++    )
++    return _project_blob_paths(paths, projection)
++
++
+ def reject_unfetchable_blob_columns(
+     schema: pa.Schema, projection: QueryProjection, blob_sources: dict[str, str]
+ ) -> None:
+@@ -177,8 +200,9 @@ def reject_unfetchable_blob_columns(
+     if unfetchable:
+         raise ValueError(
+             f"blob_mode='bytes' cannot fetch blob columns {unfetchable}. Bytes are "
+-            "fetched by row id, which covers blob v2 columns with one blob per "
+-            "row but not legacy blob columns or blobs inside lists. Use "
++            "fetched by row id for legacy and v2 columns in local plain scans, "
++            "but not for blobs inside lists or query shapes whose result columns "
++            "cannot be matched back to the source. Use "
+             "blob_mode='descriptions' or remove these columns from the projection."
+         )
+ 
+@@ -269,7 +293,7 @@ def finalize_blob_query_table(
+     return stash_auto_row_ids(tbl, blob_paths)
+ 
+ 
+-async def replace_v2_blob_columns_with_bytes(
++async def replace_blob_columns_with_bytes(
+     tbl: pa.Table,
+     blob_sources: dict[str, str],
+     fetch_blobs: FetchBlobsAsync,
+@@ -289,7 +313,7 @@ async def replace_v2_blob_columns_with_bytes(
+     return tbl
+ 
+ 
+-def replace_v2_blob_columns_with_bytes_sync(
++def replace_blob_columns_with_bytes_sync(
+     tbl: pa.Table,
+     blob_sources: dict[str, str],
+     fetch_blobs: FetchBlobsSync,
 ```
 
-**File**: `python/pyproject.toml` (modified, +1/-1)
+**File**: `python/python/lancedb/query.py` (modified, +179/-75)
 ```diff
-@@ -64,7 +64,7 @@ tests = [
-     "polars>=0.19, <=1.32.3",
-     "pyarrow>=16",
-     "pyarrow-stubs>=16.0",
--    "pylance==15.0.0b13",
-+    "pylance==15.0.0b14",
-     "requests>=2.31.0",
-     "datafusion>=54,<55",
-     "opentelemetry-sdk>=1.30.0",
+@@ -48,12 +48,13 @@
+     FetchBlobsAsync,
+     FetchBlobsSync,
+     blob_auto_row_id_for_scan,
++    blob_projection_sources,
+     blob_v2_projection_sources,
+     finalize_blob_query_table,
+     reject_unfetchable_blob_columns,
+     reject_unmatched_blob_outputs,
+-    replace_v2_blob_columns_with_bytes,
+-    replace_v2_blob_columns_with_bytes_sync,
++    replace_blob_columns_with_bytes,
++    replace_blob_columns_with_bytes_sync,
+     strip_auto_row_ids,
+     validate_blob_mode,
+ )
+@@ -245,6 +246,17 @@ def _query_is_plain_scan(query: Query) -> bool:
+     )
+ 
+ 
++def _query_is_plain_blob_scan(query: Query) -> bool:
++    """Whether native batch conversion can preserve this query's row result."""
++    return (
++        query.vector is None
++        and query.full_text_query is None
++        and query.take_offsets is None
++        and query.take_row_ids is None
++        and not query.postfilter
++    )
++
++
+ def _filter_to_sql(filter: Optional[Union[str, Expr]]) -> Optional[str]:
+     if filter is None:
+         return None
+@@ -421,7 +433,7 @@ def _finish_plain_scan_pandas(
+ ) -> pd.DataFrame:
+     if blob_sources:
+         tbl = _scanner_to_table(scanner)
+-        tbl = replace_v2_blob_columns_with_bytes_sync(tbl, blob_sources, fetch_blobs)
++        tbl = replace_blob_columns_with_bytes_sync(tbl, blob_sources, fetch_blobs)
+         if strip_auto_row_id and "_rowid" in tbl.column_names:
+             tbl = tbl.drop_columns(["_rowid"])
+         if flatten is not None:
+@@ -475,7 +487,7 @@ async def _finish_plain_scan_pandas_async(
+ ) -> pd.DataFrame:
+     if blob_sources:
+         tbl = _scanner_to_table(scanner)
+-        tbl = await replace_v2_blob_columns_with_bytes(tbl, blob_sources, fetch_blobs)
++        tbl = await replace_blob_columns_with_bytes(tbl, blob_sources, fetch_blobs)
+         if strip_auto_row_id and "_rowid" in tbl.column_names:
+             tbl = tbl.drop_columns(["_rowid"])
+         if flatten is not None:
+@@ -1281,10 +1293,10 @@ def to_pandas(
+         blob_mode: str, default "lazy"
+             Controls how blob columns are returned. Local blob v2 queries support
+             ``"bytes"`` and ``"descriptions"`` without pylance. Eligible local
+-            plain scans use pylance's scanner for lazy blob handles in ``"lazy"``
+-            mode and for legacy blob columns. Other local blob v2
+-            queries return descriptors in ``"lazy"`` and ``"descriptions"``
+-            modes, or payloads in ``"bytes"`` mode, through :meth:`to_arrow`.
++            plain scans also support ``"bytes"`` for row-addressable legacy blob
++            columns without pylance. Other local blob v2 queries return
++            descriptors in ``"lazy"`` and ``"descriptions"`` modes, or payloads
++            in ``"bytes"`` mode, through :meth:`to_arrow`.
+             LanceDB Enterprise blob queries support only ``"descriptions"`` until a
+             stable
+             table snapshot can bind the query and blob fetches.
+@@ -1352,8 +1364,8 @@ def to_arrow(
+         blob_mode: str, default "lazy"
+             ``"lazy"`` returns blob v2 descriptors that carry the row id
+             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
+-            ``"bytes"`` returns payload bytes and raises for legacy blob columns
+-            and blobs inside lists.
++            ``"bytes"`` returns payload bytes for supported row-addressable blob
++            columns and raises for blobs inside lists.
+         """
+         raise NotImplementedError
+ 
+@@ -1370,7 +1382,7 @@ def to_batches(
+         Execute the query and return the results as a pyarrow
+         [RecordBatchReader](https://arrow.apache.org/docs/python/generated/pyarrow.RecordBatchReader.html)
+ 
+-        For v2 blob projections, the default ``blob_mode="lazy"`` keeps the
++        For blob v2 projections, the default ``blob_mode="lazy"`` keeps the
+         auto ``_rowid`` column visible so batch consumers can call
+         ``fetch_blobs``. The ``"bytes"`` and ``"descriptions"`` modes hide
+         automatic row ids.
+@@ -1390,10 +1402,11 @@ def to_batches(
+             The timeout also covers reading the batches, so consuming them
+             slowly can exceed it.
+         blob_mode: str, default "lazy"
+-            ``"lazy"`` keeps blob descriptors and auto row ids for manual fetches.
+-            ``"descriptions"`` omits auto row ids. ``"bytes"`` fetches blob v2
+-            payloads one batch at a time, without requiring pylance. Bytes mode
+-            has the same restrictions as :meth:`to_arrow`.
++            ``"lazy"`` keeps blob v2 descriptors and auto row ids for manual
++            fetches. ``"descriptions"`` omits auto row ids. ``"bytes"`` fetches
++            supported row-addressable blob payloads one batch at a time, without
++            requiring pylance. Bytes mode has the same restrictions as
++            :meth:`to_arrow`.
+ 
+         Examples
+         --------
+@@ -1599,20 +1612,41 @@ def _blob_auto_row_id_enabled(self) -> bool:
+     def _scan_nee
 ```
 
-**File**: `python/uv.lock` (modified, +9/-9)
+**File**: `python/python/lancedb/schema.py` (modified, +9/-0)
 ```diff
-@@ -2147,7 +2147,7 @@ requires-dist = [
-     { name = "pyarrow-stubs", marker = "extra == 'tests'", specifier = ">=16.0" },
-     { name = "pydantic", specifier = ">=2.7.4,<3" },
-     { name = "pylance", marker = "extra == 'pylance'", specifier = ">=15.0.0b3" },
--    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b13" },
-+    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b14" },
-     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.350" },
-     { name = "pytest", marker = "extra == 'tests'", specifier = ">=7.0" },
-     { name = "pytest-asyncio", marker = "extra == 'tests'", specifier = ">=0.21" },
-@@ -4301,7 +4301,7 @@ crypto = [
+@@ -122,6 +122,15 @@ def blob_v2_column_paths(schema: pa.Schema) -> list[str]:
+     return [path for path, _ in _collect_blob_paths(schema, is_blob_v2_field)]
  
- [[package]]
- name = "pylance"
--version = "15.0.0b13"
-+version = "15.0.0b14"
- source = { registry = "https://pypi.fury.io/lance-format/" }
- dependencies = [
-     { name = "lance-namespace" },
-@@ -4312,13 +4312,13 @@ dependencies = [
-     { name = "pyarrow", version = "26.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
- ]
- wheels = [
--    { url = "https://pypi.fury.io/lance-format/-/ver_1UqLiw/pylance-15.0.0b13-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:bbbf6e42624275d1559a4887a11f6cb1c34f10c560ca7209b59219d3614a444f" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_wto7I/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8b8730195df05fa7242d12f4c759019b658f668b90d7ceba380059597bb5951a" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_13UO9X/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a41f292084694a681773990e6d96a675b45e4d232d7a67b21b05762dd5976e8a" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_1Mjytl/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:76d2f6a5a8ac150bee990006cc7b7c920e1af2532e4d3ff6a142ab5a5412483e" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_1XuqE6/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ac2b50bf8af53aac65d56703010cdf9c1567fdfe230c7fbac1d69584933d7793" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_Fj6Go/pylance-15.0.0b13-cp310-abi3-win_amd64.whl", hash = "sha256:7e6556db1a812cb0846cc0e30c0f273468d5e58dc210f3ee9955d9cdc3bc762a" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_zqD9j/pylance-15.0.0b13-cp310-abi3-win_arm64.whl", hash = "sha256:b3aecc63299a687d9ae69d80655f869321d922d5b462f4657efc83d73456551e" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_b88Zw/pylance-15.0.0b14-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:48bcdfda408d1f8eaabbd066236bdb0ae9539acb3186b246c5c1ad4e8e5dcf23" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_J0evn/pylance-15.0.0b14-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:958d7cf0c8f31e09be94d6785c45158121073e79eb3bdb6f7ed25f7dde22c9a2" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_18gbAN/pylance-15.0.0b14-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:80814eff77dd0b83ee3c18280895a8d2cadf6d49818d7047a4540b773618738d" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_1gqym0/pylance-15.0.0b14-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:bb59f5d5b8740eb5df57c1777bce61f3e2a9f7d47ab31068e2ccf43549627103" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_1FHTtC/pylance-15.0.0b14-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:357357f9f419efe9f90ba63d4dc371fc93e191aa692cf6f88d327607680f77da" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_1LzfL9/pylance-15.0.0b14-cp310-abi3-win_amd64.whl", hash = "sha256:916fcc39051bdd2e8ca50950ee4d8afb941c130fd278ac7cea252c2059beab58" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_nDQ2x/pylance-15.0.0b14-cp310-abi3-win_arm64.whl", hash = "sha256:e1449bbb7a207cb2890d9afeef41f816d2ab4a459ed73cc46c919d463e46fe10" },
- ]
  
- [[package]]
++def row_addressable_blob_paths(schema: pa.Schema) -> list[str]:
++    """Blob v1 and v2 paths with one blob addressable by table row id."""
++    return [
++        path
++        for path, has_list_ancestor in _collect_blob_paths(schema, is_blob_like_field)
++        if not has_list_ancestor
++    ]
++
++
+ def row_addressable_blob_v2_paths(schema: pa.Schema) -> list[str]:
+     """Blob v2 paths with one blob addressable by table row id.
+ 
+```
+
+**File**: `python/python/lancedb/table.py` (modified, +12/-9)
+```diff
+@@ -1589,8 +1589,8 @@ def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
+         blob_mode: str, default "lazy"
+             ``"lazy"`` returns blob v2 descriptors that carry the row id
+             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
+-            ``"bytes"`` returns payload bytes and raises for legacy blob columns
+-            and blobs inside lists.
++            ``"bytes"`` returns payload bytes for supported row-addressable blob
++            columns and raises for blobs inside lists.
+ 
+         Returns
+         -------
+@@ -4160,7 +4160,7 @@ def to_pandas(self, blob_mode: BlobMode = "lazy", **kwargs) -> "pd.DataFrame":
+         ):
+             return self.to_arrow().to_pandas(**kwargs)
+ 
+-        if blob_mode == "bytes" and blob_v2_column_paths(self.schema):
++        if blob_mode == "bytes" and schema_has_blob_field(self.schema):
+             return self.search().to_pandas(blob_mode=blob_mode, **kwargs)
+ 
+         return self.to_lance().to_pandas(blob_mode=blob_mode, **kwargs)
+@@ -4173,8 +4173,8 @@ def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
+         blob_mode: str, default "lazy"
+             ``"lazy"`` returns blob v2 descriptors that carry the row id
+             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
+-            ``"bytes"`` returns payload bytes and raises for legacy blob columns
+-            and blobs inside lists.
++            ``"bytes"`` returns payload bytes for supported row-addressable blob
++            columns and raises for blobs inside lists.
+ 
+         Returns
+         -------
+@@ -6640,7 +6640,7 @@ async def to_pandas(self, blob_mode: BlobMode = "lazy", **kwargs) -> "pd.DataFra
+ 
+         if blob_mode == "lazy" and get_uri_scheme(await self.uri()) == "memory":
+             return (await self.to_arrow()).to_pandas(**kwargs)
+-        if blob_mode == "bytes" and blob_v2_column_paths(schema):
++        if blob_mode == "bytes" and schema_has_blob_field(schema):
+             return await self.query().to_pandas(blob_mode=blob_mode, **kwargs)
+         return (await self.to_lance()).to_pandas(blob_mode=blob_mode, **kwargs)
+ 
+@@ -6652,8 +6652,8 @@ async def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
+         blob_mode: str, default "lazy"
+             ``"lazy"`` returns blob v2 descriptors that carry the row id
+             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
+-            ``"bytes"`` returns payload bytes and raises for legacy blob columns
+-            and blobs inside lists.
++            ``"bytes"`` returns payload bytes for supported row-addressable blob
++            columns and raises for blobs inside lists.
+ 
+         Returns
+         -------
+@@ -7460,7 +7460,10 @@ def _sync_query_to_async(
+         if query.offset is not None:
+             async_query = async_query.offset(query.offset)
+         if query.columns:
+-            async_query = async_query.select(query.columns)
++            columns = query.columns
++            if isinstance(columns, list) and columns and isinstance(columns[0], tuple):
++                columns = dict(columns)
++            async_query = async_query.select(columns)
+         if query.filter is not None:
+             async_query = async_query.where(query.filter)
+         if query.fast_search:
+```
+
+**File**: `python/python/tests/test_blob.py` (modified, +30/-3)
+```diff
+@@ -1651,16 +1651,41 @@ def test_bytes_mode_rejects_blobs_inside_lists():
+ 
+ 
+ def test_row_addressable_paths_exclude_list_children():
+-    from lancedb.schema import row_addressable_blob_v2_paths
++    from lancedb.schema import (
++        row_addressable_blob_paths,
++        row_addressable_blob_v2_paths,
++    )
+ 
+     schema = pa.schema(
+         [
+             pa.field("id", pa.int64()),
+-            pa.field("info", pa.struct([lancedb.blob("blob")])),
++            pa.field(
++                "info",
++                pa.struct(
++                    [
++                        lancedb.blob("blob"),
++                        pa.field(
++                            "legacy",
++                            pa.large_binary(),
++                            metadata={"lance-encoding:blob": "true"},
++                        ),
++                    ]
++                ),
++            ),
++            pa.field(
++                "legacy",
++                pa.large_binary(),
++                metadata={"lance-encoding:blob": "true"},
++            ),
+             pa.field("images", pa.list_(lancedb.blob("image"))),
+         ]
+     )
+     assert blob_v2_column_paths(schema) == ["info.blob", "images.image"]
++    assert row_addressable_blob_paths(schema) == [
++        "info.blob",
++        "info.legacy",
++        "legacy",
++    ]
+     assert row_addressable_blob_v2_paths(schema) == ["info.blob"]
+ 
+ 
+@@ -2325,6 +2350,8 @@ async def fetch(column, row_ids):
+     if blob_mode != "lazy":
+         assert "_rowid" not in reader.schema.names
+         assert "_lance_row_id" not in str(reader.schema)
++    else:
++        assert "_rowid" in reader.schema.names
+ 
+ 
+ class _KeepAllScoresReranker(Reranker):
+@@ -2368,7 +2395,7 @@ def test_bytes_mode_rejects_legacy_blob_after_reranker_drops_metadata(tmp_path):
+         .rerank(_KeepAllScoresReranker())
+     )
+ 
+-    with pytest.raises(ValueError, match=r"\['blob'\].*legacy blob columns"):
++    with pytest.raises(ValueError, match=r"\['blob'\].*local plain scans"):
+         query.to_arrow(blob_mode="bytes")
+ 
+ 
+```
+
+---
+
+### Incident Patch 3: `481e8229` (2026-11-10)
+**Commit Message**: fix(python): explain explicit blob reads and subset copies (#4940)
+
+Unsupported remote blob materialization errors now point to row-ID
+selection, fetch_blobs and fetch_blob_files. Document descriptor
+structs, fetched bytes and Function BlobReader inputs, and show a
+bounded subset-copy recipe that keeps the source unchanged between
+selection and fetching.
+
+Adds guidance assertions and copy coverage preserving payloads, empty
+blobs and nulls.
+
+No new blob materialization API is introduced.
+
+Formatting applied; no local builds or tests were run. CI will execute
+the regression coverage.
+
+**File**: `docs/web/management/table.mdx` (modified, +45/-0)
+```diff
+@@ -477,6 +477,51 @@ the default `"lazy"` mode because it would open `BlobFile` handles. Query with
+ `blob_mode="descriptions"`, then read bytes with `fetch_blobs` or
+ `fetch_blob_files`.
+ 
++###### Copy a subset of blob rows {#multimodal-copy-subset}
++
++Blob query results describe the stored payload; they are not the bytes to
++insert into another table. These APIs return different values:
++
++| Read path | Value |
++| --- | --- |
++| SQL or an Arrow query in `"descriptions"` mode | Descriptor struct identifying the stored blob. Treat it as opaque. |
++| `table.fetch_blobs(column, row_ids)` | Arrow `large_binary` array; `.to_pylist()` gives `bytes` or `None` in the requested order. |
++| A Function parameter annotated `lancedb.BlobReader` | Lazy, seekable reader over the input blob, available inside the Function. |
++
++For an Enterprise source table, select the rows and fetch their bytes explicitly.
++The following example copies up to 100 rows from an existing `images` table with
++an integer `id` and a blob `image` column. Keep the source unchanged during this
++operation: selection and fetching are separate requests.
++
++```python
++import lancedb
++import pyarrow as pa
++
++source = db.open_table("images")
++hits = (
++    source.search()
++    .where("id < 100")
++    .select(["id"])
++    .with_row_id(True)
++    .limit(100)
++    .to_arrow()
++)
++payloads = source.fetch_blobs("image", hits["_rowid"]).to_pylist()
++subset = db.create_table(
++    "image_subset",
++    schema=pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")]),
++)
++if hits.num_rows:
++    subset.add([
++        {"id": image_id, "image": payload}
++        for image_id, payload in zip(hits["id"].to_pylist(), payloads, strict=True)
++    ])
++```
++
++Empty blobs remain `b""` and null blobs remain `None`. Fetch bounded batches
++for larger subsets; `fetch_blobs` materializes all requested bytes in memory.
++For incremental decoding, use `fetch_blob_files` instead.
++
+ `blob_mode="bytes"` materializes top-level and struct-nested blob columns. It
+ raises `ValueError` when the selected columns include blobs
+ inside a list. Select those columns with `blob_mode="descriptions"`, or leave
+```
+
+**File**: `python/python/lancedb/query.py` (modified, +8/-2)
+```diff
+@@ -206,7 +206,10 @@ def _blob_bytes_without_snapshot_error() -> NotImplementedError:
+         "blob_mode='bytes' cannot safely materialize blob columns without a "
+         "stable table snapshot. LanceDB Enterprise and namespace QueryTable pushdown "
+         "run the query on a server, so the blob fetch could read another table "
+-        "version. Use blob_mode='descriptions'."
++        "version. Use blob_mode='descriptions' to inspect descriptors. To read "
++        "payloads, select row IDs with with_row_id(True), then call "
++        "table.fetch_blobs(column, row_ids) or table.fetch_blob_files(column, "
++        "row_ids). Keep the source unchanged between selection and fetching."
+     )
+ 
+ 
+@@ -453,7 +456,10 @@ def _finish_remote_pandas(
+     raise NotImplementedError(
+         f"remote to_pandas(blob_mode={blob_mode!r}) cannot safely materialize "
+         "blob columns without a stable table snapshot; "
+-        "use blob_mode='descriptions'"
++        "use blob_mode='descriptions' to inspect descriptors. To read payloads, "
++        "select row IDs with with_row_id(True), then call "
++        "table.fetch_blobs(column, row_ids) or table.fetch_blob_files(column, "
++        "row_ids). Keep the source unchanged between selection and fetching."
+     )
+ 
+ 
+```
+
+**File**: `python/python/lancedb/table.py` (modified, +6/-0)
+```diff
+@@ -2626,6 +2626,12 @@ def fetch_blobs(
+         bytes. The client splits requests automatically and reads an individual
+         larger blob through the Range route. This method still materializes all
+         bytes in memory; for large values use :meth:`fetch_blob_files`.
++
++        The returned Arrow ``large_binary`` array contains payload bytes, not
++        SQL/query descriptor dictionaries. Use ``.to_pylist()`` to obtain
++        Python ``bytes`` or ``None`` values for copying into a blob column.
++        Select row IDs with ``search().with_row_id(True)`` first. Selection and
++        fetching are separate requests: keep the source unchanged between them.
+         """
+ 
+     @abstractmethod
+```
+
+**File**: `python/python/tests/test_blob.py` (modified, +33/-1)
+```diff
+@@ -1070,8 +1070,10 @@ def test_bytes_mode_refused_under_namespace_query_pushdown(tmp_path):
+     )
+     table.add([{"id": 1, "image": b"one"}])
+ 
+-    with pytest.raises(NotImplementedError, match="stable table snapshot"):
++    with pytest.raises(NotImplementedError, match="stable table snapshot") as exc:
+         table.to_arrow(blob_mode="bytes")
++    assert "fetch_blobs(column, row_ids)" in str(exc.value)
++    assert "with_row_id(True)" in str(exc.value)
+     with pytest.raises(NotImplementedError, match="stable table snapshot"):
+         table.search().to_list(blob_mode="bytes")
+     with pytest.raises(NotImplementedError, match="stable table snapshot"):
+@@ -1103,6 +1105,36 @@ async def test_async_bytes_mode_refused_under_namespace_query_pushdown(tmp_path)
+         await table.query().to_batches(blob_mode="bytes")
+ 
+ 
++def test_copy_blob_subset_preserves_payloads_nulls_and_empty_values(tmp_path):
++    db = lancedb.connect(tmp_path)
++    schema = pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")])
++    rows = [
++        {"id": 1, "image": b"one"},
++        {"id": 2, "image": b""},
++        {"id": 3, "image": None},
++        {"id": 4, "image": b"excluded"},
++    ]
++    source = db.create_table("source", data=rows, schema=schema)
++    hits = (
++        source.search()
++        .where("id < 4")
++        .select(["id"])
++        .with_row_id(True)
++        .limit(100)
++        .to_arrow()
++    )
++    payloads = source.fetch_blobs("image", hits["_rowid"]).to_pylist()
++    subset = db.create_table("subset", schema=schema)
++    subset.add(
++        [
++            {"id": image_id, "image": payload}
++            for image_id, payload in zip(hits["id"].to_pylist(), payloads, strict=True)
++        ]
++    )
++    copied = subset.search().to_list(blob_mode="bytes")
++    assert sorted(copied, key=lambda row: row["id"]) == rows[:3]
++
++
+ def test_fetch_blobs_round_trip():
+     table = _blob_table(
+         "round_trip",
+```
+
+**File**: `python/python/tests/test_remote_db.py` (modified, +5/-1)
+```diff
+@@ -4958,8 +4958,12 @@ def fail_dataset(*args, **kwargs):
+             assert "_rowid" not in df.columns
+             assert df["image"][0]["size"] == 5
+         else:
+-            with pytest.raises(NotImplementedError, match="stable table snapshot"):
++            with pytest.raises(
++                NotImplementedError, match="stable table snapshot"
++            ) as exc:
+                 query.to_pandas(blob_mode=blob_mode)
++            assert "fetch_blobs(column, row_ids)" in str(exc.value)
++            assert "with_row_id(True)" in str(exc.value)
+ 
+ 
+ @pytest.mark.asyncio
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4909** (2026-11-08): chore: update lance dependency to v15.0.0-beta.14 (@BubbleCal)
-- **PR #4899** (2026-11-07): chore: update lance dependency to v15.0.0-beta.13 (@lancedb-robot)
-- **PR #4896** (2026-11-06): docs: fix Rust example download links (@tsmithv11)
-- **PR #4895** (closed): feat: preserve remote compaction option inheritance (@ChilePiquin)
-- **PR #4890** (2026-11-06): feat: expose the remaining refresh options on the SDKs (@wkalt)
-- **PR #4888** (2026-11-06): chore(deps): upgrade Lance to v15.0.0-beta.12 (@BubbleCal)
+- **PR #4956** (2026-11-11): feat: expose Function call concurrency limits (@Xuanwo)
+- **PR #4955** (closed): feat: expose Function call concurrency limits (@Xuanwo)
+- **PR #4953** (2026-11-11): feat: persist automatic Function refresh resource budgets (@Xuanwo)
+- **PR #4951** (2026-11-11): feat: expose Function refresh resource budgets in SDKs (@Xuanwo)
+- **PR #4949** (2026-11-11): feat: resolve latest Function versions (@Xuanwo)
+- **PR #4948** (2026-11-11): fix: preserve function freshness across input-preserving writes (@BubbleCal)
 
 ---
 
@@ -1687,28 +2178,32 @@ SHA-256
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version: 0.42.0-beta.8 → 0.42.0-beta.9
+## X. preserve function freshness across input-preserving writes (#4948)
 
 **RULE**:
-When implementing operations in `.bumpversion.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/lancedb/src/table/computed_columns.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1157a070`: Bump version: 0.42.0-beta.8 → 0.42.0-beta.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34e8b808`: preserve function freshness across input-preserving writes (#4948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bumpversion.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table/computed_columns.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-current_version = "0.42.0-beta.9"
+/// Signatures of input-preserving rewrites whose retained Function outputs
+/// are current but whose inserted rows still need their first computation.
+/// A sidecar reference keeps this separate from completed freshness stamps.
+pub const PENDING_FILL_SIGNATURE_META_KEY: &str = "computed_refresh.pending_fill_signature";
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-current_version = "0.42.0-beta.8"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1157a070` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34e8b808` are properly handled with clean fallback behavior.

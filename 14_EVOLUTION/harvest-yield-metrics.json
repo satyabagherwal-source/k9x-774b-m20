@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:29:09.641Z",
-  "total_cycles_completed": 8743,
-  "total_learnings_persisted": 8743,
-  "total_rules_promoted": 8607,
+  "last_updated": "2026-11-11T09:40:54.395Z",
+  "total_cycles_completed": 8747,
+  "total_learnings_persisted": 8747,
+  "total_rules_promoted": 8612,
   "history": [
-    {
-      "timestamp": "2026-11-09T11:56:27.797Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T12:13:07.445Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T12:13:13.595Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T12:16:14.586Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T12:17:30.719Z",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-11T09:29:09.641Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:39:45.575Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:39:48.860Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:40:00.422Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T09:40:54.395Z",
+      "repository": "webAI-Official/TwIL-8B",
+      "learningId": "learn-huggingface-webai-official-twil-8b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

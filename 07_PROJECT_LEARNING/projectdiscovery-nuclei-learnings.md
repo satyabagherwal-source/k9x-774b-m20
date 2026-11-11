@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `3fdb5996`  
+> **Source Version**: `b2ea1489`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:58:31.098Z  
+> **Timestamp**: 2026-11-11T09:39:45.161Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:58:31.092Z  
+> **Harvest Timestamp**: 2026-11-11T09:39:44.826Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32733 stars
+- **Stars / Engagement**: 32788 stars
 
 ---
 
@@ -362,6 +362,7 @@ type Engine struct {
 	executerOpts              *protocols.ExecutorOptions
 	Callback                  func(*output.ResultEvent) // Executed on results
 	templateExecutionCallback TemplateExecutionCallback
+	planRun                   PlanRun
 	Logger                    *gologger.Logger
 }
 
@@ -446,6 +447,7 @@ import (
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
 	"github.com/projectdiscovery/nuclei/v3/pkg/types/scanstrategy"
@@ -472,6 +474,7 @@ func (e *Engine) ExecuteWithResults(ctx context.Context, templatesList []*templa
 func (e *Engine) ExecuteScanWithOpts(ctx context.Context, templatesList []*templates.Template, target provider.InputProvider, noCluster bool) *atomic.Bool {
 	results := &atomic.Bool{}
 	selfcontainedWg := &sync.WaitGroup{}
+	httpclientpool.ResetSharedResponses(e.options)
 
 	totalReqBeforeCluster := getRequestCount(templatesList) * int(target.Count())
 
@@ -726,9 +729,13 @@ func (e *Engine) executeAllSelfContained(ctx context.Context, alltemplates []*te
 			if sharedBudget {
 				defer e.options.ReleaseTemplateThread()
 			}
+			defer e.tasksDone(1)
+			planned, skip := e.claimPlanned(template, &contextargs.MetaInput{})
+			if skip {
+				return
+			}
 			finished := e.templateExecutionStarted(template, "")
 			defer func() { finished(ctx.Err()) }()
-			defer e.tasksDone(1)
 			var err error
 			var match bool
 			ctx := scan.NewScanContext(ctx, contextargs.New(ctx))
@@ -745,6 +752,8 @@ func (e *Engine) executeAllSelfContained(ctx context.Context, alltemplates []*te
 			}
 			if err != nil {
 				e.options.Logger.Warning().Msgf("[%s] Could not execute step (self-contained): %s\n", e.executerOpts.Colorizer.BrightBlue(template.ID), err)
+			} else if ctx.Context().Err() == nil {
+				planned()
 			}
 			results.CompareAndSwap(false, match)
 		}(v, usesSharedTemplateBudget)
@@ -993,12 +1002,7 @@ func (e *Engine) selectionFor(input *contextargs.MetaInput) protocols.TemplateSe
 	return e.executerOpts.TargetScope.For(input)
 }
 
-// taskTracker returns the progress when it counts tasks, nil otherwise.
-func (e *Engine) taskTracker() progress.TaskTracker {
-	if e.executerOpts == nil {
-		return nil
-	}
-	tracker, _ := e.executerOpts.Progress
+// taskTracker returns the progress when it counts ta
 ```
 
 ### Core Architecture Module: `pkg/core/plan.go`
@@ -1109,7 +1113,7 @@ func planEntry(template *templates.Template, value *contextargs.MetaInput, selec
 	entry := PlanEntry{
 		Target:    value.Input,
 		IP:        value.CustomIP,
-		Templates: []string{template.ID},
+		Templates: planTemplates(template, selection),
 		Protocol:  template.Type().String(),
 		Requests:  template.TotalRequests,
 		Dynamic:   template.Flow != "" || template.IsFuzzableRequest(),
@@ -1131,7 +1135,6 @@ func planEntry(template *templates.Template, value *contextargs.MetaInput, selec
 		entry.Dynamic = true
 	case isCluster(template):
 		cluster := template.Executer.(*templates.ClusterExecuter)
-		entry.Templates = slices.Sorted(slices.Values(cluster.TemplateIDs(selection)))
 		// TotalRequests of a cluster counts only its http and dns requests,
 		// so an ssl cluster would show none
 		entry.Requests = cluster.Requests()
@@ -1148,6 +1151,15 @@ func planEntry(template *templates.Template, value *contextargs.MetaInput, selec
 	return entry
 }
 
+// planTemplates lists the templates an entry runs, sorted so the entry id does
+// not depend on clustering order.
+func planTemplates(template *templates.Template, selection protocols.TemplateSelection) []string {
+	if cluster, ok := template.Executer.(*templates.ClusterExecuter); ok {
+		return slices.Sorted(slices.Values(cluster.TemplateIDs(selection)))
+	}
+	return []string{template.ID}
+}
+
 func isCluster(template *templates.Template) bool {
 	_, ok := template.Executer.(*templates.ClusterExecuter)
 	return ok
@@ -1158,6 +1170,39 @@ func isCluster(template *templates.Template) bool {
 func planEntryID(entry PlanEntry) string {
 	sum := sha256.Sum256([]byte(entry.Target + "\x00" + entry.IP + "\x00" + strings.Join(entry.Templates, "\x00")))
 	return hex.EncodeToString(sum[:8])
+}
+
+// PlanRun limits a scan to the entries of a plan and records the ones that
+// finish, so running the plan again resumes it.
+type PlanRun interface {
+	// Skip reports whether the entry is not in the plan or already finished.
+	Skip(id string) bool
+	// Finished records an entry that ran without error.
+	Finished(id string)
+}
+
+// SetPlanRun makes the scan run only the entries run allows.
+func (e *Engine) SetPlanRun(run PlanRun) {
+	e.planRun = run
+}
+
+// claimPlanned reports whether the pair is skipped under a plan run, and
+// otherwise returns the func that records it finished. Without a plan run
+// every pair runs.
+func (e *Engine) claimPlanned(template *templates.Template, value *contextargs.MetaInput) (finished func(), skip bool) {
+	if e.planRun == nil {
+		return func() {}, false
+	}
+	// as in Plan, a self-contained template is not narrowed by any target
+	var selection protocols.TemplateSelection
+	if !template.SelfContained {
+		selection = e.selectionFor(value)
+	}
+	id := planEntryID(PlanEntry{Target: value.Input, IP: value.CustomIP, Templates: planTemplates(template, selection)})
+	if e.planRun.Skip(id) {
+		return nil, true
+	}
+	return func() { e.planRun.Finished(id) }, false
 }
 
 ```
@@ -1538,537 +1583,202 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54662dc4` (2026-11-09)
-**Commit Message**: Merge pull request #8079 from projectdiscovery/security-context/refresh
+### Incident Patch 1: `67cda504` (2026-11-10)
+**Commit Message**: fix test
 
-chore: refresh security context
-
-**File**: `SECURITY_CONTEXT.md` (modified, +21/-13)
+**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +5/-3)
 ```diff
-@@ -1,35 +1,40 @@
--<!-- Generated by securitycontext.dev. Source HEAD: df57ae6d2955864fd92a1bd2565fe9e4e9a7592b. -->
-+<!-- Generated by securitycontext.dev. Source HEAD: 40d08ee493f6f84c9a6b3c7f15f22da83853130c. -->
- # Security Context: projectdiscovery/nuclei @ dev
+@@ -79,10 +79,12 @@ func TestSharedResponsesSendEachRequestOncePerScan(t *testing.T) {
+ 	sharedGet(t, transport, http.MethodGet, server.URL+"/b", "three", http.Header{"User-Agent": {"custom-scanner"}})
+ 	require.EqualValues(t, 6, hits.Load(), "one a template sets is")
  
- > Reference context for editing projectdiscovery/nuclei. Before changing any component below, **preserve the listed guards and do not reintroduce these fixed issues**. Each fingerprint is a regression check, and each shared attack surface is a guard that must keep holding on every path.
- 
--_Analyzed [df57ae6d29][c-df57ae6d29] on `dev` · 5174 commits, 548 security-relevant examined · generated 2026-11-02_
-+_Analyzed [40d08ee493][c-40d08ee493] on `dev` · 5242 commits, 586 security-relevant examined · generated 2026-11-09_
- 
- ## Recurring Security Patterns
- 
--**7.1% of classified fixes repeat a previously fixed pattern** (1 recurring, 13 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
-+**12.5% of classified fixes repeat a previously fixed pattern** (2 recurring, 14 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
- 
- ## Top Risks
- 
- Components with the strongest concentration of past fixes for one class.
- 
- | # | Class | Component | Severity | Fixes | Evidence |
- |---|---|---|---|---|---|
--| 1 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
--| 2 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
--| 3 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
--| 4 | Code Execution | `pkg/fuzz/execute.go` | high | 1 | [ccbfb12bd0][c-ccbfb12bd0] |
--| 5 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
--| 6 | Information Disclosure | `internal/httpapi/apiendpoint.go` | high | 1 | [a20aa26024][c-a20aa26024] |
-+| 1 | Code Execution | `pkg/fuzz/execute.go` | high | 2 | [4fed40f75a][c-4fed40f75a], [ccbfb12bd0][c-ccbfb12bd0] |
-+| 2 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
-+| 3 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
-+| 4 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
-+| 5 | Certificate Validation Bypass | `pkg/reporting/exporters/es/elasticsearch.go` | high | 1 | [82d5a8acc2][c-82d5a8acc2] |
-+| 6 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
- 
- ## Fixed-Issue Fingerprints
- 
- Real security fixes mined from git history; use them as regression checks. `verified` fixes are linked to a published advisory, `inferred` fixes were confirmed from the diff evidence alone. Each is identified by its short commit SHA, which the variant-leads report uses to reference it back to this history.
- 
- **By component** (directories with the most fixes):
- 
-+- `pkg/fuzz` — 2 fixes: Code Execution (2)
- - `pkg/protocols/common/protocolstate` — 2 fixes: SSRF (2)
- 
-+- [4fed40f75a][c-4fed40f75a] **fix(fuzz): stop re-rendering evaluated template variables (#8057)** — Code Execution, high [CWE-94] · inferred · 2026-11-05
-+  `pkg/fuzz/execute.go` · sink `rule.evaluateVarsWithInteractsh` · fix: safe parser configuration
-+- [82d5a8acc2][c-82d5a8acc2] **exporters: verify TLS certificates (#8042)** — Certificate Validation Bypass, high [CWE-295] · inferred · 2026-11-04
-+  `pkg/reporting/exporters/es/elasticsearch.go` · sink `DialTLS` · fix: cryptographic verification
- - [1c0f77d28e][c-1c0f77d28e] **fix(js/net): enforce network policy on proxied target in JS net dial** — SSRF, high [CWE-918] · inferred · 2026-10-18
-   `pkg/js/libs/net/net.go` · sink `dialHTTPProxy` · fix: input validation
- - [d43c1f547f][c-d43c1f547f] **fix(headless): canonicalize IPv4-mapped IPv6 literals and re-validate dial targets** — SSRF, high [CWE-918] · inferred · 2026-10-13
-@@ -63,11 +68,12 @@ Real security fixes mined from git history; use them as regression checks. `veri
- 
- | Class | Fixes | Verified | Most recent fix |
- |---|---|---|---|
-+| Code Execution | 3 | 2 | [2026-11-05][c-4fed40f75a] 4fed40f75a |
- | SSRF | 3 | 0 | [2026-10-18][c-1c0f77d28e] 1c0f77d28e |
- | Arbitrary File Access | 1 (1 component gone, not counted) | 2 | [2026-06-19][c-634cecbb28] 634cecbb28 |
--| Code Execution | 2 | 2 | [2026-06-30][c-ccbfb12bd0] ccbfb12bd0 |
- | Sandbox Escape | 2 | 0 | [2026-06-24][c-3a8b65cb45] 3a8b65cb45 |
- | Signature Verification Bypass | 2 | 2 | [2026-07-03][c-fac0b7196d] fac0b7196d |
-+| Certificate Validation Bypass | 1 | 0 | [2026-11-04][c-82d5a8acc2] 82d5a8acc2 |
- | Information Disclosure
+-	req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
+-	require.NoError(t, err)
+ 	for range 2 {
+-		resp, err := transport.RoundTrip(req.Clone(req.Context()))
++		// A new request each time. Clone shares the body, so a second clone
++		// of one request can send ContentLength with an already-read body.
++		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
++		require.NoError(t, err)
++		resp, err := transport.RoundTrip(req)
+ 		require.NoError(t, err)
+ 		_ = resp.Body.Close()
+ 	}
 ```
 
 ---
 
-### Incident Patch 2: `3fdb5996` (2026-11-10)
-**Commit Message**: fix(js): stop tsgen from panicking on non-struct types (#8102)
+### Incident Patch 2: `df5b8b36` (2026-11-10)
+**Commit Message**: fix reuse
 
-* fix(js/tsgen): map non-struct external types to any
-
-tsgen treated every type from another package as a struct and queued
-it to have its fields scraped into a TypeScript interface. The kind
-was checked only at scrape time, as a fatal error, so an interface,
-func, or named basic type in an exported signature or field aborted
-the whole run. make jsupdate-tsgen panicked on net.Conn, which the
-dcerpc, gptransport, mssql, net, and oracle libraries return, and
-never wrote the remaining definitions or index.ts.
-
-Check the kind when the type is first seen instead. Structs are still
-scraped; other types have no fields to describe and become any, as
-external parameter types already do. Names that do not resolve are
-still reported.
-
-Fixes: #8099
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-* fix(js): exclude gptransport and smbsession from codegen
-
-gptransport and smbsession are shared Go adapters for the smb, dcerpc,
-and file protocol code, not JavaScript modules: nothing registers them
-with the runtime, and index.ts does not export them. Without the
-.nuclei-jsgen-ignore marker that goexec already carries, tsgen and
-bindgen
-
-**File**: `pkg/js/devtools/tsgen/parser.go` (modified, +19/-9)
+**File**: `pkg/protocols/http/httpclientpool/shared_responses.go` (modified, +34/-2)
 ```diff
-@@ -284,8 +284,8 @@ func (p *EntityParser) extractClassProperties(node *ast.StructType) []Property {
- 					Description: field.Doc.Text(),
- 				}
- 				if strings.Contains(property.Type, ".") {
--					// external struct found
--					property.Type = p.handleExternalStruct(property.Type)
-+					// external type found
-+					property.Type = p.handleExternalType(property.Type)
- 				}
- 				properties = append(properties, property)
- 			}
-@@ -349,7 +349,7 @@ func (p *EntityParser) extractReturnType(fn *ast.FuncDecl) (out string) {
- 		for _, result := range fn.Type.Results.List {
- 			tmp := exprToString(result.Type)
- 			if strings.Contains(tmp, ".") && !strings.HasPrefix(tmp, "goja.") {
--				tmp = p.handleExternalStruct(tmp) + " | null" // external object interfaces can always return null
-+				tmp = p.handleExternalType(tmp) + " | null" // external object interfaces can always return null
- 			}
- 			returns = append(returns, tmp)
- 		}
-@@ -374,8 +374,10 @@ func (p *EntityParser) extractReturnType(fn *ast.FuncDecl) (out string) {
- 			}
- 		}
- 		if sliceutil.Contains(returns, "error") {
--			// add | null to the return type
--			out = out + " | null"
-+			// external types already record that they can be null
-+			if !strings.HasSuffix(out, "| null") {
-+				out += " | null"
-+			}
- 			return
- 		}
+@@ -140,7 +140,12 @@ func (t *sharingTransport) send(req *http.Request, entry *sharedEntry) (*http.Re
+ 		return resp, err
  	}
-@@ -413,10 +415,18 @@ func (p *EntityParser) extractParameters(fn *ast.FuncDecl) []Parameter {
- 	return parameters
- }
- 
--// typeName is in format ssh.ClientConfig
--// it first fetches all fields from the struct and creates a new object
--// with that name and returns name of that object as type
--func (p *EntityParser) handleExternalStruct(typeName string) string {
-+// handleExternalType returns the TypeScript type for typeName, a type from
-+// another package such as ssh.ClientConfig. A struct is queued for
-+// scrapeAndCreate, which describes its fields in an interface of the same name.
-+// Any other type, such as the net.Conn interface, has no fields to describe,
-+// so it becomes any. A typeName that does not resolve is queued too, so that
-+// scrapeAndCreate reports it.
-+func (p *EntityParser) handleExternalType(typeName string) string {
-+	obj, err := p.lookupType(typeName)
-+	if err == nil && !isStruct(obj.Type()) {
-+		return "any"
-+	}
-+
- 	baseType := typeName[strings.LastIndex(typeName, ".")+1:]
- 	p.newObjects[typeName] = &Entity{
- 		Name:        baseType,
-```
-
-**File**: `pkg/js/devtools/tsgen/parser_external_test.go` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+package tsgen_test
-+
-+import (
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/js/devtools/tsgen"
-+)
-+
-+func TestParseExternalTypes(t *testing.T) {
-+	t.Parallel()
-+
-+	ep, err := tsgen.NewEntityParser(filepath.Join("testdata", "external"))
-+	require.NoError(t, err)
-+	require.NoError(t, ep.Parse())
-+
-+	entities := make(map[string]tsgen.Entity)
-+	for _, e := range ep.GetEntities() {
-+		entities[e.Name] = e
-+	}
-+
-+	// net.Conn is an interface, so it has no fields to describe.
-+	require.Equal(t, "any | null", entities["Dial"].Function.Returns)
-+	require.Equal(t, []tsgen.Property{{Name: "Conn", Type: "any", Description: ""}}, entities["Session"].Object.Properties)
-+	require.NotContains(t, entities, "Conn")
-+
-+	// url.URL is a struct, so its fields become an interface.
-+	require.Equal(t, "URL | null", entities["Parse"].Function.Returns)
-+	require.Equal(t, "interface", entities["URL"].Type)
-+	require.NotEmpty(t, entities["URL"].Object.Properties)
-+}
-```
-
-**File**: `pkg/js/devtools/tsgen/scrape.go` (modified, +40/-19)
-```diff
-@@ -1,38 +1,29 @@
- package tsgen
- 
- import (
-+	"errors"
- 	"fmt"
- 	"go/types"
- 	"regexp"
- 	"strings"
--
--	"github.com/projectdiscovery/utils/errkit"
- )
- 
-+// errUnresolvedType is returned by lookupType for a name it cannot resolve.
-+var errUnresolvedType = errors.New("unresolved type")
-+
- // scrape.go scrapes all information of exported type from different package
- 
- func (p *EntityParser) scrapeAndCreate(typeName string) error {
- 	if p.newObjects[typeName] == nil {
- 		return nil
- 	}
--	// get package name
--	pkgName := strings.Split(typeName, ".")[0]
--	baseTypeName := strings.Split(typeName, ".")[1]
--	// get package
--	pkg, ok := p.imports[pkgName]
--	if !ok {
--		return errkit.Newf("package %v for type %v not found", pkgName, typeName)
--	}
--	// get type
--	obj := pkg.Types.Scope().Lookup(baseTypeName)
--	if obj == nil {
--		return errkit.Newf("type %v not found in package %+v", typeName, pkg)
--	}
--	// Ensure the object is a type name
--	typeNameObj, ok := obj.(*types.TypeName)
--	if !ok {
--		return errkit.Newf("%v is not a type name", typeName)
-+
-+	typeNameObj, err := p.lookupType(typeName)
+ 	body, err := io.ReadAll(io.LimitReader(resp.Body, sharedResponseMaxBody+1))
+-	if err != nil || len(body) > sharedResponseMaxBody {
 +	if err != nil {
-+		return err
- 	}
-+
-+	baseTypeName := typeNameObj.Name()
- 	// Ensure the type is a named struct type
- 	namedStruct, ok := typeNameObj.Type().Underlying().(*types.Struct)
- 	if !ok {
-@@ -72,6 +63,36 @@ func (p *EntityParser) scrapeAndCreate(typeName string) error {
- 	return nil
- }
- 
-+// lookupType resolves typeName, such as net.Conn, in the packages imported by
-+// the parsed files.
-+func (p *EntityParser) lookupType(typeName string) (*types.TypeName, error) {
-+	pkgName, baseTypeName, _ := strings.Cut(typeName, ".")
-+
-+	pkg := p.imports[pkgName]
-+	if pkg == nil {
-+		return nil, fmt.Errorf("%w: package %v for type %v not found", errUnresolvedType, pkgName, typeName)
++		t.forget(entry)
++		_ = resp.Body.Close()
++		return nil, err
 +	}
-+
-+	obj := pkg.Types.Scope().Lookup(baseTypeName)
-+	if obj == nil {
-+		return nil, fmt.Errorf("%w: type %v not found in package %+v", errUnresolvedType, typeName, pkg)
-+	}
-+
-+	typeNameObj, ok := obj.(*types.TypeName)
-+	if !ok {
-+		return nil, fmt.Errorf("%w: %v is not a type name", errUnresolvedType, typeName)
-+	}
-+
-+	return typeNameObj, nil
-+}
-+
-+// isStruct reports whether t is a struct type.
-+func isStruct(t types.Type) bool {
-+	_, ok := t.Underlying().(*types.Struct)
-+
-+	return ok
-+}
-+
- type ExtObject struct {
- 	builtIn map[string]string
- 	nested  map[string]map[string]*ExtObject // Changed to map of field names to ExtObject
-```
-
-**File**: `pkg/js/devtools/tsgen/testdata/external/external.go` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+// Package external is a tsgen fixture that references types from other
-+// packages, both structs and non-structs.
-+package external
-+
-+import (
-+	"context"
-+	"net"
-+	"net/url"
-+)
-+
-+// Dial returns an external interface type.
-+func Dial(network, address string) (net.Conn, error) {
-+	return net.Dial(network, address)
-+}
-+
-+// Parse returns an external struct type.
-+func Parse(raw string) (*url.URL, error) {
-+	return url.Parse(raw)
-+}
-+
-+// Session holds an external interface type in an exported field.
-+type Session struct {
-+	Conn net.Conn
-+}
-+
-+type dialer struct{}
-+
-+// DialContext is exported, but its receiver is not.
-+func (dialer) DialContext(ctx context.Context, network, address string) (net.Conn, error) {
-+	var d net.Dialer
-+	return d.DialContext(ctx, network, address)
-+}
-```
-
-**File**: `pkg/js/libs/gptransport/.nuclei-jsgen-ignore` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+shared adapter package; not a public JavaScript module
-```
-
-**File**: `pkg/js/libs/smbsession/.nuclei-jsgen-ignore` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+shared adapter package; not a public JavaScript module
-```
-
----
-
-### Incident Patch 3: `ec6794c2` (2026-11-09)
-**Commit Message**: fix(js/tsgen): report package load errors instead of ignoring them
-
-packages.Load records parse, type, and list errors in Package.Errors
-and still returns a nil error. NewEntityParser and loadPackage checked
-only the returned error, so tsgen accepted packages that do not
-compile. Parse then panicked in extractParameters on the recovered
-syntax tree, or looked up types in an empty package and reported a
-misleading "type not found" error.
-
-Both call sites now load through loadPackage, which returns the
-package errors with the package ID and file positions.
-
-Fixes: #8098
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/js/devtools/tsgen/parser.go` (modified, +23/-12)
-```diff
-@@ -38,14 +38,11 @@ func NewEntityParser(dir string) (*EntityParser, error) {
- 			return parser.ParseFile(fset, filename, src, parser.ParseComments)
- 		},
++	if len(body) > sharedResponseMaxBody {
+ 		t.forget(entry)
+ 		// hand back what was read followed by the rest
+ 		resp.Body = struct {
+@@ -149,12 +154,35 @@ func (t *sharingTransport) send(req *http.Request, entry *sharedEntry) (*http.Re
+ 		}{io.MultiReader(bytes.NewReader(body), resp.Body), resp.Body}
+ 		return resp, nil
  	}
--	pkgs, err := packages.Load(cfg, ".")
-+
-+	pkg, err := loadPackage(cfg, ".")
- 	if err != nil {
- 		return nil, err
- 	}
--	if len(pkgs) == 0 {
--		return nil, errors.New("no packages found")
--	}
--	pkg := pkgs[0]
- 
- 	return &EntityParser{
- 		syntax:      pkg.Syntax,
-@@ -513,6 +510,7 @@ func (p *EntityParser) extractVarsNConstants() {
- 
- // loadImportedPackages loads all imported packages
- func (p *EntityParser) loadImportedPackages() error {
-+	cfg := &packages.Config{Mode: packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo}
- 	// get all import statements
- 	// iterate over all imports
- 	for _, file := range p.syntax {
-@@ -522,7 +520,7 @@ func (p *EntityParser) loadImportedPackages() error {
- 			// remove the quotes from the path
- 			path = path[1 : len(path)-1]
- 			// load the package
--			pkg, err := loadPackage(path)
-+			pkg, err := loadPackage(cfg, path)
- 			if err != nil {
- 				return err
- 			}
-@@ -543,18 +541,31 @@ func (p *EntityParser) loadImportedPackages() error {
- 	return nil
- }
- 
--// Load the package containing the type definition
--// TODO: we don't support named imports yet
--func loadPackage(pkgPath string) (*packages.Package, error) {
--	cfg := &packages.Config{Mode: packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo}
--	pkgs, err := packages.Load(cfg, pkgPath)
-+// loadPackage loads the package that pattern names.
-+//
-+// packages.Load reports parse, type, and list errors in Package.Errors
-+// rather than in its returned error, so loadPackage converts them into an
-+// error. The parser assumes a complete syntax tree and type information.
-+func loadPackage(cfg *packages.Config, pattern string) (*packages.Package, error) {
-+	pkgs, err := packages.Load(cfg, pattern)
- 	if err != nil {
- 		return nil, err
- 	}
- 	if len(pkgs) == 0 {
- 		return nil, errors.New("no packages found")
- 	}
--	return pkgs[0], nil
-+
-+	pkg := pkgs[0]
-+	if len(pkg.Errors) > 0 {
-+		errs := make([]error, len(pkg.Errors))
-+		for i, e := range pkg.Errors {
-+			errs[i] = e
++	// A refusal is the server's, for this moment. Storing it would hand the
++	// same 429 or gateway error to every later template, and none of them
++	// would send.
++	if !shareableStatus(resp.StatusCode) {
++		t.forget(entry)
++		resp.Body = io.NopCloser(bytes.NewReader(body))
++		if req.Method != http.MethodHead {
++			resp.ContentLength = int64(len(body))
 +		}
-+
-+		return nil, fmt.Errorf("package %s: %w", pkg.ID, errors.Join(errs...))
++		return resp, nil
 +	}
-+
-+	return pkg, nil
+ 	_ = resp.Body.Close()
+ 	entry.response = &storedResponse{response: resp, body: body}
+ 	t.store(entry)
+ 	return entry.response.copyFor(req), nil
  }
  
- // exprToString converts an expression to a string
++// shareableStatus reports whether code is an answer a later template can
++// reuse. 404 and 500 are answers templates match on. 429 and the gateway
++// errors mean the server did not answer, so the next template must send.
++func shareableStatus(code int) bool {
++	switch code {
++	case http.StatusTooManyRequests, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout:
++		return false
++	default:
++		return true
++	}
++}
++
+ // hasBody reports whether req sends a body. retryablehttp gives every
+ // request one, empty for a GET, so its content is what counts.
+ func hasBody(req *http.Request) bool {
+@@ -220,7 +248,11 @@ func (s *storedResponse) copyFor(req *http.Request) *http.Response {
+ 	resp.Header = s.response.Header.Clone()
+ 	resp.Trailer = s.response.Trailer.Clone()
+ 	resp.Body = io.NopCloser(bytes.NewReader(s.body))
+-	resp.ContentLength = int64(len(s.body))
++	// A HEAD response has an empty body and a Content-Length for the body it
++	// did not send. Matchers read that length, so a reused HEAD keeps it.
++	if req.Method != http.MethodHead {
++		resp.ContentLength = int64(len(s.body))
++	}
+ 	resp.Request = req
+ 	return &resp
+ }
 ```
 
-**File**: `pkg/js/devtools/tsgen/parser_test.go` (added, +86/-0)
+**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +86/-0)
 ```diff
-@@ -0,0 +1,86 @@
-+package tsgen
+@@ -189,3 +189,89 @@ func TestSharedResponsesCapCountsBodylessResponses(t *testing.T) {
+ 	require.LessOrEqual(t, transport.shared.bytes, transport.shared.maxBytes)
+ 	require.Less(t, len(transport.shared.entries), 20, "HEAD responses are evicted too")
+ }
 +
-+import (
-+	"go/ast"
-+	"go/parser"
-+	"go/token"
-+	"os"
-+	"path/filepath"
-+	"testing"
++func TestSharedResponsesKeepHeadContentLength(t *testing.T) {
++	var hits atomic.Int32
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		hits.Add(1)
++		w.Header().Set("Content-Length", "1234")
++		w.WriteHeader(http.StatusOK)
++	}))
++	defer server.Close()
++	transport := newSharingTransport(http.DefaultTransport)
 +
-+	"github.com/stretchr/testify/require"
-+	"golang.org/x/tools/go/packages"
-+)
-+
-+// writeModule writes src as the only package of a new Go module and
-+// returns the module directory.
-+func writeModule(t *testing.T, src string) string {
-+	t.Helper()
-+
-+	dir := t.TempDir()
-+	files := map[string]string{
-+		"go.mod":     "module example.com/tsgentest\n\ngo 1.21\n",
-+		"example.go": src,
++	length := func(templateID string) int64 {
++		t.Helper()
++		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), templateID), http.MethodHead, server.URL, nil)
++		require.NoError(t, err)
++		resp, err := transport.RoundTrip(req)
++		require.NoError(t, err)
++		t.Cleanup(func() { _ = resp.Body.Close() })
++		return resp.ContentLength
 +	}
 +
-+	for name, content := range files {
-+		require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte(content), 0o600))
-+	}
-+
-+	return dir
++	require.Equal(t, int64(1234), length("one"))
++	require.Equal(t, int64(1234), length("two"), "a reused HEAD keeps the length the server advertised")
++	require.EqualValues(t, 1, hits.Load())
 +}
 +
-+func TestNewEntityParser(t *testing.T) {
-+	const src = `package example
++func TestSharedResponsesDoNotKeepRefusals(t *testing.T) {
++	for _, status := range []int{http.StatusTooManyRequests, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout} {
++		t.Run(http.StatusText(status), func(t *testing.T) {
++			var hits atomic.Int32
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				hits.Add(1)
++				http.Error(w, "no", status)
++			}))
++			defer server.Close()
++			transport := newSharingTransport(http.DefaultTransport)
 +
-+import "strings"
-+
-+// Upper returns s in upper case.
-+func Upper(s string) string { return strings.ToUpper(s) }
-+`
-+
-+	p, err := NewEntityParser(writeModule(t, src))
-+	require.NoError(t, err)
-+	require.NoError(t, p.Parse())
-+
-+	entities := p.GetEntities()
-+
-+	names := make([]string, 0, len(entities))
-+	for _, e := range entities {
-+		names = append(names, e.Name)
-+	}
-+
-+	require.Contains(t, names, "Upper")
-+}
-+
-+func TestNewEntityParserPackageErrors(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		src  string
-+	}{
-+		{name: "syntax error", src: "package example\n\nfunc Broken( {\n\treturn 42\n}\n"},
-+		{name: "type error", src: "package example\n\nfunc Broken() int { return undefined }\n"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			_, err := NewEntityParser(writeModule(t, tt.src))
-+			require.ErrorContains(t, err, "example.go:")
++			sharedGet(t, transport, http.MethodGet, server.URL, "one", nil)
++			sharedGet(t, transport, http.MethodGet, server.URL, "two", nil)
++			require.EqualValues(t, 2, hits.Load())
 +		})
 +	}
 +}
 +
-+func TestLoadImportedPackagesMissing(t *testing.T) {
-+	const src = `package example; import "example.com/tsgentest/missing"`
++func TestSharedResponsesKeepNotFound(t *testing.T) {
++	var hits atomic.Int32
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		hits.Add(1)
++		http.NotFound(w, r)
++	}))
++	defer server.Close()
++	transport := newSharingTransport(http.DefaultTransport)
 +
-+	file, err := parser.ParseFile(token.NewFileSet(), "example.go", src, parser.ImportsOnly)
-+	require.NoError(t, err)
-+	p := &EntityParser{
-+		syntax:  []*ast.File{file},
-+		imports: map[string]*packages.Package{},
++	sharedGet(t, transport, http.MethodGet, server.URL, "one", nil)
++	sharedGet(t, transport, http.MethodGet, server.URL, "two", nil)
++	require.EqualValues(t, 1, hits.Load())
++}
++
++type errReadBody struct{}
++
++func (errReadBody) Read([]byte) (int, error) { return 0, errors.New("short read") }
++func (errReadBody) Close() error             { return nil }
++
++type errBodyTransport struct{}
++
++func (errBodyTransport) RoundTrip(*http.Request) (*http.Response, error) {
++	return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: errReadBody{}}, nil
++}
++
++func TestSharedResponsesReturnBodyReadErrors(t *testing.T) {
++	transport := newSharingTransport(errBodyTransport{})
++
++	send := func(templateID string) (*http.Response, error) {
++		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), templateID), http.MethodGet, "http://example.com", nil)
++		require.NoError(t, err)
++		return transport.RoundTrip(req)
 +	}
 +
-+	var pkgErr packages.Error
++	resp, err := send("one")
++	require.Error(t, err)
++	require.Nil(t, resp)
 +
-+	require.ErrorAs(t, p.loadImportedPackages(), &pkgErr)
-+	require.Contains(t, pkgErr.Msg, "example.com/tsgentest/missing")
++	resp, err = send("two")
++	require.Error(t, err, "a failed read is not reused")
++	require.Nil(t, resp)
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8107** (2026-11-10): send identical requests once per scan (@dogancanbakir)
+- **PR #8103** (2026-11-10): add -store-events and -replay over stored events of any protocol (@dogancanbakir)
 - **PR #8102** (2026-11-10): fix(js): stop tsgen from panicking on non-struct types (@dwisiswant0)
+- **PR #8101** (2026-11-11): add -run-plan to run a plan file and resume it (@dogancanbakir)
 - **PR #8100** (2026-11-09): fix(js/tsgen): report package load errors instead of ignoring them (@dwisiswant0)
 - **PR #8095** (closed): chore(deps): bump the modules group across 1 directory with 18 updates (@dependabot[bot])
-- **PR #8094** (2026-11-09): chore(deps): bump crate-ci/typos from 1.51.1 to 1.52.0 in the workflows group (@dependabot[bot])
-- **PR #8093** (2026-11-09): fix(templates): never trust cached verification verdicts (#7663) (@hakarrr)
-- **PR #8091** (2026-11-09): fix(deps): bump golang.org/x/net, brotli, and klauspost/compress (@dwisiswant0)
 
 ---
 
@@ -2088,46 +1798,34 @@ Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8079 from projectdiscovery/security-context/refresh
+## X. Empirical Invariant Guard in shared_responses_test.go
 
 **RULE**:
-When implementing operations in `SECURITY_CONTEXT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/http/httpclientpool/shared_responses_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54662dc4`: Merge pull request #8079 from projectdiscovery/security-context/refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67cda504`: test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY_CONTEXT.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/httpclientpool/shared_responses_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-<!-- Generated by securitycontext.dev. Source HEAD: 40d08ee493f6f84c9a6b3c7f15f22da83853130c. -->
-_Analyzed [40d08ee493][c-40d08ee493] on `dev` · 5242 commits, 586 security-relevant examined · generated 2026-11-09_
-**12.5% of classified fixes repeat a previously fixed pattern** (2 recurring, 14 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
-| 1 | Code Execution | `pkg/fuzz/execute.go` | high | 2 | [4fed40f75a][c-4fed40f75a], [ccbfb12bd0][c-ccbfb12bd0] |
-| 2 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
-| 3 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
-| 4 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
-| 5 | Certificate Validation Bypass | `pkg/reporting/exporters/es/elasticsearch.go` | high | 1 | [82d5a8acc2][c-82d5a8acc2] |
-| 6 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
-- `pkg/fuzz` — 2 fixes: Code Executio
+		// A new request each time. Clone shares the body, so a second clone
+		// of one request can send ContentLength with an already-read body.
+		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
+		require.NoError(t, err)
+		resp, err := transport.RoundTrip(req)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-<!-- Generated by securitycontext.dev. Source HEAD: df57ae6d2955864fd92a1bd2565fe9e4e9a7592b. -->
-_Analyzed [df57ae6d29][c-df57ae6d29] on `dev` · 5174 commits, 548 security-relevant examined · generated 2026-11-02_
-**7.1% of classified fixes repeat a previously fixed pattern** (1 recurring, 13 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
-| 1 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
-| 2 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
-| 3 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
-| 4 | Code Execution | `pkg/fuzz/execute.go` | high | 1 | [ccbfb12bd0][c-ccbfb12bd0] |
-| 5 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
-| 6 | Information Disclosure | `internal/httpapi/apiendpoint.go` | high | 1 | [a20aa26024][c-a20aa26024] |
-| Code Execution | 2 | 2 | [2026-06-30][c-ccbfb12bd0] ccbfb12bd0 |
+	req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
+	require.NoError(t, err)
+		resp, err := transport.RoundTrip(req.Clone(req.Context()))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54662dc4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67cda504` are properly handled with clean fallback behavior.

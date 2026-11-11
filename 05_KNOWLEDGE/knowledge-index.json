@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T09:29:09.510Z",
+  "last_updated": "2026-11-11T09:40:54.261Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40287,8 +40287,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "1157a070",
-      "content_hash": "4600d4940b5b572ca18b66b9f72c8724612114b02ccd512077797d8ecf2bdf20",
+      "source_version": "34e8b808",
+      "content_hash": "f7ba6704927ce71894fb077e3437601df0354adaa3efc3c3226ac57901f57f99",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -40305,6 +40305,11 @@
         {
           "number": null,
           "title": "Bump version: 0.42.0-beta.8 → 0.42.0-beta.9",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "preserve function freshness across input-preserving writes (#4948)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40393,7 +40398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:44:05.635Z",
+      "verified_at": "2026-11-11T09:40:00.270Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50792,8 +50797,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "2596ac5d",
-      "content_hash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
+      "source_version": "89452d2a",
+      "content_hash": "050ce85a18a207c5513be2057308746474c4511e8302a09c8a7b2e43cac2affc",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -50810,6 +50815,11 @@
         {
           "number": null,
           "title": "AOT: the Bun side of the rewritten ahead-of-time compiler (#47942)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "AOT: bun compile, build output, module mocks, fixes and new names (#48436)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50878,7 +50888,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:36:34.930Z",
+      "verified_at": "2026-11-11T09:39:48.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52722,8 +52732,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "3fdb5996",
-      "content_hash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
+      "source_version": "b2ea1489",
+      "content_hash": "5759c9dec1226de28145439dbb8610563a538338cf73617a37fe83f6433b964b",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -52908,7 +52918,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:58:32.756Z",
+      "verified_at": "2026-11-11T09:39:45.370Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189453,13 +189463,28 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
       "source_version": "hf-webai-official-twil-8b",
-      "content_hash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
+      "content_hash": "bd624a4f33850d0ea73b52034983a5fc2a7302265ed192f132386e53b3aafb1a",
       "dossier_path": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "BF16 vs. FP16 Precision Guard for Large Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Explicit Softmax Scale Enforcement in Custom Transformer Kernels",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Autoregressive Batch Generation Padding Side Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Explicit Model Max Context Serialization Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -189478,7 +189503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:05:31.919Z",
+      "verified_at": "2026-11-11T09:40:54.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8901,3 +8901,8 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `073bdd96` | Multi-dimensional audit evidence | 2026-11-11T09:29:09.620Z |
 | `learn-dom-k-232f5ad4` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-11T09:30:20.179Z |
 | `learn-dom-h-03eb2317` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-11T09:30:36.892Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b2ea1489` | Multi-dimensional audit evidence | 2026-11-11T09:39:45.561Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `89452d2a` | Multi-dimensional audit evidence | 2026-11-11T09:39:48.786Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `34e8b808` | Multi-dimensional audit evidence | 2026-11-11T09:40:00.416Z |
+| `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-11T09:40:54.378Z |
+| `learn-dom-f-83d565c2` | `project://hf-webai-official-twil-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | 2026-11-11T09:41:14.924Z |
