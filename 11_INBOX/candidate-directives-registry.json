@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:35:34.166Z",
+  "last_updated": "2026-11-11T10:43:41.585Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4648,6 +4648,33 @@
       "source_repo": "gravitl-netmaker",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C6204C-pre-release-fixes-v1-8-0-4224-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-842B59",
+      "directive_title": "linux): ask before a page uses the camera or microphone, and recover from a fail",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tw93-pake",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-842B59-linux-ask-before-a-page-uses-the-camera-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-395C35",
+      "directive_title": "memory): keep claims on every line of a note",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "caviraoss-longmemory",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-395C35-memory-keep-claims-on-every-line-of-a-no.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-8EAC7D",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8EAC7D-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-11"
     }
   ]

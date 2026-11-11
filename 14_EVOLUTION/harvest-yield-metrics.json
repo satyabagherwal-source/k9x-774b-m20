@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:35:27.935Z",
-  "total_cycles_completed": 8769,
-  "total_learnings_persisted": 8769,
-  "total_rules_promoted": 8633,
+  "last_updated": "2026-11-11T10:43:35.164Z",
+  "total_cycles_completed": 8771,
+  "total_learnings_persisted": 8771,
+  "total_rules_promoted": 8635,
   "history": [
-    {
-      "timestamp": "2026-11-09T14:04:34.106Z",
-      "repository": "telemt/telemt",
-      "learningId": "learn-github-telemt-telemt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T14:04:49.216Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T14:05:33.559Z",
       "repository": "vllm-sr/d3",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T10:35:27.935Z",
       "repository": "infiniflow/infinity",
       "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:43:22.233Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:43:35.164Z",
+      "repository": "CaviraOSS/LongMemory",
+      "learningId": "learn-github-caviraoss-longmemory",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

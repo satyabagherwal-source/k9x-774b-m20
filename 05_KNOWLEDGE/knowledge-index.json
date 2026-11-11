@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T10:35:27.765Z",
-  "total_verified_learnings": 1253,
+  "last_updated": "2026-11-11T10:43:35.004Z",
+  "total_verified_learnings": 1254,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6971,22 +6971,35 @@
     "learn-github-caviraoss-longmemory": {
       "learning_id": "learn-github-caviraoss-longmemory",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "caviraoss-longmemory",
+      "source": "CaviraOSS/LongMemory",
+      "repository": "CaviraOSS/LongMemory",
       "slug": "caviraoss-longmemory",
       "platform": "github",
       "source_url": "https://github.com/CaviraOSS/LongMemory",
-      "source_version": "HEAD",
-      "content_hash": "12fbb1d62725e603556a701fb710a2d2bec1e6cbce667a9373b705ceb140ffa3",
+      "source_version": "aec98ced",
+      "content_hash": "5d8720b6b6b7f59c92ce48711128c77972e5ad34a5e9efc67e3e70abd6b03fb8",
       "dossier_path": "07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "memory): keep claims on every line of a note",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.217Z"
+      "verified_at": "2026-11-11T10:43:34.968Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cdk-team-cdk": {
       "learning_id": "learn-github-cdk-team-cdk",
@@ -78484,8 +78497,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "1332aafa",
-      "content_hash": "8b4832b181759439a54f3273e335afc13466a0151006a530e7dc5cf5b597e387",
+      "source_version": "763ed8b0",
+      "content_hash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -78508,6 +78521,11 @@
           "number": null,
           "title": "Native Binary FFI Crate Dependency Feature Alignment Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "linux): ask before a page uses the camera or microphone, and recover from a fail",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1452,
@@ -78575,7 +78593,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:34:32.245Z",
+      "verified_at": "2026-11-11T10:43:21.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

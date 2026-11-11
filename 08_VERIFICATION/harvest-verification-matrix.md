@@ -8921,3 +8921,5 @@
 | `CYCLE-20261111-G8W5` | `2026-11-11T10:35:17.381Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8ce858e9...`) |
 | `CYCLE-20261111-GGEW` | `2026-11-11T10:35:27.128Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c0b2b52f...`) |
 | `CYCLE-20261111-GH0K` | `2026-11-11T10:35:27.908Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2a5f232e...`) |
+| `CYCLE-20261111-QMZK` | `2026-11-11T10:43:22.208Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`55b7f9ea...`) |
+| `CYCLE-20261111-QWZ5` | `2026-11-11T10:43:35.153Z` | `CaviraOSS/LongMemory` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5d8720b6...`) |

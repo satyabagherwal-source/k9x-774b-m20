@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-16AJ",
-    "timestamp": "2026-11-08T15:12:29.467Z",
-    "repository": "Comfy-Org/Wan-2.2",
-    "learningId": "learn-huggingface-comfy-org-wan-2-2",
-    "contentHash": "6451b5b394218e0e19f59cc450de910549c08a29ae184b9ae42182d65927a5d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-D2EC",
-    "timestamp": "2026-11-08T15:21:44.292Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "e0efb330929580e8d311497727f3ff2937b646884133f00327d8a9998079825e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-D4ZQ",
     "timestamp": "2026-11-08T15:21:47.654Z",
     "repository": "pingcap/tidb",
@@ -7490,6 +7460,36 @@
     "repository": "infiniflow/infinity",
     "learningId": "learn-github-infiniflow-infinity",
     "contentHash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-QMZK",
+    "timestamp": "2026-11-11T10:43:22.208Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-QWZ5",
+    "timestamp": "2026-11-11T10:43:35.153Z",
+    "repository": "CaviraOSS/LongMemory",
+    "learningId": "learn-github-caviraoss-longmemory",
+    "contentHash": "5d8720b6b6b7f59c92ce48711128c77972e5ad34a5e9efc67e3e70abd6b03fb8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

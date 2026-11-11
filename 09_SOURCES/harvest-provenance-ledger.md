@@ -8930,3 +8930,5 @@ Every entry in this ledger must capture:
 | `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `21ce991b` | Multi-dimensional audit evidence | 2026-11-11T10:35:17.386Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `4d495c64` | Multi-dimensional audit evidence | 2026-11-11T10:35:27.132Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `a8583bc5` | Multi-dimensional audit evidence | 2026-11-11T10:35:27.912Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `763ed8b0` | Multi-dimensional audit evidence | 2026-11-11T10:43:22.212Z |
+| `learn-github-caviraoss-longmemory` | `https://github.com/CaviraOSS/LongMemory` | `aec98ced` | Multi-dimensional audit evidence | 2026-11-11T10:43:35.158Z |

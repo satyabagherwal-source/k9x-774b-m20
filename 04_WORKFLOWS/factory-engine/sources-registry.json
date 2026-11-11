@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T10:35:33.996Z",
-    "lastVerified": "2026-11-11T10:35:33.996Z",
+    "lastChecked": "2026-11-11T10:43:41.451Z",
+    "lastVerified": "2026-11-11T10:43:41.451Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -229,9 +229,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-10T04:44:26.177Z",
+    "lastChecked": "2026-11-11T10:43:17.077Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-10T04:44:26.177Z"
+    "lastVerified": "2026-11-11T10:43:17.077Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -460,8 +460,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T10:08:14.435Z",
-    "lastVerified": "2026-11-11T10:08:14.435Z",
+    "lastChecked": "2026-11-11T10:43:22.032Z",
+    "lastVerified": "2026-11-11T10:43:22.032Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2770,11 +2770,21 @@
     "revisionIdentifier": "bbb1e5bd"
   },
   "caviraoss-longmemory": {
-    "name": "LongMemory",
+    "name": "CaviraOSS/LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-09T04:10:32.097Z",
-    "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-11-09T04:10:32.097Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-11T10:43:23.765Z",
+    "lastVerified": "2026-11-11T10:43:23.765Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-caviraoss-longmemory",
+    "contentHash": "5d8720b6b6b7f59c92ce48711128c77972e5ad34a5e9efc67e3e70abd6b03fb8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ratatui-ratatui": {
     "name": "ratatui",
@@ -7199,9 +7209,9 @@
   "kizitonwose-calendar": {
     "name": "Calendar",
     "officialUrl": "https://github.com/kizitonwose/Calendar",
-    "lastChecked": "2026-11-07T20:16:22.035Z",
+    "lastChecked": "2026-11-11T10:43:12.047Z",
     "revisionIdentifier": "c2711b3c",
-    "lastVerified": "2026-11-07T20:16:22.035Z"
+    "lastVerified": "2026-11-11T10:43:12.047Z"
   },
   "databricks-click": {
     "name": "click",
@@ -7404,8 +7414,8 @@
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T04:59:41.356Z",
-    "lastVerified": "2026-11-09T04:59:41.356Z",
+    "lastChecked": "2026-11-11T10:43:14.636Z",
+    "lastVerified": "2026-11-11T10:43:14.636Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
@@ -9131,22 +9141,21 @@
     "lastVerified": "2026-11-08T01:54:46.570Z"
   },
   "tw93-pake": {
-    "name": "Pake",
+    "name": "tw93/Pake",
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T23:43:31.522Z",
-    "lastVerified": "2026-11-08T23:43:31.522Z",
+    "lastChecked": "2026-11-11T10:43:10.463Z",
+    "lastVerified": "2026-11-11T10:43:10.463Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "8b4832b181759439a54f3273e335afc13466a0151006a530e7dc5cf5b597e387",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1332aafa"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-vllm-sr-d3": {
     "name": "vllm-sr/d3",
@@ -10371,9 +10380,9 @@
   "lifesciforge-seo-auditor": {
     "name": "seo-auditor",
     "officialUrl": "https://github.com/LifeSciForge/seo-auditor",
-    "lastChecked": "2026-11-06T14:56:19.799Z",
+    "lastChecked": "2026-11-11T10:43:09.520Z",
     "revisionIdentifier": "cb5dbfbf",
-    "lastVerified": "2026-11-06T14:56:19.799Z"
+    "lastVerified": "2026-11-11T10:43:09.520Z"
   },
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",

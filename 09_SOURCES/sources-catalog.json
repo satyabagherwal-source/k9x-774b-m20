@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "1332aafa",
+    "sourceVersion": "763ed8b0",
     "license": "GPL-3.0",
-    "contentHash": "8b4832b181759439a54f3273e335afc13466a0151006a530e7dc5cf5b597e387",
-    "lastHarvestedAt": "2026-11-07T22:34:32.359Z",
+    "contentHash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
+    "lastHarvestedAt": "2026-11-11T10:43:22.212Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -12348,5 +12348,15 @@
     "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
     "lastHarvestedAt": "2026-11-11T07:08:07.263Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-woof"
+  },
+  "caviraoss-longmemory": {
+    "repository": "CaviraOSS/LongMemory",
+    "platform": "github",
+    "sourceUrl": "https://github.com/CaviraOSS/LongMemory",
+    "sourceVersion": "aec98ced",
+    "license": "Apache-2.0",
+    "contentHash": "5d8720b6b6b7f59c92ce48711128c77972e5ad34a5e9efc67e3e70abd6b03fb8",
+    "lastHarvestedAt": "2026-11-11T10:43:35.158Z",
+    "learningId": "learn-github-caviraoss-longmemory"
   }
 }
