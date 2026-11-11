@@ -14,6 +14,7 @@
  */
 
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
@@ -114,42 +115,58 @@ try {
   assert(Object.isFrozen(record), 'Record object is deeply frozen/immutable');
 
   // ---------------------------------------------------------------------------
-  // TEST 4: Atomic Disk Persistence & Registry State
+  // TEST 4: Atomic Disk Persistence & Registry State (Sandboxed Isolation)
   // ---------------------------------------------------------------------------
-  console.log('\n[TEST 4] Verifying Atomic Persistence to 05_KNOWLEDGE/domain-intelligence/...');
+  console.log('\n[TEST 4] Verifying Atomic Persistence to Isolated Sandbox Registry...');
   
-  const persistResult = persistDomainIntelligenceRecord(record);
-  assert(persistResult.persisted === true, 'Record persisted to canonical domain registry', persistResult.record_id);
-  assert(persistResult.domain_letter === 'E', 'Persisted under Domain E');
+  // Set up temporary isolated sandbox fixture to preserve production registry pristine
+  const tempSandboxDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brain-test-sandbox-'));
+  const sandboxKnowledgeDir = path.join(tempSandboxDir, '05_KNOWLEDGE', 'domain-intelligence');
+  fs.mkdirSync(sandboxKnowledgeDir, { recursive: true });
 
-  const registry = loadDomainRegistry();
-  assert(registry.records[record.record_id] !== undefined, 'Record retrievable from reloaded domain-registry.json');
-  assert(registry.domains['E'].record_ids.includes(record.record_id), 'Domain E tracks record ID in its index');
-  assert(registry.total_records >= 8, 'Total registry records tracked correctly', `Count: ${registry.total_records}`);
+  // Seed sandbox with a copy of production domain-registry.json
+  const { registryFile: prodRegistryFile } = getDomainStoragePaths(BRAIN_ROOT);
+  fs.copyFileSync(prodRegistryFile, path.join(sandboxKnowledgeDir, 'domain-registry.json'));
 
-  // ---------------------------------------------------------------------------
-  // TEST 5: Duplicate Detection & Conflict Interception
-  // ---------------------------------------------------------------------------
-  console.log('\n[TEST 5] Verifying Duplicate Detection & Conflict Interception...');
-  
-  const duplicateRecord = createDomainIntelligenceRecord(sampleCandidate);
-  const duplicateResult = persistDomainIntelligenceRecord(duplicateRecord);
-  assert(duplicateResult.persisted === false, 'Duplicate record persistence strictly blocked');
-  assert(duplicateResult.reason === 'DUPLICATE_CONTENT_HASH', 'Identified duplicate via SHA-256 content hash');
-  assert(duplicateResult.existing_record_id === record.record_id, 'Referenced original existing record ID');
+  try {
+    const persistResult = persistDomainIntelligenceRecord(record, tempSandboxDir);
+    assert(persistResult.persisted === true, 'Record persisted to sandbox domain registry', persistResult.record_id);
+    assert(persistResult.domain_letter === 'E', 'Persisted under Domain E');
 
-  // ---------------------------------------------------------------------------
-  // TEST 6: Fast Domain-Targeted Retrieval
-  // ---------------------------------------------------------------------------
-  console.log('\n[TEST 6] Verifying Fast Domain-Targeted Retrieval via queryDomainIntelligence...');
-  
-  const domainEQuery = queryDomainIntelligence('E', 'visual metaphors');
-  assert(domainEQuery.total_found >= 1, 'Successfully retrieved Domain E records', `Found: ${domainEQuery.total_found}`);
-  assert(domainEQuery.results[0].record_id === record.record_id, 'Top result matches created Domain E record');
+    const registry = loadDomainRegistry(tempSandboxDir);
+    assert(registry.records[record.record_id] !== undefined, 'Record retrievable from reloaded domain-registry.json');
+    assert(registry.domains['E'].record_ids.includes(record.record_id), 'Domain E tracks record ID in its index');
+    assert(registry.total_records >= 8, 'Total registry records tracked correctly', `Count: ${registry.total_records}`);
 
-  const domainFQuery = queryDomainIntelligence('F', 'Tailwind');
-  assert(domainFQuery.total_found >= 1, 'Successfully retrieved Domain F (Design) records', `Found: ${domainFQuery.total_found}`);
-  assert(domainFQuery.results[0].title.includes('Tailwind'), 'Domain F result contains expected Tailwind intelligence');
+    // ---------------------------------------------------------------------------
+    // TEST 5: Duplicate Detection & Conflict Interception
+    // ---------------------------------------------------------------------------
+    console.log('\n[TEST 5] Verifying Duplicate Detection & Conflict Interception...');
+    
+    const duplicateRecord = createDomainIntelligenceRecord(sampleCandidate);
+    const duplicateResult = persistDomainIntelligenceRecord(duplicateRecord, tempSandboxDir);
+    assert(duplicateResult.persisted === false, 'Duplicate record persistence strictly blocked');
+    assert(duplicateResult.reason === 'DUPLICATE_CONTENT_HASH', 'Identified duplicate via SHA-256 content hash');
+    assert(duplicateResult.existing_record_id === record.record_id, 'Referenced original existing record ID');
+
+    // ---------------------------------------------------------------------------
+    // TEST 6: Fast Domain-Targeted Retrieval
+    // ---------------------------------------------------------------------------
+    console.log('\n[TEST 6] Verifying Fast Domain-Targeted Retrieval via queryDomainIntelligence...');
+    
+    const domainEQuery = queryDomainIntelligence('E', 'visual metaphors', tempSandboxDir);
+    assert(domainEQuery.total_found >= 1, 'Successfully retrieved Domain E records', `Found: ${domainEQuery.total_found}`);
+    assert(domainEQuery.results[0].record_id === record.record_id, 'Top result matches created Domain E record');
+
+    const domainFQuery = queryDomainIntelligence('F', 'Tailwind', tempSandboxDir);
+    assert(domainFQuery.total_found >= 1, 'Successfully retrieved Domain F (Design) records', `Found: ${domainFQuery.total_found}`);
+    assert(domainFQuery.results[0].title.includes('Tailwind'), 'Domain F result contains expected Tailwind intelligence');
+  } finally {
+    // Clean up temporary isolated sandbox fixture completely
+    try {
+      fs.rmSync(tempSandboxDir, { recursive: true, force: true });
+    } catch (cleanErr) { }
+  }
 
   // ---------------------------------------------------------------------------
   // TEST 7: Domain Boosting in retrieval-engine.mjs (searchBrain)
@@ -158,6 +175,7 @@ try {
   
   // Warm up search index
   searchBrain('warmup');
+  searchBrain('warmup 2');
 
   const boostStart = Date.now();
   const searchResult = searchBrain('Tailwind CSS design tokens', { domain: 'F' });
@@ -181,17 +199,6 @@ try {
 
   assert(constructionGuidelines.F.topItem.title.includes('Tailwind'), 'Design guideline contains verified Tailwind tokens');
   assert(constructionGuidelines.J.topItem.title.includes('JSON-LD') || constructionGuidelines.J.topItem.title.includes('SEO'), 'SEO guideline contains verified JSON-LD schema');
-
-  // Clean up temporary test record from registry
-  const regToClean = loadDomainRegistry();
-  delete regToClean.records[record.record_id];
-  if (regToClean.domains['E']) {
-    regToClean.domains['E'].record_ids = regToClean.domains['E'].record_ids.filter(id => id !== record.record_id);
-    regToClean.domains['E'].total = regToClean.domains['E'].record_ids.length;
-  }
-  regToClean.total_records = Object.keys(regToClean.records).length;
-  const { registryFile } = getDomainStoragePaths();
-  fs.writeFileSync(registryFile, JSON.stringify(regToClean, null, 2), 'utf-8');
 
   // ---------------------------------------------------------------------------
   // TEST 9: Master Brain 16-Folder Invariant Check

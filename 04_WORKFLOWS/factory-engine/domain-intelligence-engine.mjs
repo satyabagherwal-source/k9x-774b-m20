@@ -506,7 +506,7 @@ export function persistDomainIntelligenceRecord(record, customRoot = null, authC
  */
 export function queryDomainIntelligence(domainIdentifier, query = '', options = {}) {
   const targetDomain = resolveDomain(domainIdentifier);
-  const customRoot = options.brainRoot || null;
+  const customRoot = typeof options === 'string' ? options : (options?.brainRoot || null);
   const registry = loadDomainRegistry(customRoot);
 
   const queryTerms = String(query).toLowerCase().split(/\s+/).filter(t => t.length > 2);
