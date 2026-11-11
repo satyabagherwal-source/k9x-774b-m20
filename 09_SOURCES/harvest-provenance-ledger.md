@@ -8946,3 +8946,4 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `7e497e23` | Multi-dimensional audit evidence | 2026-11-11T11:19:09.411Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `51d3b704` | Multi-dimensional audit evidence | 2026-11-11T11:19:09.823Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `cd5af882` | Multi-dimensional audit evidence | 2026-11-11T11:19:12.005Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `49c815a0` | Multi-dimensional audit evidence | 2026-11-11T11:39:43.464Z |

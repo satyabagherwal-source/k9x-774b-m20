@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:19:20.195Z",
+  "last_updated": "2026-11-11T11:39:47.842Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T11:10:58.477Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-11T10:43:41.586Z",
+      "processed_at": "2026-11-11T11:39:47.836Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -246,9 +246,19 @@
       "processed_at": "2026-11-11T11:19:20.195Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "prometheus-prometheus-learnings.md": {
+      "processed_at": "2026-11-11T11:39:47.832Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "zoontek-react-native-bootsplash-learnings.md": {
+      "processed_at": "2026-11-11T11:39:47.842Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 54,
+  "total_dossiers_evaluated": 57,
   "total_canonical_promoted": 14,
-  "total_staged_for_review": 37
+  "total_staged_for_review": 40
 }

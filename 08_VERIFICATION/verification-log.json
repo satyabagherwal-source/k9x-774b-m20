@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-RXIR",
-    "timestamp": "2026-11-08T16:01:17.427Z",
-    "repository": "yshrsmz/BuildKonfig",
-    "learningId": "learn-github-yshrsmz-buildkonfig",
-    "contentHash": "8cbf7c151b75f56fe856e9478fab1bfd309d64f5e77140d4fe72b74009c91f42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-RZJ6",
     "timestamp": "2026-11-08T16:01:20.034Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7475,21 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-R3Z8",
+    "timestamp": "2026-11-11T11:39:43.460Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "b7b4875fce60da0e95cb77cd6d6ee6252a822aa03e628e0e8d37ff910dccd0ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T11:19:11.862Z",
+  "last_updated": "2026-11-11T11:39:43.333Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53053,8 +53053,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "1d4faeaf",
-      "content_hash": "137fa529a86fd4c9f80563bb7b02e15f19638e7d757c80a51c0df3b587bff532",
+      "source_version": "49c815a0",
+      "content_hash": "b7b4875fce60da0e95cb77cd6d6ee6252a822aa03e628e0e8d37ff910dccd0ac",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -53082,6 +53082,11 @@
           "number": null,
           "title": "Non-Escalating Ceiling Enforcement for Per-Query Limit Overrides",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2206,
@@ -53169,7 +53174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T10:28:57.158Z",
+      "verified_at": "2026-11-11T11:39:43.303Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

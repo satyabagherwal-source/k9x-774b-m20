@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:19:20.194Z",
+  "last_updated": "2026-11-11T11:39:47.841Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4774,6 +4774,33 @@
       "source_repo": "k3s-io-k3s",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-299D04-disable-lb-tunnel-on-agentless-servers-w.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4D1270",
+      "directive_title": "Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prometheus-prometheus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D1270-merge-pull-request-20398-from-ayushbuild.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-A38FAD",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A38FAD-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-5AF5AE",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5AF5AE-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-11"
     }
   ]

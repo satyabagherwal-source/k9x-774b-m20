@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:19:12.012Z",
-  "total_cycles_completed": 8784,
-  "total_learnings_persisted": 8784,
-  "total_rules_promoted": 8647,
+  "last_updated": "2026-11-11T11:39:43.469Z",
+  "total_cycles_completed": 8785,
+  "total_learnings_persisted": 8785,
+  "total_rules_promoted": 8648,
   "history": [
-    {
-      "timestamp": "2026-11-09T15:29:01.987Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T15:51:36.464Z",
       "repository": "kgateway-dev/kgateway",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-11T11:19:12.012Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T11:39:43.469Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
