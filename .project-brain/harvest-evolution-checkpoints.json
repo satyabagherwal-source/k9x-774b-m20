@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:09:35.591Z",
+  "last_updated": "2026-11-11T10:18:06.342Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T07:59:25.580Z",
@@ -136,9 +136,24 @@
       "processed_at": "2026-11-11T10:09:35.591Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "facebook-folly-learnings.md": {
+      "processed_at": "2026-11-11T10:17:50.078Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-unsloth-qwen3.8-flash-next-gguf-learnings.md": {
+      "processed_at": "2026-11-11T10:18:06.334Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "aleo-labs-protocol-snarkos-learnings.md": {
+      "processed_at": "2026-11-11T10:18:06.342Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 30,
-  "total_canonical_promoted": 12,
-  "total_staged_for_review": 15
+  "total_dossiers_evaluated": 33,
+  "total_canonical_promoted": 13,
+  "total_staged_for_review": 17
 }

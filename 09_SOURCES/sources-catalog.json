@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "5c7d169f",
+    "sourceVersion": "b2bfa52b",
     "license": "Apache-2.0",
-    "contentHash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
-    "lastHarvestedAt": "2026-11-10T02:43:58.293Z",
+    "contentHash": "3d96f5cc84413df255e870ae5d320f379d432bd447d26584092fb5ff6248bcfc",
+    "lastHarvestedAt": "2026-11-11T10:17:41.203Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "34441533",
+    "sourceVersion": "781cb511",
     "license": "AGPL-3.0",
-    "contentHash": "125d9ac6048790c3e3114a2b07859c9707c92258425560857da738393d7d12c1",
-    "lastHarvestedAt": "2026-11-09T03:42:53.644Z",
+    "contentHash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
+    "lastHarvestedAt": "2026-11-11T10:17:43.506Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "985ebd5d",
+    "sourceVersion": "4a2f75a6",
     "license": "Apache-2.0",
-    "contentHash": "c25ac39d05d58c6c195aca2b701af5a9be117b66f20dba30682de563f608d9d4",
-    "lastHarvestedAt": "2026-11-07T22:09:05.285Z",
+    "contentHash": "5938d8cea6ca764e4b123bffae881521cf9c0e0683efc2e6a5578fa368dd79a7",
+    "lastHarvestedAt": "2026-11-11T10:17:30.876Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -12075,8 +12075,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-flash-next-gguf",
     "license": "Open-Source",
-    "contentHash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
-    "lastHarvestedAt": "2026-11-06T14:40:35.577Z",
+    "contentHash": "cbbe10604f74de7ac3a87b9c31e0d09b665b7cc2a5ef3cdbc3deb7e24b29a97d",
+    "lastHarvestedAt": "2026-11-11T10:17:11.234Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf"
   },
   "hf-baidu-ernie-5.5-flash-base": {

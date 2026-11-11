@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:09:30.312Z",
-  "total_cycles_completed": 8758,
-  "total_learnings_persisted": 8758,
-  "total_rules_promoted": 8623,
+  "last_updated": "2026-11-11T10:17:43.513Z",
+  "total_cycles_completed": 8762,
+  "total_learnings_persisted": 8762,
+  "total_rules_promoted": 8626,
   "history": [
-    {
-      "timestamp": "2026-11-09T13:10:10.918Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T13:10:13.358Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T13:21:44.896Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T13:21:52.296Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T13:26:55.265Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -1403,6 +1375,34 @@
       "repository": "LiconStudio/Minimax-H3-VBVR",
       "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:17:11.241Z",
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:17:30.884Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:17:41.227Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:17:43.513Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

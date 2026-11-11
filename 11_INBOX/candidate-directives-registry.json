@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:09:35.590Z",
+  "last_updated": "2026-11-11T10:18:06.341Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4576,6 +4576,24 @@
       "source_repo": "rook-rook",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-64E4D8-test-fix-flaky-and-racy-mgr-module-confi.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-8F22ED",
+      "directive_title": "Arena large-block overruns and drop its Boost.Intrusive dependency",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "facebook-folly",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8F22ED-arena-large-block-overruns-and-drop-its-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-866FF8",
+      "directive_title": "Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-866FF8-merge-pull-request-4661-from-aleo-labs-p.md",
       "staged_date": "2026-11-11"
     }
   ]

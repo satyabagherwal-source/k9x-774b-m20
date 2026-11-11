@@ -8918,3 +8918,8 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `af5d1570` | Multi-dimensional audit evidence | 2026-11-11T10:08:31.964Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `fdcf2d37` | Multi-dimensional audit evidence | 2026-11-11T10:08:35.830Z |
 | `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-11T10:09:30.294Z |
+| `learn-huggingface-unsloth-qwen3-8-flash-next-gguf` | `https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-11T10:17:11.234Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `4a2f75a6` | Multi-dimensional audit evidence | 2026-11-11T10:17:30.876Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b2bfa52b` | Multi-dimensional audit evidence | 2026-11-11T10:17:41.203Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `781cb511` | Multi-dimensional audit evidence | 2026-11-11T10:17:43.506Z |
+| `learn-dom-d-11562009` | `project://hf-unsloth-qwen3.8-flash-next-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | 2026-11-11T10:18:06.334Z |

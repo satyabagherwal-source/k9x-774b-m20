@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T10:09:30.316Z",
+  "last_updated": "2026-11-11T10:17:43.518Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
-      "verified_at": "2026-11-11T06:24:00.825Z",
+      "content_hash": "3d96f5cc84413df255e870ae5d320f379d432bd447d26584092fb5ff6248bcfc",
+      "verified_at": "2026-11-11T10:17:41.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T06:24:00.825Z"
+      "last_updated": "2026-11-11T10:17:41.231Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "125d9ac6048790c3e3114a2b07859c9707c92258425560857da738393d7d12c1",
-      "verified_at": "2026-11-09T03:42:53.654Z",
+      "content_hash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
+      "verified_at": "2026-11-11T10:17:43.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:42:53.654Z"
+      "last_updated": "2026-11-11T10:17:43.517Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "c25ac39d05d58c6c195aca2b701af5a9be117b66f20dba30682de563f608d9d4",
-      "verified_at": "2026-11-07T22:09:05.301Z",
+      "content_hash": "5938d8cea6ca764e4b123bffae881521cf9c0e0683efc2e6a5578fa368dd79a7",
+      "verified_at": "2026-11-11T10:17:30.889Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:09:05.301Z"
+      "last_updated": "2026-11-11T10:17:30.889Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",
@@ -18171,14 +18171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "content_hash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
-      "verified_at": "2026-11-06T14:40:35.583Z",
+      "content_hash": "cbbe10604f74de7ac3a87b9c31e0d09b665b7cc2a5ef3cdbc3deb7e24b29a97d",
+      "verified_at": "2026-11-11T10:17:11.245Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:40:35.583Z"
+      "last_updated": "2026-11-11T10:17:11.245Z"
     },
     "baidu/ERNIE-5.5-Flash-Base": {
       "repository": "baidu/ERNIE-5.5-Flash-Base",

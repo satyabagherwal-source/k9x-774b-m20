@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T10:09:30.183Z",
+  "last_updated": "2026-11-11T10:17:43.374Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -51213,8 +51213,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "34441533",
-      "content_hash": "125d9ac6048790c3e3114a2b07859c9707c92258425560857da738393d7d12c1",
+      "source_version": "781cb511",
+      "content_hash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -51226,6 +51226,11 @@
         {
           "number": null,
           "title": "polish RankJoin eligibility, planner warnings, and parameterized score projectio",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "correct Tantivy revision after clustering update (#7365)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51304,7 +51309,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:42:53.527Z",
+      "verified_at": "2026-11-11T10:17:43.336Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77581,13 +77586,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "b2bfa52b",
-      "content_hash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "3d96f5cc84413df255e870ae5d320f379d432bd447d26584092fb5ff6248bcfc",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -77790,7 +77795,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:24:00.702Z",
+      "verified_at": "2026-11-11T10:17:41.057Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161020,8 +161025,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "985ebd5d",
-      "content_hash": "c25ac39d05d58c6c195aca2b701af5a9be117b66f20dba30682de563f608d9d4",
+      "source_version": "4a2f75a6",
+      "content_hash": "5938d8cea6ca764e4b123bffae881521cf9c0e0683efc2e6a5578fa368dd79a7",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -161044,6 +161049,11 @@
           "number": null,
           "title": "Explicit SIMD Vector Reinterpretation Over Platform-Dependent Lax Conversion Flags",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Arena large-block overruns and drop its Boost.Intrusive dependency",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 5437,
@@ -161071,7 +161081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:09:05.143Z",
+      "verified_at": "2026-11-11T10:17:30.690Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189576,7 +189586,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
       "source_version": "hf-unsloth-qwen3.8-flash-next-gguf",
-      "content_hash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
+      "content_hash": "cbbe10604f74de7ac3a87b9c31e0d09b665b7cc2a5ef3cdbc3deb7e24b29a97d",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
       "promoted_rules": [
@@ -189601,7 +189611,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:40:35.467Z",
+      "verified_at": "2026-11-11T10:17:11.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8909,3 +8909,8 @@
 | `CYCLE-20261111-HU54` | `2026-11-11T10:08:31.960Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b7e0587...`) |
 | `CYCLE-20261111-HX4G` | `2026-11-11T10:08:35.824Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62fed445...`) |
 | `CYCLE-20261111-J35E` | `2026-11-11T10:09:30.290Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`b19d7edf...`) |
+| `CYCLE-20261111-SYTA` | `2026-11-11T10:17:11.230Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`cbbe1060...`) |
+| `CYCLE-20261111-TDYV` | `2026-11-11T10:17:30.871Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5938d8ce...`) |
+| `CYCLE-20261111-TLXQ` | `2026-11-11T10:17:41.198Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d96f5cc...`) |
+| `CYCLE-20261111-TNPP` | `2026-11-11T10:17:43.501Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`09cef6d0...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T10:18:06.334Z` | `hf-unsloth-qwen3.8-flash-next-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-11562009` [Domain D] | Yes (`b250b613...`) |
