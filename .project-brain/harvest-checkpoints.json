@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T18:59:45.555Z",
+  "last_updated": "2026-11-11T19:15:32.241Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3546,14 +3546,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fission-fission",
-      "content_hash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
-      "verified_at": "2026-11-09T13:10:05.590Z",
+      "content_hash": "051fdbd2d5f80888e2df0cd26e1dfdd1235bbe538c738a96766db4f00d0a33d2",
+      "verified_at": "2026-11-11T19:15:26.232Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T13:10:05.590Z"
+      "last_updated": "2026-11-11T19:15:26.232Z"
     },
     "smallstep/cli": {
       "repository": "smallstep/cli",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
-      "verified_at": "2026-11-09T11:54:13.204Z",
+      "content_hash": "475ff7ebc5f757296168b646663213b46230673aa5e588bc827818f84740b43f",
+      "verified_at": "2026-11-11T19:15:32.240Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:54:13.204Z"
+      "last_updated": "2026-11-11T19:15:32.240Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -17376,14 +17376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
-      "content_hash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
-      "verified_at": "2026-11-06T23:12:02.582Z",
+      "content_hash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
+      "verified_at": "2026-11-11T19:15:03.658Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:12:02.582Z"
+      "last_updated": "2026-11-11T19:15:03.658Z"
     },
     "LiquidAI/LFM3-Audio-2B": {
       "repository": "LiquidAI/LFM3-Audio-2B",

@@ -9000,3 +9000,7 @@
 | `CYCLE-20261111-B3V6` | `2026-11-11T18:55:10.675Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`027d9b1f...`) |
 | `CYCLE-20261111-GZYD` | `2026-11-11T18:59:45.541Z` | `unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md` | Yes (`799b082c...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T19:00:03.099Z` | `hf-unsloth-deepseek-v4.1-flash-1017-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-01CFC4FC` [Domain D] | Yes (`3ea07f9b...`) |
+| `CYCLE-20261111-0OD8` | `2026-11-11T19:15:03.644Z` | `Pika-Labs/Pika-H3-Flex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md` | Yes (`5f5708b3...`) |
+| `CYCLE-20261111-15RV` | `2026-11-11T19:15:26.203Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`051fdbd2...`) |
+| `CYCLE-20261111-1AF6` | `2026-11-11T19:15:32.226Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`475ff7eb...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T19:15:52.268Z` | `hf-pika-labs-pika-h3-flex` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D2E2CA9E` [Domain D] | Yes (`a3bb90be...`) |

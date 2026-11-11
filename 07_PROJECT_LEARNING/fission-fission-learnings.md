@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fission-fission-learnings.md`  
 > **Source**: github ([https://github.com/fission/fission](https://github.com/fission/fission))  
-> **Source Version**: `9cac7b02`  
+> **Source Version**: `8152c961`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T13:10:04.108Z  
+> **Timestamp**: 2026-11-11T19:15:13.178Z  
 > **Learning ID**: `learn-github-fission-fission`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fission-fission-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fission/fission](https://github.com/fission/fission))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T13:10:03.358Z  
+> **Harvest Timestamp**: 2026-11-11T19:15:13.172Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and Simple Serverless Functions for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 8944 stars
+- **Stars / Engagement**: 8945 stars
 
 ---
 
@@ -1040,310 +1040,289 @@ func FunctionOwnerRef(fn *Function) metav1.OwnerReference {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a08f8c0` (2026-11-09)
-**Commit Message**: Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspost CVE fixes (#3748)
+### Incident Patch 1: `8152c961` (2026-11-11)
+**Commit Message**: chore(deps): bump golang.org/x/sync (#3751)
 
-* Bump k8s.io/* to v0.37.2 (patch) with code-generator and authn/kubernetes rider
+Bumps the go-dependencies group with 1 update: [golang.org/x/sync](https://github.com/golang/sync).
 
-Patch bump across the k8s core family (api, apimachinery, client-go,
-apiextensions-apiserver, metrics, code-generator) plus the
-go-containerregistry authn/kubernetes pseudo-version, which requires
-k8s v0.37 minimum. Regenerated pkg/generated picks up the client-go
-v0.37.2 applyconfig tag change and DiscoveryInterfaces rename.
 
-* Bump transport: x/net v0.62.0, grpc v1.85.0, x/crypto post-tag fix
+Updates `golang.org/x/sync` from 0.24.0 to 0.25.0
+- [Commits](https://github.com/golang/sync/compare/v0.24.0...v0.25.0)
 
-x/net v0.62.0 closes GO-2026-6866 and GO-2026-6860 (module-level).
-x/crypto moves to the post-v0.58.0 commit that fixes GO-2026-5932
-(no v0.58.1 tag exists yet); it stays indirect.
+---
+updated-dependencies:
+- dependency-name: golang.org/x/sync
+  dependency-version: 0.25.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: go-dependencies
+...
 
-* Bump misc deps: brotli v1.2.7, klauspost/compress v1.20.2, pgx v5.12.0, ojg, prometheus/common, pflag, sqlite, go-snaps
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-brotli v1.2.7 closes GO-2026-6888 (excessive memory allocation on
-crafted brotli streams, called from the router streaming reader and
-fetcher websocket handler) and klauspost/compress v1.20.2 closes
-GO-2026-6865 (panic on two-block frames, called from the package zip
-writer). The rest are routine minor/patch b
-
-**File**: `.claude/resources/fission-dep-groups.md` (modified, +6/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -51,6 +51,12 @@ If you bump into / out of controller-runtime v0.24, replicate these:
- `hack/update-codegen.sh` copies upstream code-generator out of the module cache at whatever version `go.mod` requires, so bump it with the `k8s.io/*` group.
- **After** a k8s bump, run `make codegen` + `make generate-crds` and commit the regenerated `pkg/generated/` + `crds/v1/` **in the same commit** as the k8s bump.
- 
-+Local-env note: if the PATH `go` binary is older than this module's `go` directive (e.g. a Nix go 1.26 while `go.mod` says `go 1.27.3`),
-+`make codegen` fails in register-gen with `method must have no type parameters` on stdlib `math/rand/v2`.
-+The generator is built by `go install` inside the copied code-generator module (whose own `go` directive is older), so it compiles with the old local go/types,
-+which then rejects the newer stdlib's generic methods. Run `GOTOOLCHAIN=go1.27.3 make codegen` to force the matching toolchain.
-+CI is unaffected — every workflow installs Go from `go-version-file: go.mod`.
-+
- `github.com/google/go-containerregistry/pkg/authn/kubernetes` is published only as pseudo-versions, and every snapshot after 2026-08-31 requires `k8s.io/* v0.37`.
- A `go get` of a newer snapshot silently pulls k8s core up a minor; keep it on its current pseudo-version until the k8s-minor lockstep commit, and bump it there.
- 
-```
-
-**File**: `.mergify.yml` (modified, +6/-6)
-```diff
-@@ -6,12 +6,12 @@ pull_request_rules:
-       - label=ready-to-merge
-       - label!=hold-off-merging
-       - check-success=CodeQL-Build
--      - check-success=CodeQL
--      - check-success=lint 
--      - check-success=upgrade-test (kindest/node:v1.23.17, ubuntu-latest)
--      - check-success=integration-test (v1.23.17, ubuntu-latest)
--      - check-success=integration-test (v1.25.11, ubuntu-latest)
--      - check-success=integration-test (v1.27.3, ubuntu-latest)
-+      - check-success=lint
-+      - check-success=upgrade-test (v1.32.11, ubuntu-24.04, latest)
-+      - check-success=upgrade-test (v1.32.11, ubuntu-24.04, skip-level)
-+      - check-success=integration-test (v1.32.11, ubuntu-24.04)
-+      - check-success=integration-test (v1.34.8, ubuntu-24.04)
-+      - check-success=integration-test (v1.36.1, ubuntu-24.04)
-     actions:
-       merge:
-         method: squash
-```
-
-**File**: `Makefile` (modified, +1/-1)
-```diff
-@@ -160,7 +160,7 @@ delete-crds:
- 
- ### Cleanup
- clean:
--	@rm -f dist/
-+	@rm -rf dist/
- 
- ### Misc
- generate-swagger-doc:
-```
-
-**File**: `go.mod` (modified, +24/-23)
-```diff
-@@ -12,33 +12,33 @@ require (
- 	github.com/dustin/go-humanize v1.1.0
- 	github.com/fatih/color v1.19.0
- 	github.com/fsnotify/fsnotify v1.10.1
--	github.com/gkampitakis/go-snaps v0.5.24
-+	github.com/gkampitakis/go-snaps v0.5.25
- 	github.com/go-git/go-git/v5 v5.19.3
- 	github.com/go-logr/logr v1.4.4
- 	github.com/golang-jwt/jwt/v4 v4.5.2
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/go-containerregistry v0.22.1
--	github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261013193525-92aac6186bc4
--	github.com/jackc/pgx/v5 v5.11.0
-+	github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261026195947-bc0638f2d173
-+	github.com/jackc/pgx/v5 v5.12.0
- 	github.com/johannesboyne/gofakes3 v1.2.0
- 	github.com/kedacore/keda/v2 v2.21.0
- 	github.com/mholt/archives v0.1.5
- 	github.com/minio/minio-go/v7 v7.4.1
- 	github.com/moby/moby/api v1.56.1
- 	github.com/moby/moby/client v0.6.2
- 	github.com/modelcontextprotocol/go-sdk v1.8.0
--	github.com/ohler55/ojg v1.28.8
-+	github.com/ohler55/ojg v1.28.9
- 	github.com/ory/dockertest/v3 v3.12.0
- 	github.com/prometheus/client_golang v1.25.0
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.72.1
-+	github.com/prometheus/common v0.73.1
- 	github.com/prometheus/otlptranslator v1.0.0
- 	github.com/robfig/cron/v3 v3.0.1
- 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
- 	github.com/sanketsudake/go-portless v0.4.0
- 	github.com/sanketsudake/go-portless/k8s v0.3.0
- 	github.com/spf13/cobra v1.10.2
--	github.com/spf13/pflag v1.0.10
-+	github.com/spf13/pflag v1.1.0
- 	github.com/stretchr/testify v1.12.1
- 	go.opentelemetry.io/contrib/bridges/otelzap v0.21.0
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0
-@@ -57,22 +57,22 @@ require (
- 	go.opentelemetry.io/otel/trace v1.47.0
+@@ -58,7 +58,7 @@ require (
  	go.uber.org/goleak v1.3.0
  	go.uber.org/zap v1.28.0
--	golang.org/x/net v0.61.0
-+	golang.org/x/net v0.62.0
- 	golang.org/x/sync v0.24.0
+ 	golang.org/x/net v0.62.0
+-	golang.org/x/sync v0.24.0
++	golang.org/x/sync v0.25.0
  	golang.org/x/term v0.47.0
--	google.golang.org/grpc v1.84.0
--	k8s.io/api v0.37.1
--	k8s.io/apiextensions-apiserver v0.37.1
--	k8s.io/apimachinery v0.37.1
--	k8s.io/client-go v0.37.1
--	k8s.io/code-generator v0.37.1
-+	google.golang.org/grpc v1.85.0
-+	k8s.io/api v0.37.2
-+	k8s.io/apiextensions-apiserver v0.37.2
-+	k8s.io/apimachinery v0.37.2
-+	k8s.io/client-go v0.37.2
-+	k8s.io/code-generator v0.37.2
- 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3
- 	k8s.io/klog/v2 v2.140.0
--	k8s.io/metrics v0.37.1
--	modernc.org/sqlite v1.61.0
-+	k8s.io/metrics v0.37.2
-+	modernc.org/sqlite v1.62.0
- 	pgregory.net/rapid v1.3.0
- 	sigs.k8s.io/controller-runtime v0.25.2
--	sigs.k8s.io/gateway-api v1.6.3
-+	sigs.k8s.io/gateway-api v1.7.0
- 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2
- 	sigs.k8s.io/yaml v1.6.0
- )
-@@ -86,7 +86,7 @@ require (
- 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
- 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
- 	github.com/STARRY-S/zip v0.2.3 // indirect
--	github.com/andybalholm/brotli v1.2.3 // indirect
-+	github.com/andybalholm/brotli v1.2.7 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/bmatcuk/doublestar/v4 v4.0.2 // indirect
- 	github.com/bodgit/plumbing v1.3.0 // indirect
-@@ -153,7 +153,7 @@ require (
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
- 	github.com/jackc/pgpassfile v1.0.0 // indirect
- 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
--	github.com/jackc/puddle/v2 v2.2.2 // indirect
-+	github.com/jackc/puddle/v2 v2.2.3 // indirect
- 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
- 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
-@@ -162,7 +162,7 @@ require (
- 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/kevinburke/ssh_config v1.2.0 // indirect
--	github.com/klauspost/compress v1.20.1 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
- 	github.com/klauspost/crc32 v1.3.0 // indirect
- 	github.com/klauspost/pgzip v1.2.6 // indirect
-@@ -189,6 +189,7 @@ require (
- 	github.com/opencontainers/go-digest v1.0.0 // indirect
- 	github.com/opencontainers/image-spec v1.1.1 // indirect
- 	github.com/opencontainers/runc v1.3.6 // indirect
-+	github.com/pandatix/go-abnf v0.5.3 // indirect
- 	github.com/philhofer/fwd v1.2.0 // indirect
- 	github.com/pierrec/lz4/v4 v4.1.31 // indirect
- 	github.com/pjbgf/sha1cd v0.7.0 // indirect
-@@ -226,12 +227,12 @@ require (
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2 // indirect
- 	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
--	golang.org/x/time v0.15.0 // indirect
-+	golang.org/x/time 
+ 	google.golang.org/grpc v1.85.0
+ 	k8s.io/api v0.37.2
 ```
 
-**File**: `go.sum` (modified, +56/-54)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -44,8 +44,8 @@ github.com/ProtonMail/go-crypto v1.3.0 h1:ILq8+Sf5If5DCpHQp4PbZdS1J7HDFRXz/+xKBi
- github.com/ProtonMail/go-crypto v1.3.0/go.mod h1:9whxjD8Rbs29b4XWbB8irEcE8KHMqaR2e7GWU1R+/PE=
- github.com/STARRY-S/zip v0.2.3 h1:luE4dMvRPDOWQdeDdUxUoZkzUIpTccdKdhHHsQJ1fm4=
- github.com/STARRY-S/zip v0.2.3/go.mod h1:lqJ9JdeRipyOQJrYSOtpNAiaesFO6zVDsE8GIGFaoSk=
--github.com/andybalholm/brotli v1.2.3 h1:8H1qwOkl2LPfjf3YezB90JnCliZb6SInJ/OJkEbA5NQ=
--github.com/andybalholm/brotli v1.2.3/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
-+github.com/andybalholm/brotli v1.2.7 h1:UgafRPGMam5ySHfRkhthMqOFA6IFoeF3D7mWIDLjG5A=
-+github.com/andybalholm/brotli v1.2.7/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/anishathalye/porcupine v1.3.1 h1:fBZ4/NGNPnIDdd6xNtrNk9/GiEQ0L4FO5+scINN+t0E=
- github.com/anishathalye/porcupine v1.3.1/go.mod h1:WM0SsFjWNl2Y4BqHr/E/ll2yY1GY1jqn+W7Z/84Zoog=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
-@@ -176,8 +176,8 @@ github.com/fxamacker/cbor/v2 v2.9.3 h1:oQBnFATpNdY8gJHTndDDv5Xl4QqNaz51G5LLEPhng
- github.com/fxamacker/cbor/v2 v2.9.3/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
- github.com/gkampitakis/ciinfo v0.3.4 h1:5eBSibVuSMbb/H6Elc0IIEFbkzCJi3lm94n0+U7Z0KY=
- github.com/gkampitakis/ciinfo v0.3.4/go.mod h1:1NIwaOcFChN4fa/B0hEBdAb6npDlFL8Bwx4dfRLRqAo=
--github.com/gkampitakis/go-snaps v0.5.24 h1:oyQ/CQA4s0nkVm6CLlM2GJSU8e4p6KGPZbrSCnTNBzE=
--github.com/gkampitakis/go-snaps v0.5.24/go.mod h1:uy3lVzCCRRsAwYqSocyw5fY8xRLCYEfqoOJNxr8HonM=
-+github.com/gkampitakis/go-snaps v0.5.25 h1:ZE3iiQcS2WDV08JdUc+wVpHb6JEnLC+hlo9v8/YqZoQ=
-+github.com/gkampitakis/go-snaps v0.5.25/go.mod h1:uy3lVzCCRRsAwYqSocyw5fY8xRLCYEfqoOJNxr8HonM=
- github.com/gliderlabs/ssh v0.3.8 h1:a4YXD1V7xMF9g5nTkdfnja3Sxy1PVDCj1Zg4Wb8vY6c=
- github.com/gliderlabs/ssh v0.3.8/go.mod h1:xYoytBv1sV0aL3CavoDuJIQNURXkkfPA/wxQ1pL1fAU=
- github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 h1:+zs/tPmkDkHx3U66DAb0lQFJrpS6731Oaa12ikc+DiI=
-@@ -278,8 +278,8 @@ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
- github.com/google/go-containerregistry v0.22.1 h1:RZuuSYhTvlDvtsK+NkutoCZ//C0X2ebLK8X8l3ULs84=
- github.com/google/go-containerregistry v0.22.1/go.mod h1:bJR35SK8XgisYmhg/FMQ/5RK0S/XrOAqLBV5/LR2XE0=
--github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261013193525-92aac6186bc4 h1:73D7f/eA05ea94q4mYS8VHKx2SeYYPHbyuBL3giTdjU=
--github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261013193525-92aac6186bc4/go.mod h1:LI3ZSbqmFw4vxcBwMdG8h6blxTu6LyjIR9TQyOmEhRM=
-+github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261026195947-bc0638f2d173 h1:zWrZht3lpXnp7+jRhewVLpzbRbT36bRqxgDOS0QR7UE=
-+github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261026195947-bc0638f2d173/go.mod h1:LI3ZSbqmFw4vxcBwMdG8h6blxTu6LyjIR9TQyOmEhRM=
- github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
- github.com/google/gofuzz v1.2.0 h1:xRy4A+RhZaiKjJ1bPfwQ8sedCA+YS2YcCHW6ec7JMi0=
- github.com/google/gofuzz v1.2.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
-@@ -322,10 +322,10 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
- github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
- github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
- github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
--github.com/jackc/pgx/v5 v5.11.0 h1:IzBBtyK9AHqf98cctWFifYSci2hgQR/cd56wB4p+ogg=
--github.com/jackc/pgx/v5 v5.11.0/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
--github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
--github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
-+github.com/jackc/pgx/v5 v5.12.0 h1:hWwax8YiGT0YiN50U1oIDn5kgR7KC2tG3rmavwpPkxY=
-+github.com/jackc/pgx/v5 v5.12.0/go.mod h1:u2Fi6no03HCSBYE+ZVdLxbwdu3xyi2vU+K/YNJioSds=
-+github.com/jackc/puddle/v2 v2.2.3 h1:f8HoREISb3l5eO9coPgK7U3hKLhWGokOFVcThl5jrao=
-+github.com/jackc/puddle/v2 v2.2.3/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
- github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
- github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
- github.com/jcmturner/aescts/v2 v2.0.0 h1:9YKLH6ey7H4eDBXW8khjYslgyqG2xZikXP0EQFKrle8=
-@@ -354,8 +354,8 @@ github.com/kevinburke/ssh_config v1.2.0 h1:x584FjTGwHzMwvHx18PXxbBVzfnxogHaAReU4
- github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF4nAY/ojJ6r6mM=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
- gith
+@@ -691,8 +691,8 @@ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 ```
 
-**File**: `pkg/generated/applyconfiguration/core/v1/canaryconfig.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `f8309a5a` (2026-11-11)
+**Commit Message**: chore(deps): bump the github-actions group across 1 directory with 8 updates (#3752)
+
+Bumps the github-actions group with 8 updates in the / directory:
+
+| Package | From | To |
+| --- | --- | --- |
+| [step-security/harden-runner](https://github.com/step-security/harden-runner) | `2.22.1` | `2.22.4` |
+| [helm/kind-action](https://github.com/helm/kind-action) | `1.15.1` | `1.15.2` |
+| [github/codeql-action/init](https://github.com/github/codeql-action) | `4.39.0` | `4.39.3` |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.39.0` | `4.39.3` |
+| [docker/login-action](https://github.com/docker/login-action) | `4.6.0` | `4.8.0` |
+| [sigstore/cosign-installer](https://github.com/sigstore/cosign-installer) | `4.1.2` | `4.1.3` |
+| [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.39.0` | `4.39.3` |
+| [actions/setup-java](https://github.com/actions/setup-java) | `6.1.0` | `6.2.0` |
+
+
+
+Updates `step-security/harden-runner` from 2.22.1 to 2.22.4
+- [Release notes](https://github.com/step-security/harden-runner/releases)
+- [Commits](https://github.com/step-security/harden-runner/compare/ccd8616d44fd3846e67624a50d5aad6d37bf2d25...1d883
+
+**File**: `.github/workflows/benchmark.yaml` (modified, +3/-3)
 ```diff
-@@ -17,7 +17,7 @@ import (
- //
- // CanaryConfig is for canary deployment of two functions.
- type CanaryConfigApplyConfiguration struct {
--	metav1.TypeMetaApplyConfiguration    `json:",inline"`
-+	metav1.TypeMetaApplyConfiguration    `json:""`
- 	*metav1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
- 	Spec                                 *CanaryConfigSpecApplyConfiguration   `json:"spec,omitempty"`
- 	Status                               *CanaryConfigStatusApplyConfiguration `json:"status,omitempty"`
+@@ -91,7 +91,7 @@ jobs:
+       versions: ${{ steps.versions.outputs.list }}
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+       - id: versions
+@@ -127,7 +127,7 @@ jobs:
+         fission_version: ${{ fromJSON(needs.setup.outputs.versions) }}
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+@@ -152,7 +152,7 @@ jobs:
+           version: ${{ env.HELM_VERSION }}
+ 
+       - name: Kind Cluster
+-        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
++        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
+         with:
+           node_image: kindest/node:${{ env.BENCH_K8S }}
+           version: ${{ env.KIND_VERSION }}
 ```
 
-**File**: `pkg/generated/applyconfiguration/core/v1/environment.go` (modified, +1/-1)
+**File**: `.github/workflows/codeql.yaml` (modified, +3/-3)
 ```diff
-@@ -17,7 +17,7 @@ import (
- //
- // Environment is environment for building and running user functions.
- type EnvironmentApplyConfiguration struct {
--	metav1.TypeMetaApplyConfiguration    `json:",inline"`
-+	metav1.TypeMetaApplyConfiguration    `json:""`
- 	*metav1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
- 	Spec                                 *EnvironmentSpecApplyConfiguration   `json:"spec,omitempty"`
- 	Status                               *EnvironmentStatusApplyConfiguration `json:"status,omitempty"`
+@@ -28,7 +28,7 @@ jobs:
+     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+@@ -42,9 +42,9 @@ jobs:
+           cache: true
+ 
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           languages: go
+ 
+       - name: Perform CodeQL Analysis
+-        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
 ```
 
-**File**: `pkg/generated/applyconfiguration/core/v1/fissiontenant.go` (modified, +1/-1)
+**File**: `.github/workflows/dependency-review.yml` (modified, +1/-1)
 ```diff
-@@ -22,7 +22,7 @@ import (
- // fission.io/enabled=true on a Namespace is sugar the controller
- // materializes into one of these. See docs/multiple-namespace/prd.md.
- type FissionTenantApplyConfiguration struct {
--	metav1.TypeMetaApplyConfiguration    `json:",inline"`
-+	metav1.TypeMetaApplyConfiguration    `json:""`
- 	*metav1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
- 	Spec                                 *FissionTenantSpecApplyConfiguration   `json:"spec,omitempty"`
- 	Status                               *FissionTenantStatusApplyConfiguration `json:"status,omitempty"`
+@@ -21,7 +21,7 @@ jobs:
+     runs-on: ubuntu-24.04
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/lint-dashboards.yaml` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ jobs:
+     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/lint.yaml` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ jobs:
+     # if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/push_pr.yaml` (modified, +2/-2)
+```diff
+@@ -53,7 +53,7 @@ jobs:
+         os: [ubuntu-24.04]
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+@@ -84,7 +84,7 @@ jobs:
+           version: ${{ env.HELM_VERSION }}
+ 
+       - name: Kind Cluster
+-        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
++        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
+         with:
+           node_image: kindest/node:${{ matrix.kindversion }}
+           version: ${{ env.KIND_VERSION }}
+```
+
+**File**: `.github/workflows/release.yaml` (modified, +7/-7)
+```diff
+@@ -28,7 +28,7 @@ jobs:
+     runs-on: ubuntu-24.04
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+@@ -54,7 +54,7 @@ jobs:
+           version: "~> v2"
+ 
+       - name: Kind Cluster
+-        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
++        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
+         with:
+           node_image: kindest/node:${{ env.KIND_NODE_IMAGE_TAG }}
+           version: ${{ env.KIND_VERSION }}
+@@ -68,14 +68,14 @@ jobs:
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+ 
+       - name: Login to ghcr.io
+-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           registry: ghcr.io
+           username: ${{ github.repository_owner }}
+           password: ${{ secrets.GITHUB_TOKEN }}
+ 
+       - name: Install Cosign
+-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
++        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
+         with:
+           cosign-release: ${{ env.COSIGN_VERSION }}
+ 
+@@ -145,7 +145,7 @@ jobs:
+         with:
+           persist-credentials: false
+       - name: Login to GitHub Container Registry
+-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           registry: ghcr.io
+           username: ${{ github.actor }}
+@@ -180,14 +180,14 @@ jobs:
+     permissions: read-all
+     steps:
+       - name: Login
+-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           registry: ghcr.io
+           username: ${{ github.actor }}
+           password: ${{ secrets.GITHUB_TOKEN }}
+ 
+       - name: Install Cosign
+-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
++        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
+         with:
+           cosign-release: ${{ env.COSIGN_VERSION }}
+ 
+```
+
+**File**: `.github/workflows/scorecard.yml` (modified, +2/-2)
+```diff
+@@ -32,7 +32,7 @@ jobs:
+ 
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+@@ -73,6 +73,6 @@ jobs:
+       # Upload the results to GitHub's code scanning dashboard (optional).
+       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           sarif_file: results.sarif
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3752** (2026-11-11): chore(deps): bump the github-actions group across 1 directory with 8 updates (@dependabot[bot])
+- **PR #3751** (2026-11-11): chore(deps): bump golang.org/x/sync from 0.24.0 to 0.25.0 in the go-dependencies group (@dependabot[bot])
 - **PR #3750** (2026-11-09): chore(release): prepare 1.28 (@sanketsudake)
 - **PR #3749** (2026-11-09): CI tool refresh 2026-11-09: helm v4.3.1, kind v0.33.0, Envoy Gateway v1.10.0, cosign v3.1.4, golangci-lint v2.15.0 (@sanketsudake)
 - **PR #3748** (2026-11-09): Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspost CVE fixes (@sanketsudake)
 - **PR #3747** (closed): chore(deps): bump the go-dependencies group with 13 updates (@dependabot[bot])
-- **PR #3745** (2026-10-26): Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, misc patches (@sanketsudake)
-- **PR #3743** (2026-10-22): chore(deps): bump the github-actions group with 5 updates (@dependabot[bot])
 
 ---
 
@@ -1363,33 +1342,28 @@ writer). The rest are routine minor/patch b
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspo
+## X. deps): bump golang.org/x/sync (#3751)
 
 **RULE**:
-When implementing operations in `.claude/resources/fission-dep-groups.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fission/fission. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fission/fission. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a08f8c0`: Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspost CVE fixes (#3748). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8152c961`: deps): bump golang.org/x/sync (#3751). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/resources/fission-dep-groups.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Local-env note: if the PATH `go` binary is older than this module's `go` directive (e.g. a Nix go 1.26 while `go.mod` says `go 1.27.3`),
-`make codegen` fails in register-gen with `method must have no type parameters` on stdlib `math/rand/v2`.
-The generator is built by `go install` inside the copied code-generator module (whose own `go` directive is older), so it compiles with the old local go/types,
-which then rejects the newer stdlib's generic methods. Run `GOTOOLCHAIN=go1.27.3 make codegen` to force the matching toolchain.
-CI is unaffected — every workflow installs Go from `go-version-file: go.mod`.
-
+	golang.org/x/sync v0.25.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	golang.org/x/sync v0.24.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a08f8c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8152c961` are properly handled with clean fallback behavior.

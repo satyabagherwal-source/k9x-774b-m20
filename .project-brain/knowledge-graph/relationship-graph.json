@@ -2,14 +2,17 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-11T19:00:03.099Z",
+  "updated_at": "2026-11-11T19:15:52.268Z",
   "statistics": {
-    "total_nodes": 2,
-    "total_edges": 0,
+    "total_nodes": 4,
+    "total_edges": 1,
     "domain_distribution": {
-      "D": 2
+      "D": 3,
+      "M": 1
     },
-    "relation_distribution": {}
+    "relation_distribution": {
+      "CONSTRAINED_BY_ARCHITECTURE": 1
+    }
   },
   "nodes": {
     "DOM-D-62E0908D": {
@@ -55,7 +58,54 @@
       ],
       "created_at": "2026-11-11T19:00:03.099Z",
       "updated_at": "2026-11-11T19:00:03.099Z"
+    },
+    "DOM-D-D2E2CA9E": {
+      "id": "DOM-D-D2E2CA9E",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Pika-Labs/Pika-H3-Flex",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-pika-labs-pika-h3-flex/hf-pika-labs-pika-h3-flex-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T19:15:37.675Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-pika-labs-pika-h3-flex)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-11T19:15:52.268Z",
+      "updated_at": "2026-11-11T19:15:52.268Z"
+    },
+    "NODE-M-domain-bridge-m": {
+      "id": "NODE-M-domain-bridge-m",
+      "domain": "M",
+      "type": "DOMAIN_CONCEPT_BRIDGE",
+      "title": "Domain M Concept Space",
+      "summary": "",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {},
+      "tags": [],
+      "created_at": "2026-11-11T19:15:52.268Z",
+      "updated_at": "2026-11-11T19:15:52.268Z"
     }
   },
-  "edges": []
+  "edges": [
+    {
+      "id": "EDGE-C80E135DDB76",
+      "sourceId": "DOM-D-D2E2CA9E",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-D2E2CA9E [D] with Domain M",
+      "created_at": "2026-11-11T19:15:52.268Z"
+    }
+  ]
 }

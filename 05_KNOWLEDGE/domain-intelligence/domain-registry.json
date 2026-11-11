@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T19:00:03.098Z",
-  "total_records": 51,
+  "last_updated": "2026-11-11T19:15:52.266Z",
+  "total_records": 52,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 21,
+      "total": 22,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -46,7 +46,8 @@
         "DOM-D-40589951",
         "DOM-D-BA155874",
         "DOM-D-62E0908D",
-        "DOM-D-01CFC4FC"
+        "DOM-D-01CFC4FC",
+        "DOM-D-D2E2CA9E"
       ]
     },
     "E": {
@@ -2054,6 +2055,47 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-11T19:00:03.096Z"
+    },
+    "DOM-D-D2E2CA9E": {
+      "record_id": "DOM-D-D2E2CA9E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Pika-Labs/Pika-H3-Flex",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Pika-Labs/Pika-H3-Flex](https://huggingface.co/Pika-Labs/Pika-H3-Flex))  \n> **Source Version**: `hf-pika-labs`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "a3bb90be5cee4011a0dd3378374f8ce6d0b6193bc06f12549564c7aadb215deb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-pika-labs-pika-h3-flex/hf-pika-labs-pika-h3-flex-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T19:15:37.675Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-pika-labs-pika-h3-flex)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-pika-labs-pika-h3-flex"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T19:15:52.265Z"
     }
   }
 }

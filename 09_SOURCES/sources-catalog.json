@@ -2273,10 +2273,10 @@
     "repository": "fission/fission",
     "platform": "github",
     "sourceUrl": "https://github.com/fission/fission",
-    "sourceVersion": "9cac7b02",
+    "sourceVersion": "8152c961",
     "license": "Apache-2.0",
-    "contentHash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
-    "lastHarvestedAt": "2026-11-09T13:10:05.570Z",
+    "contentHash": "051fdbd2d5f80888e2df0cd26e1dfdd1235bbe538c738a96766db4f00d0a33d2",
+    "lastHarvestedAt": "2026-11-11T19:15:26.207Z",
     "learningId": "learn-github-fission-fission"
   },
   "smallstep-cli": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "047a8a24",
+    "sourceVersion": "9e4c4967",
     "license": "OSL-3.0",
-    "contentHash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
-    "lastHarvestedAt": "2026-11-09T11:54:13.195Z",
+    "contentHash": "475ff7ebc5f757296168b646663213b46230673aa5e588bc827818f84740b43f",
+    "lastHarvestedAt": "2026-11-11T19:15:32.230Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -11555,8 +11555,8 @@
     "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
     "sourceVersion": "hf-pika-labs-pika-h3-flex",
     "license": "Open-Source",
-    "contentHash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
-    "lastHarvestedAt": "2026-11-06T23:12:02.563Z",
+    "contentHash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
+    "lastHarvestedAt": "2026-11-11T19:15:03.648Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   },
   "hf-liquidai-lfm3-audio-2b": {

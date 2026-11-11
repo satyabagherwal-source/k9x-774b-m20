@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T18:59:45.551Z",
-  "total_cycles_completed": 8843,
-  "total_learnings_persisted": 8843,
-  "total_rules_promoted": 8700,
+  "last_updated": "2026-11-11T19:15:32.236Z",
+  "total_cycles_completed": 8846,
+  "total_learnings_persisted": 8846,
+  "total_rules_promoted": 8702,
   "history": [
-    {
-      "timestamp": "2026-11-09T22:41:01.028Z",
-      "repository": "sensenova/SenseNova-Loop-9B-Preview",
-      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T22:48:35.415Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T22:55:27.051Z",
-      "repository": "graphprotocol/graph-node",
-      "learningId": "learn-github-graphprotocol-graph-node",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T23:07:30.095Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1403,6 +1382,27 @@
       "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
       "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T19:15:03.654Z",
+      "repository": "Pika-Labs/Pika-H3-Flex",
+      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T19:15:26.228Z",
+      "repository": "fission/fission",
+      "learningId": "learn-github-fission-fission",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T19:15:32.236Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

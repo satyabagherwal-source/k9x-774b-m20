@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:00:03.108Z",
+  "last_updated": "2026-11-11T19:15:52.318Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5457,6 +5457,24 @@
       "source_repo": "higress-group-higress",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-390BDB-mcp-server-acknowledge-valid-legacy-json.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-319BE7",
+      "directive_title": "deps): bump golang.org/x/sync (#3751)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fission-fission",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-319BE7-deps-bump-golang-org-x-sync-3751-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-3EE349",
+      "directive_title": "Further simplify subscription state management. Avoid race between record-level",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trailbaseio-trailbase",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3EE349-further-simplify-subscription-state-mana.md",
       "staged_date": "2026-11-11"
     }
   ]

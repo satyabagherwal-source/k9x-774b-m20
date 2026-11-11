@@ -2,16 +2,17 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T19:00:03.129Z",
+  "updated_at": "2026-11-11T19:15:52.326Z",
   "stats": {
-    "total_discovered": 175,
-    "approved_pending_harvest": 150,
+    "total_discovered": 194,
+    "approved_pending_harvest": 168,
     "harvested_count": 0,
-    "rejected_count": 25,
+    "rejected_count": 26,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 160,
-      "OFFICIAL_DOCUMENTATION": 8,
-      "STANDARDS_AND_SPECIFICATIONS": 7
+      "COMMUNITY_AND_EXPERT": 177,
+      "OFFICIAL_DOCUMENTATION": 9,
+      "STANDARDS_AND_SPECIFICATIONS": 7,
+      "ENGINEERING_BLOGS": 1
     }
   },
   "sources": {
@@ -3689,6 +3690,417 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
         "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-0AE524EE7A4C": {
+      "id": "SRC-0AE524EE7A4C",
+      "url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+      "title": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
+        "fileName": "hf-pika-labs-pika-h3-flex-learnings.md"
+      }
+    },
+    "SRC-4551A32FB09D": {
+      "id": "SRC-4551A32FB09D",
+      "url": "https://github.com/fission/fission",
+      "title": "https://github.com/fission/fission",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-BCCED9A4DFC4": {
+      "id": "SRC-BCCED9A4DFC4",
+      "url": "https://repo.example.com/v1/archive/app.zip",
+      "title": "https://repo.example.com/v1/archive/app.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-F854B5BD7BC4": {
+      "id": "SRC-F854B5BD7BC4",
+      "url": "https://blog.openshift.com/kubernetes-deep-dive-code-generation-customresources",
+      "title": "https://blog.openshift.com/kubernetes-deep-dive-code-generation-customresources",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "ENGINEERING_BLOGS",
+      "authorityTier": "ENGINEERING_PEER",
+      "trustScore": 0.85,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-1DD3050371A7": {
+      "id": "SRC-1DD3050371A7",
+      "url": "https://github.com/golang/sync",
+      "title": "https://github.com/golang/sync",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.286Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-90ED34BD6DA2": {
+      "id": "SRC-90ED34BD6DA2",
+      "url": "https://github.com/golang/sync/compare/v0.24.0...v0.25.0",
+      "title": "https://github.com/golang/sync/compare/v0.24.0...v0.25.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-BD97C87C62C2": {
+      "id": "SRC-BD97C87C62C2",
+      "url": "https://github.com/step-security/harden-runner",
+      "title": "https://github.com/step-security/harden-runner",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-A742E4BF7C72": {
+      "id": "SRC-A742E4BF7C72",
+      "url": "https://github.com/helm/kind-action",
+      "title": "https://github.com/helm/kind-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-689B8B741048": {
+      "id": "SRC-689B8B741048",
+      "url": "https://github.com/github/codeql-action",
+      "title": "https://github.com/github/codeql-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.292Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-7F21D8364BB8": {
+      "id": "SRC-7F21D8364BB8",
+      "url": "https://github.com/docker/login-action",
+      "title": "https://github.com/docker/login-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-81BC93126FC1": {
+      "id": "SRC-81BC93126FC1",
+      "url": "https://github.com/sigstore/cosign-installer",
+      "title": "https://github.com/sigstore/cosign-installer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-7E291E641E14": {
+      "id": "SRC-7E291E641E14",
+      "url": "https://github.com/actions/setup-java",
+      "title": "https://github.com/actions/setup-java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-0F8741C57782": {
+      "id": "SRC-0F8741C57782",
+      "url": "https://github.com/step-security/harden-runner/releases",
+      "title": "https://github.com/step-security/harden-runner/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-07F1E422E5DA": {
+      "id": "SRC-07F1E422E5DA",
+      "url": "https://github.com/step-security/harden-runner/compare/ccd8616d44fd3846e67624a50d5aad6d37bf2d25...1d883",
+      "title": "https://github.com/step-security/harden-runner/compare/ccd8616d44fd3846e67624a50d5aad6d37bf2d25...1d883",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fission-fission-learnings.md",
+        "fileName": "fission-fission-learnings.md"
+      }
+    },
+    "SRC-A6DC702176BD": {
+      "id": "SRC-A6DC702176BD",
+      "url": "https://github.com/trailbaseio/trailbase",
+      "title": "https://github.com/trailbaseio/trailbase",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+        "fileName": "trailbaseio-trailbase-learnings.md"
+      }
+    },
+    "SRC-5E14DC868AD1": {
+      "id": "SRC-5E14DC868AD1",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.321Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+        "fileName": "trailbaseio-trailbase-learnings.md"
+      }
+    },
+    "SRC-02722813E24C": {
+      "id": "SRC-02722813E24C",
+      "url": "https://stackoverflow.com/a/67806663",
+      "title": "https://stackoverflow.com/a/67806663",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+        "fileName": "trailbaseio-trailbase-learnings.md"
+      }
+    },
+    "SRC-889DC119D68F": {
+      "id": "SRC-889DC119D68F",
+      "url": "https://github.com/Aleph-Alpha/ts-rs",
+      "title": "https://github.com/Aleph-Alpha/ts-rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:15:52.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+        "fileName": "trailbaseio-trailbase-learnings.md"
+      }
+    },
+    "SRC-14EE714555AE": {
+      "id": "SRC-14EE714555AE",
+      "url": "http://127.0.0.1:${port",
+      "title": "http://127.0.0.1:${port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T19:15:52.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+        "fileName": "trailbaseio-trailbase-learnings.md"
       }
     }
   }

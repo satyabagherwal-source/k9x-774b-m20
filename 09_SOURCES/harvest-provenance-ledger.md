@@ -9009,3 +9009,7 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `5be60bda` | Multi-dimensional audit evidence | 2026-11-11T18:55:10.679Z |
 | `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-11T18:59:45.545Z |
 | `learn-dom-d-01cfc4fc` | `project://hf-unsloth-deepseek-v4.1-flash-1017-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md` | 2026-11-11T19:00:03.099Z |
+| `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-11T19:15:03.648Z |
+| `learn-github-fission-fission` | `https://github.com/fission/fission` | `8152c961` | Multi-dimensional audit evidence | 2026-11-11T19:15:26.207Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `9e4c4967` | Multi-dimensional audit evidence | 2026-11-11T19:15:32.230Z |
+| `learn-dom-d-d2e2ca9e` | `project://hf-pika-labs-pika-h3-flex` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md` | 2026-11-11T19:15:52.268Z |

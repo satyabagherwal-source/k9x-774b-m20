@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T18:59:45.432Z",
+  "last_updated": "2026-11-11T19:15:32.120Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15424,14 +15424,19 @@
       "slug": "fission-fission",
       "platform": "github",
       "source_url": "https://github.com/fission/fission",
-      "source_version": "9cac7b02",
-      "content_hash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
+      "source_version": "8152c961",
+      "content_hash": "051fdbd2d5f80888e2df0cd26e1dfdd1235bbe538c738a96766db4f00d0a33d2",
       "dossier_path": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspo",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump golang.org/x/sync (#3751)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15455,7 +15460,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:10:05.440Z",
+      "verified_at": "2026-11-11T19:15:25.986Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63509,8 +63514,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "047a8a24",
-      "content_hash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
+      "source_version": "9e4c4967",
+      "content_hash": "475ff7ebc5f757296168b646663213b46230673aa5e588bc827818f84740b43f",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -63528,6 +63533,11 @@
           "number": null,
           "title": "Multi-Tier Secret Redaction on State Serialization",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Further simplify subscription state management. Avoid race between record-level",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1914,
@@ -63575,7 +63585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:54:13.012Z",
+      "verified_at": "2026-11-11T19:15:32.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165318,7 +165328,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
       "source_version": "hf-pika-labs-pika-h3-flex",
-      "content_hash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
+      "content_hash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
       "dossier_path": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "promoted_rules": [
@@ -165348,7 +165358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:12:02.445Z",
+      "verified_at": "2026-11-11T19:15:03.512Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

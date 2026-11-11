@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-2Y69",
-    "timestamp": "2026-11-08T20:21:48.033Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-F3IW",
-    "timestamp": "2026-11-08T20:31:14.840Z",
-    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-    "contentHash": "4e750a0e12a60a91925ca8e841e1f13d99b8bb87a691c18046ab4c73ec4870f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-FG5N",
-    "timestamp": "2026-11-08T20:31:31.211Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "692420c164801127b8aa7113a7aa8ee433cb38549d4fc14eeff0f8c465d808d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-OMQ1",
     "timestamp": "2026-11-08T20:38:39.625Z",
     "repository": "google-t5/t5-small",
@@ -7492,6 +7447,51 @@
     "contentHash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-0OD8",
+    "timestamp": "2026-11-11T19:15:03.644Z",
+    "repository": "Pika-Labs/Pika-H3-Flex",
+    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+    "contentHash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-15RV",
+    "timestamp": "2026-11-11T19:15:26.203Z",
+    "repository": "fission/fission",
+    "learningId": "learn-github-fission-fission",
+    "contentHash": "051fdbd2d5f80888e2df0cd26e1dfdd1235bbe538c738a96766db4f00d0a33d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-1AF6",
+    "timestamp": "2026-11-11T19:15:32.226Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "475ff7ebc5f757296168b646663213b46230673aa5e588bc827818f84740b43f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
