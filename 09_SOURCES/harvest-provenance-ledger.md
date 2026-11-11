@@ -8949,3 +8949,7 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `49c815a0` | Multi-dimensional audit evidence | 2026-11-11T11:39:43.464Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `e0d1aa05` | Multi-dimensional audit evidence | 2026-11-11T12:03:33.700Z |
 | `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `b18bd7b2` | Multi-dimensional audit evidence | 2026-11-11T12:08:34.846Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `bb5390b6` | Multi-dimensional audit evidence | 2026-11-11T12:53:26.292Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `50e4ffde` | Multi-dimensional audit evidence | 2026-11-11T12:53:28.380Z |
+| `learn-github-aquasecurity-trivy-operator` | `https://github.com/aquasecurity/trivy-operator` | `689215dd` | Multi-dimensional audit evidence | 2026-11-11T12:53:34.234Z |
+| `learn-dom-d-40589951` | `project://xerj-org-xerj` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | 2026-11-11T12:53:53.499Z |

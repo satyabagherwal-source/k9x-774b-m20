@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T12:41:25.399Z",
+  "last_updated": "2026-11-11T12:53:53.500Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T12:41:25.396Z",
@@ -271,9 +271,24 @@
       "processed_at": "2026-11-11T12:41:25.388Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "iii-hq-iii-learnings.md": {
+      "processed_at": "2026-11-11T12:53:40.697Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "aquasecurity-trivy-operator-learnings.md": {
+      "processed_at": "2026-11-11T12:53:40.702Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "xerj-org-xerj-learnings.md": {
+      "processed_at": "2026-11-11T12:53:53.499Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 63,
-  "total_canonical_promoted": 14,
-  "total_staged_for_review": 46
+  "total_dossiers_evaluated": 66,
+  "total_canonical_promoted": 15,
+  "total_staged_for_review": 48
 }

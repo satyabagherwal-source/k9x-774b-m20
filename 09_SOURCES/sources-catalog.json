@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "9f467738",
+    "sourceVersion": "bb5390b6",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "ad86f125397a595dc39ce64d9762a509b06c53873588ca60caaaaa01eaafd3b7",
-    "lastHarvestedAt": "2026-11-07T23:55:17.872Z",
+    "contentHash": "79f65bcd0d03ca74eb5c3d1d5ee0a7f286b95abe4f99e651531347c1e6f862a4",
+    "lastHarvestedAt": "2026-11-11T12:53:26.292Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "f73bbd95",
+    "sourceVersion": "50e4ffde",
     "license": "Apache-2.0",
-    "contentHash": "889fbf211418e2eee4e3656372ded3e258f31a0baa53aa80df0a347347eb0efb",
-    "lastHarvestedAt": "2026-11-09T05:26:11.701Z",
+    "contentHash": "e3b5575a06a2e47f73555bec2e76a305db31ac4bb5b4da71cfd81db590607eed",
+    "lastHarvestedAt": "2026-11-11T12:53:28.380Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -12103,10 +12103,10 @@
     "repository": "aquasecurity/trivy-operator",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy-operator",
-    "sourceVersion": "b40091af",
+    "sourceVersion": "689215dd",
     "license": "Apache-2.0",
-    "contentHash": "3289560bedf486d5558d0d29ce63b7fc093e8a1ed479707b1a82854825b7c806",
-    "lastHarvestedAt": "2026-11-07T17:27:27.845Z",
+    "contentHash": "d3c6f2e44bff092c8c0174c02a063c61f491d2194393cad2b744bbb851cb1764",
+    "lastHarvestedAt": "2026-11-11T12:53:34.234Z",
     "learningId": "learn-github-aquasecurity-trivy-operator"
   },
   "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic": {

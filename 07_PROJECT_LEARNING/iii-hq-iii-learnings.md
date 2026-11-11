@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `9f467738`  
+> **Source Version**: `bb5390b6`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T23:55:16.634Z  
+> **Timestamp**: 2026-11-11T12:53:16.438Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T23:55:15.419Z  
+> **Harvest Timestamp**: 2026-11-11T12:53:16.247Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18927 stars
+- **Stars / Engagement**: 18936 stars
 
 ---
 
@@ -48,7 +48,7 @@
 //! The daemon's own connection to the engine.
 //!
 //! The daemon is an ordinary worker: it connects with the SDK, registers in
-//! `default` as `compose`, and exposes `compose::*` there — where a trigger
+//! `default` as `compose`, and exposes `compose::*` there — where a call
 //! with no namespace flag lands. One connection serves every project it holds,
 //! whatever namespaces those declare.
 //!
@@ -58,13 +58,13 @@
 
 use std::time::Duration;
 
-use iii_sdk::{IIIClient, InitOptions, protocol::TriggerRequest, register_worker};
+use iii_sdk::{IIIClient, InitOptions, protocol::CallRequest, register_worker};
 
 use serde_json::{Value, json};
 
 use crate::{
     error::{ComposeError, Result},
-    process::Supervised,
+    lifecycle::Child,
 };
 
 /// How often readiness is re-checked. Short enough that a fast worker is not
@@ -89,6 +89,8 @@ pub struct EngineClient {
     /// Namespace this daemon registered in — the same one `compose::*` lands
     /// in. Children live in the *project* namespace, which is separate.
     namespace: String,
+    /// The managed engine has exited: no call over this bus can be answered.
+    exited: std::sync::atomic::AtomicBool,
 }
 
 /// The last few lines a container printed, for an error that would otherwise
@@ -123,7 +125,7 @@ fn log_tail(log_dir: &std::path::Path, container: &str) -> Option<String> {
     )
 }
 
-/// Whether a trigger failure is the configuration worker reporting an
+/// Whether a call failure is the configuration worker reporting an
 /// unregistered id, as opposed to anything that went wrong reaching it.
 ///
 /// The distinction is the whole of fetch-or-fail: one means "nothing stored
@@ -175,11 +177,21 @@ impl EngineClient {
         Self {
             client,
             namespace: namespace.to_string(),
+            exited: Default::default(),
         }
     }
 
     pub fn client(&self) -> &IIIClient {
         &self.client
+    }
+
+    /// Records that the managed engine exited, so teardown stops asking it.
+    pub fn mark_exited(&self) {
+        self.exited.store(true, std::sync::atomic::Ordering::SeqCst);
+    }
+
+    pub fn has_exited(&self) -> bool {
+        self.exited.load(std::sync::atomic::Ordering::SeqCst)
     }
 
     pub fn namespace(&self) -> &str {
@@ -220,8 +232,8 @@ impl EngineClient {
     pub async fn fetch_config(&self, name: &str) -> Result<Option<serde_yaml::Value>> {
         let response = match self
             .client
-            .trigger(
-                TriggerRequest {
+            .call(
+                CallRequest {
                     function_id: "configuration::get".to_string(),
                     // Use the current configuration, preserving raw env placeholders.
                     payload: json!({ "id": name, "raw": true }),
@@ -260,8 +272,8 @@ impl EngineClient {
             message: err.to_string(),
         })?;
         self.client
-            .trigger(
-                TriggerRequest {
+            .call(
+                CallRequest {
                     function_id: "configuration::set".into(),
                     payload: json!({"id": name, "value": value, "flush": false}),
                     action: None,
@@ -279,14 +291,273 @@ impl EngineClient {
 
     /// Ask the configuration authority to migrate the exact previous default.
     /// Returns true only when both source and destination are missing.
-    /// A missing function is an upgrade error, never permission to reset defaults.
-    pub async fn migrate_config(&self, from_id: &str, to_id: &str) -> Result<bool> {
-        let capabilities = self.client.trigger(TriggerRequest {
-            function_id: "configuration::migration-capabilities".into(),
-            payload: json!({}),
-            action: None,
-            timeout_ms: Some(CALL_TIMEOUT_MS),
-        }.namespace(DEFAULT_NAMESPACE)).await
+    /// A missing functio
+```
+
+### Core Architecture Module: `crates/iii-compose/src/engine_compat.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! The `iii_engine_version` range a worker manifest declares, checked against
+//! the engine hosting Compose.
+//!
+//! The grammar is the node-semver subset the registry and the workers CI also
+//! accept: `OP? MAJOR.MINOR.PATCH` comparators (`>=`, `>`, `<=`, `<`, `=`, `^`,
+//! `~`), space-joined into sets (all must hold) and `||`-joined into a range
+//! (any set may hold). A bare version means exactly that version.
+
+use semver::{Op, Version, VersionReq};
+
+const OPERATORS: [&str; 7] = [">=", "<=", ">", "<", "=", "^", "~"];
+
+/// The refusal for a value outside the supported range grammar.
+pub fn malformed_iii_engine_version(got: impl std::fmt::Debug) -> String {
+    format!(
+        "iii_engine_version must be a semver range like \">=0.26.0\" (comparators >=, >, <=, <, =, ^, ~ on MAJOR.MINOR.PATCH, joined by spaces or ||), got {got:?}"
+    )
+}
+
+pub fn valid_iii_engine_version(range: &str) -> bool {
+    parse_range(range).is_some()
+}
+
+/// Compatible when the engine's `MAJOR.MINOR.PATCH` satisfies any `||` set, so
+/// `0.26.0-rc.2` counts as `0.26.0`.
+pub fn check_iii_engine_requirement(
+    worker: &str,
+    range: &str,
+    running: &Version,
+) -> Result<(), String> {
+    let worker = sanitize(worker);
+    let Some(sets) = parse_range(range) else {
+        return Err(format!("{worker}: {}", malformed_iii_engine_version(range)));
+    };
+    let base = Version::new(running.major, running.minor, running.patch);
+    if sets.iter().any(|set| set.matches(&base)) {
+        return Ok(());
+    }
+    let tail = if update_can_help(&sets, &base) {
+        "run: iii update".to_string()
+    } else {
+        format!(
+            "this iii is newer than {worker} supports \u{2014} install a version of {worker} that supports iii {running}"
+        )
+    };
+    Err(format!(
+        "{worker} requires iii {range}, running {running}; {tail}"
+    ))
+}
+
+/// The engine version Compose checks manifests against: the binary hosting
+/// it, which is the engine that runs the workers. `None` outside an engine.
+pub fn running_engine_version() -> Option<Version> {
+    crate::host_version().and_then(|raw| Version::parse(raw.trim().trim_start_matches('v')).ok())
+}
+
+/// One `VersionReq` per `||` set, or `None` when `range` is outside the grammar.
+/// `VersionReq` reads a bare `1.2.3` as `^1.2.3` and joins comparators with
+/// commas, so a bare version gets `=` and each set is comma-joined.
+fn parse_range(range: &str) -> Option<Vec<VersionReq>> {
+    if range.is_empty() || range.starts_with(is_space) || range.ends_with(is_space) {
+        return None;
+    }
+    range
+        .split("||")
+        .map(|set| {
+            let set = set.trim_matches(is_space);
+            if set.is_empty() || set.chars().any(|c| c.is_whitespace() && !is_space(c)) {
+                return None;
+            }
+            let comparators = set
+                .split(is_space)
+                .filter(|c| !c.is_empty())
+                .map(comparator)
+                .collect::<Option<Vec<_>>>()?;
+            VersionReq::parse(&comparators.join(", ")).ok()
+        })
+        .collect()
+}
+
+/// `OP? MAJOR.MINOR.PATCH` with no leading zeros, normalised for `VersionReq`.
+fn comparator(text: &str) -> Option<String> {
+    let op = OPERATORS
+        .iter()
+        .find(|op| text.starts_with(*op))
+        .copied()
+        .unwrap_or("");
+    let version = &text[op.len()..];
+    let parts: Vec<&str> = version.split('.').collect();
+    let numeric = |part: &&str| {
+        !part.is_empty()
+            && part.bytes().all(|b| b.is_ascii_digit())
+            && (*part == "0" || !part.starts_with('0'))
+    };
+    if parts.len() != 3 || !parts.iter().all(numeric) {
+        return None;
+    }
+    Some(format!("{}{version}", if op.is_empty() { "=" } else { op }))
+}
+
+fn is_space(c: char) -> bool {
+    c.is_ascii_whitespace()
+}
+
+/// True when some `||` set fails only because the engine is too old for it.
+fn update_can_help(sets: &[VersionReq], base: &Version) -> bool {
+    sets.iter().any(|set| {
+        set.comparators.iter().all(|c| {
+            let single = VersionReq {
+                comparators: vec![c.clone()],
+            };
+            single.matches(base) || {
+                let floor = Version::new(c.major, c.minor.unwrap_or(0), c.patch.unwrap_or(0));
+                match c.op {
+                    Op::Greater | Op::GreaterEq => true,
+                    Op::Less | Op::LessEq => false,
+                    _ => *base < floor,
+                }
+            }
+        })
+    })
+}
+
+/// Drops terminal control and bidi-override characters so a worker name can't
+/// rewrite the error line it appears in.
+fn sanitize(name: &str) -> String {
+    name.chars()
+        .filter(|c| {
+            !c.is_control()
+                && !matches!(c, '\u{200E}' | '\u{200F}' | '\u{202A}'..='\u{202E}' | '\u{2066}'..='\u{2069}')
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn v(s: &str) -> Version {
+        Version::parse(s).unwrap()
+    }
+
+    fn ok(range: &str, running: &str) -> bool {
+        check_iii_engine_requirement("http", range, &v(running)).is_ok()
+    }
+
+    #[test]
+    fn rc_engine_satisfies_release_floor() {
+        assert!(ok(">=0.26.0", "0.26.0-rc.2"));
+    }
+
+    #[test]
+    fn older_engine_is_refused_with_update_hint() {
+        assert_eq!(
+            check_iii_engine_requirement("http", ">=0.26.0", &v("0.25.9")).unwrap_err(),
+            "http requires iii >=0.26.0, running 0.25.9; run: iii update"
+        );
+    }
+
+    #[test]
+    fn too_new_engine_gets_a_different_hint() {
+        let msg =
+            |r: &str, run: &str| check_iii_engine_requirement("http", r, &v(run)).unwrap_err();
+        for (r, run) in [("<0.28.0", "0.28.1"), ("^0.26.0", "0.27.0")] {
+            let e = msg(r, run);
+            assert!(
+                e.contains("newer than http supports") && !e.contains("iii update"),
+                "{e}"
+            );
+        }
+        for (r, run) in [("^0.26.0", "0.25.0"), ("^0.25.0 || ^0.27.0", "0.26.0")] {
+            assert!(msg(r, run).ends_with("run: iii update"), "{r}");
+        }
+    }
+
+    #[test]
+    fn caret_range_refuses_the_next_minor() {
+        assert!(ok("^0.26.0", "0.26.4"));
+        assert!(!ok("^0.26.0", "0.27.0"));
+    }
+
+    #[test]
+    fn space_joined_comparators_must_all_hold() {
+        assert!(ok(">=0.26.0 <0.28.0", "0.27.3"));
+        assert!(!ok(">=0.26.0 <0.28.0", "0.28.0"));
+    }
+
+    #[test]
+    fn any_or_set_may_hold() {
+        assert!(ok("^0.25.0 || ^0.26.0", "0.25.4"));
+        assert!(ok("^0.25.0 || ^0.26.0", "0.26.1"));
+        assert!(!ok("^0.25.0 || ^0.26.0", "0.27.0"));
+    }
+
+    #[test]
+    fn bare_version_means_exactly_that_version() {
+        assert!(ok("0.26.0", "0.26.0"));
+        assert!(ok("0.26.0", "0.26.0-rc.1"));
+        assert!(!ok("0.26.0", "0.26.1"));
+    }
+
+    #[test]
+    fn valid_iii_engine_version_follows_the_range_grammar() {
+        for good in [
+            ">=0.26.0",
+            "^0.26.0",
+            "~0.26.0",
+            "=0.26.0",
+            "0.26.0",
+            ">=0.26.0 <0.28.0",
+            "^0.25.0 || ^0.26.0",
+            "^0.25.0||^0.26.0",
+        ] {
+            assert!(valid_iii_engine_version(good), "{good}");
+        }
+        for bad in [
+            "",
+            "0.26",
+            "v0.26.0",
+            ">=0.26.0-rc.1",
+            ">=01.2.3",
+            "0.26.x",
+            "1.0.0 - 2.0.0",
+            " >=0.26.0",
+            ">=0.26.0 ",
+            ">=0.26.0 ||",
+            ">=0.26.0<0.28.0",
+            "=>0.26.0",
+            ">=0.26.0\u{a0}<0.28.0",
+            ">=0.2\u{666}.0",
+        ] {
+            assert!(!valid_iii_engine_version(bad), "{bad:?}");
+        }
+    }
+
+    #[test]
+    fn malformed_range_is_refused() {
+        let err = check_iii_engine_requirement("http", "0.26", &v("0.26.0")).unwrap_err();
+        assert!(
+            err.starts_with("http: iii_engine_version must be a semver range"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn worker_name_is_sanitized_in_errors() {
+        let err = check_iii_engine_requirement("ht\x1b[31mtp\u{202E}", ">=0.26.0", &v("0.25.9"))
+            .unwrap_err();
+        assert!(
+            !err.contains('\x1b') && !err.contains('\u{202E}'),
+            "{err:?}"
+        );
+        assert!(err.starts_with("ht[31mtp requires iii >=0.26.0"), "{err:?}");
+    }
+}
+
 ```
 
 ### Core Architecture Module: `crates/iii-compose/src/hooks.rs`
@@ -616,6 +887,7 @@ impl Drop for HookProcess {
 
 use std::{
     collections::BTreeMap,
+    process::ExitStatus,
     time::{Duration, Instant},
 };
 
@@ -630,7 +902,7 @@ use crate::{
     error::{ComposeError, Result},
     hooks,
     logs::LogStore,
-    manifest::{StartSpec, VmSpec, resolve_start},
+    manifest::{StartSpec, VmSpec},
     process::{Outcome, Supervised, spawn_supervised_piped},
     report, restart,
     spawn::{SpawnCtx, resolve_working_dir, spawn_plan},
@@ -706,8 +978,12 @@ pub struct LifecycleCtx<'a> {
     pub package_cache: &'a std::path::Path,
     /// Persistent, bounded stdout and stderr for every project worker.
     pub logs: &'a LogStore,
-    /// Root of the per-container VM state.
-    pub vm_dir: &'a std::path::Path,
+    /// This project's state directory: with the container key, it names a
+    /// VM's state at its adapter (`sandbox::state_key`).
+    pub state_dir: &'a std::path::Path,
+    /// This project's `DaemonState::sandbox_token`: what the adapter container
+    /// is started with and what a call to its `worker::*` functions carries.
+    pub sandbox_token: &'a str,
     pub(crate) empty_env_diagnostics: &'a crate::config::EmptyEnvDiagnostics,
 }
 
@@ -716,7 +992,7 @@ pub struct LifecycleCtx<'a> {
 enum StartAttempt {
     Ready {
         record: ChildRecord,
-        child: Supervised,
+        child: Box<Child>,
         recovery: Option<RetryRecovery>,
     },
     Failed(ComposeError),
@@ -740,8 +1016,45 @@ impl From<ComposeError> for StartFailure {
     }
 }
 
+/// One supervised container: a local process group, or a VM its adapter runs.
+pub enum Child {
+    Process(Supervised),
+    Vm(crate::sandbox::RemoteVm),
+}
+
+impl Child {
+    pub fn poll(&self) -> Outcome {
+        match self {
+            Self::Process(process) => process.poll(),
+            Self::Vm(vm) => vm.poll(),
+        }
+    }
+
+    pub async fn wait(&self) -> ExitStatus {
+        match self {
+            Self::Process(process) => process.wait().await,
+            Self::Vm(vm) => vm.wait().await,
+        }
+    }
+
+    pub async fn stop(&self, grace: Duration) -> ExitStatus {
+        match self {
+            Self::Process(process) => process.stop(grace).await,
+            Self::Vm(vm) => vm.stop(grace).await,
+        }
+    }
+
+    /// Inherited from an earlier daemon rather than started here.
+    pub fn is_adopted(&self) -> bool {
+        match self {
+            Self::Process(process) => process.is_adopted(),
+            Self::Vm(vm) => vm.is_adopted(),
+        }
+    }
+}
+
 /// Containers currently supervised by this daemon, keyed by container id.
-pub type Children = BTreeMap<String, Supervised>;
+pub type Children = BTreeMap<String, Child>;
 
 /// Starts `target` (or the whole graph) in dependency order.
 ///
@@ -857,34 +1170,7 @@ async fn up_scoped(
 
         let mut starting: Vec<String> = Vec::new();
         for key in &wave {
-            if is_running(children, key) {
-                report::unchanged(key, "already running");
-                if let Some(operation) = crate::operation::active(&operation_id) {
-                    operation.emit(Some(key), "ready", "already running").await;
-                    operation.completed_one().await;
-                }
-                results.push(ContainerResult {
-                    container: key.clone(),
-                    state: ChildStatus::Ready,
-                    changed: false,
-                    error: None,
-                });
-                continue;
-            }
-            report::starting(key, "starting");
-            if let Some(operation) = crate::operation::active(&operation_id) {
-                operation
-                    .emit(Some(key), "starting", "starting worker")
-                    .await;
-            }
-            starting.push(key.clone());
-        }
-        // Bounded: a wave may hold every container in the file, and each one
-        // can be a download, a process, or a VM. An operator's machine should
-        // not have to survive all of them at once.
-        let mut outcomes = futures::stream::iter(starting.into_iter().map(|key| {
-            let shutdown = shutdown.clone();
-            let start_operation_id
+       
 ```
 
 ### Core Architecture Module: `crates/iii-compose/src/managed_engine.rs`
@@ -960,7 +1246,7 @@ impl ManagedEngine {
                 .map_err(|source| ComposeError::EngineSpawnFailed {
                     message: format!("could not claim the managed engine namespace: {source}"),
                 })??;
-        let config_path = materialize_engine_config(spec, namespace_dir)?;
+        let config_path = materialize_engine_config(spec, namespace_dir, daemon_namespace)?;
         let log_path = engine_log_path(namespace_dir);
         let mut engine = Self::spawn_with_materialized_config(
             &executable,
@@ -1099,6 +1385,16 @@ impl ManagedEngine {
         self.process.poll()
     }
 
+    /// Its exit status once it has exited, recorded on `client` so teardown
+    /// stops asking over its bus.
+    pub fn poll_exit(&self, client: &crate::engine::EngineClient) -> Option<ExitStatus> {
+        let crate::process::Outcome::Exited(status) = self.poll() else {
+            return None;
+        };
+        client.mark_exited();
+        Some(status)
+    }
+
     pub async fn stop(&self, grace: Duration) -> ExitStatus {
         let status = self.process.stop(grace).await;
         self.finish_logging().await;
@@ -1137,6 +1433,14 @@ struct MaterializedEngineConfig<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     observers: Option<&'a serde_yaml::Value>,
     workers: Vec<MaterializedWorker<'a>>,
+    /// Always written, so the router is bound whether or not the file asks.
+    sandbox: MaterializedSandbox<'a>,
+}
+
+#[derive(Serialize)]
+struct MaterializedSandbox<'a> {
+    adapter: &'a str,
+    namespace: &'a str,
 }
 
 #[derive(Serialize)]
@@ -1145,7 +1449,13 @@ struct MaterializedWorker<'a> {
     config: &'a serde_yaml::Value,
 }
 
-fn materialize_engine_config(spec: &EngineSpec, namespace_dir: &Path) -> Result<PathBuf> {
+/// `owner_namespace` is the project's own: the adapter runs there unless
+/// `engine.sandbox.namespace` says otherwise.
+fn materialize_engine_config(
+    spec: &EngineSpec,
+    namespace_dir: &Path,
+    owner_namespace: &str,
+) -> Result<PathBuf> {
     std::fs::create_dir_all(namespace_dir).map_err(|source| ComposeError::Io {
         path: namespace_dir.to_path_buf(),
         source,
@@ -1163,25 +1473,7 @@ fn materialize_engine_config(spec: &EngineSpec, namespace_dir: &Path) -> Result<
         workers.extend(
             spec.workers
                 .iter()
-                .filter(|(name, _)| crate::config::engine_worker_type(name) == *worker_type)
-                .map(|(name, config)| MaterializedWorker { name, config }),
-        );
-        if *worker_type == "iii-worker-manager"
-            && let Some(config) = inferred_worker_manager.as_ref()
-        {
-            workers.push(MaterializedWorker {
-                name: "iii-worker-manager",
-                config,
-            });
-        }
-    }
-    let document = MaterializedEngineConfig {
-        registration_namespace_grace_ms: spec.registration_namespace_grace_ms,
-        observers: spec.observers.as_ref(),
-        workers,
-    };
-    let text = serde_yaml::to_string(&document).map_err(|err| ComposeError::EngineSpawnFailed {
-        message: format!("could not serialize managed en
+                .filter(|(name, 
 ```
 
 ### Core Architecture Module: `crates/iii-compose/src/state.rs`
@@ -1268,10 +1560,16 @@ pub enum ChildStatus {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ChildRecord {
-    pub pid: u32,
+    /// `None` for a VM container, which has no local process.
+    #[serde(default)]
+    pub pid: Option<u32>,
     /// Fingerprint taken when the child was spawned. Without a match, the PID is
     /// never signalled again.
-    pub birth: BirthIdentity,
+    #[serde(default)]
+    pub birth: Option<BirthIdentity>,
+    /// The VM a VM container runs, at the adapter that runs it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub vm: Option<VmRecord>,
     pub status: ChildStatus,
     /// Seconds since the unix epoch, for `compose::status` output.
     pub started_at: u64,
@@ -1279,11 +1577,23 @@ pub struct ChildRecord {
     pub last_error: Option<String>,
 }
 
+/// One boot of a VM container: `instance` names it, so a call about an older
+/// boot cannot touch a newer one.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct VmRecord {
+    pub adapter: String,
+    /// Where the adapter's `worker::*` functions are registered.
+    pub namespace: String,
+    pub vm_id: String,
+    pub instance: u64,
+}
+
 impl ChildRecord {
     pub fn new(pid: u32, birth: BirthIdentity, status: ChildStatus) -> Self {
         Self {
-            pid,
-            birth,
+            pid: Some(pid),
+            birth: Some(birth),
+            vm: None,
             status,
             started_at: now_unix(),
             last_error: None,
@@ -1292,6 +1602,20 @@ impl ChildRecord {
 
     pub fn from_supervised(child: &crate::process::Supervised, status: ChildStatus) -> Self {
         Self::new(child.pid, child.birth.clone(), status)
+    }
+
+    pub fn from_child(child: &crate::lifecycle::Child, status: ChildStatus) -> Self {
+        match child {
+            crate::lifecycle::Child::Process(process) => Self::from_supervised(process, status),
+            crate::lifecycle::Child::Vm(vm) => Self {
+                pid: None,
+                birth: None,
+                vm: Some(vm.record.clone()),
+                status,
+                started_at: now_unix(),
+                last_error: None,
+            },
+        }
     }
 }
 
@@ -1307,6 +1631,16 @@ pub struct DaemonState {
     /// written before it was recorded.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub owner: Option<Owner>,
+    /// Secret that lets this project's engine call the sandbox adapter's
+    /// `worker::*` functions. Minted when the project first opens, kept in this
+    /// 0600 file so a restarted daemon hands the same value to an adopted
+    /// adapter, and given to the adapter container only. `None` in state
+    /// written before it existed.
+    // shortcut: sandbox-libkrun hides this file from a VM whose worker directory holds it only from
+    // 0.3.1 on, and only under a directory named `.iii`, move the token out of the project directory
+    // if older versions must stay supported.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sandbox_token: Option<String>,
 }
 
 /// One compose process, fingerprinted like the children it records.
@@ -1345,6 +1679,7 @@ impl DaemonState {
             namespace: namespace.to_string(),
             containers: BTreeMap::new(),
             owner: None,
+            sandbox_token: None,
         }
     }
 
@@ -1379,359 +1714,25 @@ pub enum Reconciliation {
     /// A live PID that is not provably the recorded process — a recycled PID, or
     /// a platform that cannot fingerprint. Never signalled; reported instead.
     Unverifiable,
-    /// This daemon stopped it on purpose and recorded that: nothing to adopt,
-    /// nothing to report. `down` leaves the record behind and `restart`
-    /// re-opens the project right after it.
+    /// This daemon stopped it on purpose, or recorded it as failed and why:
+    /// nothing to adopt, nothing to report. `down` leaves the record behind and
+    /// `restart` re-opens the project right after it.
     Stopped,
 }
 
 /// Read-only: inspects the recorded child and returns what to do. Signals
 /// nothing, kills nothing.
 pub fn reconcile(record: &ChildRecord) -> Reconciliation {
-    if record.status == ChildStatus::Stopped {
+    // A failed record's last_error already says why; re-checking it would
+    // replace that with "exited". A failed record can still be running (an
+    // unverifiable pid, or a VM whose worker::stop got no answer); reading it
+    // as stopped never signals it, and its adapter still owns the VM.
+    if matches!(record.status, ChildStatus::Stopped | ChildStatus::Failed) {
         return Reconciliation::Stopped;
     }
-    if !crate::process::is_running(record.pid) {
-        return Reconciliation::Gone;
-    }
-    if record.birth.matches(&birth_identity(record.pid)) {
-        Reconciliation::Adopt
-    } else {
-        Reconciliation::Unverifiable
-    }
-}
-
-/// Owner-only directory holding one daemon's durable state.
-#[derive(Debug, Clone)]
-pub struct StateStore {
-    dir: PathBuf,
-}
-
-impl StateStore {
-    /// Shared package storage: `~/.iii/compose`, or `$III_COMPOSE_STATE_DIR`.
-    /// Project state lives beside the compose file unless explicitly relocated.
-    pub fn root() -> Result<PathBuf> {
-        match std::env::var_os("III_COMPOSE_STATE_DIR") {
-            Some(root) => Ok(PathBuf::from(root)),
-            None => Ok(dirs::home_dir()
-                .ok_or(ComposeError::StateDirUnavailable)?
-                .join(".iii")
-                .join("compose")),
-        }
-    }
-
-    /// Registry packages are shared by every Compose daemon and project on
-    /// this machine.
-    pub fn package_cache() -> Result<PathBuf> {
-        Ok(Self::root()?.join("packages"))
-    }
-
-    /// Where one project's state lives:
-    /// `<compose-dir>/.iii/compose/<daemon-namespace>`, or
-    /// `$III_COMPOSE_STATE_DIR/<project-slug>/<daemon-namespace>` when relocated.
-    ///
-    /// Callers pass the canonical compose path so `--file` and symlinks use
-    /// the same directory. A shared external root needs a slug to keep projects
-    /// apart, while the default is already scoped to the project directory.
-    pub fn for_project(daemon_namespace: &str, compose_path: &Path) -> Result<Self> {
-        let project_dir = match std::env::var_os("III_COMPOSE_STATE_DIR") {
-            Some(root) => PathBuf::from(root).join(project_slug(compose_path)),
-            None => compose_path
-                .parent()
-                .unwrap_or_else(|| Path::new("."))
-                .join(".iii")
-                .join("compose"),
-        };
-        Ok(Self::at(project_dir.join(daemon_namespace)))
-    }
-
-    pub fn at(dir: impl Into<PathBuf>) -> Self {
-        Self { dir: dir.into() }
-    }
-
-    pub fn dir(&self) -> &Path {
-        &self.dir
-    }
-
-    pub fn path(&self) -> PathBuf {
-        self.dir.join(STATE_FILE)
-    }
-
-    /// `None` when this daemon has never written state. A corrupt file is an
-    /// error, never a silent reset: that is exactly the moment children may be
-    /// running unaccounted for.
-    pub fn loa
-```
-
-### Core Architecture Module: `crates/iii-init/src/worker_env.rs`
-```
-// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-// contributor license agreements. Licensed under the Elastic License 2.0;
-// you may not use this file except in compliance with the Elastic License 2.0.
-// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-// See LICENSE and PATENTS files for details.
-
-//! Loads the worker environment the host sends over the `iii.env`
-//! virtio-console port (see `iii_supervisor::env_channel`).
-//!
-//! The frame carries the worker's variables and the worker command
-//! (`III_WORKER_CMD`). The rest of iii-init's plumbing (`III_BLOCK_ROOT_*`,
-//! `III_WORKER_WORKDIR`, ...) still arrives on the kernel command line. The
-//! frame is exported into PID 1's environment, and the worker, supervisor
-//! restarts and `iii worker exec` sessions inherit it from there.
-
-use std::fs::OpenOptions;
-use std::io::{self, Read};
-use std::os::fd::{AsRawFd, RawFd};
-use std::os::unix::fs::OpenOptionsExt;
-use std::path::{Path, PathBuf};
-use std::time::{Duration, Instant};
-
-use iii_supervisor::env_channel::{ENV_PORT_ENV, decode_payload, frame_len};
-
-use crate::InitError;
-
-/// How long to wait for the port to appear and for the host's frame. The
-/// host writes the frame as soon as the VM starts, so hitting this means
-/// the host side is broken.
-const TIMEOUT: Duration = Duration::from_secs(30);
-
-/// Pause between retries while the port is missing or reads as EOF.
-const RETRY: Duration = Duration::from_millis(25);
-
-/// Reads the env frame when the host announced one via `III_ENV_PORT` and
-/// exports it. No-op when the variable is absent (older hosts).
-///
-/// Fails closed: a worker started without the environment and command it
-/// was given would fail later, and much less clearly, than a boot error
-/// naming the port.
-///
-/// Needs `/sys` and `/dev` (mounted by `mount::mount_filesystems`), and must
-/// run while iii-init is still single-threaded (before
-/// `supervisor::exec_worker` spawns its helper threads), because it mutates
-/// the process environment. `main::run` calls it right after
-/// `mount_filesystems`, so the worker env is visible to every later boot
-/// step, as it was when the env rode the kernel command line.
-pub fn load_worker_env() -> Result<(), InitError> {
-    let port_name = match std::env::var(ENV_PORT_ENV) {
-        Ok(name) => name,
-        Err(_) => return Ok(()),
-    };
-    let started = Instant::now();
-    let deadline = started + TIMEOUT;
-
-    let port_path = wait_for_port(&port_name, deadline).ok_or_else(|| {
-        InitError::WorkerEnv(format!(
-            "{ENV_PORT_ENV}={port_name} but no such port appeared in /sys/class/virtio-ports \
-             within {}s",
-            TIMEOUT.as_secs()
-        ))
-    })?;
-
-    let pairs = read_env_frame(&port_path, started, deadline)
-        .map_err(|e| InitError::WorkerEnv(format!("reading {}: {e}", port_path.display())))?;
-
-    // SAFETY: iii-init is single-threaded at this point. `main::run` calls
-    // this before `exec_worker`, which is where the shell-dispatcher and
-    // source-sync threads are spawned, so nothing can read the environment
-    // concurrently. `decode_payload` has already rejected the inputs that
-    // make `set_var` panic (empty name, '=' in the name, NUL).
-    unsafe {
-        for (key, value) in &pairs {
-            std::env::set_var(key, value);
-        }
-        // Plumbing, not worker configuration.
-        std::env::remove_var(ENV_PORT_ENV);
-    }
-    Ok(())
-}
-
-/// Port add/name events are asynchronous virtio control traffic, handled by
-/// a kernel workqueue; a slow host can still be announcing the port when
-/// iii-init gets here.
-fn wait_for_port(name: &str, deadline: Instant) -> Option<PathBuf> {
-    loop {
-        if let Some(path) = iii_supervisor::control::find_virtio_port_by_name(name) {
-            return Some(path);
-        }
-        if Instant::now() >= deadline {
-            return None;
-        }
-        std::thread::sleep(RETRY);
-    }
-}
-
-fn read_env_frame(
-    port_path: &Path,
-    started: Instant,
-    deadline: Instant,
-) -> io::Result<Vec<(String, String)>> {
-    let mut port = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .custom_flags(libc::O_NONBLOCK)
-        .open(port_path)?;
-    read_frame_patient(&mut port, started, deadline)
-}
-
-/// Reads one frame from a non-blocking reader, tolerating the transient EOF
-/// a virtio-console port reports before its host backend is connected, and
-/// giving up at `deadline`. `started` is when the whole load began (port
-/// lookup included), for the timeout message.
-fn read_frame_patient<R: Read + AsRawFd>(
-    port: &mut R,
-    started: Instant,
-    deadline: Instant,
-) -> io::Result<Vec<(String, String)>> {
-    let mut header = [0u8; 4];
-    read_exact_patient(port, &mut header, started, deadline)?;
-    let mut payload = vec![0u8; frame_len(header)?];
-    read_exact_patient(port, &mut payload, started, deadline)?;
-    decode_payload(&payload)
-}
-
-fn read_exact_patient<R: Read + AsRawFd>(
-    port: &mut R,
-    buf: &mut [u8],
-    started: Instant,
-    deadline: Instant,
-) -> io::Result<()> {
-    let mut filled = 0;
-    while filled < buf.len() {
-        let remaining = deadline.saturating_duration_since(Instant::now());
-        if remaining.is_zero() {
-            return Err(io::Error::new(
-                io::ErrorKind::TimedOut,
-                format!(
-                    "no complete env frame from the host after {:.1}s ({filled} of {} bytes)",
-                    started.elapsed().as_secs_f32(),
-                    buf.len()
-                ),
-            ));
-        }
-        match port.read(&mut buf[filled..]) {
-            Ok(n) if n > 0 => filled += n,
-            // Host backend not connected yet: the port reads as EOF.
-            Ok(_) => std::thread::sleep(RETRY),
-            Err(e) if e.kind() == io::ErrorKind::Interrupted => {}
-            Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
-                wait_readable(port.as_raw_fd(), remaining)?
-            }
-            Err(e) => return Err(e),
-        }
-    }
-    Ok(())
-}
-
-fn wait_readable(fd: RawFd, remaining: Duration) -> io::Result<()> {
-    let mut pollfd = libc::pollfd {
-        fd,
-        events: libc::POLLIN,
-        revents: 0,
-    };
-    // Short slices so the deadline is re-checked even if poll keeps
-    // reporting a hangup without data.
-    let slice_ms = remaining.as_millis().clamp(1, 100) as libc::c_int;
-    // SAFETY: one valid pollfd on the stack, count 1.
-    let rc = unsafe { libc::poll(&mut pollfd, 1, slice_ms) };
-    if rc < 0 {
-        let err = io::Error::last_os_error();
-        if err.kind() != io::ErrorKind::Interrupted {
-            return Err(err);
-        }
-    }
-    if rc > 0 && pollfd.revents & libc::POLLHUP != 0 && pollfd.revents & libc::POLLIN == 0 {
-        std::thread::sleep(RETRY);
-    }
-    Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use iii_supervisor::env_channel::encode_frame;
-    use std::collections::VecDeque;
-    use std::io::Write;
-    use std::os::unix::net::UnixStream;
-
-    fn env() -> Vec<(String, String)> {
-        vec![
-            ("GREETING".to_string(), "Ol\u{e1} \u{1f496}".to_string()),
-            ("PEM".to_string(), "a\nb".to_string()),
-            (
-                "III_WORKER_CMD".to_string(),
-                "exec bash /opt/iii/dev-run.sh".to_string(),
-            ),
-        ]
-    }
-
-    fn read_within<R: Read + AsRawFd>(port: &mut R, ms: u64) -> io::Result<Vec<(String, String)>> {
-        let now = Instant::now();
-        read_frame_patient(port, now, now + Duration::from_millis(ms))
-    }
-
-    /// Scripted reads: `Ok(0)` entries model the transient EOF of a port
-    /// whose host backend is not connected yet.
-    struct Scripted(VecDeque<io::Result<Vec<u8>>>);
-
-    impl Read for Scripted {
-        fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-            match self.0.pop_front() {
-                None => Ok(0),
-                Some(Err(e)) => Err(e),
-                Some(Ok(mut chunk)) => {
-                    let n = chunk.len().min(buf.len());
-                    buf[..n].copy_from_slice(&chunk[..n]);
-                    if n < chunk.len() {
-                        self.0.push_front(Ok(chunk.split_off(n)));
-                    }
-                    Ok(n)
-                }
-            }
-        }
-    }
-
-    impl AsRawFd for Scripted {
-        fn as_raw_fd(&self) -> RawFd {
-            -1 // poll ignores negative fds
-        }
-    }
-
-    #[test]
-    fn frame_split_across_reads_on_a_nonblocking_socket() {
-        let (mut host, mut guest) = UnixStream::pair().unwrap();
-        guest.set_nonblocking(true).unwrap();
-        let frame = encode_frame(&env()).unwrap();
-        let writer = std::thread::spawn(move || {
-            for chunk in [&frame[..2], &frame[2..7], &frame[7..]] {
-                host.write_all(chunk).unwrap();
-                std::thread::sleep(Duration::from_millis(20));
-            }
-            host
-        });
-        assert_eq!(read_within(&mut guest, 5_000).unwrap(), env());
-        drop(writer.join().unwrap());
-    }
-
-    #[test]
-    fn frame_larger_than_the_socket_buffer_arrives_whole() {
-        let (mut host, mut guest) = UnixStream::pair().unwrap();
-        guest.set_nonblocking(true).unwrap();
-        // Over a Linux socketpair's ~180 KiB, so the writer really blocks;
-        // each variable stays under the 128 KiB execve limit.
-        let big: Vec<(String, String)> = (0..3)
-            .map(|i| (format!("BIG{i}"), "x".repeat(100 * 1024)))
-            .collect();
-        let frame = encode_frame(&big).unwrap();
-        let writer = std::thread::spawn(move || host.write_all(&frame).map(|_| host));
-        assert_eq!(read_within(&mut guest, 5_000).unwrap(), big);
-        drop(writer.join().unwrap().unwrap());
-    }
-
-    #[test]
-    fn transient_eof_before_the_host_connects_is_retried() {
-        let frame = encode_frame(&env()).unwrap();
-        let mut port = Scripted(VecDeque
+    // No process: a VM container, which only its adapter can answer for.
+    let (Some(pid), Some(birth)) = (record.pid, &record.birth) else {
+        return Reconcili
 ```
 
 ### Core Architecture Module: `crates/iii-sandbox-contract/src/worker.rs`
@@ -1739,13 +1740,55 @@ mod tests {
 // Copyright Motia LLC and/or licensed to Motia LLC under one or more
 // contributor license agreements. Licensed under the Elastic License 2.0.
 
-//! Request and response types of the `<adapter>::worker::*` operations. Only Compose calls
-//! them, to run a worker's VM container through the adapter.
+//! Request and response types of the `<adapter>::worker::*` operations. `iii sandbox` calls
+//! them to run one Compose container's VM through the adapter.
+//!
+//! Every request carries `auth`: the project token, or, with
+//! [`FEATURE_SCOPED_AUTH`](crate::FEATURE_SCOPED_AUTH), the token scoped to the VM's state key
+//! ([`scoped_auth_token`]). A scoped token controls that one VM and no other.
 
 use crate::channel::StreamChannelRef;
+use hmac::{Hmac, Mac};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use sha2::Sha256;
 use std::collections::BTreeMap;
+
+/// What the scoped token's MAC covers before the state key, so it can never equal another MAC
+/// of the project token over the same bytes. A different derivation gets a new version.
+const SCOPED_AUTH_DOMAIN: &[u8] = b"iii-sandbox/worker-scope/v1\0";
+
+/// The token that authorizes `worker::*` calls for the VM of `state_key` alone: the lowercase
+/// hex of HMAC-SHA256 keyed with the project token over `iii-sandbox/worker-scope/v1\0`
+/// followed by the state key. Compose hands it to the container that runs the VM; the adapter
+/// recomputes it from the project token it already holds, so neither side stores a token per VM.
+/// `tests/fixtures/scoped_auth.json` pins it.
+pub fn scoped_auth_token(project_token: &str, state_key: &str) -> String {
+    hex::encode(scoped_mac(project_token, state_key).finalize().into_bytes())
+}
+
+/// Whether `presented` is the scoped token for `state_key`, compared in constant time. Never
+/// with an empty project token, whose MAC anyone can compute, or an empty state key.
+pub fn scoped_auth_matches(project_token: &str, state_key: &str, presented: &str) -> bool {
+    if project_token.is_empty() || state_key.is_empty() {
+        return false;
+    }
+    let Ok(tag) = hex::decode(presented) else {
+        return false;
+    };
+    scoped_mac(project_token, state_key)
+        .verify_slice(&tag)
+        .is_ok()
+}
+
+fn scoped_mac(project_token: &str, state_key: &str) -> Hmac<Sha256> {
+    // HMAC takes a key of any length; only fixed-size MACs can refuse one.
+    let mut mac = Hmac::<Sha256>::new_from_slice(project_token.as_bytes())
+        .expect("HMAC accepts a key of any length");
+    mac.update(SCOPED_AUTH_DOMAIN);
+    mac.update(state_key.as_bytes());
+    mac
+}
 
 /// Where the worker's code comes from.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -1767,9 +1810,13 @@ pub enum WorkerSource {
 /// Idempotent image and base-layer pull; long-running.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct WorkerPrepareRequest {
-    /// Per-project token.
+    /// The project token or the VM's scoped token.
     pub auth: String,
     pub source: WorkerSource,
+    /// The VM the prepare is for. Required with a scoped token, which the adapter checks
+    /// against it. Since contract 1.2.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub state_key: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -1778,7 +1825,7 @@ pub struct WorkerPrepareResponse {}
 /// Boots the VM. The adapter reads resources from the worker's manifest.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct WorkerStartRequest {
-    /// Per-project token.
+    /// The project token or the VM's scoped token.
     pub auth: String,
     /// Hash of the compose state dir and container key; the same key gets the same persistent upper.
     pub state_key: String,
@@ -1837,17 +1884,30 @@ pub struct WorkerLogsRequest {
     pub auth: String,
     pub vm_id: String,
     /// `LogRecord.cursor` of the last record the caller has; reading resumes right after it.
-    /// Opaque to Compose. A cursor past the end of the log (after a rotation) reads from the start.
+    /// Opaque to the caller. A cursor past the end of the log (after a rotation) reads from the
+    /// start.
     pub cursor: Option<u64>,
     /// Keep the channel open while the instance runs.
     pub follow: bool,
-    /// Writer end of a channel Compose created; one `LogRecord` JSON per text frame.
+    /// Writer end of a channel the caller created; one `LogRecord` JSON per text frame.
     pub channel: StreamChannelRef,
+    /// Start after the record that is last when the request arrives, ignoring `cursor`: a client
+    /// that reattaches to a running instance gets only what follows, not the log again. Since
+    /// contract 1.2 ([`FEATURE_LOGS_FROM_END`](crate::FEATURE_LOGS_FROM_END)); an older adapter
+    /// ignores it. The response's `cursor` says where the stream started.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub from_end: bool,
 }
 
 /// Returned once the log pump starts; the records travel over the channel.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerLogsResponse {}
+#[derive(Debug, Clone, Default, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerLogsResponse {
+    /// With `from_end`: the cursor of the record that was last when the request arrived, the
+    /// one the stream starts after, so a stream reopened later resumes there instead of at the
+    /// end again; `None` when the log was empty. Since contract 1.2.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cursor: Option<u64>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -1889,82 +1949,7 @@ pub struct WorkerDestroyResponse {
 
 ```
 
-### Core Architecture Module: `crates/iii-worker/examples/dump_worker_env.rs`
-```
-//! Quick demo: dumps the env hashmap that `iii worker start <name>`
-//! would inject into the sandbox VM for a given worker, after
-//! `${VAR}` / `${VAR:default}` expansion. Run from a directory
-//! containing `config.yaml`:
-//!
-//!     ANTHROPIC_API_KEY=sk-real \
-//!       cargo run -p iii-worker --example dump_worker_env -- ai-worker
-
-fn main() {
-    let name = std::env::args().nth(1).unwrap_or_else(|| {
-        eprintln!("usage: dump_worker_env <worker-name>");
-        std::process::exit(2);
-    });
-    let env = iii_worker::cli::config_file::get_worker_config_as_env(&name);
-    if env.is_empty() {
-        eprintln!("(empty — worker not found, or expansion failed; see stderr above)");
-        std::process::exit(1);
-    }
-    let mut keys: Vec<_> = env.keys().collect();
-    keys.sort();
-    for k in keys {
-        println!("{}={}", k, env[k]);
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/iii-worker/examples/gen-golden.rs`
-```
-//! One-time generator for the embedded golden upper image.
-//!
-//! Reads a raw (sparse) empty ext4 image and emits the compressed
-//! sparse-extent format consumed by `cli::upper` at runtime. Driven by
-//! `crates/iii-worker/vendor/regen-golden.sh`; not built into the shipped
-//! binary.
-//!
-//! Usage: gen-golden <raw.ext4> <out.iiu.gz>
-
-use iii_worker::cli::upper;
-use std::path::Path;
-
-fn main() {
-    let mut args = std::env::args().skip(1);
-    let (raw, out) = match (args.next(), args.next()) {
-        (Some(raw), Some(out)) => (raw, out),
-        _ => {
-            eprintln!("usage: gen-golden <raw.ext4> <out.iiu.gz>");
-            std::process::exit(2);
-        }
-    };
-
-    match upper::build_golden(Path::new(&raw), Path::new(&out)) {
-        Ok(stats) => {
-            let on_disk = std::fs::metadata(&out).map(|m| m.len()).unwrap_or(0);
-            eprintln!(
-                "gen-golden: {} -> {}\n  logical {:.1} GiB, {} non-zero {}-byte blocks kept, artifact {:.2} MiB",
-                raw,
-                out,
-                stats.total_len as f64 / (1u64 << 30) as f64,
-                stats.blocks_kept,
-                stats.block_size,
-                on_disk as f64 / (1u64 << 20) as f64,
-            );
-        }
-        Err(e) => {
-            eprintln!("gen-golden: failed: {e}");
-            std::process::exit(1);
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/iii-worker/src/cli/app.rs`
+### Core Architecture Module: `crates/scaffolder-core/src/cli.rs`
 ```
 // Copyright Motia LLC and/or licensed to Motia LLC under one or more
 // contributor license agreements. Licensed under the Elastic License 2.0;
@@ -1972,268 +1957,261 @@ fn main() {
 // This software is patent protected. We welcome discussions - reach out at team@iii.dev
 // See LICENSE and PATENTS files for details.
 
-use clap::{Args, Parser, Subcommand};
-use std::path::PathBuf;
+//! Scaffolding helpers for `iii project init` (engine): the dotfile-exemption
+//! and `data/`-filter rules for the target directory.
 
-/// Default engine WebSocket port (must match engine's DEFAULT_PORT).
-pub const DEFAULT_PORT: u16 = 49134;
+use crate::{IiiConfig, ProductConfig, TemplateFetcher, copy_template};
+use colored::Colorize;
+use std::path::{Path, PathBuf};
 
-/// Shared arguments for `add` and `reinstall` commands.
-#[derive(Args, Debug)]
-pub struct AddArgs {
-    /// iii registry worker names (ex. `database` or `pdfkit@1.0.0`), local worker
-    /// paths (ex. `./my_worker`, a directory containing `iii.worker.yaml`), or
-    /// Docker / OCI image references (ex. `ghcr.io/org/worker:tag`)
-    #[arg(value_name = "WORKER[@VERSION]|PATH", required = true, num_args = 1..)]
-    pub worker_names: Vec<String>,
-
-    /// Discard the worker's config.yaml entry and recreate it fresh
-    /// (dropping any hand-written config block), instead of keeping the
-    /// existing entry. With `add`, takes effect only together with --force;
-    /// `reinstall` applies force automatically.
-    #[arg(long)]
-    pub reset_config: bool,
-
-    /// Proceed without prompting when the resolved dependency graph contains
-    /// more than 32 workers. Required for large-graph installs in CI or other
-    /// non-interactive environments.
-    #[arg(long, short = 'y')]
-    pub yes: bool,
+/// Resolve the scaffold target directory.
+///
+/// `None` -> current working directory.
+/// `Some("")` -> error (empty argument).
+/// `Some(path)` -> that path as a `PathBuf`.
+pub fn resolve_root(dir: Option<&str>) -> Result<PathBuf, String> {
+    match dir {
+        Some(d) if d.trim().is_empty() => Err("directory argument cannot be empty".to_string()),
+        Some(d) => Ok(PathBuf::from(d)),
+        None => std::env::current_dir().map_err(|e| format!("cannot read cwd: {}", e)),
+    }
 }
 
-#[derive(Parser, Debug)]
-#[command(
-    name = "iii worker",
-    bin_name = "iii worker",
-    version,
-    about = "iii managed worker runtime"
-)]
-pub struct Cli {
-    #[command(subcommand)]
-    pub command: Commands,
+/// Reject scaffolding into a non-empty directory unless the user opted in via
+/// `allow_non_empty`, OR the directory is already initialized (detected by
+/// the presence of `.iii/project.ini`).
+///
+/// Hidden dotfiles (`.git/`, `.gitignore`, etc.) are not considered "user
+/// content"; anything else, including a `data/` directory, blocks the
+/// scaffold (an existing `data/` belongs to some engine and clobbering its
+/// project would orphan that state).
+pub fn check_directory_state(root: &Path, allow_non_empty: bool) -> Result<(), String> {
+    if !root.exists() {
+        return Ok(());
+    }
+    if !root.is_dir() {
+        return Err(format!("{} exists but is not a directory", root.display()));
+    }
+    if root.join(".iii").join("project.ini").exists() {
+        return Ok(());
+    }
+    if allow_non_empty {
+        return Ok(());
+    }
+    let entries: Vec<String> = match std::fs::read_dir(root) {
+        Ok(rd) => rd
+            .filter_map(|e| e.ok())
+            .map(|e| e.file_name().to_string_lossy().into_owned())
+            .filter(|name| !name.starts_with('.'))
+            .collect(),
+        Err(e) => return Err(format!("read {}: {e}", root.display())),
+    };
+    if entries.is_empty() {
+        Ok(())
+    } else {
+        let mut sample = entries.clone();
+        sample.sort();
+        let preview: Vec<String> = sample.iter().take(5).cloned().collect();
+        let suffix = if sample.len() > 5 {
+            format!(", and {} more", sample.len() - 5)
+        } else {
+            String::new()
+        };
+        Err(format!(
+            "{} contains {}{}",
+            root.display(),
+            preview.join(", "),
+            suffix
+        ))
+    }
 }
 
-#[derive(Subcommand, Debug)]
-pub enum Commands {
-    /// Install a worker from the iii registry, a path to a local worker directory (ex.
-    /// `./myWorker` with a `iii.worker.yaml` file within it)
-    /// or by OCI image reference. To create a NEW worker from scratch, use
-    /// `iii worker init`.
-    /// By default `add` waits up to 120s for the worker to report ready.
-    /// After which the worker will continue to boot but the command will
-    /// return to the shell. See `iii worker status` to continue observing
-    /// a booting worker and `iii worker logs` for logs.
-    Add {
-        #[command(flatten)]
-        args: AddArgs,
+/// Build a `TemplateFetcher` -- local-dir fixture when `template_dir` is set,
+/// otherwise the canonical remote source from `IiiConfig`.
+pub fn build_fetcher(template_dir: Option<&str>) -> anyhow::Result<TemplateFetcher> {
+    if let Some(dir) = template_dir {
+        Ok(TemplateFetcher::from_local(
+            PathBuf::from(dir),
+            IiiConfig.name(),
+        ))
+    } else {
+        TemplateFetcher::from_config(&IiiConfig)
+    }
+}
 
-        /// Force re-download: delete existing artifacts before adding
-        #[arg(long, short = 'f')]
-        force: bool,
+/// Apply a template to `target`, skipping any files that already exist at the
+/// destination. This is the idempotent variant -- safe to re-run without
+/// clobbering user edits to `.gitignore`, `iii.worker.yaml`, or any other
+/// scaffolded file. Equivalent to `write_if_absent` per-file.
+///
+/// Merges the root manifest's `language_files` with the per-template overrides.
+pub async fn apply_template_idempotent(
+    fetcher: &mut TemplateFetcher,
+    template_name: &str,
+    target: &Path,
+) -> anyhow::Result<()> {
+    let root_manifest = fetcher.fetch_root_manifest().await?;
+    let manifest = fetcher.fetch_template_manifest(template_name).await?;
+    let mut language_files = root_manifest.language_files.clone();
+    language_files.merge(&manifest.language_files);
 
-        /// Don't block waiting for the engine to finish booting the worker.
-        #[arg(long)]
-        no_wait: bool,
-    },
+    // copy_template writes files unconditionally. To get write-if-absent
+    // behavior, scaffold into a tempdir first, then walk it and copy each
+    // entry to `target` only when the destination doesn't already exist.
+    let staging = tempfile::tempdir()?;
+    copy_template(
+        fetcher,
+        template_name,
+        &manifest,
+        staging.path(),
+        &[],
+        &language_files,
+    )
+    .await?;
+    merge_dir_if_absent(staging.path(), target)?;
+    Ok(())
+}
 
-    /// Remove one or more workers from config.yaml and iii.lock. The engine's
-    /// file watcher tears down any running sandbox. Artifacts under
-    /// ~/.iii/managed/{name}/ remain; use `iii worker clear {name}` to delete them.
-    Remove {
-        /// Worker names to remove (e.g., "pdfkit")
-        #[arg(value_name = "WORKER", required = true, num_args = 1..)]
-        worker_names: Vec<String>,
+fn merge_dir_if_absent(src: &Path, dst: &Path) -> std::io::Result<()> {
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let from = entry.path();
+        let to = dst.join(entry.file_name());
+        let ft = entry.file_type()?;
+        if ft.is_dir() {
+            std::fs::create_dir_all(&to)?;
+            merge_dir_if_absent(&from, &to)?;
+        } else if !to.exists() {
+            if let Some(parent) = to.parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+            std::fs::copy(&from, &to)?;
+        }
+    }
+    Ok(())
+}
 
-        /// Skip the confirmation prompt when a worker is currently running
-        #[arg(long, short = 'y')]
-        yes: bool,
-    },
+/// Print a standardized error block (red header, dimmed cause + fix lines) and
+/// return exit code `1`.
+pub fn print_err(problem: &str, cause: &str, fix: &str) -> i32 {
+    eprintln!("{} {}", "error:".red().bold(), problem);
+    eprintln!("  {} {}", "cause:".dimmed(), cause);
+    eprintln!("  {} {}", "fix:".dimmed(), fix);
+    1
+}
 
-    /// Re-download a worker (like `add --force`, but returns immediately instead of waiting
-    /// for the worker to report ready; pass `--reset-config` to also reset its config.yaml
-    /// entry to registry defaults)
-    Reinstall {
-        #[command(flatten)]
-        args: AddArgs,
-    },
+```
 
-    /// Update workers pinned in iii.lock to the latest version published in the registry,
-    /// rewriting config.yaml and iii.lock
-    Update {
-        /// Optional worker name to update. If omitted, updates every worker in iii.lock.
-        #[arg(value_name = "WORKER")]
-        worker_name: Option<String>,
-    },
+### Core Architecture Module: `crates/scaffolder-core/src/iii.rs`
+```
+//! iii-specific [`ProductConfig`] implementation.
+//!
+//! Lives here (rather than in the engine binary) so that any future caller
+//! who wants to drive the scaffolder against the iii product reuses one
+//! definition. Constants are also drawn from [`runtime::tool::iii_tool`]
+//! where possible to keep docs/install URLs in a single place.
+//!
+//! See `crates/motia-tools/src/main.rs` for the parallel `MotiaConfig` impl
+//! (which lives in its own binary because that binary is published
+//! separately as `motia-tools`).
+//!
+//! [`ProductConfig`]: crate::ProductConfig
 
-    /// Clear downloaded worker artifacts from ~/.iii/ (local-only, no engine connection needed).
-    /// Does not affect a worker's own build artifacts or dependencies (e.g. node_modules, Cargo.lock).
-    Clear {
-        /// Worker name to clear (omit to clear all)
-        #[arg(value_name = "WORKER")]
-        worker_name: Option<String>,
+use crate::product::ProductConfig;
 
-        /// Skip confirmation prompt
-        #[arg(long, short = 'y')]
-        yes: bool,
-    },
+/// Product-config impl for iii.
+#[derive(Debug, Clone, Default)]
+pub struct IiiConfig;
 
-    /// Start a previously stopped managed worker container. If the worker has no
-    /// local artifacts (e.g. after `iii worker clear`), it is fetched from the
-    /// registry first.
-    /// By default waits up to 120s for the worker to report ready before returning.
-    /// Workers will continue to start after 120s, see `iii worker status` and `iii worker logs` for
-    /// tracking workers.
-    Start {
-        /// Worker name to start
-        #[arg(value_name = "WORKER")]
-        worker_name: String,
+impl ProductConfig for IiiConfig {
+    fn name(&self) -> &'static str {
+        "iii"
+    }
 
-        /// Return immediately. Don't block waiting for the worker to report ready.
-        #[arg(long)]
-        no_wait: bool,
+    fn display_name(&self) -> &'static str {
+        "iii"
+    }
 
-        /// Engine WebSocket port the spawned worker connects back to. Defaults
-        /// to the iii-worker-manager port in config.yaml (else 49134); the
-        /// engine passes its configured port explicitly when auto-spawning
-        /// external workers so non-default manager ports don't silently
-        /// break connectivity.
-        #[arg(long)]
-        port: Option<u16>,
+    fn default_template_url(&self) -> &'static str {
+        "https://github.com/iii-hq/templates.git"
+    }
 
-        /// YAML config forwarded to the spawned worker binary as `--config <path>`.
-        /// Binary workers only; OCI workers warn and ignore.
-        #[arg(long, value_name = "PATH")]
-        config: Option<PathBuf>,
-    },
+    fn template_url_env(&self) -> &'static str {
+        "III_TEMPLATE_URL"
+    }
 
-    /// Stop a managed worker container. Stop is treated as a routine,
-    /// reversible action; running `iii worker start <name>` brings the worker
-    /// back up.
-    Stop {
-        /// Worker name to stop
-        #[arg(value_name = "WORKER")]
-        worker_name: String,
-        /// Backward-compat no-op. Stop never prompts; the flag is kept
-        /// so scripts that already pass `-y` keep working.
-        #[arg(short = 'y', long = "yes")]
-        yes: bool,
-    },
+    fn requires_iii(&self) -> bool {
+        true
+    }
 
-    /// Restart a managed worker: stop if running, then start (same start path as
-    /// `iii worker start`, including the registry fetch for missing local artifacts).
-    /// By default waits up to 120s for the worker to report ready (same as start).
-    Restart {
-        /// Worker name to restart
-        #[arg(value_name = "WORKER")]
-        worker_name: String,
+    fn docs_url(&self) -> &'static str {
+        // Source of truth lives in `runtime::tool::iii_tool()`. We
+        // re-state the URL here because the trait demands `&'static str`
+        // and `iii_tool().config().docs_url` is an opaque accessor; if
+        // the source of truth moves, a search for `iii.dev/docs` will
+        // surface every site that needs to be updated.
+        "https://iii.dev/docs"
+    }
 
-        /// Return immediately. Don't block waiting for the worker to report ready.
-        #[arg(long)]
-        no_wait: bool,
+    fn cli_description(&self) -> &'static str {
+        "CLI for scaffolding iii projects"
+    }
 
-        /// Engine WebSocket port the spawned worker connects back to. Same
-        /// semantics as `start --port`.
-        #[arg(long)]
-        port: Option<u16>,
+    fn upgrade_command(&self) -> &'static str {
+        "iii update"
+    }
+}
 
-        /// Same as `start --config`.
-        #[arg(long, value_name = "PATH")]
-        config: Option<PathBuf>,
-    },
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    /// List all workers and their status
-    List,
+    #[test]
+    fn iii_config_defaults_match_runtime_tool() {
+        let cfg = IiiConfig;
+        assert_eq!(cfg.name(), "iii");
+        assert_eq!(cfg.display_name(), "iii");
+        assert_eq!(
+            cfg.docs_url(),
+            crate::runtime::tool::iii_tool().config().docs_url
+        );
+        assert!(cfg.requires_iii());
+    }
+}
 
-    /// Install registry-managed workers exactly from iii.lock.
-    Sync {
-        /// Verify lockfile dependencies without mutating local files.
-        /// Useful for validation in CICD.
-        #[arg(long)]
-        frozen: bool,
-    },
+```
 
-    /// Verify config.yaml and iii.lock agree: every managed worker in config.yaml
-    /// must be pinned in iii.lock for this platform.
-    Verify {
-        /// Also check dependency declarations against locked versions.
-        #[arg(long)]
-        strict: bool,
-    },
+### Core Architecture Module: `crates/scaffolder-core/src/lib.rs`
+```
+//! Scaffolder Core - Shared library for project scaffolding CLIs
+//!
+//! This library provides the core functionality for scaffolding projects from templates.
+//! It is designed to be used by multiple CLI binaries (e.g., `motia`, `iii`) that share
+//! the same underlying scaffolding logic but have different product configurations.
+//!
+//! # Architecture
+//!
+//! - **Core operations:** template fetching, copying, runtime detection, telemetry
+//! - **Workflow orchestration:** `ProductConfig` trait describing each product
+//! - **CLI/TUI interface:** cliclack-based prompts exposed via `run`
 
-    /// Show detailed status of one worker (config, sandbox, process, logs).
-    /// By default refreshes live in place until the worker reaches a success
-    /// or failure state; exits immediately when the engine is not running.
-    Status {
-        /// Worker name
-        #[arg(value_name = "WORKER")]
-        worker_name: String,
+pub mod cli;
+pub mod iii;
+pub mod product;
+pub mod runtime;
+pub mod telemetry;
+pub mod templates;
+pub mod tui;
 
-        /// Print status and exit immediately (no live refresh)
-        #[arg(long)]
-        no_watch: bool,
-    },
+// Re-export main types for convenience
+pub use iii::IiiConfig;
+pub use product::ProductConfig;
+pub use runtime::{Language, RuntimeInfo, check_runtimes};
+pub use templates::{
+    LanguageFiles, RootManifest, TemplateFetcher, TemplateManifest, TemplateSource, copy_template,
+};
+pub use tui::run;
 
-    /// Show logs from a managed worker container. Logs are read from the
-    /// local log files under ~/.iii/logs/{name}/.
-    Logs {
-        /// Worker name
-        #[arg(value_name = "WORKER")]
-        worker_name: String,
-
-        /// Follow log output
-        #[arg(long, short)]
-        follow: bool,
-    },
-
-    /// Scaffold a NEW standalone worker repo from scratch.
-    /// To install an EXISTING worker, use `iii worker add`.
-    Init(super::init::InitArgs),
-
-    /// Run a command inside a running worker's VM. Pipes stdin/stdout/
-    /// stderr through and returns the child's exit code. Pass `-t` for
-    /// an interactive PTY.
-    Exec(ExecArgs),
-
-    /// Manage ephemeral sandboxes (create/exec/stop short-lived VMs).
-    Sandbox {
-        #[command(subcommand)]
-        cmd: SandboxCmd,
-    },
-
-    /// Internal: sandbox RPC daemon. Started automatically by the iii
-    /// engine when `iii-sandbox` appears in config.yaml.
-    #[command(name = "sandbox-daemon", hide = true)]
-    SandboxDaemon(SandboxDaemonArgs),
-
-    /// Internal: boot a libkrun VM (crash-isolated subprocess)
-    #[command(name = "__vm-boot", hide = true)]
-    VmBoot(super::vm_boot::VmBootArgs),
-
-    /// Internal: build a bundle worker's VM and print how to start it
-    #[command(name = "__bundle-prepare", hide = true)]
-    BundlePrepare,
-
-    /// Internal: build a local-path worker's VM and print how to start it
-    #[command(name = "__local-prepare", hide = true)]
-    LocalPrepare,
-
-    /// Internal: download base images into the shared rootfs cache without
-    /// starting anything, so a later spawn finds them already there.
-    #[command(name = "__pull-images", hide = true)]
-    PullImages {
-        /// OCI references, e.g. `docker.io/iiidev/node:latest`.
-        #[arg(required = true)]
-        images: Vec<String>,
-    },
-
-    /// Internal: host-side source watcher sidecar for local-path workers
-    #[command(name = "__watch-source", hide = true)]
-    WatchSource(WatchSourceArgs),
-
-    /// Generate the committed MDX CLI reference page from this binary's
-    /// clap definitions (build tooling; see scripts/generate-cli-docs.sh)
-    #[command(name = "gen-cli-docs", hide = true)]
-    Ge
 ```
 
 
@@ -2263,235 +2241,427 @@ pub enum Commands {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f467738` (2026-11-07)
-**Commit Message**: fix(website): bump next, mermaid and shadcn for Supply Chain advisories (#2487)
+### Incident Patch 1: `69f3520b` (2026-11-10)
+**Commit Message**: fix(subscribe): install from bun.lock before the worker starts (#2511)
 
-**File**: `website/package.json` (modified, +3/-3)
+**File**: `services/subscribe/README.md` (modified, +6/-5)
 ```diff
-@@ -30,9 +30,9 @@
-     "hast-util-to-jsx-runtime": "^2.3.6",
-     "lucide-react": "^1.48.0",
-     "marked": "^18.0.5",
--    "mermaid": "^11.16.0",
-+    "mermaid": "^11.17.2",
-     "motion": "^13.4.6",
--    "next": "16.3.6",
-+    "next": "16.4.5",
-     "next-themes": "^0.4.6",
-     "react": "19.2.8",
-     "react-dom": "19.2.8",
-@@ -42,7 +42,7 @@
-     "remark-parse": "^11.0.0",
-     "remark-rehype": "^11.1.2",
-     "server-only": "^0.0.1",
--    "shadcn": "^4.21.0",
-+    "shadcn": "^4.23.0",
-     "shiki": "^4.4.3",
-     "tailwind-merge": "^3.7.0",
-     "three": "^0.186.1",
+@@ -30,13 +30,14 @@ Set in `worker-compose.yaml`, except the key:
+ 
+ ## Develop
+ 
+-Bun, not pnpm: this directory is deployed on its own (iii Cloud installs at the environment's root
+-directory), so it keeps its own `bun.lock` outside the pnpm workspace.
++Bun, not pnpm: the worker is deployed on its own, so it keeps its own `package.json` and
++`bun.lock` in `workers/subscribe/`, outside the pnpm workspace. Its start command installs from
++that lockfile before running, both on iii Cloud and in a local compose VM (which sees only the
++worker's directory).
+ 
+ ```bash
+-bun install
+-bun test
+-RESEND_API_KEY=re_... iii compose --up   # engine + http worker + this worker
++cd workers/subscribe && bun install && bun test
++RESEND_API_KEY=re_... iii compose --up   # from services/subscribe: engine + http worker + this worker
+ ```
+ 
+ ## Deploy
+```
+
+**File**: `services/subscribe/workers/subscribe/iii.worker.yaml` (modified, +7/-1)
+```diff
+@@ -3,4 +3,10 @@ description: iii.dev email signup, POST /api/subscribe (Resend contact + welcome
+ runtime:
+   base_image: oven/bun:1.3
+ scripts:
+-  start: bun run index.ts
++  # Install from bun.lock before starting. Without node_modules, Bun falls back to
++  # auto-install, which fetches the latest versions and leaves peer dependencies
++  # unresolved: iii-sdk's OpenTelemetry packages then fail on '@opentelemetry/api'.
++  # The manifest and lockfile live in this directory, so this works wherever the
++  # worker runs: iii Cloud's image, or the /workspace of a local compose VM, which
++  # holds this directory alone. When node_modules is current this is a no-op.
++  start: bun install --frozen-lockfile --production && exec bun run index.ts
 ```
 
 ---
 
-### Incident Patch 2: `d5e595f8` (2026-11-06)
-**Commit Message**: ci(bench): report CPU and memory in /bench and in the release benchmarks (#2485)
+### Incident Patch 2: `6806db60` (2026-11-09)
+**Commit Message**: fix(deps): bump zstd chain, rusqlite and async-executor for Supply Chain advisories (#2498)
 
-Co-authored-by: iii harness (claude-sonnet-5-5) <[REDACTED_EMAIL]>
+Fix the Rust advisories job of the Supply Chain workflow:
 
-**File**: `.github/workflows/bench-compare.yml` (modified, +93/-3)
+- zstd 0.13.4, zstd-safe 7.4.0 and zstd-sys 2.1.2 (RUSTSEC-2026-0391,
+  -0398, -0403, -0410) with a lockfile-only update; msb_krun stays
+  pinned at =0.1.16.
+- rusqlite 0.41.1 / libsqlite3-sys 0.39.1 (RUSTSEC-2026-0459, bundled
+  SQLite).
+- async-executor 1.14.1 (1.14.0 was yanked).
+- Both CONTRIBUTING.md guides now ask for Rust 1.91+.
+
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
+
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,9 @@ name: Benchmark Compare
- # the `iii/vX.Y.Z[-pre]` release tag. The first ref listed is the baseline the
- # other columns are compared against.
- #
-+# Besides the timings, the report lists the peak memory and the CPU each bench
-+# binary used (see "Install the resource-measuring bench runner" below).
-+#
- # Constraints:
- #   - GitHub runs issue_comment workflows from the DEFAULT branch only, so this
- #     file must be merged into main before /bench works on any PR (including PRs
-@@ -169,6 +172,27 @@ jobs:
-           PR: ${{ needs.authorize.outputs.pr }}
-         run: git fetch --no-tags origin "refs/pull/$PR/head"
+@@ -61,7 +61,7 @@ their behalf, or your employer must have waived such rights for your contributio
  
-+      # Cargo runs every bench binary through this wrapper (a target runner), which
-+      # prints the binary's wall time, CPU time and peak memory (GNU time) next to
-+      # its timings. It lives outside the checked-out tree, so refs that predate it
-+      # are measured the same way.
-+      - name: Install the resource-measuring bench runner
-+        run: |
-+          cat > "$RUNNER_TEMP/bench-runner.sh" <<'RUNNER'
-+          #!/usr/bin/env bash
-+          # cargo runner: bench-runner.sh <bench-binary> [args...]
-+          if [[ ! -x /usr/bin/time ]]; then exec "$@"; fi
-+          name="$(basename "$1")"; name="${name%-*}"
-+          tmp="$(mktemp)"
-+          /usr/bin/time -f '%e %U %S %M' -o "$tmp" "$@"
-+          rc=$?
-+          read -r wall user sys maxrss < <(tail -n1 "$tmp")
-+          rm -f "$tmp"
-+          printf '\n%s\n' "resource $name wall_s=${wall:-0} user_s=${user:-0} sys_s=${sys:-0} maxrss_kb=${maxrss:-0}"
-+          exit "$rc"
-+          RUNNER
-+          chmod +x "$RUNNER_TEMP/bench-runner.sh"
-+
-       # All refs run sequentially on the SAME runner so the numbers are
-       # comparable (separate runners add 10-20% noise). Each ref is benchmarked
-       # with its own benches, so a tag that predates a benchmark simply has no
-@@ -180,6 +204,9 @@ jobs:
-         run: |
-           set -uo pipefail
-           mkdir -p out
-+          # Cargo's per-target runner, set through the environment so it wins over any .cargo/config of a ref.
-+          HOST="$(rustc -vV | sed -n 's/^host: //p')"
-+          RUNNER_VAR="CARGO_TARGET_$(echo "$HOST" | tr 'a-z-' 'A-Z_')_RUNNER"
-           echo "$REFS" > out/refs.json
-           N=$(jq length out/refs.json)
-           for i in $(seq 0 $((N-1))); do
-@@ -192,7 +219,7 @@ jobs:
-               git fetch --no-tags origin "$REV" || echo "::warning::pinned commit $REV is not available (PR force-pushed?)"
-             fi
-             if git worktree add --detach "$DIR" "$REV" && \
--               (cd "$DIR" && cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee "$GITHUB_WORKSPACE/out/$i.txt"; exit "${PIPESTATUS[0]}"); then
-+               (cd "$DIR" && env "$RUNNER_VAR=$RUNNER_TEMP/bench-runner.sh" cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee "$GITHUB_WORKSPACE/out/$i.txt"; exit "${PIPESTATUS[0]}"); then
-               echo ok > "out/$i.status"
-             else
-               echo failed > "out/$i.status"
-@@ -240,22 +267,31 @@ jobs:
-           def line_re():
-               return re.compile(r'^test (.+?) \.\.\. bench:\s+([\d,]+) ns/iter \(\+/- ([\d,]+)\)')
+ ### Prerequisites
  
-+          def res_re():
-+              # Printed by the bench runner: one line per bench binary.
-+              return re.compile(r'^resource (\S+) wall_s=([\d.]+) user_s=([\d.]+) sys_s=([\d.]+) maxrss_kb=(\d+)')
-+
-           try:
-               refs = json.load(open('out/refs.json'))
-           except Exception:
-               refs = []
+-- Rust 1.80+ (edition 2024)
++- Rust 1.91+ (edition 2024)
+ - Redis (only if you enable the event/cron/stream workers)
  
--          results, status = [], []
-+          results, status, resources = [], [], []
-           for i, _ in enumerate(refs):
--              data = {}
-+              data, res = {}, {}
-               try:
-                   for line in open(f'out/{i}.txt', errors='replace'):
-+                      rm = res_re().match(line.strip())
-+                      if rm:
-+                          res[rm.group(1)] = {'wall': float(rm.group(2)), 'user': float(rm.group(3)),
-+                                              'sys': float(rm.group(4)), 'rss_kb': int(rm.group(5))}
-                       m = line_re().match(line.strip())
-                       if m:
-                           data[m.group(1)] = int(m.group(2).replace(',', ''))
-               except FileNotFoundError:
-                   pass
-               results.append(data)
-+              resources.append(res)
-               try:
-                   status.append(open(f'out/{i}.status').read().strip())
-               except FileNotFoundError:
-@@ -365,6 +401,60 @@ jobs:
-               else:
-                   out.append('_Full table omitted (too long for a comment); see the run summary and the artifact attached to the workflow run._')
-                   open(os.environ['GITHUB_STEP_SUMMARY'], 'a').write(full + '\n')
-+          # CPU and memory of each bench binary: peak resident memory, and the cores it kept busy on
-+          # average ((user + sys CPU time
+ ### Setting Up Your Development Environment
 ```
 
-**File**: `.github/workflows/bench-release.yml` (modified, +66/-1)
+**File**: `Cargo.lock` (modified, +24/-24)
 ```diff
-@@ -30,8 +30,32 @@ jobs:
-         with:
-           cache-on-failure: true
+@@ -151,7 +151,7 @@ version = "1.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
+ dependencies = [
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+ ]
  
-+      # Cargo runs every bench binary through this wrapper (a target runner), which
-+      # prints the binary's wall time, CPU time and peak memory (GNU time) next to
-+      # its timings. The same wrapper is used by /bench (bench-compare.yml).
-+      - name: Install the resource-measuring bench runner
-+        run: |
-+          cat > "$RUNNER_TEMP/bench-runner.sh" <<'RUNNER'
-+          #!/usr/bin/env bash
-+          # cargo runner: bench-runner.sh <bench-binary> [args...]
-+          if [[ ! -x /usr/bin/time ]]; then exec "$@"; fi
-+          name="$(basename "$1")"; name="${name%-*}"
-+          tmp="$(mktemp)"
-+          /usr/bin/time -f '%e %U %S %M' -o "$tmp" "$@"
-+          rc=$?
-+          read -r wall user sys maxrss < <(tail -n1 "$tmp")
-+          rm -f "$tmp"
-+          printf '\n%s\n' "resource $name wall_s=${wall:-0} user_s=${user:-0} sys_s=${sys:-0} maxrss_kb=${maxrss:-0}"
-+          exit "$rc"
-+          RUNNER
-+          chmod +x "$RUNNER_TEMP/bench-runner.sh"
-+
-       - name: Run benchmarks
--        run: cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee bench-output.txt
-+        id: bench
-+        run: |
-+          HOST="$(rustc -vV | sed -n 's/^host: //p')"
-+          RUNNER_VAR="CARGO_TARGET_$(echo "$HOST" | tr 'a-z-' 'A-Z_')_RUNNER"
-+          env "$RUNNER_VAR=$RUNNER_TEMP/bench-runner.sh" cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee bench-output.txt
+ [[package]]
+@@ -162,7 +162,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
+ dependencies = [
+  "anstyle",
+  "once_cell_polyfill",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+ ]
  
-       - name: Extract version from tag
-         id: meta
-@@ -64,6 +88,47 @@ jobs:
-           GH_TOKEN: ${{ github.token }}
-         run: gh workflow run deploy-website.yml --repo "${{ github.repository }}" --ref main
+ [[package]]
+@@ -271,9 +271,9 @@ dependencies = [
  
-+      # Peak memory and the cores kept busy by each bench binary, as a second
-+      # series on the same gh-pages charts (lower is better). iii.dev/benchmarks
-+      # reads only the timing series above, so this one does not change the site.
-+      # `!cancelled()` so a failed website dispatch above does not skip these (it still fails the job).
-+      - name: Collect CPU and memory
-+        if: ${{ !cancelled() && steps.bench.outcome == 'success' }}
-+        run: |
-+          python3 - <<'PY'
-+          import json, re
-+          out = []
-+          pat = re.compile(r'^resource (\S+) wall_s=([\d.]+) user_s=([\d.]+) sys_s=([\d.]+) maxrss_kb=(\d+)')
-+          for line in open('bench-output.txt', errors='replace'):
-+              m = pat.match(line.strip())
-+              if not m:
-+                  continue
-+              name = m.group(1)
-+              wall, user, sys_ = float(m.group(2)), float(m.group(3)), float(m.group(4))
-+              out.append({'name': f'{name} / peak memory', 'unit': 'MiB', 'value': round(int(m.group(5)) / 1024, 1)})
-+              if wall > 0:
-+                  out.append({'name': f'{name} / cores busy', 'unit': 'cores', 'value': round((user + sys_) / wall, 2)})
-+          if out:
-+              json.dump(out, open('resources.json', 'w'), indent=1)
-+          print(f'{len(out)} resource series')
-+          PY
+ [[package]]
+ name = "async-executor"
+-version = "1.14.0"
++version = "1.14.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c96bf972d85afc50bf5ab8fe2d54d1586b4e0b46c97c50a0c9e71e2f7bcd812a"
++checksum = "f426a31126c735126297bc5ea7a521263c9faff4f63ca415267ee625651c4f37"
+ dependencies = [
+  "async-task",
+  "concurrent-queue",
+@@ -989,7 +989,7 @@ version = "3.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
+ dependencies = [
+- "windows-sys 0.48.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -1648,7 +1648,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users 0.5.2",
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -1767,7 +1767,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -3213,7 +3213,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
+ dependencies = [
+  "hermit-abi",
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -3561,9 +3561,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libsqlite3-sys"
+-version = "0.38.2"
++version = "0.39.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f1d20bef17f513b9b3004532233187769cd072d790971f4e4da0e346eb6401e8"
++checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+ dependencies = [
+  "cc",
+  "pkg-config",
+@@ -4090,7 +4090,7 @@ version = "0.50.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+ dependencies = [
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -5332,9 +5332,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rusqlite"
+-version = "0.40.2"
++version = "0.41.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "23f2a97da3e3873c73cb2a2e71b35c40ff95e0b1eefa8d72d8499a6928c3b5b3"
++checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+ dependencies = [
+  "bitflags 2.11.1",
+  "fallible-iterator",
+@@ -5379,7 +5379,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -5462,7 +5462,7 @@ dependencies = [
+  "security-framework",
+  "security-framework-sys",
+  "webpki-root-certs",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -5957,7 +5957,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
+ dependencies = [
+  "libc",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -6209,7 +6209,7 @@ dependencies = [
+  "getrandom 0.4.2",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -7278,7 +7278,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.48.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -8018,27 +8018,27 @@ checksum = "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
+ 
+ [[package]]
+ name = "zstd"
+-version = "0.13.3"
++version = "0.13.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
++checksum = "cdb02c3132d251ab1606e9fc913a7da6c6ed08cc263df15edf082e1dc497d157"
+ dependencies = [
+  "zstd-safe",
+ ]
+ 
+ [[package]]
+ name = "zstd-safe"
+-version = "7.2.4"
++version = "7.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8f49c4d5f0abb602a93fb8736af2a4f4dd9512e36f7f570d66e65ff867ed3b9d"
++checksum = "1c8ea04668f5de8d8d51051714ba560c9536519cadcdb8829bba4fe2ad159b03"
+ dependencies = [
+  "zstd-sys",
+ ]
+ 
+ [[package]]
+ name = "zstd-sys"
+-version = "2.0.16+zstd.1.5.7"
++version = "2.1.2+zstd.1.5.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "91e19ebc2adc8f83e43039e79776e3fda8ca919132d68a1fed6a5faca2683748"
++checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
+ dependencies = [
+  "cc",
+  "pkg-config",
+```
+
+**File**: `engine/CONTRIBUTING.md` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ respectful and constructive in all interactions.
+ 
+ ### Prerequisites
+ 
+-- **Rust 1.80+** - Install via [rustup](https://rustup.rs/)
++- **Rust 1.91+** - Install via [rustup](https://rustup.rs/)
+ - **Redis** (optional) - Required for event bus, state, and cron modules
+ - **RabbitMQ** (optional) - Alternative event bus adapter
+ - **pre-commit** - For Git hooks (`pip install pre-commit`)
+```
+
+**File**: `engine/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -110,7 +110,7 @@ hyper = { version = "1", features = ["http1", "server"] }
+ hyper-util = { version = "0.1", features = ["tokio", "service"] }
+ serde = { version = "1", features = ["derive", "rc"] }
+ serde_json = "1"
+-rusqlite = { version = "0.40.2", features = ["bundled", "hooks"] }
++rusqlite = { version = "0.41.1", features = ["bundled", "hooks"] }
+ schemars = "0.8"
+ serde_yaml = "0.9"
+ url = { workspace = true }
+```
+
+---
+
+### Incident Patch 3: `bb5390b6` (2026-11-11)
+**Commit Message**: fix: license headers on two observer tests and a stale state event in the Python SDK (#2523)
+
+**File**: `engine/src/observer/dispatch/metadata_tests.rs` (modified, +6/-0)
+```diff
+@@ -1,3 +1,9 @@
++// Copyright Motia LLC and/or licensed to Motia LLC under one or more
++// contributor license agreements. Licensed under the Elastic License 2.0;
++// you may not use this file except in compliance with the Elastic License 2.0.
++// This software is patent protected. We welcome discussions - reach out at team@iii.dev
++// See LICENSE and PATENTS files for details.
 +
-+      - name: Store CPU and memory result
-+        if: ${{ !cancelled() && steps.bench.outcome == 'success' && hashFiles('resources.json') != '' }}
-+        uses: benchmark-action/github-action-benchmark@v1
-+        with:
-+          name: iii Engine Benchmarks (CPU and memory)
-+          tool: 'customSmallerIsBetter'
-+          output-file-path: resources.json
-+          gh-pages-branch: gh-pages
-+          benchmark-data-dir-path: dev/bench
-+          github-token: ${{ secrets.GITHUB_TOKEN }}
-+          auto-push: true
-+          alert-threshold: '150%'
-+          comment-on-alert: true
-+          summary-always: true
-+          alert-comment-cc-users: '@iii-hq/engine'
+ //! Decision 62: a call's metadata is shared (`Arc<Value>`), not deep-copied,
+ //! by the observed call that keeps it and by the activation envelopes built
+ //! from it, and what the observers receive is unchanged.
+```
+
+**File**: `engine/src/observer/legacy_matrix_tests.rs` (modified, +6/-0)
+```diff
+@@ -1,3 +1,9 @@
++// Copyright Motia LLC and/or licensed to Motia LLC under one or more
++// contributor license agreements. Licensed under the Elastic License 2.0;
++// you may not use this file except in compliance with the Elastic License 2.0.
++// This software is patent protected. We welcome discussions - reach out at team@iii.dev
++// See LICENSE and PATENTS files for details.
 +
-       - name: Upload raw criterion data
-         uses: actions/upload-artifact@v4
-         with:
+ //! Decision 60: an older SDK's `source.on` / `source.deliver` are translated
+ //! at registration instead of refused, and every one of the 528 old
+ //! `on` x `deliver` x `capture` combinations fires on exactly the outcomes it
+```
+
+**File**: `sdk/packages/python/iii/src/iii/observer_handle.py` (modified, +23/-11)
+```diff
+@@ -57,7 +57,8 @@ def __init__(
+         self._reason: ObserveReason | None = None
+         self._listeners: list[StateListener] = []
+         self._schedule = schedule
+-        self._undelivered: deque[tuple[ObserverState, ObserveReason | None]] = deque()
++        # Each change with the listeners subscribed when it happened.
++        self._undelivered: deque[tuple[ObserverState, ObserveReason | None, tuple[StateListener, ...]]] = deque()
+         self._delivering = False
+         self._changed = threading.Condition()
+         #: Sent on some connection: the engine may hold it, so disposing it needs an ``unobserve``.
+@@ -155,15 +156,18 @@ def wake(_state: ObserverState, _reason: ObserveReason | None) -> None:
+             raise error
+ 
+     def on_state_change(self, listener: StateListener) -> Callable[[], None]:
+-        """Calls ``listener(state, reason)`` on every state change, in order,
+-        on the SDK's callback thread. Returns the unsubscribe function."""
+-        self._listeners.append(listener)
++        """Calls ``listener(state, reason)`` on every state change after it
++        subscribes, in order, on the SDK's callback thread. Returns the
++        unsubscribe function; a change still queued then is not delivered to it."""
++        with self._changed:
++            self._listeners.append(listener)
+ 
+         def off() -> None:
+-            try:
+-                self._listeners.remove(listener)
+-            except ValueError:
+-                pass
++            with self._changed:
++                try:
++                    self._listeners.remove(listener)
++                except ValueError:
++                    pass
+ 
+         return off
+ 
+@@ -194,7 +198,12 @@ def _set_state(self, state: ObserverState, reason: ObserveReason | None = None)
+                 return
+             # Delivered later, in order: a listener never runs on the read path
+             # (or inside dispose()), so it may call the client freely.
+-            self._undelivered.append((state, reason))
++            # The listeners now: one that subscribes after this change, before
++            # it is delivered, must not hear it.
++            listeners = tuple(self._listeners)
++            if not listeners:
++                return
++            self._undelivered.append((state, reason, listeners))
+             if self._delivering:
+                 return
+             self._delivering = True
+@@ -206,8 +215,11 @@ def _deliver(self) -> None:
+                 if not self._undelivered:
+                     self._delivering = False
+                     return
+-                state, reason = self._undelivered.popleft()
+-            for listener in list(self._listeners):
++                state, reason, listeners = self._undelivered.popleft()
++            for listener in listeners:
++                with self._changed:
++                    if listener not in self._listeners:
++                        continue
+                 try:
+                     listener(state, reason)
+                 except Exception:
+```
+
+**File**: `sdk/packages/python/iii/tests/test_observe_observer.py` (modified, +21/-0)
+```diff
+@@ -385,6 +385,27 @@ def bad(state: str, reason: Any) -> None:
+     wait_until(lambda: seen == ["active"], what="the second listener")
+ 
+ 
++def test_a_listener_hears_only_the_changes_made_after_it_subscribed() -> None:
++    from iii.observer_handle import ObserverHandle
++
++    queued: list[Any] = []  # the callback thread, run by hand
++    handle = ObserverHandle("x", {}, lambda handle: None, lambda: False, queued.append)
++    early: list[str] = []
++    handle.on_state_change(lambda state, reason: early.append(state))
++    handle._set_state("active")
++    late: list[str] = []
++    handle.on_state_change(lambda state, reason: late.append(state))  # before "active" is delivered
++    gone: list[str] = []
++    off = handle.on_state_change(lambda state, reason: gone.append(state))
++    handle._set_state("suspended")
++    off()  # before "suspended" is delivered
++    for deliver in queued:
++        deliver()
++    assert early == ["active", "suspended"]
++    assert late == ["suspended"]
++    assert gone == []
++
++
+ def test_ready_from_the_sdk_loop_thread_is_refused(engine: FakeEngine, connect: Any) -> None:
+     client = connect(engine)
+     handle = client.observe({"function_id": "f::a"}, "t::a")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2492** (2026-11-06): fix(engine): bound trace reads so summaries never decode span payloads (MOT-5648) (@andersonleal)
-- **PR #2490** (2026-11-06): ci(bench-compare): resolve alpha release tags (iii-alpha/v*) (@guibeira)
-- **PR #2489** (2026-11-06): perf(engine): batch trace archive commits and give the writer a 16 MiB cache (@ytallo)
-- **PR #2488** (2026-11-06): perf(engine): read channel and /otel sockets with an 8 KiB buffer (@ytallo)
-- **PR #2487** (2026-11-07): fix(website): bump next, mermaid and shadcn for Supply Chain advisories (@arihantcodes)
-- **PR #2485** (2026-11-06): ci(bench): report CPU and memory in /bench and in the release benchmarks (@guibeira)
+- **PR #2524** (2026-11-11): feat(compose)!: explicit VM mode replaces the implicit VM path (@guibeira)
+- **PR #2523** (2026-11-11): fix: license headers on two observer tests and a stale state event in the Python SDK (@ytallo)
+- **PR #2518** (2026-11-11): chore(compose): scaffold the explicit VM mode interfaces (@guibeira)
+- **PR #2517** (2026-11-11): feat(sandbox-contract): contract 1.3 with worker::build (@guibeira)
+- **PR #2514** (2026-11-10): fix(subscribe): bind the route with observe for the iii 0.26 engine (@arihantcodes)
+- **PR #2513** (2026-11-10): docs(tech-specs): explicit VM mode for Compose (@guibeira)
 
 ---
 
@@ -2511,32 +2681,37 @@ Co-authored-by: iii harness (claude-sonnet-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. website): bump next, mermaid and shadcn for Supply Chain advisories (#2487)
+## X. subscribe): install from bun.lock before the worker starts (#2511)
 
 **RULE**:
-When implementing operations in `website/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `services/subscribe/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f467738`: website): bump next, mermaid and shadcn for Supply Chain advisories (#2487). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69f3520b`: subscribe): install from bun.lock before the worker starts (#2511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `services/subscribe/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "mermaid": "^11.17.2",
-    "next": "16.4.5",
-    "shadcn": "^4.23.0",
+Bun, not pnpm: the worker is deployed on its own, so it keeps its own `package.json` and
+`bun.lock` in `workers/subscribe/`, outside the pnpm workspace. Its start command installs from
+that lockfile before running, both on iii Cloud and in a local compose VM (which sees only the
+worker's directory).
+cd workers/subscribe && bun install && bun test
+RESEND_API_KEY=re_... iii compose --up   # from services/subscribe: engine + http worker + this worker
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "mermaid": "^11.16.0",
-    "next": "16.3.6",
-    "shadcn": "^4.21.0",
+Bun, not pnpm: this directory is deployed on its own (iii Cloud installs at the environment's root
+directory), so it keeps its own `bun.lock` outside the pnpm workspace.
+bun install
+bun test
+RESEND_API_KEY=re_... iii compose --up   # engine + http worker + this worker
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f467738` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69f3520b` are properly handled with clean fallback behavior.

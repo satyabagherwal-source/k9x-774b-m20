@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T12:08:34.851Z",
-  "total_cycles_completed": 8787,
-  "total_learnings_persisted": 8787,
-  "total_rules_promoted": 8650,
+  "last_updated": "2026-11-11T12:53:34.252Z",
+  "total_cycles_completed": 8790,
+  "total_learnings_persisted": 8790,
+  "total_rules_promoted": 8652,
   "history": [
-    {
-      "timestamp": "2026-11-09T16:04:17.199Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:10:53.625Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:10:56.066Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T16:11:00.715Z",
       "repository": "invertase/react-native-firebase",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T12:08:34.851Z",
       "repository": "mikepenz/AboutLibraries",
       "learningId": "learn-github-mikepenz-aboutlibraries",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T12:53:26.316Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T12:53:28.388Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T12:53:34.252Z",
+      "repository": "aquasecurity/trivy-operator",
+      "learningId": "learn-github-aquasecurity-trivy-operator",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

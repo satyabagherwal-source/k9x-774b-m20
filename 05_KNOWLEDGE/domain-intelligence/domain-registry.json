@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T11:10:58.467Z",
-  "total_records": 47,
+  "last_updated": "2026-11-11T12:53:53.499Z",
+  "total_records": 48,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 17,
+      "total": 18,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -42,7 +42,8 @@
         "DOM-D-C4D2B996",
         "DOM-D-CB6BA6DF",
         "DOM-D-11562009",
-        "DOM-D-00269E5B"
+        "DOM-D-00269E5B",
+        "DOM-D-40589951"
       ]
     },
     "E": {
@@ -1886,6 +1887,47 @@
       },
       "confidence": 0.64,
       "created_at": "2026-11-11T11:10:58.466Z"
+    },
+    "DOM-D-40589951": {
+      "record_id": "DOM-D-40589951",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): xerj-org/xerj",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  \n> **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  \n> **Source Version**: `50e4ffde`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "8e3570cf329a80c7f5287338588e77d64a7e948f37869ebeeab6e3d61dd7082a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  \n> **Source**: github ([https://github.com/xerj-org/xer -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  \n> **Source**: github ([https://github.com/xerj-org/xer",
+      "provenance": {
+        "source_uri": "project://xerj-org-xerj/xerj-org-xerj-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T12:53:40.703Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (xerj-org-xerj)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of xerj-org-xerj"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T12:53:53.497Z"
     }
   }
 }

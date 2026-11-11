@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T12:08:34.719Z",
+  "last_updated": "2026-11-11T12:53:34.083Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36153,8 +36153,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "9f467738",
-      "content_hash": "ad86f125397a595dc39ce64d9762a509b06c53873588ca60caaaaa01eaafd3b7",
+      "source_version": "bb5390b6",
+      "content_hash": "79f65bcd0d03ca74eb5c3d1d5ee0a7f286b95abe4f99e651531347c1e6f862a4",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -36166,6 +36166,11 @@
         {
           "number": null,
           "title": "website): bump next, mermaid and shadcn for Supply Chain advisories (#2487)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "subscribe): install from bun.lock before the worker starts (#2511)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -36239,7 +36244,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T23:55:17.712Z",
+      "verified_at": "2026-11-11T12:53:26.111Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66666,8 +66671,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "f73bbd95",
-      "content_hash": "889fbf211418e2eee4e3656372ded3e258f31a0baa53aa80df0a347347eb0efb",
+      "source_version": "50e4ffde",
+      "content_hash": "e3b5575a06a2e47f73555bec2e76a305db31ac4bb5b4da71cfd81db590607eed",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -66782,7 +66787,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T05:26:11.563Z",
+      "verified_at": "2026-11-11T12:53:28.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189842,14 +189847,19 @@
       "slug": "aquasecurity-trivy-operator",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy-operator",
-      "source_version": "b40091af",
-      "content_hash": "3289560bedf486d5558d0d29ce63b7fc093e8a1ed479707b1a82854825b7c806",
+      "source_version": "689215dd",
+      "content_hash": "d3c6f2e44bff092c8c0174c02a063c61f491d2194393cad2b744bbb851cb1764",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-operator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-operator-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "configaudit): restore ConfigMap data for content-based… (#3054)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump ubi9/ubi-minimal in /build/trivy-operator (#3136)",
           "status": "WITHHELD_REJECT"
         }
       ],
@@ -189858,7 +189868,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:27:27.767Z",
+      "verified_at": "2026-11-11T12:53:34.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

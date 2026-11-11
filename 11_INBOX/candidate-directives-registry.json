@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T12:41:25.398Z",
+  "last_updated": "2026-11-11T12:53:40.701Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4855,6 +4855,24 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FC51E5-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-FC8F39",
+      "directive_title": "subscribe): install from bun.lock before the worker starts (#2511)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "iii-hq-iii",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FC8F39-subscribe-install-from-bun-lock-before-t.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-1E3FD1",
+      "directive_title": "build(deps): bump ubi9/ubi-minimal in /build/trivy-operator (#3136)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aquasecurity-trivy-operator",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1E3FD1-build-deps-bump-ubi9-ubi-minimal-in-buil.md",
       "staged_date": "2026-11-11"
     }
   ]

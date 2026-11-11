@@ -8940,3 +8940,7 @@
 | `CYCLE-20261111-R3Z8` | `2026-11-11T11:39:43.460Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7b4875f...`) |
 | `CYCLE-20261111-LRK1` | `2026-11-11T12:03:33.697Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9127a0f9...`) |
 | `CYCLE-20261111-S7X6` | `2026-11-11T12:08:34.842Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62692211...`) |
+| `CYCLE-20261111-DWNK` | `2026-11-11T12:53:26.288Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`79f65bcd...`) |
+| `CYCLE-20261111-DY9K` | `2026-11-11T12:53:28.376Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | Yes (`e3b5575a...`) |
+| `CYCLE-20261111-E2S6` | `2026-11-11T12:53:34.230Z` | `aquasecurity/trivy-operator` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d3c6f2e4...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T12:53:53.499Z` | `xerj-org-xerj` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-40589951` [Domain D] | Yes (`8e3570cf...`) |
