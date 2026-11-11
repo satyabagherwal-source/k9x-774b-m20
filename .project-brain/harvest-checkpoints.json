@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T10:27:16.911Z",
+  "last_updated": "2026-11-11T10:35:27.940Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2316,14 +2316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "9a5e95bd027309a23c03cf8d48eabeee3c231e0baa3ed55e77bbb6f7626370d4",
-      "verified_at": "2026-11-08T23:36:22.544Z",
+      "content_hash": "bae832341744f328b89ea8e72f08f82e6c373f7ef0bcac0a94beddd16dbc995e",
+      "verified_at": "2026-11-11T10:35:10.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:36:22.544Z"
+      "last_updated": "2026-11-11T10:35:10.431Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
-      "verified_at": "2026-11-06T13:34:56.056Z",
+      "content_hash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
+      "verified_at": "2026-11-11T10:35:27.143Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:34:56.056Z"
+      "last_updated": "2026-11-11T10:35:27.143Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -10101,14 +10101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqldelight-sqldelight",
-      "content_hash": "bddd721293a6aef30c5c0873c0a9762b63514b5cc54b27466defaed9e8ac7264",
-      "verified_at": "2026-10-27T23:01:37.410Z",
+      "content_hash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
+      "verified_at": "2026-11-11T10:35:17.401Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:01:37.410Z"
+      "last_updated": "2026-11-11T10:35:17.401Z"
     },
     "kubernetes-sigs/aws-load-balancer-controller": {
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "816afd10e93b0d56e646981162153a8668c6117cd52fad7dc14cae589a30ba25",
-      "verified_at": "2026-11-09T04:00:49.479Z",
+      "content_hash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
+      "verified_at": "2026-11-11T10:35:27.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:00:49.479Z"
+      "last_updated": "2026-11-11T10:35:27.939Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",

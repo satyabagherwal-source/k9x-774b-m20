@@ -8926,3 +8926,7 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `ef171a81` | Multi-dimensional audit evidence | 2026-11-11T10:26:49.053Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `c805ecfe` | Multi-dimensional audit evidence | 2026-11-11T10:26:52.259Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `065aed87` | Multi-dimensional audit evidence | 2026-11-11T10:27:16.903Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `3ea984cf` | Multi-dimensional audit evidence | 2026-11-11T10:35:10.373Z |
+| `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `21ce991b` | Multi-dimensional audit evidence | 2026-11-11T10:35:17.386Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `4d495c64` | Multi-dimensional audit evidence | 2026-11-11T10:35:27.132Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `a8583bc5` | Multi-dimensional audit evidence | 2026-11-11T10:35:27.912Z |

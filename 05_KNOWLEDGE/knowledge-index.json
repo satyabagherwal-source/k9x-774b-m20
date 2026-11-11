@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T10:27:16.763Z",
+  "last_updated": "2026-11-11T10:35:27.765Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18028,14 +18028,19 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "51c1838b",
-      "content_hash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
+      "source_version": "4d495c64",
+      "content_hash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "NM-356: mark extclients offline when their ingress gateway is unreachable (#4213",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Pre-Release Fixes v1.8.0 (#4224)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18089,7 +18094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:34:55.921Z",
+      "verified_at": "2026-11-11T10:35:26.976Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36334,14 +36339,19 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "b078219d",
-      "content_hash": "816afd10e93b0d56e646981162153a8668c6117cd52fad7dc14cae589a30ba25",
+      "source_version": "a8583bc5",
+      "content_hash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Port secondary index and plaid to rust (#3547)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -36375,7 +36385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:00:49.321Z",
+      "verified_at": "2026-11-11T10:35:27.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59314,11 +59324,16 @@
       "slug": "sqldelight-sqldelight",
       "platform": "github",
       "source_url": "https://github.com/sqldelight/sqldelight",
-      "source_version": "6f07e305",
-      "content_hash": "bddd721293a6aef30c5c0873c0a9762b63514b5cc54b27466defaed9e8ac7264",
+      "source_version": "21ce991b",
+      "content_hash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
       "dossier_path": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ReflectiveKotlinFindUsagesFactory exceptions (#6355)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2244,
           "title": "Keep query files in-memory for the duration of a task (#6374)",
@@ -59340,7 +59355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:01:37.328Z",
+      "verified_at": "2026-11-11T10:35:17.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75698,8 +75713,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "d0e358e1",
-      "content_hash": "9a5e95bd027309a23c03cf8d48eabeee3c231e0baa3ed55e77bbb6f7626370d4",
+      "source_version": "3ea984cf",
+      "content_hash": "bae832341744f328b89ea8e72f08f82e6c373f7ef0bcac0a94beddd16dbc995e",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -75716,6 +75731,11 @@
         {
           "number": null,
           "title": "deps): remove unmaintained pin-utils dependency",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "accounts): recheck receipt bytes after directory sync",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -75779,7 +75799,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T23:36:22.417Z",
+      "verified_at": "2026-11-11T10:35:09.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

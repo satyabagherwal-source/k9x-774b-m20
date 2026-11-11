@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:27:23.216Z",
+  "last_updated": "2026-11-11T10:35:34.166Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4621,6 +4621,33 @@
       "source_repo": "rustls-rustls",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-728786-reject-non-empty-legacy-session-id-in-qu.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-27C02A",
+      "directive_title": "accounts): recheck receipt bytes after directory sync",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nguyenphutrong-quotio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-27C02A-accounts-recheck-receipt-bytes-after-dir.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0997CF",
+      "directive_title": "ReflectiveKotlinFindUsagesFactory exceptions (#6355)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sqldelight-sqldelight",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0997CF-reflectivekotlinfindusagesfactory-except.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C6204C",
+      "directive_title": "Pre-Release Fixes v1.8.0 (#4224)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gravitl-netmaker",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C6204C-pre-release-fixes-v1-8-0-4224-.md",
       "staged_date": "2026-11-11"
     }
   ]

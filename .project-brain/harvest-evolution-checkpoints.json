@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:27:23.217Z",
+  "last_updated": "2026-11-11T10:35:34.167Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T07:59:25.580Z",
@@ -166,9 +166,24 @@
       "processed_at": "2026-11-11T10:27:23.217Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "nguyenphutrong-quotio-learnings.md": {
+      "processed_at": "2026-11-11T10:35:34.154Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "sqldelight-sqldelight-learnings.md": {
+      "processed_at": "2026-11-11T10:35:34.161Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "gravitl-netmaker-learnings.md": {
+      "processed_at": "2026-11-11T10:35:34.167Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 36,
+  "total_dossiers_evaluated": 39,
   "total_canonical_promoted": 13,
-  "total_staged_for_review": 20
+  "total_staged_for_review": 23
 }

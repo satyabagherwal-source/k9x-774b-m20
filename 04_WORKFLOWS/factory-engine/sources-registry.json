@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T10:27:23.101Z",
-    "lastVerified": "2026-11-11T10:27:23.101Z",
+    "lastChecked": "2026-11-11T10:35:33.996Z",
+    "lastVerified": "2026-11-11T10:35:33.996Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -115,22 +115,21 @@
     "revisionIdentifier": "a2e3b24d"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:36:53.055Z",
-    "lastVerified": "2026-11-10T04:36:53.055Z",
+    "lastChecked": "2026-11-11T10:35:07.560Z",
+    "lastVerified": "2026-11-11T10:35:07.560Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
+    "contentHash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "51c1838b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -367,9 +366,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T10:00:04.024Z",
+    "lastChecked": "2026-11-11T10:35:05.741Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T10:00:04.024Z"
+    "lastVerified": "2026-11-11T10:35:05.741Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2709,12 +2708,12 @@
     "officialUrl": "https://github.com/infiniflow/infinity",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-09T04:00:47.406Z",
-    "lastVerified": "2026-11-09T04:00:47.406Z",
+    "lastChecked": "2026-11-11T10:35:08.832Z",
+    "lastVerified": "2026-11-11T10:35:08.832Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "816afd10e93b0d56e646981162153a8668c6117cd52fad7dc14cae589a30ba25",
+    "contentHash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7122,11 +7121,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqldelight-sqldelight": {
-    "name": "sqldelight",
+    "name": "sqldelight/sqldelight",
     "officialUrl": "https://github.com/sqldelight/sqldelight",
-    "lastChecked": "2026-11-07T20:09:17.497Z",
-    "revisionIdentifier": "6f07e305",
-    "lastVerified": "2026-11-07T20:09:17.497Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-11T10:35:00.620Z",
+    "lastVerified": "2026-11-11T10:35:00.620Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sqldelight-sqldelight",
+    "contentHash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "rook-rook": {
     "name": "rook/rook",
@@ -7317,9 +7326,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-11-09T04:49:33.156Z",
+    "lastChecked": "2026-11-11T10:34:58.237Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-11-09T04:49:33.156Z"
+    "lastVerified": "2026-11-11T10:34:58.237Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -9085,12 +9094,12 @@
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T23:36:21.145Z",
-    "lastVerified": "2026-11-08T23:36:21.145Z",
+    "lastChecked": "2026-11-11T10:34:55.867Z",
+    "lastVerified": "2026-11-11T10:34:55.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "9a5e95bd027309a23c03cf8d48eabeee3c231e0baa3ed55e77bbb6f7626370d4",
+    "contentHash": "bae832341744f328b89ea8e72f08f82e6c373f7ef0bcac0a94beddd16dbc995e",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -10311,8 +10320,8 @@
     "officialUrl": "https://github.com/alfa546/Crawler",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-06T14:47:31.924Z",
-    "lastVerified": "2026-11-06T14:47:31.924Z",
+    "lastChecked": "2026-11-11T10:34:53.127Z",
+    "lastVerified": "2026-11-11T10:34:53.127Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alfa546-crawler",

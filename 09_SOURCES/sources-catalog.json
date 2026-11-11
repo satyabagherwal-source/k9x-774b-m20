@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "d0e358e1",
+    "sourceVersion": "3ea984cf",
     "license": "MIT",
-    "contentHash": "9a5e95bd027309a23c03cf8d48eabeee3c231e0baa3ed55e77bbb6f7626370d4",
-    "lastHarvestedAt": "2026-11-08T23:36:22.535Z",
+    "contentHash": "bae832341744f328b89ea8e72f08f82e6c373f7ef0bcac0a94beddd16dbc995e",
+    "lastHarvestedAt": "2026-11-11T10:35:10.373Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "51c1838b",
+    "sourceVersion": "4d495c64",
     "license": "NOASSERTION",
-    "contentHash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
-    "lastHarvestedAt": "2026-11-06T13:34:56.039Z",
+    "contentHash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
+    "lastHarvestedAt": "2026-11-11T10:35:27.132Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -6693,10 +6693,10 @@
     "repository": "sqldelight/sqldelight",
     "platform": "github",
     "sourceUrl": "https://github.com/sqldelight/sqldelight",
-    "sourceVersion": "6f07e305",
+    "sourceVersion": "21ce991b",
     "license": "Apache-2.0",
-    "contentHash": "bddd721293a6aef30c5c0873c0a9762b63514b5cc54b27466defaed9e8ac7264",
-    "lastHarvestedAt": "2026-10-27T23:01:37.402Z",
+    "contentHash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
+    "lastHarvestedAt": "2026-11-11T10:35:17.386Z",
     "learningId": "learn-github-sqldelight-sqldelight"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "b078219d",
+    "sourceVersion": "a8583bc5",
     "license": "Apache-2.0",
-    "contentHash": "816afd10e93b0d56e646981162153a8668c6117cd52fad7dc14cae589a30ba25",
-    "lastHarvestedAt": "2026-11-09T04:00:49.470Z",
+    "contentHash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
+    "lastHarvestedAt": "2026-11-11T10:35:27.912Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {

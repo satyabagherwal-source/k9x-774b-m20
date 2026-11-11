@@ -8917,3 +8917,7 @@
 | `CYCLE-20261111-5CNS` | `2026-11-11T10:26:49.048Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dd242ff1...`) |
 | `CYCLE-20261111-5F4W` | `2026-11-11T10:26:52.256Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`078a5273...`) |
 | `CYCLE-20261111-5Y5F` | `2026-11-11T10:27:16.899Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d8beb555...`) |
+| `CYCLE-20261111-G3HB` | `2026-11-11T10:35:10.367Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bae83234...`) |
+| `CYCLE-20261111-G8W5` | `2026-11-11T10:35:17.381Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8ce858e9...`) |
+| `CYCLE-20261111-GGEW` | `2026-11-11T10:35:27.128Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c0b2b52f...`) |
+| `CYCLE-20261111-GH0K` | `2026-11-11T10:35:27.908Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2a5f232e...`) |
