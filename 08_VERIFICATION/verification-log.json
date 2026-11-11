@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-RT25",
-    "timestamp": "2026-11-08T20:13:08.189Z",
-    "repository": "zenbu-labs/terminal-browser",
-    "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-S2C3",
-    "timestamp": "2026-11-08T20:13:20.211Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "94753537632d13cb1069e2395f26220c4bf64628361ffc433fa23822841a6f23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-2KSU",
-    "timestamp": "2026-11-08T20:21:30.702Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "7e037497be83e5f8e6e13a54111ed523b6bbac60327f11b6769816ae83c94253",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-2QBM",
-    "timestamp": "2026-11-08T20:21:37.858Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "7851a9d5283c14288c568cd6e8dbb3b7b46ef8d89a857d917cc7a95b40c43206",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-2Y69",
     "timestamp": "2026-11-08T20:21:48.033Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7432,66 @@
     "contentHash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-AR9E",
+    "timestamp": "2026-11-11T18:54:54.338Z",
+    "repository": "higress-group/higress",
+    "learningId": "learn-github-higress-group-higress",
+    "contentHash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-ATLH",
+    "timestamp": "2026-11-11T18:54:57.365Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-B3V6",
+    "timestamp": "2026-11-11T18:55:10.675Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "027d9b1fc3c7e3201366ee9733bd8cea6b2ba8e283f6ed5de908a96597c0b1a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-GZYD",
+    "timestamp": "2026-11-11T18:59:45.541Z",
+    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+    "contentHash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `533e89d6`  
+> **Source Version**: `7437e3e9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T04:20:07.135Z  
+> **Timestamp**: 2026-11-11T18:54:45.632Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T04:20:07.127Z  
+> **Harvest Timestamp**: 2026-11-11T18:54:45.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3479 stars
+- **Stars / Engagement**: 3487 stars
 
 ---
 
@@ -1741,11 +1741,11 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1298** (2026-11-08): **Codex usage and banked resets load again for user-scoped logins**
-  *Symptoms*: Codex usage limits and banked resets stopped loading for ChatGPT logins whose ID token carries a user id.  The engine keys such an account as `{user}::{workspace}`, so two seats in one team stay apart, but OpenAI's usage answer reports only the workspace. `refresh_codex_usage` and `codex_slot_auth` compared that answer with the whole key, so every successful probe was thrown away as missing credentials. The UI kept an old cached snapshot: no fresh week/5-hour bars, and no banked resets on Settings → Providers. Both now compare against the workspace part of the key.  Split out of #1292 by @laurentcodes (their commit, unchanged); the rest of #1292 stays there.  Tests: - `codex_usage_loads_for_a_login_whose_key_carries_the_user_id` (new): fails on main, passes here. - `cargo test -p zeron-engine --lib agent_accounts`: 92 passed, 0 failed.  What behaves differently: for these logins, the Codex usage bars refresh again, and banked resets appear on the Codex card. Nothing changes for other logins.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796772459&installation_model_id=425430&pr_number=1298&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1298&signature=a0d088d9531dd48c6778b8934acfbfeda700581c8e40792ee6015257f2a10edd"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comment
+- **Issue #1352** (2026-11-11): **zgx: a folded row is held at its compressed length**
+  *Symptoms*: LZ4 writes a folded row into a buffer made for its worst case, about the row's own size, and `compressed()` shrank it with `into_boxed_slice`. That is a realloc. mimalloc (and macOS's malloc) keeps a block where it is when it shrinks by less than half, and real rows compress by only about a fifth (1.24×). So every folded row kept nearly its uncompressed size. A 15,443-row chat whose rows compress to 20.4 MB held 30.7 MB of them.  `compressed()` now copies the output into a box of its own length. The rows are identical, and nothing else changes.  **Measured** on the M5 Max (zgx-zz rig: d7df47220 against zgx 0bce8ef43 + #1945/#1960/#1981, isolated engine, kept-chats off). One launch per build, alternated, two launches each. The long chat is da5bd3cc's, 15,442 folded rows. Each rest is the new-chat page versus the long chat open, after 16 s.  | the long chat's cost at rest | before | after | |---|---|---| | heap in use (mimalloc) | +42.8, +42.5 MB | +35.1, +35.2 MB | | mimalloc dirty pages | +40.4, +41.1 MB | +33.6, +33.8 MB | | footprint | +39.0, +42.6 MB | +35.1, +35.5 MB |  The new-chat page at launch also drops (128–129 MB, against 130–138), since rows folded at launch shrink the same way.  **Test:** `chat::tests::a_folded_rows_bytes_take_their_own_length` checks mimalloc's usable size of a folded row with a real-like ratio. It fails without the change ("held 4096 for 2291 bytes").  This is step 1 of the plan sent to V3. Step 2 (zstd with an on-device dictionary, ~10 MB for 
 
-- **Issue #1297** (2026-11-09): **Linux: a dropped image no longer crashes the window with "texture must exist"**
-  *Symptoms*: A Linux user's window aborted on 0.2.138 (beta). The background engine kept running.  ``` panicked at crates/gpui_wgpu/src/wgpu_atlas.rs:146:36: texture must exist panicked at wgpu-hal-29.0.4/src/vulkan/swapchain/native.rs:359:58: Trying to destroy a SwapchainAcquireSemaphore that is still in use by a SurfaceTexture panic in a destructor during cleanup ```  **Cause.** `Window::drop_image` freed an image's atlas tiles right away, and with them the whole atlas texture when those were its last tiles. Zeron drops images in several places: evicted tool images (`tool_images.rs`), visuals (`visuals.rs`), and browser frames on resize (`browser/linux`). The window can then present its last frame again without redrawing it, for example during high-rate input or on a forced present on Wayland. That frame still names the freed texture, so the lookup panicked. A second panic during the unwind aborted the process.  **Fix.** This PR only moves pins: - zui `b564a34` → `15ee708` (zeronsh/zui#19, stacked on zeronsh/zui#18). Dropped images stay in the atlas until the next draw. A scene that still names a freed texture is skipped and redrawn instead of panicking. - gpui-base `59f8924` → `cab50b0` (zeronsh/gpui-component#7, stacked on zeronsh/gpui-component#6), so it shares the same zui.  **Merge order.** zui#18 → zui#19, and gpui-component#6 → #7. The pinned commits can already be fetched through their PR refs, the way `b564a34` is today, so this PR doesn't wait on those merges.  **Tests.** - Th
+- **Issue #1349** (2026-11-11): **zgx: zgx-linux green (real causes, no skips)**
+  *Symptoms*: Work in progress: makes the `zgx / zgx-linux` job pass, each failure fixed at its cause.  So far (first commit): - SDK copies re-copied from `plugins-sdk/zeron.luau` (#1290 changed the canonical copy only). - Zeron v2's `.base.json` re-blessed (its copies already had the default's fixes). - **Bug, off a Mac only:** the shortcut recorder wrote Ctrl as `ctrl`, while commands spell the command key `cmd`. So Settings → Shortcuts let another command take Toggle sidebar's Ctrl+B. It now writes `cmd`. What it writes on a Mac is unchanged. - Tests that pressed a Mac's keys on every platform are now platform-aware: rival plugin keys, rebinding, the editor's line-edge keys, and the editor's secondary click.  Still to do: the GPU visuals test, the any-focus shortcuts test, the Linux UI tests, the flaky large-diff test, and the known Mac failures.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796977118&installation_model_id=425430&pr_number=1349&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1349&signature=c6071a7e60f33355ef726e99c057cec50c308e0c36cc61e105a091176354dfe8"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,285 +1762,345 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `533e89d6` (2026-11-09)
-**Commit Message**: Linux: a dropped image no longer crashes the window with "texture must exist" (#1297)
+### Incident Patch 1: `7437e3e9` (2026-11-11)
+**Commit Message**: Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)
 
-* Linux: keep dropped images on screen until the next frame, not a crash
+Chimes were played by an afplay child. While a game holds the foreground
+macOS keeps other apps' process coalitions in the background, and the
+child's CoreAudio assertion makes RunningBoard lift the app's coalition out
+and drop it back when the sound ends. On macOS 27.2 a coalition change that
+lands while a process of that coalition is in exec can deadlock in the
+kernel; runningboardd never returns, the window server blocks behind it and
+the watchdog panics the machine.
 
-Pins zui 15ee708, which keeps a dropped image's atlas tiles until the next
-draw and lets the wgpu renderer skip, then redraw, a scene that names a
-freed atlas texture. Before, re-presenting a frame after an image was
-dropped (an evicted tool image or visual, a resized browser frame) could
-abort the window with "texture must exist" in wgpu_atlas.rs.
+Play them through the System Sound server instead, which holds the
+assertion itself.
 
-* Pin gpui-base cab50b0 so it shares zui 15ee708 with Zeron
-
-zeronsh/gpui-component#7 moves gpui-base to the same zui; without it the
-lock carried two copies of zui.
-
-**File**: `Cargo.lock` (modified, +21/-21)
+**File**: `crates/ui/src/sound.rs` (modified, +117/-4)
 ```diff
-@@ -1650,7 +1650,7 @@ dependencies = [
- [[package]]
- name = "collections"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "gpui_util",
-  "indexmap",
-@@ -2454,7 +2454,7 @@ dependencies = [
- [[package]]
- name = "derive_refineable"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -3839,7 +3839,7 @@ dependencies = [
- [[package]]
- name = "gpui"
- version = "0.2.2"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "accesskit",
-  "anyhow",
-@@ -3925,7 +3925,7 @@ dependencies = [
- [[package]]
- name = "gpui-base"
- version = "0.5.2"
--source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
-+source = "git+https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f#cab50b071497683a119ae0e4038880f195c0f23f"
- dependencies = [
-  "aho-corasick",
-  "anyhow",
-@@ -3955,7 +3955,7 @@ dependencies = [
- [[package]]
- name = "gpui_linux"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "accesskit",
-  "accesskit_unix",
-@@ -4007,7 +4007,7 @@ dependencies = [
- [[package]]
- name = "gpui_macos"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "accesskit",
-  "accesskit_macos",
-@@ -4056,7 +4056,7 @@ dependencies = [
- [[package]]
- name = "gpui_macros"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "heck 0.5.0",
-  "proc-macro2",
-@@ -4067,7 +4067,7 @@ dependencies = [
- [[package]]
- name = "gpui_platform"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "console_error_panic_hook",
-  "gpui",
-@@ -4080,7 +4080,7 @@ dependencies = [
- [[package]]
- name = "gpui_shared_string"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "schemars",
-  "serde",
-@@ -4090,7 +4090,7 @@ dependencies = [
- [[package]]
- name = "gpui_tokio"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "anyhow",
-  "gpui",
-@@ -4101,7 +4101,7 @@ dependencies = [
- [[package]]
- name = "gpui_util"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "anyhow",
-  "log",
-@@ -4111,7 +4111,7 @@ dependencies = [
- [[package]]
- name = "gpui_web"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -4135,7 +4135,7 @@ dependencies = [
- [[package]]
- name = "gpui_wgpu"
- version = "0.1.
-```
-
-**File**: `Cargo.toml` (modified, +7/-4)
-```diff
-@@ -113,15 +113,18 @@ loro-protocol = "0.3"
- # Atlas tiles updated in place from pixels or imported dma-bufs, display-rate
- # frame callbacks in inactive windows, and Wayland frames that no longer stop
- # after a forced draw (b564a34, zeronsh/zui#18).
--gpui = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
--gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9", features = [
-+# Dropped images stay in the atlas until the next draw, so presenting the last
-+# frame again no longer aborts with "texture must exist" (15ee708,
-+# zeronsh/zui#19; gpui-base cab50b0, zeronsh/gpui-component#7).
-+gpui = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
-+gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be", features = [
-     "wayland",
-     "x11",
-     "font-kit",
-     "runtime_shaders",
- ] }
--gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
--gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "59f89243cea79dd70eb7a619b3930c374ef6958a" }
-+gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
-+gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "cab50b071497683a119ae0e4038880f195c0f23f" }
+@@ -5,9 +5,11 @@
+ //!   the start and end of a voice call;
+ //! - macOS Appshots use a preloaded native player; other cues write to a
+ //!   temp file and use the system player on a
+-//!   background thread: `afplay` (macOS), PowerShell `Media.SoundPlayer`
+-//!   (Windows), first of `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux —
+-//!   WAV, so even bare ALSA `aplay` decodes it);
++//!   background thread: the System Sound server (macOS, see
++//!   `macos_system_sound` for why not `afplay`), PowerShell
++//!   `Media.SoundPlayer` (Windows), first of
++//!   `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux — WAV, so even bare
++//!   ALSA `aplay` decodes it);
+ //! - `ZERON_DISABLE_SOUND` env kill-switch + the `soundEnabled` ui-setting;
+ //! - failures are logged and swallowed — a missing player must never bother
+ //!   the session flow.
+@@ -235,7 +237,97 @@ fn create_temp_file() -> std::io::Result<(std::fs::File, TempSoundFile)> {
  
- # diffs
- similar = "2"
+ #[cfg(target_os = "macos")]
+ fn run_player(path: &Path) -> Result<(), String> {
+-    run_checked("afplay", &[], path)
++    macos_system_sound::play(path)
++}
++
++/// Chimes play in the System Sound server, not in a process of ours.
++///
++/// Whoever plays audio holds a CoreAudio assertion for as long as it sounds.
++/// While a game holds the foreground macOS keeps every other app's process
++/// coalition in the background, and the assertion of an `afplay` child lifts
++/// the whole coalition out and drops it back when the sound ends.
++/// AVAudioPlayer and NSSound take the same assertion, in the app. On macOS
++/// 27.2 such a change can deadlock in the kernel against a process of the
++/// same coalition that is in `exec`, and agents exec all the time: the window
++/// server hangs behind it and the machine needs a reboot. The sound server
++/// holds the assertion itself, so a chime leaves this app's processes alone.
++#[cfg(target_os = "macos")]
++mod macos_system_sound {
++    use core_foundation::base::TCFType;
++    use core_foundation::url::{CFURL, CFURLRef};
++    use std::ffi::c_void;
++    use std::path::Path;
++    use std::sync::mpsc;
++    use std::time::Duration;
++
++    type SystemSoundId = u32;
++
++    const PROPERTY_IS_UI_SOUND: u32 = u32::from_be_bytes(*b"isui");
++
++    #[link(name = "AudioToolbox", kind = "framework")]
++    unsafe extern "C" {
++        fn AudioServicesCreateSystemSoundID(url: CFURLRef, id: *mut SystemSoundId) -> i32;
++        fn AudioServicesDisposeSystemSoundID(id: SystemSoundId) -> i32;
++        fn AudioServicesSetProperty(
++            property: u32,
++            specifier_size: u32,
++            specifier: *const c_void,
++            data_size: u32,
++            data: *const c_void,
++        ) -> i32;
++        fn AudioServicesPlaySystemSoundWithCompletion(
++            id: SystemSoundId,
++            completion: &block2::Block<dyn Fn()>,
++        );
++    }
++
++    pub(super) struct SystemSound(SystemSoundId);
++
++    impl Drop for SystemSound {
++        fn drop(&mut self) {
++            unsafe {
++                AudioServicesDisposeSystemSoundID(self.0);
++            }
++        }
++    }
++
++    pub(super) fn register(path: &Path) -> Result<SystemSound, String> {
++        let url = CFURL::from_path(path, false)
++            .ok_or_else(|| format!("no file URL for {}", path.display()))?;
++        let mut id: SystemSoundId = 0;
++        let status = unsafe { AudioServicesCreateSystemSoundID(url.as_concrete_TypeRef(), &mut id) };
++        if status != 0 {
++            return Err(format!("system sound server refused the chime ({status})"));
++        }
++        let sound = SystemSound(id);
++        // System sounds default to interface feedback, silent when the user
++        // turns interface sound effects off. A chime has its own setting.
++        let ui_sound: u32 = 0;
++        unsafe {
++            AudioServicesSetProperty(
++                PROPERTY_IS_UI_SOUND,
++                size_of::<SystemSoundId>() as u32,
++                (&raw const sound.0).cast(),
++                size_of::<u32>() as u32,
++                (&raw const ui_sound).cast(),
++            );
++        }
++        Ok(sound)
++    }
++
++    pub(super) fn play(path: &Path) -> Result<(), String> {
++        let sound = register(path)?;
++        let (finished, wait) = mpsc::channel();
++        let completion = block2::RcBlock::new(move || {
++            let _ = finished.send(());
++        });
++        unsafe { AudioServicesPlaySystemSoundWithCompletion(sound.0, &completion) };
++        // The caller deletes the file when this returns, so wait the chime
++        // out. Bounded like the other players: a wedged sound server must not
++        // accumulate threads.
++        wait.recv_timeout(Duration::from_secs(10))
++            .map_err(|_| "system sound timed out".to_string())
++    }
+ }
+ 
+ #[cfg(windows)]
+@@ -285,6 +377,7 @@ fn run_player(path: &Path) -> Result<(), String> {
+     Err(format!("no audio player available: {}", errors.join("; ")))
+ }
+ 
++#[cfg(not(target_os = "macos"))]
+ fn run_checked(prog
 ```
 
 ---
 
-### Incident Patch 2: `adf87317` (2026-11-08)
-**Commit Message**: fix: load codex usage for logins keyed by user and workspace
+### Incident Patch 2: `89b0d156` (2026-11-09)
+**Commit Message**: zgx: pin the scene3d change as it merged, with its review fixes
 
-**File**: `crates/engine/src/agent_accounts.rs` (modified, +10/-2)
+The pin was ce91055f plus #1760 as first written. #1760 merged with a
+fix commit on top (a079c236): a mesh with no triangles drew a panic
+(`buffer slices can not be empty`), which the CAD plugin hits when cuts
+leave nothing; non-finite numbers passed its checks; `flat` dropped
+`colors`; `double_sided` took any value as true; and a plugin's own
+geometry now counts against its memory limit. zeron/pin-scene3d-2 is
+the old pin plus that commit, so the pin carries #1760 as it landed and
+still moves nothing else in zgx.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/zgx/Cargo.lock` (modified, +22/-22)
 ```diff
-@@ -3230,7 +3230,7 @@ impl AgentAccounts {
-         )
-         .await?;
-         if let Some(account_id) = str_field(&body, "account_id")
--            && account_id != slot.account_key
-+            && account_id != codex_workspace(&slot.account_key)
-         {
-             return Err(ProbeError::NoCredentials {
-                 why: NoCredentials::Missing,
-@@ -4051,6 +4051,14 @@ fn parse_codex_auth(auth: serde_json::Value) -> Option<Detected> {
-     })
- }
+@@ -30,7 +30,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_atspi_common"
+ version = "0.19.1"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -43,7 +43,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_consumer"
+ version = "0.38.0"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "accesskit",
+  "hashbrown 0.16.1",
+@@ -66,7 +66,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_macos"
+ version = "0.26.3"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -79,7 +79,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_unix"
+ version = "0.22.1"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "accesskit",
+  "accesskit_atspi_common",
+@@ -96,7 +96,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_windows"
+ version = "0.34.0"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -5539,7 +5539,7 @@ dependencies = [
+ [[package]]
+ name = "wgpu-hal"
+ version = "29.0.4"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "android_system_properties",
+  "arrayvec",
+@@ -5911,7 +5911,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
+ [[package]]
+ name = "winit"
+ version = "0.30.13"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "ahash",
+  "android-activity",
+@@ -6447,7 +6447,7 @@ dependencies = [
+ [[package]]
+ name = "zgx"
+ version = "0.1.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "fixed_decimal",
+  "foldhash 0.2.0",
+@@ -6473,7 +6473,7 @@ dependencies = [
+ [[package]]
+ name = "zgx-3d"
+ version = "0.1.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "bytemuck",
+  "zgx",
+@@ -6483,7 +6483,7 @@ dependencies = [
+ [[package]]
+ name = "zgx-alacritty-terminal"
+ version = "0.26.1"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "base64 0.22.1",
+  "bitflags 2.13.2",
+@@ -6506,15 +6506,15 @@ dependencies = [
+ [[package]]
+ name = "zgx-components"
+ version = "0.1.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "zgx",
+ ]
  
-+// account keys put the user id before "::" so team seats sharing a workspace
-+// stay distinct (`parse_codex_auth`), but openai only ever reports the workspace
-+fn codex_workspace(account_key: &str) -> &str {
-+    account_key
-+        .rsplit_once("::")
-+        .map_or(account_key, |(_, workspace)| workspace)
-+}
-+
- fn codex_slot_auth(slot: &Slot) -> Result<(&str, &str), EngineError> {
-     let detected = parse_codex_auth(slot.credentials.clone())
-         .ok_or_else(|| EngineError::Other("This Codex login needs to be refreshed.".into()))?;
-@@ -4064,7 +4072,7 @@ fn codex_slot_auth(slot: &Slot) -> Result<(&str, &str), EngineError> {
-     match (account_id, access_token) {
-         (Some(account_id), Some(access_token))
-             if !access_token.is_empty()
--                && account_id == slot.account_key
-+                && account_id == codex_workspace(&slot.account_key)
-                 && detected.account_key == slot.account_key =>
-         {
-             Ok((access_token, account_id))
+ [[package]]
+ name = "zgx-cosmic-text"
+ version = "0.19.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
++source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
+ dependencies = [
+  "bitflags 2.13.2",
+  "fontdb",
+@@ -653
 ```
 
-**File**: `crates/engine/src/agent_accounts/provider_tests.rs` (modified, +60/-0)
+**File**: `apps/zgx/Cargo.toml` (modified, +13/-13)
 ```diff
-@@ -1924,6 +1924,66 @@ fn codex_auth(email: &str, account_id: &str) -> String {
-     .to_string()
- }
+@@ -30,7 +30,7 @@ beta = []
+ layout_probe = []
  
-+#[tokio::test]
-+async fn codex_usage_loads_for_a_login_whose_key_carries_the_user_id() {
-+    let server = MockServer::start(move |method, path, _| match (method, path) {
-+        ("GET", "/backend-api/wham/usage") => (
-+            200,
-+            serde_json::json!({
-+                "account_id": "acct-team",
-+                "plan_type": "plus",
-+                "rate_limit": {
-+                    "primary_window": { "used_percent": 12, "limit_window_seconds": 18000 },
-+                    "secondary_window": { "used_percent": 40, "limit_window_seconds": 604800 },
-+                },
-+                "rate_limit_reset_credits": { "available_count": 1 },
-+            })
-+            .to_string(),
-+        ),
-+        ("GET", "/backend-api/wham/rate-limit-reset-credits") => (
-+            200,
-+            serde_json::json!({
-+                "available_count": 1,
-+                "credits": [
-+                    { "id": "credit-1", "reset_type": "codex_rate_limits", "status": "available",
-+                      "title": "Full reset (Weekly + 5 hr)", "expires_at": "2030-01-04T02:01:00Z" },
-+                ]
-+            })
-+            .to_string(),
-+        ),
-+        _ => (404, String::new()),
-+    })
-+    .await;
-+    let tmp = tempfile::tempdir().unwrap();
-+    let (accounts, config) = accounts_with(tmp.path(), mocked(&server.base));
-+    let id_token = jwt(serde_json::json!({
-+        "email": "ada@example.com",
-+        "https://api.openai.com/auth": {
-+            "chatgpt_account_id": "acct-team",
-+            "chatgpt_user_id": "user-ada",
-+            "chatgpt_plan_type": "plus",
-+        },
-+    }));
-+    write(
-+        &config.codex_home.join("auth.json"),
-+        &serde_json::json!({
-+            "tokens": { "id_token": id_token, "access_token": "codex-access", "account_id": "acct-team" }
-+        })
-+        .to_string(),
-+    );
-+
-+    let codex = rows(&accounts.list(true).await.unwrap(), HarnessId::Codex);
-+    assert_eq!(codex.len(), 1);
-+    let fractions: Vec<f32> = codex[0].usage_windows.iter().map(|w| w.used_fraction).collect();
-+    assert_eq!(fractions.len(), 2, "{:?}", codex[0].usage_windows);
-+    assert!((fractions[0] - 0.12).abs() < 1e-6);
-+    assert!((fractions[1] - 0.40).abs() < 1e-6);
-+    assert_eq!(
-+        codex[0].codex_reset_credits.as_ref().map(|c| c.available_count),
-+        Some(1)
-+    );
-+}
-+
- #[tokio::test]
- async fn codex_banked_resets_list_persist_and_redeem_against_the_mock() {
-     // Who the usage endpoint says the token belongs to (a mismatch: another).
+ [dependencies]
+-zgx = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
++zgx = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5" }
+ # `mimalloc`: the program's allocator, in place of the system's. It hands
+ # freed memory back to the system (the system's keeps the most it ever
+ # held), and zgx measures 1-10% less CPU for script, text and layout work.
+@@ -41,26 +41,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb9
+ # none of it, and without it pages are placeholders ("Web view · <url>").
+ # zgx-run turns it on by default, but this app takes zgx-run without its
+ # defaults (below). Nothing on macOS or Windows.
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["mimalloc", "terminal", "webkitgtk"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["mimalloc", "terminal", "webkitgtk"] }
+ # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
+ # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
+ # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
+ # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
+ # wgpu this app already links), for plugins that show 3D: the CAD plugin
+ # hands it its own triangles (`geometry = { positions, indices, … }`). It
+ # asks no grant; a scene draws a frame only when something in it changes.
+-zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["inspect", "i18n", "scene3d"] }
++zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["inspect", "i18n", "scene3d"] }
+ # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
+ # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
+ # turns on).
+-zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", default-features = false }
++zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", default-features = false }
+ # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
+ # built in; `limits` to keep one from attaching any other file.
+ rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
+ # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
+ # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
+ # and plugins granted "network". Nothing else of the runner.
+-zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", default-features = false, features = ["fetch"] }
++zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", default-features = false, features = ["fetch"] }
+ # `webp`: `ui.image` decodes through this crate, by what its features
+ # allow, so turning WebP on here is all it takes (the member cards' art).
+ # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
+@@ -156,7 +156,7 @@ foreign-types = "0.5"
+ # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
+ # draws them from the font at its text line height, gapped. Builds Ghostty
+ # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["ghostty"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["ghostty"] }
+ 
+ # Windows' Transparency effects (src/transparency.rs), read and watched in
+ # the registry, until zgx reports them (zgx-asks/windows-transparency); a
+@@ -167,13 +167,13 @@ windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphic
+ # zgx's own patches (its root Cargo.toml): a git dependency does not bring
+ # them, so every consumer repeats them.
+ [patch.crates-io]
+-wgpu-hal = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
+-winit = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
+-accesskit_macos = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
+-accesskit_consumer = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
+-accesskit_atspi_common = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
+-accesskit_unix = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
+-accesskit_windows = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
++wgpu-hal = 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1298** (2026-11-08): Codex usage and banked resets load again for user-scoped logins (@wingleeio)
-- **PR #1297** (2026-11-09): Linux: a dropped image no longer crashes the window with "texture must exist" (@katulevskiy)
-- **PR #1296** (closed): feat(zgx): attach file and side-chat tabs as composer context (@jsgrrchg)
-- **PR #1292** (closed): fix: new chat project, codex usage, and composer invocations (@laurentcodes)
-- **PR #1284** (2026-11-08): iOS: Activity on the Sessions page, Sleep, and Settings → Activity (1.0.2) (@wingleeio)
-- **PR #1283** (2026-11-08): zgx on Windows: the panel level with the chat page, and chimes that play (@hoangvu12)
+- **PR #1352** (2026-11-11): zgx: a folded row is held at its compressed length (@wingleeio)
+- **PR #1349** (2026-11-11): zgx: zgx-linux green (real causes, no skips) (@wingleeio)
+- **PR #1347** (closed): engine: a big chat's threshold checkpoint waits for 8 MB of rows (@wingleeio)
+- **PR #1341** (2026-11-11): Relay: a frame the room's queue can't take yet waits, in order (@wingleeio)
+- **PR #1340** (2026-11-11): Relay: a heal the room's checkpoint already covers sends nothing (@wingleeio)
+- **PR #1336** (2026-11-11): zgx: a picked skill reaches Claude Code as its slash command (@wingleeio)
 
 ---
 
@@ -2060,46 +2120,53 @@ lock carried two copies of zui.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Linux: a dropped image no longer crashes the window with "texture must exist" (#
+## X. Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ui/src/sound.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `533e89d6`: Linux: a dropped image no longer crashes the window with "texture must exist" (#1297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7437e3e9`: Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ui/src/sound.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-source = "git+https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f#cab50b071497683a119ae0e4038880f195c0f23f"
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
-s
+//!   background thread: the System Sound server (macOS, see
+//!   `macos_system_sound` for why not `afplay`), PowerShell
+//!   `Media.SoundPlayer` (Windows), first of
+//!   `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux — WAV, so even bare
+//!   ALSA `aplay` decodes it);
+    macos_system_sound::play(path)
+}
+
+/// Chimes play in the System Sound server, not in a process of ours.
+///
+/// Whoever plays audio holds a CoreAudio assertion for as long as it sounds.
+/// While a game holds the foreground macOS keeps every other app's process
+/// coalition in the background, and the assertion of an `afplay` child lifts
+/// the whole coalition out and drops it back when the sound ends.
+/// AVAudioPlayer and NSSound take the same assertion, in the app. On macOS
+/// 27.2 such a change can deadlock in the kernel against a process of the
+/// same coalition that is in `exec`, and agents exec all the time: the window
+/// server hangs behind it and the machine needs a reboot. The sound server
+/// holds the assertion itself, so a chime leaves this app's processes alone.
+#[cfg(target_os = "macos")]
+mod macos_system_sound {
+    use core_foundation::base::TCFType;
+    use core_foundation::url::{CFURL,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-s
+//!   background thread: `afplay` (macOS), PowerShell `Media.SoundPlayer`
+//!   (Windows), first of `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux —
+//!   WAV, so even bare ALSA `aplay` decodes it);
+    run_checked("afplay", &[], path)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `533e89d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7437e3e9` are properly handled with clean fallback behavior.

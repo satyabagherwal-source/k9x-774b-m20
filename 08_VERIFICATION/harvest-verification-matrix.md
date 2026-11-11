@@ -8995,3 +8995,8 @@
 | `CYCLE-20261111-LY37` | `2026-11-11T18:35:36.787Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md` | Yes (`43784fc8...`) |
 | `CYCLE-20261111-M83C` | `2026-11-11T18:35:49.752Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`119414c4...`) |
 | `CYCLE-20261111-MCIC` | `2026-11-11T18:35:55.476Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5ec5b172...`) |
+| `CYCLE-20261111-AR9E` | `2026-11-11T18:54:54.338Z` | `higress-group/higress` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/higress-group-higress-learnings.md` | Yes (`79c87ef2...`) |
+| `CYCLE-20261111-ATLH` | `2026-11-11T18:54:57.365Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`828db638...`) |
+| `CYCLE-20261111-B3V6` | `2026-11-11T18:55:10.675Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`027d9b1f...`) |
+| `CYCLE-20261111-GZYD` | `2026-11-11T18:59:45.541Z` | `unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md` | Yes (`799b082c...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T19:00:03.099Z` | `hf-unsloth-deepseek-v4.1-flash-1017-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-01CFC4FC` [Domain D] | Yes (`3ea07f9b...`) |

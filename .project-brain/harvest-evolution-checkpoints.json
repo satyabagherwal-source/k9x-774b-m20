@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T18:36:00.974Z",
+  "last_updated": "2026-11-11T19:00:03.131Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T16:43:08.691Z",
@@ -501,9 +501,24 @@
       "processed_at": "2026-11-11T18:36:00.967Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "zeronsh-zeron-learnings.md": {
+      "processed_at": "2026-11-11T18:59:48.217Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md": {
+      "processed_at": "2026-11-11T19:00:03.100Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "higress-group-higress-learnings.md": {
+      "processed_at": "2026-11-11T19:00:03.109Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 126,
-  "total_canonical_promoted": 17,
-  "total_staged_for_review": 106
+  "total_dossiers_evaluated": 129,
+  "total_canonical_promoted": 18,
+  "total_staged_for_review": 108
 }

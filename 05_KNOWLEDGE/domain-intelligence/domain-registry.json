@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T16:56:20.047Z",
-  "total_records": 50,
+  "last_updated": "2026-11-11T19:00:03.098Z",
+  "total_records": 51,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 20,
+      "total": 21,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -45,7 +45,8 @@
         "DOM-D-00269E5B",
         "DOM-D-40589951",
         "DOM-D-BA155874",
-        "DOM-D-62E0908D"
+        "DOM-D-62E0908D",
+        "DOM-D-01CFC4FC"
       ]
     },
     "E": {
@@ -2012,6 +2013,47 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-11T16:56:20.046Z"
+    },
+    "DOM-D-01CFC4FC": {
+      "record_id": "DOM-D-01CFC4FC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF](https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF))  \n> **Source Version**: `hf-unslot",
+      "content_hash": "3ea07f9bacdae11455a220b64ac74561235eb0c5faa18a8b87464297cc3b8bd7",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface (",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-deepseek-v4.1-flash-1017-gguf/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T18:59:48.233Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-deepseek-v4.1-flash-1017-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-deepseek-v4.1-flash-1017-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T19:00:03.096Z"
     }
   }
 }

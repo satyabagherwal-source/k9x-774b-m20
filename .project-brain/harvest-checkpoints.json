@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T18:35:55.498Z",
+  "last_updated": "2026-11-11T18:59:45.555Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
-      "verified_at": "2026-11-09T12:49:37.329Z",
+      "content_hash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
+      "verified_at": "2026-11-11T18:54:54.362Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:49:37.330Z"
+      "last_updated": "2026-11-11T18:54:54.362Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "9fc22120a8c140cf239fdb9193a730dba6e0af276c6b411e287f11b2e0fe3ae0",
-      "verified_at": "2026-11-09T04:20:08.719Z",
+      "content_hash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
+      "verified_at": "2026-11-11T18:54:57.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:20:08.719Z"
+      "last_updated": "2026-11-11T18:54:57.378Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
-      "verified_at": "2026-11-07T17:57:51.075Z",
+      "content_hash": "027d9b1fc3c7e3201366ee9733bd8cea6b2ba8e283f6ed5de908a96597c0b1a0",
+      "verified_at": "2026-11-11T18:55:10.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T17:57:51.075Z"
+      "last_updated": "2026-11-11T18:55:10.702Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -17766,14 +17766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-      "content_hash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
-      "verified_at": "2026-11-06T23:02:42.530Z",
+      "content_hash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
+      "verified_at": "2026-11-11T18:59:45.554Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:02:42.530Z"
+      "last_updated": "2026-11-11T18:59:45.554Z"
     },
     "kortix-ai/CompanyOS": {
       "repository": "kortix-ai/CompanyOS",

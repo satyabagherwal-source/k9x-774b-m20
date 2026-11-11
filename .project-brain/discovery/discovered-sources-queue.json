@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T18:36:00.973Z",
+  "updated_at": "2026-11-11T19:00:03.129Z",
   "stats": {
-    "total_discovered": 156,
-    "approved_pending_harvest": 133,
+    "total_discovered": 175,
+    "approved_pending_harvest": 150,
     "harvested_count": 0,
-    "rejected_count": 23,
+    "rejected_count": 25,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 141,
+      "COMMUNITY_AND_EXPERT": 160,
       "OFFICIAL_DOCUMENTATION": 8,
       "STANDARDS_AND_SPECIFICATIONS": 7
     }
@@ -3285,6 +3285,410 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
         "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-9A8B1A114E9D": {
+      "id": "SRC-9A8B1A114E9D",
+      "url": "https://github.com/zeronsh/zeron",
+      "title": "https://github.com/zeronsh/zeron",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:59:48.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-F818D2D59541": {
+      "id": "SRC-F818D2D59541",
+      "url": "https://backend.blacksmith.sh/track/enable-autofix?expires=1796977118&installation_model_id=425430&pr_number=1349&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1349&signature=c6071a7e60f33355ef726e99c057cec50c308e0c36cc61e105a091176354dfe8",
+      "title": "https://backend.blacksmith.sh/track/enable-autofix?expires=1796977118&installation_model_id=425430&pr_number=1349&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1349&signature=c6071a7e60f33355ef726e99c057cec50c308e0c36cc61e105a091176354dfe8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:59:48.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-5A5301E74F1D": {
+      "id": "SRC-5A5301E74F1D",
+      "url": "https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg",
+      "title": "https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:59:48.227Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-08772F76B9D2": {
+      "id": "SRC-08772F76B9D2",
+      "url": "https://pr-comments-assets.blacksmith.s/",
+      "title": "https://pr-comments-assets.blacksmith.s/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:59:48.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-CF01661AC009": {
+      "id": "SRC-CF01661AC009",
+      "url": "https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd",
+      "title": "https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:59:48.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-E36C1F2DC4D5": {
+      "id": "SRC-E36C1F2DC4D5",
+      "url": "https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5",
+      "title": "https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:59:48.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-9A867FA5CCB5": {
+      "id": "SRC-9A867FA5CCB5",
+      "url": "https://github.com/zeronsh/zgx",
+      "title": "https://github.com/zeronsh/zgx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T18:59:48.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-BB3FCC714ED0": {
+      "id": "SRC-BB3FCC714ED0",
+      "url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "title": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
+        "fileName": "hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md"
+      }
+    },
+    "SRC-3F40A015183B": {
+      "id": "SRC-3F40A015183B",
+      "url": "https://github.com/higress-group/higress",
+      "title": "https://github.com/higress-group/higress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-FBC740C72048": {
+      "id": "SRC-FBC740C72048",
+      "url": "https://github.com/alibaba/higress/blob/main/plugins/golang-filter/mcp-server/servers/higress/higress-api/README_en.md",
+      "title": "https://github.com/alibaba/higress/blob/main/plugins/golang-filter/mcp-server/servers/higress/higress-api/README_en.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-AC8625207EF9": {
+      "id": "SRC-AC8625207EF9",
+      "url": "https://mcp.deepwiki.com/mcp",
+      "title": "https://mcp.deepwiki.com/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.114Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-D5541DBE8037": {
+      "id": "SRC-D5541DBE8037",
+      "url": "http://127.0.0.1/",
+      "title": "http://127.0.0.1/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T19:00:03.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-E8EA3C39ACC7": {
+      "id": "SRC-E8EA3C39ACC7",
+      "url": "https://modelcontextprotocol.io/specification/2025-03-26/basic/utilities/ping",
+      "title": "https://modelcontextprotocol.io/specification/2025-03-26/basic/utilities/ping",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.119Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-25605C0C4B08": {
+      "id": "SRC-25605C0C4B08",
+      "url": "https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/golang-filter/mcp-session/common/sse.go",
+      "title": "https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/golang-filter/mcp-session/common/sse.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-87C6CB17DA53": {
+      "id": "SRC-87C6CB17DA53",
+      "url": "https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/request.go",
+      "title": "https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/request.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-6E389DDDB032": {
+      "id": "SRC-6E389DDDB032",
+      "url": "https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/envelope.go",
+      "title": "https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/envelope.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-5CBD91F5FB9A": {
+      "id": "SRC-5CBD91F5FB9A",
+      "url": "http://backend-primary:8080/unified/rest/legacy-ack",
+      "title": "http://backend-primary:8080/unified/rest/legacy-ack",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T19:00:03.125Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-240B422D992E": {
+      "id": "SRC-240B422D992E",
+      "url": "https://github.com/higress-group/proxy/releases/download/v2.2.5/envoy-symbol-ARCH.tar.gz",
+      "title": "https://github.com/higress-group/proxy/releases/download/v2.2.5/envoy-symbol-ARCH.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.127Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-106EA3097E76": {
+      "id": "SRC-106EA3097E76",
+      "url": "https://github.com/higress-group/proxy/releases/download/v2.2.6/envoy-symbol-ARCH.tar.gz",
+      "title": "https://github.com/higress-group/proxy/releases/download/v2.2.6/envoy-symbol-ARCH.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:00:03.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
       }
     }
   }

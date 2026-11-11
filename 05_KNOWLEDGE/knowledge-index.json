@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T18:35:55.369Z",
+  "last_updated": "2026-11-11T18:59:45.432Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19233,8 +19233,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "06fcb151",
-      "content_hash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
+      "source_version": "5be60bda",
+      "content_hash": "027d9b1fc3c7e3201366ee9733bd8cea6b2ba8e283f6ed5de908a96597c0b1a0",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -19246,6 +19246,11 @@
         {
           "number": null,
           "title": "Validate secondary builds without fencing writers (#1271)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "the durable wait limit contracts after commits moved to their own thread (#1287)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -19299,7 +19304,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:57:50.963Z",
+      "verified_at": "2026-11-11T18:55:10.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35499,8 +35504,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "942b6cfa",
-      "content_hash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
+      "source_version": "f0260049",
+      "content_hash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -35565,7 +35570,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T12:49:37.187Z",
+      "verified_at": "2026-11-11T18:54:54.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68724,8 +68729,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "533e89d6",
-      "content_hash": "9fc22120a8c140cf239fdb9193a730dba6e0af276c6b411e287f11b2e0fe3ae0",
+      "source_version": "7437e3e9",
+      "content_hash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -68742,6 +68747,11 @@
         {
           "number": null,
           "title": "Linux: a dropped image no longer crashes the window with \"texture must exist\" (#",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -68805,7 +68815,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:20:08.570Z",
+      "verified_at": "2026-11-11T18:54:57.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179287,7 +179297,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
       "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
-      "content_hash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
+      "content_hash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "promoted_rules": [
@@ -179312,7 +179322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:02:42.419Z",
+      "verified_at": "2026-11-11T18:59:45.399Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

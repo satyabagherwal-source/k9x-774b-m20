@@ -9004,3 +9004,8 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `d79d5796` | Multi-dimensional audit evidence | 2026-11-11T18:35:36.790Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `8cd4dbe1` | Multi-dimensional audit evidence | 2026-11-11T18:35:49.754Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `a859dade` | Multi-dimensional audit evidence | 2026-11-11T18:35:55.479Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `f0260049` | Multi-dimensional audit evidence | 2026-11-11T18:54:54.343Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `7437e3e9` | Multi-dimensional audit evidence | 2026-11-11T18:54:57.369Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `5be60bda` | Multi-dimensional audit evidence | 2026-11-11T18:55:10.679Z |
+| `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-11T18:59:45.545Z |
+| `learn-dom-d-01cfc4fc` | `project://hf-unsloth-deepseek-v4.1-flash-1017-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md` | 2026-11-11T19:00:03.099Z |
