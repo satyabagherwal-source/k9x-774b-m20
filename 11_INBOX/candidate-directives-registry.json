@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:56:57.871Z",
+  "last_updated": "2026-11-11T15:09:01.692Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5064,6 +5064,33 @@
       "source_repo": "matrixorigin-matrixone",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-03C90D-disttae-budget-transaction-workspace-bat.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-906646",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-906646-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-299B2B",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-299B2B-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-5A70CC",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5A70CC-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-11"
     }
   ]
