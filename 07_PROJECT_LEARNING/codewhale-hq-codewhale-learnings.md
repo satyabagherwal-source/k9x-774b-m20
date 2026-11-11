@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `c50612d6`  
+> **Source Version**: `ecfbdbcc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T21:16:35.656Z  
+> **Timestamp**: 2026-11-11T07:37:35.888Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T21:16:35.650Z  
+> **Harvest Timestamp**: 2026-11-11T07:37:35.618Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41160 stars
+- **Stars / Engagement**: 41176 stars
 
 ---
 
@@ -1824,11 +1824,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7234** (2026-11-07): **fix(fork): cut saved histories that carry workspace drift notices**
-  *Symptoms*:   No-Issue: fifth instance of the engine-owned history-envelope boundary class; no separate tracker issue exists. 
+- **Issue #7276** (2026-11-10): **fix(engine): match search include globs in linear time**
+  *Symptoms*: ## What and why  For each `*`, `matches_simple_glob` retried the rest of the pattern at every remaining position. It kept no memo and built a new `String` on every attempt. With an include pattern such as `*a*a*a*a*a*a*a*a*a*a*b`, a file named 40 `a`s plus `.rs` took on the order of C(40,10) ≈ 8·10^8 recursive calls. That cost repeats for every similar file in the walk. #7254 already bounded brace expansion and repeated globstars; this was the last unbounded path.  The function now uses the standard iterative two-pointer wildcard match: it remembers the last `*` and backtracks to it, so it runs in O(text × pattern). The matching rules are unchanged:  - `*` matches zero or more characters, including `/` as before. - `?` matches exactly one character. - Literals are compared by `char`, so multi-byte names stay safe (#249).  ## Related issue (optional)  Refs #7274 (partial: the glob item)  ## How I tested it  - I extended `pathological_globs_stay_bounded` with the many-stars case. On `main` it does not finish within the test's 2 s bound; I stopped it after 60 s. With the fix it passes, and a positive match for the same pattern still holds. - `cargo test -p codewhale-engine --lib tools::search`: 31 passed - `cargo clippy -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and t
 
-- **Issue #7231** (2026-11-07): **fix(net): go direct when a local proxy disappears**
-  *Symptoms*: ## What and why  reqwest snapshots `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` when a client is built, and Codewhale builds its engine HTTP clients once per session. A session started behind a local proxy (Clash, v2rayN, sing-box on `127.0.0.1:…`) therefore kept dialing that port after the proxy was closed: every request failed with a connect error, including requests to providers that need no proxy at all, and the only recovery was restarting Codewhale.  `codewhale_net::proxy::install_loopback_proxy()` installs a `reqwest::Proxy::custom` route for ambient **loopback** proxies:  - `no_proxy()` runs first, so the custom route is the only proxy source. `no_proxy()` clears every proxy registered before it, so the order matters: a request the callback declines cannot fall back to the address reqwest read when the client was built. - A background thread probes each configured loopback proxy on its own port. While a port refuses connections, requests that would use it go direct; when it answers again, proxy routing resumes. A live `HTTP_PROXY` therefore does not keep a dead `HTTPS_PROXY` in the path. - Only a definite `ECONNREFUSED` from every resolved address moves a proxy to direct. A timeout, an fd limit or a resolver failure leaves the previous state alone: routing a session direct on that evidence would put traffic on a network path the operator deliberately avoided. - While the port answers, routing is unchanged: `ALL_PROXY` / `HTTP_PROXY` / `HTTPS_PROXY` precedence, `NO_PROXY
+- **Issue #7275** (2026-11-10): **fix: reject negative retry delays at config load instead of panicking on retry**
+  *Symptoms*: ## What and why  With `[retry] jitter = false` and a negative `max_delay` or `initial_delay`, `RetryConfig::delay_for_attempt` called `Duration::from_secs_f64` with a negative value, which panicked on the first transport retry. With jitter on, the `.max(0.0)` clamp hid the problem.  - `Config::validate` now rejects a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` when the config loads. This matches how `[retry.rate_limit]` already rejects invalid values. - `delay_for_attempt` and `TokenBucket::delay_until_available` keep a no-panic fallback for the public builders and for environment input:   - a negative delay becomes zero;   - a delay too large for a `Duration` becomes `Duration::MAX`. Every caller already caps or saturates the value.   - As a result, a tiny `CODEWHALE_RATE_LIMIT_RPS`, such as `1e-30`, now waits indefinitely instead of panicking.  ## Related issue (optional)  Refs #7274 (partial: the retry item)  ## How I tested it  - New tests, all of which fail on `main`:   - `negative_retry_delay_is_invalid` (runtime)   - `delay_for_attempt_survives_negative_and_huge_configured_delays` (engine)   - `token_bucket_saturates_delay_for_a_tiny_refill_rate` (engine) - `cargo test -p codewhale-runtime --lib negative_retry_delay`: 1 passed - `cargo test -p codewhale-engine --lib -- delay_for_attempt token_bucket`: 7 passed - `cargo clippy -p codewhale-runtime -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,593 +1845,394 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d1ffc1c` (2026-11-08)
-**Commit Message**: fix(engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list
+### Incident Patch 1: `0a7db594` (2026-11-11)
+**Commit Message**: fix(web): hanging indent only on single-line install commands; align the wrapped pipe (CW-8048 INSTALL)
 
-Reproduced from a founder session on a 0.10.3 dev build (artifacts
-subagent-failures-20261107): sub-agents died with "Child usage settlement
-failed", a turn failed on "native usage journal capacity reached before
-dispatch", and two workers returned Anthropic 400 "tools.17.custom.name".
+Under 35rem text-indent -2ch moved only the first line, so every line after a
+hard newline in the PATH and npm-prefix blocks sat 2ch right of the first and
+read as one soft-wrapped line. The indent now applies to a .code-block-single
+modifier set when the command has no newline; multi-line blocks keep pre-wrap
+with no indent. The pipe segment is sliced at pipeAt + 1 so "| sh" aligns with
+the URL continuation. At 375 the hero command wraps onto three lines.
 
-- Anthropic client: tool names were sent raw, so a name such as web.run (from
-  tool_search) invalidated the whole request. Outbound tool declarations,
-  replayed tool_use blocks, tool_choice and the omitted-tool list now use
-  to_api_tool_name, and streamed and non-streamed tool_use names are decoded
-  with from_api_tool_name, matching the chat and responses clients.
-- Usage journal: MAX_RUNTIME_USAGE_RECORDS_PER_OWNER 64 -> 256. Children share
-  the session's journal owner and the workflow default is 64 live agents with a
-  ceiling of 128, so a full fan-out plus the parent exceeded 64. be43ea93fd
-  already makes the overflow non-fatal; this keeps the receipts.
-- Turn start (CW-6633, #6184): the heartbeat stayed Idle until TurnStarted, so
-  a wait before it produced no log, no stall record an
-
-**File**: `CHANGELOG.md` (modified, +6/-0)
-```diff
-@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
-+- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
-+- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-+- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
-+- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
-+- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
- - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
- - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
- - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
-```
-
-**File**: `crates/app-server/src/acp_server.rs` (modified, +1/-1)
-```diff
-@@ -481,7 +481,7 @@ impl AcpServer {
-         let sessions =
-             codewhale_engine::session_manager::SessionManager::new(self.sessions_dir.clone())
-                 .ok()
--                .and_then(|manager| manager.list_sessions().ok())
-+                .map(|manager| manager.list_sessions_lenient())
-                 .unwrap_or_default();
-         let sessions: Vec<Value> = sessions
-             .into_iter()
-```
-
-**File**: `crates/engine/src/client/anthropic.rs` (modified, +35/-7)
-```diff
-@@ -34,14 +34,19 @@ use codewhale_models::tool_projection::{
-     RouteToolProjection, ToolSchemaProjection, description_with_constraint_note, forced_tool_name,
-     project_tool_schema,
- };
--use codewhale_models::{ContentBlock, MessageRequest, MessageResponse, StreamEvent, Usage};
-+use codewhale_models::{
-+    ContentBlock, ContentBlockStart, MessageRequest, MessageResponse, StreamEvent, Usage,
-+};
- use codewhale_runtime::config::wire_model_for_provider_route;
- use codewhale_runtime::logging;
- 
- use super::CodewhaleClient;
- use super::prepared::WireDialect;
- use super::role_placement::{RolePlacement, role_placement};
--use super::wire::{extract_sse_data_value, next_sse_line, push_sse_event_data};
-+use super::wire::{
-+    extract_sse_data_value, from_api_tool_name, next_sse_line, push_sse_event_data,
-+    to_api_tool_name,
-+};
- 
- /// Maximum `cache_control` breakpoints Anthropic accepts per request.
- const MAX_CACHE_BREAKPOINTS: usize = 4;
-@@ -120,7 +125,7 @@ impl CodewhaleClient {
-                         constraint_note,
-                     } => {
-                         let mut value = json!({
--                            "name": tool.name,
-+                            "name": to_api_tool_name(&tool.name),
-                             "description": description_with_constraint_note(
-                                 &tool.description,
-                                 constraint_note,
-@@ -137,7 +142,7 @@ impl CodewhaleClient {
-                     }
-                     ToolSchemaProjection::Omitted { .. } => {
-                         omitted_logical_names.push(tool.name.clone());
--                        omitted_tool_names.push(tool.name.clone());
-+                        omitted_tool_names.push(to_api_tool_name(&tool.name));
-                     }
-                 }
-             }
-@@ -520,12 +525,26 @@ fn discard_provider_execution_ids(value: &mut Value) {
-     }
- }
- 
-+fn decode_tool_use_names(value: &mut Value) {
-+    let Some(content) = value.get_mut("content").and_then(Value::as_array_mut) else {
-+        return;
-+    };
-+    for block in content.iter_mut() {
-+        if block.get("type").and_then(Value::as_str) == Some("tool_use")
-+            && let Some(name) = block.get("name").and_then(Value::as_str)
-+        {
-+            block["name"] = json!(from_api_tool_name(name));
-+        }
-+    }
-+}
-+
- fn decode_anthropic_message(mut value: Value) -> Result<MessageResponse> {
-     discard_provider_execution_ids(&mut value);
-     if let Some(usage) = value.get_mut("usage") {
-         *usage = json!(parse_anthropic_usage(usage));
-     }
-     normalize_redacted_thinking_blocks(&mut value);
-+    decode_tool_use_names(&mut value);
-     serde_json::from_value(value).context("Failed to decode Anthropic Messages response")
- }
- 
-@@ -777,7 +796,7 @@ fn anthropic_tool_choice(tool_choice: &Value, model: &str) -> Value {
-         Some("auto") => json!({ "type": "auto" }),
-         Some("none") => json!({ "type": "none" }),
-         Some("any" | "required") => json!({ "type": "any" }),
--        Some(name) => json!({ "type": "tool", "name": name }),
-+        Some(name) => json!({ "type": "tool", "name": to_api_tool_name(name) }),
-         None => tool_choice.clone(),
-     }
- }
-@@ -925,7 +944,7 @@ fn content_block_to_anthropic(block: &ContentBlock) -> Option<Value> {
-         } => Some(json!({
-             "type": "tool_use",
-             "id": id,
--            "name": name,
-+            "name": to_api_tool_name(name),
-             "input": input,
-         })),
-         ContentBlock::ToolResult {
-@@ -1084,7 +1103,16 @@ fn convert_anthropic_sse_data(data: &str) -> Option<Result<StreamEvent>> {
-         // Local-only receipt: the legacy path ignored it (not a provider
-         // type), so it stays ignored rather than decoding.
-         Ok(StreamEvent::ToolProjectionWarning { .. }) => None,
--        Ok(event) => Some(Ok(event)),
-+        Ok(mut event) => {
-+            if let StreamEvent::ContentBlockStart {
-+                content_block: ContentBlockStart::ToolUse { name, .. },
-+                ..
-+            } = &mut event
-+            {
-+                *name = from_api_tool_name(name);
-+            }
-+            Some(Ok(event))
-+        }
-         Err(error) => {
-             // Cold path, reached only when direct decode fails: invalid JSON
-             // and unknown types keep their exact legacy outcomes.
-```
-
-**File**: `crates/engine/src/core/engine.rs` (modified, +6/-0)
-```diff
-@@ -6768,6 +6768,12 @@ impl Engine {
-         review: Option<codewhale_protocol::op::ReviewOperation>,
-     ) -> SendMessageOutcome {
-         let setup_timing = codewhale_runtime::logging::PhaseTimer::start("turn_setup");
-+        self.turn_heartbeat.enter(
-+            turn_heartbeat::TurnPhase::Preparing,
-+            Some("starting the turn".to_string()),
-+            Some(turn_heartbeat::PREPARING_PHASE_BOUND),
-+        );
-+        let _pre_turn_idle = turn_heartbeat::IdleOnDrop(Arc::clone(&self.turn_heartbeat));
-         let is_review = review.is_some();
-         let TurnSpec {
-             profile_constitution,
-```
-
-**File**: `crates/engine/src/cost_status.rs` (modified, +1/-1)
-```diff
-@@ -1272,7 +1272,7 @@ fn with_pending_state_mut<R>(f: impl FnOnce(&mut ScopedPendingBackgroundCost) ->
- /// This journal is deliberately separate from the TUI pending-money pool:
- /// taking one runtime owner's records cannot steal or reset the foreground
- /// session's `/cost` state.
--const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 64;
-+const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 256;
- 
- #[derive(Default)]
- struct OwnerRuntimeUsageJournal {
-```
-
-**File**: `crates/engine/src/session_manager.rs` (modified, +23/-0)
-```diff
-@@ -5888,6 +5888,29 @@ impl SessionManager {
-             .collect())
-     }
- 
-+    pub fn list_sessions_lenient(&self) -> Vec<SessionMetadata> {
-+        let catalog = match self.scan_session_records() {
-+            Ok(catalog) => catalog,
-+            Err(error) => {
-+                tracing::warn!(%error, "session listing failed; showing no sessions");
-+                return Vec::new();
-+            }
-+        };
-+        if let Some(warning) = catalog.warning() {
-+            tracing::warn!(%warning, "session listing is incomplete; showing the readable ones");
-+        }
-+        let mut sessions: Vec<_> = catalog
-+            .records
-+            .into_iter()
-+            .map(|(_, mut metadata)| {
-+                self.apply_late_usage_to_metadata(&mut metadata);
-+                metadata
-+            })
-+            .collect();
-+        sessions.sort_by_key(|session| std::cmp::Reverse(session.updated_at));
-+        sessions
-+    }
-+
-     pub fn list_sessions_with_recovery(
-         &self,
-     ) -> std::io::Result<(
-```
-
-**File**: `crates/runtime/src/runtime_control.rs` (modified, +17/-14)
-```diff
-@@ -20,20 +20,23 @@ where
-     static SLOTS: std::sync::OnceLock<std::sync::Arc<tokio::sync::Semaphore>> =
-         std::sync::OnceLock::new();
-     const PERMIT_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
--    let permit = tokio::time::timeout(
--        PERMIT_WAIT,
--        SLOTS
--            .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
--            .clone()
--            .acquire_owned(),
--    )
--    .await
--    .map_err(|_| {
--        anyhow::anyhow!(
--            "blocking work is queued behind earlier jobs that have not finished within {}s",
--            PERMIT_WAIT.as_secs()
--        )
--    })??;
-+    let slots = SLOTS
-+        .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
-+        .clone();
-+    if slots.available_permits() == 0 {
-+        tracing::warn!(
-+            target: "turn",
-+            "owner_work is waiting: all 4 blocking slots are held by earlier jobs"
-+        );
-+    }
-+    let permit = tokio::time::timeout(PERMIT_WAIT, slots.acquire_owned())
-+        .await
-+        .map_err(|_| {
-+            anyhow::anyhow!(
-+                "blocking work is queued behind earlier jobs that have not finished within {}s",
-+                PERMIT_WAIT.as_secs()
-+            )
-+        })??;
-     tokio::task::spawn_blocking(move || {
-         #[cfg(any(test, feature = "test-support"))]
-         let _membership = crate::test_support::join_env_scope(env_ticket);
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +6/-0)
-```diff
-@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
-+- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
-+- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-+- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
-+- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
-+- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
- - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
- - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
- - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
-```
-
----
-
-### Incident Patch 2: `5bc1dff7` (2026-11-08)
-**Commit Message**: fix(cost): late background usage also drops settled "outcome unknown" labels
-
-Refs CW-7882 (item 1). The previous commit made the cost labels follow
-the unresolved sources when a usage record is projected, but late
-background usage takes another path: SessionCostSnapshot's
-absorb_late_background_cost and the TUI's absorb_pending_background_cost
-reconcile resolved sources out of missing_usage_sources and add the batch's
-own reasons, without pruning. When a late receipt settled the last source
-behind "request outcome unknown" (or "provider omitted usage"), the label
-stayed while another turn was unpriced for a different reason.
-
-The prune now lives in one helper,
-cost_status::prune_settled_missing_reasons, called from all three places:
-the record projection (replacing its inline block), the engine's late
-absorb and the TUI's late absorb. The rule is unchanged: each label stays
-only while an unresolved, non-running source carries it or the source map
-has overflowed, and "request in progress" only while an in-flight source
-is still unresolved.
-
-Not covered: a turn audit can carry a reason label of its own, but no
-production audit uses these two reasons (only missing-source records do),
-
-**File**: `crates/engine/src/cost_status.rs` (modified, +34/-0)
-```diff
-@@ -3883,6 +3883,40 @@ pub fn reconcile_missing_usage_sources(
-     }
- }
- 
-+pub fn prune_settled_missing_reasons(
-+    missing: &BTreeMap<String, MissingUsageCoverage>,
-+    overflowed: bool,
-+    in_flight: &mut BTreeSet<String>,
-+    unpriced: u32,
-+    cny_unpriced: u32,
-+    reasons: &mut BTreeSet<String>,
-+    cny_reasons: &mut BTreeSet<String>,
-+) {
-+    in_flight.retain(|source| missing.contains_key(source));
-+    for reason in [
-+        RuntimeUsageMissingReason::RequestOutcomeUnknown,
-+        RuntimeUsageMissingReason::SuccessWithoutUsage,
-+    ] {
-+        let unresolved = overflowed
-+            || missing
-+                .iter()
-+                .any(|(source, coverage)| coverage.reason == reason && !in_flight.contains(source));
-+        if unpriced == 0 || !unresolved {
-+            reasons.remove(reason.label());
-+        }
-+        if cny_unpriced == 0 || !unresolved {
-+            cny_reasons.remove(reason.label());
-+        }
-+    }
-+    let in_progress = crate::pricing::UnpricedReason::RequestInProgress.label();
-+    if unpriced == 0 || in_flight.is_empty() {
-+        reasons.remove(in_progress);
-+    }
-+    if cny_unpriced == 0 || in_flight.is_empty() {
-+        cny_reasons.remove(in_progress);
-+    }
-+}
-+
- /// Apply bounded unresolved metadata to an existing cost projection. The
- /// returned batch omits exact identities whose missing slots overflowed; a
- /// real receipt for such an id can still settle once, but cannot erase the gap.
-```
-
-**File**: `crates/engine/src/session_manager.rs` (modified, +18/-26)
-```diff
-@@ -1577,32 +1577,15 @@ impl SessionCostSnapshot {
-                 self.in_flight_usage_sources.remove(&key);
-             }
-         }
--        let missing_sources = &self.missing_usage_sources;
--        self.in_flight_usage_sources
--            .retain(|source| missing_sources.contains_key(source));
--        let in_flight = &self.in_flight_usage_sources;
--        for reason in [
--            crate::cost_status::RuntimeUsageMissingReason::RequestOutcomeUnknown,
--            crate::cost_status::RuntimeUsageMissingReason::SuccessWithoutUsage,
--        ] {
--            let unresolved = self.missing_usage_overflowed
--                || missing_sources.iter().any(|(source, missing)| {
--                    missing.reason == reason && !in_flight.contains(source)
--                });
--            if self.unpriced_turns == 0 || !unresolved {
--                self.unpriced_reasons.remove(reason.label());
--            }
--            if self.cny_unpriced_turns == 0 || !unresolved {
--                self.cny_unpriced_reasons.remove(reason.label());
--            }
--        }
--        let in_progress = crate::pricing::UnpricedReason::RequestInProgress.label();
--        if self.unpriced_turns == 0 || in_flight.is_empty() {
--            self.unpriced_reasons.remove(in_progress);
--        }
--        if self.cny_unpriced_turns == 0 || in_flight.is_empty() {
--            self.cny_unpriced_reasons.remove(in_progress);
--        }
-+        crate::cost_status::prune_settled_missing_reasons(
-+            &self.missing_usage_sources,
-+            self.missing_usage_overflowed,
-+            &mut self.in_flight_usage_sources,
-+            self.unpriced_turns,
-+            self.cny_unpriced_turns,
-+            &mut self.unpriced_reasons,
-+            &mut self.cny_unpriced_reasons,
-+        );
-         self.usage_source_fingerprints.insert(key.clone());
-         self.accounted_usage_sources.insert(key, next);
-         let total = self.total_estimate();
-@@ -1636,6 +1619,15 @@ impl SessionCostSnapshot {
-             .extend(pool.unpriced_reasons.iter().map(ToString::to_string));
-         self.cny_unpriced_reasons
-             .extend(pool.cny_unpriced_reasons.iter().map(ToString::to_string));
-+        crate::cost_status::prune_settled_missing_reasons(
-+            &self.missing_usage_sources,
-+            self.missing_usage_overflowed,
-+            &mut self.in_flight_usage_sources,
-+            self.unpriced_turns,
-+            self.cny_unpriced_turns,
-+            &mut self.unpriced_reasons,
-+            &mut self.cny_unpriced_reasons,
-+        );
-         self.unpriced_classes
-             .extend(pool.unpriced_classes.iter().map(ToString::to_string));
-         self.pricing_provenances
-```
-
-**File**: `crates/tui/src/tui/app.rs` (modified, +9/-0)
-```diff
-@@ -4698,6 +4698,15 @@ impl App {
-                 }
-             }
-         }
-+        codewhale_engine::cost_status::prune_settled_missing_reasons(
-+            &self.session.missing_usage_sources,
-+            self.session.missing_usage_overflowed,
-+            &mut self.session.in_flight_usage_sources,
-+            self.session.cost_unpriced_turns,
-+            self.session.cost_cny_unpriced_turns,
-+            &mut self.session.cost_unpriced_reasons,
-+            &mut self.session.cost_cny_unpriced_reasons,
-+        );
-         runtime_usage_arrived || source_arrived
-     }
- 
-```
-
----
-
-### Incident Patch 3: `faa4244b` (2026-11-08)
-**Commit Message**: fix(windows): read live Fleet and diagnostic files with shared access; name the plugin snapshot refusal
-
-Hosted Windows run 42381817495 (549ff01) failed 221 cases. Fleet ledger replay
-and state rebuild, and the CLI metrics diagnostic reader, opened files through
-the protected reader that denies concurrent writers, so a live writer caused
-OS error 32. They now use WorkspaceFile::open_file_shared, which keeps the
-regular-file, link and identity checks. Plugin enablement now reports which
-snapshot check refused (stage root, content identity, final root check) so the
-118 snapshot rejections can be diagnosed from the next hosted run; the refusal
-itself is unchanged. .gitattributes keeps LF on the generated protocol schema
-and SDK exports.
-
-Verified on macOS only: plugins lib 201 passed/0 failed; engine fleet:: 435
-passed/0 failed; cli metrics:: 42 passed/0 failed; cargo fmt clean. The Windows
-effect is unproven until hosted CI runs. The 2 MiB stack-overflow case is not
-addressed.
+Checks from web/ under the heavy lock: tsc 0, lint 0, check:locales 0, full
+vitest 90 files / 1314 of 1314 passed, build 0, shoot.mjs 16 screenshots, 0
+problems, 0 overflow. /en/install at 375 checked by eye (PATH block aligned).
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.gitattributes` (modified, +4/-0)
+**File**: `web/app/styles/primitives.css` (modified, +4/-2)
 ```diff
-@@ -80,3 +80,7 @@ scripts/release/*.sh text eol=lf
- 
- # Preserve the qualified upstream font license, including its trailing space.
- web/public/brand/fonts/OFL.txt text eol=lf whitespace=-blank-at-eol
-+
-+# Generated protocol and SDK exports are compared byte for byte; keep LF on Windows checkouts.
-+crates/app-server-protocol/schema/** text eol=lf
-+npm/runtime-sdk/generated/** text eol=lf
+@@ -591,11 +591,13 @@ a.dir-row:hover .dir-action { color: var(--text); }
+ @media (max-width: 35rem) {
+   .code pre.code-block {
+     padding-right: var(--space-4);
+-    padding-left: calc(var(--space-4) + 2ch);
+-    text-indent: -2ch;
+     white-space: pre-wrap;
+     overflow-wrap: anywhere;
+   }
++  .code pre.code-block-single {
++    padding-left: calc(var(--space-4) + 2ch);
++    text-indent: -2ch;
++  }
+   .code .code-seg-pipe { display: block; text-indent: 0; }
+   .code .code-copy {
+     position: static;
 ```
+
+**File**: `web/components/install-code-block.tsx` (modified, +3/-2)
+```diff
+@@ -37,12 +37,13 @@ export function InstallCodeBlock({ cmd, copyLabel = "Copy", copiedLabel = "Copie
+     }
+   };
+ 
+-  const pipeAt = cmd.includes("\n") ? -1 : cmd.indexOf(" | ");
++  const multiline = cmd.includes("\n");
++  const pipeAt = multiline ? -1 : cmd.indexOf(" | ");
+   const copiedWord = copiedLabel.replace(/\s*✓\s*$/u, "");
+ 
+   return (
+     <div className="code">
+-      <pre tabIndex={0} className="code-block">{pipeAt < 0 ? cmd : (<><span className="code-seg">{cmd.slice(0, pipeAt)}</span><span className="code-seg code-seg-pipe">{cmd.slice(pipeAt)}</span></>)}</pre>
++      <pre tabIndex={0} className={multiline ? "code-block" : "code-block code-block-single"}>{pipeAt < 0 ? cmd : (<><span className="code-seg">{cmd.slice(0, pipeAt)}</span><span className="code-seg code-seg-pipe">{cmd.slice(pipeAt + 1)}</span></>)}</pre>
+       <button
+         type="button"
+         lang={copyLocale}
+```
+
+---
+
+### Incident Patch 2: `12f91724` (2026-11-11)
+**Commit Message**: tui: connecting a route after "explore offline" ends offline queueing (CW-8031)
+
+choose_offline_explore sets offline_mode, but route activation through
+switch_provider only cleared the explore label, so every later message was
+held as "Saved for later" until restart. clear_offline_explore_on_route_activation
+now also clears offline_mode and returns a held message to the composer; the
+rejected-key path (apply.rs) still sets offline_mode and is unchanged.
+
+Checks (Boat farm, RUST_MIN_STACK=64MiB, cargo test -p codewhale-tui --lib,
+filters tui::onboarding, route_activation_after_offline, tui::ui::tests::failed_,
+provider_, reselecting): 68 passed, 0 failed. Without RUST_MIN_STACK two
+failed_*_activation tests overflow the stack on unmodified main too.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -361,6 +361,7 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
- - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
- - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
- - **`codewhale exec --add-dir <path>`** (repeatable) and `addDirs` on `POST /v1/threads` let the file tools read and write a sibling directory, a second checkout or a shared scratch root without turning on Full Access.
+@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - The install guide's note for a first message that gets no answer now describes v0.10.2: connect a model with `/provider`, and restart if messages stay saved for later after you connect. It described v0.10.0's key screen. The Chinese guide carries the same correction.
+ - Project activity on the site now comes from a server-side snapshot with a freshness record, the browser no longer calls GitHub, and count sentences use the right plural form in every language.
+ - The install page now gives the exact steps for the released version on every platform, including what the installer adds to PATH, how to turn off usage counting, and how to remove it, and the install command no longer gets cut off on phones.
++- After choosing "explore offline" on first run, connecting a provider or Custom endpoint with /provider now takes effect immediately; messages are no longer held as "Saved for later" until restart, and a message held while offline returns to the composer.
+ - The pet browser view opens with a one-time code instead of the long-lived owner token, so the token no longer appears in the URL or the launcher command line. The code lasts 30 seconds and works once; the owner token itself is still stored in the cookie and connection file and is not rotated. Not run in a real browser.
+ - On Windows with Caps Lock on, Ctrl+E moves to the end of the line again instead of opening the file tree; the file tree now needs an explicit Shift (Ctrl+Shift+E or Cmd+Shift+E), so a terminal that reports an uppercase E with Ctrl but no Shift flag can no longer toggle it. The Caps Lock key event is simulated from the input library source; no native Windows run.
+ - External agents installed through npm on Windows (`claude.cmd`, `codex.cmd`, ...) are now found instead of the unrunnable shell shim, `GET /v1/agents/external` says whether an agent answered with an unsupported protocol rather than reporting every failure as no answer, and a hung `--version` or handshake probe no longer leaves the agent's child processes running. Verified on macOS and Linux; the Windows code has never been compiled or run, and no agent row is qualified by this change.
 ```
 
-**File**: `crates/cli/src/metrics.rs` (modified, +1/-1)
+**File**: `crates/tui/src/tui/onboarding/mod.rs` (modified, +44/-3)
 ```diff
-@@ -519,7 +519,7 @@ fn open_diagnostic_file(path: &Path) -> io::Result<std::fs::File> {
-         )
-     })?;
-     codewhale_util::files::WorkspaceFile::open_resolved_root(parent, Path::new(name), false)?
--        .open_file()
-+        .open_file_shared()
+@@ -507,12 +507,20 @@ pub fn choose_offline_explore(app: &mut App) {
+     app.needs_redraw = true;
  }
  
- fn read_diagnostic_text(path: &Path) -> io::Result<String> {
-```
-
-**File**: `crates/engine/src/fleet/ledger.rs` (modified, +2/-2)
-```diff
-@@ -1681,7 +1681,7 @@ impl FleetLedger {
-         let mut events = Vec::new();
-         let mut replay_epoch = "legacy".to_string();
-         let mut history_compacted = false;
--        let file = match self.ledger_file.open_file() {
-+        let file = match self.ledger_file.open_file_shared() {
-             Ok(file) => file,
-             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-                 return Ok((false, events, history_compacted));
-@@ -1737,7 +1737,7 @@ impl FleetLedger {
- 
-     fn rebuild_state_unlocked(&self) -> Result<FleetLedgerState> {
-         let mut state = FleetLedgerState::default();
--        let file = match self.ledger_file.open_file() {
-+        let file = match self.ledger_file.open_file_shared() {
-             Ok(file) => file,
-             Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(state),
-             Err(error) => return Err(error).context("Opening Fleet ledger for state rebuild"),
-```
-
-**File**: `crates/plugins/src/registry.rs` (modified, +26/-9)
-```diff
-@@ -803,11 +803,15 @@ impl PluginRegistry {
-                 plugin.trust_status.as_str()
-             ));
-         }
--        if plugin.staged_root.as_deref().is_none_or(|root| {
--            !staged_bundle_matches(root, &plugin.content_hash, &plugin.capability_hash)
--        }) {
-+        let snapshot_rejection = match plugin.staged_root.as_deref() {
-+            None => Some("no staged snapshot".to_string()),
-+            Some(root) => {
-+                staged_bundle_rejection(root, &plugin.content_hash, &plugin.capability_hash)
-+            }
-+        };
-+        if let Some(reason) = snapshot_rejection {
-             return Err(format!(
--                "Plugin bundle `{}` has no verified Codewhale runtime snapshot; review and trust it again before enablement",
-+                "Plugin bundle `{}` has no verified Codewhale runtime snapshot ({reason}); review and trust it again before enablement",
-                 plugin.name()
-             ));
-         }
-@@ -1671,12 +1675,25 @@ fn runtime_stage_path(state_path: &Path, id: &PluginId, content_hash: &str) -> P
-         .join(content_hash)
- }
- 
--fn staged_bundle_matches(root: &Path, content_hash: &str, capability_hash: &str) -> bool {
--    let Ok(finalized) = verify_finalized_stage_root(root, None) else {
--        return false;
-+fn staged_bundle_rejection(
-+    root: &Path,
-+    content_hash: &str,
-+    capability_hash: &str,
-+) -> Option<String> {
-+    let finalized = match verify_finalized_stage_root(root, None) {
-+        Ok(finalized) => finalized,
-+        Err(reason) => return Some(format!("stage root: {reason}")),
-     };
--    staged_bundle_content_matches(root, content_hash, capability_hash)
--        && verify_finalized_stage_root(root, Some(&finalized)).is_ok()
-+    if !staged_bundle_content_matches(root, content_hash, capability_hash) {
-+        return Some("content or capability identity differs".to_string());
+-/// Clear the offline-explore label once a real route is activated (#3927).
++/// Retire the offline-explore state once a real route is activated (#3927).
+ ///
+-/// This is the *only* thing that retires the label: it is not time-based and
+-/// not cleared by dismissing a screen.
++/// This is the *only* thing that retires the label and the offline queueing it
++/// armed: it is not time-based and not cleared by dismissing a screen. A
++/// message held while offline is returned to the composer so the person can
++/// send it on the route that just became active; any further held messages
++/// drain after that turn completes.
+ pub fn clear_offline_explore_on_route_activation(app: &mut App) {
+     app.onboarding_explore_offline = false;
++    if app.offline_mode {
++        app.offline_mode = false;
++        app.pop_last_queued_into_draft();
++        app.needs_redraw = true;
 +    }
-+    verify_finalized_stage_root(root, Some(&finalized))
-+        .err()
-+        .map(|reason| format!("final root check: {reason}"))
+ }
+ 
+ /// Finish first run from the ready screen and land in the real composer,
+@@ -699,6 +707,39 @@ mod tests {
+ 
+         clear_offline_explore_on_route_activation(&mut app);
+         assert!(!app.onboarding_explore_offline);
++        assert!(!app.offline_mode);
++        assert_eq!(
++            app.decide_submit_disposition(),
++            crate::tui::app::SubmitDisposition::Immediate
++        );
++    }
++
++    #[test]
++    fn route_activation_returns_the_held_message_to_the_composer() {
++        let mut app = test_app_with_locale(Locale::En);
++        app.trust_mode = true;
++        choose_offline_explore(&mut app);
++        app.input.clear();
++        app.queue_message(crate::tui::app::QueuedMessage::new("first task".to_string(), None));
++        assert_eq!(
++            app.decide_submit_disposition(),
++            crate::tui::app::SubmitDisposition::Queue
++        );
++
++        clear_offline_explore_on_route_activation(&mut app);
++
++        assert_eq!(app.input, "first task");
++        assert!(app.queued_messages.is_empty());
++    }
++
++    #[test]
++    fn rejected_key_offline_stays_queued_without_route_activation() {
++        let mut app = test_app_with_locale(Locale::En);
++        app.offline_mode = true;
++        assert_eq!(
++            app.decide_submit_disposition(),
++            crate::tui::app::SubmitDisposition::Queue
++        );
+     }
+ 
+     // ── Conditional required steps: the counter ──────────────────────────
+```
+
+**File**: `crates/tui/src/tui/ui/tests.rs` (modified, +34/-0)
+```diff
+@@ -11043,6 +11043,40 @@ async fn provider_switch_clears_turn_cache_history() {
+     assert!(app.session.turn_cache_history.is_empty());
+ }
+ 
++#[tokio::test]
++async fn route_activation_after_offline_explore_sends_instead_of_holding() {
++    let _home = SettingsHomeGuard::new();
++    let mut app = create_test_app();
++    app.trust_mode = true;
++    crate::tui::onboarding::choose_offline_explore(&mut app);
++    app.input.clear();
++    app.queue_message(QueuedMessage::new("first task".to_string(), None));
++    assert_eq!(
++        app.decide_submit_disposition(),
++        crate::tui::app::SubmitDisposition::Queue
++    );
++
++    let mut engine = mock_engine_handle();
++    let mut config = Config::default();
++    let identity = (config).test_identity_for_kind(ProviderKind::Ollama);
++    switch_provider(
++        &mut app,
++        &mut engine.handle,
++        &mut config,
++        identity,
++        Some("fixture-local:tag".to_string()),
++    )
++    .await;
++
++    assert!(!app.offline_mode);
++    assert_eq!(
++        app.decide_submit_disposition(),
++        crate::tui::app::SubmitDisposition::Immediate
++    );
++    assert_eq!(app.input, "first task");
++    assert!(app.queued_messages.is_empty());
 +}
 +
-+fn staged_bundle_matches(root: &Path, content_hash: &str, capability_hash: &str) -> bool {
-+    staged_bundle_rejection(root, content_hash, capability_hash).is_none()
- }
- 
- pub(super) fn verify_finalized_stage_root(
+ /// #6566: re-selecting the provider already in use (first-run key entry)
+ /// reads as a connection, not as a switch from a provider to itself.
+ #[tokio::test]
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
+---
+
+### Incident Patch 3: `97014b29` (2026-11-11)
+**Commit Message**: fix(web): announce the read date on /contribute and drop unused feed code (CW-8048 FACTS-D)
+
+The merged-count paragraph carried its read date in aria-label, which
+ARIA does not allow on a paragraph, and the milestone progress had only
+a title. Both now keep the title and add the read date as visually
+hidden text (the site's sr-only class), so screen readers announce it.
+The visible text is unchanged. The repo-activity test now asserts the
+hidden read date on the count and on every milestone progress, and no
+aria-label on a paragraph; it fails against the previous page.
+
+Removes the JSDoc line added on extractPluralBlocks in
+check-locales.mjs (the repository takes no new code comments).
+
+git grep shows nothing uses the .feed-card* classes or imports
+lib/truncate.ts (only its own test did) after the feed card was
+removed, so the seven CSS rules, lib/truncate.ts and its test go.
+
+Checks from web/: vitest lib/repo-activity.test.ts 20/20 passed;
+check:facts, check:docs, check:locales, tsc --noEmit, lint all exit 0.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `web/app/[locale]/contribute/page.tsx` (modified, +2/-1)
 ```diff
-@@ -361,6 +361,7 @@ until the matching tag, packages, checksums, and release assets exist.
+@@ -169,7 +169,7 @@ export default async function ContributePage({ params }: { params: Promise<{ loc
+             scope={pickText(PROJECT_COPY.mergedPageScope, locale)}
+             link={<Link href="#milestones" className="btn btn-secondary">{pickText(PROJECT_COPY.goalsLink, locale)}<Icon name="arrow-right" className="icon icon-flip" /></Link>}
+           >
+-            {mergedCount ? <p className="page-meta tabular" title={countAsOf} aria-label={countAsOf ? `${mergedCount} ${countAsOf}` : undefined}>{mergedCount}</p> : null}
++            {mergedCount ? <p className="page-meta tabular" title={countAsOf}>{mergedCount}{countAsOf ? <span className="sr-only"> {countAsOf}</span> : null}</p> : null}
+             <MergedList items={pulse.merged} locale={locale} />
+           </Section>
+         ) : null}
+@@ -197,6 +197,7 @@ export default async function ContributePage({ params }: { params: Promise<{ loc
+                       <span className="tide-progress" title={countAsOf}>
+                         <span className="tide-track" aria-hidden="true"><span style={{ inlineSize: `${Math.round((progress.closed / total) * 100)}%` }} /></span>
+                         <span className="tabular">{fill(pickText(PROJECT_COPY.milestoneProgress, locale), { closed: progress.closed, total })}</span>
++                        {countAsOf ? <span className="sr-only">, {countAsOf}</span> : null}
+                       </span>
+                     ) : null}
+                   </dd>
+```
+
+**File**: `web/app/styles/pages.css` (modified, +0/-7)
+```diff
+@@ -128,13 +128,6 @@
+ .feed-column-head h2 { font-size: var(--text-heading); }
+ .feed-items > li + li { border-top: 1px solid var(--line); }
+ .feed-empty { padding: var(--space-4); }
+-.feed-card { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); }
+-.feed-card-meta,
+-.feed-card-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); color: var(--muted); font-size: var(--text-caption); }
+-.feed-card-time,
+-.feed-card-author { margin-inline-start: auto; }
+-.feed-card-title { font-size: var(--text-ui); font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
+-.feed-card-title a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 0.2em; }
+ .feed-action { border: 1px solid var(--line); border-radius: var(--radius-surface); background: color-mix(in srgb, var(--panel) 72%, transparent); }
  
- ### Fixed
+ /* Account and utility pages: one centred column. */
+```
+
+**File**: `web/lib/repo-activity.test.ts` (modified, +15/-0)
+```diff
+@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ import { authorsBetween, creditedPairs, releaseCredits } from "../scripts/repo-activity-lib.mjs";
+ import ContributePage from "../app/[locale]/contribute/page";
+ import HomePage from "../app/[locale]/page";
++import { readAsOf } from "../components/project-pulse";
+ import { GET as factsRoute } from "../app/api/facts/route";
+ import { ALL_LOCALES } from "./i18n/config";
+ import { getContribute } from "./i18n/dictionaries";
+@@ -79,6 +80,20 @@ describe("pages with every GitHub call failing", () => {
+     expect(html).toContain(`alt="${person?.login}"`);
+     expect(html).toContain(view!.pulls[0].url);
+   });
++
++  it("announces the read date of the count and the milestone progress to assistive technology", async () => {
++    const html = await render(ContributePage as Page, "en");
++    const asOf = readAsOf(String(snapshot.readAt), "en");
++    expect(asOf).toBeTruthy();
++    expect(html).toMatch(new RegExp(`<p class="page-meta tabular" title="${asOf}">[^<]+<span class="sr-only"> ${asOf}</span></p>`));
++    const progress = html.match(/<span class="tide-progress"[\s\S]*?<\/dd>/g) ?? [];
++    expect(progress.length).toBeGreaterThan(0);
++    for (const block of progress) {
++      expect(block).toContain(`title="${asOf}"`);
++      expect(block).toContain(`<span class="sr-only">, ${asOf}</span></span></dd>`);
++    }
++    expect(html).not.toMatch(/<p[^>]*aria-label=/);
++  });
+ });
  
-+- **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
- - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
- - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
- - **`codewhale exec --add-dir <path>`** (repeatable) and `addDirs` on `POST /v1/threads` let the file tools read and write a sibling directory, a second checkout or a shared scratch root without turning on Full Access.
+ describe("no browser call to GitHub", () => {
+```
+
+**File**: `web/lib/truncate.test.ts` (removed, +0/-34)
+```diff
+@@ -1,34 +0,0 @@
+-import { describe, expect, it } from "vitest";
+-import { truncateChars } from "./truncate";
+-
+-describe("truncateChars", () => {
+-  it("leaves text at or under the limit untouched", () => {
+-    expect(truncateChars("short", 70)).toBe("short");
+-    expect(truncateChars("x".repeat(70), 70)).toBe("x".repeat(70));
+-  });
+-
+-  it("never splits an astral character in half", () => {
+-    // `"…🐋".slice(0, 70)` cuts between the surrogates and emits a lone
+-    // U+D83D, which renders as U+FFFD next to the ellipsis.
+-    const title = `${"x".repeat(69)}🐋 whale support`;
+-    const cut = truncateChars(title, 70);
+-    expect(cut).toBe(`${"x".repeat(69)}🐋…`);
+-    // No surrogate survives that is not half of a well-formed pair.
+-    const unpaired = cut.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "");
+-    expect(/[\uD800-\uDFFF]/.test(unpaired), "lone surrogate in output").toBe(false);
+-    expect(title.slice(0, 70).charCodeAt(69)).toBe(0xd83d);
+-  });
+-
+-  it("counts code points, not UTF-16 code units", () => {
+-    // Forty whales are forty characters and eighty code units. The old
+-    // `title.length > 70` test called this an 80-character title and cut it.
+-    const whales = "🐋".repeat(40);
+-    expect(whales.length).toBe(80);
+-    expect(truncateChars(whales, 70)).toBe(whales);
+-  });
+-
+-  it("supports a keep budget below the limit", () => {
+-    expect(truncateChars("y".repeat(139), 140, 137)).toBe("y".repeat(139));
+-    expect(truncateChars("y".repeat(141), 140, 137)).toBe(`${"y".repeat(137)}…`);
+-  });
+-});
+```
+
+**File**: `web/lib/truncate.ts` (removed, +0/-29)
+```diff
+@@ -1,29 +0,0 @@
+-/**
+- * truncate.ts — code-point-safe truncation for text the repository owns
+- * rather than the site.
+- *
+- * `String.prototype.slice` counts UTF-16 code units, so a cut can land
+- * between the two halves of a surrogate pair. GitHub issue, pull request,
+- * and release titles routinely carry emoji, and the resulting lone surrogate
+- * is not a character: it renders as U+FFFD (the black-diamond question
+- * mark) in every browser, immediately before the ellipsis that says the text
+- * was shortened.
+- */
+-
+-/**
+- * `value` unchanged when it is at most `limit` characters long; otherwise its
+- * first `keep` characters (default: `limit`) followed by `ellipsis`.
+- *
+- * Characters are Unicode code points, so an astral character is either kept
+- * whole or dropped whole.
+- */
+-export function truncateChars(
+-  value: string,
+-  limit: number,
+-  keep: number = limit,
+-  ellipsis = "…",
+-): string {
+-  const chars = Array.from(value);
+-  if (chars.length <= limit) return value;
+-  return chars.slice(0, Math.max(0, keep)).join("") + ellipsis;
+-}
+```
+
+**File**: `web/scripts/check-locales.mjs` (modified, +0/-1)
+```diff
+@@ -67,7 +67,6 @@ function extractKeys(source) {
+ 
+ const PLURAL_CATEGORIES = ["zero", "one", "two", "few", "many", "other"];
+ 
+-/** Keys whose value is an object of plural categories (`key: {` then `one: "…"` lines). */
+ function extractPluralBlocks(source) {
+   const blocks = new Map();
+   let key = null;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7246** (2026-11-07): chore(deps): bump similar from 3.2.0 to 3.2.1 (@dependabot[bot])
-- **PR #7245** (2026-11-07): chore(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
-- **PR #7244** (2026-11-07): chore(deps): bump rmcp from 3.7.0 to 3.8.0 (@dependabot[bot])
-- **PR #7243** (2026-11-07): chore(deps): bump unicode-normalization from 0.1.25 to 0.1.26 (@dependabot[bot])
-- **PR #7242** (2026-11-07): chore(deps): bump actions/setup-java from 4.7.1 to 6.1.0 (@dependabot[bot])
-- **PR #7241** (2026-11-07): chore(deps): bump webpki-roots from 1.0.10 to 1.0.11 (@dependabot[bot])
+- **PR #7286** (closed): chore(catalog): refresh the Models.dev offline seed (@codewhale-agent[bot])
+- **PR #7277** (2026-11-11): feat(app-server,tui): run read-only builtins over the Runtime API (@gaord)
+- **PR #7276** (2026-11-10): fix(engine): match search include globs in linear time (@luochen211)
+- **PR #7275** (2026-11-10): fix: reject negative retry delays at config load instead of panicking on retry (@luochen211)
+- **PR #7273** (2026-11-10): fix(tui): pad and truncate CJK text by display width (@luochen211)
+- **PR #7272** (2026-11-10): chore: remove unreferenced code and stale dead_code allows (@luochen211)
 
 ---
 
@@ -2451,32 +2252,32 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog
+## X. web): hanging indent only on single-line install commands; align the wrapped pip
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/app/styles/primitives.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d1ffc1c`: engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a7db594`: web): hanging indent only on single-line install commands; align the wrapped pipe (CW-8048 INSTALL). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/app/styles/primitives.css`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
-- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
-- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
-- **Windows uninstall remove
+  .code pre.code-block-single {
+    padding-left: calc(var(--space-4) + 2ch);
+    text-indent: -2ch;
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    padding-left: calc(var(--space-4) + 2ch);
+    text-indent: -2ch;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d1ffc1c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a7db594` are properly handled with clean fallback behavior.

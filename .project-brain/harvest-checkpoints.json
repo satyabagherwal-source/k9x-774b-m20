@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T07:27:55.081Z",
+  "last_updated": "2026-11-11T07:37:55.706Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "c94837453fdb7f2848813ac39618b6b473db9f961d3061d56a6bf1879e06fe15",
-      "verified_at": "2026-11-09T01:53:15.873Z",
+      "content_hash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
+      "verified_at": "2026-11-11T07:37:49.447Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:53:15.873Z"
+      "last_updated": "2026-11-11T07:37:49.447Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
-      "verified_at": "2026-11-07T18:17:08.537Z",
+      "content_hash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
+      "verified_at": "2026-11-11T07:37:55.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:17:08.537Z"
+      "last_updated": "2026-11-11T07:37:55.705Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",

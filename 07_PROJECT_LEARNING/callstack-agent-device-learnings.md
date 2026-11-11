@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source**: github ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
-> **Source Version**: `e35d0d49`  
+> **Source Version**: `45e1372f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:17:06.855Z  
+> **Timestamp**: 2026-11-11T07:37:41.051Z  
 > **Learning ID**: `learn-github-callstack-agent-device`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:17:05.338Z  
+> **Harvest Timestamp**: 2026-11-11T07:37:41.040Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open source device layer for AI coding agents: a CLI, MCP server, and typed Node.js API to control mobile, web, TV, and desktop apps on devices and simulators, locally or in the cloud.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5294 stars
+- **Stars / Engagement**: 5327 stars
 
 ---
 
@@ -1749,13 +1749,13 @@ function representativesAreValid(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4298** (2026-11-07): **`device status` and `device release` ignore `--serial` when `./agent-device.json` sets a `udid`**
-  *Symptoms*: ## Summary  With a project `agent-device.json` in the working directory that sets `udid`, as an iOS session writes, `agent-device device status --platform android --serial <serial>` and `device release --platform android --serial <serial> --stale` match no Android claim. The config's `udid` takes precedence over the explicit `--serial`, so a claim on that serial disappears from both commands.  ## What we saw  agent-device 0.21.29 on macOS, with a dead owner's claim on `emulator-5560`.  From a directory with no `agent-device.json`:  ```console $ agent-device device status --platform android --serial emulator-5560 --json {"success":true,"data":{"claims":[],"hiddenStaleClaims":1}} ```  From a checkout whose `agent-device.json` is `{"platform":"ios","udid":"<simulator udid>","session":"<ios session>"}`:  ```console $ agent-device device status --platform android --serial emulator-5560 --json {"success":true,"data":{"claims":[],"hiddenStaleClaims":0}} $ agent-device device release --platform android --serial emulator-5560 --stale No local device claims matched. ```  With `{"platform":"android","serial":"emulator-5560","session":"<android session>"}` in the config instead, the explicit `--serial` wins and the claim is listed. Only a `udid` from the config hides it, which is what a claim filter on `udid ?? serial` would do.  ## Impact  A tool that runs these commands from a checkout whose last session was iOS reads every Android console port as unclaimed. Ours booted an emulator ont
-  **Post-Mortem & Fix Analysis**:
-  > Triage: bug; actionable without more input from you. On main, `agent-device.json` defaults merge into the parsed flags key by key (`src/cli/parser/args.ts`), so a config `udid` survives an explicit `--serial`, and the claim filter then takes `udid ?? serial` (`packages/daemon-contracts/src/device-claim-inspection.ts`). An agent can pick this up: `platform`, `device`, `udid` and `serial` become explicit-only for `device status` and `device release`, so config selectors stop narrowing claim queries. Thanks for the side-by-side outputs; they pinned this down. 
+- **Issue #4334** (2026-11-10): **Durable handle asyncDispose lets a rejected cleanup escape without the normalized error**
+  *Symptoms*: Found while slimming ADR 0019 (#4330).  The durable resource contract says the idempotent `[Symbol.asyncDispose]` adapter resolves only for confirmed cleanup or already-missing outcomes, and otherwise rejects with a normalized `ownership-lost` or `cleanup-pending` error. That is ADR 0019 section 5, now stated in `packages/capture-kit/docs/durable-resource-recovery.md`.  Today the adapter turns a returned `cleanup-pending` outcome into the facet error. But when the cleanup operation itself rejects, the raw error escapes the shared adapter without normalization. Examples are the recovery handles in `packages/capture-kit/src/capture-admission/*-resource-recovery.ts`, which pass `params.dispose` straight through. So a raw throw can cross the seam where ADR 0010 expects a typed error.  Expected: the shared adapter normalizes a rejected cleanup into the typed `ownership-lost` or `cleanup-pending` error and keeps the cause. A regression test should pin this.  #4330 keeps the contract and links this issue as the known drift.
 
-- **Issue #4265** (2026-11-07): **iOS simulator: in-flight `prepare ios-runner` keeps retrying the old runner port after the runner is relaunched on a new port**
-  *Symptoms*: ## Environment  - agent-device 0.21.27 (CLI through `npx`, daemon mode) - Xcode 26.3 - iOS 26.2 simulator, x86_64 host (macOS 15, Darwin 24.6) - Command: `agent-device prepare ios-runner --timeout 240000` - Host load average during the failing runs: 5–43 (1-minute)  ## Summary  The first `xcodebuild test-without-building` ends after exactly 45 s with `** BUILD INTERRUPTED **`. The daemon then runs `build-for-testing` and starts a new runner on a new port. The new runner logs `AGENT_DEVICE_RUNNER_LISTENER_READY`. The in-flight `prepare` request does not move to the new session. It retries the old port until the full 240 s budget is used, then fails with `Runner did not accept connection`.  A longer `--timeout` does not help: the new runner is ready more than 2 minutes before the request gives up.  ## Three runs, same pattern  | Run (UTC) | Port the request retries | Port of the relaunched runner | New runner ready | Request exhausted | Attempts | | --- | --- | --- | --- | --- | --- | | 2026-11-06 00:23:43 | 61846 | 62919 | 00:26:10 | 00:27:44 | 957 / 957 | | 2026-11-06 01:07:40 | 56766 | 58194 | 01:10:13 | 01:11:40 | 960 / 960 | | 2026-11-06 02:15:17 | 57548 | 58795 | 02:17:05 | 02:19:18 | 960 / 960 |  In each run, the first `test-without-building` process ends at 00:45 elapsed.  ## Timeline (run 3, UTC)  ```text 02:15:11  xcodebuild test-without-building starts (pid A, port 57548) 02:15:17  prepare request starts 02:15:18  ios_runner_session_reuse  sessionId=<SIM_UDID>:57548:
+- **Issue #4333** (2026-11-10): **Target annotation writer can emit a payload over the 4 KiB ceiling**
+  *Symptoms*: Found during the ADR 0012 slimming review (#4331).  `finalizeOversizedCandidate` (`packages/selectors/src/target-evidence.ts`) sets `verification: "unverifiable"` and drops `rect` when the serialized payload exceeds `TARGET_ANNOTATION_MAX_PAYLOAD_BYTES`. It does not measure again after the drop. The per-field 256-byte caps apply before JSON escaping, but the ceiling applies to the serialized JSON. So escape-heavy labels can leave a parent-only payload over 4 KiB, and the writer emits an annotation that the parser rejects.  Expected: after the rect drop, the writer measures again. If the payload is still over the ceiling, it degrades further or omits the annotation, so it never writes a payload that the writer/parser round-trip invariant rejects. A regression test with escape-heavy labels should pin this.  Not changed in #4331, which is docs-only. `packages/ad-script/docs/target-annotation.md` states the current behavior.
+  **Post-Mortem & Fix Analysis**:
+  > ## Apex Sentinel · Issue review  **Suggested label:** `bug`  The report identifies a concrete writer defect: finalizeOversizedCandidate drops rect without remeasuring the serialized JSON after escaping, so escape-heavy labels can still produce an over-4 KiB payload that the parser rejects. It names the file, function, invariant, and expected follow-up behavior.  ### Required sections - [ ] Steps to reproduce (missing) - [ ] Expected and actual behavior (missing) - [ ] Version or environment (missing)  <!-- apex-sentinel:issue-review -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1772,1166 +1772,1054 @@ function representativesAreValid(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `753263fe` (2026-11-07)
-**Commit Message**: fix(ios): preserve simulator app accessibility after runner teardown (#4276)
+### Incident Patch 1: `1244334d` (2026-11-11)
+**Commit Message**: fix(replay): escape recorded interpolation, run scripts off the event loop, harden Maestro and test flows (#4363)
 
-* fix(ios): preserve simulator app accessibility after runner teardown
+* fix(replay): escape recorded literal ${...} text in written scripts
 
-* refactor(ios): share the accessibility repair step and resolve the runner pid at use
-
-* fix(ios): report teardown repair failures and keep owner cleanup going past a busy lease lock
-
-* test(ios): make the accessibility test seams honest about failure
-
-* fix(ios): keep probing runner termination after a failed or timed-out pgrep
-
-* test(ios): assert the termination probe retries
-
-**File**: `packages/apple-runner/src/__tests__/runner-cache-retention.test.ts` (modified, +2/-0)
-```diff
-@@ -241,6 +241,8 @@ test('owner cleanup still stops a readable lease next to an unreadable lease fil
-   await cleanupRunnerLeasesForOwner(
-     { pid: 4242, startTime: null },
-     {
-+      confirmRunnerTermination: async () => true,
-+      enableIosSimulatorAppAccessibility: async () => {},
-       cleanupRunnerProcessTree: async () => {},
-       cleanupRunnerXcodebuildProcesses: async () => {},
-       cleanupTempFile,
-```
-
-**File**: `packages/apple-runner/src/__tests__/runner-disposal.test.ts` (modified, +104/-1)
-```diff
-@@ -32,6 +32,7 @@ import {
-   writeRunnerLease,
- } from '../runner-lease.ts';
- 
-+const mockPrepareAccessibility = vi.fn();
- const mockIsProcessAlive = vi.fn();
- const mockIsProcessGroupAlive = vi.fn();
- const mockRunAppleToolCommand = vi.fn();
-@@ -50,12 +51,14 @@ beforeEach(() => {
-     signalProcessGroupBestEffort: mockSignalProcessGroupBestEffort,
-     runAppleToolCommand: mockRunAppleToolCommand,
-     runXcrun: mockRunXcrun,
-+    enableIosSimulatorAppAccessibility: mockPrepareAccessibility,
-   });
-   vi.useFakeTimers();
-   mockIsProcessAlive.mockReturnValue(true);
-   mockIsProcessGroupAlive.mockReturnValue(false);
-   mockRunAppleToolCommand.mockResolvedValue({ exitCode: 0, stdout: '', stderr: '' });
-   mockRunXcrun.mockResolvedValue({ exitCode: 0, stdout: '', stderr: '' });
-+  mockPrepareAccessibility.mockResolvedValue(undefined);
- });
- 
- afterEach(() => {
-@@ -148,19 +151,35 @@ test('simulator disposal terminates runner container apps while it still owns th
-   vi.useRealTimers();
-   mockIsProcessAlive.mockReturnValue(false);
-   const lease = makeRunnerLease({ deviceId: IOS_SIMULATOR.id, ownerToken: 'owner-disposal-own' });
--  const session = makeRunnerSession(IOS_SIMULATOR, Promise.resolve(execResult()), { lease });
-+  const session = makeRunnerSession(IOS_SIMULATOR, Promise.resolve(execResult()), {
-+    lease,
-+    xctestrunPath: lease.xctestrunPath,
-+  });
-+  mockRunAppleToolCommand.mockResolvedValue({ exitCode: 1, stdout: '', stderr: '' });
-+  let tokenDuringRepair: string | null = null;
-+  let terminationsDuringRepair = 0;
-+  mockPrepareAccessibility.mockImplementation(async () => {
-+    tokenDuringRepair = currentRunnerLeaseOwnerToken(IOS_SIMULATOR.id);
-+    terminationsDuringRepair = simulatorTerminateCalls().length;
-+  });
-   writeRunnerLease(lease);
- 
-   await disposeRunnerSession(session, { graceful: false, waitTimeoutMs: 1 });
- 
-   expect(simulatorTerminateCalls()).not.toEqual([]);
-+  expect(mockPrepareAccessibility).toHaveBeenCalledExactlyOnceWith(IOS_SIMULATOR);
-+  expect(tokenDuringRepair).toBe(lease.ownerToken);
-+  expect(terminationsDuringRepair).toBeGreaterThan(0);
-+  expect(currentRunnerLeaseOwnerToken(IOS_SIMULATOR.id)).toBeNull();
- });
- 
- test('simulator disposal skips container-app termination after a foreign takeover replaced the lease', async () => {
-   vi.useRealTimers();
-   mockIsProcessAlive.mockReturnValue(false);
-+  mockRunAppleToolCommand.mockResolvedValue({ exitCode: 1, stdout: '', stderr: '' });
-   const session = makeRunnerSession(IOS_SIMULATOR, Promise.resolve(execResult()), {
-     lease: makeRunnerLease({ deviceId: IOS_SIMULATOR.id, ownerToken: 'owner-disposal-loser' }),
-+    xctestrunPath: makeRunnerLease({ deviceId: IOS_SIMULATOR.id }).xctestrunPath,
-   });
-   // The successor's runner lives in the same container bundles on the shared
-   // simulator; terminating them here would stop the new owner's runner.
-@@ -171,18 +190,21 @@ test('simulator disposal skips container-app termination after a foreign takeove
-   await disposeRunnerSession(session, { graceful: false, waitTimeoutMs: 1 });
- 
-   expect(simulatorTerminateCalls()).toEqual([]);
-+  expect(mockPrepareAccessibility).not.toHaveBeenCalled();
-   expect(mockCleanupTempFile).toHaveBeenCalledWith(session.launch.local!.xctestrunPath);
- });
- 
- test('disposal serializes behind a successor reclaim window and never terminates its runner', async () => {
-   vi.useRealTimers();
-   mockIsProcessAlive.mockReturnValue(false);
-+  mockRunAppleToolCommand.mockResolvedValue({ exitCode: 1, stdout: '', stderr: '' });
-   const loserLease = makeRunnerLease({
-     deviceId: IOS_SIMULATOR.id,
-     ownerToken: 'owner-toctou-loser',
-   });
-   const session = makeRunnerSession(IOS_SIMULATOR, Promise.resolve(execResult()), {
-     lease: loserLease,
-+    xctestrunPath: loserLease.xctestrunPath,
-   });
-   writeRunnerLease(loserLease);
- 
-@@ -198,6 +220,7 @@ test('disposal serializes behind a successor reclaim window and never terminates
-     await new Promise((resolve) => setTimeout(resolve, 300));
-     expect(disposalSettled).toBe(false);
-     expect(simulatorTerminateCalls()).toEqual([]);
-+    expect(mockPrepareAccessibility).not.toHaveBeenCalled();
-     releaseRunnerLease(loserLease);
-     writeRunnerLease(
-       makeRunnerLease({ deviceId: IOS_SIMULATOR.id, ownerToken: 'owner-toctou-successor' }),
-@@ -206,9 +229,89 @@ test('disposal serializes behind a successor reclaim window and never terminates
-   await disposal;
- 
-   expect(simulatorTerminateCalls()).toEqual([]);
-+  expect(mockPrepareAccessibility).not.toHaveBeenCalled();
-   expect(currentRunnerLeaseOwnerToken(IOS_SIMULATOR.id)).toBe('owner-toctou-successor');
- });
- 
-+test('disposal skips repair when a runner process group survives termination', async () => {
-+  const lease = makeRunnerLease({ deviceId: IOS_SIMULATOR.id, ownerToken: 'owner-still-running' });
-+  const session = makeRunnerSession(IOS_SIMULATOR, Promise.resolve(execResult()), {
-+    lease,
-+    xctestrunPath: lease.xctestrun
-```
-
-**File**: `packages/apple-runner/src/__tests__/runner-lease-accessibility.test.ts` (added, +191/-0)
-```diff
-@@ -0,0 +1,191 @@
-+import assert from 'node:assert/strict';
-+import { beforeEach, test, vi } from 'vitest';
-+import type { DeviceInfo } from '@agent-device/kernel/device';
-+import { appleRunnerTestHost } from '../test-host.ts';
-+import {
-+  buildRunnerLease,
-+  cleanupRunnerLeasesForOwner,
-+  currentRunnerLeaseOwnerToken,
-+  withRunnerLeaseLock,
-+  writeRunnerLease,
-+  type RunnerLeaseCleanupAdapter,
-+} from '../runner-lease.ts';
-+import { IOS_SIMULATOR, IOS_DEVICE, MACOS_DEVICE, TVOS_SIMULATOR } from './device-fixtures.ts';
-+import { mkdtempForTestSync } from './tmp-dir.ts';
-+
-+beforeEach(() => {
-+  process.env.AGENT_DEVICE_IOS_RUNNER_LEASE_DIR = mkdtempForTestSync('agent-device-ax-lease-');
-+});
-+
-+function leaseFor(device: DeviceInfo) {
-+  return buildRunnerLease({
-+    device,
-+    sessionId: 'ax-test',
-+    runnerPid: undefined,
-+    endpoint: { port: 8123, token: 'test-token' },
-+    xctestrunPath: '/tmp/ax-test.xctestrun',
-+    jsonPath: '/tmp/ax-test.json',
-+  });
-+}
-+
-+for (const confirmed of [true, false]) {
-+  test(`lease cleanup repairs only after confirmed termination (${confirmed}), before releasing`, async () => {
-+    const lease = leaseFor({ ...IOS_SIMULATOR, simulatorSetPath: '/tmp/ax-simlock-set' });
-+    writeRunnerLease(lease);
-+    const calls: string[] = [];
-+    const cleanup: RunnerLeaseCleanupAdapter = {
-+      cleanupRunnerProcessTree: async (_pid, signal) => {
-+        calls.push(signal);
-+      },
-+      cleanupRunnerXcodebuildProcesses: async () => {
-+        calls.push('xcodebuild');
-+      },
-+      confirmRunnerTermination: async () => {
-+        calls.push('confirm');
-+        return confirmed;
-+      },
-+      enableIosSimulatorAppAccessibility: async (device) => {
-+        assert.equal(currentRunnerLeaseOwnerToken(device.id), lease.ownerToken);
-+        assert.equal(device.appleOs, 'ios');
-+        assert.equal(device.simulatorSetPath, '/tmp/ax-simlock-set');
-+        calls.push('repair');
-+      },
-+      cleanupTempFile: () => {
-+        calls.push('temp');
-+      },
-+    };
-+    await cleanupRunnerLeasesForOwner({ pid: lease.ownerPid }, cleanup);
-+    assert.deepEqual(calls, [
-+      'SIGTERM',
-+      'xcodebuild',
-+      'SIGKILL',
-+      'confirm',
-+      ...(confirmed ? ['repair'] : []),
-+      'temp',
-+      'temp',
-+    ]);
-+    assert.equal(currentRunnerLeaseOwnerToken(lease.deviceId), null);
-+  });
-+}
-+
-+test('failed repair emits a diagnostic and still releases the lease', async () => {
-+  const lease = leaseFor(IOS_SIMULATOR);
-+  writeRunnerLease(lease);
-+  const diagnostic = vi.fn();
-+  appleRunnerTestHost.update({ emitDiagnostic: diagnostic });
-+  await cleanupRunnerLeasesForOwner(
-+    { pid: lease.ownerPid },
-+    {
-+      cleanupRunnerProcessTree: async () => {},
-+      cleanupRunnerXcodebuildProcesses: async () => {},
-+      confirmRunnerTermination: async () => true,
-+      enableIosSimulatorAppAccessibility: async () => {
-+        throw new Error('repair unavailable');
-+      },
-+      cleanupTempFile: () => {},
-+    },
-+  );
-+  assert.ok(
-+    diagnostic.mock.calls.some(
-+      ([event]) => event.phase === 'ios_runner_accessibility_repair_failed',
-+    ),
-+  );
-+  assert.equal(currentRunnerLeaseOwnerToken(lease.deviceId), null);
-+});
-+
-+for (const device of [
-+  IOS_SIMULATOR,
-+  IOS_DEVICE,
-+  MACOS_DEVICE,
-+  TVOS_SIMULATOR,
-+  { ...IOS_SIMULATOR, appleOs: 'visionos' },
-+] as DeviceInfo[]) {
-+  test(`legacy or excluded ${device.kind}/${device.appleOs} lease never repairs`, async () => {
-+    const lease = leaseFor(device);
-+    if (device === IOS_SIMULATOR) {
-+      delete lease.simulatorTarget;
-+      lease.simulatorSetPath = '/tmp/legacy-set';
-+    } else assert.equal(lease.simulatorTarget, undefined);
-+    writeRunnerLease(lease);
-+    const prepare = vi.fn();
-+    await cleanupRunnerLeasesForOwner(
-+      { pid: lease.ownerPid },
-+      {
-+        cleanupRunnerProcessTree: async () => {},
-+        cleanupRunnerXcodebuildProcesses: async () => {},
-+        confirmRunnerTermination: async () => true,
-+        enableIosSimulatorAppAccessibility: prepare,
-+        cleanupTempFile: () => {},
-+      },
-+    );
-+    assert.equal(prepare.mock.calls.length, 0);
-+    assert.equal(currentRunnerLeaseOwnerToken(lease.deviceId), null);
-+  });
-+}
-+
-+test('owner cleanup skips a lease replaced while waiting for the ownership fence', async () => {
-+  const lease = leaseFor(IOS_SIMULATOR);
-+  writeRunnerLease(lease);
-+  const repair = vi.fn();
-+  const terminate = vi.fn();
-+  let cleanup: Promise<void> | undefined;
-+  await withRunnerLeaseLock(lease.deviceId, async () => {
-+    cleanup = cleanupRunnerLeasesForOwner(
-+      { pid: lease.ownerPid },
-+      {
-+        cleanupRunnerProcessTree: terminate,
-+        cleanupRunnerXcodebuildProcesses: async () => {},
-+        confirmRunnerTermination: async () => true,
-+        enableIosSimulatorAppAccessibility: repair,
-+        cleanupTempFile: () => {},
-+      },
-+    );
-+    writeRunnerLease({ ...lease, ownerToken: 'su
-```
-
-**File**: `packages/apple-runner/src/__tests__/runner-lease-claim-takeover.test.ts` (modified, +2/-0)
-```diff
-@@ -53,6 +53,8 @@ function recordingCleanupAdapter(): RunnerLeaseCleanupAdapter & { calls: string[
-   const calls: string[] = [];
-   return {
-     calls,
-+    confirmRunnerTermination: async () => true,
-+    enableIosSimulatorAppAccessibility: async () => {},
-     cleanupRunnerProcessTree: async (_pid, signal) => {
-       calls.push(`process-tree:${signal}`);
-     },
-```
-
-**File**: `packages/apple-runner/src/__tests__/runner-lease-recycled-pid.test.ts` (modified, +2/-0)
-```diff
-@@ -72,6 +72,8 @@ function recordingCleanup(): {
-   return {
-     signalledPids,
-     adapter: {
-+      confirmRunnerTermination: async () => true,
-+      enableIosSimulatorAppAccessibility: async () => {},
-       cleanupRunnerProcessTree: async (pid) => {
-         signalledPids.push(pid);
-       },
-```
-
-**File**: `packages/apple-runner/src/__tests__/runner-session.test.ts` (modified, +4/-0)
-```diff
-@@ -673,6 +673,8 @@ function makeRecordingCleanupAdapter() {
-   const treeKills: Array<{ pid: number | undefined; signal: string }> = [];
-   const xcodebuildCleanups: RunnerXcodebuildCleanupTarget[] = [];
-   const adapter: RunnerLeaseCleanupAdapter = {
-+    confirmRunnerTermination: async () => true,
-+    enableIosSimulatorAppAccessibility: async () => {},
-     async cleanupRunnerProcessTree(pid, signal) {
-       treeKills.push({ pid, signal });
-     },
-@@ -912,6 +914,8 @@ test('runner lease cleanup reclaims only leases owned by the stopped daemon', as
-   await cleanupRunnerLeasesForOwner(
-     { pid: ownerPid, startTime: ownerStartTime },
-     {
-+      confirmRunnerTermination: async () => true,
-+      enableIosSimulatorAppAccessibility: async () => {},
-       cleanupRunnerProcessTree: async () => {},
-       cleanupRunnerXcodebuildProcesses: async () => {},
-       cleanupTempFile: mockCleanupTempFile,
-```
-
-**File**: `packages/apple-runner/src/__tests__/test-host-defaults.ts` (modified, +4/-0)
-```diff
-@@ -28,6 +28,7 @@ function appleToolingTestAdapters(): Pick<
-   AppleRunnerHost,
-   | 'runAppleToolCommand'
-   | 'runXcrun'
-+  | 'enableIosSimulatorAppAccessibility'
-   | 'readApplePlistJson'
-   | 'hasScopedAppleToolProvider'
-   | 'buildSimctlArgsForDevice'
-@@ -41,6 +42,9 @@ function appleToolingTestAdapters(): Pick<
-   return {
-     runAppleToolCommand: async () => unavailable('runAppleToolCommand'),
-     runXcrun: async () => unavailable('runXcrun'),
-+    // Teardown treats this repair as best effort and catches its failure, so a throwing default
-+    // would fail silently. It is a no-op; a suite that checks the repair overrides it.
-+    enableIosSimulatorAppAccessibility: async () => {},
-     // The one genuine tool: xctestrun product resolution reads real plists through `plutil`.
-     readApplePlistJson: async (plistPath, signal) => {
-       try {
-```
-
-**File**: `packages/apple-runner/src/host.ts` (modified, +2/-0)
-```diff
-@@ -32,6 +32,7 @@ export type RunnerDeviceClaimAuthorityProbe = (device: DeviceInfo) => boolean;
-  * that stops satisfying a member fails there.
-  */
- type AppleRunnerToolPort = {
-+  enableIosSimulatorAppAccessibility: (device: DeviceInfo) => Promise<void>;
-   runAppleToolCommand: (
-     cmd: string,
-     args: string[],
-@@ -215,6 +216,7 @@ export const classifyBootFailure = delegate('classifyBootFailure');
- export const bootFailureHint = delegate('bootFailureHint');
- export const runAppleToolCommand = delegate('runAppleToolCommand');
- export const runXcrun = delegate('runXcrun');
-+export const enableIosSimulatorAppAccessibility = delegate('enableIosSimulatorAppAccessibility');
- export const readApplePlistJson = delegate('readApplePlistJson');
- export const hasScopedAppleToolProvider = delegate('hasScopedAppleToolProvider');
- export const buildSimctlArgsForDevice = delegate('buildSimctlArgsForDevice');
-```
-
----
-
-### Incident Patch 2: `27170c4c` (2026-11-07)
-**Commit Message**: fix(ios): prepare snapshot helpers within a shared readiness budget (#4181)
-
-* fix(ios): prepare snapshot helpers within a shared readiness budget
-
-* fix(ios): await cleanup for every source close caller
-
-* test(ios): separate lifecycle fixtures from assertions
-
-* fix(ios): retry failed helper startup for later captures
-
-* test(ios): pin shared source readiness deadline
-
-* fix(ios): deliver late bridge startup failures once per generation
-
-* refactor(ios): retain failures at the readiness attempt boundary
-
-* test(ios): preserve fixture edge cases and verify readiness child
-
-* test(ios): pin single delivery and close waiting for startup
-
-Cover a helper crash observed inside the starting capture's wait: the next
-same-generation capture starts a fresh helper instead of receiving the
-failure again. Require close to stay pending while adopted startup is
-paused instead of checking one microtask.
+Replay interpolates every written positional, flag and runtime string,
+so recorded text such as `type "cost ${amount}"` replayed as an
+unresolved or substituted variable. The session script writer now emits
+the `\${` escape the resolver already honours, keeping exact
+`--record-as` fill placeholders live.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_016qAu53rMak1bXMuR5U2gF4
 
-* docs(ios): move helper startup notes beside the native bridge
+* fix(maestro): run runScript in a child process and enforce the 8 MiB HTTP cap
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+runScript ran `vm.runInNewContext` and a `spawnSync` per `http.post`
+inline in the daemon, blocking every session for up to 30 s per call
+and ignoring request cancellation. It now runs in a dedicated
+`run-script-child` process that the daemon awaits with the request
+signal; the synchronous script semantics stay inside that child.
 
-* test(ios): give fixture identity cases a capture budget and distinct exit codes
+The HTTP child's response travelled over `spawnSync` stdout with Node's
+1 MiB default buffer, so bodies above ~1 MiB failed generically while
+the declared cap was 8 MiB,
 
-The fixture identity cases still create real
-
-**File**: `apple/snapshot-bridge/README.md` (modified, +8/-0)
+**File**: `.fallowrc.json` (modified, +2/-0)
 ```diff
-@@ -41,6 +41,14 @@ Objective-C shim for those operations, adding another native boundary. Keeping
- the guest in Objective-C also allows direct lazy compilation with `clang`
- without an Xcode project or Swift module for private headers.
- 
-+## Startup
-+
-+The helper initializes its framework runtime before it binds its listener, so a
-+connectable socket means the runtime is ready. Readiness does not create a
-+target root or change automation settings, and it does not prove that an app's
-+accessibility server can answer a capture. The host bounds startup and shares
-+one readiness allowance between binary preparation and helper startup.
-+
- ## Foreground ownership
- 
- The reader checks AXRuntime's primary foreground application before and after
+@@ -35,6 +35,8 @@
+     "packages/react-native/src/companion/companion-tunnel.ts",
+     "src/daemon.ts",
+     "packages/capture-kit/src/png-worker.ts",
++    "packages/maestro/src/daemon-port/run-script-child.ts",
++    "packages/maestro/src/daemon-port/run-script-http-child.ts",
+     "scripts/patch-xcuitest-runner-icon.ts",
+     "scripts/write-xcuitest-cache-metadata.ts",
+     "scripts/xcuitest-build-settings.ts",
 ```
 
-**File**: `apple/snapshot-bridge/SnapshotBridge.m` (modified, +5/-0)
+**File**: `docs/adr/0017-parameterized-recorded-inputs.md` (modified, +1/-0)
 ```diff
-@@ -93,6 +93,11 @@ static int serve(NSString *socketPath, int idleTimeoutSeconds, BOOL exitOnDiscon
-     return 1;
-   }
+@@ -139,6 +139,7 @@ The map gets one entry for each parameterized fill, added only after the entry o
+ The map is never serialized: not to the script, the session event log, or diagnostics.
+ The map has no read API beyond the recorder that owns it.
+ The map disappears with the session.
++A placeholder that echo protection writes into a recorded result is a live script placeholder: the recorder lists its name in `SessionAction.livePlaceholders`, and the script writer escapes every other recorded `${`.
  
-+  NSString *setupError = nil;
-+  if (!sharedRuntime(&setupError)) {
-+    bridgeLog([NSString stringWithFormat:@"runtime initialization failed: %@", setupError]);
-+    return 1;
-+  }
-   int listener = socket(AF_UNIX, SOCK_STREAM, 0);
-   if (listener < 0) {
-     bridgeLog([NSString stringWithFormat:@"socket failed: %s", strerror(errno)]);
+ This is not a reversal of the "no secret-to-name table" rule in the Mapping contract above.
+ That rule rejects the retention of state to influence a *naming* decision.
 ```
 
-**File**: `contracts/fixtures/ios-snapshot-bridge-refusals.json` (modified, +5/-0)
+**File**: `packages/ad-replay/src/internal/__tests__/plan-digest.test.ts` (modified, +10/-6)
 ```diff
-@@ -25,6 +25,10 @@
-       "code": "bridge-preparation-pending",
-       "consequence": "bridge-preparation"
-     },
-+    {
-+      "code": "bridge-readiness-pending",
-+      "consequence": "bridge-preparation"
-+    },
-     {
-       "code": "snapshot-tree-changed",
-       "consequence": "tree-changed"
-@@ -60,6 +64,7 @@
-     "bridge-process-pid-missing",
-     "bridge-read-abandoned",
-     "bridge-request-deadline",
-+    "bridge-startup-deadline",
-     "child-invalid",
-     "children-invalid",
-     "continuation-budget-exhausted",
-```
-
-**File**: `packages/platform-apple/src/snapshot-source/adapter.fixtures.ts` (added, +316/-0)
-```diff
-@@ -0,0 +1,316 @@
-+import { EventEmitter } from 'node:events';
-+import { writeFile } from 'node:fs/promises';
-+import { createLiveTestHostEnvironment } from '@agent-device/test-kit';
-+import { simulatorAddressFor } from '../core/simctl.ts';
-+import { createSnapshotSourceHost } from './host.ts';
-+import { MAXIMUM_REQUEST_LEVELS } from './limits.ts';
-+import {
-+  encodeSnapshotBridgeFrame,
-+  SNAPSHOT_SOURCE_PROTOCOL_VERSION,
-+  SNAPSHOT_SOURCE_VERSION,
-+} from './protocol.ts';
-+import type { SnapshotSourceHost, SnapshotSourceProcess, SnapshotSourceSocket } from './types.ts';
-+
-+export type AdapterFixture = {
-+  host: SnapshotSourceHost;
-+  builds: number;
-+  runs: number;
-+  responsePid: number;
-+  requestedDepths: number[];
-+  requestedHints: (number | undefined)[];
-+  /** Native levels above which the fake guest reports a rejection-then-recovery. */
-+  rejectLevelsAbove: number | undefined;
-+  /** Whether the fake guest reports a depth- or node-bounded tree. */
-+  truncated: boolean;
-+  /** Whether the fake guest answers with sound counters but an unusable tree. */
-+  malformedTree: boolean;
-+  /** Whether the fake guest's tree ends at another process's content (a remote element leaf). */
-+  remoteContent: boolean;
-+  /** Whether the fake guest's tree holds a window reporting the app box quarter-turned (#2612). */
-+  turnedWindow: boolean;
-+  /** Whether the fake guest's root omits its frame, leaving the capture without a viewport. */
-+  omitViewport: boolean;
-+  /** Whether the fake guest finds a requested system surface host process running. */
-+  runningSurfaceHost: boolean;
-+  /** The surface host check each request carried: its executables and Simulator, or undefined. */
-+  surfaceHostChecks: Array<Readonly<{ executables: unknown; simulatorUdid: unknown }> | undefined>;
-+  /** The windows the fake guest reports under its root when no other tree shape is selected. */
-+  windows: readonly Record<string, unknown>[];
-+  omitRecovery: boolean;
-+  diagnostics: Record<string, unknown>[];
-+  startedTargets: Array<Parameters<SnapshotSourceHost['start']>[0]>;
-+};
-+
-+export function targetForTest(simulatorSetPath?: string) {
-+  return {
-+    simulator: simulatorAddressFor({
-+      platform: 'apple',
-+      id: 'simulator-1',
-+      name: 'iPhone 17',
-+      kind: 'simulator',
-+      target: 'mobile',
-+      ...(simulatorSetPath ? { simulatorSetPath } : {}),
-+    }),
-+    runtime: 'iOS 26.2',
-+    pid: 321,
-+  };
-+}
-+
-+export function createAdapterHost(buildDelayMs = 0): AdapterFixture {
-+  const realHost = createSnapshotSourceHost(createLiveTestHostEnvironment());
-+  const fixture: AdapterFixture = {
-+    host: undefined as never,
-+    builds: 0,
-+    runs: 0,
-+    responsePid: 321,
-+    requestedDepths: [],
-+    requestedHints: [],
-+    rejectLevelsAbove: undefined,
-+    truncated: false,
-+    malformedTree: false,
-+    remoteContent: false,
-+    turnedWindow: false,
-+    omitViewport: false,
-+    runningSurfaceHost: false,
-+    surfaceHostChecks: [],
-+    windows: [],
-+    omitRecovery: false,
-+    diagnostics: [],
-+    startedTargets: [],
-+  };
-+  const host: SnapshotSourceHost = {
-+    ...realHost,
-+    cpuArch: async () => 'arm64',
-+    emitDiagnostic: (event) => {
-+      if (event.phase === 'ios_snapshot_source_recovery')
-+        fixture.diagnostics.push(event.data ?? {});
-+    },
-+    run: async (command, args) => {
-+      fixture.runs += 1;
-+      if (command === 'xcrun' && args.includes('clang')) {
-+        fixture.builds += 1;
-+        if (buildDelayMs > 0) await new Promise((resolve) => setTimeout(resolve, buildDelayMs));
-+        await writeFile(args.at(-1)!, 'bridge-binary');
-+        return { stdout: '', stderr: '', exitCode: 0 };
-+      }
-+      return {
-+        stdout:
-+          command === 'xcodebuild'
-+            ? 'Xcode 16.4\nBuild version 16F6'
-+            : command === 'sw_vers'
-+              ? '15.6'
-+              : '26.2',
-+        stderr: '',
-+        exitCode: 0,
-+      };
-+    },
-+    start: (target) => {
-+      fixture.startedTargets.push(target);
-+      return new AdapterProcess();
-+    },
-+    connect: async () => new AdapterSocket(fixture),
-+    readTargetProcessStartTime: async () => 'target-start',
-+  };
-+  fixture.host = host;
-+  return fixture;
-+}
-+
-+class AdapterProcess implements SnapshotSourceProcess {
-+  readonly pid = 801;
-+  readonly wait: Promise<{ stdout: string; stderr: string; exitCode: number }>;
-+  private resolveWait!: (result: { stdout: string; stderr: string; exitCode: number }) => void;
-+  private alive = true;
-+
-+  constructor() {
-+    this.wait = new Promise((resolve) => {
-+      this.resolveWait = resolve;
-+    });
-+  }
-+
-+  isAlive(): boolean {
-+    return this.alive;
-+  }
-+
-+  signal(): void {
-+    this.alive = false;
-+    this.resolveWait({ stdout: '', stderr: '', exitCode: 0 });
-+  }
-+
-+  readLog(): string {
-+    return '';
-+  }
-+}
-+
-+class AdapterSocket extends EventEmitter implements SnapshotSourceSocket {
-+  destroyed = false;
-+  private readonl
-```
-
-**File**: `packages/platform-apple/src/snapshot-source/adapter.test.ts` (modified, +131/-320)
-```diff
-@@ -1,5 +1,4 @@
- import assert from 'node:assert/strict';
--import { EventEmitter } from 'node:events';
- import { readFileSync } from 'node:fs';
- import { rm, writeFile } from 'node:fs/promises';
- import path from 'node:path';
-@@ -8,28 +7,15 @@ import {
-   createIosSnapshotRequest,
-   deriveIosCaptureHint,
- } from '@agent-device/capture-kit/ios-snapshot-planning';
--import { createSnapshotSourceHost } from './host.ts';
- import { createSimulatorSnapshotSource } from './adapter.ts';
--import { simulatorAddressFor } from '../core/simctl.ts';
- import { createLocalAppleToolProvider, withAppleToolProvider } from '../core/tool-provider.ts';
- import { readSnapshotTargetProcessStartTime } from '../snapshot-process.ts';
- import { DEPTH_HINT_PROBE_BACK_AFTER_USES } from './depth-hints.ts';
- import { SNAPSHOT_BRIDGE_SOURCE_FILENAMES } from './cache-identity.ts';
--import { MAXIMUM_REQUEST_LEVELS } from './limits.ts';
- import { ADAPTER_KEYBOARD_CASES } from './adapter-keyboard.fixtures.ts';
--import {
--  encodeSnapshotBridgeFrame,
--  SNAPSHOT_SOURCE_PROTOCOL_VERSION,
--  SNAPSHOT_SOURCE_VERSION,
--} from './protocol.ts';
--import type {
--  SnapshotSourceHost,
--  SnapshotSourceOutcome,
--  SnapshotSourceProcess,
--  SnapshotSourceSocket,
--} from './types.ts';
-+import type { SnapshotSourceOutcome } from './types.ts';
-+import { createAdapterHost, targetForTest, type AdapterFixture } from './adapter.fixtures.ts';
- import { mkdtempForTest } from '../__tests__/tmp-dir.ts';
--import { createLiveTestHostEnvironment } from '@agent-device/test-kit';
- 
- test('the Simulator AX source returns raw acquisition facts and discloses unsupported facets', async () => {
-   const root = await mkdtempForTest('agent-device-snapshot-adapter-');
-@@ -230,6 +216,57 @@ test('the Simulator AX source asks the guest for running surface hosts only when
-   }
+@@ -20,7 +20,6 @@ function digestFor(
+   return computeReplayPlanDigest({
+     actions,
+     actionLines: actions.map((_, i) => i + 1),
+-    actionSourcePaths: undefined,
+     metadata: {},
+     ...overrides,
+   });
+@@ -31,6 +30,15 @@ test('computeReplayPlanDigest is a 64-char lowercase hex SHA-256', () => {
+   assert.match(digest, /^[0-9a-f]{64}$/);
  });
  
-+test('concurrent source close callers await the same detached preparation cleanup', async () => {
-+  const root = await mkdtempForTest('agent-device-snapshot-adapter-close-');
-+  const sourceRoot = path.join(root, 'source');
-+  await (await import('@agent-device/host-kit/host-file')).ensureHostDirectory(sourceRoot);
-+  for (const file of SNAPSHOT_BRIDGE_SOURCE_FILENAMES)
-+    await writeFile(path.join(sourceRoot, file), 'fixture source');
-+  let entered!: () => void;
-+  const enteredPromise = new Promise<void>((resolve) => {
-+    entered = resolve;
++test('computeReplayPlanDigest keeps the published digest for an unchanged plan', () => {
++  const digest = computeReplayPlanDigest({
++    actions: [action({ command: 'open', positionals: ['Demo'] }), action()],
++    actionLines: [2, 3],
++    metadata: { platform: 'ios' },
 +  });
-+  let release!: () => void;
-+  const releasePromise = new Promise<void>((resolve) => {
-+    release = resolve;
-+  });
-+  const fixture = createAdapterHost();
-+  const source = createSimulatorSnapshotSource({
-+    sourceRoot,
-+    cacheRoot: path.join(root, 'cache'),
-+    host: {
-+      ...fixture.host,
-+      run: async (command, args, options) => {
-+        if (command === 'xcrun' && args.includes('clang')) {
-+          entered();
-+          await releasePromise;
-+        }
-+        return await fixture.host.run(command, args, options);
-+      },
-+    },
-+  });
-+  const acquiring = source.acquire({
-+    target: { ...targetForTest(), generation: 'generation-1' },
-+    hint: deriveIosCaptureHint(createIosSnapshotRequest()),
-+  });
-+  await enteredPromise;
-+  const first = source.close();
-+  let secondFinished = false;
-+  const second = source.close().then(() => {
-+    secondFinished = true;
-+  });
-+  try {
-+    await new Promise<void>((resolve) => setImmediate(resolve));
-+    assert.equal(secondFinished, false, 'close resolved before the owned build settled');
-+  } finally {
-+    release();
-+    await Promise.all([first, second, acquiring]);
-+    await rm(root, { recursive: true, force: true });
-+  }
-+  assert.equal(secondFinished, true);
-+  assert.equal(fixture.startedTargets.length, 0);
++  assert.equal(digest, '0641236777b11822d90d446022965629ec99ac2ba1af2d5c637f06dd684fe695');
 +});
 +
- test('a capture reports a cold preparation instead of spending its deadline on it', async () => {
-   const root = await mkdtempForTest('agent-device-snapshot-adapter-preparing-');
-   const sourceRoot = path.join(root, 'source');
-@@ -272,6 +309,84 @@ test('a capture reports a cold preparation instead of spending its deadline on i
-   }
+ test('computeReplayPlanDigest is stable across repeated computation of the same plan', () => {
+   const actions = [action(), action({ command: 'open', positionals: ['Demo'] })];
+   assert.equal(digestFor(actions), digestFor(actions));
+@@ -54,15 +62,11 @@ test('computeReplayPlanDigest changes when the command changes', () => {
+   assert.notEqual(original, edited);
  });
  
-+test('binary preparation and helper connection share the source readiness allowance', async () => {
-+  const root = await mkdtempForTest('agent-device-snapshot-adapter-readiness-');
-+  const sourceRoot = path.join(root, 'source');
-+  await (await import('@agent-device/host-kit/host-file')).ensureHostDirectory(sourceRoot);
-+  for (const name of SNAPSHOT_BRIDGE_SOURCE_FILENAMES) {
-+    await writeFile(path.join(sourceRoot, name), 'native source');
-+  }
-+  const fixture = createAdapterHost(1500);
-+  let buildEntered!: () => void;
-+  const building = new Promise<void>((resolve) => {
-+    buildEntered = resolve;
-+  });
-+  let connectEntered!: () => void;
-+  const connecting = new Promise<void>((resolve) => {
-+    connectEntered = resolve;
-+  });
-+  let connections = 0;
-+  const source = createSimulatorSnapshotSource({
-+    sourceRoot,
-+    cacheRoot: path.join(root, 'cache'),
-+    host: {
-+      ...fixture.host,
-+      run: as
+-test('computeReplayPlanDigest changes when source provenance (path/line) changes', () => {
++test('computeReplayPlanDigest changes when the source line changes', () => {
+   const actions = [action()];
+   const original = digestFor(actions, { actionLines: [1] });
+   const movedLine = digestFor(actions, { actionLines: [5] });
+   assert.notEqual(original, movedLine);
+-
+-  const noSourcePath = digestFor(actions, { actionSourcePaths: undefined });
+-  const withSourcePath = digestFor(actions, { actionSourcePaths: ['/tmp/include.ad'] });
+-  assert.notEqual(noSourcePath, withSourcePath);
+ });
+ 
+ test('computeReplayPlanDigest changes when platform-conditioned metadata changes', () => {
 ```
 
-**File**: `packages/platform-apple/src/snapshot-source/adapter.ts` (modified, +9/-3)
+**File**: `packages/ad-replay/src/internal/__tests__/step-loop.test.ts` (modified, +0/-1)
 ```diff
-@@ -6,6 +6,7 @@ import {
- } from './bridge-source.ts';
- import { SnapshotBridgeManager } from './lifecycle.ts';
- import { resolveSnapshotSourceLimits } from './limits.ts';
-+import { createSnapshotSourceDeadline, remainingSnapshotSourceMs } from './deadline.ts';
- import { createSnapshotBridgePreparation } from './preparation.ts';
- import type { SnapshotSourceHost, SnapshotSourceLimits, SnapshotSourceTarget } from './types.ts';
- 
-@@ -40,18 +41,23 @@ export function createSimulatorSnapshotSource(
-       name: 'guest-process',
-       validateTarget,
-       prepare: async (target, deadline) => {
-+        const readinessDeadline = createSnapshotSourceDeadline(
-+          Math.min(2000, remainingSnapshotSourceMs(deadline, 'bridge-readiness-deadline')),
-+          deadline.signal,
-+        );
-         const bridge = await preparation.readyBinary(
-           target.runtime,
-           deadline,
-           'bridge-preparation-deadline',
-+          readinessDeadline,
-         );
--        return async (read) => await manager.request({ ...read, target, bridge });
-+        return async (read) =>
-+          await manager.request({ ...read, target, bridge, readinessDeadline });
-       },
-       close: async () => {
-         // A bridge build that outlives this source answers to nobody: no request is waiting on it
-         // and its cache write would land after the source is gone (#2491).
--        preparation.close();
--        await manager.close();
-+        await Promise.all([preparation.close(), manager.close()]);
-       },
-     },
-   });
+@@ -41,7 +41,6 @@ function runRequest(
+     entryIndex: overrides.entryIndex ?? 0,
+     keepSession: overrides.keepSession,
+     actionLines: actions.map(() => 1),
+-    actionSourcePaths: undefined,
+     resolvedPath: 'fixture.ad',
+     varSources: {},
+   };
 ```
 
-**File**: `packages/platform-apple/src/snapshot-source/bridge-source.ts` (modified, +5/-3)
+**File**: `packages/ad-replay/src/internal/inspect.ts` (modified, +0/-3)
 ```diff
-@@ -77,6 +77,7 @@ export function createSnapshotBridgeSource<Target extends SnapshotBridgeTarget>(
-   const depthHints = new AcceptedDepthHints();
-   const diagnostics = options.diagnostics;
-   let closed = false;
-+  let closing: Promise<void> | undefined;
- 
-   const acquire = async (
-     request: SnapshotBridgeSourceRequest<Target>,
-@@ -136,10 +137,11 @@ export function createSnapshotBridgeSource<Target extends SnapshotBridgeTarget>(
- 
+@@ -32,7 +32,6 @@ import { resolveReplayEntryIndex, type PendingRecordAndHeal } from './resume.ts'
+ export type AdReplayManifest = Readonly<{
+   actions: SessionAction[];
+   actionLines: number[];
+-  actionSourcePaths: (string | undefined)[] | undefined;
+   metadata: ReplayScriptMetadata;
+   /** SHA-256 digest of the canonical plan (`digestFlags` binds the same platform/target the replay invokes with). */
+   planDigest: string;
+@@ -83,7 +82,6 @@ export function inspectAdReplay(
+   const planDigest = computeReplayPlanDigest({
+     actions: parsed.actions,
+     actionLines: parsed.actionLines,
+-    actionSourcePaths: parsed.actionSourcePaths,
+     metadata: {
+       platform:
+         digestFlags?.platform ?? resolveDeclaredScriptPlatform(parsed.actions) ?? metadata.platform,
+@@ -94,7 +92,6 @@ export function inspectAdReplay(
    return {
-     acquire,
--    close: async () => {
--      if (closed) return;
-+    close: () => {
-+      if (closing) return closing;
-       closed = true;
--      await transport.close();
-+      closing = transport.close();
-+      return closing;
-     },
+     actions: parsed.actions,
+     actionLines: parsed.actionLines,
+-    actionSourcePaths: parsed.actionSourcePaths,
+     metadata,
+     planDigest,
+     resolveEntryIndex: (params) => resolveReplayEntryIndex(params, actionCount, planDigest),
+```
+
+**File**: `packages/ad-replay/src/internal/plan-digest.ts` (modified, +5/-12)
+```diff
+@@ -24,7 +24,6 @@ export type ReplayPlanDigestMetadata = {
+ export function computeReplayPlanDigest(params: {
+   actions: SessionAction[];
+   actionLines: number[];
+-  actionSourcePaths?: (string | undefined)[];
+   metadata: ReplayPlanDigestMetadata;
+ }): string {
+   const canonical = buildCanonicalPlan(params);
+@@ -35,31 +34,25 @@ export function computeReplayPlanDigest(params: {
+ function buildCanonicalPlan(params: {
+   actions: SessionAction[];
+   actionLines: number[];
+-  actionSourcePaths?: (string | undefined)[];
+   metadata: ReplayPlanDigestMetadata;
+ }): unknown {
+-  const { actions, actionLines, actionSourcePaths, metadata } = params;
++  const { actions, actionLines, metadata } = params;
+   return {
+     platform: metadata.platform ?? null,
+     target: metadata.target ?? null,
+-    steps: actions.map((action, index) =>
+-      canonicalizeAction(action, actionLines[index] ?? null, actionSourcePaths?.[index] ?? null),
+-    ),
++    steps: actions.map((action, index) => canonicalizeAction(action, actionLines[index] ?? null)),
+   };
+ }
+ 
+-function canonicalizeAction(
+-  action: SessionAction,
+-  line: number | null,
+-  sourcePath: string | null,
+-): unknown {
++function canonicalizeAction(action: SessionAction, line: number | null): unknown {
+   return {
+     command: action.command,
+     positionals: action.positionals ?? [],
+     flags: action.flags ?? {},
+     runtime: action.runtime ?? null,
+     targetEvidence: action.targetEvidence ?? null,
+     targetEvidences: action.targetEvidences ?? null,
+-    source: { path: sourcePath, line },
++    // Published digests hash `path: null`; dropping the key would invalidate every saved resume digest.
++    source: { path: null, line },
    };
  }
 ```
 
-**File**: `packages/platform-apple/src/snapshot-source/cache-native-runtime.test.ts` (modified, +39/-0)
+**File**: `packages/ad-replay/src/internal/runtime-port-types.ts` (modified, +1/-3)
 ```diff
-@@ -162,3 +162,42 @@ describe.skipIf(process.platform !== 'darwin')(
-     );
-   },
- );
-+
-+describe.skipIf(process.platform !== 'darwin')('native listener readiness', () => {
-+  let binary: string;
-+  let root: string;
-+  beforeAll(async () => {
-+    root = await mkdtempForTest('snapshot-ready-');
-+    binary = path.join(root, 'readiness');
-+    const nativeRoot = path.resolve(import.meta.dirname, '../../../../apple/snapshot-bridge');
-+    await compileSnapshotBridgeFixture([
-+      '--sdk',
-+      'macosx',
-+      'clang',
-+      '-fobjc-arc',
-+      '-framework',
-+      'Foundation',
-+      '-framework',
-+      'CoreGraphics',
-+      '-I',
-+      nativeRoot,
-+      path.join(nativeRoot, 'SnapshotBridgeRuntime.m'),
-+      path.join(nativeRoot, 'SnapshotBridgeCapture.m'),
-+      path.join(nativeRoot, 'SnapshotBridgeRequest.m'),
-+      path.join(nativeRoot, 'SnapshotBridgeSurfaceHosts.m'),
-+      path.join(import.meta.dirname, 'fixtures/readiness.m'),
-+      '-o',
-+      binary,
-+    ]);
-+  }, COMPILE_HOOK_TIMEOUT_MS);
-+  test.each(['success', 'failure'])(
-+    'initialization %s precedes socket readiness',
-+    async (scenario) => {
-+      const result = await runCmd(binary, [scenario, path.join(root, scenario + '.sock')], {
-+        allowFailure: true,
-+        timeoutMs: 5000,
-+      });
-+      assert.equal(result.exitCode, 0, result.stderr);
-+    },
-+  );
-+});
+@@ -348,9 +348,7 @@ export type AdReplayRunRequest = Readonly<{
+    * `loc`).
+    */
+   readonly actionLines: readonly number[];
+-  /** Per-action resolved source path when it differs from `resolvedPath` (a `runFlow` include's own file), parallel to `actions`. */
+-  readonly actionSourcePaths: readonly (string | undefined)[] | undefined;
+-  /** The resolved `.ad` file path — the interpolation-location fallback when an action's own `actionSourcePaths` entry is absent. */
++  /** The resolved `.ad` file path every step's interpolation-error location names. */
+   readonly resolvedPath: string;
+   /**
+    * `${VAR}` scope inputs — plain data the daemon reads from the request/
+```
+
+**File**: `packages/ad-replay/src/internal/step-loop.ts` (modified, +2/-2)
+```diff
+@@ -208,13 +208,13 @@ function mergeArtifactPaths(
+   return [...new Set([...ledger, ...failureArtifactPaths])];
+ }
+ 
+-/** `resolveReplayAction`'s `loc` for one step — `actionSourcePaths[index]` when the step came from a `runFlow` include, else the top-level plan's own resolved path. */
++/** `resolveReplayAction`'s `loc` for one step of the `.ad` plan. */
+ function resolveActionLoc(
+   request: AdReplayRunRequest,
+   index: number,
+ ): { file: string; line: number } {
+   return {
+-    file: request.actionSourcePaths?.[index] ?? request.resolvedPath,
++    file: request.resolvedPath,
+     line: request.actionLines[index] ?? 1,
+   };
+ }
 ```
 
 ---
 
-### Incident Patch 3: `9d21b1f6` (2026-11-07)
-**Commit Message**: fix(limrun): start the iOS runner under the hosts' Xcode 27 (#4305)
+### Incident Patch 2: `7d478959` (2026-11-11)
+**Commit Message**: fix(capture): audit remediation for redaction, capture lifecycle, contract validation and snapshot performance (#4366)
 
-* fix(limrun): start the iOS runner under the hosts' Xcode 27
+* fix(kernel,app-log): keep shared redaction references and validate app-log redact patterns
 
-Limrun hosts now run XCTest with Xcode 27. A runner built with Xcode 26
-embeds XCTest 26 and its test host crashes at startup there. Build the
-release runner with Xcode 27, point Runner.xctestrun at the host's
-platform XCTest through DYLD_FRAMEWORK_PATH and DYLD_LIBRARY_PATH, and
-refuse a runner that still embeds XCTest.framework.
+Redaction tracked every visited object, so a shared non-cyclic reference
+was reported as [Circular]. Track only the ancestor path.
 
-Fixes #4301
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci(release): select Xcode 27 by reported version and fail with a clear error
+AGENT_DEVICE_APP_LOG_REDACT_PATTERNS split on every comma and dropped
+patterns that did not compile. Split on top-level commas only and fail
+logs start with INVALID_ARGS (app_log_redact_pattern_invalid).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_016qAu53rMak1bXMuR5U2gF4
 
-* test(apple): spend the unread-exit budget on virtual time, not host setup
+* fix(kernel): refuse overflowing and CGRectInfinite keyboard frames
 
-The test gave the request 120 ms of wall time, which also had to cover the
-fixture host's real directory setup before the helper starts. A loaded
-coverage run outlasted it and the request ended as bridge-readiness-pending.
-Fake setTimeout and Date for this test so the budget covers only the
-connect retry and the exit wait it is about.
+The inline keyboard frame guard claimed parity with isPositiveFiniteRect
+but skipped its overflow and CGRectInfinite refusals.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_016qAu53rMak1bXMuR5U2gF4
 
-* ci(release): pick the newest reported Xcode 27, not the last bundle 
+* fix(capture-kit): keep typed scroll-edge capture failures
 
-**File**: `.github/workflows/release-ios-runner.yml` (modified, +16/-4)
+captureScrollEdgeState wrapped every capture failure, including request
+cancellation and typed runner errors, in a generic COMMAND_FAILED, and
+
+**File**: `packages/capture-kit/src/alert-tree-driver.ts` (modified, +6/-2)
 ```diff
-@@ -52,12 +52,24 @@ jobs:
-           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-         shell: bash
+@@ -8,6 +8,7 @@ import {
+   type AlertPlatform,
+   ALERT_NOT_FOUND_REASON,
+   ALERT_POLL_INTERVAL_MS,
++  ALERT_WAIT_TIMEOUT_REASON,
+   ALERT_WINDOW_EXPIRED_REASON,
+   type AlertStatusKind,
+   DEFAULT_ALERT_TIMEOUT_MS,
+@@ -18,7 +19,8 @@ import { AppError, createRequestCanceledError } from '@agent-device/kernel/error
+ import { successText } from '@agent-device/kernel/success-text';
  
--      # Limrun simulators run iOS 26 and cannot reach this machine's Xcode. Xcode 26 embeds XCTest in
--      # the runner app; Xcode 27 leaves it out, and the packaging step refuses such a runner.
--      - name: Select Xcode 26
-+      # Limrun hosts run XCTest with Xcode 27 and load XCTest from that Xcode. A runner built with an
-+      # older Xcode embeds its own XCTest, which crashes there, and the packaging step refuses it.
-+      - name: Select Xcode 27
-         run: |
-           set -euo pipefail
--          XCODE_APP="$(ls -d /Applications/Xcode_26*.app | sort -V | tail -n 1)"
-+          # Pick the newest reported 27.x version, whatever the bundle is named.
-+          XCODE_APP="$(
-+            for APP in /Applications/Xcode*.app; do
-+              VERSION="$("$APP/Contents/Developer/usr/bin/xcodebuild" -version 2>/dev/null | awk 'NR == 1 { print $2 }')" || continue
-+              case "$VERSION" in
-+                (27 | 27.*) printf '%s\t%s\n' "$VERSION" "$APP" ;;
-+              esac
-+            done | sort -V -k1,1 | tail -n 1 | cut -f2-
-+          )"
-+          if [ -z "$XCODE_APP" ]; then
-+            echo "::error::No Xcode 27 found in /Applications on this runner image. The Limrun runner must be built with Xcode 27; choose an image that ships it." >&2
-+            exit 1
-+          fi
-           echo "DEVELOPER_DIR=${XCODE_APP}/Contents/Developer" >> "$GITHUB_ENV"
-           echo "Using ${XCODE_APP}"
-         shell: bash
-```
-
-**File**: `packages/platform-apple/src/snapshot-source/lifecycle.test.ts` (modified, +10/-3)
-```diff
-@@ -1,5 +1,5 @@
- import assert from 'node:assert/strict';
--import { test, vi } from 'vitest';
-+import { onTestFinished, test, vi } from 'vitest';
- import { SnapshotSourceError, snapshotSourceError } from './errors.ts';
- import { SnapshotBridgeManager } from './lifecycle.ts';
- import { simulatorAddressFor } from '../core/simctl.ts';
-@@ -605,7 +605,11 @@ test('a capture whose exit status stays unread ends at its own deadline without
-   const helper = () => fixture.processes[0]!;
-   const manager = new SnapshotBridgeManager(fixture.host);
- 
--  const failure = await manager
-+  // Virtual time stands still through the host's real directory setup, so the 120 ms budget covers only
-+  // the connect retry and the exit wait this test is about, however loaded the run is.
-+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
-+  onTestFinished(() => void vi.useRealTimers());
-+  const request = manager
-     .request({
-       target,
-       bridge,
-@@ -617,14 +621,17 @@ test('a capture whose exit status stays unread ends at its own deadline without
-       () => undefined,
-       (error: unknown) => error,
-     );
-+  while (fixture.connects.length === 0) await new Promise((resolve) => setImmediate(resolve));
-+  while (!(helper()?.exitStatusReads >= 1)) await vi.advanceTimersByTimeAsync(1);
-+  await vi.advanceTimersByTimeAsync(120);
-+  const failure = await request;
- 
-   assert.ok(
-     failure instanceof SnapshotSourceError &&
-       failure.failureKind === 'timeout' &&
-       failure.failureCode === 'bridge-exit-deadline',
-     'the exit wait did not answer the request budget it was given',
-   );
--  assert.equal(helper().exitStatusReads >= 1, true);
-   assert.equal(exitDiagnostics(fixture).length, 0);
-   await manager.close();
- });
-```
-
-**File**: `scripts/package-ios-simulator-runner.sh` (modified, +4/-18)
-```diff
-@@ -92,26 +92,12 @@ if [ -n "$EXPECTED_RUNNER_BUNDLE_ID" ] && [ "$RUNNER_BUNDLE_ID" != "$EXPECTED_RU
- fi
- 
- ditto "$RUNNER_APP_PATH" "$STAGED_APP_PATH"
--# Remote simulators cannot resolve dependencies from the build machine's Xcode paths, so the runner
--# must carry XCTest itself. Xcode 26 embeds it; Xcode 27 leaves it out, and Limrun simulators run iOS 26.
--if [ ! -d "$STAGED_APP_PATH/Frameworks/XCTest.framework" ]; then
--  echo "The runner app does not embed XCTest.framework. Build the simulator runner with Xcode 26 (set DEVELOPER_DIR to an Xcode 26 install): Xcode 27 resolves XCTest from the build machine, which a remote simulator cannot reach." >&2
-+# Limrun hosts run XCTest with Xcode 27, which loads XCTest from its own platform directory. A runner
-+# that embeds XCTest.framework comes from an older Xcode, and its test host crashes there.
-+if [ -d "$STAGED_APP_PATH/Frameworks/XCTest.framework" ]; then
-+  echo "The runner app embeds XCTest.framework. Build the simulator runner with Xcode 27 (set DEVELOPER_DIR to an Xcode 27 install): Limrun hosts load XCTest from their own Xcode 27, and an older embedded copy crashes the test host." >&2
-   exit 1
- fi
--PLATFORM_PATH="$(xcrun --sdk iphonesimulator --show-sdk-platform-path)"
--# Newer Xcode 26 releases link Testing.framework against this library; Xcode 26.2 ships none.
--INTEROP_LIBRARY="$PLATFORM_PATH/Developer/usr/lib/lib_TestingInterop.dylib"
--if [ -f "$INTEROP_LIBRARY" ]; then
--  cp "$INTEROP_LIBRARY" "$STAGED_APP_PATH/Frameworks/"
--fi
--# Swift Testing loads overlays at runtime; keep them from the same toolchain as its bundled framework.
--if [ -d "$STAGED_APP_PATH/Frameworks/Testing.framework" ]; then
--  for FRAMEWORK in "$PLATFORM_PATH"/Developer/Library/Frameworks/_Testing_*.framework; do
--    if [ -d "$FRAMEWORK" ]; then
--      ditto "$FRAMEWORK" "$STAGED_APP_PATH/Frameworks/$(basename "$FRAMEWORK")"
--    fi
--  done
--fi
- rm -f "$ARCHIVE_PATH"
- (
-   cd "$STAGE_DIR"
-```
-
-**File**: `src/core/interactors/limrun-ios-runner-products.test.ts` (modified, +4/-3)
-```diff
-@@ -32,13 +32,14 @@ test('a normal app without a test bundle reports the invalid runner path', async
-   expect(fetch).not.toHaveBeenCalled();
- });
- 
--test('a runner built without its own XCTest is refused before it reaches Limrun', async () => {
-+test('a runner that embeds its own XCTest is refused before it reaches Limrun', async () => {
-   const directory = await mkdtempForTest('runner-products-');
-   const appPath = path.join(directory, 'AgentDeviceRunnerUITests-Runner.app');
--  // An Xcode 27 build: the test bundle is there, the XCTest frameworks are not.
-+  // An Xcode 26 build: the runner app carries XCTest, which crashes under the host's Xcode 27.
-   await fs.mkdir(path.join(appPath, 'PlugIns', 'AgentDeviceRunnerUITests.xctest'), {
-     recursive: true,
-   });
-+  await fs.mkdir(path.join(appPath, 'Frameworks', 'XCTest.framework'), { recursive: true });
-   const fetch = vi.fn();
-   vi.stubGlobal('fetch', fetch);
-   await expect(
-@@ -52,7 +53,7 @@ test('a runner built without its own XCTest is refused before it reaches Limrun'
-     }),
-   ).rejects.toMatchObject({
-     code: 'INVALID_ARGS',
--    message: 'The Limrun XCTest runner does not embed XCTest.framework',
-+    message: 'The Limrun XCTest runner embeds XCTest.framework from an Xcode older than 27',
-     details: { reason: 'limrun_runner_products_invalid' },
-   });
-   expect(fetch).not.toHaveBeenCalled();
-```
-
-**File**: `src/core/interactors/limrun-ios-runner-products.ts` (modified, +11/-7)
-```diff
-@@ -119,18 +119,18 @@ export async function prepareLimrunRunnerProducts(input: {
-       'INVALID_ARGS',
-     );
-   }
--  // A remote simulator cannot reach the build machine's Xcode, so the runner must carry XCTest
--  // itself. Xcode 26 embeds it in the runner app; Xcode 27 leaves it out and resolves it from the
--  // build machine, so such a runner never starts on a Limrun simulator.
--  const xctest = await fs
-+  // Limrun hosts drive XCTest with Xcode 27, which loads XCTest from its own platform directory
-+  // (see TestingEnvironmentVariables below). A runner that embeds XCTest.framework was built with
-+  // an older Xcode, and its test host crashes at startup there.
-+  const embeddedXctest = await fs
-     .stat(path.join(appPath, 'Frameworks', 'XCTest.framework'))
-     .catch(() => null);
--  if (!xctest?.isDirectory()) {
-+  if (embeddedXctest?.isDirectory()) {
-     throw limrunRunnerError(
-       'limrun_runner_products_invalid',
--      'The Limrun XCTest runner does not embed XCTest.framework',
-+      'The Limrun XCTest runner embeds XCTest.framework from an Xcode older than 27',
-       {
--        hint: 'Build and package the simulator runner with Xcode 26, for example with DEVELOPER_DIR set to an Xcode 26 install.',
-+        hint: 'Build and package the simulator runner with Xcode 27, for example with DEVELOPER_DIR set to an Xcode 27 install.',
-       },
-       'INVALID_ARGS',
-     );
-@@ -160,6 +160,10 @@ ${Object.entries(RUNNER_XCTESTRUN_CAPTURE_OPTIONS)
-   .map(([key, value]) => `<key>${key}</key>${string(value)}`)
-   .join('')}
- <key>OnlyTestIdentifiers</key><array><string>RunnerTests/testCommand</string></array>
-+<key>TestingEnvironmentVariables</key><dict>
-+<key>DYLD_FRAMEWORK_PATH</key><string>__PLATFORMS__/iPhoneSimulator.platform/Developer/Library/Frameworks</string>
-+<key>DYLD_LIBRARY_PATH</key><string>__PLATFORMS__/iPhoneSimulator.platform/Developer/usr/lib</string>
-+</dict>
- <key>EnvironmentVariables</key><dict>${Object.entries(environment)
-     .map(([key, value]) => `<key>${key}</key>${string(value)}`)
-     .join('')}</dict>
-```
-
-**File**: `src/core/interactors/limrun-ios-runner.fixtures.ts` (modified, +11/-1)
-```diff
-@@ -35,6 +35,7 @@ type RunnerFixture = {
-   requests: string[];
-   readonly manifest: Manifest | undefined;
-   readonly environment: Record<string, string>;
-+  readonly testingEnvironment: Record<string, string>;
-   readonly command: Record<string, unknown> | undefined;
-   readonly testRun: ServerResponse | undefined;
- };
-@@ -64,13 +65,13 @@ export async function fixture(
-   const directory = await mkdtempForTest('limrun-runner-');
-   const app = path.join(directory, 'AgentDeviceRunnerUITests-Runner.app');
-   await fs.mkdir(path.join(app, 'PlugIns', 'AgentDeviceRunnerUITests.xctest'), { recursive: true });
--  await fs.mkdir(path.join(app, 'Frameworks', 'XCTest.framework'), { recursive: true });
-   await fs.writeFile(path.join(app, 'Runner'), 'simulator runner', { mode: 0o755 });
-   const requests: string[] = [];
-   const commands: Record<string, unknown>[] = [];
-   let manifest: Manifest | undefined;
-   const uploads: Manifest[] = [];
-   const environment: Record<string, string> = {};
-+  let testingEnvironment: Record<string, string> = {};
-   let command: Record<string, unknown> | undefined;
-   let testRun: ServerResponse | undefined;
-   let admitted: ServerResponse | undefined;
-@@ -214,6 +215,12 @@ export async function fixture(
-           new RegExp(`<key>AGENT_DEVICE_RUNNER_${key}</key><string>(.*?)</string>`),
-         )![1]!;
-       }
-+      const testing = xml.match(/<key>TestingEnvironmentVariables<\/key><dict>(.*?)<\/dict>/s);
-+      testingEnvironment = Object.fromEntries(
-+        [...(testing?.[1] ?? '').matchAll(/<key>(.*?)<\/key><string>(.*?)<\/string>/g)].map(
-+          ([, key, value]) => [key!, value!],
-+        ),
-+      );
-       response.end(JSON.stringify({ ok: true }));
-       return;
+ /**
+- * The one driver for every backend that reads alerts from a capture tree (Android ADB). A
++ * The shared driver for backends that read alerts from a capture tree (today Android ADB; the
++ * Apple backends ask their runner or helper instead). A
+  * backend supplies only its observation (`capture` + `findCandidate`), its acting policy
+  * (`choose`), and its press seam (`press`). It lives in the capture kit: an iOS provider
+  * must not depend on the Android package to poll a tree.
+@@ -144,7 +146,9 @@ export async function runTreeAlertAction<
+       // Both a quiet capture and one that stayed alert-shaped yet unresolvable mean no
+       // actionable alert ever resolved within the window; the timeout phrasing is the honest
+       // answer for either.
+-      throw new AppError('COMMAND_FAILED', 'alert wait timed out');
++      throw new AppError('COMMAND_FAILED', 'alert wait timed out', {
++        reason: ALERT_WAIT_TIMEOUT_REASON,
++      });
      }
-@@ -315,6 +322,9 @@ export async function fixture(
-     get environment() {
-       return environment;
-     },
-+    get testingEnvironment() {
-+      return testingEnvironment;
-+    },
-     get command() {
-       return command;
-     },
+     return {
+       kind: 'alertWait',
 ```
 
-**File**: `src/core/interactors/limrun-ios-runner.test.ts` (modified, +5/-0)
+**File**: `packages/capture-kit/src/app-log-pid-monitor.ts` (modified, +16/-3)
 ```diff
-@@ -29,6 +29,11 @@ test('stages a token-authenticated runner once and presents forwarded XCTest sna
+@@ -102,9 +102,10 @@ async function pollActiveProcessPid(
+ ): Promise<void> {
+   while (!input.stopped() && !wait.settled()) {
+     if (!(await waitForPidPoll(input, wait))) return;
+-    const observedPid = await input.resolvePid();
++    const observedPid = await resolvePidOrUnknown(input);
+     if (input.stopped()) return;
+-    if (observedPid === scopedProcess.pid) continue;
++    // An unanswered poll is inconclusive, so retain the stream and retry on the next tick.
++    if (observedPid === undefined || observedPid === scopedProcess.pid) continue;
+     await scopedProcess.process.terminate();
+     return;
+   }
+@@ -146,7 +147,7 @@ async function pauseBeforeProcessRestart(input: PidScopedProcessMonitor): Promis
+ async function startAndAdoptSubsequentProcess(
+   input: PidScopedProcessMonitor,
+ ): Promise<SubsequentProcessStart> {
+-  const pid = await input.resolvePid();
++  const pid = await resolvePidOrUnknown(input);
+   if (input.stopped()) return { status: 'stopped' };
+   if (!pid) {
+     input.setState('recovering');
+@@ -160,6 +161,18 @@ async function startAndAdoptSubsequentProcess(
+   return { status: 'stopped' };
+ }
+ 
++/**
++ * A PID poll is a best-effort probe (one `pidof` under its own timeout). A failed poll is retried on
++ * the next tick instead of ending capture for the rest of the session.
++ */
++async function resolvePidOrUnknown(input: PidScopedProcessMonitor): Promise<string | undefined> {
++  try {
++    return await input.resolvePid();
++  } catch {
++    return undefined;
++  }
++}
++
+ async function stopAdoptedProcess(
+   input: PidScopedProcessMonitor,
+   process: AppLogBackgroundProcess,
+```
+
+**File**: `packages/capture-kit/src/app-log-pid-process.test.ts` (modified, +55/-0)
+```diff
+@@ -231,3 +231,58 @@ async function testSleep(_milliseconds: number, signal?: AbortSignal): Promise<v
+     signal?.addEventListener('abort', onAbort, { once: true });
    });
-   expect(f.environment.BIND_IP).toBe('10.244.1.2');
-   expect(f.environment.TOKEN?.length).toBeGreaterThanOrEqual(32);
-+  // The host's Xcode 27 resolves the runner's @rpath XCTest from its own simulator platform.
-+  expect(f.testingEnvironment).toEqual({
-+    DYLD_FRAMEWORK_PATH: '__PLATFORMS__/iPhoneSimulator.platform/Developer/Library/Frameworks',
-+    DYLD_LIBRARY_PATH: '__PLATFORMS__/iPhoneSimulator.platform/Developer/usr/lib',
+ }
++
++describe('PID-scoped app-log capture after a failed PID poll', () => {
++  function startCapture(
++    resolvePid: () => Promise<string>,
++    start: () => Promise<AppLogBackgroundProcess>,
++  ) {
++    return createPidScopedAppLogProcess({
++      host: hostFixture(outputFixture().sink),
++      backend: 'android',
++      outputPath: '/tmp/app.log',
++      pidPath: '/tmp/app-log.pid',
++      processStart: start,
++      setupSignal: new AbortController().signal,
++      resolvePid,
++      command: (pid) => ({
++        kind: 'host',
++        request: { executable: 'adb', args: ['logcat', '--pid', pid] },
++      }),
++      cleanupFailureMessage: 'cleanup failed',
++    });
++  }
++
++  test('keeps the active stream and keeps polling after one rejected poll', async () => {
++    const started =
++      processFixture(deferred<{ stdout: string; stderr: string; exitCode: number }>());
++    const resolvePid = vi
++      .fn<() => Promise<string>>()
++      .mockResolvedValueOnce('123')
++      .mockRejectedValueOnce(new Error('adb shell pidof timed out'))
++      .mockResolvedValue('123');
++    const handle = await startCapture(resolvePid, async () => started.process);
++
++    await vi.waitFor(() => expect(resolvePid.mock.calls.length).toBeGreaterThanOrEqual(4));
++    expect(started.dispose).not.toHaveBeenCalled();
++    expect(started.terminate).not.toHaveBeenCalled();
++    await expect(handle.finish()).resolves.toMatchObject({ status: 'completed' });
++    expect(started.terminate).toHaveBeenCalledOnce();
 +  });
-   expect((f.manifest?.files.find((f) => f.path === 'Runner.app/Runner')?.mode ?? 0) & 0o111).toBe(
-     0o111,
-   );
++
++  test('starts the stream once a rejected waiting poll is followed by a PID', async () => {
++    const started =
++      processFixture(deferred<{ stdout: string; stderr: string; exitCode: number }>());
++    const resolvePid = vi
++      .fn<() => Promise<string>>()
++      .mockResolvedValueOnce('')
++      .mockRejectedValueOnce(new Error('adb shell pidof timed out'))
++      .mockResolvedValue('456');
++    const start = vi.fn(async () => started.process);
++    const handle = await startCapture(resolvePid, start);
++
++    await vi.waitFor(() => expect(start).toHaveBeenCalledOnce());
++    await handle.finish();
++    expect(started.terminate).toHaveBeenCalledOnce();
++  });
++});
 ```
 
-**File**: `website/docs/docs/limrun.md` (modified, +1/-1)
+**File**: `packages/capture-kit/src/capture-admission/__tests__/durable-capture-resource-boundary-faults.test.ts` (modified, +1/-1)
 ```diff
-@@ -125,7 +125,7 @@ Open your app before taking a snapshot. Snapshots target the app you opened in t
+@@ -138,7 +138,7 @@ test('retains recording evidence when exact-owner recovery resolves after its de
+     const recovery = resource.recoverAll({
+       sessionsDir: path.dirname(context.sessionStore.resolveSessionDir(context.sessionName)),
+       scope,
+-      perRecordDeadlineMs: 25,
++      acquisitionDeadlineMs: 25,
+       onDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
+       acquireControl: async (_envelope, recoveryScope) => {
+         expect(recoveryScope.signal.aborted).toBe(false);
+```
+
+**File**: `packages/capture-kit/src/capture-admission/app-log-resource-recovery.ts` (modified, +4/-4)
+```diff
+@@ -27,7 +27,7 @@ export function recoverAppLogResourcesAfterDaemonLock(params: {
+   sessionsDir: string;
+   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
+   scope: PlatformRequestScope;
+-  perRecordDeadlineMs?: number;
++  acquisitionDeadlineMs?: number;
+   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
+ }): Promise<AppLogRecoverySummary> {
+   return appLogDurableResource.recoverAll({
+@@ -41,7 +41,7 @@ export function recoverAppLogResourceAfterDaemonLock(params: {
+   resourcePath: string;
+   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
+   scope: PlatformRequestScope;
+-  perRecordDeadlineMs?: number;
++  acquisitionDeadlineMs?: number;
+   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
+ }) {
+   return appLogDurableResource.recoverOne(
+@@ -53,12 +53,12 @@ export function recoverAppLogResourceAfterDaemonLock(params: {
+ function buildAppLogRecoveryParams(params: {
+   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
+   scope: PlatformRequestScope;
+-  perRecordDeadlineMs?: number;
++  acquisitionDeadlineMs?: number;
+   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
+ }) {
+   return {
+     scope: params.scope,
+-    perRecordDeadlineMs: params.perRecordDeadlineMs,
++    acquisitionDeadlineMs: params.acquisitionDeadlineMs,
+     onDiagnostic: params.onDiagnostic,
+     acquireControl: async (
+       envelope: DurableResourceEnvelope<'app-log'>,
+```
+
+**File**: `packages/capture-kit/src/capture-admission/audio-probe-resource-recovery.ts` (modified, +2/-2)
+```diff
+@@ -23,14 +23,14 @@ export function recoverAudioProbeResourceAfterDaemonLock(params: {
+   resourcePath: string;
+   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
+   scope: PlatformRequestScope;
+-  perRecordDeadlineMs?: number;
++  acquisitionDeadlineMs?: number;
+   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
+ }) {
+   return audioProbeDurableResource.recoverOne(
+     {
+       sessionsDir: params.sessionsDir,
+       scope: params.scope,
+-      perRecordDeadlineMs: params.perRecordDeadlineMs,
++      acquisitionDeadlineMs: params.acquisitionDeadlineMs,
+       onDiagnostic: params.onDiagnostic,
+       acquireControl: async (envelope, scope) =>
+         await acquireAudioProbeRecoveryControl(params.gateway, envelope, scope),
+```
+
+**File**: `packages/capture-kit/src/capture-admission/perf-capture-resource-recovery.ts` (modified, +2/-2)
+```diff
+@@ -24,14 +24,14 @@ export function recoverPerfCaptureResourceAfterDaemonLock(params: {
+   resourcePath: string;
+   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
+   scope: PlatformRequestScope;
+-  perRecordDeadlineMs?: number;
++  acquisitionDeadlineMs?: number;
+   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
+ }) {
+   return perfCaptureDurableResource.recoverOne(
+     {
+       sessionsDir: params.sessionsDir,
+       scope: params.scope,
+-      perRecordDeadlineMs: params.perRecordDeadlineMs,
++      acquisitionDeadlineMs: params.acquisitionDeadlineMs,
+       onDiagnostic: params.onDiagnostic,
+       acquireControl: async (envelope, scope) =>
+         await acquirePerfCaptureRecoveryControl(params.gateway, envelope, scope),
+```
+
+**File**: `packages/capture-kit/src/capture-admission/screen-recording-resource-recovery.ts` (modified, +2/-2)
+```diff
+@@ -23,14 +23,14 @@ export function recoverScreenRecordingResourceAfterDaemonLock(params: {
+   resourcePath: string;
+   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
+   scope: PlatformRequestScope;
+-  perRecordDeadlineMs?: number;
++  acquisitionDeadlineMs?: number;
+   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
+ }) {
+   return screenRecordingDurableResource.recoverOne(
+     {
+       sessionsDir: params.sessionsDir,
+       scope: params.scope,
+-      perRecordDeadlineMs: params.perRecordDeadlineMs,
++      acquisitionDeadlineMs: params.acquisitionDeadlineMs,
+       onDiagnostic: params.onDiagnostic,
+       acquireControl: async (envelope, scope) =>
+         await acquireScreenRecordingRecoveryControl(params.gateway, envelope, scope),
+```
+
+---
+
+### Incident Patch 3: `885cbffb` (2026-11-11)
+**Commit Message**: fix(host-kit): one async process-identity reader and one identity-checked stop escalation (#4359)
+
+* fix(host-kit): read process identity off the event loop and unify stop escalation
+
+readProcessIdentities answers start time, command and zombie state for a
+set of pids from two concurrent ps reads (one CIM query on Windows), off
+the event loop. readProcessIdentityFacts is its one-pid form. The current
+process's own identity is memoized by readCurrentOwnerIdentity, because a
+process's start time never changes; nothing about another pid is cached.
+
+stopProcessAndConfirmExit is now the only TERM-then-KILL escalation. It
+takes an optional SIGINT opening signal, reports the last signal it sent
+on a stopped verdict, and re-proves the recorded command before SIGKILL.
+stopPidsWithEscalation is removed. The startup reaper, the Android
+emulator terminate, the app-log terminate and the web smoke cleanup now
+stop through it; the reaper reports unconfirmed and survived records
+instead of labelling both as ownership lost.
+
+Screen-recording and app-log identity reads use the async reader, and the
+recording kill ladder re-proves each marker before the next rung signals
+it.
+
+Co-Authored-By: Claude O
+
+**File**: `docs/adr/0030-process-lock-exclusion.md` (modified, +16/-1)
+```diff
+@@ -16,8 +16,12 @@ Mixed access with the legacy host-kit protocol is unsupported.
+   An unprovable owner record or an unremovable directory also leaves release unverified.
+ - A claim identifies an acquisition.
+   A PID alone cannot authorize release.
+-- Unknown owners and abandoned guards remain retained.
++- Unknown owners remain retained.
+   Age never proves abandonment.
++- A guard records its holder's pid, start time, and token.
++  A contender removes a guard only when that holder is proven dead or its pid reused, by the same proof rule as a lock owner.
++  An exclusive per-token reap marker admits one reaper, and the reaper removes the guard only if it still names that token.
++  An unattributable guard, a legacy directory guard, and a live holder remain retained.
+ - Before an upgrade, stop every legacy process that uses the shared state or cache paths.
+   While hardened users operate those paths, prevent legacy versions from returning.
+   Use one deployed version or separate environments.
+@@ -33,6 +37,13 @@ Guard expiry admits another process.
+ The first process can then resume and overwrite or delete the replacement.
+ Retention of an uncertain guard sacrifices automatic crash recovery to preserve exclusion.
  
- `install` leaves your app stopped. Use `open` to launch it. To change launch arguments on an app that is already running, use `open --relaunch --launch-args`. Screenshots download as lossless PNG files, and recording downloads the finished MP4 when you stop it. Push notifications use the same command and payload format as local simulators.
++A holder proven dead cannot resume, so its guard is not uncertain.
++Without a recorded holder, a holder killed inside its guarded step left a guard that blocked every contender until manual removal.
++A token check alone cannot remove a file conditionally, because a second reaper could remove a successor's guard after the first reaper succeeds.
++The exclusive reap marker closes that race: no other process can change the guard between the reaper's token check and its unlink.
++If a reaper dies while it holds the marker, that guard stays retained.
++A live holder whose guard stands longer than one second gets a process-table read; age only gates that read.
++
+ The guard is an exclusive file at the existing guard path.
+ Legacy age-based `rmdir` cannot remove it.
+ A new legacy reclaimer therefore cannot take a hardened publisher's guard.
+@@ -106,3 +117,7 @@ flowchart LR
+     O --> L
+     L --> F[Protected metadata and reports]
+ ```
++
++## Decision history
++
++- 2026-11-10: A guard with a proven-dead holder became recoverable. Before this change, every abandoned guard stayed retained until manual removal, which contradicted automatic reclaim of provably dead owners.
+```
+
+**File**: `packages/daemon-contracts/src/device-claim-inspection.ts` (modified, +65/-10)
+```diff
+@@ -8,8 +8,10 @@ import {
+ } from '@agent-device/kernel/device';
+ import {
+   classifyOwnerLivenessFromObservation,
++  type HostProcessIdentityObservation,
+   type OwnerLiveness,
+   readHostProcessIdentityObservations,
++  readHostProcessIdentityObservationsAsync,
+ } from '@agent-device/host-kit/process';
  
--If you use a nightly or unpublished agent-device build, obtain a matching packaged iOS runner from the build's maintainer. Set `AGENT_DEVICE_LIMRUN_IOS_RUNNER_APP` to the extracted `.app` path before starting agent-device. The runner must be built with Xcode 26, because Limrun simulators run iOS 26 and an Xcode 27 build does not include the XCTest frameworks it needs there; agent-device refuses such a runner. If the daemon is already running, stop it with `agent-device daemon stop` using the same `--state-dir`, then reconnect.
-+If you use a nightly or unpublished agent-device build, obtain a matching packaged iOS runner from the build's maintainer. Set `AGENT_DEVICE_LIMRUN_IOS_RUNNER_APP` to the extracted `.app` path before starting agent-device. The runner must be built with Xcode 27, because Limrun runs XCTest with Xcode 27. agent-device refuses a runner built with an older Xcode. If the daemon is already running, stop it with `agent-device daemon stop` using the same `--state-dir`, then reconnect.
+ import { isSupersededDaemonOwner } from './daemon-registration.ts';
+@@ -34,22 +36,61 @@ export type DeviceClaimSelectors = {
+   serial?: string;
+ };
  
- ## Connect an iOS app to Metro
++type OwnerObservations = ReadonlyMap<number, HostProcessIdentityObservation>;
++
++/**
++ * Every matching claim, judged from one process-table snapshot. This one blocks for that snapshot,
++ * which suits a one-shot CLI; a daemon path uses {@link inspectDeviceClaimsAsync}.
++ */
+ export function inspectDeviceClaims(
+   selectors: DeviceClaimSelectors,
+   env: EnvMap,
+ ): InspectedDeviceClaim[] {
++  const listed = readMatchingClaimFiles(selectors, env);
++  if ('claims' in listed) return listed.claims;
++  return classifyInspectedClaims(
++    listed.parsed,
++    readHostProcessIdentityObservations(claimOwnerPids(listed.parsed)),
++  );
++}
++
++/** {@link inspectDeviceClaims} with the snapshot taken off the event loop. */
++export async function inspectDeviceClaimsAsync(
++  selectors: DeviceClaimSelectors,
++  env: EnvMap,
++): Promise<InspectedDeviceClaim[]> {
++  const listed = readMatchingClaimFiles(selectors, env);
++  if ('claims' in listed) return listed.claims;
++  return classifyInspectedClaims(
++    listed.parsed,
++    await readHostProcessIdentityObservationsAsync(claimOwnerPids(listed.parsed)),
++  );
++}
++
++function readMatchingClaimFiles(
++  selectors: DeviceClaimSelectors,
++  env: EnvMap,
++): { parsed: InspectedDeviceClaim[] } | { claims: InspectedDeviceClaim[] } {
+   const root = resolveDeviceClaimRoot(env);
+   const listed = readClaimEntries(root);
+-  if ('claims' in listed) return listed.claims;
++  if ('claims' in listed) return listed;
+   const parsed = listed.entries
+     .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+-    .map((entry) => readDeviceClaimFile(path.join(root, entry.name)))
++    .map((entry) => readDeviceClaimEntry(path.join(root, entry.name)))
+     .filter((entry): entry is InspectedDeviceClaim => entry !== null)
+     .filter((entry) => matchesClaimSelectors(entry.claim, selectors));
+-  const observations = readHostProcessIdentityObservations(
+-    parsed.flatMap((entry) => (entry.claim ? [entry.claim.ownerPid] : [])),
+-  );
+-  return parsed.map((entry) =>
++  return { parsed };
++}
++
++function claimOwnerPids(entries: readonly InspectedDeviceClaim[]): number[] {
++  return entries.flatMap((entry) => (entry.claim ? [entry.claim.ownerPid] : []));
++}
++
++function classifyInspectedClaims(
++  entries: readonly InspectedDeviceClaim[],
++  observations: OwnerObservations,
++): InspectedDeviceClaim[] {
++  return entries.map((entry) =>
+     entry.claim
+       ? classifyInspectedClaim(entry, observations.get(entry.claim.ownerPid) ?? null)
+       : entry,
+@@ -98,14 +139,28 @@ function matchesClaimPlatform(claim: DeviceClaim, platform: PlatformSelector | u
+   );
+ }
  
+-export function inspectDeviceClaimFile(filePath: string): InspectedDeviceClaim | null {
+-  const entry = readDeviceClaimFile(filePath);
++/** One claim file, judged off the event loop. */
++export async function inspectDeviceClaimFile(
++  filePath: string,
++): Promise<InspectedDeviceClaim | null> {
++  return await classifyDeviceClaimEntry(readDeviceClaimEntry(filePath));
++}
++
++/** Judges the owner of a claim file already read by {@link readDeviceClaimEntry}. */
++export async function classifyDeviceClaimEntry(
++  entry: InspectedDeviceClaim | null,
++): Promise<InspectedDeviceClaim | null> {
+   if (!entry?.claim) return entry;
+-  const observations = readHostProcessIdentityObservations([entry.claim.ownerPid]);
++  const observations = await readHostProcessIdentityObservationsAsync([entry.claim.ownerPid]);
+   return classifyInspectedClaim(entry, observations.get(entry.claim.ownerPid) ?? null);
+ }
+ 
+-function readDeviceClaimFile(filePath: string): InspectedDeviceClaim | null {
++/**
++ * One claim file, decoded and not judged: its `classification` is `unknown` until
++ * {@link classifyDeviceClaimEntry} asks the host about the owner. A caller that compares only the
++ * recorded owner token, pid, and start time needs no process-table read at all.
++ */
++export function readDeviceClaimEntry(filePath: string): InspectedDeviceClaim | null {
+   const fileName = path.basename(filePath);
+   try {
+     return inspectClaimContents(fileName, fs.readFileSync(filePath, 'utf8'));
+```
+
+**File**: `packages/daemon-contracts/src/device-claim-settlement.test.ts` (modified, +22/-0)
+```diff
+@@ -8,6 +8,7 @@ import {
+   acquireDeviceClaim as acquireProductionDeviceClaim,
+   acquireTransientDeviceClaim,
+   canonicalLocalDeviceKey,
++  clearDeviceClaim,
+   inspectDeviceClaims,
+   inspectDeviceClaimAcquisition,
+   renewDeviceClaim,
+@@ -796,3 +797,24 @@ test('an owner that reopened its app after the reboot keeps the device', async (
+   assert.equal(foreign.conflict.classification, 'live');
+   assert.equal(storedClaim().session, 'cwd:/w:default');
+ });
++
++// Claim writes run on the daemon event loop every session shares. Acquiring a free device and
++// clearing it again compares recorded owners only, so no owner is ever asked about.
++test('acquiring and clearing a free device never blocks on the process table', async () => {
++  const root = useClaimsRoot();
++  const syncReads = vi.spyOn(hostProcess, 'readHostProcessIdentityObservations');
++  const asyncReads = vi.spyOn(hostProcess, 'readHostProcessIdentityObservationsAsync');
++
++  const acquired = await acquireDeviceClaim({
++    env: process.env,
++    device,
++    session: 'counted',
++    workspace: '/worktrees/counted',
++    stateDir: root,
++  });
++  if (acquired.status !== 'acquired') throw new Error('acquisition was refused');
++  assert.equal(await clearDeviceClaim(acquired.ownership, process.env), 'deleted');
++
++  assert.equal(syncReads.mock.calls.length, 0);
++  assert.equal(asyncReads.mock.calls.length, 0);
++});
+```
+
+**File**: `packages/daemon-contracts/src/device-claim-settlement.ts` (modified, +3/-1)
+```diff
+@@ -113,7 +113,9 @@ export async function inspectExistingClaimSettlement(params: {
+   observeDeviceBoot?: DeviceBootObservationService;
+   env: EnvMap;
+ }): Promise<InspectedClaimSettlement> {
+-  const existing = inspectDeviceClaimFile(resolveDeviceClaimPath(params.deviceKey, params.env));
++  const existing = await inspectDeviceClaimFile(
++    resolveDeviceClaimPath(params.deviceKey, params.env),
++  );
+   if (!existing) return { status: 'available' };
+   if (
+     existing.claim &&
+```
+
+**File**: `packages/daemon-contracts/src/device-claims-app.test.ts` (modified, +3/-3)
+```diff
+@@ -381,7 +381,7 @@ test.each(['invalid-json', 'unknown'] as const)(
+     const file = await seedForeignMacClaim(root, { bundleId: 'com.example.one' });
+     if (failure === 'invalid-json') fs.writeFileSync(file, '{');
+     else
+-      vi.spyOn(claimInspection, 'inspectDeviceClaims').mockReturnValue([
++      vi.spyOn(claimInspection, 'inspectDeviceClaimsAsync').mockResolvedValue([
+         { fileName: path.basename(root), classification: 'unknown', error: 'EACCES' },
+       ]);
+     const before = fs.readFileSync(file, 'utf8');
+@@ -643,8 +643,8 @@ test('failed whole-Mac acquisition leaves its abandoned app fenced against forei
+   const own = entries.find((entry) => claimedApp(entry.claim) === 'com.example.one')!;
+   const foreign = entries.find((entry) => claimedApp(entry.claim) === 'com.example.two')!;
+   const orderedScan = vi
+-    .spyOn(claimInspection, 'inspectDeviceClaims')
+-    .mockReturnValue([own, foreign]);
++    .spyOn(claimInspection, 'inspectDeviceClaimsAsync')
++    .mockResolvedValue([own, foreign]);
+   const whole = await acquireDeviceClaim({
+     device: mac,
+     session: 'whole',
+```
+
+**File**: `packages/daemon-contracts/src/device-claims.ts` (modified, +37/-37)
+```diff
+@@ -17,9 +17,11 @@ import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
+ import { ownerIdentityMatches, readCurrentOwnerIdentity } from '@agent-device/host-kit/process';
+ 
+ import {
++  classifyDeviceClaimEntry,
+   deviceClaimOwnerCannotRelease,
+   inspectDeviceClaimFile,
+-  inspectDeviceClaims,
++  inspectDeviceClaimsAsync,
++  readDeviceClaimEntry,
+   type DeviceClaimClassification,
+   type DeviceClaimSelectors,
+   type InspectedDeviceClaim,
+@@ -52,6 +54,7 @@ export {
+   deviceClaimOwnerCannotRelease,
+   deviceClaimRequiresStaleInspection,
+   inspectDeviceClaims,
++  inspectDeviceClaimsAsync,
+ } from './device-claim-inspection.ts';
+ export type {
+   DeviceClaimClassification,
+@@ -94,12 +97,12 @@ type ClaimAcquisitionInspectionParams = {
+   observeDeviceBoot?: DeviceBootObservationService;
+ };
+ 
+-function inspectTransientExactClaim(
++async function inspectTransientExactClaim(
+   params: ClaimAcquisitionInspectionParams,
+   deviceKey: string,
+   owner: ReturnType<typeof readCurrentOwnerIdentity>,
+-): InspectedClaimSettlement | undefined {
+-  const existing = inspectDeviceClaimFile(resolveDeviceClaimPath(deviceKey, params.env));
++): Promise<InspectedClaimSettlement | undefined> {
++  const existing = await inspectDeviceClaimFile(resolveDeviceClaimPath(deviceKey, params.env));
+   const local =
+     existing &&
+     inspectTransientLocalClaim(existing, { ...params, coveredBySession: params.session }, owner);
+@@ -117,7 +120,7 @@ async function inspectExactClaimSettlement(
+ ): Promise<InspectedClaimSettlement> {
+   const transient = params.command !== 'open';
+   if (transient && allowTransientCoverage) {
+-    const local = inspectTransientExactClaim(params, deviceKey, owner);
++    const local = await inspectTransientExactClaim(params, deviceKey, owner);
+     if (local) return local;
+   }
+   const acquirer = {
+@@ -129,19 +132,19 @@ async function inspectExactClaimSettlement(
+   return await inspectExistingClaimSettlement({ ...acquirer, device, deviceKey, owner });
+ }
+ 
+-function inspectOverlappingHostScopedClaims(
++async function inspectOverlappingHostScopedClaims(
+   params: ClaimAcquisitionInspectionParams,
+   identity: DeviceIdentity,
+   owner: ReturnType<typeof readCurrentOwnerIdentity>,
+-): InspectedClaimSettlement[] {
++): Promise<InspectedClaimSettlement[]> {
+   const settlements: InspectedClaimSettlement[] = [];
+-  for (const entry of inspectDeviceClaims({}, params.env)) {
++  for (const entry of await inspectDeviceClaimsAsync({}, params.env)) {
+     if (!entry.claim) {
+       settlements.push({ status: 'conflict', conflict: entry });
+       continue;
+     }
+     if (!isClaimOfHostScopedDevice(identity, entry.claim)) continue;
+-    const current = inspectDeviceClaimFile(
++    const current = await inspectDeviceClaimFile(
+       resolveDeviceClaimPath(entry.claim.deviceKey, params.env),
+     );
+     if (current) {
+@@ -179,7 +182,7 @@ export async function inspectDeviceClaimAcquisition(
+     hostDeviceId === undefined &&
+     canHostScopedDevices(params.device)
+   ) {
+-    const local = inspectTransientExactClaim(params, deviceKey, owner);
++    const local = await inspectTransientExactClaim(params, deviceKey, owner);
+     if (local) return [local];
+   }
+   const settlements: InspectedClaimSettlement[] = [];
+@@ -188,13 +191,13 @@ export async function inspectDeviceClaimAcquisition(
+     const hostKey = canonicalLocalDeviceKey(deviceClaimIdentity(host));
+     const hostSettlement = await inspectExactClaimSettlement(params, host, hostKey, owner, false);
+     if (hostSettlement.status === 'held') {
+-      const held = inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
++      const held = await inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
+       if (held) settlements.push({ status: 'conflict', conflict: held });
+     } else {
+       settlements.push(hostSettlement);
+     }
+   } else if (canHostScopedDevices(params.device)) {
+-    settlements.push(...inspectOverlappingHostScopedClaims(params, identity, owner));
++    settlements.push(...(await inspectOverlappingHostScopedClaims(params, identity, owner)));
+   }
+   settlements.push(await inspectExactClaimSettlement(params, params.device, deviceKey, owner));
+   return settlements;
+@@ -256,7 +259,7 @@ async function withAcquisitionLocks<Result extends TransientDeviceClaimResult>(
+     });
+     if (hostClaim.status === 'conflict') return hostClaim;
+     if (hostClaim.status === 'held') {
+-      const held = inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
++      const held = await inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
+       if (held) return { status: 'conflict', conflict: held };
+     }
+     const acquired = await withDeviceClaimLock(deviceKey, params.env, acquire);
+@@ -326,7 +329,7 @@ export async function acquireTransientDeviceClaim(params: {
+     transientCommand: params.command,
+   };
+   return await withAcquisitionLocks(lockParams, deviceKey, async () => {
+-    c
+```
+
+**File**: `packages/daemon/src/sessions/session-lifecycle/internal/inventory.ts` (modified, +4/-4)
+```diff
+@@ -33,7 +33,7 @@ import {
+ import { resolveAndroidSerialAllowlist } from '@agent-device/kernel/device-isolation';
+ import {
+   deviceClaimOwnerCannotRelease,
+-  inspectDeviceClaims,
++  inspectDeviceClaimsAsync,
+   canonicalLocalDeviceKey,
+   deviceClaimIdentity,
+   isClaimOfHostScopedDevice,
+@@ -157,7 +157,7 @@ async function devicesInventoryResponse(
+   env: HostEnvironment['env'],
+ ): Promise<DaemonResponse> {
+   try {
+-    const claims = blockingClaims(env);
++    const claims = await blockingClaims(env);
+     return {
+       ok: true,
+       data: {
+@@ -180,8 +180,8 @@ async function devicesInventoryResponse(
+   }
+ }
+ 
+-function blockingClaims(env: HostEnvironment['env']): DeviceClaim[] {
+-  return inspectDeviceClaims({}, env).flatMap((entry) =>
++async function blockingClaims(env: HostEnvironment['env']): Promise<DeviceClaim[]> {
++  return (await inspectDeviceClaimsAsync({}, env)).flatMap((entry) =>
+     entry.claim && !deviceClaimOwnerCannotRelease(entry.classification) ? [entry.claim] : [],
+   );
+ }
+```
+
+**File**: `packages/host-kit/src/internal/host-process-liveness.test.ts` (modified, +62/-15)
+```diff
+@@ -16,16 +16,18 @@ import {
+   isProcessZombie,
+   readHostProcessIdentityObservations,
+   readHostProcessIdentityObservationsAsync,
++  readProcessIdentities,
+   readProcessIdentityFacts,
+ } from './host-process.ts';
+ 
+ function psReturns(stdout: string, exitCode = 0): void {
+   mockRunCmdSync.mockReturnValue({ stdout, stderr: '', exitCode });
+ }
+ 
+-function psAnswersEachField(fields: Record<string, string>): void {
++/** Answers the two batched identity reads: state and start time, and the command line. */
++function psAnswersIdentity(rows: { identity?: string; command?: string }): void {
+   mockRunCmd.mockImplementation(async (_cmd: string, args: string[]) => {
+-    const value = fields[args[3]!];
++    const value = args[3] === 'pid=,command=' ? rows.command : rows.identity;
+     return { stdout: value ?? '', stderr: '', exitCode: value === undefined ? 1 : 0 };
+   });
+ }
+@@ -133,11 +135,10 @@ test('no pid to ask about means no process tool runs at all', async () => {
+   assert.equal(mockRunCmdSync.mock.calls.length, 0);
+ });
+ 
+-test('the ownership read spends the budget its caller names on every field', async () => {
+-  psAnswersEachField({
+-    'lstart=': 'Mon Aug 10 20:00:00 2026',
+-    'command=': '/bin/simctl io recordVideo out.mp4',
+-    'state=': 'Ss',
++test('the ownership read spends the budget its caller names on both batched reads', async () => {
++  psAnswersIdentity({
++    identity: '4242 Ss   Mon Aug 10 20:00:00 2026\n',
++    command: '4242 /bin/simctl io recordVideo out.mp4\n',
+   });
+ 
+   const facts = await readProcessIdentityFacts(4242, 5_000);
+@@ -147,12 +148,61 @@ test('the ownership read spends the budget its caller names on every field', asy
+     command: '/bin/simctl io recordVideo out.mp4',
+     zombie: false,
+   });
+-  assert.equal(mockRunCmd.mock.calls.length, 3);
++  assert.deepEqual(
++    mockRunCmd.mock.calls.map((call) => call[1]),
++    [
++      ['-p', '4242', '-o', 'pid=,state=,lstart='],
++      ['-p', '4242', '-o', 'pid=,command='],
++    ],
++  );
+   for (const call of mockRunCmd.mock.calls) {
+     assert.equal(call[2]?.timeoutMs, 5_000);
+   }
+ });
+ 
++test('one identity read answers a whole fleet from two ps runs, on Linux and macOS output', async () => {
++  // procps pads a one-digit day with a space; BSD ps on macOS prints the same lstart layout. The
++  // command keeps its own spaces, and a pid the host did not list stays unknown.
++  psAnswersIdentity({
++    identity: [
++      '  101 Ss   Mon Nov  9 10:00:00 2026',
++      '  202 Z+   Tue Nov 10 08:30:00 2026',
++      '',
++    ].join('\n'),
++    command: [
++      '  101 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless',
++      '  202 [chrome] <defunct>',
++      '',
++    ].join('\n'),
++  });
++
++  const facts = await readProcessIdentities([101, 202, 303, 101]);
++
++  assert.deepEqual(
++    [...facts.entries()],
++    [
++      [
++        101,
++        {
++          startTime: 'Mon Nov  9 10:00:00 2026',
++          command: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless',
++          zombie: false,
++        },
++      ],
++      [202, { startTime: 'Tue Nov 10 08:30:00 2026', command: '[chrome] <defunct>', zombie: true }],
++      [303, { startTime: null, command: null, zombie: null }],
++    ],
++  );
++  assert.deepEqual(
++    mockRunCmd.mock.calls.map((call) => call[1]),
++    [
++      ['-p', '101,202,303', '-o', 'pid=,state=,lstart='],
++      ['-p', '101,202,303', '-o', 'pid=,command='],
++    ],
++  );
++  assert.equal(mockRunCmdSync.mock.calls.length, 0, 'the identity read never blocks the loop');
++});
++
+ test('the ownership read reports an unanswered host as unknown, not as absence', async () => {
+   mockRunCmd.mockRejectedValue(new Error('/bin/ps timed out after 5000ms'));
+ 
+@@ -164,20 +214,17 @@ test('the ownership read reports an unanswered host as unknown, not as absence',
+ });
+ 
+ test('the ownership read leaves the zombie question open when only the state is unreadable', async () => {
+-  psAnswersEachField({
+-    'lstart=': 'Mon Aug 10 20:00:00 2026',
+-    'command=': '/bin/simctl io recordVideo out.mp4',
+-  });
++  psAnswersIdentity({ command: '4242 /bin/simctl io recordVideo out.mp4\n' });
+ 
+   assert.deepEqual(await readProcessIdentityFacts(4242, 5_000), {
+-    startTime: 'Mon Aug 10 20:00:00 2026',
++    startTime: null,
+     command: '/bin/simctl io recordVideo out.mp4',
+     zombie: null,
+   });
+ });
+ 
+ test('the ownership read answers the zombie question from the state field', async () => {
+-  psAnswersEachField({ 'lstart=': 'x', 'command=': 'y', 'state=': 'ZN' });
++  psAnswersIdentity({ identity: '4242 ZN x\n', command: '4242 y\n' });
+ 
+   assert.deepEqual(await readProcessIdentityFacts(4242), {
+     startTime: 'x',
+@@ -191,7 +238,7 @@ test('the ownership read answers the zombie question from the state field', asyn
+ test('a host without /bin/ps reads identity through the NixOS system profile procps', async () => {
+   psInstalledAt(['/run/current-system/sw/bin/ps']);
+   psReturns('
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4320** (2026-11-07): test(ios): answer the panel fixture's label through KVC (@thymikee)
-- **PR #4316** (2026-11-07): ci(vitest): annotate failing tests on the GitHub check (@thymikee)
-- **PR #4315** (2026-11-07): fix(cli): treat device status and release selectors as explicit-only (@twotnguyen)
-- **PR #4313** (2026-11-07): refactor(capture-kit): state each snapshot source's circuit scope (@thymikee)
-- **PR #4312** (2026-11-07): docs(agents): prefer runner images and small fixes over selection code (@thymikee)
-- **PR #4311** (2026-11-07): ci(release): build the Limrun runner on the macos-27 image (@thymikee)
+- **PR #4400** (2026-11-11): ci: install the Android SDK through one setup-android-sdk action (@thymikee)
+- **PR #4398** (2026-11-11): fix(selectors): make only value rewrites live recorded placeholders (@thymikee)
+- **PR #4397** (2026-11-11): fix(maestro): run child entrypoints through symlinked paths (@thymikee)
+- **PR #4394** (2026-11-11): fix: review follow-ups (web text-entry hint, recorder echo names, mutation report on cancel) (@thymikee)
+- **PR #4393** (2026-11-11): refactor(apple): remove redundant cleanup platform state (@thymikee)
+- **PR #4392** (closed): test(daemon): split longpress script-writer tests to fix red main lint (@thymikee)
 
 ---
 
@@ -2951,22 +2839,22 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): preserve simulator app accessibility after runner teardown (#4276)
+## X. replay): escape recorded interpolation, run scripts off the event loop, harden M
 
 **RULE**:
-When implementing operations in `packages/apple-runner/src/__tests__/runner-cache-retention.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.fallowrc.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `753263fe`: ios): preserve simulator app accessibility after runner teardown (#4276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1244334d`: replay): escape recorded interpolation, run scripts off the event loop, harden Maestro and test flows (#4363). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/apple-runner/src/__tests__/runner-cache-retention.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.fallowrc.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      confirmRunnerTermination: async () => true,
-      enableIosSimulatorAppAccessibility: async () => {},
+    "packages/maestro/src/daemon-port/run-script-child.ts",
+    "packages/maestro/src/daemon-port/run-script-http-child.ts",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2976,4 +2864,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `753263fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1244334d` are properly handled with clean fallback behavior.

@@ -8875,3 +8875,6 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e91a85c4` | Multi-dimensional audit evidence | 2026-11-11T07:27:55.070Z |
 | `learn-dom-d-12383e4d` | `project://checkmarx-kics` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md` | 2026-11-11T07:28:14.638Z |
 | `learn-dom-d-06fc3249` | `project://t8y2-dbx` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md` | 2026-11-11T07:28:35.217Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `ecfbdbcc` | Multi-dimensional audit evidence | 2026-11-11T07:37:49.436Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `45e1372f` | Multi-dimensional audit evidence | 2026-11-11T07:37:55.682Z |
+| `learn-dom-d-bc0a19f3` | `project://codewhale-hq-codewhale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md` | 2026-11-11T07:38:16.421Z |

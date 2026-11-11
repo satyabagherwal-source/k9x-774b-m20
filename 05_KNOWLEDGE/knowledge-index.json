@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T07:27:54.956Z",
+  "last_updated": "2026-11-11T07:37:55.549Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6533,14 +6533,19 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "e35d0d49",
-      "content_hash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
+      "source_version": "45e1372f",
+      "content_hash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ios): preserve simulator app accessibility after runner teardown (#4276)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "replay): escape recorded interpolation, run scripts off the event loop, harden M",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -6594,7 +6599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:17:08.392Z",
+      "verified_at": "2026-11-11T07:37:55.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8821,13 +8826,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "a2fda9d5",
-      "content_hash": "c94837453fdb7f2848813ac39618b6b473db9f961d3061d56a6bf1879e06fe15",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "ecfbdbcc",
+      "content_hash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -8837,6 +8842,11 @@
         {
           "number": null,
           "title": "engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "web): hanging indent only on single-line install commands; align the wrapped pip",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8955,7 +8965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:53:15.791Z",
+      "verified_at": "2026-11-11T07:37:49.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

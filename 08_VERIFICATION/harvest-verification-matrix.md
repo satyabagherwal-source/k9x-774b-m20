@@ -8866,3 +8866,6 @@
 | `CYCLE-20261111-RA9N` | `2026-11-11T07:27:55.067Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`057c1881...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:28:14.638Z` | `checkmarx-kics` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-12383E4D` [Domain D] | Yes (`625bc82a...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:28:35.217Z` | `t8y2-dbx` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-06FC3249` [Domain D] | Yes (`3d456dc9...`) |
+| `CYCLE-20261111-40VR` | `2026-11-11T07:37:49.431Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5097ed16...`) |
+| `CYCLE-20261111-45PA` | `2026-11-11T07:37:55.678Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8bb0e757...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:38:16.421Z` | `codewhale-hq-codewhale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BC0A19F3` [Domain D] | Yes (`446e0ecc...`) |

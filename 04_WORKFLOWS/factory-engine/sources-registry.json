@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T07:28:01.506Z",
-    "lastVerified": "2026-11-11T07:28:01.506Z",
+    "lastChecked": "2026-11-11T07:38:01.189Z",
+    "lastVerified": "2026-11-11T07:38:01.189Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,9 +368,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T06:23:48.094Z",
+    "lastChecked": "2026-11-11T07:37:46.071Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T06:23:48.094Z"
+    "lastVerified": "2026-11-11T07:37:46.071Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1569,9 +1569,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-10T00:10:14.388Z",
+    "lastChecked": "2026-11-11T07:37:41.090Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-10T00:10:14.388Z"
+    "lastVerified": "2026-11-11T07:37:41.090Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -1651,8 +1651,8 @@
     "officialUrl": "https://github.com/valeriansaliou/sonic",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:53:20.399Z",
-    "lastVerified": "2026-11-09T01:53:20.399Z",
+    "lastChecked": "2026-11-11T07:37:43.535Z",
+    "lastVerified": "2026-11-11T07:37:43.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-valeriansaliou-sonic",
@@ -6297,14 +6297,14 @@
     "officialUrl": "https://github.com/callstack/agent-device",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T18:17:05.338Z",
-    "lastVerified": "2026-11-07T18:17:05.338Z",
+    "lastChecked": "2026-11-11T07:37:41.040Z",
+    "lastVerified": "2026-11-11T07:37:41.040Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
+    "contentHash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6540,9 +6540,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-09T02:34:39.735Z",
+    "lastChecked": "2026-11-11T07:37:38.496Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-09T02:34:39.735Z"
+    "lastVerified": "2026-11-11T07:37:38.496Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -8545,14 +8545,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T21:16:35.650Z",
-    "lastVerified": "2026-11-08T21:16:35.650Z",
+    "lastChecked": "2026-11-11T07:37:35.618Z",
+    "lastVerified": "2026-11-11T07:37:35.618Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "11be18443b3612d162e9c77da41e374c0e570a0d1de8c549bd85401b372f68a6",
+    "contentHash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10164,9 +10164,9 @@
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",
     "officialUrl": "https://github.com/janreges/siteone-crawler",
-    "lastChecked": "2026-11-06T13:20:11.060Z",
+    "lastChecked": "2026-11-11T07:37:33.517Z",
     "revisionIdentifier": "f3d967b190",
-    "lastVerified": "2026-11-06T13:20:11.060Z"
+    "lastVerified": "2026-11-11T07:37:33.517Z"
   },
   "jellyfin-swiftfin": {
     "name": "jellyfin/Swiftfin",
