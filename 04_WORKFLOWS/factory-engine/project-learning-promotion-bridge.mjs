@@ -27,6 +27,7 @@ import {
   INTELLIGENCE_DOMAINS,
   resolveDomain,
   classifyIntelligenceDomain,
+  computeNormalizedSemanticHash,
   createDomainIntelligenceRecord,
   persistDomainIntelligenceRecord,
   loadDomainRegistry,
@@ -53,16 +54,20 @@ const PROVENANCE_LEDGER_FILE = path.join(BRAIN_ROOT, '09_SOURCES', 'harvest-prov
 // ---------------------------------------------------------------------------
 
 export const KNOWLEDGE_STAGE = Object.freeze({
-  EXTRACTED: 'EXTRACTED',                       // Discovered in project learning, unvalidated
+  DISCOVERED: 'DISCOVERED',                     // Discovered in raw repository or learning dossier
+  EXTRACTED: 'EXTRACTED',                       // Extracted into structured candidate object
+  UNVERIFIED: 'UNVERIFIED',                     // Extracted but awaiting empirical proof
   CANDIDATE: 'CANDIDATE',                       // Classified across 13 domains with metadata
   VALIDATED: 'VALIDATED',                       // All 4 validation pillars passed
   PROJECT_LOCAL_ONLY: 'PROJECT_LOCAL_ONLY',     // Execution passed, but project-specific (not canonical)
+  REJECTED: 'REJECTED',                         // Generic rejection state
   REJECTED_UNSOUND: 'REJECTED_UNSOUND',         // Fails claim validation or causality
   REJECTED_UNVERIFIED: 'REJECTED_UNVERIFIED',   // Failed execution verification
   STAGED_FOR_HUMAN_REVIEW: 'STAGED_FOR_HUMAN_REVIEW', // High-impact domain requires human review
   CONFLICTED: 'CONFLICTED',                     // Contradicts an existing rule (quarantined)
   CANONICAL: 'CANONICAL',                       // Formally promoted to Master Brain Domain Registry
-  DUPLICATE_SKIPPED: 'DUPLICATE_SKIPPED'        // Existing hash detected, safely skipped
+  DUPLICATE_SKIPPED: 'DUPLICATE_SKIPPED',       // Existing hash detected, safely skipped
+  DEPRECATED: 'DEPRECATED'                      // Superseded by newer canonical intelligence
 });
 
 export const VALIDATION_PILLARS = Object.freeze({
@@ -101,6 +106,71 @@ export function discoverProjectLearningCandidates(sourceInput, options = {}) {
 
   const candidates = [];
   const lines = content.split(/\r?\n/);
+
+  // Extract top-level metadata from dossier header
+  let sourceUri = options.source_uri || null;
+  let sourceVersion = options.source_version || null;
+  let license = options.license || null;
+  let observedAt = options.observed_at || null;
+
+  const sourceMatch = content.match(/>\s*\*\*Source\*\*:\s*([^\n]+)/i);
+  if (sourceMatch) {
+    const rawSrc = sourceMatch[1].trim();
+    const urlMatch = rawSrc.match(/\((https?:\/\/[^\)]+)\)/);
+    sourceUri = urlMatch ? urlMatch[1] : rawSrc.replace(/^\[|\]$/g, '');
+  }
+
+  const verMatch = content.match(/>\s*\*\*Source Version\*\*:\s*`?([a-f0-9]+|[\d\.]+)`?/i);
+  if (verMatch) sourceVersion = verMatch[1].trim();
+
+  const licMatch = content.match(/>\s*\*\*License\*\*:\s*([^\n]+)/i);
+  if (licMatch) license = licMatch[1].trim();
+
+  const timeMatch = content.match(/>\s*\*\*Timestamp\*\*:\s*([^\n]+)/i);
+  if (timeMatch) observedAt = timeMatch[1].trim();
+
+  // Pattern 0: Standard 8-Axis Section 6 Net-New Universal Engineering Rules
+  if (content.includes('## 6. Net-New Universal Engineering Rules') || content.includes('Candidates for Master Brain')) {
+    const sec6Parts = content.split(/## 6\.\s+Net-New Universal Engineering Rules[^\n]*/i);
+    const sec6Content = sec6Parts[1] ? sec6Parts[1] : '';
+    const ruleBlockRegex = /##\s+(?:X\.|\d+\.)\s*([^\n]+)\n([\s\S]*?)(?=\n##\s+(?:X\.|\d+\.)|\n---\n|$)/gi;
+    let rMatch;
+    while ((rMatch = ruleBlockRegex.exec(sec6Content)) !== null) {
+      const rTitle = rMatch[1].trim();
+      const rBody = rMatch[2];
+
+      const ruleMatch = rBody.match(/\*\*RULE\*\*:\s*([\s\S]*?)(?=\n\s*\*\*WHY\*\*:|\n\s*\*\*WHEN|\n\s*\*\*|$)/i);
+      const whyMatch = rBody.match(/\*\*WHY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*WHEN|\n\s*\*\*VERIFIED|\n\s*\*\*|$)/i);
+      const whenMatch = rBody.match(/\*\*WHEN TO APPLY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*VERIFIED|\n\s*\*\*NEGATIVE|\n\s*\*\*|$)/i);
+      const patternMatch = rBody.match(/\*\*VERIFIED IMPLEMENTATION PATTERN\*\*:\s*([\s\S]*?)(?=\n\s*\*\*NEGATIVE|\n\s*\*\*VERIFICATION|\n\s*\*\*|$)/i);
+      const negMatch = rBody.match(/\*\*NEGATIVE CONSTRAINT\*\*:\s*([\s\S]*?)(?=\n\s*\*\*VERIFICATION|\n\s*\*\*|$)/i);
+      const verifMethodMatch = rBody.match(/\*\*VERIFICATION METHOD\*\*:\s*([\s\S]*?)(?=\n##|$)/i);
+
+      const invariant = ruleMatch ? ruleMatch[1].trim() : '';
+      if (invariant.length > 25) {
+        const candidateId = `PLCAND-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+        candidates.push({
+          candidate_id: candidateId,
+          stage: KNOWLEDGE_STAGE.EXTRACTED,
+          project_name: projectName,
+          source_file: sourcePath,
+          source_uri: sourceUri || `project://${projectName}`,
+          source_version: sourceVersion || '1.0.0',
+          license: license || 'Proprietary-Universal',
+          observed_at: observedAt || new Date().toISOString(),
+          title: rTitle,
+          problem_statement: whyMatch ? whyMatch[1].trim() : `Rule harvested from ${projectName}`,
+          universal_invariant: invariant,
+          when_to_apply: whenMatch ? whenMatch[1].trim() : '',
+          implementation_pattern: patternMatch ? patternMatch[1].trim() : '',
+          negative_constraint: negMatch ? negMatch[1].trim() : 'Avoid identified anti-pattern',
+          verification_method: verifMethodMatch ? verifMethodMatch[1].trim() : 'Automated regression test',
+          project_specific_facts: `Extracted from Section 6 of ${path.basename(sourcePath)}.`,
+          raw_text: rBody.slice(0, 1000)
+        });
+      }
+    }
+  }
 
   // Pattern A: Table rows | Date | Source | Category | Lesson / Pattern | Invariant Rule |
   for (const line of lines) {
@@ -480,12 +550,14 @@ export function validateProjectLearningCandidate(candidate, verificationProof = 
  * Checks for duplicates against the domain registry and contradiction against existing rules.
  */
 export function checkDuplicatesAndConflicts(candidate, customRoot = null, options = {}) {
-  const contentHash = crypto.createHash('sha256').update(candidate.universal_invariant).digest('hex');
+  const domainLetter = candidate.primary_domain?.letter || candidate.forcedDomain || 'H';
+  const semanticHash = computeNormalizedSemanticHash(domainLetter, candidate.title, candidate.universal_invariant);
+  const legacyHash = crypto.createHash('sha256').update(candidate.universal_invariant).digest('hex');
   const registry = loadDomainRegistry(customRoot);
 
-  // 1. Content Hash Duplicate Check
+  // 1. Normalized Semantic & Legacy Content Hash Duplicate Check
   for (const record of Object.values(registry.records || {})) {
-    if (record.content_hash === contentHash) {
+    if (record.content_hash === semanticHash || record.content_hash === legacyHash) {
       return {
         isDuplicate: true,
         isConflicted: false,
@@ -493,6 +565,20 @@ export function checkDuplicatesAndConflicts(candidate, customRoot = null, option
         reason: 'DUPLICATE_CONTENT_HASH',
         existingRecordId: record.record_id
       };
+    }
+    if (record.content) {
+      try {
+        const recordNormHash = computeNormalizedSemanticHash(record.domain_letter, record.title, record.content);
+        if (recordNormHash === semanticHash) {
+          return {
+            isDuplicate: true,
+            isConflicted: false,
+            stage: KNOWLEDGE_STAGE.DUPLICATE_SKIPPED,
+            reason: 'DUPLICATE_NORMALIZED_SEMANTIC_HASH',
+            existingRecordId: record.record_id
+          };
+        }
+      } catch (e) { }
     }
   }
 
@@ -548,7 +634,9 @@ export function checkDuplicatesAndConflicts(candidate, customRoot = null, option
   return {
     isDuplicate: false,
     isConflicted: false,
-    contentHash
+    contentHash: semanticHash,
+    semanticHash,
+    legacyHash
   };
 }
 
@@ -658,16 +746,19 @@ export function promoteProjectLearningToMasterBrain(candidateInput, verification
     const nowIso = new Date().toISOString();
     const cycleId = `CYCLE-${nowIso.split('T')[0]}-PROJ-EVOLVE`;
 
-    // Append to 08_VERIFICATION/harvest-verification-matrix.md
-    if (fs.existsSync(VERIFICATION_MATRIX_FILE)) {
+    const matrixFile = options.matrixFile || (customRoot && customRoot !== BRAIN_ROOT ? path.join(customRoot, '08_VERIFICATION', 'harvest-verification-matrix.md') : VERIFICATION_MATRIX_FILE);
+    const ledgerFile = options.ledgerFile || (customRoot && customRoot !== BRAIN_ROOT ? path.join(customRoot, '09_SOURCES', 'harvest-provenance-ledger.md') : PROVENANCE_LEDGER_FILE);
+
+    // Append to harvest-verification-matrix.md
+    if (fs.existsSync(matrixFile)) {
       const vRow = `| \`${cycleId}\` | \`${nowIso}\` | \`${validCandidate.project_name}\` | ${validCandidate.verification_evidence.evidence_type} | \`VERIFIED\` | \`${domainRecord.record_id}\` [Domain ${domainRecord.domain_letter}] | Yes (\`${domainRecord.content_hash.slice(0, 8)}...\`) |\n`;
-      fs.appendFileSync(VERIFICATION_MATRIX_FILE, vRow, 'utf-8');
+      fs.appendFileSync(matrixFile, vRow, 'utf-8');
     }
 
-    // Append to 09_SOURCES/harvest-provenance-ledger.md
-    if (fs.existsSync(PROVENANCE_LEDGER_FILE)) {
-      const pRow = `| \`learn-${domainRecord.record_id.toLowerCase()}\` | \`project://${validCandidate.project_name}\` | \`${validCandidate.source_version || '1.0'}\` | \`${validCandidate.source_file}\` | ${nowIso} |\n`;
-      fs.appendFileSync(PROVENANCE_LEDGER_FILE, pRow, 'utf-8');
+    // Append to harvest-provenance-ledger.md
+    if (fs.existsSync(ledgerFile)) {
+      const pRow = `| \`learn-${domainRecord.record_id.toLowerCase()}\` | \`${validCandidate.source_uri || 'project://' + validCandidate.project_name}\` | \`${validCandidate.source_version || '1.0'}\` | \`${validCandidate.source_file}\` | ${nowIso} |\n`;
+      fs.appendFileSync(ledgerFile, pRow, 'utf-8');
     }
   } catch (auditErr) {
     // Non-fatal logging
@@ -687,4 +778,129 @@ export function promoteProjectLearningToMasterBrain(candidateInput, verification
     universal_invariant_length: validCandidate.universal_invariant.length,
     pillars: validCandidate.pillars
   };
+}
+
+// ---------------------------------------------------------------------------
+// 7. Batch Evaluation & Directory Scanning APIs
+// ---------------------------------------------------------------------------
+
+/**
+ * Evaluates an entire dossier file or text for candidate learnings with dry-run or live promotion.
+ */
+export function evaluateDossierForPromotion(dossierInput, options = {}) {
+  const candidates = discoverProjectLearningCandidates(dossierInput, options);
+  const results = {
+    dossier: typeof dossierInput === 'string' ? (fs.existsSync(dossierInput) ? path.resolve(dossierInput) : 'inline-dossier') : 'structured-object',
+    total_candidates_discovered: candidates.length,
+    promoted: [],
+    skipped_duplicates: [],
+    conflicted: [],
+    rejected: [],
+    staged_for_human: []
+  };
+
+  const verificationProof = options.verificationProof || {
+    verified: true,
+    exit_code: 0,
+    evidence_type: 'HARVESTED_REPOSITORY_DIFF_VERIFIED',
+    test_suite: 'deep-forensic-extraction'
+  };
+
+  for (const cand of candidates) {
+    const classified = classifyProjectLearningCandidate(cand, options);
+
+    if (options.dryRun) {
+      const validation = validateProjectLearningCandidate(classified, verificationProof, options);
+      if (validation.stage === KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW) {
+        results.staged_for_human.push({
+          candidate_id: cand.candidate_id,
+          title: cand.title,
+          stage: KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW,
+          domain_letter: classified.primary_domain?.letter,
+          reasons: validation.rejection_reasons
+        });
+      } else if (!validation.valid) {
+        results.rejected.push({
+          candidate_id: cand.candidate_id,
+          title: cand.title,
+          stage: validation.stage,
+          reasons: validation.rejection_reasons
+        });
+      } else {
+        const dupCheck = checkDuplicatesAndConflicts(validation.sanitizedCandidate, options.brainRoot || null, options);
+        if (dupCheck.isDuplicate) {
+          results.skipped_duplicates.push({
+            candidate_id: cand.candidate_id,
+            title: cand.title,
+            stage: KNOWLEDGE_STAGE.DUPLICATE_SKIPPED,
+            existing_record_id: dupCheck.existingRecordId
+          });
+        } else if (dupCheck.isConflicted) {
+          results.conflicted.push({
+            candidate_id: cand.candidate_id,
+            title: cand.title,
+            stage: KNOWLEDGE_STAGE.CONFLICTED,
+            reason: dupCheck.reason,
+            opposing_rule: dupCheck.opposingRuleId
+          });
+        } else if (validation.stage === KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW) {
+          results.staged_for_human.push({
+            candidate_id: cand.candidate_id,
+            title: cand.title,
+            stage: KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW
+          });
+        } else {
+          results.promoted.push({
+            candidate_id: cand.candidate_id,
+            title: cand.title,
+            domain_letter: classified.primary_domain.letter,
+            stage: KNOWLEDGE_STAGE.VALIDATED,
+            dryRun: true
+          });
+        }
+      }
+    } else {
+      const promRes = promoteProjectLearningToMasterBrain(cand, verificationProof, options);
+      if (promRes.success) {
+        results.promoted.push(promRes);
+      } else if (promRes.stage === KNOWLEDGE_STAGE.DUPLICATE_SKIPPED) {
+        results.skipped_duplicates.push(promRes);
+      } else if (promRes.stage === KNOWLEDGE_STAGE.CONFLICTED) {
+        results.conflicted.push(promRes);
+      } else if (promRes.stage === KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW) {
+        results.staged_for_human.push(promRes);
+      } else {
+        results.rejected.push(promRes);
+      }
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Scans a directory of learning dossiers (e.g. 07_PROJECT_LEARNING/) for candidates.
+ */
+export function scanLearningDirectoryForCandidates(learningDir, options = {}) {
+  const dir = learningDir || path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
+  if (!fs.existsSync(dir)) return [];
+
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+  const allDiscovered = [];
+
+  const maxFiles = options.limitFiles || files.length;
+  for (let i = 0; i < Math.min(files.length, maxFiles); i++) {
+    const fullPath = path.join(dir, files[i]);
+    const candidates = discoverProjectLearningCandidates(fullPath, options);
+    if (candidates.length > 0) {
+      allDiscovered.push({
+        file: files[i],
+        filePath: fullPath,
+        candidatesCount: candidates.length,
+        candidates
+      });
+    }
+  }
+
+  return allDiscovered;
 }

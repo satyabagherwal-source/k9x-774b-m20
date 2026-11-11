@@ -142,9 +142,12 @@ simulatedRegistry.total_records = Object.keys(simulatedRegistry.records).length;
 simulatedRegistry.last_updated = new Date().toISOString();
 
 // 6. Verify Simulated Registry Invariants
+const expectedTotal = Object.keys(originalRegistry.records).length - TARGET_DUPLICATE_IDS.length;
+const expectedDomainHTotal = (originalRegistry.domains?.H?.record_ids?.length || 0) - TARGET_DUPLICATE_IDS.length;
+
 console.log('\n[INVARIANT VERIFICATION]');
-console.log(`  Simulated total_records: ${simulatedRegistry.total_records} (Expected: 16)`);
-console.log(`  Simulated Domain H records: ${simulatedRegistry.domains.H.record_ids.length} (Expected: 2) -> [${simulatedRegistry.domains.H.record_ids.join(', ')}]`);
+console.log(`  Simulated total_records: ${simulatedRegistry.total_records} (Expected: ${expectedTotal})`);
+console.log(`  Simulated Domain H records: ${simulatedRegistry.domains.H.record_ids.length} (Expected: ${expectedDomainHTotal}) -> [${simulatedRegistry.domains.H.record_ids.join(', ')}]`);
 
 const simulatedKeys = Object.keys(simulatedRegistry.records);
 const simulatedHashes = new Set();
@@ -154,7 +157,7 @@ for (const [id, r] of Object.entries(simulatedRegistry.records)) {
 }
 
 console.log(`  Unique normalized hashes across all simulated records: ${simulatedHashes.size} / ${simulatedKeys.length}`);
-const perfectlyUnique = (simulatedHashes.size === simulatedKeys.length && simulatedKeys.length === 16);
+const perfectlyUnique = (simulatedHashes.size === simulatedKeys.length && simulatedKeys.length === expectedTotal);
 console.log(`  Deduplication integrity verified: ${perfectlyUnique ? '100% PERFECT ✅' : 'FAILED ❌'}`);
 
 console.log('\n======================================================================');

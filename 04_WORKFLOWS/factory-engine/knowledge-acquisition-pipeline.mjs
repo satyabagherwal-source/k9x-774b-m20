@@ -182,7 +182,7 @@ export function detectDirectiveOpposition(candRule, candNegative, canonicalRes) 
     while ((m = re.exec(text)) !== null) {
       if (m[1] && m[1].length >= 3) {
         const term = m[1].toLowerCase().replace(/[^a-z0-9_-]/g, '');
-        if (!['all', 'the', 'any', 'each', 'this', 'that', 'from', 'with', 'when', 'then'].includes(term)) {
+        if (!['all', 'the', 'any', 'each', 'this', 'that', 'from', 'with', 'when', 'then', 'call', 'run', 'use', 'make', 'take', 'have', 'do'].includes(term)) {
           terms.push(term);
         }
       }
@@ -204,7 +204,7 @@ export function detectDirectiveOpposition(candRule, candNegative, canonicalRes) 
 
   for (const negTerm of candNegatives) {
     for (const affTerm of canAffirmatives) {
-      if (negTerm === affTerm || (negTerm.length >= 4 && affTerm.includes(negTerm)) || (affTerm.length >= 4 && negTerm.includes(affTerm))) {
+      if (negTerm === affTerm || (negTerm.length >= 5 && (affTerm.startsWith(negTerm) || affTerm.endsWith(negTerm))) || (affTerm.length >= 5 && (negTerm.startsWith(affTerm) || negTerm.endsWith(affTerm)))) {
         return {
           opposed: true,
           reason: `Opposing directive on '${negTerm}': candidate forbids action ('never ${negTerm}') while canonical Rule ${canonicalRes.rule_number || canonicalRes.id} prescribes it ('always ${affTerm}')`
@@ -225,7 +225,7 @@ export function detectDirectiveOpposition(candRule, candNegative, canonicalRes) 
 
   for (const affTerm of candAffirmatives) {
     for (const negTerm of canNegatives) {
-      if (affTerm === negTerm || (affTerm.length >= 4 && negTerm.includes(affTerm)) || (negTerm.length >= 4 && affTerm.includes(negTerm))) {
+      if (affTerm === negTerm || (affTerm.length >= 5 && (negTerm.startsWith(affTerm) || negTerm.endsWith(affTerm))) || (negTerm.length >= 5 && (affTerm.startsWith(negTerm) || affTerm.endsWith(negTerm)))) {
         return {
           opposed: true,
           reason: `Opposing directive on '${affTerm}': candidate prescribes action ('always ${affTerm}') while canonical Rule ${canonicalRes.rule_number || canonicalRes.id} forbids it ('never ${negTerm}')`
