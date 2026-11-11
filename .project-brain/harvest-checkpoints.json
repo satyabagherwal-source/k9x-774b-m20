@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T11:10:40.963Z",
+  "last_updated": "2026-11-11T11:19:12.017Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
-      "verified_at": "2026-11-09T22:14:58.410Z",
+      "content_hash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
+      "verified_at": "2026-11-11T11:19:12.016Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T22:14:58.410Z"
+      "last_updated": "2026-11-11T11:19:12.016Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
-      "verified_at": "2026-11-07T05:58:17.119Z",
+      "content_hash": "8789ab88b13a4ae2a68ef38c1fed6c43b3180c7cc12dc2117f5ac72cf2cfbfdf",
+      "verified_at": "2026-11-11T11:19:09.832Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:58:17.119Z"
+      "last_updated": "2026-11-11T11:19:09.832Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
-      "verified_at": "2026-11-07T20:56:04.896Z",
+      "content_hash": "38f9e8f5d5a3624fc114431754500661abd82f66179979270e3e1354105aa7b0",
+      "verified_at": "2026-11-11T11:19:09.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:56:04.896Z"
+      "last_updated": "2026-11-11T11:19:09.423Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
@@ -11826,14 +11826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sxyazi-yazi",
-      "content_hash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
-      "verified_at": "2026-11-05T18:53:36.574Z",
+      "content_hash": "fddc27f39589ae53b3c5a5aa6c93486f44f1b538dea06a83d901b9bb27713622",
+      "verified_at": "2026-11-11T11:18:57.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:53:36.574Z"
+      "last_updated": "2026-11-11T11:18:57.042Z"
     },
     "ronitsingh10/FineTune": {
       "repository": "ronitsingh10/FineTune",

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:10:40.959Z",
-  "total_cycles_completed": 8780,
-  "total_learnings_persisted": 8780,
-  "total_rules_promoted": 8643,
+  "last_updated": "2026-11-11T11:19:12.012Z",
+  "total_cycles_completed": 8784,
+  "total_learnings_persisted": 8784,
+  "total_rules_promoted": 8647,
   "history": [
-    {
-      "timestamp": "2026-11-09T15:12:49.086Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T15:12:51.558Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T15:17:35.621Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T15:28:54.516Z",
-      "repository": "black-forest-labs/flux-3-image-klein-comfy",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T15:29:01.987Z",
       "repository": "karmada-io/karmada",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-11T11:10:40.959Z",
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T11:18:57.037Z",
+      "repository": "sxyazi/yazi",
+      "learningId": "learn-github-sxyazi-yazi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T11:19:09.419Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T11:19:09.829Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T11:19:12.012Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

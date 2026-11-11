@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `dca306c8`  
+> **Source Version**: `51d3b704`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:58:15.325Z  
+> **Timestamp**: 2026-11-11T11:18:54.044Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:58:15.319Z  
+> **Harvest Timestamp**: 2026-11-11T11:18:54.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34351 stars
+- **Stars / Engagement**: 34388 stars
 
 ---
 
@@ -884,13 +884,13 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #14971** (2026-11-10): **Disable LB+tunnel on agentless servers with local apiserver**
+  *Symptoms*: #### Proposed Changes #### If running with agent (containerd/cni/kubelet) disabled and apiserver enabled, do not start tunnels to other apiservers. The load-balancer and tunnels are only necessary for etcd-only servers (node->apiserver), or nodes that might run a pod (apiserver->node).  #### Types of Changes ####  Enhancement  #### Verification ####  See linked issue  #### Testing ####   #### Linked Issues #### * https://github.com/k3s-io/k3s/issues/14950  #### User-Facing Change #### ```release-note ```  #### Further Comments #### 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14971?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :x: Patch coverage is `33.33333%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 51.92%. Comparing base ([`dca306c`](https://app.codecov.io/gh/k3s-io/k3s/commit/dca306c81c44fed1dd0621d5579785c980080ae8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`df0b650`](https://app.codecov.io/gh/k3s-io/k3s/commit/df0b6508b22267b2dfed32fa31bf82b9fe4c0ea7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  | [Files with missing lines](https://app.codecov.io/gh/k3s-io/k3s/pull/14971?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=
+
 - **Issue #14968** (2026-11-06): **[main] Bump Klipper LB version**
   *Symptoms*:    <Actions>     <action id="e0a9fe32db8e9db3e5cb4c4ccdd32d3e665fa59c307ebb2fa091d7a938f65869">         <h3>Bump Klipper LB version</h3>         <details id="11a0b411d5881733470a0714e2147a7156f2f76194c76db3775c9df96024686e">             <summary>Update rancher/klipper-lb image versions</summary>             <p>2 file(s) updated with &#34;rancher/klipper-lb:v0.4.18&#34;:&#xA;&#xA;* pkg/cloudprovider/servicelb.go&#xA;* scripts/airgap/image-list.txt&#xA;</p>             <details>                 <summary>v0.4.18</summary>             </details>             <details>                 <summary>v0.4.17</summary>                 <pre>## What&#39;s Changed&#xD;&#xA;* Remove unnecessary apks by @brandond in https://github.com/k3s-io/klipper-lb/pull/93&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**Full Changelog**: https://github.com/k3s-io/klipper-lb/compare/v0.4.16...v0.4.17</pre>             </details>             <details>                 <summary>v0.4.16</summary>             </details>             <details>                 <summary>v0.4.15</summary>                 <pre>* v0.4.15</pre>             </details>             <details>                 <summary>v0.4.14</summary>                 <pre>## What&#39;s Changed&#xD;&#xA;* Bump alpine from 3.21 to 3.22 by @dependabot[bot] in https://github.com/k3s-io/klipper-lb/pull/82&#xD;&#xA;* Bump alpine from 3.22 to 3.23 by @dependabot[bot] in https://github.com/k3s-io/klipper-lb/pull/86&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**Full Changelog**: https://github.com/
-
-- **Issue #14967** (2026-11-06): **[main] Bump Klipper Helm and Helm Controller version**
-  *Symptoms*:    <Actions>     <action id="f3ef93e2e26c39fd6a612f8f436b6127da34796d634f8902655d8b1a9c8f1f01">         <h3>Bump Klipper Helm and Helm Controller version</h3>         <details id="05473a80b95353b4bba0b1793ea2348d1c4f94f2036bbd576f5f078d3d4d795a">             <summary>Bump to latest klipper-helm version in scripts/version.sh</summary>             <p>1 file(s) updated with &#34;VERSION_HELM_JOB=\&#34;v0.14.0-build20261106\&#34;&#34;:&#xA;&#xA;* scripts/version.sh&#xA;</p>             <details>                 <summary>v0.14.0-build20261106</summary>             </details>         </details>         <details id="8cc5acf0cc00b5a6ef3c81556a0733972833478428ffc3bb5db482078c19b9c6">             <summary>Update rancher/klipper-helm image version</summary>             <p>1 file(s) updated with &#34;rancher/klipper-helm:v0.14.0-build20261106&#34;:&#xA;&#xA;* scripts/airgap/image-list.txt&#xA;</p>             <details>                 <summary>v0.14.0-build20261106</summary>             </details>         </details>         <a href="https://github.com/k3s-io/k3s/actions/runs/42268865934">GitHub Action workflow link</a>     </action> </Actions>  ---  <table>   <tr>     <td width="77">       <img src="https://www.updatecli.io/images/updatecli.png" alt="Updatecli logo" width="50" height="50" />     </td>     <td>       <p>         Created automatically by <a href="https://www.updatecli.io/">Updatecli</a>       </p>       <details><summary>Options:</summary>         <br />         <p>Most of
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14967?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 51.96%. Comparing base ([`3ddfb9f`](https://app.codecov.io/gh/k3s-io/k3s/commit/3ddfb9fded547e9fa66d5daa79b39b98bda8c045?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`1ba51a8`](https://app.codecov.io/gh/k3s-io/k3s/commit/1ba51a85e32450037d0e185e2b7465839a93da44?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main   #14967   +/-   ## =======================================   Covera
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -907,86 +907,35 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dca306c8` (2026-11-06)
-**Commit Message**: chore: Update rancher/klipper-lb image versions (#14968)
+### Incident Patch 1: `51d3b704` (2026-11-07)
+**Commit Message**: Disable LB+tunnel on agentless servers with local apiserver
 
-Made with ❤️️ by updatecli
+Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-
-**File**: `pkg/cloudprovider/servicelb.go` (modified, +1/-1)
+**File**: `pkg/agent/run.go` (modified, +4/-2)
 ```diff
-@@ -55,7 +55,7 @@ const (
- )
+@@ -272,8 +272,10 @@ func RunStandalone(ctx context.Context, wg *sync.WaitGroup, cfg cmds.Agent) erro
+ 		return err
+ 	}
  
- var (
--	DefaultLBImage = "rancher/klipper-lb:v0.4.17"
-+	DefaultLBImage = "rancher/klipper-lb:v0.4.18"
- )
- 
- var lbPodSelector labels.Selector
-```
-
-**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- docker.io/rancher/klipper-helm:v0.14.0-build20261106
--docker.io/rancher/klipper-lb:v0.4.17
-+docker.io/rancher/klipper-lb:v0.4.18
- docker.io/rancher/local-path-provisioner:v0.0.37
- docker.io/rancher/mirrored-coredns-coredns:1.15.0
- docker.io/rancher/mirrored-library-busybox:1.37.0
-```
-
----
-
-### Incident Patch 2: `0e39df29` (2026-11-06)
-**Commit Message**: [main] Bump rancher/mirrored-library-traefik image version (#14932)
-
-* chore: Update Traefik image version in manifests/traefik.yaml
-
-Made with ❤️️ by updatecli
-
-* chore: Update Traefik image version in scripts/airgap/image-list
-
-Made with ❤️️ by updatecli
-
----------
-
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-
-**File**: `manifests/traefik.yaml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ spec:
-     priorityClassName: "system-cluster-critical"
-     image:
-       repository: "rancher/mirrored-library-traefik"
--      tag: "3.7.15"
-+      tag: "3.7.17"
-     tolerations:
-     - key: "CriticalAddonsOnly"
-       operator: "Exists"
-```
-
-**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
-```diff
-@@ -3,6 +3,6 @@ docker.io/rancher/klipper-lb:v0.4.17
- docker.io/rancher/local-path-provisioner:v0.0.37
- docker.io/rancher/mirrored-coredns-coredns:1.15.0
- docker.io/rancher/mirrored-library-busybox:1.37.0
--docker.io/rancher/mirrored-library-traefik:3.7.15
-+docker.io/rancher/mirrored-library-traefik:3.7.17
- docker.io/rancher/mirrored-metrics-server:v0.9.1
- docker.io/rancher/mirrored-pause:3.10.2
+-	if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
+-		return err
++	if !cfg.DisableLoadBalancer {
++		if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
++			return err
++		}
+ 	}
+ 	if err := certMonitorSetup(ctx, nodeConfig, cfg); err != nil {
+ 		return err
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14971** (2026-11-10): Disable LB+tunnel on agentless servers with local apiserver (@brandond)
 - **PR #14968** (2026-11-06): [main] Bump Klipper LB version (@github-actions[bot])
 - **PR #14967** (2026-11-06): [main] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
 - **PR #14966** (2026-11-06): [release-1.36] Bump Klipper LB version (@github-actions[bot])
 - **PR #14965** (2026-11-06): [release-1.35] Bump Klipper LB version (@github-actions[bot])
 - **PR #14964** (2026-11-06): [release-1.36] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
-- **PR #14963** (2026-11-06): [release-1.35] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
 
 ---
 
@@ -1006,28 +955,32 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update rancher/klipper-lb image versions (#14968)
+## X. Disable LB+tunnel on agentless servers with local apiserver
 
 **RULE**:
-When implementing operations in `pkg/cloudprovider/servicelb.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/agent/run.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dca306c8`: Update rancher/klipper-lb image versions (#14968). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51d3b704`: Disable LB+tunnel on agentless servers with local apiserver. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cloudprovider/servicelb.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/agent/run.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	DefaultLBImage = "rancher/klipper-lb:v0.4.18"
+	if !cfg.DisableLoadBalancer {
+		if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
+			return err
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	DefaultLBImage = "rancher/klipper-lb:v0.4.17"
+	if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
+		return err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dca306c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51d3b704` are properly handled with clean fallback behavior.

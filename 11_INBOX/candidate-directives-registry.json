@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:10:58.476Z",
+  "last_updated": "2026-11-11T11:19:20.194Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4747,6 +4747,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-803435-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-608509",
+      "directive_title": "new `create` and `bulk-create` DDS events for file creations (#4484)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sxyazi-yazi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-608509-new-create-and-bulk-create-dds-events-fo.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-F8AB4B",
+      "directive_title": "one): emit the objective-c selector a protocol requirement declares (#1179)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "onejs-one",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F8AB4B-one-emit-the-objective-c-selector-a-prot.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-299D04",
+      "directive_title": "Disable LB+tunnel on agentless servers with local apiserver",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "k3s-io-k3s",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-299D04-disable-lb-tunnel-on-agentless-servers-w.md",
       "staged_date": "2026-11-11"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T11:10:40.846Z",
+  "last_updated": "2026-11-11T11:19:11.862Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38144,14 +38144,19 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "dca306c8",
-      "content_hash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
+      "source_version": "51d3b704",
+      "content_hash": "8789ab88b13a4ae2a68ef38c1fed6c43b3180c7cc12dc2117f5ac72cf2cfbfdf",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Update rancher/klipper-lb image versions (#14968)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Disable LB+tunnel on agentless servers with local apiserver",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38215,7 +38220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:58:16.974Z",
+      "verified_at": "2026-11-11T11:19:09.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47797,8 +47802,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "bac14d41",
-      "content_hash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
+      "source_version": "cd5af882",
+      "content_hash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -47810,6 +47815,11 @@
         {
           "number": null,
           "title": "sandbox): scope macOS process-exec to the read set (#2282)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): upgrade aws-config and remove crypto-bigint audit exception",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47918,7 +47928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T22:14:58.314Z",
+      "verified_at": "2026-11-11T11:19:11.822Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49394,14 +49404,19 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "ce71455b",
-      "content_hash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
+      "source_version": "7e497e23",
+      "content_hash": "38f9e8f5d5a3624fc114431754500661abd82f66179979270e3e1354105aa7b0",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "tests): preserve Android dump command errors",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "one): emit the objective-c selector a protocol requirement declares (#1179)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49455,7 +49470,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:56:04.742Z",
+      "verified_at": "2026-11-11T11:19:09.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60622,11 +60637,16 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "6882e1ac",
-      "content_hash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
+      "source_version": "805579e9",
+      "content_hash": "fddc27f39589ae53b3c5a5aa6c93486f44f1b538dea06a83d901b9bb27713622",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "new `create` and `bulk-create` DDS events for file creations (#4484)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2533,
           "title": "make terminal probe timeout earlier to startup (#4432)",
@@ -60673,7 +60693,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:53:36.436Z",
+      "verified_at": "2026-11-11T11:18:56.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8933,3 +8933,7 @@
 | `CYCLE-20261111-P8YU` | `2026-11-11T11:10:16.998Z` | `Comfy-Org/RelayVSR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | Yes (`1fd9414f...`) |
 | `CYCLE-20261111-PRFT` | `2026-11-11T11:10:40.937Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5373e825...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T11:10:58.468Z` | `hf-comfy-org-relayvsr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-00269E5B` [Domain D] | Yes (`8321d1c4...`) |
+| `CYCLE-20261111-0E81` | `2026-11-11T11:18:57.025Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fddc27f3...`) |
+| `CYCLE-20261111-0NRY` | `2026-11-11T11:19:09.406Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`38f9e8f5...`) |
+| `CYCLE-20261111-0O3F` | `2026-11-11T11:19:09.819Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8789ab88...`) |
+| `CYCLE-20261111-0PS0` | `2026-11-11T11:19:12.000Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2cb563c2...`) |

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T11:10:45.376Z",
-    "lastVerified": "2026-11-11T11:10:45.376Z",
+    "lastChecked": "2026-11-11T11:19:20.082Z",
+    "lastVerified": "2026-11-11T11:19:20.082Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -167,22 +167,21 @@
     "revisionIdentifier": "3fd42218"
   },
   "sxyazi-yazi": {
-    "name": "yazi",
+    "name": "sxyazi/yazi",
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T00:13:18.527Z",
-    "lastVerified": "2026-11-09T00:13:18.527Z",
+    "lastChecked": "2026-11-11T11:18:45.302Z",
+    "lastVerified": "2026-11-11T11:18:45.302Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
-    "contentHash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
+    "contentHash": "fddc27f39589ae53b3c5a5aa6c93486f44f1b538dea06a83d901b9bb27713622",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6882e1ac"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-edge0-audio8-asr-infinite": {
     "name": "Edge0/Audio8-ASR-Infinite",
@@ -459,8 +458,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T10:43:22.032Z",
-    "lastVerified": "2026-11-11T10:43:22.032Z",
+    "lastChecked": "2026-11-11T11:18:55.788Z",
+    "lastVerified": "2026-11-11T11:18:55.788Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -637,22 +636,21 @@
     "revisionIdentifier": "763f4021"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T05:14:19.715Z",
-    "lastVerified": "2026-11-10T05:14:19.715Z",
+    "lastChecked": "2026-11-11T11:18:56.638Z",
+    "lastVerified": "2026-11-11T11:18:56.638Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
+    "contentHash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bac14d41"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -3086,9 +3084,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-09T04:49:38.125Z",
+    "lastChecked": "2026-11-11T11:18:53.135Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-09T04:49:38.125Z"
+    "lastVerified": "2026-11-11T11:18:53.135Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -7471,14 +7469,14 @@
     "officialUrl": "https://github.com/onejs/one",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T20:56:02.717Z",
-    "lastVerified": "2026-11-07T20:56:02.717Z",
+    "lastChecked": "2026-11-11T11:18:52.832Z",
+    "lastVerified": "2026-11-11T11:18:52.832Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-onejs-one",
-    "contentHash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
+    "contentHash": "38f9e8f5d5a3624fc114431754500661abd82f66179979270e3e1354105aa7b0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 25,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7730,22 +7728,21 @@
     "revisionIdentifier": "e1178ba3"
   },
   "k3s-io-k3s": {
-    "name": "k3s",
+    "name": "k3s-io/k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T05:40:40.490Z",
-    "lastVerified": "2026-11-09T05:40:40.490Z",
+    "lastChecked": "2026-11-11T11:18:54.037Z",
+    "lastVerified": "2026-11-11T11:18:54.037Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
+    "contentHash": "8789ab88b13a4ae2a68ef38c1fed6c43b3180c7cc12dc2117f5ac72cf2cfbfdf",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "dca306c8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -10442,9 +10439,9 @@
   "crawlcove-crawlcove-hreflang-checker": {
     "name": "crawlcove-hreflang-checker",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-    "lastChecked": "2026-11-06T15:27:19.291Z",
+    "lastChecked": "2026-11-11T11:18:43.075Z",
     "revisionIdentifier": "3e8c680f",
-    "lastVerified": "2026-11-06T15:27:19.291Z"
+    "lastVerified": "2026-11-11T11:18:43.075Z"
   },
   "kdchang-reactjs101": {
     "name": "reactjs101",

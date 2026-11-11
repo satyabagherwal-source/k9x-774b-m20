@@ -8942,3 +8942,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-11T11:10:17.001Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `8085a1d8` | Multi-dimensional audit evidence | 2026-11-11T11:10:40.940Z |
 | `learn-dom-d-00269e5b` | `project://hf-comfy-org-relayvsr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | 2026-11-11T11:10:58.468Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `805579e9` | Multi-dimensional audit evidence | 2026-11-11T11:18:57.030Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `7e497e23` | Multi-dimensional audit evidence | 2026-11-11T11:19:09.411Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `51d3b704` | Multi-dimensional audit evidence | 2026-11-11T11:19:09.823Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `cd5af882` | Multi-dimensional audit evidence | 2026-11-11T11:19:12.005Z |

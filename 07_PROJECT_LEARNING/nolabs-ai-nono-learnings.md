@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `bac14d41`  
+> **Source Version**: `cd5af882`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T22:14:57.091Z  
+> **Timestamp**: 2026-11-11T11:18:56.655Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T22:14:56.882Z  
+> **Harvest Timestamp**: 2026-11-11T11:18:56.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4911 stars
+- **Stars / Engagement**: 4928 stars
 
 ---
 
@@ -1021,6 +1021,53 @@ pub struct DomainEndpointState {
     pub domain: String,
     /// Allowed method+path rules (default-deny when non-empty)
     pub endpoints: Vec<EndpointRuleState>,
+    /// The entry's `endpoint_policy` as the proxy enforces it. `endpoints`
+    /// then lists only its `allow` rules, for display; `nono why` evaluates
+    /// this policy.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint_policy: Option<nono_proxy::config::EndpointPolicyConfig>,
+}
+
+impl DomainEndpointState {
+    /// Endpoint state for an `allow_domain` entry, or `None` when the entry
+    /// does not restrict endpoints.
+    pub fn from_allow_domain(entry: &crate::profile::AllowDomainEntry) -> Option<Self> {
+        if !entry.has_endpoint_restrictions() {
+            return None;
+        }
+        let crate::profile::AllowDomainEntry::WithEndpoints {
+            domain,
+            endpoints,
+            endpoint_policy,
+        } = entry
+        else {
+            return None;
+        };
+        let rules: Vec<EndpointRuleState> = match endpoint_policy {
+            Some(policy) => policy
+                .allow
+                .iter()
+                .map(|r| EndpointRuleState {
+                    method: r.method.clone(),
+                    path: r.path.clone(),
+                })
+                .collect(),
+            None => endpoints
+                .iter()
+                .map(|r| EndpointRuleState {
+                    method: r.method.clone(),
+                    path: r.path.clone(),
+                })
+                .collect(),
+        };
+        Some(Self {
+            domain: domain.clone(),
+            endpoints: rules,
+            endpoint_policy: endpoint_policy
+                .as_ref()
+                .map(crate::profile::AllowDomainEndpointPolicy::to_proxy),
+        })
+    }
 }
 
 /// Serializable endpoint rule
@@ -1121,41 +1168,7 @@ impl SandboxState {
                             AccessMode::Write => "write".to_string(),
                             AccessMode::ReadWrite => "readwrite".to_string(),
                         },
-                        is_file: c.is_file,
-                        source: Some(c.source.to_string()),
-                        dev: inode.map(|(dev, _)| dev),
-                        ino: inode.map(|(_, ino)| ino),
-                    }
-                })
-                .collect(),
-            unix_sockets: caps.unix_socket_capabilities().to_vec(),
-            pathname_socket_enforcement: None,
-            net_blocked: caps.is_network_blocked(),
-            allowed_commands: caps.allowed_commands().to_vec(),
-            blocked_commands: caps.blocked_commands().to_vec(),
-            applied_bypasses: bypass_protection_paths.to_vec(),
-            deny_paths: deny_paths.iter().map(|p| p.display().to_string()).collect(),
-            allowed_domains: allowed_domains.to_vec(),
-            denied_domains: denied_domains.to_vec(),
-            domain_endpoints: domain_endpoints.to_vec(),
-            resource_limits: caps.resource_limits().copied(),
-        }
-    }
-
-    /// Get resolved filesystem deny paths for query use.
-    pub fn deny_paths_as_paths(&self) -> Vec<PathBuf> {
-        self.deny_paths.iter().map(PathBuf::from).collect()
-    }
-
-    /// Convert back to a CapabilitySet
-    ///
-    /// Paths are re-validated through the standard constructors whenever
-    /// possible. On macOS, exact-file grants for missing leaf paths are
-    /// reconstructed with the same future-file logic used at profile load time.
-    /// On Linux, paths or direct symlinks that resolve to or via /proc/self/*
-    /// are ignored since these are process specific (e.g. /dev/stdin ->
-    /// /proc/self/fd/0 -> /dev/pts/7). In all cases, the reconstructed
-    /// canonical path must
+                        is_
 ```
 
 ### Core Architecture Module: `crates/nono-cli/src/state_paths.rs`
@@ -2959,13 +2972,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2282** (2026-11-09): **fix(sandbox): scope macOS process-exec to the read set**
-  *Symptoms*: ## Linked Issue  Closes #1865  ## Summary  On macOS nono emitted `(allow process-exec*)` unconditionally but only granted `file-read*` / `file-map-executable` for paths in the read set. A binary that could be exec'd but not read started, then failed obscurely (Go binaries: `SecPolicyCreateSSL error: 0`; Mach-O: killed silently with exit 137), while `nono why --op read` said `path_not_granted`.  Per maintainer direction, exec is now limited to the readable paths. This does not auto-grant reads on exec targets and does not resolve wrapper chains. Exec of an unreadable binary now fails immediately with `Operation not permitted` naming the path. This matches Linux, where Landlock Read already includes Execute.  - `crates/nono`: drop the blanket `process-exec*` allow; emit a scoped allow next to each Read/ReadWrite `file-read*` rule (same filters, original + resolved paths). Extension rules (`com.apple.app-sandbox.read` / `read-write`) also allow exec, so supervisor dynamic grants behave like static ones. `file-map-executable` is deliberately not extended to tokens. - `nono-cli` policy: wherever `deny file-read-data` is emitted (glob denies, `deny.access`, protected roots) also emit `deny process-exec*` and `deny file-map-executable`. `bypass_protection` directory/file overrides re-allow exec. Keychain DB exceptions stay read-only. - Tool-sandbox: remove the blanket exec allow from the outer guard; brokered-binary denies are unchanged. - `system_read_macos`: add `/usr
-
-- **Issue #2278** (2026-11-06): **fix(docker): create home directory for nono user**
-  *Symptoms*:  ## Linked Issue  <!-- External and agent-proposed PRs must reference an existing issue. Maintainer-directed routine PRs may leave this blank and explain the exception in the Summary. -->  Closes #2275   ## Summary  Add -m to useradd in the CI, standard, and headless Dockerfiles so the runtime user can initialize audit and session state.  <!-- Briefly describe what this PR does and why. -->  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [ ] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [ ] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [ ] Public-facing changes are paired with documentation updates - [ ] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked  <!-- ## Agent Compliance Check (Required for AI/Automated PRs) - [ ] I am not prohibited from contributing under this policy - [ ] An issue exists and I disclosed that I am an agen
+- **Issue #2294** (2026-11-10): **fix(deps): upgrade aws-config and remove crypto-bigint audit exception**
+  *Symptoms*:  ## Summary  Bump aws-config to 1.13.1, resolving p256 to 0.14.0 and crypto-bigint to patched 0.7.11. Remove the RUSTSEC-2026-0387 audit exception.  Add missing phantom_format fields to three existing test fixtures.  
   **Post-Mortem & Fix Analysis**:
-  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +3 | | Lines removed | -3 | | Total changed | 6 | | **Classification** | **Small (< 50 lines)** |  ### Affected crates  No crate source directories are directly affected.  ### Blast radius — Contained  This PR touches: **unknown file types**  --- <sub>Updated automatically on each push to this PR.</sub>
+  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +161 | | Lines removed | -158 | | Total changed | 319 | | **Classification** | **Large (> 300 lines)** |  ### Affected crates  - **crates/nono-proxy** — **downstream consumers depend on this crate**. API or behaviour changes will affect external callers; treat any breaking change with extra scrutiny.  ### Blast radius — Moderate  This PR touches: **source code,configuration / policy files**  --- <sub>Updated automatically on each push to this PR.</sub>
+
+- **Issue #2287** (2026-11-10): **fix(proxy): skip synthetic _EP_ env vars for endpoint-filtered routes (#2286)**
+  *Symptoms*: ## Linked Issue  Closes #2286  ## Summary  `credential_env_vars()` emitted a `{PREFIX}_BASE_URL` var for every proxy route, including synthetic `_ep_<domain>` routes created by `partition_allow_domain` for `allow_domain` entries with `endpoints`. Those routes have no credential and no SDK to point at them, so the var only handed agents a dead end: per #2286, 239/506 benchmark sessions called an `_EP_` URL instead of the real host, and 11 of them leaked `NONO_PROXY_TOKEN` as `Proxy-Authorization`.  This PR skips `_ep_`-prefixed routes when generating credential env vars. The route itself stays in the route store, so proxying and endpoint filtering are unchanged. The discriminator is the `_ep_` prefix, not `endpoint_rules`: credential routes can also carry endpoint rules and keep their `BASE_URL` + phantom-token vars.  ## Agent Disclosure (if applicable)  - This PR was prepared by an AI agent (Muse Spark, acting for contributor Bharath Vemula) from issue #2286, which the contributor approved pursuing. No public comment was posted on the issue; this PR body carries the disclosure instead. - Files/sections consulted: `crates/nono-proxy/src/server.rs` (`credential_env_vars`, existing tests), `crates/nono-cli/src/network_policy.rs` (`partition_allow_domain`, the `_ep_` prefix creation site), `crates/nono-cli/src/proxy_runtime.rs` (env-var consumers, tool-sandbox credential path), `crates/nono-proxy/src/route.rs` + `server.rs` CONNECT handling, `AGENTS.md`, `CONTRIBUTING.md`, and th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2982,573 +2995,397 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59969be3` (2026-11-09)
-**Commit Message**: fix(sandbox): scope macOS process-exec to the read set (#2282)
+### Incident Patch 1: `b5f01f13` (2026-11-10)
+**Commit Message**: fix(deps): upgrade aws-config and remove crypto-bigint audit exception
 
-* fix(sandbox): scope macOS process-exec to the read set
+Bump aws-config to 1.13.1, resolving p256 to 0.14.0 and crypto-bigint
+to patched 0.7.11. Remove the RUSTSEC-2026-0387 audit exception.
 
-Replace the blanket (allow process-exec*) with per-path rules mirroring
-file-read*, add matching exec/map denies next to read denies, extend
-extension tokens to exec, and add platform helper dirs to
-system_read_macos. Exec of an unreadable binary now fails immediately
-with EPERM instead of dying obscurely.
+Add missing phantom_format fields to three existing test fixtures.
 
-Co-Authored-By: Claude <[REDACTED_EMAIL]>
-Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
+Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
-* fix(sandbox): drop speculative system dirs from system_read_macos
-
-/System/Applications and /System/iOSSupport hold GUI apps and Catalyst
-frameworks that a CLI sandbox does not exec directly. Keep /usr/libexec
-(path_helper, java_home).
-
-Co-Authored-By: Claude <[REDACTED_EMAIL]>
-Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-cli/data/policy.json` (modified, +1/-0)
+**File**: `.cargo/audit.toml` (modified, +1/-11)
 ```diff
-@@ -151,6 +151,7 @@
-           "/sbin",
-           "/usr/bin",
-           "/usr/sbin",
-+          "/usr/libexec",
-           "/usr/local/bin",
-           "/usr/lib",
-           "/usr/local/lib",
+@@ -1,14 +1,4 @@
+ # Workspace cargo-audit configuration.
+-#
+-# Temporary exception: `aws-config`'s required `credentials-login` feature
+-# pins `p256` 0.13 and therefore vulnerable `crypto-bigint` 0.5.5.
+-# Remove once AWS adopts `p256` 0.14. Review by 2026-11-10.
+-#
+-# Upstream: https://github.com/smithy-lang/smithy-rs/tree/main/aws/rust-runtime/aws-config
+-# Crate: https://crates.io/crates/aws-config
+-# Advisory: https://rustsec.org/advisories/RUSTSEC-2026-0387.html
+ 
+ [advisories]
+-ignore = [
+-    "RUSTSEC-2026-0387",
+-]
++ignore = []
 ```
 
-**File**: `crates/nono-cli/src/diagnostic/formatter.rs` (modified, +33/-5)
+**File**: `Cargo.lock` (modified, +156/-146)
 ```diff
-@@ -988,14 +988,17 @@ impl<'a> DiagnosticFormatter<'a> {
-             Some(c) => c,
-             None => return true, // no context, assume readable
-         };
--        let binary_path = &cmd.resolved_path;
-+        // Compare canonical paths so symlinks and /tmp vs /private/tmp aliases
-+        // do not produce a wrong verdict. `starts_with` is component-based.
-+        let binary_path = canonical_or_self(&cmd.resolved_path);
-         for cap in self.caps.fs_capabilities() {
-             if cap.access == AccessMode::Read || cap.access == AccessMode::ReadWrite {
-+                let cap_path = canonical_or_self(&cap.resolved);
-                 if cap.is_file {
--                    if *binary_path == cap.resolved {
-+                    if binary_path == cap_path {
-                         return true;
+@@ -364,9 +364,9 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
+ 
+ [[package]]
+ name = "aws-config"
+-version = "1.13.0"
++version = "1.13.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "939e256cfe0ed68e96d32f194339d88210d5c10685cff0787400158f852c6819"
++checksum = "515fb9175dcf49db2eaa95b7913326d95469172e4ef4bec8b7888b8304c6e655"
+ dependencies = [
+  "aws-credential-types",
+  "aws-runtime",
+@@ -388,7 +388,7 @@ dependencies = [
+  "hex",
+  "http",
+  "p256",
+- "rand 0.8.7",
++ "rand",
+  "sha1 0.10.7",
+  "sha2 0.10.9",
+  "time",
+@@ -437,9 +437,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-runtime"
+-version = "1.10.2"
++version = "1.10.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9a0cc2144962cc5e358467b16e3d82981b1d424a7c3d34602be0036103814a1a"
++checksum = "f78d86ab4bb091d41e9d045810a6a46149ee3af579d510a4c23031e8872a4654"
+ dependencies = [
+  "aws-credential-types",
+  "aws-sigv4",
+@@ -462,9 +462,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-sdk-signin"
+-version = "1.31.0"
++version = "1.34.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8d158a88ae1fe0355b1f859347ed5fae7983c1b7b3dea536696f2bbb27883e01"
++checksum = "b912987654c28db0d47b88655e58607e2645d0604321a27e41a1df5450365379"
+ dependencies = [
+  "arc-swap",
+  "aws-credential-types",
+@@ -487,9 +487,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-sdk-sso"
+-version = "1.117.0"
++version = "1.120.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5316813498fa9c403877007934ae448aa44b18136f58051f8fa3c5b79b44bdc6"
++checksum = "0b6cbbbd3906e5e5c0898ec30a06d867ced79ff6f9080efcabb2f25fad76f8e3"
+ dependencies = [
+  "arc-swap",
+  "aws-credential-types",
+@@ -512,9 +512,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-sdk-ssooidc"
+-version = "1.119.0"
++version = "1.122.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "31db35e5662787b786daba15f431e4393c7ea512b70fa112bd048d1f3ecf877a"
++checksum = "965a652b21ed2d64b9e172e0cde9468b3998f6697636aaac8d0b096b9b93a70a"
+ dependencies = [
+  "arc-swap",
+  "aws-credential-types",
+@@ -528,18 +528,16 @@ dependencies = [
+  "aws-smithy-schema",
+  "aws-smithy-types",
+  "aws-types",
+- "bytes",
+  "fastrand",
+- "http",
+  "regex-lite",
+  "tracing",
+ ]
+ 
+ [[package]]
+ name = "aws-sdk-sts"
+-version = "1.122.0"
++version = "1.125.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a10491638d9e560db90c484dbc77d73b8ad202780cdc9b9e92180603acb07ada"
++checksum = "89a20505b0fd7a2175475a00591df8ec7f6448b833cf7b2e1d2801b9ab69eb83"
+ dependencies = [
+  "arc-swap",
+  "aws-credential-types",
+@@ -563,9 +561,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-sigv4"
+-version = "1.6.4"
++version = "1.6.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f385da9b7757ed4c8214797ad663ff534fb622006143530aa80e21f8e06ff85c"
++checksum = "57a4393e6addc3380632887b0998d06ad5f099ab5c478be0a3eeedecf8604161"
+ dependencies = [
+  "aws-credential-types",
+  "aws-smithy-http",
+@@ -574,7 +572,7 @@ dependencies = [
+  "bytes",
+  "form_urlencoded",
+  "hex",
+- "hmac 0.13.0",
++ "hmac",
+  "http",
+  "percent-encoding",
+  "sha2 0.11.1",
+@@ -615,9 +613,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-smithy-http-client"
+-version = "1.5.1"
++version = "1.5.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aeca69f65362f7375891008ea525fd440ad6db1836458ac188c87b126804114e"
++checksum = "859a81364f8185349c584fb41cd8765a400cf982f447adada590cf008a9f3b85"
+ dependencies = [
+  "aws-smithy-async",
+  "aws-smithy-runtime-api",
+@@ -639,9 +637,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-smithy-json"
+-version = "0.65.0"
++version = "0.65.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9f6835fb38bc6fc8c91e584b0366eb4ff595e5c485134dbf4f0bdeaa18856666"
++checksum = "b45f9fc77ffe92c92c341165a01a565bd30c39ecf5aa8c0719b41719009604f9"
+ dependencies = [
+  "aws-smithy-runtime-api",
+  "aws-smithy-schema",
+@@ -650,11 +648,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-smithy-observability"
+-version = "0.3.0"
++version = "0.3.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8e86338c869539a581bf161247762a6e87f92c5c075060057b5ed6d06632ed0c"
++checksum = "a416257d7b1b0f32a517a470a8c1dd354d8c4aa697ccab81a11a1e6cfb7418e3"
+ dependencies = [
+  "aws-smithy-runtime-api",
++ "aws-smithy-types",
++ "tracing",
+ ]
+ 
+ [[package]]
+@@ -672,9 +672,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-smithy-runtime"
+-version = "1.16.1"
++version = "1.16.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "79cef0c41e8ca40f74f68ed8ee4d1ddbde12bb847b95ef9b3c025681ddfae58a"
++checksum = "5bc688673e282f42d3152dcd9cacc1a9a75734d7cd39d02e58989276fc750f3c"
+ dependencies = [
+  "aws-smithy-async",
+  "aws-smithy-http",
+@@ -695,9 +695,9 @@ dependencies = [
+ 
+ [[packa
+```
+
+**File**: `crates/nono-proxy/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ socket2 = { version = "0.6", features = ["all"] }
+ # feature(s) enabled: credentials-login", so an `aws_auth` route cannot sign for
+ # an SSO-logged-in operator — the primary intended use of host-side credential
+ # resolution.
+-aws-config = { version = "1", features = [
++aws-config = { version = "1.13.1", features = [
+     "behavior-version-latest",
+     "credentials-login",
+ ] }
+```
+
+**File**: `crates/nono-proxy/src/route.rs` (modified, +1/-0)
+```diff
+@@ -1942,6 +1942,7 @@ mod tests {
+             query_param_name: None,
+             proxy: None,
+             env_var: None,
++            phantom_format: None,
+             endpoint_rules: vec![],
+             endpoint_policy: Some(crate::config::EndpointPolicyConfig {
+                 allow: vec![crate::config::EndpointPolicyRule {
+```
+
+**File**: `crates/nono-proxy/src/server.rs` (modified, +2/-0)
+```diff
+@@ -5588,6 +5588,7 @@ mod tests {
+                     query_param_name: None,
+                     proxy: None,
+                     env_var: None,
++                    phantom_format: None,
+                     endpoint_rules: vec![],
+                     endpoint_policy: None,
+                     tls_ca: None,
+@@ -5612,6 +5613,7 @@ mod tests {
+                     query_param_name: None,
+                     proxy: None,
+                     env_var: None,
++                    phantom_format: None,
+                     endpoint_rules: vec![crate::config::EndpointRule {
+                         method: "GET".to_string(),
+                         path: "/**".to_string(),
+```
+
+---
+
+### Incident Patch 2: `98b920bb` (2026-11-09)
+**Commit Message**: fix: apply rustfmt to ENDPOINT_ROUTE_PREFIX use sites
+
+rustfmt check failed on the review-follow-up commit: the long
+nono_proxy::config import and the assert_eq! in the
+partition_allow_domain test need their multi-line forms.
+
+Signed-off-by: Bharath Vemula <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/src/network_policy.rs` (modified, +7/-2)
+```diff
+@@ -5,7 +5,9 @@
+ 
+ use crate::profile::CustomCredentialDef;
+ use nono::{NonoError, Result};
+-use nono_proxy::config::{ENDPOINT_ROUTE_PREFIX, EndpointRule, InjectMode, ProxyConfig, RouteConfig};
++use nono_proxy::config::{
++    ENDPOINT_ROUTE_PREFIX, EndpointRule, InjectMode, ProxyConfig, RouteConfig,
++};
+ use serde::Deserialize;
+ use std::collections::HashMap;
+ use tracing::debug;
+@@ -1355,7 +1357,10 @@ mod tests {
+         assert_eq!(endpoint_routes.len(), 1);
+ 
+         let route = &endpoint_routes[0];
+-        assert_eq!(route.prefix, format!("{ENDPOINT_ROUTE_PREFIX}api.github.com"));
++        assert_eq!(
++            route.prefix,
++            format!("{ENDPOINT_ROUTE_PREFIX}api.github.com")
++        );
+         assert_eq!(route.upstream, "https://api.github.com");
+         assert!(route.credential_key.is_none());
+         assert_eq!(route.endpoint_rules.len(), 2);
+```
+
+---
+
+### Incident Patch 3: `47de96b8` (2026-11-09)
+**Commit Message**: refactor(proxy): share ENDPOINT_ROUTE_PREFIX const for synthetic _ep_ routes (#2286)
+
+Replace the duplicated "_ep_" magic string with a shared
+ENDPOINT_ROUTE_PREFIX const in nono-proxy (config.rs), used by both the
+creation site (partition_allow_domain in nono-cli) and the match site
+(credential_env_vars in nono-proxy server.rs), so renaming one cannot
+silently reintroduce the credential env vars this prefix suppresses.
+
+The regression test for #2286 and the partition_allow_domain test now
+build their synthetic prefixes from the const, so a future rename is
+caught by the tests instead of passing silently.
+
+Addresses review feedback from panga on #2287.
+
+Signed-off-by: Bharath Vemula <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/src/network_policy.rs` (modified, +3/-3)
+```diff
+@@ -5,7 +5,7 @@
+ 
+ use crate::profile::CustomCredentialDef;
+ use nono::{NonoError, Result};
+-use nono_proxy::config::{EndpointRule, InjectMode, ProxyConfig, RouteConfig};
++use nono_proxy::config::{ENDPOINT_ROUTE_PREFIX, EndpointRule, InjectMode, ProxyConfig, RouteConfig};
+ use serde::Deserialize;
+ use std::collections::HashMap;
+ use tracing::debug;
+@@ -445,7 +445,7 @@ pub fn partition_allow_domain(
+                                 .to_string(),
+                         ));
                      }
--                } else if binary_path.starts_with(&cap.resolved) {
-+                } else if binary_path.starts_with(&cap_path) {
-                     return true;
-                 }
-             }
-@@ -1009,14 +1012,15 @@ impl<'a> DiagnosticFormatter<'a> {
-             Some(c) => c,
-             None => return true,
-         };
--        let binary_dir = match cmd.resolved_path.parent() {
-+        let resolved = canonical_or_self(&cmd.resolved_path);
-+        let binary_dir = match resolved.parent() {
-             Some(d) => d,
-             None => return false,
-         };
-         for cap in self.caps.fs_capabilities() {
-             if !cap.is_file
-                 && (cap.access == AccessMode::Read || cap.access == AccessMode::ReadWrite)
--                && binary_dir.starts_with(&cap.resolved)
-+                && binary_dir.starts_with(canonical_or_self(&cap.resolved))
-             {
-                 return true;
-             }
-@@ -1069,6 +1073,13 @@ impl<'a> DiagnosticFormatter<'a> {
-                             );
-                             lines.push(format!("[nono]   nono run --read {} ...", parent_path,));
-                         }
-+                        // Exec requires read; a file grant is the narrowest fix.
-+                        let canonical = canonical_or_self(&cmd.resolved_path).display().to_string();
-+                        lines.push("[nono] Or, for just this binary:".to_string());
-+                        lines.push(format!(
-+                            "[nono]   nono run --read-file {} ...",
-+                            sanitize_for_diagnostic(&canonical)
-+                        ));
-                     } else if !self.is_binary_dir_readable() {
-                         // Binary itself is allowed but its directory isn't
-                         // (unlikely but possible with file-level grants)
-@@ -1139,6 +1150,18 @@ impl<'a> DiagnosticFormatter<'a> {
-                         "[nono] may be blocking execution of binaries in that directory."
-                             .to_string(),
-                     );
-+                    if !self.is_binary_path_readable() {
-+                        // On macOS, exec is only allowed for paths in the read set.
-+                        let canonical = canonical_or_self(&cmd.resolved_path).display().to_string();
-+                        lines.push("[nono]".to_string());
-+                        lines.push(
-+                            "[nono] The binary is not in the sandbox read set. Fix:".to_string(),
-+                        );
-+                        lines.push(format!(
-+                            "[nono]   nono run --read-file {} ...",
-+                            sanitize_for_diagnostic(&canonical)
-+                        ));
-+                    }
-                 } else {
-                     lines.push(
-                         "[nono] The command was found but could not be executed.".to_string(),
-@@ -2908,6 +2931,11 @@ fn shell_quote(s: &str) -> String {
-     quoted
+-                    let prefix = format!("_ep_{}", domain);
++                    let prefix = format!("{ENDPOINT_ROUTE_PREFIX}{domain}");
+                     let scheme = if is_loopback_domain(domain) {
+                         "http"
+                     } else {
+@@ -1355,7 +1355,7 @@ mod tests {
+         assert_eq!(endpoint_routes.len(), 1);
+ 
+         let route = &endpoint_routes[0];
+-        assert_eq!(route.prefix, "_ep_api.github.com");
++        assert_eq!(route.prefix, format!("{ENDPOINT_ROUTE_PREFIX}api.github.com"));
+         assert_eq!(route.upstream, "https://api.github.com");
+         assert!(route.credential_key.is_none());
+         assert_eq!(route.endpoint_rules.len(), 2);
+```
+
+**File**: `crates/nono-proxy/src/config.rs` (modified, +8/-0)
+```diff
+@@ -735,6 +735,14 @@ fn normalise_no_proxy_host(host: &str) -> String {
+     lower.parse::<IpAddr>().map_or(lower, |ip| ip.to_string())
  }
  
-+/// Canonicalize for comparison, falling back to the path as given.
-+fn canonical_or_self(path: &std::path::Path) -> std::path::PathBuf {
-+    path.canonicalize().unwrap_or_else(|_| path.to_path_buf())
-+}
++/// Prefix marking a synthetic endpoint-authorization route created by the CLI
++/// (`partition_allow_domain`) for an `allow_domain` entry with `endpoints`.
++/// The route gates requests to the domain's endpoints and carries no
++/// credential. Shared between the creation site (`nono-cli`) and the match
++/// site (`credential_env_vars` in `server.rs`) so renaming one cannot
++/// silently reintroduce the vars this prefix suppresses (see #2286).
++pub const ENDPOINT_ROUTE_PREFIX: &str = "_ep_";
 +
- #[cfg(test)]
- mod tests {
-     use super::*;
+ /// Configuration for a reverse proxy credential route.
+ #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+ pub struct RouteConfig {
 ```
 
-**File**: `crates/nono-cli/src/policy.rs` (modified, +44/-8)
+**File**: `crates/nono-proxy/src/server.rs` (modified, +5/-4)
 ```diff
-@@ -1041,6 +1041,8 @@ pub(crate) fn add_glob_deny_rules(
-         let re = glob_to_seatbelt_regex_with_literal_prefix(&prefix_str, glob_suffix)?;
-         caps.add_platform_rule(format!("(allow file-read-metadata (regex #\"{re}\"))"))?;
-         caps.add_platform_rule(format!("(deny file-read-data (regex #\"{re}\"))"))?;
-+        caps.add_platform_rule(format!("(deny process-exec* (regex #\"{re}\"))"))?;
-+        caps.add_platform_rule(format!("(deny file-map-executable (regex #\"{re}\"))"))?;
-         caps.add_platform_rule(format!("(deny file-write* (regex #\"{re}\"))"))?;
-         // Unix socket connect(2) is mediated as network-outbound, not file I/O.
-         caps.add_platform_rule(format!("(deny network-outbound (regex #\"{re}\"))"))?;
-@@ -1175,6 +1177,9 @@ pub(crate) fn emit_macos_deny_rules_for_path(path: &Path, caps: &mut CapabilityS
+@@ -704,14 +704,15 @@ impl ProxyHandle {
+             // and double-slashed URLs.
+             let prefix = route.prefix.trim_matches('/');
  
-     caps.add_platform_rule(format!("(allow file-read-metadata ({}))", file_filter))?;
-     caps.add_platform_rule(format!("(deny file-read-data ({}))", file_filter))?;
-+    // A denied read must not stay executable or mappable.
-+    caps.add_platform_rule(format!("(deny process-exec* ({}))", file_filter))?;
-+    caps.add_platform_rule(format!("(deny file-map-executable ({}))", file_filter))?;
-     caps.add_platform_rule(format!("(deny file-write* ({}))", file_filter))?;
-     caps.add_platform_rule(format!("(deny network-outbound ({}))", network_filter))?;
-     Ok(())
-@@ -1992,6 +1997,8 @@ pub fn apply_deny_overrides(
- 
-                 if grant_has_read {
-                     caps.add_platform_rule(format!("(allow file-read-data ({}))", filter))?;
-+                    caps.add_platform_rule(format!("(allow process-exec* ({}))", filter))?;
-+                    caps.add_platform_rule(format!("(allow file-map-executable ({}))", filter))?;
-                 }
-                 if grant_has_write {
-                     caps.add_platform_rule(format!("(allow file-write* ({}))", filter))?;
-@@ -2917,13 +2924,15 @@ mod tests {
-         if cfg!(target_os = "macos") {
-             // On macOS, Seatbelt platform rules should be generated
-             let rules = caps.platform_rules();
--            assert_eq!(rules.len(), 4);
-+            assert_eq!(rules.len(), 6);
-             assert!(rules[0].contains("allow file-read-metadata"));
-             assert!(rules[1].contains("deny file-read-data"));
--            assert!(rules[2].contains("deny file-write*"));
-+            assert!(rules[2].contains("deny process-exec*"));
-+            assert!(rules[3].contains("deny file-map-executable"));
-+            assert!(rules[4].contains("deny file-write*"));
-             assert!(
--                rules[3].contains("deny network-outbound")
--                    && rules[3].contains("subpath \"/nonexistent/test/deny\"")
-+                rules[5].contains("deny network-outbound")
-+                    && rules[5].contains("subpath \"/nonexistent/test/deny\"")
-             );
-         } else {
-             // On Linux, no platform rules generated (Landlock has no deny semantics)
-@@ -3178,9 +3187,13 @@ mod tests {
-         );
- 
-         if cfg!(target_os = "macos") {
--            // Should have 8 rules: 4 for symlink path + 4 for resolved target
-+            // Should have 12 rules: 6 for symlink path + 6 for resolved target
-             let rules = caps.platform_rules();
--            assert_eq!(rules.len(), 8, "expected 8 Seatbelt rules for symlink deny");
-+            assert_eq!(
-+                rules.len(),
-+                12,
-+                "expected 12 Seatbelt rules for symlink deny"
-+            );
-         }
-     }
- 
-@@ -3315,8 +3328,8 @@ mod tests {
-                 let rules = caps.platform_rules();
-                 assert_eq!(
-                     rules.len(),
--                    8,
--                    "expected 8 Seatbelt rules (4 original + 4 resolved); got: {:?}",
-+                    12,
-+                    "expected 12 Seatbelt rules (6 original + 6 resolved); got: {:?}",
-                     rules
-                 );
+-            // Synthetic endpoint-filtered routes (prefix `_ep_<domain>`,
+-            // created by `partition_allow_domain` for `allow_domain`
++            // Synthetic endpoint-filtered routes (prefix
++            // `ENDPOINT_ROUTE_PREFIX` + `<domain>`, created by
++            // `partition_allow_domain` for `allow_domain`
+             // entries with `endpoints`) have no credential and no SDK to
+             // point at them, so a `{PREFIX}_BASE_URL` var only hands the
+             // agent a dead end it will try and fail (see #2286). Skip
+             // them entirely; the route itself stays in the route store,
+             // so proxying and endpoint filtering are unchanged.
+-            if prefix.starts_with("_ep_") {
++            if prefix.starts_with(crate::config::ENDPOINT_ROUTE_PREFIX) {
+                 continue;
              }
-@@ -5779,6 +5792,29 @@ mod tests {
-             read_paths.iter().any(|p| p == "/System/Volumes"),
-             "system_read_macos should still grant /System/Volumes for firmlink resolution: {read_paths:?}"
-         );
-+        // Exec is scoped to the read set, so platform helper dirs must be readable.
-+        assert!(
-+            read_paths.iter().any(|p| p == "/usr/libexec"),
-+            "system_read_macos must grant /usr/libexec: {read_paths:?}"
-+        );
-+    }
-+
-+    #[cfg(target_os = "macos")]
-+    #[test]
-+    fn test_deny_rules_also_deny_exec_and_map_executable() {
-+        let dir = tempfile::tempdir().expect("tempdir");
-+        let file = dir.path().join("bin");
-+        std::fs::write(&file, b"x").expect("write");
-+        let mut caps = CapabilitySet::new();
-+        emit_macos_deny_rules_for_path(&file, &mut caps).expect("emit");
-+        let rules = caps.platform_rules();
-+        assert!(rules.iter().any(|r| r.contains("deny fi
-```
-
-**File**: `crates/nono-cli/src/tool-sandbox/platform/macos.rs` (modified, +5/-6)
-```diff
-@@ -3444,11 +3444,10 @@ fn add_outer_process_exec_gate(caps: &mut CapabilitySet, state: &ToolSandboxStat
-         denied.insert(deny_only.path.clone());
-     }
-     // This sandbox is a routing guard, not the command sandbox selected by policy.
--    // It permits ordinary agent process execution, then denies configured
--    // policy command binaries by exact path so those tools must be reached
--    // through the broker shim on PATH. The supervisor applies the actual
-+    // Exec is already scoped to the read set by the library profile; this denies
-+    // configured policy command binaries by exact path so those tools must be
-+    // reached through the broker shim on PATH. The supervisor applies the actual
-     // command sandbox to the approved grandchild invocation.
--    caps.add_platform_rule("(allow process-exec*)")?;
-     add_controlled_source_denies(caps, denied)
- }
  
-@@ -6832,7 +6831,7 @@ mod tests {
-     }
- 
-     #[test]
--    fn outer_process_exec_gate_allows_exec_but_denies_controlled_paths() -> Result<()> {
-+    fn outer_process_exec_gate_has_no_blanket_allow_and_denies_controlled_paths() -> Result<()> {
-         let temp = test_tempdir()?;
-         let bin_dir = temp.path().join("bin");
-         create_dir(&bin_dir)?;
-@@ -6852,7 +6851,7 @@ mod tests {
- 
-         let rules = caps.platform_rules();
-         assert!(
--            rules
-+            !rules
-                 .iter()
-                 .any(|rule| rule.as_str() == "(allow process-exec*)")
-         );
-```
-
-**File**: `crates/nono-cli/tests/macos_exec_requires_read.rs` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+//! On macOS, `process-exec*` is scoped to the read set: a binary that is not
-+//! readable fails immediately with EPERM instead of dying obscurely at startup.
-+
-+#![cfg(target_os = "macos")]
-+
-+use nono_test_support::{Argv, NonoTest, Profile, nono_test};
-+use std::fs;
-+use std::path::PathBuf;
-+use std::process::Command;
-+
-+fn profile_with_reads(t: &NonoTest, name: &str, reads: &[&PathBuf]) -> Profile {
-+    let reads: Vec<String> = reads
-+        .iter()
-+        .map(|p| format!("\"{}\"", p.display()))
-+        .collect();
-+    t.write_profile(
-+        name,
-+        &format!(
-+            r#"{{
-+                "meta": {{ "name": "{name}-test" }},
-+                "filesystem": {{ "allow": ["{workspace}"], "read": [{reads}] }}
-+            }}"#,
-+            workspace = t.workspace().display(),
-+            reads = reads.join(",")
-+        ),
-+    )
-+}
-+
-+fn workspace_only_profile(t: &NonoTest, name: &str) -> Profile {
-+    profile_with_reads(t, name, &[])
-+}
-+
-+/// Ad hoc signed copy of `/bin/echo` placed outside the granted workspace.
-+fn ungranted_binary(t: &NonoTest, dir: &str) -> PathBuf {
-+    let dir = t.root().join(dir);
-+    fs::create_dir_all(&dir).expect("create dir");
-+    let bin = dir.join("echo-copy");
-+    fs::copy("/bin/echo", &bin).expect("copy echo");
-+    let status = Command::new("codesign")
-+        .args(["-f", "-s", "-"])
-+        .arg(&bin)
-+        .output()
-+        .expect("run codesign");
-+    assert!(status.status.success(), "codesign failed");
-+    bin.canonicalize().expect("canonicalize")
-+}
-+
-+#[test]
-+fn exec_of_unreadable_binary_fails_fast() {
-+    let t = nono_test!("exec-unreadable");
-+    let bin = ungranted_binary(&t, "ungranted");
-+    let profile = workspace_only_profile(&t, "exec-unreadable");
-+
-+    t.run()
-+        .profile(&profile)
-+        .no_rollback()
-+        .exec(
-+            Argv::new("/bin/sh")
-+                .arg("-c")
-+                .arg(format!("{} hi", bin.display())),
-+        )
-+        .assert_failure("exec of a binary outside the read set is denied")
-+        .assert_stderr_contains("Operation not permitted")
-+        .assert_stdout_lacks("hi");
-+}
-+
-+#[test]
-+fn exec_of_binary_succeeds_once_read_granted() {
-+    let t = nono_test!("exec-granted");
-+    let bin = ungranted_binary(&t, "ungranted");
-+    let profile = profile_with_reads(&t, "exec-granted", &[&bin]);
-+
-+    t.run()
-+        .profile(&profile)
-+        .no_rollback()
-+        .exec(
-+            Argv::new("/bin/sh")
-+                .arg("-c")
-+                .arg(format!("{} hi", bin.display())),
-+        )
-+        .assert_success("a read-granted binary is executable")
-+        .assert_stdout_contains("hi");
-+}
-+
-+#[test]
-+fn exec_of_binary_in_granted_dir_succeeds() {
-+    let t = nono_test!("exec-dir");
-+    let bin = ungranted_binary(&t, "granted-dir");
-+    let dir = bin.parent().expect("parent").to_path_buf();
-+    let profile = profile_with_reads(&t, "exec-dir", &[&dir]);
-+
-+    t.run()
-+        .profile(&profile)
-+        .no_rollback()
-+        .exec(
-+            Argv::new("/bin/sh")
-+                .arg("-c")
-+                .arg(format!("{} hi", bin.display())),
-+        )
-+        .assert_success("a read-granted dir allows exec");
-+}
-+
-+#[test]
-+fn default_system_tools_still_run() {
-+    let t = nono_test!("exec-system");
-+    let profile = workspace_only_profile(&t, "exec-system");
-+
-+    t.run()
-+        .profile(&profile)
-+        .no_rollback()
-+        .exec(
-+            Argv::new("/bin/zsh")
-+                .arg("-l")
-+                .arg("-c")
-+                .arg("echo login-ok"),
-+        )
-+        .assert_success("login shell runs path_helper")
-+        .assert_stdout_contains("login-ok");
-+}
-```
-
-**File**: `crates/nono-cli/tests/why_deny.rs` (modified, +11/-6)
-```diff
-@@ -20,12 +20,17 @@ fn fixture() -> (tempfile::TempDir, std::path::PathBuf, std::path::PathBuf) {
- 
-     fs::write(
-         &profile,
--        r#"{
--            "filesystem": {
--                "allow": ["$WORKDIR"],
--                "deny": ["$WORKDIR/blocked.txt"]
--            }
--        }"#,
-+        format!(
-+            r#"{{
-+                "filesystem": {{
-+                    "allow": ["$WORKDIR"],
-+                    "read_file": ["{nono}"],
-+                    "deny": ["$WORKDIR/blocked.txt"]
-+                }}
-+            }}"#,
-+            // macOS scopes exec to the read set, so the sandboxed binary must be readable.
-+            nono = env!("CARGO_BIN_EXE_nono")
-+        ),
-     )
-     .expect("write profile");
- 
-```
-
-**File**: `crates/nono/src/sandbox/linux.rs` (modified, +8/-0)
-```diff
-@@ -4071,6 +4071,14 @@ mod tests {
-         assert!(!info.details.is_empty());
-     }
- 
-+    #[test]
-+    fn test_read_access_includes_execute_write_does_not() {
-+        let read = access_to_landlock(AccessMode::Read, ABI::V3);
-+        assert!(read.effective.contains(AccessFs::Execute));
-+        let write = access_to_landlock(AccessMode::Write, ABI::V3);
-+        assert!(!write.effective.contains(AccessFs::Execute));
-+    }
-+
-     #[test]
-     fn test_access_conversion_v3() {
-         let abi = ABI::V3;
-```
-
-**File**: `crates/nono/src/sandbox/macos.rs` (modified, +125/-1)
-```diff
-@@ -526,7 +526,8 @@ fn generate_profile(caps: &CapabilitySet) -> Result<String> {
-     }
- 
-     // Allow specific process operations needed for execution
--    profile.push_str("(allow process-exec*)\n");
-+    // process-exec* is scoped to the read set below: a binary that can be
-+    // exec'd but not read cannot load its own image and dies obscurely.
-     profile.push_str("(allow process-fork)\n");
- 
-     // Process info: allow self-inspection and same-sandbox inspection for both
-@@ -674,6 +675,7 @@ fn generate_profile(caps: &CapabilitySet) -> Result<String> {
-             AccessMode::Read | AccessMode::ReadWrite => {
-                 for filter in path_filters_for_cap(cap)? {
-                     profile.push_str(&format!("(allow file-read* ({}))\n", filter));
-+                    profile.push_str(&format!("(allow process-exec* ({}))\n", filter));
-                 }
-             }
-             AccessMode::Write => {
-@@ -691,6 +693,10 @@ fn generate_profile(caps: &CapabilitySet) -> Result<String> {
-         profile.push_str("(allow file-read* (extension \"com.apple.app-sandbox.read\"))\n");
-         profile.push_str("(allow file-read* (extension \"com.apple.app-sandbox.read-write\"))\n");
-         profile.push_str("(allow file-write* (extension \"com.apple.app-sandbox.read-write\"))\n");
-+        // Exec follows read for dynamic grants, same as static grants.
-+        profile.push_str("(allow process-exec* (extension \"com.apple.app-sandbox.read\"))\n");
-+        profile
-+            .push_str("(allow process-exec* (extension \"com.apple.app-sandbox.read-write\"))\n");
-     }
- 
-     // Add write rules for all capabilities with Write or ReadWrite access.
-@@ -1099,6 +1105,56 @@ mod tests {
-         assert!(profile.contains("(allow file-map-executable (subpath \"/test\"))"));
-     }
- 
-+    #[test]
-+    fn test_generate_profile_scopes_exec_to_read_set() {
-+        let mut caps = CapabilitySet::new();
-+        caps.add_fs(FsCapability {
-+            original: PathBuf::from("/readable"),
-+            resolved: PathBuf::from("/readable"),
-+            access: AccessMode::Read,
-+            is_file: false,
-+            source: CapabilitySource::User,
-+        });
-+        caps.add_fs(FsCapability {
-+            original: PathBuf::from("/rw-file"),
-+            resolved: PathBuf::from("/rw-file"),
-+            access: AccessMode::ReadWrite,
-+            is_file: true,
-+            source: CapabilitySource::User,
-+        });
-+        caps.add_fs(FsCapability {
-+            original: PathBuf::from("/write-only"),
-+            resolved: PathBuf::from("/write-only"),
-+            access: AccessMode::Write,
-+            is_file: false,
-+            source: CapabilitySource::User,
-+        });
-+
-+        let profile = generate_profile(&caps).unwrap();
-+
-+        assert!(!profile.contains("(allow process-exec*)\n"));
-+        assert!(profile.contains("(allow process-exec* (subpath \"/readable\"))"));
-+        assert!(profile.contains("(allow process-exec* (literal \"/rw-file\"))"));
-+        assert!(!profile.contains("process-exec* (subpath \"/write-only\")"));
-+    }
-+
-+    #[test]
-+    fn test_generate_profile_exec_covers_original_and_resolved() {
-+        let mut caps = CapabilitySet::new();
-+        caps.add_fs(FsCapability {
-+            original: PathBuf::from("/tmp"),
-+            resolved: PathBuf::from("/private/tmp"),
-+            access: AccessMode::Read,
-+            is_file: false,
-+            source: CapabilitySource::User,
-+        });
-+
-+        let profile = generate_profile(&caps).unwrap();
-+
-+        assert!(profile.contains("(allow process-exec* (subpath \"/tmp\"))"));
-+        assert!(profile.contains("(allow process-exec* (subpath \"/private/tmp\"))"));
-+    }
-+
-     #[test]
-     fn test_generate_profile_with_file() {
-         let mut caps = CapabilitySet::new();
-@@ -1555,6 +1611,74 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn test_generate_profile_extensions_allow_exec() {
-+        let caps = CapabilitySet::new().enable_extensions();
-+        let profile = generate_profile(&caps).unwrap();
-+
-+        assert!(
-+            profile.contains("(allow process-exec* (extension \"com.apple.app-sandbox.read\"))")
-+        );
-+        assert!(
-+            profile
-+                .contains("(allow process-exec* (extension \"com.apple.app-sandbox.read-write\"))")
-+        );
-+    }
-+
-+    /// Applies a real sandbox in a forked child: an ungranted binary can be
-+    /// exec'd only after its extension token is consumed.
-+    #[test]
-+    fn test_extension_token_allows_exec_of_ungranted_binary() {
-+        use std::os::unix::process::CommandExt;
-+        use std::process::Command;
-+
-+        let dir = tempfile::tempdir().unwrap();
-+        let bin = dir.path().join("echo-copy");
-+        std::fs::copy("/bin/echo", &bin).unwrap();
-+        let signed = Command::new("codesign")
-+            .args(["-f", "-s", "-"])
-+            .arg(&bin)
-+            .output()
-+            .unwrap();
-+        asse
+@@ -4547,7 +4548,7 @@ mod tests {
+                 },
+                 crate::config::RouteConfig {
+                     redeem_phantoms: Vec::new(),
+-                    prefix: "_ep_example.com".to_string(),
++                    prefix: format!("{}example.com", crate::config::ENDPOINT_ROUTE_PREFIX),
+                     upstream: "https://example.com".to_string(),
+                     credential_key: None,
+                     inject_mode: crate::config::InjectMode::Header,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2294** (2026-11-10): fix(deps): upgrade aws-config and remove crypto-bigint audit exception (@SequeI)
+- **PR #2293** (2026-11-10): feat(cli): add session terminal recording (NEP-0010) (@lukehinds)
 - **PR #2289** (2026-11-09): chore(deps): bump ureq from 3.5.0 to 3.5.1 in the routine-rust group (@dependabot[bot])
 - **PR #2288** (2026-11-09): chore(deps): bump the routine-actions group with 5 updates (@dependabot[bot])
+- **PR #2287** (2026-11-10): fix(proxy): skip synthetic _EP_ env vars for endpoint-filtered routes (#2286) (@bharathvemula)
 - **PR #2282** (2026-11-09): fix(sandbox): scope macOS process-exec to the read set (@panga)
-- **PR #2278** (2026-11-06): fix(docker): create home directory for nono user (@SequeI)
-- **PR #2277** (2026-11-09): feat(proxy): select aws_auth signing profile by placeholder access key ID (@nmgrenyi)
-- **PR #2276** (2026-11-06): docs(schema): add command sandbox exec_paths and open_port fields (@daescha)
 
 ---
 
@@ -3568,28 +3405,38 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sandbox): scope macOS process-exec to the read set (#2282)
+## X. deps): upgrade aws-config and remove crypto-bigint audit exception
 
 **RULE**:
-When implementing operations in `crates/nono-cli/data/policy.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59969be3`: sandbox): scope macOS process-exec to the read set (#2282). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5f01f13`: deps): upgrade aws-config and remove crypto-bigint audit exception. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/data/policy.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          "/usr/libexec",
+ignore = []
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+#
+# Temporary exception: `aws-config`'s required `credentials-login` feature
+# pins `p256` 0.13 and therefore vulnerable `crypto-bigint` 0.5.5.
+# Remove once AWS adopts `p256` 0.14. Review by 2026-11-10.
+#
+# Upstream: https://github.com/smithy-lang/smithy-rs/tree/main/aws/rust-runtime/aws-config
+# Crate: https://crates.io/crates/aws-config
+# Advisory: https://rustsec.org/advisories/RUSTSEC-2026-0387.html
+ignore = [
+    "RUSTSEC-2026-0387",
+]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59969be3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5f01f13` are properly handled with clean fallback behavior.

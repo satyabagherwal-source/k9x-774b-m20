@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "bac14d41",
+    "sourceVersion": "cd5af882",
     "license": "Apache-2.0",
-    "contentHash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
-    "lastHarvestedAt": "2026-11-09T22:14:58.403Z",
+    "contentHash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
+    "lastHarvestedAt": "2026-11-11T11:19:12.005Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "dca306c8",
+    "sourceVersion": "51d3b704",
     "license": "Apache-2.0",
-    "contentHash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
-    "lastHarvestedAt": "2026-11-07T05:58:17.111Z",
+    "contentHash": "8789ab88b13a4ae2a68ef38c1fed6c43b3180c7cc12dc2117f5ac72cf2cfbfdf",
+    "lastHarvestedAt": "2026-11-11T11:19:09.823Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "ce71455b",
+    "sourceVersion": "7e497e23",
     "license": "NOASSERTION",
-    "contentHash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
-    "lastHarvestedAt": "2026-11-07T20:56:04.881Z",
+    "contentHash": "38f9e8f5d5a3624fc114431754500661abd82f66179979270e3e1354105aa7b0",
+    "lastHarvestedAt": "2026-11-11T11:19:09.411Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {
@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "6882e1ac",
+    "sourceVersion": "805579e9",
     "license": "MIT",
-    "contentHash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
-    "lastHarvestedAt": "2026-11-05T18:53:36.557Z",
+    "contentHash": "fddc27f39589ae53b3c5a5aa6c93486f44f1b538dea06a83d901b9bb27713622",
+    "lastHarvestedAt": "2026-11-11T11:18:57.030Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {
