@@ -9170,3 +9170,6 @@
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T12:50:51.248Z` | `webpack-webpack` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-EE08D822` [Domain H] | Yes (`c62c37cb...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T12:51:11.112Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B173C8F8` [Domain H] | Yes (`d42b1d92...`) |
 | `CYCLE-20261112-ZQSJ` | `2026-11-12T12:58:05.539Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5e8eb110...`) |
+| `CYCLE-20261112-FJUS` | `2026-11-12T13:10:23.044Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8e6f0e61...`) |
+| `CYCLE-20261112-LPAS` | `2026-11-12T13:15:10.036Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | Yes (`29866816...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T13:15:27.334Z` | `hf-liquidai-lfm3-1.7b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A3AABF62` [Domain D] | Yes (`2896f36c...`) |

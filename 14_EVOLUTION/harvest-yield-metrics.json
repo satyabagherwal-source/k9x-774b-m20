@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T12:58:05.547Z",
-  "total_cycles_completed": 8993,
-  "total_learnings_persisted": 8993,
-  "total_rules_promoted": 8836,
+  "last_updated": "2026-11-12T13:15:10.046Z",
+  "total_cycles_completed": 8995,
+  "total_learnings_persisted": 8995,
+  "total_rules_promoted": 8837,
   "history": [
-    {
-      "timestamp": "2026-11-11T13:29:07.426Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T13:29:11.311Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T13:29:12.688Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1403,6 +1389,20 @@
       "repository": "rollup/rollup",
       "learningId": "learn-github-rollup-rollup",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T13:10:23.053Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T13:15:10.046Z",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T12:51:11.110Z",
-  "total_records": 71,
+  "last_updated": "2026-11-12T13:15:27.331Z",
+  "total_records": 72,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 33,
+      "total": 34,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -58,7 +58,8 @@
         "DOM-D-2EFB96C5",
         "DOM-D-91EB11DA",
         "DOM-D-78355AEC",
-        "DOM-D-E7997468"
+        "DOM-D-E7997468",
+        "DOM-D-A3AABF62"
       ]
     },
     "E": {
@@ -2876,6 +2877,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T12:51:11.108Z"
+    },
+    "DOM-D-A3AABF62": {
+      "record_id": "DOM-D-A3AABF62",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-1.7B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF](https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "2896f36ca01249dc1d5c33c95171f4ee5b3f64273d23139ef7f1fa83d5416f9b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-1.7b-gguf/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T13:15:12.716Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-1.7b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-lfm3-1.7b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T13:15:27.329Z"
     }
   }
 }

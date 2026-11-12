@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T12:58:09.377Z",
+  "last_updated": "2026-11-12T13:15:27.361Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6905,6 +6905,24 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-12C225-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-504048",
+      "directive_title": "release: 3.12.3 — linux-gnu binary budget 110 MB",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yvgude-lean-ctx",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-504048-release-3-12-3-linux-gnu-binary-budget-1.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-16EA67",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-16EA67-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-12"
     }
   ]

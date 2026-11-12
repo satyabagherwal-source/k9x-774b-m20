@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T12:58:05.550Z",
+  "last_updated": "2026-11-12T13:15:10.050Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "cce419abe5983bcb417ea5aab779e1eb34ac9f27aef07318adeff0f74fe92995",
-      "verified_at": "2026-11-09T22:14:48.803Z",
+      "content_hash": "8e6f0e6191946d471dd56d6030d08491d01d98cc03155ee4c704e5f3cfb8ef8f",
+      "verified_at": "2026-11-12T13:10:23.056Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T22:14:48.803Z"
+      "last_updated": "2026-11-12T13:10:23.056Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -17436,14 +17436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "content_hash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
-      "verified_at": "2026-11-07T20:49:07.549Z",
+      "content_hash": "29866816d6d8b7d60348718039781b0fd03bfe562979d1774eea7b34737adc95",
+      "verified_at": "2026-11-12T13:15:10.049Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:49:07.549Z"
+      "last_updated": "2026-11-12T13:15:10.049Z"
     },
     "speridlabs/idol": {
       "repository": "speridlabs/idol",

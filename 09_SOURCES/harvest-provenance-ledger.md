@@ -9179,3 +9179,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-ee08d822` | `project://webpack-webpack` | `39b7c8a8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md` | 2026-11-12T12:50:51.248Z |
 | `learn-dom-h-b173c8f8` | `project://dathere-qsv` | `58854051` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-12T12:51:11.112Z |
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `41ee3267` | Multi-dimensional audit evidence | 2026-11-12T12:58:05.542Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `013ddb1c` | Multi-dimensional audit evidence | 2026-11-12T13:10:23.048Z |
+| `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-12T13:15:10.040Z |
+| `learn-dom-d-a3aabf62` | `project://hf-liquidai-lfm3-1.7b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | 2026-11-12T13:15:27.334Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T12:58:05.428Z",
+  "last_updated": "2026-11-12T13:15:09.941Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -68586,8 +68586,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "f97f122a",
-      "content_hash": "cce419abe5983bcb417ea5aab779e1eb34ac9f27aef07318adeff0f74fe92995",
+      "source_version": "013ddb1c",
+      "content_hash": "8e6f0e6191946d471dd56d6030d08491d01d98cc03155ee4c704e5f3cfb8ef8f",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
@@ -68599,6 +68599,11 @@
         {
           "number": null,
           "title": "deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "release: 3.12.3 — linux-gnu binary budget 110 MB",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -68647,7 +68652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T22:14:48.709Z",
+      "verified_at": "2026-11-12T13:10:22.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168517,7 +168522,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
       "source_version": "hf-liquidai-lfm3-1.7b-gguf",
-      "content_hash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
+      "content_hash": "29866816d6d8b7d60348718039781b0fd03bfe562979d1774eea7b34737adc95",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
       "promoted_rules": [
@@ -168547,7 +168552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:49:07.411Z",
+      "verified_at": "2026-11-12T13:15:09.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

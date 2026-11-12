@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T12:58:09.339Z",
+  "updated_at": "2026-11-12T13:15:27.350Z",
   "stats": {
-    "total_discovered": 1334,
-    "approved_pending_harvest": 1212,
+    "total_discovered": 1336,
+    "approved_pending_harvest": 1214,
     "harvested_count": 0,
     "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1221,
+      "COMMUNITY_AND_EXPERT": 1223,
       "OFFICIAL_DOCUMENTATION": 59,
       "STANDARDS_AND_SPECIFICATIONS": 51,
       "ENGINEERING_BLOGS": 1,
@@ -28511,6 +28511,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
         "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-C903204AB4AE": {
+      "id": "SRC-C903204AB4AE",
+      "url": "https://github.com/yvgude/lean-ctx",
+      "title": "https://github.com/yvgude/lean-ctx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:15:12.702Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
+        "fileName": "yvgude-lean-ctx-learnings.md"
+      }
+    },
+    "SRC-961556B08BEA": {
+      "id": "SRC-961556B08BEA",
+      "url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+      "title": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:15:27.350Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+        "fileName": "hf-liquidai-lfm3-1.7b-gguf-learnings.md"
       }
     }
   }

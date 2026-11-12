@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "f97f122a",
+    "sourceVersion": "013ddb1c",
     "license": "Apache-2.0",
-    "contentHash": "cce419abe5983bcb417ea5aab779e1eb34ac9f27aef07318adeff0f74fe92995",
-    "lastHarvestedAt": "2026-11-09T22:14:48.796Z",
+    "contentHash": "8e6f0e6191946d471dd56d6030d08491d01d98cc03155ee4c704e5f3cfb8ef8f",
+    "lastHarvestedAt": "2026-11-12T13:10:23.048Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -11595,8 +11595,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceVersion": "hf-liquidai-lfm3-1.7b-gguf",
     "license": "Open-Source",
-    "contentHash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
-    "lastHarvestedAt": "2026-11-07T20:49:07.536Z",
+    "contentHash": "29866816d6d8b7d60348718039781b0fd03bfe562979d1774eea7b34737adc95",
+    "lastHarvestedAt": "2026-11-12T13:15:10.040Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
   },
   "hf-speridlabs-idol": {
