@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:56:24.175Z",
-  "total_cycles_completed": 8904,
-  "total_learnings_persisted": 8904,
-  "total_rules_promoted": 8753,
+  "last_updated": "2026-11-12T04:24:38.664Z",
+  "total_cycles_completed": 8906,
+  "total_learnings_persisted": 8906,
+  "total_rules_promoted": 8754,
   "history": [
-    {
-      "timestamp": "2026-11-10T05:14:16.558Z",
-      "repository": "bahdotsh/wrkflw",
-      "learningId": "learn-github-bahdotsh-wrkflw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T05:14:21.220Z",
-      "repository": "lingodotdev/lingo.dev",
-      "learningId": "learn-github-lingodotdev-lingo-dev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T05:14:25.124Z",
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "TableProApp/TablePro",
       "learningId": "learn-github-tableproapp-tablepro",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T04:24:11.142Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T04:24:38.664Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

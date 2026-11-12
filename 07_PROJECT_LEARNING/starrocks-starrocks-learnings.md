@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `d1531769`  
+> **Source Version**: `bf73116b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T17:35:06.858Z  
+> **Timestamp**: 2026-11-12T04:24:00.441Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T17:35:06.851Z  
+> **Harvest Timestamp**: 2026-11-12T04:24:00.258Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12245 stars
+- **Stars / Engagement**: 12248 stars
 
 ---
 
@@ -1818,155 +1818,42 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d686f0a` (2026-11-09)
-**Commit Message**: [UT] Accept the non-finite query vector error and run test_vector_index_query_vector_overflow on shared-data (#82665)
+### Incident Patch 1: `bf73116b` (2026-11-12)
+**Commit Message**: [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)
 
-Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Karol Sobczak <[REDACTED_EMAIL]>
 
-**File**: `test/sql/test_vector_index_query_vector_overflow/R/test_vector_index_query_vector_overflow` (modified, +5/-3)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java` (modified, +10/-0)
 ```diff
-@@ -1,4 +1,4 @@
---- name: test_vector_index_query_vector_overflow @sequential @native
-+-- name: test_vector_index_query_vector_overflow @sequential
- CREATE TABLE `t_ivfpq_overflow` (
-   `id` bigint(20) NOT NULL COMMENT "",
-   `v` ARRAY<FLOAT> NOT NULL COMMENT "",
-@@ -14,7 +14,9 @@ PROPERTIES (
- );
- -- result:
- -- !result
--INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 64)) t(number);
-+-- nbits=8 trains 256 PQ centroids, so the load must contain at least that many rows
-+-- or faiss rejects it ('nx >= k') before the query vector is checked.
-+INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 256)) t(number);
- -- result:
- -- !result
- select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1.0, 0.0, 0.0, 0.0], v) limit 1;
-@@ -23,7 +25,7 @@ select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1.0, 0.
- -- !result
- select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1e308, 0.0, 0.0, 0.0], v) limit 1;
- -- result:
--[REGEX].*invalid query vector element.*
-+[REGEX].*(invalid query vector element|query vector contains a non-finite element).*
- -- !result
- select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<TINYINT>[100, 100, 100, 100], v) limit 1;
- -- result:
-```
-
-**File**: `test/sql/test_vector_index_query_vector_overflow/T/test_vector_index_query_vector_overflow` (modified, +4/-2)
-```diff
-@@ -1,4 +1,4 @@
---- name: test_vector_index_query_vector_overflow @sequential @native
-+-- name: test_vector_index_query_vector_overflow @sequential
- -- A query-vector element that overflows float range (1e308 > FLT_MAX) used to
- -- reach an unguarded std::stof in OlapChunkSource::_init_reader_params and abort
- -- the BE. It must now be rejected with a clean error instead of crashing.
-@@ -15,7 +15,9 @@ PROPERTIES (
- "replicated_storage" = "false",
- "compression" = "LZ4"
- );
--INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 64)) t(number);
-+-- nbits=8 trains 256 PQ centroids, so the load must contain at least that many rows
-+-- or faiss rejects it ('nx >= k') before the query vector is checked.
-+INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 256)) t(number);
+@@ -123,6 +123,7 @@
+ import com.starrocks.type.TypeFactory;
+ import com.starrocks.type.VarcharType;
  
- -- A well-formed query vector still works and uses the index (nearest is id 1).
- select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1.0, 0.0, 0.0, 0.0], v) limit 1;
-```
-
----
-
-### Incident Patch 2: `df0912a0` (2026-11-09)
-**Commit Message**: [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (#82700)
-
-Signed-off-by: xiangguangyxg <[REDACTED_EMAIL]>
-Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/LakeTableAlterJobV2Builder.java` (modified, +56/-4)
-```diff
-@@ -18,6 +18,9 @@
- import com.google.common.base.Preconditions;
- import com.staros.proto.FileCacheInfo;
- import com.staros.proto.FilePathInfo;
-+import com.starrocks.catalog.ColocateRange;
-+import com.starrocks.catalog.ColocateRangeUtils;
-+import com.starrocks.catalog.ColocateTableIndex;
- import com.starrocks.catalog.Column;
- import com.starrocks.catalog.MaterializedIndex;
- import com.starrocks.catalog.OlapTable;
-@@ -33,7 +36,9 @@
- import com.starrocks.thrift.TStorageMedium;
- import com.starrocks.warehouse.cngroup.ComputeResource;
- 
-+import java.util.ArrayList;
- import java.util.HashMap;
-+import java.util.LinkedHashMap;
- import java.util.List;
- import java.util.Map;
- import java.util.stream.Collectors;
-@@ -78,6 +83,12 @@ public AlterJobV2 build() throws StarRocksException {
-         // would make the scheduler redundantly rebuild the entire existing dataset after the ALTER.
-         boolean inlineBuildsVectorIndex = indexes != null &&
-                 indexes.stream().anyMatch(i -> i.getIndexType() == IndexDef.IndexType.VECTOR);
-+        ColocateTableIndex colocateTableIndex = globalStateMgr.getColocateTableIndex();
-+        ColocateTableIndex.GroupId rangeColocateGroupId = colocateTableIndex.getRangeColocateGroupId(tableId);
-+        List<ColocateRange> colocateRanges = rangeColocateGroupId == null ? null
-+                : colocateTableIndex.getColocateRanges(rangeColocateGroupId.grpId);
-+        int colocateColumnCount = rangeColocateGroupId == null ? 0
-+                : colocateTableIndex.getGroupSchema(rangeColocateGroupId).getColocateColumnCount();
-         for (Map.Entry<Long, List<Column>> entry : newIndexMetaIdToSchema.entrySet()) {
-             long originIndexMetaId = entry.getKey();
-             // 1. get new schema version/schema version hash, short key column count
-@@ -99,10 +110,16 @@ public AlterJobV2 build() throws StarRocksException {
-                 //  revise the code again.
-                 List<Long> originTabletIds = originTablets.stream().map(Tablet::getId).collect(Collectors.toList());
-                 Map<String, String> properties = buildShadowShardProperties(table, physicalPartitionId, shadowIndexId);
--                List<Long> shadowTabletIds = createShards(originTablets.size(),
--                        table.getPartitionFilePathInfo(physicalPartitionId),
--                        table.getPartitionFileCacheInfo(physicalPartitionId), shardGroupId,
--                        originTabletIds, properties, computeResource);
-+                List<Long> shadowTabletIds;
-+                if (colocateRanges == null) {
-+                    shadowTabletIds = createShards(originTablets.size(),
-+                            table.getPartitionFilePathInfo(physicalPartitionId),
-+                            table.getPartitionFileCacheInfo(physicalPartitionId), shardGroupId,
-+                            originTabletIds, properties, computeResource);
-+                } else {
-+                    shadowTabletIds = createRangeColocateShadowShards(originTablets, colocateRanges,
-+                            colocateColumnCount, physicalPartitionId, shardGroupId, properties);
++import java.math.BigDecimal;
+ import java.math.BigInteger;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+@@ -825,6 +826,15 @@ public Void visitTimestampArithmeticExpr(TimestampArithmeticExpr node, Scope sco
+                         .join(Arrays.stream(argumentTypes).map(Type::toSql).collect(Collectors.toList())));
+                 throw new SemanticException(msg, node.getPos());
+             }
++            String fnName = fn.getFunctionName().getFunction();
++            if (FunctionSet.SECONDS_ADD.equals(fnName) || FunctionSet.SECONDS_SUB.equals(fnName)) {
++                // A literal amount with more than 6 decimals is refused here already, so that a definition that uses it,
++                // such as a generated column or a view, is refused when it is created rather than each time it is used
++                BigDecimal seconds = IntervalSeconds.literalValue(node.getChild(1));
++                if (seconds != null) {
++                    IntervalSeconds.split(seconds, node.getPos());
 +                }
-                 Preconditions.checkState(originTablets.size() == shadowTabletIds.size());
- 
-                 TStorageMedium medium = table.getPartitionInfo().getDataProperty(partitionId).getStorageMedium();
-@@ -144,6 +161,41 @@ public AlterJobV2 build() throws StarRocksException {
-         return schemaChangeJob;
-     }
- 
-+    /**
-+     * Creates the shadow shards of a table in a range colocate group, one per origin tablet and in the same order.
-+     *
-+     * <p>Every tablet of such a table must be in the PACK shard group of the ColocateRange it lies in, as partition
-+     * creation, split and merge place it. Otherwise, once the origin shard is deleted, nothing keeps the tablet with
-+     * the other tablets of its range, and nothing puts it back while the group stays stable. A shadow tablet copies its
-+     * origin tablet's range, so its shard joins the index shard group and the PACK shard group of the origin tablet's
-+     * ColocateRange. Like the children of a split, it stays pinned to its origin shard to reuse the warm cache. In a
-+     * stable group the origin shard already sits with that PACK shard group; while the group is unstable they may
-+     * differ, and the colocate checker settles the placement after the job, as it does after a split.
-+     */
-+    private List<Long> createRangeColocateShadowShards(List<Tablet> originTablets, List<ColocateRange> colocateRanges,
-+                                                       int colocateColumnCount, long physicalPartitionId,
-+                                                       long shardGroupId, Map<String, String> properties)
-+            throws DdlException {
-+        Map<Long, Long> newToOldShardId = new LinkedHashMap<>();
-+        Map<Long, List<Long>> newShardIdToGroupIds = new LinkedHashMap<>();
-+        for (Tablet originTablet : originTa
++            }
+             node.setType(fn.getReturnType());
+             return null;
+         }
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/LakeTableSchemaChangeJobColocateTest.java` (added, +674/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/IntervalSeconds.java` (added, +79/-0)
 ```diff
-@@ -0,0 +1,674 @@
+@@ -0,0 +1,79 @@
 +// Copyright 2021-present StarRocks, Inc. All rights reserved.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -1981,273 +1868,708 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package com.starrocks.alter;
++package com.starrocks.sql.analyzer;
 +
-+import com.google.common.collect.Table;
-+import com.staros.proto.FileCacheInfo;
-+import com.staros.proto.FilePathInfo;
-+import com.staros.proto.PlacementPolicy;
-+import com.staros.proto.ShardInfo;
-+import com.starrocks.alter.reshard.ColocateChecker;
-+import com.starrocks.alter.reshard.ReshardingMaterializedIndex;
-+import com.starrocks.alter.reshard.ReshardingTablet;
-+import com.starrocks.alter.reshard.TabletReshardJob;
-+import com.starrocks.alter.reshard.TabletReshardJobMgr;
-+import com.starrocks.alter.reshard.presplit.SampleSet;
-+import com.starrocks.catalog.ColocateRange;
-+import com.starrocks.catalog.ColocateRangeUtils;
-+import com.starrocks.catalog.ColocateTableIndex;
-+import com.starrocks.catalog.Column;
-+import com.starrocks.catalog.Database;
-+import com.starrocks.catalog.MaterializedIndex;
-+import com.starrocks.catalog.OlapTable;
-+import com.starrocks.catalog.PhysicalPartition;
-+import com.starrocks.catalog.Tablet;
-+import com.starrocks.catalog.TabletMeta;
-+import com.starrocks.catalog.TabletRange;
-+import com.starrocks.catalog.Tuple;
-+import com.starrocks.catalog.Variant;
-+import com.starrocks.common.Config;
-+import com.starrocks.common.Range;
-+import com.starrocks.common.jmockit.Deencapsulation;
-+import com.starrocks.lake.LakeTablet;
-+import com.starrocks.lake.StarOSAgent;
-+import com.starrocks.qe.ConnectContext;
-+import com.starrocks.server.GlobalStateMgr;
-+import com.starrocks.server.RunMode;
-+import com.starrocks.server.WarehouseManager;
-+import com.starrocks.sql.common.MetaUtils;
-+import com.starrocks.task.AgentBatchTask;
-+import com.starrocks.thrift.TStorageMedium;
-+import com.starrocks.transaction.GlobalTransactionMgr;
-+import com.starrocks.transaction.InsertTxnCommitAttachment;
-+import com.starrocks.transaction.TransactionState;
-+import com.starrocks.transaction.TransactionStatus;
-+import com.starrocks.type.IntegerType;
-+import com.starrocks.utframe.StarRocksAssert;
-+import com.starrocks.utframe.UtFrameUtils;
-+import com.starrocks.warehouse.cngroup.ComputeResource;
-+import mockit.Invocation;
-+import mockit.Mock;
-+import mockit.MockUp;
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
-+import org.junit.jupiter.api.Test;
++import com.starrocks.sql.ast.expression.DecimalLiteral;
++import com.starrocks.sql.ast.expression.Expr;
++import com.starrocks.sql.ast.expression.FloatLiteral;
++import com.starrocks.sql.ast.expression.StringLiteral;
++import com.starrocks.sql.parser.NodePosition;
 +
-+import java.util.ArrayList;
-+import java.util.HashMap;
-+import java.util.HashSet;
-+import java.util.LinkedHashMap;
-+import java.util.List;
-+import java.util.Map;
-+import java.util.Set;
-+import java.util.stream.Collectors;
-+
-+import static org.junit.jupiter.api.Assertions.assertEquals;
-+import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-+import static org.junit.jupiter.api.Assertions.assertNull;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
++import java.math.BigDecimal;
 +
 +/**
-+ * A heavy schema change of a table in a range colocate group creates every shadow shard in the partition's index shard
-+ * group and in the PACK shard group of the ColocateRange its origin tablet lies in, pinned to its origin shard. Tables
-+ * outside range colocate groups keep the single index shard group.
++ * The amount of an INTERVAL in SECOND. seconds_add and seconds_sub take it as an INT, so a fraction of a second would be
++ * lost; such an amount is added as whole seconds and microseconds instead.
 + */
-+public class LakeTableSchemaChangeJobColocateTest {
-+    private static ConnectContext connectContext;
-+    private static StarRocksAssert starRocksAssert;
-+    private static boolean savedEnableRangeDistribution;
++public final class IntervalSeconds {
++    private IntervalSeconds() {
++    }
 +
-+    @BeforeAll
-+    public static void setUp() throws Exception {
-+        // Keeps the reshard daemon, and the colocate checker it runs, from acting on the tables of the tests.
-+        new MockUp<TabletReshardJobMgr>() {
-+            @Mock
-+            protected void runAfterLeaseValid() {
++    /**
++     * Splits an amount of seconds into whole seconds and microseconds.
++     *
++     * @return {whole seconds, microseconds}, or null if the amount doesn't fit in an INT, which leaves it to the INT cast
++     * @throws SemanticException if the amount has more than 6 decimals: a datetime has no digits below microseconds
++     */
++    public static int[] split(BigDecimal seconds, NodePosition pos) {
++        // An INT holds at most 10 digits before the point, so a larger amount is left to the INT cast. This also keeps
++        // the arithmetic below away from the huge numbers a short exponent can describe, as in '1e100000000'.
++        if ((long) seconds.precision() - seconds.scale() > 10) {
++            return null;
++        }
++        BigDecimal exact = seconds.stripTrailingZeros();
++        if (exact.scale() > 6) {
++            // BigDecimal.toString() writes a long fraction such as '1e-100000000' with an exponent, so the message stays
++            // short
++            throw new SemanticException("The amount of an INTERVAL in SECOND can have at most 6 decimals "
++                    + "because a datetime has no digits below microseconds: " + seconds, pos);
++        }
++        BigDecimal[] wholeAndFraction = exact.divideAndRemainder(BigDecimal.ONE);
++        try {
++            return new int[] {wholeAndFraction[0].intValueExact(), wholeAndFraction[1].movePointRight(6).intValueExact()};
++        } catch (ArithmeticException e) {
++            // doesn't fit in an INT, which is what the function takes
++            return null;
++        }
++    }
++
++    /**
++     * The value of a decimal, floating point or string literal, or null for any other expression (also for a string that
++     * is not a number, which is left to the INT cast)
++     */
++    public static BigDecimal literalValue(Expr amount) {
++        try {
++            if (amount instanceof DecimalLiteral) {
++                return ((DecimalLiteral) amount).getValue();
++            } else if (amount instanceof FloatLiteral) {
++                return BigDecimal.valueOf(((FloatLiteral) amount).getValue());
++            } else if (amount instanceof StringLiteral) {
++                return new BigDecimal(((StringLiteral) amount).getValue().trim());
 +            }
++        } catch (NumberFormatException e) {
++            return null;
++        }
++        return null;
++    }
++}
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRule.java` (modified, +29/-35)
+```diff
+@@ -48,39 +48,33 @@
+ 
+ import java.util.Arrays;
+ import java.util.List;
+-import java.util.Objects;
++import java.util.Map;
+ import java.util.Set;
+ import java.util.function.Predicate;
+ import java.util.stream.Collectors;
+ 
+ public class SimplifiedPredicateRule extends BottomUpScalarOperatorRewriteRule {
+-    private static final ImmutableMap<String, List<String>> TIME_FNS = ImmutableMap.<String, List<String>>builder()
+-            .put("years_", ImmutableList.of(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB))
+-            .put("quarters_", ImmutableList.of(FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB))
+-            .put("months_", ImmutableList.of(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB))
+-            .put("weeks_", ImmutableList.of(FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB))
+-            .put("days_", ImmutableList.of(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB))
+-            .put("hours_", ImmutableList.of(FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB))
+-            .put("minutes_", ImmutableList.of(FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB))
+-            .put("seconds_", ImmutableList.of(FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB))
+-            .put("milliseconds_", ImmutableList.of(FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB))
+-            .put("microseconds_", ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB))
+-            .put("date", ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB))
+-            .build();
+-    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of("years_", "quarters_", "months_");
+-    private static final List<String> TIME_FN_NAMES = ImmutableList.<String>builder()
+-            .add(FunctionSet.YEARS_ADD).add(FunctionSet.YEARS_SUB)
+-            .add(FunctionSet.QUARTERS_ADD).add(FunctionSet.QUARTERS_SUB)
+-            .add(FunctionSet.MONTHS_ADD).add(FunctionSet.MONTHS_SUB)
+-            .add(FunctionSet.WEEKS_ADD).add(FunctionSet.WEEKS_SUB)
+-            .add(FunctionSet.DAYS_ADD).add(FunctionSet.DAYS_SUB)
+-            .add(FunctionSet.HOURS_ADD).add(FunctionSet.HOURS_SUB)
+-            .add(FunctionSet.MINUTES_ADD).add(FunctionSet.MINUTES_SUB)
+-            .add(FunctionSet.SECONDS_ADD).add(FunctionSet.SECONDS_SUB)
+-            .add(FunctionSet.MILLISECONDS_ADD).add(FunctionSet.MILLISECONDS_SUB)
+-            .add(FunctionSet.MICROSECONDS_ADD).add(FunctionSet.MICROSECONDS_SUB)
+-            .add(FunctionSet.DATE_ADD).add(FunctionSet.DATE_SUB)
+-            .build();
++    // The {add, sub} functions of each time unit. Only calls of the same unit are merged.
++    private static final List<List<String>> TIME_FN_UNITS = ImmutableList.of(
++            ImmutableList.of(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB),
++            ImmutableList.of(FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB),
++            ImmutableList.of(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB),
++            ImmutableList.of(FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB),
++            ImmutableList.of(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB),
++            ImmutableList.of(FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB),
++            ImmutableList.of(FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB),
++            ImmutableList.of(FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB),
++            ImmutableList.of(FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB),
++            ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB),
++            ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB));
++    // Each time function and the {add, sub} functions of its unit
++    private static final Map<String, List<String>> TIME_FNS = TIME_FN_UNITS.stream()
++            .flatMap(unit -> unit.stream().map(fn -> Map.entry(fn, unit)))
++            .collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
++    // years, quarters and months clamp to the month end, so they do not compose
++    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of(FunctionSet.YEARS_ADD,
++            FunctionSet.YEARS_SUB, FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB, FunctionSet.MONTHS_ADD,
++            FunctionSet.MONTHS_SUB);
+ 
+     private static final EliminateNegationsRewriter ELIMINATE_NEGATIONS_REWRITER = new EliminateNegationsRewriter();
+ 
+@@ -398,7 +392,7 @@ public ScalarOperator visitCall(CallOperator call, ScalarOperatorRewriteContext
+             return ifNull(call);
+         } else if (FunctionSet.ARRAY_MAP.equals(call.getFnName())) {
+             return arrayMap(call);
+-        } else if (TIME_FN_NAMES.contains(call.getFnName())) {
++        } else if (TIME_FNS.containsKey(call.getFnName())) {
+             return simplifiedTimeFns(call);
+         } else if (FunctionSet.DATE_TRUNC.equalsIgnoreCase(call.getFnName())) {
+             return simplifiedDateTrunc(call);
+@@ -443,8 +437,7 @@ public ScalarOperator visitLikePredicateOperator(LikePredicateOperator predicate
+
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/transformer/SqlToScalarOperatorTranslator.java` (modified, +80/-1)
+```diff
+@@ -24,6 +24,7 @@
+ import com.starrocks.qe.ConnectContext;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.sql.analyzer.ExpressionAnalyzer;
++import com.starrocks.sql.analyzer.IntervalSeconds;
+ import com.starrocks.sql.analyzer.RelationFields;
+ import com.starrocks.sql.analyzer.RelationId;
+ import com.starrocks.sql.analyzer.ResolvedField;
+@@ -109,12 +110,17 @@
+ import com.starrocks.sql.optimizer.operator.scalar.SubfieldOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.SubqueryOperator;
+ import com.starrocks.sql.optimizer.rewrite.ScalarOperatorRewriter;
++import com.starrocks.sql.parser.NodePosition;
++import com.starrocks.type.DateType;
+ import com.starrocks.type.FunctionType;
++import com.starrocks.type.IntegerType;
+ import com.starrocks.type.InvalidType;
+ import com.starrocks.type.JsonType;
++import com.starrocks.type.Type;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import java.math.BigDecimal;
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.List;
+@@ -563,7 +569,80 @@ public ScalarOperator visitTimestampArithmeticExpr(TimestampArithmeticExpr node,
+ 
+             Function fn = ExprUtils.getTimestampArithmeticFunction(node);
+             Preconditions.checkNotNull(fn, "TimestampArithmeticExpr must resolve to a function");
+-            return new CallOperator(fn.getFunctionName().getFunction(), node.getType(), arguments, fn);
++            String fnName = fn.getFunctionName().getFunction();
++            ScalarOperator fractionalSeconds = splitFractionalSeconds(fnName, node.getType(), arguments, node.getPos());
++            if (fractionalSeconds != null) {
++                return fractionalSeconds;
++            }
++            return new CallOperator(fnName, node.getType(), arguments, fn);
++        }
++
++        // seconds_add and seconds_sub take the amount as an INT, so `ts + INTERVAL '0.5' SECOND` would add NULL and
++        // `ts + INTERVAL 1.5 SECOND` one second. A constant amount that is a decimal, a floating point number or a
++        // string is added as whole seconds and microseconds instead:
++        // `ts + INTERVAL 1.5 SECOND` is `microseconds_add(seconds_add(ts, 1), 500000)`.
++        // Returns null if the call is not such an interval, and then it is built as it is.
++        private static ScalarOperator splitFractionalSeconds(String fnName, Type returnType,
++                                                             List<ScalarOperator> arguments, NodePosition pos) {
++            boolean add = FunctionSet.SECONDS_ADD.equals(fnName);
++            if (!add && !FunctionSet.SECONDS_SUB.equals(fnName)) {
++                return null;
++            }
++            ScalarOperator amount = arguments.get(1);
++            if (!amount.isConstantRef() && amount.isConstant()) {
++                // A constant expression, as in `TIMESTAMPADD(SECOND, 0.25 + 0.25, ts)`, is folded here. Later on the
++                // amount is cast to INT before constants are folded, which would drop the fraction.
++                ScalarOperatorRewriter rewriter = new ScalarOperatorRewriter();
++                amount = rewriter.rewrite(rewriter.rewrite(amount, ScalarOperatorRewriter.DEFAULT_TYPE_CAST_RULE),
++                        ScalarOperatorRewriter.FOLD_CONSTANT_RULES);
++            }
++            BigDecimal seconds = constantSeconds(amount);
++            if (seconds == null) {
++                return null;
++            }
++            int[] wholeSecondsAndMicroseconds = IntervalSeconds.split(seconds, pos);
++            if (wholeSecondsAndMicroseconds == null) {
++                return null;
++            }
++            int wholeSeconds = wholeSecondsAndMicroseconds[0];
++            int wholeMicroseconds = wholeSecondsAndMicroseconds[1];
++
++            String microsecondsFn = add ? FunctionSet.MICROSECONDS_ADD : FunctionSet.MICROSECONDS_SUB;
++            Type[] argTypes = {DateType.DATETIME, IntegerType.INT};
++            ScalarOperator result = arguments.get(0);
++            if (wholeSeconds != 0 || wholeMicroseconds == 0) {
++                result = new CallOperator(fnName, returnType,
++                        Lists.newArrayList(result, ConstantOperator.createInt(wholeSeconds)),
++                        ExprUtils.getBuiltinFunction(fnName, argTypes, Function.CompareMode.IS_IDENTICAL));
++            }
++            if (wholeMicroseconds != 0) {
++                result = new CallOperator(microsecondsFn, returnType,
++                        Lists.newArrayList(result, ConstantOperator.createInt(wholeMicroseconds)),
++                        ExprUtils.getBuiltinFunction(microsecondsFn, argTypes, Function.CompareMode.IS_IDENTICAL));
++            }
++            return result;
++        }
++
++        // The value of a constant decimal, floating point or string amount, or null for any other amount (also for a
++        // string that is not a number, which is left to the cast to INT of the function argument)
++        private static Bi
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRuleTest.java` (modified, +104/-1)
+```diff
+@@ -16,21 +16,30 @@
+ package com.starrocks.sql.optimizer.rewrite.scalar;
+ 
+ import com.google.common.collect.Lists;
++import com.starrocks.catalog.Function;
++import com.starrocks.catalog.FunctionSet;
+ import com.starrocks.sql.ast.expression.BinaryType;
++import com.starrocks.sql.ast.expression.ExprUtils;
+ import com.starrocks.sql.optimizer.operator.OperatorType;
+ import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
++import com.starrocks.sql.optimizer.operator.scalar.CallOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.CaseWhenOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.ConstantOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.LikePredicateOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.ScalarOperator;
+ import com.starrocks.sql.plan.PlanTestBase;
+ import com.starrocks.type.BooleanType;
++import com.starrocks.type.DateType;
+ import com.starrocks.type.IntegerType;
++import com.starrocks.type.Type;
+ import com.starrocks.type.VarcharType;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.Test;
+ 
++import java.util.Arrays;
++import java.util.List;
++
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ 
+ public class SimplifiedPredicateRuleTest extends PlanTestBase {
+@@ -42,6 +51,24 @@ public class SimplifiedPredicateRuleTest extends PlanTestBase {
+     private static final ConstantOperator OB_FALSE = ConstantOperator.createBoolean(false);
+     private static final ConstantOperator OB_TRUE = ConstantOperator.createBoolean(true);
+ 
++    // The {add, sub} functions of each unit whose nested calls with constant amounts are merged
++    private static final String[][] TIME_FN_UNITS = {
++            {FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB},
++            {FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB},
++            {FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB},
++            {FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB},
++            {FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB},
++            {FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB},
++            {FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB},
++            {FunctionSet.DATE_ADD, FunctionSet.DATE_SUB},
++    };
++    // Years, quarters and months clamp to the month end, so their nested calls are not merged
++    private static final String[][] MONTH_BASED_TIME_FN_UNITS = {
++            {FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB},
++            {FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB},
++            {FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB},
++    };
++
+     private SimplifiedPredicateRule rule = new SimplifiedPredicateRule();
+ 
+     @BeforeAll
+@@ -163,4 +190,80 @@ public void applyHourToDatetimeRewrite() throws Exception {
+         starRocksAssert.query("SELECT hour(to_datetime(ts, 4)) FROM test_timestamp")
+                 .explainWithout("hour_from_unixtime");
+     }
+-}
+\ No newline at end of file
++
++    private static CallOperator timeFn(String name, ScalarOperator datetime, int amount) {
++        Function fn = ExprUtils.getBuiltinFunction(name, new Type[] {DateType.DATETIME, IntegerType.INT},
++                Function.CompareMode.IS_IDENTICAL);
++        return new CallOperator(name, DateType.DATETIME,
++                Lists.newArrayList(datetime, ConstantOperator.createInt(amount)), fn);
++    }
++
++    @Test
++    public void mergeTimeFnsOfTheSameUnit() {
++        ColumnRefOperator ts = new ColumnRefOperator(1, DateType.DATETIME, "ts", true);
++        for (String[] unit : TIME_FN_UNITS) {
++            String add = unit[0];
++            String sub = unit[1];
++            assertEquals(add + "(1: ts, 7)", rule.apply(timeFn(add, timeFn(add, ts, 3), 4), null).toString());
++            assertEquals(sub + "(1: ts, 2)", rule.apply(timeFn(sub, timeFn(add, ts, 3), 5), null).toString());
++            assertEquals(add + "(1: ts, 2)", rule.apply(timeFn(add, timeFn(sub, ts, 3), 5), null).toString());
++            assertEquals(sub + "(1: ts, 7)", rule.apply(timeFn(sub, timeFn(sub, ts, 3), 4), null).toString());
++            // the amounts cancel out
++            assertEquals("1: ts", rule.apply(timeFn(sub, timeFn(add, ts, 3), 3), null).toString());
++        }
++        for (String[] unit : MONTH_BASED_TIME_FN_UNITS) {
++            for (String outerFn : unit) {
++                for (String innerFn : unit) {
++                    CallOperator call = timeFn(outerFn, timeFn(innerFn, ts, 3), 4);
++                    assertEquals(call.toString(), rule.apply(call, null).toString(), outerFn + " over " + innerFn);
++                }
++            }
++        }
++    }
++
++    @Test
++    public void doNotMergeTimeFnsOfDifferentUnits() {
++        ColumnRefOperator ts = new ColumnRefOperator(1, DateType.DATETIME, "ts", true);
++        List<String[]> units = Lists.newArrayList(TIME_FN_UNITS);
++        units.addAll(Arrays.asList(MONTH_BASED_TIME_FN_UNITS));
++        for 
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExpressionTest.java` (modified, +81/-0)
+```diff
+@@ -257,6 +257,87 @@ public void testTimestampArithmeticExpr() throws Exception {
+                 + "  |  <slot 14> : days_sub(15: cast, 3)\n"));
+     }
+ 
++    // seconds_add takes its amount as an INT, so a fraction of a second is added with microseconds_add
++    @Test
++    public void testIntervalWithFractionalSeconds() throws Exception {
++        String[][] cases = {
++                {"id_datetime + interval '0.5' second", "microseconds_add(8: id_datetime, 500000)"},
++                {"id_datetime + interval 1.5 second", "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
++                {"id_datetime - interval 1.5 second", "microseconds_sub(seconds_sub(8: id_datetime, 1), 500000)"},
++                {"interval 1.5 second + id_datetime", "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
++                {"id_datetime + interval -0.25 second", "microseconds_add(8: id_datetime, -250000)"},
++                {"id_datetime + interval -1.5 second", "microseconds_add(seconds_add(8: id_datetime, -1), -500000)"},
++                {"id_datetime + interval 0.000001 second", "microseconds_add(8: id_datetime, 1)"},
++                {"id_datetime + interval 1e0 second", "seconds_add(8: id_datetime, 1)"},
++                {"id_datetime + interval 0.5e0 second", "microseconds_add(8: id_datetime, 500000)"},
++                {"date_add(id_datetime, interval '3000.000001' second)",
++                        "microseconds_add(seconds_add(8: id_datetime, 3000), 1)"},
++                {"timestampadd(second, 2.5, id_datetime)", "microseconds_add(seconds_add(8: id_datetime, 2), 500000)"},
++                // the amount is still a number of seconds when it has a fraction of zero
++                {"id_datetime + interval '5.0' second", "seconds_add(8: id_datetime, 5)"},
++                {"id_datetime + interval 5.00 second", "seconds_add(8: id_datetime, 5)"},
++                // amounts without a fraction are as before
++                {"id_datetime + interval 2 second", "seconds_add(8: id_datetime, 2)"},
++                {"id_datetime + interval '2' second", "seconds_add(8: id_datetime, 2)"},
++                {"id_datetime - interval 2 second", "seconds_sub(8: id_datetime, 2)"},
++                // and the other calls on the same value are not merged with it
++                {"id_datetime + interval 1.5 second + interval 1 second",
++                        "seconds_add(microseconds_add(seconds_add(8: id_datetime, 1), 500000), 1)"},
++                {"id_datetime + interval 1.5 second + interval 250 millisecond",
++                        "milliseconds_add(microseconds_add(seconds_add(8: id_datetime, 1), 500000), 250)"},
++                // a constant expression is folded first
++                {"timestampadd(second, 0.25 + 0.25, id_datetime)", "microseconds_add(8: id_datetime, 500000)"},
++                {"id_datetime + interval cast('1.5' as decimal(10, 1)) second",
++                        "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
++                {"date_sub(id_datetime, interval cast(3 as double) / 4 second)", "microseconds_sub(8: id_datetime, 750000)"},
 +        };
-+        UtFrameUtils.createMinStarRocksCluster(RunMode.SHARED_DATA);
-+        // The tests run the schema change jobs themselves; nothing may run them in the background.
-+        UtFrameUtils.stopBackgroundSchemaChangeHandler(60000);
-+        connectContext = UtFrameUtils.createDefaultCtx();
-+        starRocksAssert = new StarRocksAssert(connectContext);
-+        starRocksAssert.withDatabase("test").useDatabase("test");
-+        savedEnableRangeDistribution = Config.enable_range_distribution;
-+        Config.enable_range_distribution = true;
++        for (String[] c : cases) {
++            String plan = getFragmentPlan("select " + c[0] + " from test_all_type");
++            assertContains(plan, c[1]);
++        }
 +    }
 +
-+    @AfterAll
-+    public static void tearDown() {
-+        Config.enable_range_distribution = savedEnableRangeDistribution;
++    @Test
++    public void testIntervalWithSecondsFinerThanMicroseconds() {
++        // DATETIME has no digits below microseconds
++        SemanticException e = assertThrows(SemanticException.class,
++                () -> getFragmentPlan("select id_datetime + interval 0.1234567 second from test_all_type"));
++        assertContains(e.getMessage(), "0.1234567");
++        assertThrows(SemanticException.class,
++                () -> getFragmentPlan("select id_datetime + interval '1.0000001' second from test_all_type"));
++        // also when the amount is a constant expression
++        assertThrows(SemanticException.class,
++                () -> getFragmentPlan("select timestampadd(second, 0.0000001 + 0, id_datetime) from test_all_type"));
 +    }
 +
-+    // ----------
++    // A literal amount is checked when the expression is analyzed, so a definition that uses it is refused when it is
++    // created, rather than each time it is used
++    @Test
++    public void testDefinitionWithSecondsFinerThanMicroseconds() {
++        Exception e = assertThrows(Exception.class, () -> starRocksAssert.withTable("CREATE TABLE t_interval_generated (\n" +
++                "  k1 INT NOT NULL,\n" +
++                "  ts DATETIME NOT NULL,\n" +
++                "  ts2 DATETIME NULL AS ts + INTERVAL 0.1234567 SECOND\n" +
++                ") DUPLICATE KEY(k1) DISTRIBUTED BY HASH(k1) BUCKETS 1 PROPERTIES ('replication_num' = '1')"));
++        assertContains(e.getMessage(), "at most 6 decimals");
++
++        e = assertThrows(Exception.class, () -> starRocksAssert.withView(
++                "create view v_interval_finer as select id_datetime + interval '0.1234567' second from test_all_type"));
+
 ```
 
 ---
 
-### Incident Patch 3: `d67954ce` (2026-11-09)
-**Commit Message**: [BugFix][RB-225] Stop pushing down Delta Lake predicates through a type-changing cast (#82640)
+### Incident Patch 2: `dcd391a9` (2026-11-12)
+**Commit Message**: [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (#82995)
 
 Co-authored-by: tqqq <[REDACTED_EMAIL]>
 Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExpr.java` (modified, +4/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculator.java` (modified, +15/-6)
 ```diff
-@@ -449,7 +449,10 @@ public String visitVariableReference(ColumnRefOperator operator, Void context) {
+@@ -312,9 +312,11 @@ public Void visitOperator(Operator node, ExpressionContext context) {
+             Map<ColumnRefOperator, SubfieldOperator> subfieldColumns = Maps.newHashMap();
+             Preconditions.checkState(projection.getCommonSubOperatorMap().isEmpty());
+             for (Map.Entry<ColumnRefOperator, ScalarOperator> entry : projection.getColumnRefMap().entrySet()) {
+-                if (entry.getValue() instanceof SubfieldOperator && (node instanceof LogicalScanOperator ||
+-                        node instanceof PhysicalScanOperator)) {
+-                    subfieldColumns.put(entry.getKey(), (SubfieldOperator) entry.getValue());
++                if (entry.getValue() instanceof SubfieldOperator subfieldOperator &&
++                        (node instanceof LogicalScanOperator ||
++                        node instanceof PhysicalScanOperator) &&
++                        canUseSubfieldStatistics(subfieldOperator)) {
++                    subfieldColumns.put(entry.getKey(), subfieldOperator);
+                 } else {
+                     statisticsBuilder.addColumnStatistic(entry.getKey(),
+                             ExpressionStatisticCalculator.calculate(entry.getValue(), statisticsBuilder.build()));
+@@ -329,6 +331,12 @@ public Void visitOperator(Operator node, ExpressionContext context) {
+         return null;
+     }
  
-         @Override
-         public String visitCastOperator(CastOperator operator, Void context) {
--            if (operator.isTruncatingCharCast()) {
-+            // Stripping a non-identity cast can change predicate semantics and incorrectly prune files,
-+            // e.g. cast(date_col AS datetime) < '2020-01-01 10:00:00' must not become date_col < '2020-01-01'.
-+            // Any non-identity cast that still reaches this converter must remain a residual predicate.
-+            if (!operator.getType().equals(operator.getChild(0).getType())) {
-                 return null;
++    private static boolean canUseSubfieldStatistics(SubfieldOperator subfieldOperator) {
++        // Persistent subfield statistics paths must be rooted directly at a table column. Expression roots such as
++        // array_col[1] cannot be represented by a persistent STRUCT path.
++        return subfieldOperator.getChild(0) instanceof ColumnRefOperator;
++    }
++
+     private void addSubFiledStatistics(Operator node, Map<ColumnRefOperator, SubfieldOperator> subfieldColumns,
+                                        Statistics.Builder statisticsBuilder) {
+         if (!(node instanceof LogicalScanOperator) && !(node instanceof PhysicalScanOperator)) {
+@@ -1230,11 +1238,12 @@ private Void computeProjectNode(ExpressionContext context,
+ 
+         for (ColumnRefOperator requiredColumnRefOperator : columnRefMap.keySet()) {
+             ScalarOperator mapOperator = columnRefMap.get(requiredColumnRefOperator);
+-            if (mapOperator instanceof SubfieldOperator && context.getOptExpression() != null) {
++            if (mapOperator instanceof SubfieldOperator subfieldOperator &&
++                    canUseSubfieldStatistics(subfieldOperator) &&
++                    context.getOptExpression() != null) {
+                 Operator child = context.getOptExpression().inputAt(0).getOp();
+                 if (child instanceof LogicalScanOperator || child instanceof PhysicalScanOperator) {
+-                    addSubFiledStatistics(child, ImmutableMap.of(requiredColumnRefOperator,
+-                            (SubfieldOperator) mapOperator), builder);
++                    addSubFiledStatistics(child, ImmutableMap.of(requiredColumnRefOperator, subfieldOperator), builder);
+                     continue;
+                 }
              }
-             return operator.getChild(0).accept(this, context);
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExprTest.java` (modified, +85/-2)
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculatorTest.java` (modified, +217/-0)
 ```diff
-@@ -195,10 +195,93 @@ public void testTruncatingCharCastIsNotPushedDown() {
-         Predicate expected = new Predicate("=", cDeltaIntCol, Literal.ofInt(5));
-         Assertions.assertEquals(expected.toString(), converter.convert(List.of(equality, safeEquality), context).toString());
+@@ -33,6 +33,7 @@
+ import com.starrocks.qe.ConnectContext;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.server.MetadataMgr;
++import com.starrocks.sql.analyzer.SemanticException;
+ import com.starrocks.sql.ast.JoinOperator;
+ import com.starrocks.sql.ast.expression.BinaryType;
+ import com.starrocks.sql.common.StarRocksPlannerException;
+@@ -51,27 +52,37 @@
+ import com.starrocks.sql.optimizer.dump.MockDumpInfo;
+ import com.starrocks.sql.optimizer.dump.QueryDumpInfo;
+ import com.starrocks.sql.optimizer.operator.AggType;
++import com.starrocks.sql.optimizer.operator.Projection;
+ import com.starrocks.sql.optimizer.operator.UKFKConstraints;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalAggregationOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalEsScanOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalIcebergScanOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalJoinOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalKuduScanOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalOlapScanOperator;
++import com.starrocks.sql.optimizer.operator.logical.LogicalProjectOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalUnionOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalValuesOperator;
+ import com.starrocks.sql.optimizer.operator.logical.LogicalWindowOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.CallOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.CastOperator;
++import com.starrocks.sql.optimizer.operator.scalar.CollectionElementOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.CompoundPredicateOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.ConstantOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.InPredicateOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.ScalarOperator;
++import com.starrocks.sql.optimizer.operator.scalar.SubfieldOperator;
+ import com.starrocks.sql.plan.ConnectorPlanTestBase;
++import com.starrocks.statistic.StatisticUtils;
++import com.starrocks.thrift.TExplainLevel;
++import com.starrocks.type.ArrayType;
+ import com.starrocks.type.DateType;
+ import com.starrocks.type.IntegerType;
++import com.starrocks.type.StructField;
++import com.starrocks.type.StructType;
++import com.starrocks.type.Type;
+ import com.starrocks.type.VarcharType;
+ import com.starrocks.utframe.StarRocksAssert;
+ import com.starrocks.utframe.UtFrameUtils;
+@@ -315,6 +326,212 @@ public void testLogicalOlapTableScan() throws Exception {
+         }
+     }
  
-+        // An implicit CHAR cast still changes the type, so it is not stripped either.
-         ScalarOperator implicitEquality = new BinaryPredicateOperator(BinaryType.EQ,
-                 new CastOperator(new CharType(5), cVarcharCol, true), value);
--        expected = new Predicate("=", cDeltaVarcharCol, Literal.ofString("hello"));
--        Assertions.assertEquals(expected.toString(), converter.convert(List.of(implicitEquality), context).toString());
-+        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(implicitEquality), context));
-+    }
-+
++    /**
++     * Operator level test for both call sites that ask the statistics storage for a subfield path: the projection of a
++     * scan operator, and a LogicalProject on top of a scan. A query reaches the first one, see
++     * {@link #testQueryWithSubfieldOfArrayElement()}, but not the second one, because the project is merged into the
++     * scan projection before statistics are estimated. That branch is therefore covered by a hand built operator tree.
++     */
 +    @Test
-+    public void testTypeChangingCastIsNotPushedDown() {
-+        ScalarOperationToDeltaLakeExpr converter = new ScalarOperationToDeltaLakeExpr();
-+        ScalarOperationToDeltaLakeExpr.DeltaLakeContext context =
-+                new ScalarOperationToDeltaLakeExpr.DeltaLakeContext(schema, new HashSet<>());
-+        ConstantOperator ts = ConstantOperator.createDatetime(LocalDateTime.of(2020, 1, 1, 10, 0, 0));
++    public void testSkipStatisticsForSubfieldOfArrayElement() {
++        GlobalStateMgr globalStateMgr = connectContext.getGlobalStateMgr();
++        OlapTable table = (OlapTable) globalStateMgr.getLocalMetastore().getDb("statistics_test")
++                .getTable("test_all_type");
++        List<Long> partitionIds = table.getPartitions().stream()
++                .mapToLong(Partition::getId).boxed().collect(Collectors.toList());
 +
-+        // cast(c_date AS datetime) < '2020-01-01 10:00:00' must not become c_date < 2020-01-01,
-+        // which would prune c_date = 2020-01-01 although it satisfies the original predicate.
-+        for (BinaryType op : List.of(BinaryType.LT, BinaryType.LE, BinaryType.EQ, BinaryType.GE, BinaryType.GT)) {
-+            ScalarOperator predicate = new BinaryPredicateOperator(op,
-+                    new CastOperator(com.starrocks.type.DateType.DATETIME, cDateCol), ts);
-+            Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(predicate), context), op.toString());
-+        }
++        Type structType = new StructType(
++                new ArrayList<>(List.of(new StructField("bucket_id", IntegerType.INT))));
++        Type arrayType = new ArrayType(structType);
++        Column arrayColumn = new Column("bucket_array", arrayType, true);
++        ColumnRefOperator arrayRef = columnRefFactory.create("bucket_array", arrayType, true);
++        ColumnRefOperator outputRef = columnRefFactory.create("bucket_id", IntegerType.INT, true);
++        CollectionElementOperator arrayElement = new CollectionElementOperator(
++                structType, arrayRef, ConstantOperator.createInt(1), false);
++        SubfieldOperator subfield = new SubfieldOperator(
++                arrayElement, IntegerType.INT, List.of("bucket_id"));
 +
-+        // cast(c_date AS varchar) < '2020-01-01 00:00:01' compares strings, so '2020-01-01' matches;
-+        // it must not become c_date < 2020-01-01.
-+        ScalarOperator toVarchar = new BinaryPredicateOperator(BinaryType.LT,
-+                new CastOperator(VarcharType.VARCHAR, cDateCol), ConstantOperator.createVarchar("2020-01-01 00:00:01"));
-+        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(toVarchar), context));
-+
-+        // cast(c_long AS int) = 5 must not become c_long = 5: values overflowing int also satisfy it.
-+        ScalarOperator narrowing = new BinaryPredicateOperator(BinaryType.EQ,
-+                new CastOperator(com.starrocks.type.IntegerType.INT, cLongCol), ConstantOperator.createInt(5));
-+        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(narrowing), context));
-+
-+        // The other conjuncts are still pushed down.
-+        ScalarOperator safeEquality = new BinaryPredicateOperator(BinaryType.EQ, cIntCol,
-+                ConstantOperator.createInt(5));
-+        Predicate expected = new Predicate("=", cDeltaIntCol, Literal.ofInt(5));
-+        Assertions.assertEquals(expected.toString(),
-+                converter.convert(List.of(narrowing, safeEquality), context).toString());
-+
-+        // An identity cast is still stripped and pushed down.
-+        ScalarOperator identity = new BinaryPredicateOperator(BinaryType.EQ,
-+                new CastOperator(com.starrocks.type.IntegerType.INT, cIntCol), ConstantOperator.createInt(5));
-+        Assertions.assertEquals(expected.toString(), converter.convert(List.of(identity), context).toString());
-+    }
-+
-+    @Test
-+    public void testTypeChangingCastInNestedAndCompoundPredicates() {
-+        ScalarOperationToDeltaLakeExpr converter = new ScalarOperationToDeltaLakeExpr();
-+        ScalarOperationToDeltaLakeExpr.DeltaLakeContext context =
-+                new ScalarOperationToDeltaLakeExpr.DeltaLakeContext(schema, new HashSet<>());
-+        ScalarOperator castToVarcharLt = new BinaryPredicateOperator(BinaryType.LT,
-+                new CastOperator(VarcharType.VARCHAR, cDateCol), ConstantOperator.createVarchar("2020-01-01 00:00:01"));
-+        ScalarOperator safeEquality = new BinaryPredicateOperator(BinaryType.EQ, cIntCol, ConstantOperator.createInt(5));
-+        Predicate expected = new Predicate("=", cDeltaIntCol, Literal.ofInt(5));
-+
-+        // Nested casts: a type change anywhere in the chain blocks pushdown; a chain of identity casts does not.
-+        ScalarOperator nestedNarrowing = new BinaryPredicateOperator(BinaryType.EQ,
-+                new CastOperator(com.starrocks.type.IntegerType.INT,
-+                        new CastOperator(com.starrocks.type.IntegerType.BIGINT, cIntCol)),
-+                ConstantOperator.createInt(5));
-+        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(nestedNarrowing), context));
-+        ScalarOperator nestedIdentity = new BinaryPredicateOperator(BinaryType.EQ,
-+                new CastOperator(com.starrocks.type.IntegerType.INT,
-+
++        LogicalOlapScanOperator scanOperator = new LogicalOlapScanOperator(table,
++                ImmutableMap.of(arrayRef, arrayColumn),
++                ImmutableMap.of(arrayColumn, arrayRef),
++                null, -1, null,
++                table.getBaseIndexMetaId(),
++                partitionIds,
++                null,
++                false,
++                Lists.newArrayList(),
++                Lists.newArrayList(),
++                Lists.newArrayList(),
++                false);
++        scanOperator.setProjection(new Projection(ImmutableMap.of(outputRe
 ```
 
-**File**: `test/sql/test_deltalake/R/test_deltalake_cast_predicate_pushdown` (added, +27/-0)
+---
+
+### Incident Patch 3: `234fea95` (2026-11-12)
+**Commit Message**: [BugFix] Keep constant columns in MAP casts (#82964)
+
+Signed-off-by: Viktor Gnidenko <[REDACTED_EMAIL]>
+
+**File**: `be/src/exprs/cast_nested.cpp` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,27 @@
-+-- name: test_deltalake_cast_predicate_pushdown
-+create external catalog delta_test_${uuid0} PROPERTIES (
-+    "type"="deltalake",
-+    "hive.metastore.uris"="${deltalake_catalog_hive_metastore_uris}",
-+    "aws.s3.access_key"="${oss_ak}",
-+    "aws.s3.secret_key"="${oss_sk}",
-+    "aws.s3.endpoint"="${oss_endpoint}"
-+);
+@@ -57,6 +57,9 @@ StatusOr<ColumnPtr> CastMapExpr::evaluate_checked(ExprContext* context, Chunk* p
+     auto casted_map = MapColumn::create(casted_key_column, casted_value_column,
+                                         ColumnHelper::as_column<UInt32Column>(std::move(*src_offsets_column).mutate()));
+     RETURN_IF_ERROR(down_cast<MapColumn*>(casted_map->as_mutable_raw_ptr())->unfold_const_children(_type));
++    if (orig_column->is_constant()) {
++        return ConstColumn::create(std::move(casted_map), orig_column->size());
++    }
+     if (!orig_column->is_nullable()) {
+         return casted_map;
+     }
+```
+
+**File**: `be/test/exprs/cast_expr_core_test.cpp` (modified, +59/-0)
+```diff
+@@ -14,8 +14,13 @@
+ 
+ #include <gtest/gtest.h>
+ 
++#include "column/chunk.h"
++#include "column/column_helper.h"
++#include "column/const_column.h"
++#include "column/map_column.h"
+ #include "common/object_pool.h"
+ #include "exprs/cast_expr.h"
++#include "exprs/column_ref.h"
+ 
+ namespace starrocks {
+ 
+@@ -39,6 +44,21 @@ TypeDescriptor make_array_type(LogicalType elem_type) {
+     return array_type;
+ }
+ 
++const auto int_map_type = TypeDescriptor::create_map_type(TYPE_INT_DESC, TYPE_INT_DESC);
++const auto bigint_key_map_type = TypeDescriptor::create_map_type(TYPE_BIGINT_DESC, TYPE_INT_DESC);
++
++StatusOr<ColumnPtr> cast_map(ColumnPtr input) {
++    ObjectPool pool;
++    auto* input_expr = pool.add(new ColumnRef(int_map_type, 0));
++    auto* expr = VectorizedCastExprFactory::from_type(int_map_type, bigint_key_map_type, input_expr, &pool);
++    if (expr == nullptr) {
++        return Status::InternalError("Failed to create MAP cast expression");
++    }
++    Chunk chunk;
++    chunk.append_column(std::move(input), 0);
++    return expr->evaluate_checked(nullptr, &chunk);
++}
++
+ } // namespace
+ 
+ TEST(CastExprCoreTest, from_thrift_succeeds_for_primitive_cast) {
+@@ -59,4 +79,43 @@ TEST(CastExprCoreTest, from_thrift_returns_null_for_unsupported_cast) {
+     EXPECT_EQ(nullptr, expr);
+ }
+ 
++TEST(CastExprCoreTest, map_cast_preserves_constant) {
++    auto input = ColumnHelper::create_column(int_map_type, false);
++    input->append_datum(DatumMap{{int32_t{1}, int32_t{7}}});
++    auto result = cast_map(ConstColumn::create(std::move(input), 4));
++    ASSERT_TRUE(result.ok()) << result.status();
++    ASSERT_EQ(4, result.value()->size());
++    ASSERT_TRUE(result.value()->is_constant());
++
++    const auto* map = down_cast<const MapColumn*>(ColumnHelper::get_data_column(result.value().get()));
++    EXPECT_EQ(1, map->size());
++    EXPECT_EQ("{1:7}", map->debug_item(0));
++    EXPECT_NE(nullptr, dynamic_cast<const Int64Column*>(ColumnHelper::get_data_column(map->keys_column().get())));
++}
++
++TEST(CastExprCoreTest, map_cast_preserves_nullable_rows) {
++    auto input = ColumnHelper::create_column(int_map_type, true);
++    input->append_datum(DatumMap{{int32_t{1}, int32_t{7}}});
++    input->append_nulls(1);
++    input->append_datum(DatumMap{});
++    input->append_datum(DatumMap{{int32_t{2}, int32_t{9}}});
++    auto result = cast_map(std::move(input));
++    ASSERT_TRUE(result.ok()) << result.status();
++    const auto& output = result.value();
++    ASSERT_EQ(4, output->size());
++    EXPECT_FALSE(output->is_constant());
++    ASSERT_TRUE(output->is_nullable());
++    EXPECT_EQ("{1:7}", output->debug_item(0));
++    EXPECT_TRUE(output->is_null(1));
++    EXPECT_EQ("{}", output->debug_item(2));
++    EXPECT_EQ("{2:9}", output->debug_item(3));
++}
++
++TEST(CastExprCoreTest, map_cast_preserves_constant_null) {
++    auto result = cast_map(ColumnHelper::create_const_null_column(4));
++    ASSERT_TRUE(result.ok()) << result.status();
++    EXPECT_EQ(4, result.value()->size());
++    EXPECT_TRUE(result.value()->only_null());
++}
++
+ } // namespace starrocks
+```
+
+**File**: `test/sql/test_map/R/test_cast_constant_map` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++-- name: test_cast_constant_map
++WITH t AS (
++    SELECT generate_series AS id, CAST(parse_json('{"1":7}') AS MAP<INT,INT>) AS m
++    FROM TABLE(generate_series(1,4))
++)
++SELECT CAST(m AS MAP<BIGINT,INT>) AS m FROM t;
 +-- result:
-+-- !result
-+select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) < '2024-04-25 00:00:01' group by col_date order by col_date;
-+-- result:
-+2024-04-24	3
-+2024-04-25	3
-+-- !result
-+select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) >= '2024-04-25 00:00:01' group by col_date order by col_date;
-+-- result:
-+2024-04-26	3
-+2024-04-27	3
-+-- !result
-+function: assert_explain_verbose_contains("select * from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where col_date < '2024-04-25'", "partitions=1/4")
-+-- result:
-+None
-+-- !result
-+drop catalog delta_test_${uuid0};
-+-- result:
++{1:7}
++{1:7}
++{1:7}
++{1:7}
 +-- !result
 ```
 
-**File**: `test/sql/test_deltalake/T/test_deltalake_cast_predicate_pushdown` (added, +20/-0)
+**File**: `test/sql/test_map/T/test_cast_constant_map` (added, +6/-0)
 ```diff
-@@ -0,0 +1,20 @@
-+-- name: test_deltalake_cast_predicate_pushdown
-+-- description: A cast that changes the column type must not be stripped when pushing a predicate down to the
-+-- Delta kernel. cast(col_date AS varchar) < '2024-04-25 00:00:01' compares strings, so '2024-04-25' matches;
-+-- it used to be pushed as col_date < '2024-04-25', which pruned the 2024-04-25 partition.
-+-- Fixture (DATE partition, 3 rows for each of 2024-04-24 .. 2024-04-27): delta_oss_db.delta_lake_par_col_date.
-+
-+create external catalog delta_test_${uuid0} PROPERTIES (
-+    "type"="deltalake",
-+    "hive.metastore.uris"="${deltalake_catalog_hive_metastore_uris}",
-+    "aws.s3.access_key"="${oss_ak}",
-+    "aws.s3.secret_key"="${oss_sk}",
-+    "aws.s3.endpoint"="${oss_endpoint}"
-+);
-+
-+select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) < '2024-04-25 00:00:01' group by col_date order by col_date;
-+select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) >= '2024-04-25 00:00:01' group by col_date order by col_date;
-+-- control: no cast, still pruned
-+function: assert_explain_verbose_contains("select * from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where col_date < '2024-04-25'", "partitions=1/4")
-+
-+drop catalog delta_test_${uuid0};
+@@ -0,0 +1,6 @@
++-- name: test_cast_constant_map
++WITH t AS (
++    SELECT generate_series AS id, CAST(parse_json('{"1":7}') AS MAP<INT,INT>) AS m
++    FROM TABLE(generate_series(1,4))
++)
++SELECT CAST(m AS MAP<BIGINT,INT>) AS m FROM t;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #82708** (2026-11-09): [BugFix][RB-97] Realign stable range colocate groups that received tablets cut against stale ranges (backport #82699) (@mergify[bot])
-- **PR #82707** (2026-11-09): [BugFix][RB-97] Realign stable range colocate groups that received tablets cut against stale ranges (backport #82699) (@mergify[bot])
-- **PR #82706** (2026-11-09): [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (backport #82700) (@mergify[bot])
-- **PR #82705** (2026-11-09): [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (backport #82700) (@mergify[bot])
-- **PR #82700** (2026-11-09): [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (@starrocks-bot[bot])
-- **PR #82699** (2026-11-09): [BugFix][RB-97] Realign stable range colocate groups that received tablets cut against stale ranges (@starrocks-bot[bot])
+- **PR #83011** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
+- **PR #83010** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
+- **PR #83009** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
+- **PR #83007** (2026-11-12): [BugFix] Keep constant columns in MAP casts (backport #82964) (@mergify[bot])
+- **PR #83004** (2026-11-12): [Doc] Merge the warehouse and privilege partials into their pages (backport #82999) (@mergify[bot])
+- **PR #83003** (2026-11-12): [Doc] Merge the warehouse and privilege partials into their pages (backport #82999) (@mergify[bot])
 
 ---
 
@@ -2267,33 +2589,37 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [UT] Accept the non-finite query vector error and run test_vector_index_query_ve
+## X. [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)
 
 **RULE**:
-When implementing operations in `test/sql/test_vector_index_query_vector_overflow/R/test_vector_index_query_vector_overflow`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d686f0a`: [UT] Accept the non-finite query vector error and run test_vector_index_query_vector_overflow on shared-data (#82665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf73116b`: [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/sql/test_vector_index_query_vector_overflow/R/test_vector_index_query_vector_overflow`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
--- name: test_vector_index_query_vector_overflow @sequential
--- nbits=8 trains 256 PQ centroids, so the load must contain at least that many rows
--- or faiss rejects it ('nx >= k') before the query vector is checked.
-INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 256)) t(number);
-[REGEX].*(invalid query vector element|query vector contains a non-finite element).*
+import java.math.BigDecimal;
+            String fnName = fn.getFunctionName().getFunction();
+            if (FunctionSet.SECONDS_ADD.equals(fnName) || FunctionSet.SECONDS_SUB.equals(fnName)) {
+                // A literal amount with more than 6 decimals is refused here already, so that a definition that uses it,
+                // such as a generated column or a view, is refused when it is created rather than each time it is used
+                BigDecimal seconds = IntervalSeconds.literalValue(node.getChild(1));
+                if (seconds != null) {
+                    IntervalSeconds.split(seconds, node.getPos());
+                }
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 64)) t(number);
-[REGEX].*invalid query vector element.*
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d686f0a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf73116b` are properly handled with clean fallback behavior.

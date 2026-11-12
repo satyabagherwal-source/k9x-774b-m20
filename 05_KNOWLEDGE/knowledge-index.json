@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T03:56:24.015Z",
+  "last_updated": "2026-11-12T04:24:38.541Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -60051,8 +60051,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "d1531769",
-      "content_hash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
+      "source_version": "bf73116b",
+      "content_hash": "e2ca9c5f2f2cd4d90128a33b256a6fb837a225eba5305106a90e41fd36c30aee",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -60074,6 +60074,11 @@
         {
           "number": null,
           "title": "[UT] Accept the non-finite query vector error and run test_vector_index_query_ve",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -60157,7 +60162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:35:08.513Z",
+      "verified_at": "2026-11-12T04:24:10.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162543,8 +162548,8 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "9d2e25ea",
-      "content_hash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
+      "source_version": "fe1e32b8",
+      "content_hash": "504c49a1dca0ae1cf5119060ac9b2c19c67c8da13834e65156888d4c4275db1e",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
@@ -162604,7 +162609,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T21:31:47.823Z",
+      "verified_at": "2026-11-12T04:24:38.509Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

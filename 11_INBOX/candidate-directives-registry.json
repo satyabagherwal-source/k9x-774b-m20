@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:56:31.420Z",
+  "last_updated": "2026-11-12T04:24:41.443Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6073,6 +6073,44 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0AF7AC-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-NG1X",
+      "directive_title": "Merge PR #374 (dajiaohuang): fix: avoid max cardinality negation overflow",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "fabio-rovai/open-ontologies",
+      "source_commit": "fe1e32b8",
+      "date_staged": "2026-11-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule title references repository-specific PR/issue rather than a universal engineering principle",
+      "learning_id": "learn-github-fabio-rovai-open-ontologies"
+    },
+    {
+      "id": "CD-REV-C68B04",
+      "directive_title": "Merge PR #374 (dajiaohuang): fix: avoid max cardinality negation overflow",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fabio-rovai-open-ontologies",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C68B04-merge-pr-374-dajiaohuang-fix-avoid-max-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4A6D33",
+      "directive_title": "[BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "starrocks-starrocks",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4A6D33--bugfix-add-the-fractional-seconds-of-an.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-7D1DAB",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7D1DAB-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

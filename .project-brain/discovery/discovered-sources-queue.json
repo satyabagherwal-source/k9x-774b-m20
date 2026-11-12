@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T03:56:31.416Z",
+  "updated_at": "2026-11-12T04:24:41.439Z",
   "stats": {
-    "total_discovered": 716,
-    "approved_pending_harvest": 654,
+    "total_discovered": 737,
+    "approved_pending_harvest": 665,
     "harvested_count": 0,
-    "rejected_count": 62,
+    "rejected_count": 72,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 674,
+      "COMMUNITY_AND_EXPERT": 691,
       "OFFICIAL_DOCUMENTATION": 22,
-      "STANDARDS_AND_SPECIFICATIONS": 18,
+      "STANDARDS_AND_SPECIFICATIONS": 22,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 1
     }
@@ -15335,6 +15335,398 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
         "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-34721A88A36C": {
+      "id": "SRC-34721A88A36C",
+      "url": "https://github.com/fabio-rovai/open-ontologies",
+      "title": "https://github.com/fabio-rovai/open-ontologies",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-B489C6B78677": {
+      "id": "SRC-B489C6B78677",
+      "url": "http://www.w3.org/2002/07/owl",
+      "title": "http://www.w3.org/2002/07/owl",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-12T04:24:41.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-FDAA4462A6CA": {
+      "id": "SRC-FDAA4462A6CA",
+      "url": "http://www.w3.org/2000/01/rdf-schema",
+      "title": "http://www.w3.org/2000/01/rdf-schema",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-12T04:24:41.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-A85FCF77B562": {
+      "id": "SRC-A85FCF77B562",
+      "url": "http://www.w3.org/1999/02/22-rdf-syntax-ns",
+      "title": "http://www.w3.org/1999/02/22-rdf-syntax-ns",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-12T04:24:41.353Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-0FC2EF0B36F6": {
+      "id": "SRC-0FC2EF0B36F6",
+      "url": "http://example.org/data",
+      "title": "http://example.org/data",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T04:24:41.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-377BF5749508": {
+      "id": "SRC-377BF5749508",
+      "url": "http://example.org/t",
+      "title": "http://example.org/t",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T04:24:41.365Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-781BC04EC9BD": {
+      "id": "SRC-781BC04EC9BD",
+      "url": "http://example.org/",
+      "title": "http://example.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T04:24:41.369Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-FF40D4D876C8": {
+      "id": "SRC-FF40D4D876C8",
+      "url": "http://www.w3.org/2001/XMLSchema",
+      "title": "http://www.w3.org/2001/XMLSchema",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-12T04:24:41.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-62CD58DF2B6F": {
+      "id": "SRC-62CD58DF2B6F",
+      "url": "http://example.org/Current",
+      "title": "http://example.org/Current",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T04:24:41.379Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-5512767568A4": {
+      "id": "SRC-5512767568A4",
+      "url": "http://example.org/Thing",
+      "title": "http://example.org/Thing",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T04:24:41.383Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-BB70B29D2064": {
+      "id": "SRC-BB70B29D2064",
+      "url": "https://github.com/StarRocks/starrocks",
+      "title": "https://github.com/StarRocks/starrocks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.393Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-F2036F817D22": {
+      "id": "SRC-F2036F817D22",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "title": "https://www.apache.org/licenses/LICENSE-2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-ECA0D09E294A": {
+      "id": "SRC-ECA0D09E294A",
+      "url": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/task_worker_pool.cpp",
+      "title": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/task_worker_pool.cpp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-6249DEBC675A": {
+      "id": "SRC-6249DEBC675A",
+      "url": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/task_worker_pool.h",
+      "title": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/task_worker_pool.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-E5CEA043F411": {
+      "id": "SRC-E5CEA043F411",
+      "url": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/utils.cpp",
+      "title": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/utils.cpp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-4A30BAC033A9": {
+      "id": "SRC-4A30BAC033A9",
+      "url": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/utils.h",
+      "title": "https://github.com/apache/incubator-doris/blob/master/be/src/agent/utils.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.417Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-CECB4AC14EBC": {
+      "id": "SRC-CECB4AC14EBC",
+      "url": "https://github.com/apache/incubator-doris/blob/master/be/src/util/bit_stream_utils.h",
+      "title": "https://github.com/apache/incubator-doris/blob/master/be/src/util/bit_stream_utils.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-0E6867AB0E37": {
+      "id": "SRC-0E6867AB0E37",
+      "url": "https://en.wikipedia.org/wiki/LEB128",
+      "title": "https://en.wikipedia.org/wiki/LEB128",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.425Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-8BD66948F3C0": {
+      "id": "SRC-8BD66948F3C0",
+      "url": "https://github.com/apache/incubator-doris/blob/master/be/src/util/bit_stream_utils.inline.h",
+      "title": "https://github.com/apache/incubator-doris/blob/master/be/src/util/bit_stream_utils.inline.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-563E14B4AB4D": {
+      "id": "SRC-563E14B4AB4D",
+      "url": "https://github.com/apache/incubator-doris/blob/master/be/src/util/bit_util.h",
+      "title": "https://github.com/apache/incubator-doris/blob/master/be/src/util/bit_util.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:24:41.434Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-CD420C91CFEC": {
+      "id": "SRC-CD420C91CFEC",
+      "url": "http://graphics.stanford.edu/~seander/bithacks.html",
+      "title": "http://graphics.stanford.edu/~seander/bithacks.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T04:24:41.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
       }
     }
   }

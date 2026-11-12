@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T03:56:31.260Z",
-    "lastVerified": "2026-11-12T03:56:31.260Z",
+    "lastChecked": "2026-11-12T04:24:41.202Z",
+    "lastVerified": "2026-11-12T04:24:41.202Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -229,9 +229,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-11T18:23:37.573Z",
+    "lastChecked": "2026-11-12T04:23:53.806Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-11T18:23:37.573Z"
+    "lastVerified": "2026-11-12T04:23:53.806Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -251,12 +251,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T03:23:49.059Z",
-    "lastVerified": "2026-11-12T03:23:49.059Z",
+    "lastChecked": "2026-11-12T04:23:58.821Z",
+    "lastVerified": "2026-11-12T04:23:58.821Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -265,7 +265,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fcc9870c"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -4279,9 +4280,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-09T10:28:17.875Z",
+    "lastChecked": "2026-11-12T04:23:43.812Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-09T10:28:17.875Z"
+    "lastVerified": "2026-11-12T04:23:43.812Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -6499,14 +6500,14 @@
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T17:35:06.851Z",
-    "lastVerified": "2026-11-09T17:35:06.851Z",
+    "lastChecked": "2026-11-12T04:24:00.258Z",
+    "lastVerified": "2026-11-12T04:24:00.258Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
+    "contentHash": "e2ca9c5f2f2cd4d90128a33b256a6fb837a225eba5305106a90e41fd36c30aee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9649,9 +9650,9 @@
   "twostraws-controlroom": {
     "name": "ControlRoom",
     "officialUrl": "https://github.com/twostraws/ControlRoom",
-    "lastChecked": "2026-11-08T04:19:20.662Z",
+    "lastChecked": "2026-11-12T04:23:48.807Z",
     "revisionIdentifier": "1764564f",
-    "lastVerified": "2026-11-08T04:19:20.662Z"
+    "lastVerified": "2026-11-12T04:23:48.807Z"
   },
   "hartemyaakoub-seo-toolkit": {
     "name": "seo-toolkit",
@@ -9710,14 +9711,14 @@
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T21:26:58.223Z",
-    "lastVerified": "2026-11-09T21:26:58.223Z",
+    "lastChecked": "2026-11-12T04:23:54.710Z",
+    "lastVerified": "2026-11-12T04:23:54.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 2,
+    "contentHash": "504c49a1dca0ae1cf5119060ac9b2c19c67c8da13834e65156888d4c4275db1e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 25,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11543,9 +11544,9 @@
   "remarkjs-remark": {
     "name": "remark",
     "officialUrl": "https://github.com/remarkjs/remark",
-    "lastChecked": "2026-11-07T05:08:59.120Z",
+    "lastChecked": "2026-11-12T04:23:46.317Z",
     "revisionIdentifier": "1146b3a2",
-    "lastVerified": "2026-11-07T05:08:59.120Z"
+    "lastVerified": "2026-11-12T04:23:46.317Z"
   },
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
