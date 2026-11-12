@@ -6523,10 +6523,10 @@
     "repository": "pathwaycom/serviette",
     "platform": "github",
     "sourceUrl": "https://github.com/pathwaycom/llm-app",
-    "sourceVersion": "84e92a33",
+    "sourceVersion": "53c6382b",
     "license": "MIT",
-    "contentHash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
-    "lastHarvestedAt": "2026-11-03T20:01:01.979Z",
+    "contentHash": "220506085089ff8c221140e63063e44c9de92471ed514df3fc2b9e5be60bcacf",
+    "lastHarvestedAt": "2026-11-12T11:51:08.778Z",
     "learningId": "learn-github-pathwaycom-serviette"
   },
   "amir1376-ab-download-manager": {
@@ -9963,10 +9963,10 @@
     "repository": "sveltejs/svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/sveltejs/svelte",
-    "sourceVersion": "7775f73b",
+    "sourceVersion": "ff7404cc",
     "license": "MIT",
-    "contentHash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
-    "lastHarvestedAt": "2026-11-07T20:02:04.867Z",
+    "contentHash": "9970d4870c80da71bd728283ce35035c7eaa3d25e02115b59d8dbc3bc78d0b02",
+    "lastHarvestedAt": "2026-11-12T11:50:57.903Z",
     "learningId": "learn-github-sveltejs-svelte"
   },
   "solidjs-solid": {

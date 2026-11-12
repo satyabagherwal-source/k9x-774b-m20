@@ -9155,3 +9155,5 @@
 | `CYCLE-20261112-48UT` | `2026-11-12T11:37:36.725Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fafee00d...`) |
 | `CYCLE-20261112-4BJ2` | `2026-11-12T11:37:40.190Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`db48414c...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T11:38:00.745Z` | `google-closure-compiler` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7D775901` [Domain H] | Yes (`687df25b...`) |
+| `CYCLE-20261112-LF1O` | `2026-11-12T11:50:57.900Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9970d487...`) |
+| `CYCLE-20261112-LNFR` | `2026-11-12T11:51:08.775Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`22050608...`) |

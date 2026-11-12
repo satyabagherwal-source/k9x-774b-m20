@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T11:37:47.224Z",
-    "lastVerified": "2026-11-12T11:37:47.224Z",
+    "lastChecked": "2026-11-12T11:51:15.034Z",
+    "lastVerified": "2026-11-12T11:51:15.034Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -344,29 +344,28 @@
     "revisionIdentifier": "b9a7b08e"
   },
   "pathwaycom-llm-app": {
-    "name": "llm-app",
+    "name": "pathwaycom/serviette",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T04:36:55.545Z",
-    "lastVerified": "2026-11-10T04:36:55.545Z",
+    "lastChecked": "2026-11-12T11:50:59.044Z",
+    "lastVerified": "2026-11-12T11:50:59.044Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
-    "contentHash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
+    "contentHash": "220506085089ff8c221140e63063e44c9de92471ed514df3fc2b9e5be60bcacf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "84e92a33"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T10:52:38.231Z",
+    "lastChecked": "2026-11-12T11:50:56.093Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T10:52:38.231Z"
+    "lastVerified": "2026-11-12T11:50:56.093Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -421,8 +420,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T04:50:19.679Z",
-    "lastVerified": "2026-11-12T04:50:19.679Z",
+    "lastChecked": "2026-11-12T11:50:51.062Z",
+    "lastVerified": "2026-11-12T11:50:51.062Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -5900,9 +5899,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-10T05:14:17.291Z",
+    "lastChecked": "2026-11-12T11:50:48.526Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-10T05:14:17.291Z"
+    "lastVerified": "2026-11-12T11:50:48.526Z"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -6197,8 +6196,8 @@
     "officialUrl": "https://github.com/nezhahq/nezha",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:34:47.772Z",
-    "lastVerified": "2026-11-09T17:34:47.772Z",
+    "lastChecked": "2026-11-12T11:50:41.007Z",
+    "lastVerified": "2026-11-12T11:50:41.007Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nezhahq-nezha",
@@ -10291,9 +10290,9 @@
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",
     "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
-    "lastChecked": "2026-11-08T09:51:51.087Z",
+    "lastChecked": "2026-11-12T11:50:46.044Z",
     "revisionIdentifier": "4fd07daa",
-    "lastVerified": "2026-11-08T09:51:51.087Z"
+    "lastVerified": "2026-11-12T11:50:46.044Z"
   },
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",
@@ -12114,14 +12113,14 @@
     "officialUrl": "https://github.com/sveltejs/svelte",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T20:02:02.496Z",
-    "lastVerified": "2026-11-07T20:02:02.496Z",
+    "lastChecked": "2026-11-12T11:50:48.253Z",
+    "lastVerified": "2026-11-12T11:50:48.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
+    "contentHash": "9970d4870c80da71bd728283ce35035c7eaa3d25e02115b59d8dbc3bc78d0b02",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

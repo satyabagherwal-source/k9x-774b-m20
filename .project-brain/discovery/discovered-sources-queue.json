@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T11:38:01.049Z",
+  "updated_at": "2026-11-12T11:51:15.256Z",
   "stats": {
-    "total_discovered": 1250,
-    "approved_pending_harvest": 1133,
+    "total_discovered": 1268,
+    "approved_pending_harvest": 1148,
     "harvested_count": 0,
-    "rejected_count": 117,
+    "rejected_count": 120,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1146,
-      "OFFICIAL_DOCUMENTATION": 51,
-      "STANDARDS_AND_SPECIFICATIONS": 50,
+      "COMMUNITY_AND_EXPERT": 1162,
+      "OFFICIAL_DOCUMENTATION": 52,
+      "STANDARDS_AND_SPECIFICATIONS": 51,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
     }
@@ -26698,6 +26698,381 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
         "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-43D3EF9BD32A": {
+      "id": "SRC-43D3EF9BD32A",
+      "url": "https://github.com/sveltejs/svelte",
+      "title": "https://github.com/sveltejs/svelte",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-BD3482E18DA2": {
+      "id": "SRC-BD3482E18DA2",
+      "url": "https://github.com/milomg/js-reactivity-benchmark",
+      "title": "https://github.com/milomg/js-reactivity-benchmark",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-B471A694918A": {
+      "id": "SRC-B471A694918A",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-BD26E56ED252": {
+      "id": "SRC-BD26E56ED252",
+      "url": "https://html.spec.whatwg.org/entities.json",
+      "title": "https://html.spec.whatwg.org/entities.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.163Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-EC3C50F9AEA9": {
+      "id": "SRC-EC3C50F9AEA9",
+      "url": "https://dev.w3.org/html5/html-author/charref",
+      "title": "https://dev.w3.org/html5/html-author/charref",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.169Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-B6FC6A61DA5A": {
+      "id": "SRC-B6FC6A61DA5A",
+      "url": "http://en.wikipedia.org/wiki/Character_encodings_in_HTML",
+      "title": "http://en.wikipedia.org/wiki/Character_encodings_in_HTML",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T11:51:15.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-4775F83BD5D0": {
+      "id": "SRC-4775F83BD5D0",
+      "url": "https://en.wikipedia.org/wiki/Plane_(Unicode",
+      "title": "https://en.wikipedia.org/wiki/Plane_(Unicode",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-499BA94699D7": {
+      "id": "SRC-499BA94699D7",
+      "url": "https://svelte.dev/playground/aaac159f0f73466bb3859dfed6792cab?version=5.56.0",
+      "title": "https://svelte.dev/playground/aaac159f0f73466bb3859dfed6792cab?version=5.56.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.190Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-C587DB4C4EEE": {
+      "id": "SRC-C587DB4C4EEE",
+      "url": "https://svelte.dev/playground/hello-world?version=5.56.0",
+      "title": "https://svelte.dev/playground/hello-world?version=5.56.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-3BCD0F5DBD07": {
+      "id": "SRC-3BCD0F5DBD07",
+      "url": "https://github.com/pathwaycom/llm-app",
+      "title": "https://github.com/pathwaycom/llm-app",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.207Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-204EE96F5B92": {
+      "id": "SRC-204EE96F5B92",
+      "url": "https://huggingface.co/api/datasets/google/frames-benchmark/parquet",
+      "title": "https://huggingface.co/api/datasets/google/frames-benchmark/parquet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.213Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-0E2B4F08449B": {
+      "id": "SRC-0E2B4F08449B",
+      "url": "https://huggingface.co/api/datasets/google/frames-benchmark",
+      "title": "https://huggingface.co/api/datasets/google/frames-benchmark",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-7F2D8ACF1B2E": {
+      "id": "SRC-7F2D8ACF1B2E",
+      "url": "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json",
+      "title": "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-7DDEA889349A": {
+      "id": "SRC-7DDEA889349A",
+      "url": "https://en.wikipedia.org/w/api.php?action=query&prop=revisions",
+      "title": "https://en.wikipedia.org/w/api.php?action=query&prop=revisions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-82141E272189": {
+      "id": "SRC-82141E272189",
+      "url": "https://api.openai.com/v1/chat/completions",
+      "title": "https://api.openai.com/v1/chat/completions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.238Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-9ABA683ECB4D": {
+      "id": "SRC-9ABA683ECB4D",
+      "url": "http://127.0.0.1:{args.port",
+      "title": "http://127.0.0.1:{args.port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T11:51:15.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-F9C34A2A90DF": {
+      "id": "SRC-F9C34A2A90DF",
+      "url": "http://127.0.0.1:{port",
+      "title": "http://127.0.0.1:{port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T11:51:15.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
+      }
+    },
+    "SRC-DC991D09CCAE": {
+      "id": "SRC-DC991D09CCAE",
+      "url": "https://github.com/pathwaycom/llm-app/tree/main/examples/pipelines/demo-question-answering",
+      "title": "https://github.com/pathwaycom/llm-app/tree/main/examples/pipelines/demo-question-answering",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:51:15.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+        "fileName": "pathwaycom-llm-app-learnings.md"
       }
     }
   }

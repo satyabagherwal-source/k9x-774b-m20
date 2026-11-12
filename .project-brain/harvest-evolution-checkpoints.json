@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:38:01.053Z",
+  "last_updated": "2026-11-12T11:51:15.274Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-12T08:19:36.877Z",
+      "processed_at": "2026-11-12T11:51:15.265Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1076,9 +1076,19 @@
       "processed_at": "2026-11-12T11:38:00.981Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "sveltejs-svelte-learnings.md": {
+      "processed_at": "2026-11-12T11:51:15.138Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "pathwaycom-llm-app-learnings.md": {
+      "processed_at": "2026-11-12T11:51:15.204Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 288,
+  "total_dossiers_evaluated": 291,
   "total_canonical_promoted": 36,
-  "total_staged_for_review": 252
+  "total_staged_for_review": 255
 }

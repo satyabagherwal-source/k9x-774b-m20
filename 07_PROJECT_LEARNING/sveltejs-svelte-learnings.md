@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `7775f73b`  
+> **Source Version**: `ff7404cc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:02:03.798Z  
+> **Timestamp**: 2026-11-12T11:50:48.510Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:02:02.496Z  
+> **Harvest Timestamp**: 2026-11-12T11:50:48.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 88660 stars
+- **Stars / Engagement**: 88725 stars
 
 ---
 
@@ -2009,132 +2009,848 @@ export function is_whitespace(cc) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7775f73b` (2026-11-04)
-**Commit Message**: fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary (#19166)
+### Incident Patch 1: `c60f6e1d` (2026-11-08)
+**Commit Message**: fix: render the same `<title>` on the server as on the client and ignore titles inside failed boundaries (#19176)
 
-When hydration has to throw away server-rendered content, for example
-because an `{#if}` takes a different branch on the client, Svelte walks
-forward to the end of that block. It didn't treat the opening comment of
-a boundary whose `failed` snippet was rendered on the server as a nested
-block, so it stopped at that boundary's closing comment instead of the
-real end.
+When a page has more than one `<title>`, the server sometimes picked a
+different one from the client, so the title changed once the page
+hydrated (and anything reading the server HTML saw the wrong one). The
+server now renders the same title as the client:
 
-```svelte
-{#if show}
-	<svelte:boundary>
-		<Child />
-		{#snippet failed()}<p>failed</p>{/snippet}
-	</svelte:boundary>
-	<p>after</p>
-{:else}
-	<p>else</p>
-{/if}
-```
+| Case | Client | `main` | This PR |
+|---|---|---|---|
+| `{#if}<title>A</title>{/if}<title>B</title>` | B | B | B |
+| same with `{#each}` | B | B | B |
+| `<title>A</title><title>B</title>` | B | A (wrong) | B |
+| `<Title />` (A) then `<title>B</title>`, in head | B | A (wrong) | B |
+| `<Title />` (A) before `<svelte:head>` with B | A | A | A |
+| layout title, then `<Page />` with its own | Page | Page | Page |
+| `<X /><Y />`, each with a title | Y | Y | Y |
+| head title B, then `{#if}<X />{/if}` | X | X | X |
+| `{#if n}<title>A{n}</title>{/if}<title>B{n}</title>` | B1 | B1 | B1 |
 
-With `show` true on the server and false on the client, the stale
-`<p>after</p>` stayed on the page next to `<p>else</p>`, and unmounting
-left nodes behind. Now the whole server-rendered branch is removed.
+The client sets each title after the rest of its block, so the last one
+to run wins. The server now does the same instead of putting titles
+first.
 
-### Before submitting the PR, please make sure you do the following
+Titles inside a failed `<svelte:boundary>` are no longer rendered
+either, same as the rest 
 
-- [ ] It's really useful if your PR references an issue where it is
-discussed ahead of time. In many cases, features are absent for a
-reason. For large changes, please create an RFC:
-https://github.com/sveltejs/rfcs
-- [x] Prefix your PR title with `feat:`, `fix:`, `ch
-
-**File**: `.changeset/skip-failed-boundaries.md` (added, +5/-0)
+**File**: `.changeset/last-title-wins.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary
++fix: render the same `<title>` on the server as on the client and ignore titles inside failed boundaries
 ```
 
-**File**: `packages/svelte/src/internal/client/dom/hydration.js` (modified, +4/-1)
+**File**: `packages/svelte/src/compiler/phases/3-transform/server/visitors/Fragment.js` (modified, +6/-1)
 ```diff
-@@ -5,7 +5,8 @@ import {
- 	HYDRATION_END,
- 	HYDRATION_ERROR,
- 	HYDRATION_START,
--	HYDRATION_START_ELSE
-+	HYDRATION_START_ELSE,
-+	HYDRATION_START_FAILED
- } from '../../../constants.js';
- import * as w from '../warnings.js';
- import { get_next_sibling } from './operations.js';
-@@ -98,6 +99,8 @@ export function skip_nodes(remove = true) {
- 			} else if (
- 				data === HYDRATION_START ||
- 				data === HYDRATION_START_ELSE ||
-+				// "[?" followed by the serialized error, for failed boundaries
-+				data.startsWith(HYDRATION_START_FAILED) ||
- 				// "[1", "[2", etc. for if blocks
- 				(data[0] === '[' && !isNaN(Number(data.slice(1))))
- 			) {
-```
-
-**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-hydrate-skip/_config.js` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+import { test } from '../../test';
-+
-+export default test({
-+	mode: ['hydrate'],
-+	server_props: { show: true },
-+	props: { show: false },
-+	ssrHtml: '<p>failed</p> <p>after</p> <p>end</p>',
-+	transformError: () => 'error',
-+
-+	test({ assert, target }) {
-+		assert.htmlEqual(target.innerHTML, '<p>else</p> <p>end</p>');
+@@ -33,7 +33,7 @@ export function Fragment(node, context) {
+ 	};
+ 
+ 	for (const node of hoisted) {
+-		context.visit(node, state);
++		if (node.type !== 'TitleElement') context.visit(node, state);
+ 	}
+ 
+ 	if (is_text_first) {
+@@ -43,6 +43,11 @@ export function Fragment(node, context) {
+ 
+ 	process_children(trimmed, { ...context, state });
+ 
++	// the client sets titles after the rest of the fragment
++	for (const node of hoisted) {
++		if (node.type === 'TitleElement') context.visit(node, state);
 +	}
-+});
++
+ 	if (state.async_consts && state.async_consts.thunks.length > 0) {
+ 		state.init.push(
+ 			b.var(state.async_consts.id, b.call('$$renderer.run', b.array(state.async_consts.thunks)))
 ```
 
-**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-hydrate-skip/child.svelte` (added, +3/-0)
+**File**: `packages/svelte/src/compiler/phases/3-transform/server/visitors/TitleElement.js` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@ export function TitleElement(node, context) {
+ 	process_children(node.fragment.nodes, { ...context, state: { ...context.state, template } });
+ 	template.push(b.literal('</title>'));
+ 
+-	context.state.init.push(
++	context.state.template.push(
+ 		b.stmt(
+ 			b.call('$$renderer.title', b.arrow([b.id('$$renderer')], b.block(build_template(template))))
+ 		)
+```
+
+**File**: `packages/svelte/src/internal/server/renderer.js` (modified, +24/-62)
+```diff
+@@ -132,6 +132,9 @@ export class Renderer {
+ 	 */
+ 	#is_component_body = false;
+ 
++	/** @type {boolean} */
++	#is_title = false;
++
+ 	/**
+ 	 * If set, this renderer is an error boundary. When async collection
+ 	 * of the children fails, the failed snippet is rendered instead.
+@@ -503,26 +506,12 @@ export class Renderer {
+ 	 * @param {(renderer: Renderer) => void} fn
+ 	 */
+ 	title(fn) {
+-		const path = this.get_path();
+-
+-		/** @param {string} head */
+-		const close = (head) => {
+-			this.global.set_title(head, path);
+-		};
+-
+-		this.child((renderer) => {
+-			const r = new Renderer(renderer.global, renderer);
+-			fn(r);
++		const title = new Renderer(this.global, this);
++		title.type = 'head';
++		title.#is_title = true;
+ 
+-			if (renderer.global.mode === 'async') {
+-				return r.#collect_content_async().then((content) => {
+-					close(content.head);
+-				});
+-			} else {
+-				const content = r.#collect_content();
+-				close(content.head);
+-			}
+-		});
++		this.#out.push(title);
++		title.child(fn);
+ 	}
+ 
+ 	/**
+@@ -543,19 +532,13 @@ export class Renderer {
+ 		(this.#on_destroy ??= []).push(fn);
+ 	}
+ 
+-	/**
+-	 * @returns {number[]}
+-	 */
+-	get_path() {
+-		return this.#parent ? [...this.#parent.get_path(), this.#parent.#out.indexOf(this)] : [];
+-	}
+-
+ 	/**
+ 	 * @deprecated this is needed for legacy component bindings
+ 	 */
+ 	copy() {
+ 		const copy = new Renderer(this.global, this.#parent);
+ 		copy.type = this.type;
++		copy.#is_title = this.#is_title;
+ 		copy.#out = this.#out.map((item) => (item instanceof Renderer ? item.copy() : item));
+ 		copy.promise = this.promise;
+ 		return copy;
+@@ -585,6 +568,7 @@ export class Renderer {
+ 		});
+ 		this.promise = other.promise;
+ 		this.type = other.type;
++		this.#is_title = other.#is_title;
+ 	}
+ 
+ 	get length() {
+@@ -802,7 +786,9 @@ export class Renderer {
+ 		for (const item of this.#out) {
+ 			if (typeof item === 'string') {
+ 				content[this.type] += item;
+-			} else if (item instanceof Renderer) {
++			} else if (item.#is_title) {
++				this.global.title = item.#collect_content().head;
++			} else {
+ 				item.#collect_content(content);
+ 			}
+ 		}
+@@ -822,19 +808,25 @@ export class Renderer {
+ 		for (const item of this.#out) {
+ 			if (typeof item === 'string') {
+ 				content[this.type] += item;
+-			} else if (item instanceof Renderer) {
++			} else if (item.#is_title) {
++				this.global.title = (await item.#collect_content_async()).head;
++			} else {
+ 				if (item.#boundary) {
+ 					// This renderer is an error boundary - collect into a separate
+ 					// accumulator so we can discard partial content on error
+ 					/** @type {AccumulatedContent} */
+ 					const boundary_content = { head: '', body: '' };
++					const title = this.global.title;
+ 
+ 					try {
+ 						await item.#collect_content_async(boundary_content);
+ 						// Success - merge into the main content
+ 						content.head += boundary_content.head;
+ 						content.body += boundary_content.body;
+ 					} catch (error) {
++						// a failed boundary does not render its title
++						this.global.title = title;
++
+ 						const { context, failed, transformError } = item.#boundary;
+ 
+ 						set_ssr_context(context);
+@@ -909,7 +901,7 @@ export class Renderer {
+ 	 * @returns {AccumulatedContent & { hashes: { script: Sha256Source[] } }}
+ 	 */
+ 	static #close_render(content, renderer) {
+-		let head = content.head + renderer.global.get_title();
++		let head = content.head + renderer.global.title;
+ 		let body = content.body;
+ 
+ 		for (const { hash, code } of renderer.global.css) {
+@@ -992,6 +984,9 @@ export class SSRState {
+ 	/** @readonly @type {Set<{ hash: string; code: string }>} */
+ 	css = new Set();
+ 
++	/** set while collecting so the last title in document order wins */
++	title = '';
++
+ 	/** @type {Set<Promise<unknown>>} */
+ 	#pending = new Set();
+ 
+@@ -1007,9 +1002,6 @@ export class SSRState {
+ 	 */
+ 	transformError;
+ 
+-	/** @type {{ path: number[], value: string }} */
+-	#title = { path: [], value: '' };
+-
+ 	/**
+ 	 * @param {'sync' | 'async'} mode
+ 	 * @param {string} id_prefix
+@@ -1061,34 +1053,4 @@ export class SSRState {
+ 		if (this.#aborted) controller.abort(STALE_REACTION);
+ 		return controller.signal;
+ 	}
+-
+-	get_title() {
+-		return this.#title.value;
+-	}
+-
+-	/**
+-	 * Performs a depth-first (lexicographic) comparison using the path. Rejects sets
+-	 * from earlier than or equal to the current value.
+-	 * @param {string} value
+-	 * @param {number[]} path
+-	 */
+-	set_title(value, path) {
+-		const current = this.#title.path;
+-
+-		let i = 0;
+-		let l = Math.min(path.length, current.length);
+-
+-		// skip identical prefixes - [1, 2, 3, ...] === [1, 2, 3, ...]
+-		while (i < l && path[i] === current[i]) i += 1;
+-
+-		if (path[i] === undefined) return;
+-
+-		// replace title if
+-		// - incoming path is longer - [7, 8, 9] > [7, 8]
+-		// - incoming path is later  - [7, 8, 9] > [7, 8, 8]
+-		if (current[i] === undefined || path[i] > current[i]) {
+-			this.#title.path = path;
+-			this.#title.value = value;
+-		}
+-	}
+ }
+```
+
+**File**: `packages/svelte/src/internal/server/renderer.test.ts` (modified, +91/-48)
+```diff
+@@ -57,28 +57,54 @@ test('child inherits parent type when not specified', () => {
+ 	expect(head).toBe('<meta name="x"/><style>/* css */</style>');
+ });
+ 
+-test('get_path returns the path indexes to a renderer', () => {
+-	const root = new Renderer(new SSRState('sync'));
+-	let child_a: InstanceType<typeof Renderer> | undefined;
+-	let child_b: InstanceType<typeof Renderer> | undefined;
+-	let child_b_0: InstanceType<typeof Renderer> | undefined;
++test('renders the title after the rest of the head', () => {
++	const component = (renderer: Renderer) => {
++		renderer.head(($$renderer) => {
++			$$renderer.title(($$renderer) => $$renderer.push('<title>T</title>'));
++			$$renderer.push('<meta name="x"/>');
++		});
++	};
+ 
+-	root.child(($$renderer) => {
+-		child_a = $$renderer;
+-		$$renderer.push('A');
+-	});
+-	root.child(($$renderer) => {
+-		child_b = $$renderer;
+-		$$renderer.child(($$inner) => {
+-			child_b_0 = $$inner;
+-			$$inner.push('B0');
++	const { head } = Renderer.render(component as unknown as Component);
++	expect(head).toBe('<meta name="x"/><title>T</title>');
++});
++
++test('renders the last title in document order', () => {
++	const component = (renderer: Renderer) => {
++		renderer.head(($$renderer) => {
++			$$renderer.child(($$renderer) => {
++				$$renderer.title(($$renderer) => $$renderer.push('<title>A</title>'));
++			});
++			$$renderer.title(($$renderer) => $$renderer.push('<title>B</title>'));
+ 		});
+-		$$renderer.push('B1');
+-	});
++		renderer.head(($$renderer) => {
++			$$renderer.title(($$renderer) => $$renderer.push('<title>C</title>'));
++			$$renderer.title(($$renderer) => $$renderer.push('<title>D</title>'));
++		});
++	};
+ 
+-	expect(child_a!.get_path()).toEqual([0]);
+-	expect(child_b!.get_path()).toEqual([1]);
+-	expect(child_b_0!.get_path()).toEqual([1, 0]);
++	const { head } = Renderer.render(component as unknown as Component);
++	expect(head).toBe('<title>D</title>');
++});
++
++test('does not render a title from inside a failed boundary', () => {
++	const component = (renderer: Renderer) => {
++		renderer.head(($$renderer) => {
++			$$renderer.title(($$renderer) => $$renderer.push('<title>outside</title>'));
++		});
++		renderer.boundary({ failed: (renderer) => renderer.push('failed') }, (renderer) => {
++			renderer.head(($$renderer) => {
++				$$renderer.title(($$renderer) => $$renderer.push('<title>inside</title>'));
++			});
++			throw new Error('oops');
++		});
++	};
++
++	const { head } = Renderer.render(
++		component as unknown as Component,
++		{ transformError: () => 'transformed' } as any
++	);
++	expect(head).toBe('<title>outside</title>');
+ });
+ 
+ test('creating an async child in a sync context throws', () => {
+@@ -121,7 +147,6 @@ test('subsume replaces tree content and state from other', () => {
+ 		$$renderer.push('body');
+ 	});
+ 	b.global.css.add({ hash: 'h', code: 'c' });
+-	b.global.set_title('Title', [1]);
+ 	b.local.select_value = 'B';
+ 	b.promise = Promise.resolve();
+ 
+@@ -145,7 +170,6 @@ test('subsume refuses to switch modes', () => {
+ 		$$renderer.push('body');
+ 	});
+ 	b.global.css.add({ hash: 'h', code: 'c' });
+-	b.global.set_title('Title', [1]);
+ 	b.local.select_value = 'B';
+ 	b.promise = Promise.resolve();
+ 
+@@ -159,33 +183,6 @@ test('SSRState uid generator uses prefix', () => {
+ 	expect(state.uid()).toBe('id-s1');
+ });
+ 
+-test('SSRState title ordering favors later lexicographic paths', () => {
+-	const state = new SSRState('sync');
+-
+-	state.set_title('A', [1]);
+-	expect(state.get_title()).toBe('A');
+-
+-	// equal path -> unchanged
+-	state.set_title('B', [1]);
+-	expect(state.get_title()).toBe('A');
+-
+-	// earlier -> unchanged
+-	state.set_title('C', [0, 9]);
+-	expect(state.get_title()).toBe('A');
+-
+-	// later -> update
+-	state.set_title('D', [2]);
+-	expect(state.get_title()).toBe('D');
+-
+-	// longer but same prefix -> update
+-	state.set_title('E', [2, 0]);
+-	expect(state.get_title()).toBe('E');
+-
+-	// shorter (earlier) than current with same prefix -> unchanged
+-	state.set_title('F', [2]);
+-	expect(state.get_title()).toBe('E');
+-});
+-
+ test('selects an option with an explicit value', () => {
+ 	const component = (renderer: Renderer) => {
+ 		renderer.select({ value: 2 }, (renderer) => {
+@@ -373,6 +370,52 @@ describe('async', () => {
+ 		expect(() => result.html).toThrow('html_deprecated');
+ 	});
+ 
++	test('does not render a title from inside a boundary that fails asynchronously', async () => {
++		const component = (renderer: Renderer) => {
++			renderer.head(($$renderer) => {
++				$$renderer.title(($$renderer) => $$renderer.push('<title>outside</title>'));
++			});
++			renderer.boundary({ failed: (renderer) => renderer.push('failed') }, (renderer) => {
++				renderer.head(($$renderer) => {
++					$$renderer.title(($$renderer) => $$renderer.push('<title>inside</title>'));
++				});
++				renderer.child(async () => {
++					await Promise.resolve();
++					throw new Error('oops');
++				});
++			});
++		};
++
++		const { head, body } = await Renderer.render(
++			component as unknown as Component,
++			{ transformError: ()
+```
+
+**File**: `packages/svelte/tests/server-side-rendering/samples/head-title-after-component/Title.svelte` (added, +3/-0)
 ```diff
 @@ -0,0 +1,3 @@
-+<script>
-+	throw new Error('unlucky');
-+</script>
++<svelte:head>
++	<title>A</title>
++</svelte:head>
 ```
 
-**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-hydrate-skip/main.svelte` (added, +21/-0)
+**File**: `packages/svelte/tests/server-side-rendering/samples/head-title-after-component/_config.js` (added, +3/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+<script>
-+	import Child from './child.svelte';
+@@ -0,0 +1,3 @@
++import { test } from '../../test';
 +
-+	let { show } = $props();
-+</script>
++export default test({});
+```
+
+**File**: `packages/svelte/tests/server-side-rendering/samples/head-title-after-component/_expected_head.html` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<title>B</title>
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 2: `ff7404cc` (2026-11-11)
+**Commit Message**: perf: speed up test suite (#19246)
+
+This speeds up the runtime-runes test suite by a factor of 3x (the whole
+by a factor of 1.5-2x), by doing several things:
+
+- don't recompile Svelte components when we know they haven't changed
+(i.e. their input did not change, no compiler-related code or pnpm
+lockfile was touched)
+- shard runtime-runes and runtime-legacy to execute tests in parallel.
+`$inspect.trace` tests get isolated so that the tracing runtime flag is
+only turned on for them, saving time in all the other tests that don't
+need it (and have it therefore turned off; previously runtime-runes was
+one worker so the flag was enabled for all tests)
+- run slow tests only in client mode
+- ~~in the infinite loop detection, don't capture the stack each time
+beyond 20 times, instead at random each 1-10 times, to safe time when
+running into such a loop. The 99% case is the same loop with the same
+stack over and over again and this is only dev-mode best-effort so this
+is fine. This greatly speeds up the tests that test infinite loops.~~
+maybe investigate later
+
+**File**: `CONTRIBUTING.md` (modified, +4/-0)
+```diff
+@@ -113,6 +113,10 @@ Test samples are kept in `/tests/xxx/samples` folders.
+ 
+    (You can also do `FILTER=<test-name> pnpm test <suite-name>` which removes other tests rather than simply skipping them — this will result in faster and more compact test results, but it's non-idiomatic. Choose your fighter.)
+ 
++The `runtime-*` and `server-side-rendering` suites only recompile a test's components if the test's files, its compile options or the compiler itself changed since it was last compiled (see `_output/{client,server}/info.json`). To always recompile, run `NO_COMPILE_CACHE=true pnpm test`.
 +
-+{#if show}
-+	<svelte:boundary>
-+		<Child />
++1. The `runtime-runes` and `runtime-legacy` suites are split into several shards that run in parallel (see `vitest.config.js`), which is why their results are labelled like `|runtime-runes (2/4)|`. To run a single shard, use e.g. `pnpm test --project "runtime-runes (2/4)"`. Samples using `$inspect.trace` must be named `inspect-trace-*`, so that they run in a shard of their own (`$inspect.trace` turns on tracing mode for all subsequent tests).
 +
-+		{#snippet failed()}
-+			<p>failed</p>
-+		{/snippet}
-+	</svelte:boundary>
+ ##### Updating `.expected` files
+ 
+ 1. Tests suites like `snapshot` and `parser` assert that the generated output matches the existing snapshot.
+```
+
+**File**: `packages/svelte/tests/helpers.js` (modified, +108/-0)
+```diff
+@@ -1,6 +1,7 @@
+ /** @import { CompileOptions } from '#compiler' */
+ import * as fs from 'node:fs';
+ import * as path from 'node:path';
++import { fileURLToPath } from 'node:url';
+ import { globSync } from 'tinyglobby';
+ import { VERSION, compile, compileModule, preprocess } from 'svelte/compiler';
+ import { vi } from 'vitest';
+@@ -164,6 +165,113 @@ export async function compile_directory(
+ 	}
+ }
+ 
++const svelte_dir = path.resolve(fileURLToPath(import.meta.url), '../..');
 +
-+	<p>after</p>
-+{:else}
-+	<p>else</p>
-+{/if}
++/** @type {number | undefined} */
++let compiler_last_modified;
 +
-+<p>end</p>
++/**
++ * Returns the most recent modification time of anything that can affect compiler output:
++ * all files in `src/compiler`, all files outside of it that the compiler (transitively)
++ * imports (`src/utils.js`, `src/constants.js` etc), the lockfile (for dependencies
++ * like `esrap`) and this file (which contains `compile_directory`)
++ */
++function get_compiler_last_modified() {
++	if (compiler_last_modified !== undefined) return compiler_last_modified;
++
++	const files = globSync('**', {
++		cwd: path.join(svelte_dir, 'src/compiler'),
++		absolute: true,
++		onlyFiles: true
++	}).map((file) => path.resolve(file));
++
++	const seen = new Set(files);
++
++	// `files` grows as we go, so that we also follow imports of files outside `src/compiler`
++	for (let i = 0; i < files.length; i += 1) {
++		const file = files[i];
++		if (!file.endsWith('.js')) continue;
++
++		const code = fs.readFileSync(file, 'utf-8');
++
++		for (const match of code.matchAll(/from\s*['"](\.\.?\/[^'"]+)['"]/g)) {
++			const dependency = path.resolve(path.dirname(file), match[1]);
++			if (seen.has(dependency)) continue;
++
++			seen.add(dependency);
++			if (fs.existsSync(dependency)) files.push(dependency);
++		}
++	}
++
++	files.push(fileURLToPath(import.meta.url), path.resolve(svelte_dir, '../../pnpm-lock.yaml'));
++
++	compiler_last_modified = Math.max(
++		...files.filter((file) => fs.existsSync(file)).map((file) => fs.statSync(file).mtimeMs)
++	);
++
++	return compiler_last_modified;
++}
++
++/**
++ * Like `compile_directory`, but skips compilation if `_output/{generate}` is still up to date.
++ * That's the case if it was compiled with the same options and from the same set of files, and
++ * neither the compiler (see `get_compiler_last_modified`) nor any of these files changed since.
++ * The time of the last compilation is stored in `_output/{generate}/info.json`.
++ *
++ * Set `NO_COMPILE_CACHE=true` to always compile.
++ *
++ * @param {string} cwd
++ * @param {'client' | 'server'} generate
++ * @param {Partial<CompileOptions>} compileOptions
++ */
++export async function compile_directory_cached(cwd, generate, compileOptions = {}) {
++	const info_file = `${cwd}/_output/${generate}/info.json`;
++
++	// same files as `compile_directory` reads
++	const files = globSync('**', { cwd, onlyFiles: true, ignore: ['_output/**'] })
++		.filter((file) => !file.startsWith('_'))
++		.sort();
++
++	// functions such as `cssHash` would be dropped otherwise
++	const options = JSON.stringify(compileOptions, (_, value) =>
++		typeof value === 'function' ? value.toString() : value
++	);
++
++	if (process.env.NO_COMPILE_CACHE !== 'true') {
++		/** @type {{ compiled_at: number; options: string; files: string[] } | null} */
++		let info = null;
++
++		try {
++			info = JSON.parse(fs.readFileSync(info_file, 'utf-8'));
++		} catch {
++			// missing or corrupted (e.g. the process was killed while writing it)
++		}
++
++		if (
++			typeof info?.compiled_at === 'number' &&
++			info.options === options &&
++			Array.isArray(info.files) &&
++			info.files.join('\n') === files.join('\n')
++		) {
++			let last_modified = get_compiler_last_modified();
++
++			for (const file of files) {
++				last_modified = Math.max(last_modified, fs.statSync(`${cwd}/${file}`).mtimeMs);
++			}
++
++			if (last_modified < info.compiled_at) return;
++		}
++	}
++
++	// take the timestamp before compiling, so that changes made while compiling are picked up next time
++	const compiled_at = Date.now();
++
++	// this removes `_output/{generate}` (including `info.json`) first, so if compilation fails we'll retry next time
++	await compile_directory(cwd, generate, compileOptions);
++
++	write(info_file, JSON.stringify({ compiled_at, options, files }, null, '\t'));
++}
++
+ export function should_update_expected() {
+ 	return process.env.SHOULD_UPDATE_EXPECTED === 'true';
+ }
+```
+
+**File**: `packages/svelte/tests/runtime-browser/test-ssr.ts` (modified, +2/-2)
+```diff
+@@ -7,7 +7,7 @@ import * as fs from 'node:fs';
+ import * as path from 'node:path';
+ import { setImmediate } from 'node:timers/promises';
+ import { render } from 'svelte/server';
+-import { compile_directory } from '../helpers';
++import { compile_directory_cached } from '../helpers';
+ import { assert_html_equal_with_options } from '../html_equal';
+ import { suite } from '../suite';
+ import { describe } from 'vitest';
+@@ -17,7 +17,7 @@ export async function run_ssr_test(
+ 	test_dir: string
+ ) {
+ 	try {
+-		await compile_directory(test_dir, 'server', config.compileOptions);
++		await compile_directory_cached(test_dir, 'server', config.compileOptions);
+ 
+ 		const Component = (await import(`${test_dir}/_output/server/main.svelte.js`)).default;
+ 		const { body } = render(Component, { props: config.props || {}, idPrefix: config.id_prefix });
+```
+
+**File**: `packages/svelte/tests/runtime-legacy/shared.ts` (modified, +21/-4)
+```diff
+@@ -5,8 +5,8 @@ import { createClassComponent } from 'svelte/legacy';
+ import { proxy } from 'svelte/internal/client';
+ import { flushSync, hydrate, mount, unmount } from 'svelte';
+ import { render } from 'svelte/server';
+-import { afterAll, assert, beforeAll, beforeEach } from 'vitest';
+-import { async_mode, compile_directory, fragments } from '../helpers.js';
++import { afterAll, assert, beforeAll, beforeEach, inject } from 'vitest';
++import { async_mode, compile_directory_cached, fragments } from '../helpers.js';
+ import { assert_html_equal, assert_html_equal_with_options } from '../html_equal.js';
+ import { raf } from '../animation-helpers.js';
+ import type { CompileOptions } from '#compiler';
+@@ -262,13 +262,30 @@ async function common_setup(cwd: string, runes: boolean | undefined, config: Run
+ 	// load_compiled can be used for debugging a test. It means the compiler will not run on the input
+ 	// so you can manipulate the output manually to see what fixes it, adding console.logs etc.
+ 	if (!config.load_compiled) {
+-		await compile_directory(cwd, 'client', compileOptions);
+-		await compile_directory(cwd, 'server', compileOptions);
++		await compile_directory_cached(cwd, 'client', compileOptions);
++		await compile_directory_cached(cwd, 'server', compileOptions);
++	}
++
++	// Components using `$inspect.trace` turn on tracing mode for good, by importing `svelte/internal/flags/tracing`.
++	// All subsequent tests in the same worker would then also run in (much slower) tracing mode, so these samples
++	// get a shard of their own (see `vitest.config.js`). That only works if they follow the naming convention
++	if (inject('shard')?.include !== 'inspect-trace' && uses_tracing(`${cwd}/_output/client`)) {
++		throw new Error(
++			'Samples using `$inspect.trace` must be in runtime-runes and named `inspect-trace-*`, ' +
++				'so that they run in their own worker (see `vitest.config.js`). This is enforced to' +
++				'prevent the tracing flag being enabled for all tests in a suite, which slows them down.'
++		);
+ 	}
+ 
+ 	return compileOptions;
+ }
+ 
++function uses_tracing(output_dir: string) {
++	return globSync('**/*.js', { cwd: output_dir }).some((file) =>
++		fs.readFileSync(`${output_dir}/${file}`, 'utf-8').includes('svelte/internal/flags/tracing')
++	);
++}
++
+ async function run_test_variant(
+ 	cwd: string,
+ 	config: RuntimeTest,
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/effect-loop-infinite/_config.js` (modified, +2/-1)
+```diff
+@@ -2,7 +2,8 @@ import { flushSync } from 'svelte';
+ import { test } from '../../test';
+ 
+ export default test({
+-	mode: ['client', 'hydrate'],
++	// infinite loops are slow in dev mode (stack traces are captured for the updates), so only run this once
++	mode: ['client'],
+ 
+ 	compileOptions: {
+ 		dev: true
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-20/_config.js` (modified, +3/-0)
+```diff
+@@ -2,6 +2,9 @@ import { flushSync } from 'svelte';
+ import { test } from '../../test';
+ 
+ export default test({
++	// infinite loops are slow in dev mode (stack traces are captured for the updates), so only run this once
++	mode: ['client'],
++
+ 	test({ assert, target, errors }) {
+ 		let btn = target.querySelector('button');
+ 
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/mount-unmount-anchor/_config.js` (modified, +3/-0)
+```diff
+@@ -2,6 +2,9 @@ import { flushSync } from 'svelte';
+ import { test } from '../../test';
+ 
+ export default test({
++	// mounting and unmounting thousands of components is slow, so only run this once
++	mode: ['client'],
++
+ 	test({ assert, target }) {
+ 		const btn = target.querySelector('button');
+ 		btn?.click();
+```
+
+**File**: `packages/svelte/tests/server-side-rendering/test.ts` (modified, +2/-2)
+```diff
+@@ -7,7 +7,7 @@
+ import * as fs from 'node:fs';
+ import { assert } from 'vitest';
+ import { render, type SyncRenderOutput } from 'svelte/server';
+-import { compile_directory, should_update_expected, try_read_file } from '../helpers.js';
++import { compile_directory_cached, should_update_expected, try_read_file } from '../helpers.js';
+ import { assert_html_equal_with_options } from '../html_equal.js';
+ import { suite_with_variants, type BaseTest } from '../suite.js';
+ import type { CompileOptions } from '#compiler';
+@@ -63,7 +63,7 @@ const { test, run } = suite_with_variants<SSRTest, 'sync' | 'async', CompileOpti
+ 		};
+ 
+ 		if (!config.load_compiled) {
+-			await compile_directory(test_dir, 'server', compile_options);
++			await compile_directory_cached(test_dir, 'server', compile_options);
+ 		}
+ 
+ 		return compile_options;
+```
+
+---
+
+### Incident Patch 3: `b3e0047d` (2026-11-11)
+**Commit Message**: fix: keep directive values that match the directive name in `print` (#19229)
+
+`print` drops the value of an `on:`, `use:`, `transition:`/`in:`/`out:`
+or `animate:` directive when the value is an identifier with the same
+name as the directive. `<button on:click={click} use:tooltip={tooltip}>`
+is printed as `<button on:click use:tooltip>`.
+
+Unlike `bind:` and `class:`, these directives have no shorthand. A bare
+`on:click` forwards the event instead of calling `click`, and a bare
+`use:tooltip`, `in:fly` or `animate:flip` gets no parameter, so the
+printed component compiles to different code.
+
+This prints the value whenever there is one. `bind:`, `class:` and
+`let:` are unchanged. Added a print sample that fails without the
+change.
+
+**File**: `.changeset/print-directive-values.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: keep directive values that match the directive name in `print`
+```
+
+**File**: `packages/svelte/src/compiler/print/index.js` (modified, +4/-16)
+```diff
+@@ -707,10 +707,7 @@ const svelte_visitors = (comments, state) => ({
+ 
+ 	AnimateDirective(node, context) {
+ 		context.write(`animate:${node.name}`);
+-		if (
+-			node.expression !== null &&
+-			!(node.expression.type === 'Identifier' && node.expression.name === node.name)
+-		) {
++		if (node.expression !== null) {
+ 			context.write('={');
+ 			context.visit(node.expression);
+ 			context.write('}');
+@@ -994,10 +991,7 @@ const svelte_visitors = (comments, state) => ({
+ 		for (const modifier of node.modifiers) {
+ 			context.write(`|${modifier}`);
+ 		}
+-		if (
+-			node.expression !== null &&
+-			!(node.expression.type === 'Identifier' && node.expression.name === node.name)
+-		) {
++		if (node.expression !== null) {
+ 			context.write('={');
+ 			context.visit(node.expression);
+ 			context.write('}');
+@@ -1144,10 +1138,7 @@ const svelte_visitors = (comments, state) => ({
+ 		for (const modifier of node.modifiers) {
+ 			context.write(`|${modifier}`);
+ 		}
+-		if (
+-			node.expression !== null &&
+-			!(node.expression.type === 'Identifier' && node.expression.name === node.name)
+-		) {
++		if (node.expression !== null) {
+ 			context.write('={');
+ 			context.visit(node.expression);
+ 			context.write('}');
+@@ -1156,10 +1147,7 @@ const svelte_visitors = (comments, state) => ({
+ 
+ 	UseDirective(node, context) {
+ 		context.write(`use:${node.name}`);
+-		if (
+-			node.expression !== null &&
+-			!(node.expression.type === 'Identifier' && node.expression.name === node.name)
+-		) {
++		if (node.expression !== null) {
+ 			context.write('={');
+ 			context.visit(node.expression);
+ 			context.write('}');
+```
+
+**File**: `packages/svelte/tests/print/samples/directive-value-same-as-name/input.svelte` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++<button on:click={click} use:tooltip={tooltip} in:fly={fly} out:fade={fade}>click</button>
++
++<p transition:slide={slide}>...</p>
++
++{#each items as item (item.id)}
++	<div animate:flip={flip}>{item.name}</div>
++{/each}
+```
+
+**File**: `packages/svelte/tests/print/samples/directive-value-same-as-name/output.svelte` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++<button
++	on:click={click}
++	use:tooltip={tooltip}
++	in:fly={fly}
++	out:fade={fade}
++>click</button>
++
++<p transition:slide={slide}>...</p>
++
++{#each items as item (item.id)}
++	<div animate:flip={flip}>{item.name}</div>
++{/each}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19189** (2026-11-06): chore: use `should_record` boolean inside `update_record` (@Rich-Harris)
-- **PR #19185** (2026-11-06): chore: simplify `update_record` (@Rich-Harris)
-- **PR #19182** (2026-11-05): chore: simplify `update_dependencies` (@Rich-Harris)
-- **PR #19178** (closed): chore: share the end of sync and async renders (@elliott-with-the-longest-name-on-github)
-- **PR #19167** (2026-11-04): fix: correctly preserve/discard each item effects in forks (@Rich-Harris)
-- **PR #19166** (2026-11-04): fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary (@elliott-with-the-longest-name-on-github)
+- **PR #19246** (2026-11-11): perf: speed up test suite (@dummdidumm)
+- **PR #19241** (2026-11-11): perf: start each compile with a new `ignore_map` (@Nic-Polumeyv)
+- **PR #19237** (2026-11-11): docs: remove duplicated word in option value comment (@ninglinLiu)
+- **PR #19236** (2026-11-10): fix: properly support `{#await }` blocks in async mode (@dummdidumm)
+- **PR #19235** (2026-11-09): fix: move batches that committed with pending work to the front (@Rich-Harris)
+- **PR #19234** (2026-11-10): fix: don't let forks take over async results (@dummdidumm)
 
 ---
 
@@ -2154,16 +2870,16 @@ https://github.com/sveltejs/rfcs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove all of the server-rendered content when hydrating a different branch that
+## X. render the same `<title>` on the server as on the client and ignore titles insid
 
 **RULE**:
-When implementing operations in `.changeset/skip-failed-boundaries.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/last-title-wins.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7775f73b`: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary (#19166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c60f6e1d`: render the same `<title>` on the server as on the client and ignore titles inside failed boundaries (#19176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/skip-failed-boundaries.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/last-title-wins.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
@@ -2172,7 +2888,7 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 'svelte': patch
 ---
 
-fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary
+fix: render the same `<title>` on the server as on the client and ignore titles inside failed boundaries
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2182,4 +2898,4 @@ fix: remove all of the server-rendered content when hydrating a different branch
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7775f73b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c60f6e1d` are properly handled with clean fallback behavior.

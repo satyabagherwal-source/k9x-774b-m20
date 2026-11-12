@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T11:37:40.046Z",
+  "last_updated": "2026-11-12T11:51:08.616Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -76646,13 +76646,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "pathwaycom/serviette",
       "repository": "pathwaycom/serviette",
-      "slug": "pathwaycom-serviette",
+      "slug": "pathwaycom-llm-app",
       "platform": "github",
-      "source_url": "https://github.com/pathwaycom/serviette",
+      "source_url": "https://github.com/pathwaycom/llm-app",
       "source_version": "53c6382b",
-      "content_hash": "4edefa749f9d24c1f97d1695a3447e877f4c47bc6fb8fe3f46e2f6f893cb9a93",
-      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
+      "content_hash": "220506085089ff8c221140e63063e44c9de92471ed514df3fc2b9e5be60bcacf",
+      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -76680,7 +76680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T10:52:54.820Z",
+      "verified_at": "2026-11-12T11:51:08.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83767,14 +83767,19 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "7775f73b",
-      "content_hash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
+      "source_version": "ff7404cc",
+      "content_hash": "9970d4870c80da71bd728283ce35035c7eaa3d25e02115b59d8dbc3bc78d0b02",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "remove all of the server-rendered content when hydrating a different branch that",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "render the same `<title>` on the server as on the client and ignore titles insid",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -83803,7 +83808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:02:04.779Z",
+      "verified_at": "2026-11-12T11:50:57.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

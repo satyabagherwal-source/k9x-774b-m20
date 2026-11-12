@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-UFOT",
-    "timestamp": "2026-11-09T05:07:03.533Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "a8205af389f86ef22b2c5fcb078d354a556aa104d6a1806b3f08bea3c33f3c42",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-UJWJ",
-    "timestamp": "2026-11-09T05:07:08.995Z",
-    "repository": "iliyami/MacSai",
-    "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "ffad54f66e3aac389405d93d36be6624c295003db21c930e572f62686d1dd805",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-3BIC",
     "timestamp": "2026-11-09T05:13:58.020Z",
     "repository": "Orange-OpenSource/hurl",
@@ -7490,6 +7460,36 @@
     "repository": "meilisearch/meilisearch",
     "learningId": "learn-github-meilisearch-meilisearch",
     "contentHash": "db48414cfdbdbfb2fea0af6e924e4b4a664db95993bcf4de81acb803a05a89a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-LF1O",
+    "timestamp": "2026-11-12T11:50:57.900Z",
+    "repository": "sveltejs/svelte",
+    "learningId": "learn-github-sveltejs-svelte",
+    "contentHash": "9970d4870c80da71bd728283ce35035c7eaa3d25e02115b59d8dbc3bc78d0b02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-LNFR",
+    "timestamp": "2026-11-12T11:51:08.775Z",
+    "repository": "pathwaycom/serviette",
+    "learningId": "learn-github-pathwaycom-serviette",
+    "contentHash": "220506085089ff8c221140e63063e44c9de92471ed514df3fc2b9e5be60bcacf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

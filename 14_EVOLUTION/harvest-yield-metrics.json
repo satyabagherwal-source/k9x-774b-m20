@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:37:40.204Z",
-  "total_cycles_completed": 8980,
-  "total_learnings_persisted": 8980,
-  "total_rules_promoted": 8823,
+  "last_updated": "2026-11-12T11:51:08.795Z",
+  "total_cycles_completed": 8982,
+  "total_learnings_persisted": 8982,
+  "total_rules_promoted": 8825,
   "history": [
-    {
-      "timestamp": "2026-11-11T11:18:57.037Z",
-      "repository": "sxyazi/yazi",
-      "learningId": "learn-github-sxyazi-yazi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T11:19:09.419Z",
-      "repository": "onejs/one",
-      "learningId": "learn-github-onejs-one",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T11:19:09.829Z",
       "repository": "k3s-io/k3s",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T11:37:40.204Z",
       "repository": "meilisearch/meilisearch",
       "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T11:50:57.920Z",
+      "repository": "sveltejs/svelte",
+      "learningId": "learn-github-sveltejs-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T11:51:08.795Z",
+      "repository": "pathwaycom/serviette",
+      "learningId": "learn-github-pathwaycom-serviette",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T11:37:40.210Z",
+  "last_updated": "2026-11-12T11:51:08.799Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2331,14 +2331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pathwaycom-serviette",
-      "content_hash": "4edefa749f9d24c1f97d1695a3447e877f4c47bc6fb8fe3f46e2f6f893cb9a93",
-      "verified_at": "2026-11-12T10:52:55.047Z",
+      "content_hash": "220506085089ff8c221140e63063e44c9de92471ed514df3fc2b9e5be60bcacf",
+      "verified_at": "2026-11-12T11:51:08.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T10:52:55.047Z"
+      "last_updated": "2026-11-12T11:51:08.798Z"
     },
     "EverMind-AI/Raven": {
       "repository": "EverMind-AI/Raven",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
-      "verified_at": "2026-11-07T20:02:04.882Z",
+      "content_hash": "9970d4870c80da71bd728283ce35035c7eaa3d25e02115b59d8dbc3bc78d0b02",
+      "verified_at": "2026-11-12T11:50:57.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:02:04.882Z"
+      "last_updated": "2026-11-12T11:50:57.923Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",

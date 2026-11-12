@@ -9164,3 +9164,5 @@ Every entry in this ledger must capture:
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `4c2e88a3` | Multi-dimensional audit evidence | 2026-11-12T11:37:36.729Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `c25aa858` | Multi-dimensional audit evidence | 2026-11-12T11:37:40.195Z |
 | `learn-dom-h-7d775901` | `project://google-closure-compiler` | `0d7d62cf` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md` | 2026-11-12T11:38:00.745Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `ff7404cc` | Multi-dimensional audit evidence | 2026-11-12T11:50:57.903Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `53c6382b` | Multi-dimensional audit evidence | 2026-11-12T11:51:08.778Z |
