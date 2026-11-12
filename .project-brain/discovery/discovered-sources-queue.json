@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T21:10:54.714Z",
+  "updated_at": "2026-11-12T21:20:02.644Z",
   "stats": {
-    "total_discovered": 1553,
-    "approved_pending_harvest": 1422,
+    "total_discovered": 1562,
+    "approved_pending_harvest": 1431,
     "harvested_count": 0,
     "rejected_count": 131,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1433,
+      "COMMUNITY_AND_EXPERT": 1442,
       "OFFICIAL_DOCUMENTATION": 64,
       "STANDARDS_AND_SPECIFICATIONS": 53,
       "ENGINEERING_BLOGS": 1,
@@ -33266,6 +33266,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-03B6BDA49FB6": {
+      "id": "SRC-03B6BDA49FB6",
+      "url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+      "title": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.571Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
+        "fileName": "hf-qwen-qwen3-embedding-0.6b-learnings.md"
+      }
+    },
+    "SRC-F473A79B672E": {
+      "id": "SRC-F473A79B672E",
+      "url": "https://github.com/SimonSchubert/Kai",
+      "title": "https://github.com/SimonSchubert/Kai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
+        "fileName": "simonschubert-kai-learnings.md"
+      }
+    },
+    "SRC-ACB5ACACC18A": {
+      "id": "SRC-ACB5ACACC18A",
+      "url": "https://schubert-simon.de/privacy/kai.txt",
+      "title": "https://schubert-simon.de/privacy/kai.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.593Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
+        "fileName": "simonschubert-kai-learnings.md"
+      }
+    },
+    "SRC-B5C5D33983AA": {
+      "id": "SRC-B5C5D33983AA",
+      "url": "https://github.com/user-attachments/assets/463de999-9885-47c4-96bf-605dc2f8d897",
+      "title": "https://github.com/user-attachments/assets/463de999-9885-47c4-96bf-605dc2f8d897",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.600Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
+        "fileName": "simonschubert-kai-learnings.md"
+      }
+    },
+    "SRC-24B29CCB39AA": {
+      "id": "SRC-24B29CCB39AA",
+      "url": "https://github.com/user-attachments/assets/6650077c-ff34-4c5f-8a6d-ee79e912dc3e",
+      "title": "https://github.com/user-attachments/assets/6650077c-ff34-4c5f-8a6d-ee79e912dc3e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
+        "fileName": "simonschubert-kai-learnings.md"
+      }
+    },
+    "SRC-F7D4D181CE42": {
+      "id": "SRC-F7D4D181CE42",
+      "url": "https://github.com/rook/rook",
+      "title": "https://github.com/rook/rook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-0960BE43A258": {
+      "id": "SRC-0960BE43A258",
+      "url": "https://slack.rook.io/",
+      "title": "https://slack.rook.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-D2FD391EB95A": {
+      "id": "SRC-D2FD391EB95A",
+      "url": "https://github.com/rook/rook/blob/a53a960adc15ec4c167c6ef9714e0b4ca009aff1/pkg/operator/ceph/controller/controller_utils.go",
+      "title": "https://github.com/rook/rook/blob/a53a960adc15ec4c167c6ef9714e0b4ca009aff1/pkg/operator/ceph/controller/controller_utils.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-748D0F75EA9A": {
+      "id": "SRC-748D0F75EA9A",
+      "url": "https://github.com/rook/rook/blob/8e7650583263e735b75cbbfd4b52b91bc9b74113/pkg/operator/ceph/cluster/version.go",
+      "title": "https://github.com/rook/rook/blob/8e7650583263e735b75cbbfd4b52b91bc9b74113/pkg/operator/ceph/cluster/version.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:20:02.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
       }
     }
   }

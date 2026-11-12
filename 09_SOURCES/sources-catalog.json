@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "6616e134",
+    "sourceVersion": "719f345e",
     "license": "Apache-2.0",
-    "contentHash": "13d4a86932f2913c0a2f2b72ef32ff6ca63b6fe4386112d9372dd599e25db401",
-    "lastHarvestedAt": "2026-11-11T10:08:29.999Z",
+    "contentHash": "a7293b29d11a05c1eddee77793828c2daca5186626b2bf8769366c1ed74771b4",
+    "lastHarvestedAt": "2026-11-12T21:19:41.401Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "d61530f2",
+    "sourceVersion": "0e83a2b1",
     "license": "Apache-2.0",
-    "contentHash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
-    "lastHarvestedAt": "2026-11-11T08:28:21.333Z",
+    "contentHash": "17e1b96c428aced8ced69f8a78f2a2ebc10bff5cf4b9c1128effe6935d5d97d9",
+    "lastHarvestedAt": "2026-11-12T21:19:46.565Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -8643,10 +8643,10 @@
     "repository": "SimonSchubert/Kai",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/Kai",
-    "sourceVersion": "a055ad41",
+    "sourceVersion": "22e49557",
     "license": "Apache-2.0",
-    "contentHash": "162b65de80f8dd90722497a08588329cddc607e2a0235990712091d211e1d2a7",
-    "lastHarvestedAt": "2026-11-08T15:35:13.646Z",
+    "contentHash": "a23e2af8713cf1f87a318bf3003b424ec3b95776aa73ebe1da769e2db2a151d2",
+    "lastHarvestedAt": "2026-11-12T21:19:32.408Z",
     "learningId": "learn-github-simonschubert-kai"
   },
   "a4csi-schema-org-validate": {
@@ -11865,8 +11865,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
     "sourceVersion": "hf-qwen-qwen3-embedding-0.6b",
     "license": "Open-Source",
-    "contentHash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
-    "lastHarvestedAt": "2026-11-07T22:46:38.360Z",
+    "contentHash": "f9e404b624c1e28ff982810c75613f23bc7330abcf148eb9ba5ed041627fb528",
+    "lastHarvestedAt": "2026-11-12T21:19:24.399Z",
     "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b"
   },
   "feder-cr-jobs_applier_ai_agent_aihawk": {

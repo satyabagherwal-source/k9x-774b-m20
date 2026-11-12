@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T21:10:48.743Z",
+  "last_updated": "2026-11-12T21:19:46.585Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "13d4a86932f2913c0a2f2b72ef32ff6ca63b6fe4386112d9372dd599e25db401",
-      "verified_at": "2026-11-11T10:08:30.013Z",
+      "content_hash": "a7293b29d11a05c1eddee77793828c2daca5186626b2bf8769366c1ed74771b4",
+      "verified_at": "2026-11-12T21:19:41.419Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:08:30.013Z"
+      "last_updated": "2026-11-12T21:19:41.419Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
-      "verified_at": "2026-11-11T08:28:21.342Z",
+      "content_hash": "17e1b96c428aced8ced69f8a78f2a2ebc10bff5cf4b9c1128effe6935d5d97d9",
+      "verified_at": "2026-11-12T21:19:46.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T08:28:21.342Z"
+      "last_updated": "2026-11-12T21:19:46.584Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -13011,14 +13011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-kai",
-      "content_hash": "162b65de80f8dd90722497a08588329cddc607e2a0235990712091d211e1d2a7",
-      "verified_at": "2026-11-08T15:35:13.664Z",
+      "content_hash": "a23e2af8713cf1f87a318bf3003b424ec3b95776aa73ebe1da769e2db2a151d2",
+      "verified_at": "2026-11-12T21:19:32.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:35:13.664Z"
+      "last_updated": "2026-11-12T21:19:32.423Z"
     },
     "a4csi/schema-org-validate": {
       "repository": "a4csi/schema-org-validate",
@@ -17856,14 +17856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "content_hash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
-      "verified_at": "2026-11-07T22:46:38.376Z",
+      "content_hash": "f9e404b624c1e28ff982810c75613f23bc7330abcf148eb9ba5ed041627fb528",
+      "verified_at": "2026-11-12T21:19:24.407Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:46:38.376Z"
+      "last_updated": "2026-11-12T21:19:24.407Z"
     },
     "feder-cr/Jobs_Applier_AI_Agent_AIHawk": {
       "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",

@@ -9205,3 +9205,8 @@
 | `CYCLE-20261112-LANJ` | `2026-11-12T21:10:44.527Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4385fdea...`) |
 | `CYCLE-20261112-LDW8` | `2026-11-12T21:10:48.728Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8f016883...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T21:11:09.945Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-34E068C1` [Domain D] | Yes (`525f60a2...`) |
+| `CYCLE-20261112-WFSB` | `2026-11-12T21:19:24.395Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | Yes (`f9e404b6...`) |
+| `CYCLE-20261112-WLYS` | `2026-11-12T21:19:32.404Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`a23e2af8...`) |
+| `CYCLE-20261112-WSWM` | `2026-11-12T21:19:41.398Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a7293b29...`) |
+| `CYCLE-20261112-WWW2` | `2026-11-12T21:19:46.562Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`17e1b96c...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T21:20:02.566Z` | `hf-qwen-qwen3-embedding-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B36C340C` [Domain D] | Yes (`055b4d48...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T21:10:48.602Z",
+  "last_updated": "2026-11-12T21:19:46.463Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1771,8 +1771,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "d61530f2",
-      "content_hash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
+      "source_version": "0e83a2b1",
+      "content_hash": "17e1b96c428aced8ced69f8a78f2a2ebc10bff5cf4b9c1128effe6935d5d97d9",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1789,6 +1789,11 @@
         {
           "number": null,
           "title": "db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "preserve reopened group queries, iterator concurrency and cache pages (#892)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -1857,7 +1862,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T08:28:21.192Z",
+      "verified_at": "2026-11-12T21:19:46.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56128,8 +56133,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "6616e134",
-      "content_hash": "13d4a86932f2913c0a2f2b72ef32ff6ca63b6fe4386112d9372dd599e25db401",
+      "source_version": "719f345e",
+      "content_hash": "a7293b29d11a05c1eddee77793828c2daca5186626b2bf8769366c1ed74771b4",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -56146,6 +56151,11 @@
         {
           "number": null,
           "title": "test: fix flaky and racy mgr module configuration tests",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #18780 from sarankumar1325/fix/rgw-duplicate-pod-name-env",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56204,7 +56214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:08:29.727Z",
+      "verified_at": "2026-11-12T21:19:41.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58885,8 +58895,8 @@
       "slug": "simonschubert-kai",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "a055ad41",
-      "content_hash": "162b65de80f8dd90722497a08588329cddc607e2a0235990712091d211e1d2a7",
+      "source_version": "22e49557",
+      "content_hash": "a23e2af8713cf1f87a318bf3003b424ec3b95776aa73ebe1da769e2db2a151d2",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "promoted_rules": [
@@ -58906,7 +58916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T15:35:13.540Z",
+      "verified_at": "2026-11-12T21:19:32.298Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131364,13 +131374,13 @@
       "rule_number": 3545,
       "title": "Upgrade dependencies",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "a055ad41",
+      "source_version": "22e49557",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-08T15:35:13.540Z"
+      "verified_at": "2026-11-12T21:19:32.298Z"
     },
     "rule-3546": {
       "learning_id": "rule-3546",
@@ -182683,7 +182693,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
       "source_version": "hf-qwen-qwen3-embedding-0.6b",
-      "content_hash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
+      "content_hash": "f9e404b624c1e28ff982810c75613f23bc7330abcf148eb9ba5ed041627fb528",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "promoted_rules": [
@@ -182723,7 +182733,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:46:38.262Z",
+      "verified_at": "2026-11-12T21:19:24.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

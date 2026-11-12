@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `d61530f2`  
+> **Source Version**: `0e83a2b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T08:28:04.706Z  
+> **Timestamp**: 2026-11-12T21:19:36.538Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T08:18:03.487Z  
+> **Harvest Timestamp**: 2026-11-12T21:19:36.533Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16226 stars
+- **Stars / Engagement**: 16231 stars
 
 ---
 
@@ -1092,14 +1092,12 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d61530f2` (2026-11-11)
-**Commit Message**: fix(db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)
+### Incident Patch 1: `e4c5dcad` (2026-11-12)
+**Commit Message**: fix: preserve reopened group queries, iterator concurrency and cache pages (#892)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `python/tests/test_rotated_quantization.py` (added, +97/-0)
+**File**: `python/tests/test_collection_group_by_reopen.py` (added, +109/-0)
 ```diff
-@@ -0,0 +1,97 @@
+@@ -0,0 +1,109 @@
 +# Copyright 2025-present the zvec project
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -1114,266 +1112,916 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
 +
-+"""Optimize must keep rotated INT8/INT4 indexes searchable (issue #886)."""
++import pytest
++import zvec
++
++
++@pytest.fixture(scope="module", autouse=True)
++def initialize():
++    zvec.init(memory_limit_mb=512, query_threads=2, optimize_threads=2)
++
++
++def _doc(key):
++    return zvec.Doc(
++        id=f"doc_{key}",
++        fields={"value": key, "group_id": key % 3},
++        vectors={"v": [float(key)] * 4},
++    )
++
++
++def _check_groups(collection, keys, kind):
++    query = zvec.Query(
++        "v",
++        vector=[1.0] * 4,
++        param=zvec.HnswQueryParam(is_linear=True) if kind == "hnsw" else None,
++    )
++    for filter_expr in [None, "value >= 3"]:
++        groups = collection.group_by_query(
++            query,
++            group_by_field_name="group_id",
++            group_count=3,
++            topk_per_group=2,
++            filter=filter_expr,
++            include_vector=True,
++        )
++        assert len(groups) == 3
++        for group in groups:
++            expected = sorted(
++                (
++                    key
++                    for key in keys
++                    if key % 3 == int(group.group_by_value)
++                    and (filter_expr is None or key >= 3)
++                ),
++                reverse=True,
++            )[:2]
++            assert [doc.id for doc in group.docs] == [f"doc_{key}" for key in expected]
++            for doc, key in zip(group.docs, expected):
++                assert doc.fields["value"] == key
++                assert doc.vectors["v"] == pytest.approx([float(key)] * 4)
++                assert doc.score == pytest.approx(float(key * 4))
++
++
++@pytest.mark.parametrize("enable_mmap", [True, False])
++@pytest.mark.parametrize("read_only", [True, False])
++@pytest.mark.parametrize("kind", ["flat", "hnsw"])
++@pytest.mark.parametrize("shape", ["unoptimized", "mixed", "optimized"])
++def test_group_by_after_reopen(tmp_path, enable_mmap, read_only, kind, shape):
++    path = tmp_path / "collection"
++    param = zvec.FlatIndexParam if kind == "flat" else zvec.HnswIndexParam
++    schema = zvec.CollectionSchema(
++        name="group_by_reopen",
++        fields=[
++            zvec.FieldSchema("group_id", zvec.DataType.INT64),
++            zvec.FieldSchema(
++                "value", zvec.DataType.INT64, index_param=zvec.InvertIndexParam()
++            ),
++        ],
++        vectors=zvec.VectorSchema(
++            "v",
++            zvec.DataType.VECTOR_FP32,
++            4,
++            index_param=param(metric_type=zvec.MetricType.IP),
++        ),
++    )
++    writer = zvec.create_and_open(
++        str(path), schema, zvec.CollectionOption(enable_mmap=enable_mmap)
++    )
++    assert all(status.ok() for status in writer.insert([_doc(i) for i in range(9)]))
++    if shape != "unoptimized":
++        writer.optimize()
++    assert all(status.ok() for status in writer.insert([_doc(i) for i in range(9, 12)]))
++    if shape == "optimized":
++        writer.optimize()
++    _check_groups(writer, range(12), kind)
++    writer.close()
++
++    collection = zvec.open(
++        str(path), zvec.CollectionOption(read_only=read_only, enable_mmap=enable_mmap)
++    )
++    try:
++        _check_groups(collection, range(12), kind)
++        if not read_only:
++            assert collection.insert(_doc(12)).ok()
++            assert collection.delete("doc_11").ok()
++            _check_groups(collection, [*range(11), 12], kind)
++    finally:
++        collection.close()
+```
+
+**File**: `src/ailego/buffer/block_eviction_queue.cc` (modified, +16/-3)
+```diff
+@@ -283,6 +283,10 @@ void BlockEvictionQueue::recycle() {
+ }
+ 
+ size_t BlockEvictionQueue::batch_recycle(size_t count) {
++  return batch_recycle(count, count >= kProtectedAgingMinBatch);
++}
++
++size_t BlockEvictionQueue::batch_recycle(size_t count, bool age_protected) {
+   size_t evicted = 0;
+   // Bound work when no page is currently evictable.
+   const size_t max_attempts =
+@@ -291,7 +295,6 @@ size_t BlockEvictionQueue::batch_recycle(size_t count) {
+           : count * 4 + 16;
+   size_t attempts = 0;
+   bool recovered = false;
+-  bool age_protected = count >= kProtectedAgingMinBatch;
+   while (evicted < count && attempts < max_attempts) {
+     BlockType item;
+     if (!evict_block(item, attempts, max_attempts, age_protected)) {
+@@ -682,8 +685,18 @@ void MemoryLimitPool::background_evict_loop() {
+     }
+     // Reclaim proactively down to the low watermark so the foreground path
+     // finds ready buffers on the free-list instead of evicting inline.
+-    while (bg_running_.load() && used_size_.load() > low) {
+-      size_t n = BlockEvictionQueue::get_instance().batch_recycle(64);
++    while (bg_running_.load()) {
++      const size_t used = used_size_.load();
++      if (used <= low) {
++        break;
++      }
++      // A full batch can drain a small pool well below the low watermark.
++      // Round up to whole pages, and recheck usage after each bounded batch.
++      const size_t pages = (used - low - 1) / page_buffer_size() + 1;
++      // Keep aging independent of the reclaim budget so small background
++      // batches can still adapt a dominant protected queue to a new workload.
++      const size_t n = BlockEvictionQueue::get_instance().batch_recycle(
++          std::min<size_t>(64, pages), /*age_protected=*/true);
+       if (n == 0) {
+         // Back off when pressure remains but eviction makes no progress.
+         bg_no_progress_sleeps_.fetch_add(1, std::memory_order_relaxed);
+```
+
+**File**: `src/ailego/logger/logger.cc` (modified, +20/-0)
+```diff
+@@ -19,6 +19,10 @@
+ #include <zvec/ailego/logger/logger.h>
+ #include <zvec/ailego/utility/time_helper.h>
+ 
++#if defined(_WIN32)
++#include <windows.h>
++#endif
++
+ namespace zvec {
+ namespace ailego {
+ 
+@@ -55,11 +59,27 @@ struct ConsoleLogger : public Logger {
+     vsnprintf(buffer, sizeof(buffer), format, args);
+     stream << buffer << '\n';
+ 
++#if defined(_WIN32)
++    // A host using another CRT (for example Python's fd capture) can close
++    // and replace standard handles without updating this DLL's iostreams.
++    // A cached handle may then refer to an unrelated index file. Resolve the
++    // process standard handle for each message instead of using that cache.
++    HANDLE output = GetStdHandle(level <= LEVEL_INFO ? STD_OUTPUT_HANDLE
++                                                     : STD_ERROR_HANDLE);
++    if (output == nullptr || output == INVALID_HANDLE_VALUE) {
++      return;
++    }
++    const std::string message = stream.str();
++    DWORD written = 0;
++    WriteFile(output, message.data(), static_cast<DWORD>(message.size()),
++              &written, nullptr);
++#else
+     if (level <= LEVEL_INFO) {
+       std::cout << stream.str() << std::flush;
+     } else {
+       std::cerr << stream.str() << std::flush;
+     }
++#endif
+   }
+ };
+ 
+```
+
+**File**: `src/core/algorithm/flat/flat_streamer_entity.cc` (modified, +9/-11)
+```diff
+@@ -891,23 +891,21 @@ int FlatContiguousStreamerEntity::build_contiguous_memory() {
+   for (uint32_t id = 0; id < count; ++id) {
+     IndexStorage::MemoryBlock block;
+     uint64_t vector_key = kInvalidKey;
+-    int ret = 0;
+-    if (use_key_info_map()) {
+-      vector_key = key(id);
+-      ret = FlatStreamerEntity::get_vector_by_key(vector_key, block);
+-      if (ret == 0) {
+-        storage->key_to_position[vector_key] = id;
+-      }
+-    } else {
+-      ret = get_vector_by_position(id, block);
+-      if (ret == 0) {
+-        ret = get_key_by_position(id, &vector_key);
++    int ret = get_key(id, &vector_key);
++    if (ret == 0) {
++      if (use_key_info_map()) {
++        ret = FlatStreamerEntity::get_vector_by_key(vector_key, block);
++      } else {
++        ret = get_vector_by_position(id, block);
+       }
+     }
+     if (ret != 0 || block.data() == nullptr) {
+       LOG_ERROR("Failed to load Flat vector into contiguous memory, id=%u", id);
+       return IndexError_ReadData;
+     }
++    if (use_key_info_map()) {
++      storage->key_to_position[vector_key] = id;
++    }
+     std::memcpy(raw + static_cast<size_t>(id) * stride, block.data(),
+                 vector_size);
+     storage->position_to_key[id] = vector_key;
+```
+
+**File**: `src/core/algorithm/flat/flat_streamer_entity.h` (modified, +19/-5)
+```diff
+@@ -228,12 +228,26 @@ class FlatStreamerEntity {
+     quantizer_ = quantizer;
+   }
+ 
+-  inline uint64_t key(uint32_t id) const {
+-    if (id < id_key_vector_.size()) {
+-      return id_key_vector_[id];
+-    } else {
+-      return kInvalidKey;
++  //! Read a key without conflating a missing slot with a storage read error.
++  //! A valid positional hole returns success with kInvalidKey.
++  inline int get_key(uint32_t id, uint64_t *out) const {
++    if (!out) {
++      return -1;
++    }
++    if (!use_key_info_map_) {
++      // Positional indexes do not rebuild the key cache on open.
++      return get_key_by_position(id, out);
++    }
++    if (id >= id_key_vector_.size()) {
++      return -1;
+     }
++    *out = id_key_vector_[id];
++    return 0;
++  }
++
++  inline uint64_t key(uint32_t id) const {
++    uint64_t out = kInvalidKey;
++    return get_key(id, &out) == 0 ? out : kInvalidKey;
+   }
+ 
+   inline void row_major_distance(const void *query, const void *feature,
+```
+
+**File**: `src/db/collection.cc` (modified, +3/-2)
+```diff
+@@ -345,9 +345,10 @@ class CollectionImpl : public Collection {
+   // destroy) without holding schema_handle_mtx_, so a maintenance
+   // operation waiting for a running optimize never becomes a pending
+   // exclusive acquirer of the schema lock (which would block new readers).
++  // Iterator creators share this lock; schema_handle_mtx_ guards snapshots.
+   // Lock order: maintenance -> schema -> write -> SegmentManager; never
+   // acquire maintenance_mtx_ after any of the others.
+-  mutable std::mutex maintenance_mtx_;
++  mutable std::shared_mutex maintenance_mtx_;
+ 
+   std::atomic<SegmentID> segment_id_allocator_;
+   std::atomic<SegmentID> tmp_segment_id_allocator_;
+@@ -2753,7 +2754,7 @@ Result<DocIterator::Ptr> CollectionImpl::create_iterator(
+     const IteratorOptions &options) {
+   // Iterators and maintenance operations are mutually exclusive (see the
+   // contract in collection.h); fail fast instead of blocking here.
+-  std::unique_lock maintenance_lock(maintenance_mtx_, std::try_to_lock);
++  std::shared_lock maintenance_lock(maintenance_mtx_, std::try_to_lock);
+   if (!maintenance_lock.owns_lock()) {
+     return tl::make_unexpected(Status::FailedPrecondition(
+         "create_iterator is not allowed while a maintenance operation "
+```
+
+**File**: `src/include/zvec/ailego/buffer/block_eviction_queue.h` (modified, +6/-2)
+```diff
+@@ -130,6 +130,10 @@ class BlockEvictionQueue {
+ 
+   size_t batch_recycle(size_t count);
+ 
++  //! Reclaim at most count blocks, optionally sampling protected aging once
++  //! regardless of the batch size.
++  size_t batch_recycle(size_t count, bool age_protected);
++
+   struct Stats {
+     std::array<size_t, kQueueCount> approximate_queue_sizes{};
+     uint64_t protected_aging_dequeues{0};
+@@ -160,8 +164,8 @@ class BlockEvictionQueue {
+     }
+   }
+ 
+-  // Foreground one-page reclaim should not pay for protected aging. Larger
+-  // reclaim batches inspect the protected queue at most once.
++  // Small explicit batches skip aging by default. Background reclamation
++  // opts into one sample even when only one page needs to be reclaimed.
+   static constexpr size_t kEvictQueueCapacity = 512 * 200;
+   static constexpr size_t kProtectedAgingMinBatch = 8;
+   static constexpr size_t kProtectedDominanceRatio = 3;
+```
+
+**File**: `src/include/zvec/db/collection.h` (modified, +2/-2)
+```diff
+@@ -133,8 +133,8 @@ class ZVEC_API Collection {
+   // add/alter/drop column), destroy and close return an error (only the
+   // destructor path waits for open iterators), and optimize fails at its
+   // start; conversely this call fails while a maintenance operation is
+-  // running. Flush, writes and queries are not affected. The collection
+-  // must outlive its iterators.
++  // running. Concurrent iterator creation is allowed. Flush, writes and
++  // queries are not affected. The collection must outlive its iterators.
+   virtual Result<DocIterator::Ptr> create_iterator(
+       const IteratorOptions &options = {}) = 0;
+ 
+```
+
+---
+
+### Incident Patch 2: `0e83a2b1` (2026-11-12)
+**Commit Message**: fix(simd): avoid AVX instructions during Windows DLL initialization (#896)
+
+**File**: `.github/workflows/05-windows-build.yml` (modified, +47/-0)
+```diff
+@@ -108,6 +108,53 @@ jobs:
+         run: sccache --show-stats
+         shell: powershell
+ 
++      - name: Check AVX objects for load-time initializers
++        if: matrix.msvc_arch == 'x64'
++        run: python .github/workflows/scripts/check_simd_initializers.py build
++        shell: powershell
++
++      - name: Check loading and search on CPUs without AVX
++        if: matrix.platform == 'windows-2022'
++        timeout-minutes: 10
++        run: |
++          $ProgressPreference = 'SilentlyContinue'
++          $archive = Join-Path $env:RUNNER_TEMP "sde.tar.xz"
++          $url = "https://downloadmirror.intel.com/924984/sde-external-10.13.1-2026-07-28-win.tar.xz"
++          Invoke-WebRequest -UseBasicParsing -TimeoutSec 120 -Uri $url -OutFile $archive
++          $expected = "74E626EDE09B0BAA5011FC9E51B58627EA92C3FC0BAE5FD7DB34B490F335F651"
++          if ((Get-FileHash $archive -Algorithm SHA256).Hash -ne $expected) {
++            throw "Intel SDE checksum mismatch"
++          }
++          # Windows' tar can stall on this archive. Extract the checksum-pinned
++          # vendor archive with Python, including the runner's Python 3.10.11.
++          python -c "import os,tarfile; p=os.path.join(os.environ['RUNNER_TEMP'],'sde.tar.xz'); t=tarfile.open(p,'r:xz'); t.extractall(os.environ['RUNNER_TEMP'])"
++          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++          $sde = Join-Path $env:RUNNER_TEMP "sde-external-10.13.1-2026-07-28-win\sde.exe"
++          $package = python -c "import importlib.util; print(next(iter(importlib.util.find_spec('zvec').submodule_search_locations)))"
++          # Check every bundled native image; CPython and the Windows CRT have
++          # their own dispatch and must not obscure violations in zvec (#810).
++          $images = Get-ChildItem $package -Recurse -File | Where-Object {
++            $_.Extension -eq '.pyd' -or $_.Extension -eq '.dll'
++          }
++          if (-not $images) { throw "No zvec native images found" }
++          $imageArgs = @()
++          foreach ($image in $images) {
++            $imageArgs += @('-chip_check_image', $image.Name)
++          }
++          foreach ($cpu in @('-mrm', '-wsm', '-glm', '-snb')) {
++            Write-Host "Checking DLL loading and dense/sparse search for $cpu"
++            & $sde $cpu @imageArgs -- python -I .github/workflows/scripts/smoke_no_avx.py --dll-only
++            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++            # Arrow's current Windows build requires SSE4.2 for collection
++            # operations. Merom still verifies DLL loading and Python import;
++            # Westmere/Goldmont match the no-AVX, SSE4.2 CPU in #810.
++            $smokeArgs = @()
++            if ($cpu -eq '-mrm') { $smokeArgs += '--import-only' }
++            & $sde $cpu @imageArgs -- python -I .github/workflows/scripts/smoke_no_avx.py @smokeArgs
++            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++          }
++        shell: powershell
++
+       - name: Run C++ Tests
+         run: |
+           cd "$env:GITHUB_WORKSPACE\build"
+```
+
+**File**: `.github/workflows/scripts/check_simd_initializers.py` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++"""Reject load-time constructors in MSVC objects compiled for AVX.
++
++Run after the Windows build. Runtime dispatch cannot protect a CPU from an
++initializer registered in .CRT$XC* or .CRT$XI*: the loader calls it first.
++"""
 +
 +from __future__ import annotations
 +
-+import numpy as np
-+import pytest
-+
-+import zvec
-+from zvec import (
-+    CollectionSchema,
-+    Doc,
-+    FlatIndexParam,
-+    HnswIndexParam,
-+    Query,
-+    QuantizerParam,
-+    VectorSchema,
-+)
-+from zvec.typing import DataType, MetricType, QuantizeType
-+
-+DIMENSION = 128
-+BATCH = 200
-+MIN_HITS = BATCH * 95 // 100
++import argparse
++import json
++import re
++import subprocess
++from pathlib import Path
 +
 +
-+def _self_recall(collection, vectors, ids) -> int:
-+    hits = 0
-+    for i in ids:
-+        result = collection.query(Query(field_name="dense", vector=vectors[i]), topk=1)
-+        hits += bool(result) and result[0].id == str(i)
-+    return hits
++def check_initializers(build_dir: Path) -> None:
++    entries = json.loads((build_dir / "compile_commands.json").read_text())
++    checked = set()
++    failures = []
++    for entry in entries:
++        if not re.search(r"/arch:AVX", entry["command"], re.IGNORECASE):
++            continue
++        obj = build_dir / entry["output"]
++        # The compilation database also lists targets not requested by pip.
++        if obj in checked or not obj.is_file():
++            continue
++        checked.add(obj)
++        headers = subprocess.run(
++            ["dumpbin", "/nologo", "/headers", str(obj)],
++            check=True,
++            capture_output=True,
++            text=True,
++            errors="replace",
++        ).stdout
++        if re.search(r"\.CRT\$X[CI]", headers):
++            failures.append(str(obj))
++    if not checked:
++        raise RuntimeError("No built AVX objects found; initializer audit did not run")
++    if failures:
++        raise RuntimeError(
++            "Load-time initializers in AVX objects:\n" + "\n".join(failures)
++        )
++    print(f"Checked {len(checked)} AVX objects: no load-time initializers")  # noqa: T201
 +
 +
-+@pytest.mark.parametrize(
-+    "metric", [MetricType.COSINE, MetricType.L2], ids=["cosine", "l2"]
-+)
-+@pytest.mark.parametrize(
-+    "quantize_type", [QuantizeType.INT8, QuantizeType.INT4], ids=["int8", "int4"]
-+)
-+@pytest.mark.parametrize("index_kind", ["hnsw", "flat"])
-+def test_rotated_quantizer_survives_optimize(
-+    tmp_path, index_kind, quantize_type, metric
-+):
-+    zvec.init()
-+    rng = np.random.default_rng(886)
-+    vectors = rng.standard_normal((BATCH * 2, DIMENSION)).astype(np.float32).tolist()
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("build_dir", type=Path)
++    check_initializers(parser.parse_args().build_dir.resolve())
+```
+
+**File**: `.github/workflows/scripts/smoke_no_avx.py` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++"""Exercise DLL loading or Python import and vector search under Intel SDE."""
 +
-+    index_cls = HnswIndexParam if index_kind == "hnsw" else FlatIndexParam
-+    index_param = index_cls(
-+        metric_type=metric,
-+        quantize_type=quantize_type,
-+        quantizer_param=QuantizerParam(enable_rotate=True),
-+    )
-+    schema = CollectionSchema(
-+        name="rotated_quantization",
++from __future__ import annotations
++
++import argparse
++import ctypes
++import importlib.util
++import tempfile
++from pathlib import Path
++
++
++def load_dll() -> None:
++    # Locate the native image without importing zvec (and running PyInit).
++    spec = importlib.util.find_spec("zvec")
++    package = Path(next(iter(spec.submodule_search_locations)))
++    native = next(package.glob("_zvec*.pyd"))
++    ctypes.WinDLL(str(native))
++    print(f"DLL load succeeded: {native.name}")  # noqa: T201
++
++
++def search() -> None:
++    import zvec  # noqa: PLC0415
++
++    schema = zvec.CollectionSchema(
++        name="no_avx",
 +        vectors=[
-+            VectorSchema(
-+                "dense", DataType.VECTOR_FP32, DIMENSION, index_param=index_param
-+            )
++            zvec.VectorSchema(
++                "dense",
++                zvec.DataType.VECTOR_FP32,
++                dimension=16,
++                index_param=zvec.FlatIndexParam(),
++            ),
++            zvec.VectorSchema(
++                "sparse",
++                zvec.DataType.SPARSE_VECTOR_FP32,
++                index_param=zvec.FlatIndexParam(),
++            ),
 +        ],
 +    )
-+    path = str(tmp_path / "collection")
-+    collection = zvec.create_and_open(path=path, schema=schema)
++    with tempfile.TemporaryDirectory() as tmp:
++        collection = zvec.create_and_open(str(Path(tmp) / "collection"), schema)
++        collection.insert(
++            [
++                zvec.Doc(
++                    id="a", vectors={"dense": [1.0] * 16, "sparse": {2: 1.0, 4: 2.0}}
++                ),
++                zvec.Doc(id="b", vectors={"dense": [0.0] * 16, "sparse": {3: 1.0}}),
++            ]
++        )
++        collection.optimize()
++        for field, vector in [("dense", [1.0] * 16), ("sparse", {2: 1.0, 4: 2.0})]:
++            result = collection.query(zvec.Query(field, vector=vector), topk=1)
++            assert result[0].id == "a", result
++        collection.close()
++    print(f"Import and dense/sparse search succeeded: zvec {zvec.__version__}")  # noqa: T201
 +
-+    def insert(ids):
-+        collection.insert([Doc(id=str(i), vectors={"dense": vectors[i]}) for i in ids])
 +
-+    first, second = range(BATCH), range(BATCH, BATCH * 2)
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--dll-only", action="store_true")
++    parser.add_argument("--import-only", action="store_true")
++    args = parser.parse_args()
++    if args.dll_only:
++        load_dll()
++    elif args.import_only:
++        import zvec
 +
-+    # The first optimize builds the index from one writing segment.
-+    insert(first)
-+    assert _self_recall(collection, vectors, first) >= MIN_HITS
-+    collection.optimize()
-+    assert _self_recall(collection, vectors, first) >= MIN_HITS
-+
-+    # The second optimize merges the indexed segment with a new one.
-+    insert(second)
-+    collection.optimize()
-+    assert _self_recall(collection, vectors, first) >= MIN_HITS
-+    assert _self_recall(collection, vectors, second) >= MIN_HITS
-+
-+    del collection
-+    collection = zvec.open(path)
-+    assert _self_recall(collection, vectors, range(BATCH * 2)) >= MIN_HITS * 2
++        print(f"Python import succeeded: zvec {zvec.__version__}")  # noqa: T201
++    else:
++        search()
 ```
 
-**File**: `src/db/index/segment/segment.cc` (modified, +1/-1)
+**File**: `src/turbo/distance/sparse/sparse_inner_product_fp16_avx.cc` (modified, +7/-505)
 ```diff
-@@ -1737,7 +1737,7 @@ Status SegmentImpl::create_vector_index(
-     // training continue to consume the raw Flat sources.
-     const auto *quantize_sources = &vector_indexers_[column];
-     if (segment_detail::CanReuseInsertTimeQuantizedVectors(
--            vector_index_params->quantize_type())) {
-+            *vector_index_params)) {
-       auto quant_iter = quant_vector_indexers_.find(column);
-       if (quant_iter != quant_vector_indexers_.end() &&
-           !quant_iter->second.empty() &&
-```
-
-**File**: `src/db/index/segment/segment_helper.cc` (modified, +1/-1)
-```diff
-@@ -736,7 +736,7 @@ Status SegmentHelper::ReduceVectorIndex(
-       // raw Flat sources and train again for the merged segment.
-       auto quant_merge_sources =
-           segment_detail::CanReuseInsertTimeQuantizedVectors(
--              vector_index_params->quantize_type())
-+              *vector_index_params)
-               ? collect_merge_indexers(&Segment::get_quant_vector_indexer)
-               : collect_merge_indexers(&Segment::get_vector_indexer);
+@@ -13,515 +13,13 @@
+ // limitations under the License.
+ #include <ailego/internal/cpu_features.h>
+ #include "sparse_distance.h"
++#include "sparse_shuffle_masks.h"
  
+ namespace zvec {
+ namespace turbo {
+ // Sparse
+ //--------------------------------------------------
+ #if defined(__AVX__)
+-const static __m128i SHUFFLE_MASK256[256] = {
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, -127, -127),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 5, 4, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 5, 4, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 5,
+-                 4, 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, 7, 6),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 7, 6, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 7, 6, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 7,
+-                 6, 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 7, 6, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 7,
+-                 6, 5, 4, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 7,
+-                 6, 5, 4, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 7, 6, 5, 4, 3,
+-                 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, 9, 8),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 9, 8, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 9, 8, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 9,
+-                 8, 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 9, 8, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 9,
+-                 8, 5, 4, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 9,
+-                 8, 5, 4, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 5, 4, 3,
+-                 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 9, 8, 7, 6),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 9,
+-                 8, 7, 6, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 9,
+-                 8, 7, 6, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 7, 6, 3,
+-                 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 9,
+-                 8, 7, 6, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 7, 6, 5,
+-                 4, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 7, 6, 5,
+-                 4, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+-                 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, 11, 10),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 11, 10, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 11, 10, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 11,
+-                 10, 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 11, 10, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 11,
+-                 10, 5, 4, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127, 11,
+-                 10, 5, 4, 3, 2),
+-    _mm_set_epi8(-127, -127, -127, -1
 ```
 
-**File**: `src/db/index/segment/segment_helper.h` (modified, +11/-1)
+**File**: `src/turbo/distance/sparse/sparse_inner_product_fp16_avx512fp16.cc` (modified, +7/-508)
 ```diff
-@@ -43,7 +43,17 @@ inline DataType FlatStorageDataTypeForField(DataType field_data_type,
+@@ -12,6 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ #include "sparse_distance.h"
++#include "sparse_shuffle_masks.h"
  
- // These quantizers encode each record independently and therefore produce a
- // valid quantized index during insert, before optimize sees the full dataset.
--inline bool CanReuseInsertTimeQuantizedVectors(QuantizeType quantize_type) {
+ namespace zvec {
+ namespace turbo {
+@@ -23,512 +24,6 @@ float InnerProductSparseInSegmentFp16AVX512FP16(
+     uint32_t m_sparse_count, const uint16_t *m_sparse_index,
+     const ailego::Float16 *m_sparse_value, uint32_t q_sparse_count,
+     const uint16_t *q_sparse_index, const ailego::Float16 *q_sparse_value) {
+-  const static __m128i SHUFFLE_MASK256[256] = {
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, -127, -127, -127, -127),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, -127, -127, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, -127, -127, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, -127, -127, 5, 4),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 5, 4, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 5, 4, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   5, 4, 3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, -127, -127, 7, 6),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 7, 6, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 7, 6, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   7, 6, 3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 7, 6, 5, 4),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   7, 6, 5, 4, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   7, 6, 5, 4, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 7, 6, 5, 4,
+-                   3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, -127, -127, 9, 8),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 9, 8, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 9, 8, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   9, 8, 3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 9, 8, 5, 4),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   9, 8, 5, 4, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   9, 8, 5, 4, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 5, 4,
+-                   3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 9, 8, 7, 6),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   9, 8, 7, 6, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   9, 8, 7, 6, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 7, 6,
+-                   3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   9, 8, 7, 6, 5, 4),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 7, 6,
+-                   5, 4, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 9, 8, 7, 6,
+-                   5, 4, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, 9, 8, 7, 6, 5, 4, 3, 2,
+-                   1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, -127, -127, 11, 10),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 11, 10, 1, 0),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   -127, -127, 11, 10, 3, 2),
+-      _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                   11, 10, 3, 2, 1, 0),
+-      _mm_set_epi8(-127, -127, 
+```
+
+**File**: `src/turbo/distance/sparse/sparse_inner_product_fp32_sse.cc` (modified, +13/-37)
+```diff
+@@ -13,45 +13,13 @@
+ // limitations under the License.
+ #include <ailego/internal/cpu_features.h>
+ #include "sparse_distance.h"
++#include "sparse_shuffle_masks.h"
+ 
+ namespace zvec {
+ namespace turbo {
+ // Sparse
+ //--------------------------------------------------
+ #if defined(__SSE4_1__)
+-const static __m128i SHUFFLE_MASK16[16] = {
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, -127, -127, -127, -127),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 7, 6, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 7, 6, 5, 4, 3,
+-                 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 11, 10, 9, 8),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 11, 10, 9, 8,
+-                 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 11, 10, 9, 8,
+-                 7, 6, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, -127, -127,
+-                 -127, -127, 15, 14, 13, 12),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 15, 14, 13, 12,
+-                 3, 2, 1, 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 15, 14, 13, 12,
+-                 7, 6, 5, 4),
+-    _mm_set_epi8(-127, -127, -127, -127, 15, 14, 13, 12, 7, 6, 5, 4, 3, 2, 1,
+-                 0),
+-    _mm_set_epi8(-127, -127, -127, -127, -127, -127, -127, -127, 15, 14, 13, 12,
+-                 11, 10, 9, 8),
+-    _mm_set_epi8(-127, -127, -127, -127, 15, 14, 13, 12, 11, 10, 9, 8, 3, 2, 1,
+-                 0),
+-    _mm_set_epi8(-127, -127, -127, -127, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
+-                 4),
+-    _mm_set_epi8(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0),
+-};
+-
+ constexpr uint32_t MAX_SPARSE_BUFFER_LENGTH = 65536;
+ 
+ float InnerProductSparseInSegmentFp32SSE(uint32_t m_sparse_count,
+@@ -159,15 +127,19 @@ float InnerProductSparseInSegmentFp32SSE(uint32_t m_sparse_count,
+ 
+         __m128i v = _mm_loadu_si128(
+             reinterpret_cast<const __m128i *>(&m_sparse_value[i1]));
+-        __m128 vs = _mm_castsi128_ps(_mm_shuffle_epi8(v, SHUFFLE_MASK16[r1]));
++        __m128 vs = _mm_castsi128_ps(_mm_shuffle_epi8(
++            v, _mm_loadu_si128(reinterpret_cast<const __m128i *>(
++                   sparse_internal::kFp32ShuffleMasks[r1].data()))));
+ 
+         _mm_storeu_ps(val_1, vs);
+         val_1 += _mm_popcnt_u32(r1);
+ 
+         int r2 = (r >> 4) & 15;
+         v = _mm_loadu_si128(
+             reinterpret_cast<const __m128i *>(&m_sparse_value[i1 + 4]));
+-        vs = _mm_castsi128_ps(_mm_shuffle_epi8(v, SHUFFLE_MASK16[r2]));
++        vs = _mm_castsi128_ps(_mm_shuffle_epi8(
++            v, _mm_loadu_si128(reinterpret_cast<const __m128i *>(
++                   sparse_internal::kFp32ShuffleMasks[r2].data()))));
+         _mm_storeu_ps(val_1, vs);
+         val_1 += _mm_popcnt_u32(r2);
+ 
+@@ -180,14 +152,18 @@ float InnerProductSparseInSegmentFp32SSE(uint32_t m_sparse_count,
+ 
+         v = _mm_loadu_si128(
+             reinterpret_cast<const __m128i *>(&q_sparse_value[i2]));
+-        vs = _mm_castsi128_ps(_mm_shuffle_epi8(v, SHUFFLE_MASK16[r1]));
++        vs = _mm_castsi128_ps(_mm_shuffle_epi8(
++            v, _mm_loadu_si128(reinterpret_cast<const __m128i *>(
++                   sparse_internal::kFp32ShuffleMasks[r1].data()))));
+         _mm_storeu_ps(val_2, vs);
+         val_2 += _mm_popcnt_u32(r1);
+ 
+         r2 = (r >> 4) & 15;
+         v = _mm_loadu_si128(
+             reinterpret_cast<const __m128i *>(&q_sparse_value[i2 + 4]));
+-        vs = _mm_castsi128_ps(_mm_shuffle_epi8(v, SHUFFLE_MASK16[r2]));
++        vs = _mm_castsi128_ps(_mm_shuffle_epi8(
++            v, _mm_loadu_si128(reinterpret_cast<const __m128i *>(
++                   sparse_internal::kFp32ShuffleMasks[r2].data()))));
+         _mm_storeu_ps(val_2, vs);
+         val_2 += _mm_popcnt_u32(r2);
+       }
+```
+
+**File**: `src/turbo/distance/sparse/sparse_shuffle_masks.h` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++// Copyright 2025-present the zvec project
 +//
-+// Rotated INT8/INT4 records are the exception: every index draws its own
-+// random rotation, and the merge copies records whose reformer names match
-+// without re-encoding them. Copying them into a new index would pair them with
-+// a different rotation, so they are rebuilt from the raw Flat sources.
-+inline bool CanReuseInsertTimeQuantizedVectors(
-+    const VectorIndexParams &params) {
-+  if (params.quantizer_param().enable_rotate()) {
-+    return false;
-+  }
-+  const QuantizeType quantize_type = params.quantize_type();
-   return quantize_type == QuantizeType::FP16 ||
-          quantize_type == QuantizeType::INT8 ||
-          quantize_type == QuantizeType::INT4;
-```
-
-**File**: `tests/db/collection_test.cc` (modified, +101/-0)
-```diff
-@@ -25,6 +25,7 @@
- #include <memory>
- #include <mutex>
- #include <numeric>
-+#include <random>
- #include <string>
- #include <system_error>
- #include <thread>
-@@ -3826,6 +3827,106 @@ TEST_F(CollectionTest, Feature_Optimize_MetricType) {
-   func(MetricType::IP, QuantizeType::FP16);
- }
- 
-+// Regression test for https://github.com/alibaba/zvec/issues/886: every
-+// rotated INT8/INT4 index draws its own random rotation, so optimize must not
-+// copy insert-time codes into an index that holds a different rotation.
-+TEST_F(CollectionTest, Feature_Optimize_RotatedIntegerQuantizer) {
-+  constexpr uint32_t kDim = 128;
-+  constexpr int kBatch = 200;
-+  constexpr int kMinHits = kBatch * 95 / 100;
-+  std::mt19937 gen(886);
-+  std::normal_distribution<float> dist(0.0f, 1.0f);
-+  std::vector<std::vector<float>> vectors(kBatch * 2, std::vector<float>(kDim));
-+  for (auto &vector : vectors) {
-+    for (auto &value : vector) value = dist(gen);
-+  }
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+  auto func = [&](IndexType index_type, QuantizeType quantize_type,
-+                  MetricType metric_type) {
-+    SCOPED_TRACE(std::string(magic_enum::enum_name(index_type)) + "/" +
-+                 std::string(magic_enum::enum_name(quantize_type)) + "/" +
-+                 std::string(magic_enum::enum_name(metric_type)));
-+    FileHelper::RemoveDirectory(col_path);
++#pragma once
 +
-+    IndexParams::Ptr index_params;
-+    if (index_type == IndexType::HNSW) {
-+      index_params = std::make_shared<HnswIndexParams>(
-+          metric_type, 16, 200, quantize_type, false, QuantizerParam(true));
-+    } else {
-+      index_params = std::make_shared<FlatIndexParams>(
-+          metric_type, quantize_type, QuantizerParam(true));
++#include <array>
++#include <cstddef>
++#include <cstdint>
++
++namespace zvec::turbo::sparse_internal {
++
++// Keep shuffle controls as constant-initialized bytes. Global __m128i arrays
++// initialized with intrinsics can emit AVX instructions in MSVC's DLL startup
++// routines, before runtime CPU dispatch has selected a compatible kernel.
++template <size_t ElementBytes>
++constexpr auto MakeShuffleMasks() {
++  static_assert(ElementBytes == 2 || ElementBytes == 4);
++  constexpr size_t kElements = 16 / ElementBytes;
++  std::array<std::array<uint8_t, 16>, 1U << kElements> masks{};
++  for (size_t mask = 0; mask < masks.size(); ++mask) {
++    for (size_t byte = 0; byte < 16; ++byte) {
++      masks[mask][byte] = 0x81;  // PSHUFB zeroes bytes with the high bit set.
 +    }
-+    CollectionSchema schema("rotate");
-+    ASSERT_TRUE(
-+        schema
-+            .add_field(std::make_shared<FieldSchema>(
-+                "dense", DataType::VECTOR_FP32, kDim, false, index_params))
-+            .ok());
-+    auto created = Collection::CreateAndOpen(col_path, schema, options_);
-+    ASSERT_TRUE(created.has_value()) << created.error().message();
-+    auto collection = std::move(created).value();
-+
-+    auto insert = [&](int begin, int end) {
-+      std::vector<Doc> docs;
-+      for (int i = begin; i < end; ++i) {
-+        Doc doc;
-+        doc.set_pk(std::to_string(i));
-+        doc.set<std::vector<float>>("dense", vectors[i]);
-+        docs.push_back(std::move(doc));
-+      }
-+      auto result = collection->insert(docs);
-+      ASSERT_TRUE(result.has_value()) << result.error().message();
-+      for (const auto &status : result.value()) {
-+        ASSERT_TRUE(status.ok()) << status.message();
-+      }
-+    };
-+    auto self_recall = [&](int begin, int end) {
-+      int hits = 0;
-+      for (int i = begin; i < end; ++i) {
-+        SearchQuery query;
-+        query.topk_ = 1;
-+        query.target_.field_name_ = "dense";
-+        query.target_.set_vector(
-+            std::string(reinterpret_cast<const char *>(vectors[i].data()),
-+                        vectors[i].size() * sizeof(float)));
-+        auto result = collection->query(query);
-+        EXPECT_TRUE(result.has_value()) << result.error().message();
-+        if (result.has_value() && !result.value().empty() &&
-+            result.value()[0]->pk() == std::to_string(i)) {
-+          ++hits;
++    size_t output = 0;
++    for (size_t element = 0; element < kElements; ++element) {
++      if (mask & (1U << element)) {
++        for (size_t byte = 0; byte < ElementBytes; ++byte) {
++          masks[mask][output++] =
++              static_cast<uint8_t>(element * ElementBytes + byte);
 +        }
 +      }
-+      return hits;
-+    };
-+
-+    // First optimize builds the index from a single writing segment.
-+    insert(0, kBatch);
-+    ASSERT_GE(self_recall(0, kBatch), kMinHits);
-+    ASSERT_TRUE(collection->optimize().ok());
-+    EXPECT_GE(self_recall(0, kBatch), kMinHits);
-+
-+    // Second optimize merges the indexed segment with a new writing segment.
-+    insert(kBatch, kBatch * 2);
-+    ASSERT_TRUE(collection->optimize().ok());
-+    EXPECT_GE(self_recall(0, kBatch), kMinHits);
-+    EXPECT_GE(self_recall(kBatch, kBatch * 2), kMinHits);
-+
-+    // The rebuilt index must keep its own rotation after reopen.
-+    collection.reset();
-+    auto reopened = Collection::Open(col_path, options_);
-+    ASSERT_TRUE(reopened.has_value()) << reopened.error().message();
-+    collection = std::move(reopened).value();
-+    EXPECT_GE(self_recall(0, kBatch * 2), kMinHits * 2);
-+  };
-+
-+  for (auto index_type : {IndexType::HNSW, IndexType::FLAT}) {
-+    for (auto quantize_type : {QuantizeType::INT8, QuantizeType::INT4}) {
-+      func(index_type, quantize_type, MetricType::COSINE);
-+      func(index_type, quantize_type, MetricType::L2);
 +    }
 +  }
++  return masks;
 +}
 +
- TEST_F(CollectionTest, Feature_Optimize_Delete) {
-   int doc_count = 1000;
++inline constexpr auto kFp16ShuffleMasks = MakeShuffleMasks<2>();
++inline constexpr auto kFp32ShuffleMasks = MakeShuffleMasks<4>();
++
++}  // namespace zvec::turbo::sparse_internal
+```
+
+**File**: `src/turbo/norm/matrix_utility.i` (modified, +12/-10)
+```diff
+@@ -78,17 +78,17 @@ static inline int64_t HorizontalAdd_INT64_V128(__m128i v) {
+ #endif  // __SSE2__
  
+ #if defined(__SSSE3__)
+-static const __m128i POPCNT_LOOKUP_SSE =
+-    _mm_setr_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+-
+ static inline __m128i VerticalPopCount_INT8_V128(__m128i v) {
+ #if defined(__AVX512VL__) && defined(__AVX512BITALG__)
+   return _mm_popcnt_epi8(v);
+ #else
++  // Intrinsics must execute inside the selected kernel, never at DLL startup.
++  const __m128i lookup =
++      _mm_setr_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+   const __m128i low_mask = _mm_set1_epi8(0x0f);
+-  __m128i lo = _mm_shuffle_epi8(POPCNT_LOOKUP_SSE, _mm_and_si128(v, low_mask));
+-  __m128i hi = _mm_shuffle_epi8(POPCNT_LOOKUP_SSE,
+-                                _mm_and_si128(_mm_srli_epi32(v, 4), low_mask));
++  __m128i lo = _mm_shuffle_epi8(lookup, _mm_and_si128(v, low_mask));
++  __m128i hi =
++      _mm_shuffle_epi8(lookup, _mm_and_si128(_mm_srli_epi32(v, 4), low_mask));
+   return _mm_add_epi8(lo, hi);
+ #endif  // __AVX512VL__ && __AVX512BITALG__
+ }
+@@ -155,11 +155,13 @@ static inline float HorizontalAdd_FP32_V256(__m256 v) {
+ 
+ #if defined(__AVX2__)
+ #define POPCNT_MASK1_INT8_AVX _mm256_set1_epi8(0x0f)
+-#define POPCNT_MASK1_INT16_AVX  _mm256_set1_epi16(1)
++#define POPCNT_MASK1_INT16_AVX _mm256_set1_epi16(1)
+ #define POPCNT_MASK2_INT16_AVX _mm256_set1_epi16(0xff)
+ #define POPCNT_MASK1_INT32_AVX _mm256_set1_epi32(0xff)
+ #define POPCNT_ZERO_AVX _mm256_setzero_si256()
+-#define POPCNT_LOOKUP_AVX _mm256_setr_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4)
++#define POPCNT_LOOKUP_AVX                                                      \
++  _mm256_setr_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 0, 1, 1, 2, \
++                   1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4)
+ 
+ static inline __m256i VerticalPopCount_INT8_V256(__m256i v) {
+ #if defined(__AVX512VL__) && defined(__AVX512BITALG__)
+@@ -263,6 +265,6 @@ static inline float HorizontalAdd_FP16_V512(__m512h v) {
+ }
+ #endif  // __AVX512FP16__
+ 
+-} // namespace turbo
+-} // namespace zvec
++}  // namespace turbo
++}  // namespace zvec
+ // NOLINTEND(readability-identifier-naming)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #897** (2026-11-12): perf(ivf): reuse query workspaces and prefetch mmap postings (@iaojnh)
+- **PR #896** (2026-11-12): fix(simd): avoid AVX instructions during Windows DLL initialization (@iaojnh)
+- **PR #892** (2026-11-12): fix: preserve reopened group queries, iterator concurrency and cache pages (@iaojnh)
 - **PR #887** (2026-11-11): fix(db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (@TheAli711)
 - **PR #884** (2026-11-09): ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (@dependabot[bot])
 - **PR #882** (2026-11-06): fix(build): add OSS fallbacks for Thrift and Boost downloads (@iaojnh)
-- **PR #880** (2026-11-06): perf(hnsw): reduce optimize memory for fresh graph builds (@iaojnh)
-- **PR #879** (2026-11-05): perf(ivf): reuse stable source vectors during construction (@iaojnh)
-- **PR #877** (2026-11-05): perf: reduce DiskANN PQ training and neighbor storage memory (@iaojnh)
 
 ---
 
@@ -1393,16 +2041,16 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)
+## X. preserve reopened group queries, iterator concurrency and cache pages (#892)
 
 **RULE**:
-When implementing operations in `python/tests/test_rotated_quantization.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/tests/test_collection_group_by_reopen.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d61530f2`: db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4c5dcad`: preserve reopened group queries, iterator concurrency and cache pages (#892). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/tests/test_rotated_quantization.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/tests/test_collection_group_by_reopen.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
@@ -1421,35 +2069,32 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Optimize must keep rotated INT8/INT4 indexes searchable (issue #886)."""
-
-from __future__ import annotations
-
-import numpy as np
 import pytest
-
 import zvec
-from zvec import (
-    CollectionSchema,
-    Doc,
-    FlatIndexParam,
-    HnswIndexParam,
-    Query,
-    QuantizerParam,
-    VectorSchema,
-)
-from zvec.typing import DataType, MetricType, QuantizeType
-
-DIMENSION = 128
-BATCH = 200
-MIN_HITS = BATCH * 95 // 100
 
 
-def _self_recall(collection, vectors, ids) -> int:
-    hits = 0
-    for i in ids:
-        result = collection.query(Query(field_name="dense", vector=vectors[i]), topk=1)
-        hits += bool(r
+@pytest.fixture(scope="module", autouse=True)
+def initialize():
+    zvec.init(memory_limit_mb=512, query_threads=2, optimize_threads=2)
+
+
+def _doc(key):
+    return zvec.Doc(
+        id=f"doc_{key}",
+        fields={"value": key, "group_id": key % 3},
+        vectors={"v": [float(key)] * 4},
+    )
+
+
+def _check_groups(collection, keys, kind):
+    query = zvec.Query(
+        "v",
+        vector=[1.0] * 4,
+        param=zvec.HnswQueryParam(is_linear=True) if kind == "hnsw" else None,
+    )
+    for filter_expr in [None, "value >= 3"]:
+        groups = collection.group_by_query(
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1459,4 +2104,4 @@ def _self_recall(collection, vectors, ids) -> int:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d61530f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4c5dcad` are properly handled with clean fallback behavior.

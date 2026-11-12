@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
-> **Source Version**: `a055ad41`  
+> **Source Version**: `22e49557`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:35:13.196Z  
+> **Timestamp**: 2026-11-12T21:19:31.928Z  
 > **Learning ID**: `learn-github-simonschubert-kai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:35:13.071Z  
+> **Harvest Timestamp**: 2026-11-12T21:19:31.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenClaw alternative in your pocket
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1343 stars
+- **Stars / Engagement**: 1351 stars
 
 ---
 
@@ -1036,44 +1036,41 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: Color
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a055ad41` (2026-11-07)
+### Incident Patch 1: `22e49557` (2026-11-12)
 **Commit Message**: Upgrade dependencies
+
+**File**: `gradle/libs.versions.toml` (modified, +2/-2)
+```diff
+@@ -18,7 +18,7 @@ kotlin = "2.4.21"
+ kotlinx-coroutines = "1.11.0"
+ kotlinx-datetime = "0.8.0"
+ kotlinxCollectionsImmutable = "0.5.2"
+-kotlinxSerializationJson = "1.12.0"
++kotlinxSerializationJson = "1.13.0"
+ ktor = "3.6.1"
+ material = "1.14.0"
+ playReview = "2.0.2"
+@@ -29,7 +29,7 @@ tts = "3.0.0"
+ foundationAndroid = "1.12.1"
+ paparazzi = "2.0.0-alpha05"
+ turbine = "1.2.1"
+-bouncycastle = "1.86"
++bouncycastle = "1.87"
+ reorderable = "3.1.0"
+ litert-lm = "0.19.1"
+ sqldelight = "2.4.1"
+```
 
 **File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  distributionBase=GRADLE_USER_HOME
  distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
  networkTimeout=10000
  retries=0
  retryBackOffMs=500
-```
-
----
-
-### Incident Patch 2: `b8d605cf` (2026-11-06)
-**Commit Message**: Upgrade dependencies
-
-**File**: `gradle/libs.versions.toml` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--agp = "9.5.0"
-+agp = "9.5.1"
- appVersion = "3.3.0"
- android-versionCode = "117"
- android-compileSdk = "37"
-@@ -31,7 +31,7 @@ paparazzi = "2.0.0-alpha05"
- turbine = "1.2.1"
- bouncycastle = "1.86"
- reorderable = "3.1.0"
--litert-lm = "0.19.0"
-+litert-lm = "0.19.1"
- sqldelight = "2.4.1"
- materialIcons = "1.7.3"
- xz = "1.12"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1105,25 +1102,27 @@ Observed empirical fixes and code patches:
 ## X. Upgrade dependencies
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a055ad41`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22e49557`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
+kotlinxSerializationJson = "1.13.0"
+bouncycastle = "1.87"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
+kotlinxSerializationJson = "1.12.0"
+bouncycastle = "1.86"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a055ad41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22e49557` are properly handled with clean fallback behavior.

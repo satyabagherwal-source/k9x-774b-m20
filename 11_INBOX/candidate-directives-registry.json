@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:10:54.612Z",
+  "last_updated": "2026-11-12T21:20:02.613Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7211,6 +7211,24 @@
       "source_repo": "cilium-cilium",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D666A8-renovate-hold-docutils-in-the-docs-build.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-36CB1A",
+      "directive_title": "Upgrade dependencies",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "simonschubert-kai",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-36CB1A-upgrade-dependencies.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EA66FB",
+      "directive_title": "Merge pull request #18780 from sarankumar1325/fix/rgw-duplicate-pod-name-env",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rook-rook",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EA66FB-merge-pull-request-18780-from-sarankumar.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:11:10.001Z",
+  "last_updated": "2026-11-12T21:20:02.647Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -133,7 +133,7 @@
       "staged_for_review": 1
     },
     "rook-rook-learnings.md": {
-      "processed_at": "2026-11-11T10:09:35.591Z",
+      "processed_at": "2026-11-12T21:20:02.614Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1226,9 +1226,19 @@
       "processed_at": "2026-11-12T21:02:39.987Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-qwen-qwen3-embedding-0.6b-learnings.md": {
+      "processed_at": "2026-11-12T21:20:02.567Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "simonschubert-kai-learnings.md": {
+      "processed_at": "2026-11-12T21:20:02.582Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 342,
-  "total_canonical_promoted": 43,
-  "total_staged_for_review": 298
+  "total_dossiers_evaluated": 345,
+  "total_canonical_promoted": 44,
+  "total_staged_for_review": 300
 }

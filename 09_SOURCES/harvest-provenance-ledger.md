@@ -9214,3 +9214,8 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `2fed022a` | Multi-dimensional audit evidence | 2026-11-12T21:10:44.532Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `1a559e40` | Multi-dimensional audit evidence | 2026-11-12T21:10:48.732Z |
 | `learn-dom-d-34e068c1` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-12T21:11:09.945Z |
+| `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-12T21:19:24.399Z |
+| `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `22e49557` | Multi-dimensional audit evidence | 2026-11-12T21:19:32.408Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `719f345e` | Multi-dimensional audit evidence | 2026-11-12T21:19:41.401Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0e83a2b1` | Multi-dimensional audit evidence | 2026-11-12T21:19:46.565Z |
+| `learn-dom-d-b36c340c` | `project://hf-qwen-qwen3-embedding-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | 2026-11-12T21:20:02.566Z |

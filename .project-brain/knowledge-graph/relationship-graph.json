@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T21:11:09.945Z",
+  "updated_at": "2026-11-12T21:20:02.566Z",
   "statistics": {
-    "total_nodes": 29,
-    "total_edges": 9,
+    "total_nodes": 30,
+    "total_edges": 10,
     "domain_distribution": {
-      "D": 18,
+      "D": 19,
       "M": 1,
       "H": 6,
       "J": 1,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 9
+      "CONSTRAINED_BY_ARCHITECTURE": 10
     }
   },
   "nodes": {
@@ -648,6 +648,29 @@
       ],
       "created_at": "2026-11-12T21:11:09.945Z",
       "updated_at": "2026-11-12T21:11:09.945Z"
+    },
+    "DOM-D-B36C340C": {
+      "id": "DOM-D-B36C340C",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3-Embedding-0.6B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-qwen-qwen3-embedding-0.6b/hf-qwen-qwen3-embedding-0.6b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T21:19:51.046Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-embedding-0.6b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T21:20:02.566Z",
+      "updated_at": "2026-11-12T21:20:02.566Z"
     }
   },
   "edges": [
@@ -740,6 +763,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-B77A0FED [H] with Domain G",
       "created_at": "2026-11-12T14:45:15.020Z"
+    },
+    {
+      "id": "EDGE-CA06E43A6664",
+      "sourceId": "DOM-D-B36C340C",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-B36C340C [D] with Domain M",
+      "created_at": "2026-11-12T21:20:02.566Z"
     }
   ]
 }
