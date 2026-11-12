@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "10ab0f82",
+    "sourceVersion": "482bbeb9",
     "license": "Apache-2.0",
-    "contentHash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
-    "lastHarvestedAt": "2026-11-10T02:24:08.666Z",
+    "contentHash": "ae8e3e7f483f58123a1a5df26f4c8650a5256ee0951d16bfe11f949222d2d1ac",
+    "lastHarvestedAt": "2026-11-12T09:25:49.127Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "f51f86e5",
+    "sourceVersion": "1598acaa",
     "license": "Apache-2.0",
-    "contentHash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
-    "lastHarvestedAt": "2026-11-10T00:59:51.656Z",
+    "contentHash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
+    "lastHarvestedAt": "2026-11-12T09:19:34.571Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {

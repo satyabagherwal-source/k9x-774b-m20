@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:53:59.705Z",
+  "last_updated": "2026-11-12T09:25:54.482Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6581,6 +6581,33 @@
       "source_repo": "cilium-cilium",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-71C192-bpf-tests-add-encrypt-host-masq-suite-fo.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B8B431",
+      "directive_title": "nodejs): read yarn.lock block fields by indent level (#11496)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aquasecurity-trivy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B8B431-nodejs-read-yarn-lock-block-fields-by-in.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-3D1E51",
+      "directive_title": "Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-w",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clickhouse-clickhouse",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D1E51-merge-pull-request-130697-from-groeneai-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C32D68",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C32D68-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-12"
     }
   ]

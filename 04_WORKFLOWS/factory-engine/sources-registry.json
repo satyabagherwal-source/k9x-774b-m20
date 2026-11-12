@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T08:53:59.505Z",
-    "lastVerified": "2026-11-12T08:53:59.505Z",
+    "lastChecked": "2026-11-12T09:25:54.192Z",
+    "lastVerified": "2026-11-12T09:25:54.192Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,8 +255,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T08:04:34.708Z",
-    "lastVerified": "2026-11-12T08:04:34.708Z",
+    "lastChecked": "2026-11-12T09:19:18.420Z",
+    "lastVerified": "2026-11-12T09:19:18.420Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2112,8 +2112,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T02:48:36.238Z",
-    "lastVerified": "2026-11-12T02:48:36.238Z",
+    "lastChecked": "2026-11-12T09:19:13.456Z",
+    "lastVerified": "2026-11-12T09:19:13.456Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -5295,14 +5295,14 @@
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T02:19:05.474Z",
-    "lastVerified": "2026-11-10T02:19:05.474Z",
+    "lastChecked": "2026-11-12T09:19:16.464Z",
+    "lastVerified": "2026-11-12T09:19:16.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
+    "contentHash": "ae8e3e7f483f58123a1a5df26f4c8650a5256ee0951d16bfe11f949222d2d1ac",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5579,9 +5579,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-09T15:51:20.741Z",
+    "lastChecked": "2026-11-12T09:19:03.461Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-09T15:51:20.741Z"
+    "lastVerified": "2026-11-12T09:19:03.461Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -7835,14 +7835,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-10T00:59:49.068Z",
-    "lastVerified": "2026-11-10T00:59:49.068Z",
+    "lastChecked": "2026-11-12T09:19:23.007Z",
+    "lastVerified": "2026-11-12T09:19:23.007Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
+    "contentHash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10092,9 +10092,9 @@
   "bernaferrari-figmatocode": {
     "name": "FigmaToCode",
     "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
-    "lastChecked": "2026-11-08T06:59:30.793Z",
+    "lastChecked": "2026-11-12T09:19:08.389Z",
     "revisionIdentifier": "f5c4831d",
-    "lastVerified": "2026-11-08T06:59:30.793Z"
+    "lastVerified": "2026-11-12T09:19:08.389Z"
   },
   "hf-diffuspace-clover-35b-a3b-preview": {
     "name": "Diffuspace/Clover-35B-A3B-Preview",
@@ -11927,9 +11927,9 @@
   "rdfjs-namespace": {
     "name": "namespace",
     "officialUrl": "https://github.com/rdfjs/namespace",
-    "lastChecked": "2026-11-07T18:57:02.987Z",
+    "lastChecked": "2026-11-12T09:19:05.968Z",
     "revisionIdentifier": "b7efbf00",
-    "lastVerified": "2026-11-07T18:57:02.987Z"
+    "lastVerified": "2026-11-12T09:19:05.968Z"
   },
   "iziz-libphonenumber-ios": {
     "name": "iziz/libPhoneNumber-iOS",

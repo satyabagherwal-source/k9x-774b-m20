@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-340Y",
-    "timestamp": "2026-11-09T03:21:49.858Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "4f2667fa5bc898086fc07bf80f793fea94da30d6ac402a4ab8e72d671e5476fa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-366D",
-    "timestamp": "2026-11-09T03:21:52.645Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "4273a4968f708c6ff479c4b9575d9baa7d14bab876018f33f8455f9845e5efc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-KFLI",
     "timestamp": "2026-11-09T03:35:18.006Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7490,6 +7460,36 @@
     "repository": "hashicorp/terraform",
     "learningId": "learn-github-hashicorp-terraform",
     "contentHash": "29dd9c9c6f3bf4601acc5e53e1820f6f0aed8cade79ec21a09e4bd250e91b361",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-6QAV",
+    "timestamp": "2026-11-12T09:19:34.567Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-ERB7",
+    "timestamp": "2026-11-12T09:25:49.123Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "ae8e3e7f483f58123a1a5df26f4c8650a5256ee0951d16bfe11f949222d2d1ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T08:53:53.858Z",
+  "last_updated": "2026-11-12T09:25:49.014Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3211,8 +3211,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "10ab0f82",
-      "content_hash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
+      "source_version": "482bbeb9",
+      "content_hash": "ae8e3e7f483f58123a1a5df26f4c8650a5256ee0951d16bfe11f949222d2d1ac",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -3224,6 +3224,11 @@
         {
           "number": null,
           "title": "docs(python): add pylock.toml row to language coverage index (#11584)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "nodejs): read yarn.lock block fields by indent level (#11496)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3307,7 +3312,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:24:08.534Z",
+      "verified_at": "2026-11-12T09:25:48.989Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8379,8 +8384,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "f51f86e5",
-      "content_hash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
+      "source_version": "1598acaa",
+      "content_hash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -8402,6 +8407,11 @@
         {
           "number": null,
           "title": "Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-w",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8510,7 +8520,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:59:51.519Z",
+      "verified_at": "2026-11-12T09:19:34.425Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

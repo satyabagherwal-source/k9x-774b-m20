@@ -9124,3 +9124,5 @@
 | `CYCLE-20261112-8K85` | `2026-11-12T08:53:00.389Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`24c39041...`) |
 | `CYCLE-20261112-8NB0` | `2026-11-12T08:53:04.381Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eb04bd85...`) |
 | `CYCLE-20261112-9PLY` | `2026-11-12T08:53:54.022Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`29dd9c9c...`) |
+| `CYCLE-20261112-6QAV` | `2026-11-12T09:19:34.567Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5f3970b0...`) |
+| `CYCLE-20261112-ERB7` | `2026-11-12T09:25:49.123Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ae8e3e7f...`) |

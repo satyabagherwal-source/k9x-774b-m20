@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:53:59.729Z",
+  "last_updated": "2026-11-12T09:25:54.520Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T08:19:36.877Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-12T08:19:36.838Z",
+      "processed_at": "2026-11-12T09:25:54.483Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -986,9 +986,19 @@
       "processed_at": "2026-11-12T08:53:59.671Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "aquasecurity-trivy-learnings.md": {
+      "processed_at": "2026-11-12T09:25:54.320Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "clickhouse-clickhouse-learnings.md": {
+      "processed_at": "2026-11-12T09:25:54.398Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 261,
+  "total_dossiers_evaluated": 264,
   "total_canonical_promoted": 32,
-  "total_staged_for_review": 228
+  "total_staged_for_review": 231
 }

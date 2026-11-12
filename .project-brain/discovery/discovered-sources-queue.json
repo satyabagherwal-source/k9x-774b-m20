@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T08:53:59.698Z",
+  "updated_at": "2026-11-12T09:25:54.473Z",
   "stats": {
-    "total_discovered": 1091,
-    "approved_pending_harvest": 979,
+    "total_discovered": 1113,
+    "approved_pending_harvest": 1000,
     "harvested_count": 0,
-    "rejected_count": 112,
+    "rejected_count": 113,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1014,
+      "COMMUNITY_AND_EXPERT": 1033,
       "OFFICIAL_DOCUMENTATION": 30,
-      "STANDARDS_AND_SPECIFICATIONS": 44,
+      "STANDARDS_AND_SPECIFICATIONS": 47,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
     }
@@ -23235,6 +23235,483 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
         "fileName": "hashicorp-terraform-learnings.md"
+      }
+    },
+    "SRC-230361631469": {
+      "id": "SRC-230361631469",
+      "url": "https://github.com/aquasecurity/trivy",
+      "title": "https://github.com/aquasecurity/trivy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-F98236A3B3D1": {
+      "id": "SRC-F98236A3B3D1",
+      "url": "https://github.com/aquasecurity/trivy/pull/7039",
+      "title": "https://github.com/aquasecurity/trivy/pull/7039",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-F98F574B94C7": {
+      "id": "SRC-F98F574B94C7",
+      "url": "https://github.com/aquasecurity/trivy/discussions/4282",
+      "title": "https://github.com/aquasecurity/trivy/discussions/4282",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-449E75A4AFB1": {
+      "id": "SRC-449E75A4AFB1",
+      "url": "https://github.com/aquasecurity/trivy/issues/5532",
+      "title": "https://github.com/aquasecurity/trivy/issues/5532",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.349Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-F13D38C1340E": {
+      "id": "SRC-F13D38C1340E",
+      "url": "https://github.com/file/file/blob/f2a6e7cb7db9b5fd86100403df6b2f830c7f22ba/src/encoding.c",
+      "title": "https://github.com/file/file/blob/f2a6e7cb7db9b5fd86100403df6b2f830c7f22ba/src/encoding.c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-AEFA14615500": {
+      "id": "SRC-AEFA14615500",
+      "url": "https://github.com/aquasecurity/trivy/discussions/11052",
+      "title": "https://github.com/aquasecurity/trivy/discussions/11052",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.361Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-C849298469D1": {
+      "id": "SRC-C849298469D1",
+      "url": "https://github.com/aquasecurity/trivy/issues/11035",
+      "title": "https://github.com/aquasecurity/trivy/issues/11035",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.367Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-9FBBB97A0C9A": {
+      "id": "SRC-9FBBB97A0C9A",
+      "url": "https://github.com/yarnpkg/yarn/blob/328fd596de935acc6c3e134741748fcc62ec3739/src/resolvers/exotics/registry-resolver.js",
+      "title": "https://github.com/yarnpkg/yarn/blob/328fd596de935acc6c3e134741748fcc62ec3739/src/resolvers/exotics/registry-resolver.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-CE74D123634B": {
+      "id": "SRC-CE74D123634B",
+      "url": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html",
+      "title": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.381Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-8E689342FF92": {
+      "id": "SRC-8E689342FF92",
+      "url": "https://github.com/paradedb/fst.git",
+      "title": "https://github.com/paradedb/fst.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-D5895C45C8F2": {
+      "id": "SRC-D5895C45C8F2",
+      "url": "https://github.com/ClickHouse/ClickHouse",
+      "title": "https://github.com/ClickHouse/ClickHouse",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.401Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-A57B20A4EF1A": {
+      "id": "SRC-A57B20A4EF1A",
+      "url": "https://play/.clickhouse/.com//?user=play",
+      "title": "https://play/.clickhouse/.com//?user=play",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.408Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-F873991D2152": {
+      "id": "SRC-F873991D2152",
+      "url": "https://s3/.amazonaws/.com/clickhouse-test-reports",
+      "title": "https://s3/.amazonaws/.com/clickhouse-test-reports",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-1A473F8E6FD3": {
+      "id": "SRC-1A473F8E6FD3",
+      "url": "https://d1k2gkhrlfqv31/.cloudfront/.net/clickhouse-test-reports-private",
+      "title": "https://d1k2gkhrlfqv31/.cloudfront/.net/clickhouse-test-reports-private",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-BB664B5DBF51": {
+      "id": "SRC-BB664B5DBF51",
+      "url": "https://github/.com/ClickHouse/ClickHouse/(?%3Apull%7Cissues=",
+      "title": "https://github/.com/ClickHouse/ClickHouse/(?%3Apull%7Cissues=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.428Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-7842A90BC7A8": {
+      "id": "SRC-7842A90BC7A8",
+      "url": "https://web.archive.org/web/20090901005747/http://codahale.com/a-lesson-in-timing-attacks",
+      "title": "https://web.archive.org/web/20090901005747/http://codahale.com/a-lesson-in-timing-attacks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.434Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-5CD16E41A2E3": {
+      "id": "SRC-5CD16E41A2E3",
+      "url": "http://www.itl.nist.gov/fipspubs/fip180-1.htm",
+      "title": "http://www.itl.nist.gov/fipspubs/fip180-1.htm",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T09:25:54.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-F269BA0A5E54": {
+      "id": "SRC-F269BA0A5E54",
+      "url": "https://clickhouse.com/docs/reference/settings/session-settings/other",
+      "title": "https://clickhouse.com/docs/reference/settings/session-settings/other",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-A6F6FE0E5DB2": {
+      "id": "SRC-A6F6FE0E5DB2",
+      "url": "https://github.com/ClickHouse/ClickHouse/pull/117359",
+      "title": "https://github.com/ClickHouse/ClickHouse/pull/117359",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-B184FE506BDB": {
+      "id": "SRC-B184FE506BDB",
+      "url": "https://www.rfc-editor.org/rfc/rfc2104",
+      "title": "IETF RFC 2104",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.459Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-A10ECD936042": {
+      "id": "SRC-A10ECD936042",
+      "url": "https://www.rfc-editor.org/rfc/rfc1321",
+      "title": "IETF RFC 1321",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.465Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-C925AE1ABDC6": {
+      "id": "SRC-C925AE1ABDC6",
+      "url": "https://www.rfc-editor.org/rfc/rfc2898",
+      "title": "IETF RFC 2898",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:25:54.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
       }
     }
   }

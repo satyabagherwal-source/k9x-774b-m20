@@ -9133,3 +9133,5 @@ Every entry in this ledger must capture:
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `8097fc0b` | Multi-dimensional audit evidence | 2026-11-12T08:53:00.393Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `988d97f3` | Multi-dimensional audit evidence | 2026-11-12T08:53:04.385Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `4a7d3d74` | Multi-dimensional audit evidence | 2026-11-12T08:53:54.038Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `1598acaa` | Multi-dimensional audit evidence | 2026-11-12T09:19:34.571Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `482bbeb9` | Multi-dimensional audit evidence | 2026-11-12T09:25:49.127Z |
