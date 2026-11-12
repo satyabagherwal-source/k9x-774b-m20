@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T01:31:31.271Z",
+  "updated_at": "2026-11-12T01:44:30.505Z",
   "stats": {
-    "total_discovered": 390,
-    "approved_pending_harvest": 352,
+    "total_discovered": 415,
+    "approved_pending_harvest": 373,
     "harvested_count": 0,
-    "rejected_count": 38,
+    "rejected_count": 42,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 362,
-      "OFFICIAL_DOCUMENTATION": 14,
+      "COMMUNITY_AND_EXPERT": 386,
+      "OFFICIAL_DOCUMENTATION": 15,
       "STANDARDS_AND_SPECIFICATIONS": 13,
       "ENGINEERING_BLOGS": 1
     }
@@ -8329,6 +8329,529 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
         "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-E558966662FB": {
+      "id": "SRC-E558966662FB",
+      "url": "https://github.com/Zleap-AI/SAG",
+      "title": "https://github.com/Zleap-AI/SAG",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.446Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-F960FC983A2B": {
+      "id": "SRC-F960FC983A2B",
+      "url": "http://localhost:3000/",
+      "title": "http://localhost:3000/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:44:30.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-628BE10F84FD": {
+      "id": "SRC-628BE10F84FD",
+      "url": "http://127.0.0.1:8000/",
+      "title": "http://127.0.0.1:8000/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:44:30.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-EE0291CEFBB5": {
+      "id": "SRC-EE0291CEFBB5",
+      "url": "https://api.openai.com/v1/responses",
+      "title": "https://api.openai.com/v1/responses",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.454Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-204546F78FDC": {
+      "id": "SRC-204546F78FDC",
+      "url": "https://api.302ai.cn/v1",
+      "title": "https://api.302ai.cn/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.456Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-B288E817C5BD": {
+      "id": "SRC-B288E817C5BD",
+      "url": "https://github.com/Zleap-AI/SAG/issues/217",
+      "title": "https://github.com/Zleap-AI/SAG/issues/217",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.459Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-C7E891FAA72C": {
+      "id": "SRC-C7E891FAA72C",
+      "url": "https://github.com/sq454313544/SAG/blob/contrib/anydoc-local-parser/apps/api/vendor/README.md",
+      "title": "https://github.com/sq454313544/SAG/blob/contrib/anydoc-local-parser/apps/api/vendor/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.461Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-E67FC17481C0": {
+      "id": "SRC-E67FC17481C0",
+      "url": "https://github.com/Zleap-AI/SAG/pull/218",
+      "title": "https://github.com/Zleap-AI/SAG/pull/218",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.463Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-A109CF2BC6B8": {
+      "id": "SRC-A109CF2BC6B8",
+      "url": "https://api.302ai.cn/v1%60",
+      "title": "https://api.302ai.cn/v1%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-69966C96DC1F": {
+      "id": "SRC-69966C96DC1F",
+      "url": "https://dashscope.aliyuncs.com/compatible-mode/v1%60%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%AF%B9%E5%BA%94%E7%9A%84%E7%99%BE%E7%82%BC",
+      "title": "https://dashscope.aliyuncs.com/compatible-mode/v1%60%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%AF%B9%E5%BA%94%E7%9A%84%E7%99%BE%E7%82%BC",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-FC6BBB955862": {
+      "id": "SRC-FC6BBB955862",
+      "url": "https://api.302ai.cn/v1%60%E3%80%81%E5%AF%B9%E5%BA%94%E7%9A%84",
+      "title": "https://api.302ai.cn/v1%60%E3%80%81%E5%AF%B9%E5%BA%94%E7%9A%84",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-5891AED827C4": {
+      "id": "SRC-5891AED827C4",
+      "url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "title": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-05EED7A7DC6E": {
+      "id": "SRC-05EED7A7DC6E",
+      "url": "https://draft.invalid/v1",
+      "title": "https://draft.invalid/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-084775B5C307": {
+      "id": "SRC-084775B5C307",
+      "url": "https://stock.invalid/v1",
+      "title": "https://stock.invalid/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.478Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-60E7A79B273A": {
+      "id": "SRC-60E7A79B273A",
+      "url": "https://stock-embedding.invalid/v1",
+      "title": "https://stock-embedding.invalid/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-B628B40B0733": {
+      "id": "SRC-B628B40B0733",
+      "url": "https://query-embedding.invalid/v1",
+      "title": "https://query-embedding.invalid/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-CB2D09963741": {
+      "id": "SRC-CB2D09963741",
+      "url": "https://before-save.invalid/v1",
+      "title": "https://before-save.invalid/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.486Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-F2E45DE13FF2": {
+      "id": "SRC-F2E45DE13FF2",
+      "url": "https://api.invalid/",
+      "title": "https://api.invalid/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.488Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-0F115DB062B7": {
+      "id": "SRC-0F115DB062B7",
+      "url": "https://example.com/",
+      "title": "https://example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.491Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-621AE37C6B20": {
+      "id": "SRC-621AE37C6B20",
+      "url": "http://t/",
+      "title": "http://t/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:44:30.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-C51203DF6E75": {
+      "id": "SRC-C51203DF6E75",
+      "url": "http://127.0.0.1:3000/",
+      "title": "http://127.0.0.1:3000/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:44:30.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-84851A235B9C": {
+      "id": "SRC-84851A235B9C",
+      "url": "https://github.com/Zleap-AI/SAG/settings/environments",
+      "title": "https://github.com/Zleap-AI/SAG/settings/environments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-2E491206B979": {
+      "id": "SRC-2E491206B979",
+      "url": "https://github.com/Zleap-AI/SAG/actions/runs/35707841464",
+      "title": "https://github.com/Zleap-AI/SAG/actions/runs/35707841464",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-29C958E5F320": {
+      "id": "SRC-29C958E5F320",
+      "url": "https://github.com/Zleap-AI/SAG/actions/runs/35809234000",
+      "title": "https://github.com/Zleap-AI/SAG/actions/runs/35809234000",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
+      }
+    },
+    "SRC-3F9A7BF27E86": {
+      "id": "SRC-3F9A7BF27E86",
+      "url": "https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching",
+      "title": "https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:44:30.505Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zleap-ai-sag-learnings.md",
+        "fileName": "zleap-ai-sag-learnings.md"
       }
     }
   }

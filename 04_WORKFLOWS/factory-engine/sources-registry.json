@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T01:31:30.821Z",
-    "lastVerified": "2026-11-12T01:31:30.821Z",
+    "lastChecked": "2026-11-12T01:44:30.298Z",
+    "lastVerified": "2026-11-12T01:44:30.298Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -254,8 +254,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T00:58:31.487Z",
-    "lastVerified": "2026-11-12T00:58:31.487Z",
+    "lastChecked": "2026-11-12T01:44:30.287Z",
+    "lastVerified": "2026-11-12T01:44:30.287Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1644,9 +1644,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-11T14:56:24.151Z",
+    "lastChecked": "2026-11-12T01:44:25.165Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-11T14:56:24.151Z"
+    "lastVerified": "2026-11-12T01:44:25.165Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3189,8 +3189,8 @@
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T16:10:56.730Z",
-    "lastVerified": "2026-11-09T16:10:56.730Z",
+    "lastChecked": "2026-11-12T01:44:22.721Z",
+    "lastVerified": "2026-11-12T01:44:22.721Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -3548,9 +3548,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-09T06:45:44.189Z",
+    "lastChecked": "2026-11-12T01:44:15.097Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-09T06:45:44.189Z"
+    "lastVerified": "2026-11-12T01:44:15.097Z"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "name": "unsloth/Qwen3.8-27B-GGUF",
@@ -5614,9 +5614,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-09T14:53:05.721Z",
+    "lastChecked": "2026-11-12T01:44:27.613Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-09T14:53:05.721Z"
+    "lastVerified": "2026-11-12T01:44:27.613Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -9331,9 +9331,9 @@
   "swiftuix-swiftuix": {
     "name": "SwiftUIX",
     "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
-    "lastChecked": "2026-11-08T02:40:34.840Z",
+    "lastChecked": "2026-11-12T01:44:20.113Z",
     "revisionIdentifier": "3a99044b",
-    "lastVerified": "2026-11-08T02:40:34.840Z"
+    "lastVerified": "2026-11-12T01:44:20.113Z"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
     "name": "black-forest-labs/flux-3-image-klein-comfy",
@@ -11254,9 +11254,9 @@
   "buriy-python-readability": {
     "name": "python-readability",
     "officialUrl": "https://github.com/buriy/python-readability",
-    "lastChecked": "2026-11-07T03:21:33.388Z",
+    "lastChecked": "2026-11-12T01:44:17.570Z",
     "revisionIdentifier": "3e7a8321",
-    "lastVerified": "2026-11-07T03:21:33.388Z"
+    "lastVerified": "2026-11-12T01:44:17.570Z"
   },
   "yannickl-dynamiccolor": {
     "name": "DynamicColor",
