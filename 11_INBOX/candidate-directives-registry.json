@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T13:51:03.195Z",
+  "last_updated": "2026-11-12T14:08:51.265Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6977,6 +6977,33 @@
       "source_repo": "dathere-qsv",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0D7050-docs-correct-jsonschema-version-in-chang.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-783A23",
+      "directive_title": "ci: apply automated fixes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tanstack-query",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-783A23-ci-apply-automated-fixes.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D06EE0",
+      "directive_title": "lsmkv): return an error for damaged RoaringSet WAL record lengths",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "weaviate-weaviate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D06EE0-lsmkv-return-an-error-for-damaged-roarin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D646C7",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D646C7-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

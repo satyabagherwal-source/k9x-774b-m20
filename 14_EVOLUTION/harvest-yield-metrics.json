@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T13:50:57.881Z",
-  "total_cycles_completed": 8999,
-  "total_learnings_persisted": 8999,
-  "total_rules_promoted": 8841,
+  "last_updated": "2026-11-12T14:08:45.723Z",
+  "total_cycles_completed": 9001,
+  "total_learnings_persisted": 9001,
+  "total_rules_promoted": 8843,
   "history": [
-    {
-      "timestamp": "2026-11-11T14:16:44.425Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:16:53.854Z",
-      "repository": "Tencent-TDS/KuiklyUI",
-      "learningId": "learn-github-tencent-tds-kuiklyui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T14:16:56.005Z",
       "repository": "projectcontour/contour",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T13:50:57.881Z",
       "repository": "Ataraxy-Labs/sem",
       "learningId": "learn-github-ataraxy-labs-sem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:08:35.319Z",
+      "repository": "TanStack/query",
+      "learningId": "learn-github-tanstack-query",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:08:45.723Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T13:51:03.268Z",
+  "updated_at": "2026-11-12T14:08:51.256Z",
   "stats": {
-    "total_discovered": 1369,
-    "approved_pending_harvest": 1247,
+    "total_discovered": 1378,
+    "approved_pending_harvest": 1256,
     "harvested_count": 0,
     "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1255,
-      "OFFICIAL_DOCUMENTATION": 59,
+      "COMMUNITY_AND_EXPERT": 1263,
+      "OFFICIAL_DOCUMENTATION": 60,
       "STANDARDS_AND_SPECIFICATIONS": 52,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
@@ -29281,6 +29281,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-A31300822CB9": {
+      "id": "SRC-A31300822CB9",
+      "url": "https://github.com/TanStack/query",
+      "title": "https://github.com/TanStack/query",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.179Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-70D7D5314CF0": {
+      "id": "SRC-70D7D5314CF0",
+      "url": "https://codesandbox.io/p/sandbox/cranky-benz-xvt2n2",
+      "title": "https://codesandbox.io/p/sandbox/cranky-benz-xvt2n2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-2AB0E0F813A5": {
+      "id": "SRC-2AB0E0F813A5",
+      "url": "https://codesandbox.io/p/sandbox/cranky-benz-xvt2n2?file=%2Fsrc%2FApp.js",
+      "title": "https://codesandbox.io/p/sandbox/cranky-benz-xvt2n2?file=%2Fsrc%2FApp.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.200Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-1A42A2DF3891": {
+      "id": "SRC-1A42A2DF3891",
+      "url": "https://www.npmjs.com/package/@tanstack/query-core/v/5.91.2?activeTab=code",
+      "title": "https://www.npmjs.com/package/@tanstack/query-core/v/5.91.2?activeTab=code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.208Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-B9B7CA14F961": {
+      "id": "SRC-B9B7CA14F961",
+      "url": "https://www.npmjs.com/package/@tanstack/query-core/v/5.94.4?activeTab=code",
+      "title": "https://www.npmjs.com/package/@tanstack/query-core/v/5.94.4?activeTab=code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-F6FD34C5F350": {
+      "id": "SRC-F6FD34C5F350",
+      "url": "https://github.com/weaviate/weaviate",
+      "title": "https://github.com/weaviate/weaviate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-CFF0366D074B": {
+      "id": "SRC-CFF0366D074B",
+      "url": "https://github.com/user-attachments/files/33944592/reproduce.py",
+      "title": "https://github.com/user-attachments/files/33944592/reproduce.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-0FEE28462251": {
+      "id": "SRC-0FEE28462251",
+      "url": "https://docs.weaviate.io/contributor-guide",
+      "title": "https://docs.weaviate.io/contributor-guide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.248Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-57583CD85D82": {
+      "id": "SRC-57583CD85D82",
+      "url": "https://weaviate.io/service/code-of-conduct",
+      "title": "https://weaviate.io/service/code-of-conduct",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:08:51.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
       }
     }
   }

@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "6498ec79",
+    "sourceVersion": "36357612",
     "license": "NOASSERTION",
-    "contentHash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
-    "lastHarvestedAt": "2026-11-10T06:12:51.600Z",
+    "contentHash": "3d31d133095b03314ff760a87e62ce7358ddc8f6fba9e7d9702c349a7d827de0",
+    "lastHarvestedAt": "2026-11-12T14:08:45.716Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "8f6da1e2",
+    "sourceVersion": "9b528b5e",
     "license": "MIT",
-    "contentHash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
-    "lastHarvestedAt": "2026-11-07T21:10:22.540Z",
+    "contentHash": "ebd533e916b9cad71a9b3593974865df9ca16741b837754ae17c6dc16963bb5d",
+    "lastHarvestedAt": "2026-11-12T14:08:35.295Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

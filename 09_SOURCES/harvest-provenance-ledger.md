@@ -9186,3 +9186,5 @@ Every entry in this ledger must capture:
 | `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `634ef6c9` | Multi-dimensional audit evidence | 2026-11-12T13:40:56.959Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `746348d7` | Multi-dimensional audit evidence | 2026-11-12T13:41:09.124Z |
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `036dde8e` | Multi-dimensional audit evidence | 2026-11-12T13:50:57.875Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `9b528b5e` | Multi-dimensional audit evidence | 2026-11-12T14:08:35.295Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `36357612` | Multi-dimensional audit evidence | 2026-11-12T14:08:45.716Z |

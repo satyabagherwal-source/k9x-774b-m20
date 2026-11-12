@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T13:50:57.760Z",
+  "last_updated": "2026-11-12T14:08:45.603Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -66914,8 +66914,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "6498ec79",
-      "content_hash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
+      "source_version": "36357612",
+      "content_hash": "3d31d133095b03314ff760a87e62ce7358ddc8f6fba9e7d9702c349a7d827de0",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -66927,6 +66927,11 @@
         {
           "number": null,
           "title": "use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "lsmkv): return an error for damaged RoaringSet WAL record lengths",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -66970,7 +66975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T06:12:51.475Z",
+      "verified_at": "2026-11-12T14:08:45.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84291,14 +84296,19 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "8f6da1e2",
-      "content_hash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
+      "source_version": "9b528b5e",
+      "content_hash": "ebd533e916b9cad71a9b3593974865df9ca16741b837754ae17c6dc16963bb5d",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "{query,react-query,preact-query}-devtools): always render the devtools left-to-r",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: apply automated fixes",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84332,7 +84342,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:10:22.398Z",
+      "verified_at": "2026-11-12T14:08:35.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

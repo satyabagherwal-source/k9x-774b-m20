@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T13:51:02.930Z",
-    "lastVerified": "2026-11-12T13:51:02.930Z",
+    "lastChecked": "2026-11-12T14:08:51.044Z",
+    "lastVerified": "2026-11-12T14:08:51.044Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -362,9 +362,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T12:58:03.371Z",
+    "lastChecked": "2026-11-12T14:08:29.998Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T12:58:03.371Z"
+    "lastVerified": "2026-11-12T14:08:29.998Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1016,12 +1016,12 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T06:12:48.341Z",
-    "lastVerified": "2026-11-10T06:12:48.341Z",
+    "lastChecked": "2026-11-12T14:08:33.751Z",
+    "lastVerified": "2026-11-12T14:08:33.751Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
+    "contentHash": "3d31d133095b03314ff760a87e62ce7358ddc8f6fba9e7d9702c349a7d827de0",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -1185,8 +1185,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T06:41:31.804Z",
-    "lastVerified": "2026-11-12T06:41:31.804Z",
+    "lastChecked": "2026-11-12T14:08:25.074Z",
+    "lastVerified": "2026-11-12T14:08:25.074Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -6471,12 +6471,12 @@
     "lastVerified": "2026-11-11T07:56:54.538Z"
   },
   "checkmarx-kics": {
-    "name": "Checkmarx/kics",
+    "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-11T07:27:38.962Z",
-    "lastVerified": "2026-11-11T07:27:38.962Z",
+    "lastChecked": "2026-11-12T14:08:22.513Z",
+    "lastVerified": "2026-11-12T14:08:22.513Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
@@ -6485,7 +6485,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "150910f8"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -6779,9 +6780,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-09T22:40:50.721Z",
+    "lastChecked": "2026-11-12T14:08:14.926Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-09T22:40:50.721Z"
+    "lastVerified": "2026-11-12T14:08:14.926Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",
@@ -10477,9 +10478,9 @@
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",
     "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
-    "lastChecked": "2026-11-08T13:40:16.899Z",
+    "lastChecked": "2026-11-12T14:08:19.998Z",
     "revisionIdentifier": "c637ad7d",
-    "lastVerified": "2026-11-08T13:40:16.899Z"
+    "lastVerified": "2026-11-12T14:08:19.998Z"
   },
   "adobe-structured-data-validator": {
     "name": "structured-data-validator",
@@ -12307,14 +12308,14 @@
     "officialUrl": "https://github.com/TanStack/query",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T21:10:20.571Z",
-    "lastVerified": "2026-11-07T21:10:20.571Z",
+    "lastChecked": "2026-11-12T14:08:23.582Z",
+    "lastVerified": "2026-11-12T14:08:23.582Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tanstack-query",
-    "contentHash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
+    "contentHash": "ebd533e916b9cad71a9b3593974865df9ca16741b837754ae17c6dc16963bb5d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
