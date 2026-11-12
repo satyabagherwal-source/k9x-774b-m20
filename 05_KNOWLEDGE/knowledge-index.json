@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T09:25:49.014Z",
+  "last_updated": "2026-11-12T09:46:20.294Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53782,8 +53782,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "71457b66",
-      "content_hash": "39f2d45fd17ac83a43ea09502087419de6bca2bc86cdec1b08e51ff5695788ad",
+      "source_version": "e449c978",
+      "content_hash": "d4a545056fa7833e31ef17d2115022c4ed70b035b4a43ec408d7bf6a7e18cc83",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -53800,6 +53800,11 @@
         {
           "number": null,
           "title": "Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "pulumi import code generation for indexed modules (#25616)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53903,7 +53908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:31:50.619Z",
+      "verified_at": "2026-11-12T09:46:20.272Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64294,8 +64299,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "2c078840",
-      "content_hash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
+      "source_version": "03441954",
+      "content_hash": "05b7cec8c60762388b494b56a431f3f0f9256ad534b9711b13b08a1aa87205a3",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -64312,6 +64317,11 @@
         {
           "number": null,
           "title": "Update module golang.org/x/crypto to v0.59.0 [SECURITY] (#5544)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update module pault.ag/go/debian to v0.21.3 (#5546)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64420,7 +64430,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T02:56:41.005Z",
+      "verified_at": "2026-11-12T09:46:18.291Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

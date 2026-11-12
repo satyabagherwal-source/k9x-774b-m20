@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:25:49.144Z",
-  "total_cycles_completed": 8955,
-  "total_learnings_persisted": 8955,
-  "total_rules_promoted": 8800,
+  "last_updated": "2026-11-12T09:46:20.441Z",
+  "total_cycles_completed": 8957,
+  "total_learnings_persisted": 8957,
+  "total_rules_promoted": 8802,
   "history": [
-    {
-      "timestamp": "2026-11-11T10:08:31.971Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:08:35.839Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T10:09:30.312Z",
       "repository": "LiconStudio/Minimax-H3-VBVR",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T09:25:49.144Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:46:18.475Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:46:20.441Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

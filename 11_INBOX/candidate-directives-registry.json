@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:25:54.482Z",
+  "last_updated": "2026-11-12T09:46:27.864Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6608,6 +6608,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C32D68-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C615FA",
+      "directive_title": "pulumi import code generation for indexed modules (#25616)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pulumi-pulumi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C615FA-pulumi-import-code-generation-for-indexe.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-501910",
+      "directive_title": "Update module pault.ag/go/debian to v0.21.3 (#5546)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trufflesecurity-trufflehog",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-501910-update-module-pault-ag-go-debian-to-v0-2.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0D0B0C",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0D0B0C-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-12"
     }
   ]

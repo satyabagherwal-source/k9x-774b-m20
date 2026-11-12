@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "2c078840",
+    "sourceVersion": "03441954",
     "license": "AGPL-3.0",
-    "contentHash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
-    "lastHarvestedAt": "2026-11-12T02:56:41.154Z",
+    "contentHash": "05b7cec8c60762388b494b56a431f3f0f9256ad534b9711b13b08a1aa87205a3",
+    "lastHarvestedAt": "2026-11-12T09:46:18.456Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "71457b66",
+    "sourceVersion": "e449c978",
     "license": "Apache-2.0",
-    "contentHash": "39f2d45fd17ac83a43ea09502087419de6bca2bc86cdec1b08e51ff5695788ad",
-    "lastHarvestedAt": "2026-11-10T02:31:50.769Z",
+    "contentHash": "d4a545056fa7833e31ef17d2115022c4ed70b035b4a43ec408d7bf6a7e18cc83",
+    "lastHarvestedAt": "2026-11-12T09:46:20.424Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T09:25:49.150Z",
+  "last_updated": "2026-11-12T09:46:20.445Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
-      "verified_at": "2026-11-12T02:56:41.164Z",
+      "content_hash": "05b7cec8c60762388b494b56a431f3f0f9256ad534b9711b13b08a1aa87205a3",
+      "verified_at": "2026-11-12T09:46:18.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:56:41.164Z"
+      "last_updated": "2026-11-12T09:46:18.478Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "18b5d4f833096c1e6c099789c026c28e95a27f356b114564dcafc6f36ed8ddc2",
-      "verified_at": "2026-11-08T03:35:51.408Z",
+      "content_hash": "d4a545056fa7833e31ef17d2115022c4ed70b035b4a43ec408d7bf6a7e18cc83",
+      "verified_at": "2026-11-12T09:46:20.444Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:35:51.408Z"
+      "last_updated": "2026-11-12T09:46:20.444Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",

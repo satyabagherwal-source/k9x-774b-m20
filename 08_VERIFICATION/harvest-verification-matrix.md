@@ -9126,3 +9126,5 @@
 | `CYCLE-20261112-9PLY` | `2026-11-12T08:53:54.022Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`29dd9c9c...`) |
 | `CYCLE-20261112-6QAV` | `2026-11-12T09:19:34.567Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5f3970b0...`) |
 | `CYCLE-20261112-ERB7` | `2026-11-12T09:25:49.123Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ae8e3e7f...`) |
+| `CYCLE-20261112-53V8` | `2026-11-12T09:46:18.452Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`05b7cec8...`) |
+| `CYCLE-20261112-55DW` | `2026-11-12T09:46:20.420Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d4a54505...`) |

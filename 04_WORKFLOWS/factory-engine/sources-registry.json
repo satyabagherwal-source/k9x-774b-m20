@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T09:25:54.192Z",
-    "lastVerified": "2026-11-12T09:25:54.192Z",
+    "lastChecked": "2026-11-12T09:46:27.455Z",
+    "lastVerified": "2026-11-12T09:46:27.455Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -365,9 +365,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T08:14:41.922Z",
+    "lastChecked": "2026-11-12T09:45:54.037Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T08:14:41.922Z"
+    "lastVerified": "2026-11-12T09:45:54.037Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2205,14 +2205,14 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T02:56:24.084Z",
-    "lastVerified": "2026-11-12T02:56:24.084Z",
+    "lastChecked": "2026-11-12T09:45:53.679Z",
+    "lastVerified": "2026-11-12T09:45:53.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
+    "contentHash": "05b7cec8c60762388b494b56a431f3f0f9256ad534b9711b13b08a1aa87205a3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5350,14 +5350,14 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T02:31:46.893Z",
-    "lastVerified": "2026-11-10T02:31:46.893Z",
+    "lastChecked": "2026-11-12T09:45:54.975Z",
+    "lastVerified": "2026-11-12T09:45:54.975Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "39f2d45fd17ac83a43ea09502087419de6bca2bc86cdec1b08e51ff5695788ad",
+    "contentHash": "d4a545056fa7833e31ef17d2115022c4ed70b035b4a43ec408d7bf6a7e18cc83",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5634,9 +5634,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-09T16:04:10.853Z",
+    "lastChecked": "2026-11-12T09:45:39.036Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-09T16:04:10.853Z"
+    "lastVerified": "2026-11-12T09:45:39.036Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -7883,8 +7883,8 @@
     "officialUrl": "https://github.com/libsql/libsql",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-10T01:19:24.394Z",
-    "lastVerified": "2026-11-10T01:19:24.394Z",
+    "lastChecked": "2026-11-12T09:45:51.564Z",
+    "lastVerified": "2026-11-12T09:45:51.564Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-libsql",
@@ -10140,9 +10140,9 @@
   "productdevbook-port-killer": {
     "name": "port-killer",
     "officialUrl": "https://github.com/productdevbook/port-killer",
-    "lastChecked": "2026-11-08T07:08:51.145Z",
+    "lastChecked": "2026-11-12T09:45:43.990Z",
     "revisionIdentifier": "2209b0fd",
-    "lastVerified": "2026-11-08T07:08:51.145Z"
+    "lastVerified": "2026-11-12T09:45:43.990Z"
   },
   "lokoe-mehdi-scouter": {
     "name": "scouter",
@@ -11970,8 +11970,8 @@
     "officialUrl": "https://github.com/AndyTheFactory/newspaper4k",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T19:04:23.920Z",
-    "lastVerified": "2026-11-07T19:04:23.920Z",
+    "lastChecked": "2026-11-12T09:45:41.480Z",
+    "lastVerified": "2026-11-12T09:45:41.480Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-andythefactory-newspaper4k",

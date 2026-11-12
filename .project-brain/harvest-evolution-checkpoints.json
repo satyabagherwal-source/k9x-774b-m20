@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:25:54.520Z",
+  "last_updated": "2026-11-12T09:46:27.899Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T08:19:36.877Z",
@@ -103,7 +103,7 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-12T02:57:07.491Z",
+      "processed_at": "2026-11-12T09:46:27.816Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-12T09:25:54.483Z",
+      "processed_at": "2026-11-12T09:46:27.866Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -996,9 +996,14 @@
       "processed_at": "2026-11-12T09:25:54.398Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "pulumi-pulumi-learnings.md": {
+      "processed_at": "2026-11-12T09:46:27.563Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 264,
+  "total_dossiers_evaluated": 267,
   "total_canonical_promoted": 32,
-  "total_staged_for_review": 231
+  "total_staged_for_review": 234
 }

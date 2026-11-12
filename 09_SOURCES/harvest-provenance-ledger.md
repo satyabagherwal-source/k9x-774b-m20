@@ -9135,3 +9135,5 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `4a7d3d74` | Multi-dimensional audit evidence | 2026-11-12T08:53:54.038Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `1598acaa` | Multi-dimensional audit evidence | 2026-11-12T09:19:34.571Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `482bbeb9` | Multi-dimensional audit evidence | 2026-11-12T09:25:49.127Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `03441954` | Multi-dimensional audit evidence | 2026-11-12T09:46:18.456Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e449c978` | Multi-dimensional audit evidence | 2026-11-12T09:46:20.424Z |
