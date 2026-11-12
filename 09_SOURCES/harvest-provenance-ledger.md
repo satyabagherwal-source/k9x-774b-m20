@@ -9191,3 +9191,4 @@ Every entry in this ledger must capture:
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `a2e03dbc` | Multi-dimensional audit evidence | 2026-11-12T14:23:56.962Z |
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `898ea993` | Multi-dimensional audit evidence | 2026-11-12T14:24:02.670Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `201a62bc` | Multi-dimensional audit evidence | 2026-11-12T14:24:06.943Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `22e24311` | Multi-dimensional audit evidence | 2026-11-12T14:31:52.510Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T14:24:06.818Z",
+  "last_updated": "2026-11-12T14:31:52.382Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -84442,14 +84442,19 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "b72200d2",
-      "content_hash": "989fe43af4768c8f04611c32ae419560967a477efb9f637f40d7aba7e1495f92",
+      "source_version": "22e24311",
+      "content_hash": "953415d49d9b9771a6e542adcc0efd74afc9d839bcdcbd564147f9e6e2ef009f",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "router): replace a crashed ssg worker",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "router): isolate concurrent adapter build entries",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84483,7 +84488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:29:25.165Z",
+      "verified_at": "2026-11-12T14:31:52.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

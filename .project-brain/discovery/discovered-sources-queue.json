@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T14:24:13.218Z",
+  "updated_at": "2026-11-12T14:31:57.602Z",
   "stats": {
-    "total_discovered": 1392,
-    "approved_pending_harvest": 1270,
+    "total_discovered": 1394,
+    "approved_pending_harvest": 1272,
     "harvested_count": 0,
     "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1277,
+      "COMMUNITY_AND_EXPERT": 1279,
       "OFFICIAL_DOCUMENTATION": 60,
       "STANDARDS_AND_SPECIFICATIONS": 52,
       "ENGINEERING_BLOGS": 1,
@@ -29787,6 +29787,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
         "fileName": "rainbow-me-rainbow-learnings.md"
+      }
+    },
+    "SRC-2C7F0F224019": {
+      "id": "SRC-2C7F0F224019",
+      "url": "https://github.com/QwikDev/qwik",
+      "title": "https://github.com/QwikDev/qwik",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:31:57.593Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
+        "fileName": "qwikdev-qwik-learnings.md"
+      }
+    },
+    "SRC-002E9A2A1FCD": {
+      "id": "SRC-002E9A2A1FCD",
+      "url": "https://localhost:${PORT",
+      "title": "https://localhost:${PORT",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:31:57.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
+        "fileName": "qwikdev-qwik-learnings.md"
       }
     }
   }

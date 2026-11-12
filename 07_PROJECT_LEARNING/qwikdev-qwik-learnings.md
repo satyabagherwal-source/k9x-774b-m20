@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source**: github ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
-> **Source Version**: `b72200d2`  
+> **Source Version**: `22e24311`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:29:24.002Z  
+> **Timestamp**: 2026-11-12T14:31:41.013Z  
 > **Learning ID**: `learn-github-qwikdev-qwik`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:29:23.175Z  
+> **Harvest Timestamp**: 2026-11-12T14:31:40.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Instant-loading web apps, without effort
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 22066 stars
+- **Stars / Engagement**: 22071 stars
 
 ---
 
@@ -77,6 +77,887 @@ export default component$(() => {
 export const head: DocumentHead = {
   title: 'Worker page',
 };
+
+```
+
+### Core Architecture Module: `e2e/preloader-e2e/utils/app.ts`
+```
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+export const APP_DIR = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../qwik-e2e/apps/preloader-test'
+);
+export const PORT = 4318;
+export const ORIGIN = `https://localhost:${PORT}`;
+
+type Manifest = {
+  core?: string;
+  preloader?: string;
+  bundleGraphAsset?: string;
+  bundles: Record<string, { origins?: string[]; symbols?: string[] }>;
+  symbols: Record<string, { ctxName?: string }>;
+};
+
+let manifest: Manifest | undefined;
+
+export const getManifest = (): Manifest =>
+  (manifest ||= JSON.parse(readFileSync(join(APP_DIR, 'dist/q-manifest.json'), 'utf8')));
+
+let bundleGraph: Map<string, string[]> | undefined;
+
+const getBundleGraph = () => {
+  if (!bundleGraph) {
+    const path = join(APP_DIR, 'dist', getManifest().bundleGraphAsset!);
+    const flat: (string | number)[] = JSON.parse(readFileSync(path, 'utf8'));
+    bundleGraph = new Map();
+    let deps: string[] = [];
+    for (const item of flat) {
+      if (typeof item === 'string') {
+        deps = [];
+        bundleGraph.set(item, deps);
+      } else if (item >= 0) {
+        // Negative numbers are probability markers, not dependencies.
+        deps.push(flat[item] as string);
+      }
+    }
+  }
+  return bundleGraph;
+};
+
+/** What the preloader marks needed with `bundle`: everything it reaches in the bundle graph. */
+export const neededWith = (bundle: string) => {
+  const graph = getBundleGraph();
+  const needed = new Set<string>();
+  const pending = [bundle];
+  while (pending.length) {
+    for (const dep of graph.get(pending.pop()!) ?? []) {
+      if (!needed.has(dep)) {
+        needed.add(dep);
+        pending.push(dep);
+      }
+    }
+  }
+  return needed;
+};
+
+const SYMBOL_HASH = /_[A-Za-z0-9]{11}\.js$/;
+
+const labelOrigin = (origin: string) =>
+  origin
+    .replace(/^src\/components\/fixtures\//, '')
+    .replace(/^src\//, '')
+    .replace(SYMBOL_HASH, '');
+
+export const bundleFile = (url: string) => new URL(url).pathname.replace(/^\/build\//, '');
+
+export const labelRequest = (url: string) => {
+  const { pathname, search } = new URL(url);
+  if (pathname.endsWith('-bundle-graph.json')) {
+    return 'bundle-graph.json';
+  }
+  if (!pathname.startsWith('/build/')) {
+    return `${pathname}${search}`;
+  }
+  const file = bundleFile(url);
+  const origins = getManifest().bundles[file]?.origins;
+  if (!origins?.length || !origins.every((origin) => origin.startsWith('src/'))) {
+    return file;
+  }
+  return [...new Set(origins.map(labelOrigin))].sort().join(' + ');
+};
+
+export const chunkComesFrom = (url: string, paths: string[]) => {
+  const origins = getManifest().bundles[bundleFile(url)]?.origins ?? [];
+  return origins.some((origin) => paths.some((path) => origin.startsWith(path)));
+};
+
+export const chunkHoldsSegmentsFrom = (url: string, paths: string[]) =>
+  chunkComesFrom(url, paths) && !!getManifest().bundles[bundleFile(url)]?.symbols?.length;
+
+const chunkHasSymbolOf = (url: string, ctxName: string) => {
+  const manifest = getManifest();
+  return (manifest.bundles[bundleFile(url)]?.symbols ?? []).some(
+    (symbol) => manifest.symbols[symbol]?.ctxName === ctxName
+  );
+};
+
+export const chunkHasScopedStyles = (url: string) => chunkHasSymbolOf(url, 'useStylesScoped$');
+
+export const chunkUrlsFrom = (path: string) =>
+  Object.entries(getManifest().bundles)
+    .filter(([, bundle]) => bundle.origins?.some((origin) => origin.startsWith(path)))
+    .map(([file]) => `${ORIGIN}/build/${file}`);
+
+```
+
+### Core Architecture Module: `e2e/preloader-e2e/utils/fixtures.ts`
+```
+export const PRIMITIVE_STEPS = {
+  'jsx-binding': 0,
+  render: 1,
+  'store-chain': 3,
+  'task-chain': 3,
+  'computed-chain': 3,
+  'async-computed-chain': 3,
+  'mixed-computed-chain': 3,
+  'visible-task-chain': 3,
+  all: 12,
+};
+
+export const SETUP_LEVELS = { single: 1, tree: 3, 'tree-context': 3, conditional: 3 };
+
+export type Fixture = {
+  id: string;
+  path: string;
+  sources: string[];
+  expected?: string;
+  warmRoundTrips?: number;
+};
+
+export const MATRIX: Fixture[] = Object.entries(SETUP_LEVELS).flatMap(([setup, levels]) =>
+  Object.entries(PRIMITIVE_STEPS).map(([primitive, steps]) => ({
+    id: `${setup}/${primitive}`,
+    path: `/${setup}/${primitive}/`,
+    sources: [
+      `src/components/fixtures/${setup}/${primitive}/`,
+      `src/routes/${setup}/${primitive}/`,
+    ],
+    expected: String(1 + levels * steps),
+  }))
+);
+
+export const MODAL: Fixture = {
+  id: 'modal',
+  path: '/modal/',
+  sources: ['src/components/fixtures/modal/', 'src/routes/modal/'],
+  expected: '3',
+};
+
+export const USER_IMPORT: Fixture = {
+  id: 'user-import',
+  path: '/user-import/',
+  sources: ['src/components/fixtures/user-import/', 'src/routes/user-import/', 'src/vendor-lib/'],
+  warmRoundTrips: 1,
+};
+
+export const SHARED_HELPER: Fixture = {
+  id: 'shared-helper',
+  path: '/shared-helper/',
+  sources: ['src/components/fixtures/shared-helper/', 'src/routes/shared-helper/'],
+  expected: '1 clicks',
+};
+
+const handWritten = (name: string, expected: string): Fixture => ({
+  id: name,
+  path: `/${name}/`,
+  sources: [`src/components/fixtures/${name}/`, `src/routes/${name}/`],
+  expected,
+});
+
+export const SLOT = handWritten('slot', '1');
+export const SCOPED_STYLES = handWritten('scoped-styles', 'styled');
+export const QRL_PROP = handWritten('qrl-prop', '42');
+export const SYNC = handWritten('sync', 'done');
+export const BARREL = handWritten('barrel', 'alpha 1.0');
+
+export const IMPORT_CHAIN: Fixture = {
+  id: 'harness/import-chain',
+  path: '/harness/import-chain/',
+  sources: ['src/components/fixtures/harness/', 'src/routes/harness/'],
+  expected: 'done',
+};
+
+export const VISIBLE_ABOVE: Fixture = {
+  id: 'visible/above',
+  path: '/visible/above/',
+  sources: ['src/components/fixtures/visible/above.tsx', 'src/routes/visible/above/'],
+  expected: '4',
+};
+
+export const VISIBLE_BELOW: Fixture = {
+  id: 'visible/below',
+  path: '/visible/below/',
+  sources: ['src/components/fixtures/visible/below.tsx', 'src/routes/visible/below/'],
+  expected: '4',
+};
+
+const visibleStrategy = (strategy: string): Fixture => ({
+  id: `visible/${strategy}`,
+  path: `/visible/${strategy}/`,
+  sources: [`src/components/fixtures/visible/${strategy}.tsx`, `src/routes/visible/${strategy}/`],
+  expected: '4',
+});
+
+export const VISIBLE_DOCUMENT_READY = visibleStrategy('document-ready');
+export const VISIBLE_DOCUMENT_IDLE = visibleStrategy('document-idle');
+
+export const fixtureById = (id: string) => {
+  const fixture = MATRIX.find((candidate) => candidate.id === id);
+  if (!fixture) {
+    throw new Error(`No fixture has the id ${id}`);
+  }
+  return fixture;
+};
+
+export const CLICKABLE_ON_ALL_AT_ONCE: Fixture[] = [...MATRIX, USER_IMPORT, MODAL].map(
+  (fixture) => ({ ...fixture, path: '/all-at-once/' })
+);
+
+const NEVER_UPDATES =
+  'never shows its result on main: a sync computed reading an async computed prop stays at 0';
+const OFF_SCREEN_VISIBLE_TASKS =
+  'needs a round trip on main: off-screen visible task chunks are never preloaded, so the scroll to the first visible-task-chain fixture fetches them all';
+const JSX_ONLY =
+  'one round trip on main: the signal is only read in JSX, so the click only needs its handler';
+const COMPUTEDS_WITH_HANDLER =
+  'one round trip on main: the computed chunks go out with the click handler';
+const VISIBLE_TASKS_LOADED =
+  'one round trip on main: the visible task chunks loaded with the page, so the click only needs its handler';
+const MIDDLE_LINK_LATE =
+  'over the 2-round-trip cap on main: the middle link of an async computed chain loads a round trip late';
+
+export const NEVER_SHOWS_RESULT: Record<string, string> = {
+  'tree/mixed-computed-chain': NEVER_UPDATES,
+  'tree-context/mixed-computed-chain': NEVER_UPDATES,
+};
+
+export type RoundTripsOnMain = { roundTrips: number; reason: string };
+
+export const NOT_READY_WHEN_WARM: Record<string, RoundTripsOnMain> = {
+  'single/visible-task-chain': { roundTrips: 1, reason: OFF_SCREEN_VISIBLE_TASKS },
+};
+
+export const ROUND_TRIPS_ON_MAIN: Record<string, RoundTripsOnMain> = {
+  'single/jsx-binding': { roundTrips: 1, reason: JSX_ONLY },
+  'tree/jsx-binding': { roundTrips: 1, reason: JSX_ONLY },
+  'tree-context/jsx-binding': { roundTrips: 1, reason: JSX_ONLY },
+  'single/computed-chain': { roundTrips: 1, reason: COMPUTEDS_WITH_HANDLER },
+  'tree/computed-chain': { roundTrips: 1, reason: COMPUTEDS_WITH_HANDLER },
+  'tree-context/computed-chain': { roundTrips: 1, reason: COMPUTEDS_WITH_HANDLER },
+  'single/visible-task-chain': { roundTrips: 1, reason: VISIBLE_TASKS_LOADED },
+  'tree/visible-task-chain': { roundTrips: 1, reason: VISIBLE_TASKS_LOADED },
+  'tree-context/visible-task-chain': { roundTrips: 1, reason: VISIBLE_TASKS_LOADED },
+  'single/async-computed-chain': { roundTrips: 3, reason: MIDDLE_LINK_LATE },
+  'single/mixed-computed-chain': { roundTrips: 3, reason: MIDDLE_LINK_LATE },
+  'tree/async-computed-chain': { roundTrips: 6, reason: MIDDLE_LINK_LATE },
+  'tree-context/async-computed-chain': { roundTrips: 6, reason: MIDDLE_LINK_LATE },
+};
+
+export const NAVIGATION_SOURCES = ['src/components/fixtures/navigation/', 'src/routes/navigation/'];
+
+```
+
+### Core Architecture Module: `e2e/preloader-e2e/utils/gate.ts`
+```
+import type { Locator, Page, Request, Route } from '@playwright/test';
+import { bundleFile, chunkHoldsSegmentsFrom, labelRequest, neededWith, ORIGIN } from './app';
+
+export const FILLER = 'src/components/filler/';
+
+const QUIET_MS = 250;
+const MAX_ROUND_TRIPS = 20;
+const DOWNLOAD_LIMIT_MS = 30_000;
+const NETWORK_IDLE_LIMIT_MS = 60_000;
+
+export type Gate = {
+  page: Page;
+  mode: 'pass' | 'hold';
+  held: Route[];
+  holdWhilePassing?: (url: string) => boolean;
+};
+
+export type RoundTrip = {
+  urls: string[];
+};
+
+export type PreloaderLink = { href: string; speculative: boolean };
+
+type PreloaderWindow = Window & {
+  __preloaderLinks?: PreloaderLink[];
+  __speculativeInFlight?: number;
+  __maxSpeculativeInFlight?: number;
+  __holdsSpeculativePreloads?: boolean;
+  __heldSpeculativePreloads?: number;
+  __resumeSpeculativePreloads?: () => void;
+  __sendHeldSpeculativePreloads?: (hrefs: string[]) => void;
+};
+
+export const recordSpeculativePreloads = (page: Page) =>
+  page.addInitScript(() => {
+    const win = window as PreloaderWindow;
+    win.__preloaderLinks = [];
+    win.__speculativeInFlight = 0;
+    win.__maxSpeculativeInFlight = 0;
+    const heldLinks: [Node, HTMLLinkElement][] = [];
+    const appendChild = Node.prototype.appendChild;
+    win.__sendHeldSpeculativePreloads = (hrefs) => {
+      for (let i = heldLinks.length - 1; i >= 0; i--) {
+        const [parent, link] = heldLinks[i];
+        if (hrefs.includes(link.href)) {
+          heldLinks.splice(i, 1);
+          appendChild.call(parent, link);
+        }
+      }
+    };
+    win.__resumeSpeculativePreloads = () => {
+      win.__holdsSpeculativePreloads = false;
+      for (const [parent, link] of heldLinks.splice(0)) {
+        appendChild.call(parent, link);
+      }
+    };
+    Node.prototype.appendChild = function <T extends Node>(this: Node, node: T): T {
+      if (node instanceof HTMLLinkElement && /preload/i.test(node.rel)) {
+        const speculative = node.getAttribute('fetchpriority') === 'low';
+        win.__preloaderLinks!.push({ href: node.href, speculative });
+        if (speculative) {
+          win.__speculativeInFlight!++;
+          win.__maxSpeculativeInFlight = Math.max(
+            win.__maxSpeculativeInFlight!,
+            win.__speculativeInFlight!
+          );
+          const settled = () => win.__speculativeInFlight!--;
+          node.addEventListener('load', settled, { once: true });
+          node.addEventListener('error', settled, { once: true });
+          if (win.__holdsSpeculativePreloads) {
+            heldLinks.push([this, node]);
+            win.__heldSpeculativePreloads = heldLinks.length;
+            return node;
+          }
+        }
+      }
+      return appendChild.call(this, node) as T;
+    };
+  });
+
+export const holdSpeculativePreloads = (page: Page) =>
+  page.addInitScript(() => {
+    (window as PreloaderWindow).__holdsSpeculativePreloads = true;
+  });
+
+/**
+ * The preloader counts a held speculative preload as in flight, so it never requests that chunk
+ * again once it is needed. Send it when a request makes it needed, as the preloader would.
+ */
+const sendHeldPreloadsNeededWith = (page: Page, url: string) => {
+  if (!url.startsWith(`${ORIGIN}/build/`)) {
+    return;
+  }
+  const hrefs = [...neededWith(bundleFile(url))].map((bundle) => `${ORIGIN}/build/${bundle}`);
+  page
+    .evaluate((hrefs) => (window as PreloaderWindow).__sendHeldSpeculativePreloads?.(hrefs), hrefs)
+    .catch(() => {});
+};
+
+const resumeSpeculativePreloads = (page: Page) =>
+  page.evaluate(() => (window as PreloaderWindow).__resumeSpeculativePreloads?.());
+
+export const maxSpeculativeInFlight = (page: Page) =>
+  page.evaluate(() => (window as PreloaderWindow).__maxSpeculativeInFlight ?? 0);
+
+export const preloaderLinks = (page: Page) =>
+  page.evaluate(() => (window as PreloaderWindow).__preloaderLinks ?? []);
+
+export const speculativePreloads = async (page: Page) =>
+  new Set((await preloaderLinks(page)).filter((link) => link.speculative).map((link) => link.href));
+
+export const createGate = async (page: Page): Promise<Gate> => {
+  const gate: Gate = { page, mode: 'pass', held: [] };
+  await page.route(`${ORIGIN}/**`, (route) => {
+    const request = route.request();
+    const holds =
+      gate.mode === 'hold'
+        ? !request.isNavigationRequest()
+        : gate.holdWhilePassing?.(request.url());
+    if (!holds) {
+      return route.continue();
+    }
+    gate.held.push(route);
+    if (gate.mode === 'hold') {
+      sendHeldPreloadsNeededWith(page, request.url());
+    }
+  });
+  return gate;
+};
+
+export const settle = async (page: Page, gate: Gate, quietMs = QUIET_MS) => {
+  let lastCount = -1;
+  let stableRounds = 0;
+  while (stableRounds < 2) {
+    await page.evaluate(
+      () => new Promise((resolve) => requestIdleCallback(() => resolve(null), { timeout: 2000 }))
+    );
+    await page.waitForTimeout(quietMs);
+    if (gate.held.length === lastCount) {
+      stableRounds++;
+    } else {
+      stableRounds = 0;
+      lastCount = gate.held.length;
+    }
+  }
+};
+
+const failAfter = (ms: number, message: string) => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const failure = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms);
+  });
+  return { failure, cancel: () => clearTimeout(timer) };
+};
+
+const releaseUntilDownloaded = async (route: Route) => {
+  await route.continue().catch(() => {});
+  const url = route.request().url();
+  const deadline = failAfter(DOWNLOAD_LIMIT_MS, `${url} did not finish downloading`);
+  try {
+    await Promise.race([
+      route
+        .request()
+        .response()
+        .then((response) => response?.finished())
+        .catch(() => {}),
+      deadline.failure,
+    ]);
+  } finally {
+    deadline.cancel();
+  }
+};
+
+export const release = async (routes: Route[]) => {
+  await Promise.all(routes.map(releaseUntilDownloaded));
+};
+
+export const waitForNetworkIdle = async (
+  page: Page,
+  action: () => Promise<unknown>,
+  quietMs = 1000
+) => {
+  const pending = new Set<Request>();
+  let lastActivity = Date.now();
+  const onRequest = (request: Request) => {
+    pending.add(request);
+    lastActivity = Date.now();
+  };
+  const onDone = (request: Request) => {
+    pending.delete(request);
+    lastActivity = Date.now();
+  };
+  page.on('request', onRequest);
+  page.on('requestfinished', onDone);
+  page.on('requestfailed', onDone);
+  try {
+    await action();
+    const startedAt = Date.now();
+    while (pending.size || Date.now() - lastActivity < quietMs) {
+      if (Date.now() - startedAt > NETWORK_IDLE_LIMIT_MS) {
+        const urls = [...pending].map((request) => request.url());
+        throw new Error(`The network never went idle; still pending: ${urls.join(', ')}`);
+      }
+      await page.waitForTimeout(100);
+    }
+  } finally {
+    page.off('request', onRequest);
+    page.off('requestfinished', onDone);
+    page.off('requestfailed', onDone);
+  }
+};
+
+export const releaseAll = async (gate: Gate, heldBack: Route[] = []) => {
+  gate.mode = 'pass';
+  await resumeSpeculativePreloads(gate.page);
+  await release([...gate.held.splice(0), ...heldBack.splice(0)]);
+};
+
+export const waitForQwikloader = (page: Page) =>
+  page.waitForFunction(() => (window as any)._qwikEv?.roots, null, { timeout: 15_000 });
+
+const urlsOf = (routes: Route[]) => routes.map((route) => route.request().url());
+
+export const openCold = async (page: Page, gate: Gate, path: string) => {
+  await holdSpeculativePreloads(page);
+  await waitForNetworkIdle(page, async () => {
+    await page.goto(path);
+    await waitForQwikloader(page);
+    await page.waitForFunction(() => (window as PreloaderWindow).__heldSpeculativePreloads, null, {
+      timeout: 15_000,
+    });
+  });
+  gate.mode = 'hold';
+};
+
+export const openWarm = async (page: Page, gate: Gate, path: string) => {
+  await waitForNetworkIdle(page, async () => {
+    await page.goto(path);
+    await waitForQwikloader(page);
+    await page.waitForFunction(() => typeof (globalThis as any).qPreload === 'function', null, {
+      timeout: 15_000,
+    });
+  });
+  gate.mode = 'hold';
+};
+
+export const countRoundTrips = async (
+  page: Page,
+  gate: Gate,
+  action: () => Promise<unknown>,
+  isDone: () => Promise<boolean>,
+  heldBack: Route[] = []
+) => {
+  gate.mode = 'hold';
+  await action();
+  const roundTrips: RoundTrip[] = [];
+  for (;;) {
+    await settle(page, gate);
+    if (await isDone()) {
+      return roundTrips;
+    }
+    const routes = gate.held.length ? gate.held.splice(0) : heldBack.splice(0);
+    if (!routes.length) {
+      throw new Error(`Not done and nothing requested after ${roundTrips.length} round trips`);
+    }
+    if (roundTrips.length === MAX_ROUND_TRIPS) {
+      throw new Error(`More than ${MAX_ROUND_TRIPS} round trips`);
+    }
+    roundTrips.push({ urls: urlsOf(routes) });
+    await release(routes);
+  }
+};
+
+export const resultIsDone = (result: Locator) => () =>
+  result.evaluateAll((elements) =>
+    elements.some((element) => element.hasAttribute('data-done') && element.checkVisibility())
+  );
+
+export const formatRoundTrips = (
+  roundTrips: RoundTrip[],
+  { segmentsFrom }: { segmentsFrom?: string[] } = {}
+) =>
+  roundTrips
+    .map(({ urls }, index) => ({
+      number: index + 1,
+      urls: segmentsFrom ? urls.filter((url) => chunkHoldsSegmentsFrom(url, segmentsFrom)) : urls,
+    }))
+    .filter(({ urls }) => urls.length)
+    .map(({ number, urls }) => {
+      const labels = [...new Set(urls.map(labelRequest))].sort();
+      return [`round trip ${number}:`, ...labels.map((label) => `  ${label}`)].join('\n');
+    })
+    .join('\n') + '\n';
+
+export const collectUntilQuiet = async (page: Page, gate: Gate, action: () => Promise<unknown>) => {
+  gate.mode = 'hold';
+  await action();
+  const urls: string[] = [];
+  for (;;) {
+    await settle(page, gate);
+    const routes = gate.held.splice(0);
+    if (!routes.length) {
+      return urls;
+    }
+    urls.push(...routes.map((route) => route.request().url()));
+    await release(routes);
+  }
+};
+
+export const sp
+```
+
+### Core Architecture Module: `e2e/preloader-e2e/utils/long-tasks.ts`
+```
+import type { Browser, Page } from '@playwright/test';
+
+const LONG_TASK_MS = 50;
+const MID_TIER_PHONE_INDEX = 400;
+const SLOW_NETWORK = {
+  offline: false,
+  latency: 40,
+  downloadThroughput: (1.6 * 1024 * 1024) / 8,
+  uploadThroughput: (750 * 1024) / 8,
+};
+
+// Adapted from Lighthouse's computeBenchmarkIndex (core/lib/page-functions.js, Apache-2.0).
+const computeBenchmarkIndex = () => {
+  const benchmarkIndexGC = () => {
+    const start = Date.now();
+    let iterations = 0;
+    while (Date.now() - start < 500) {
+      let s = '';
+      for (let j = 0; j < 10000; j++) {
+        s += 'a';
+      }
+      if (s.length === 1) {
+        throw new Error('unreachable');
+      }
+      iterations++;
+    }
+    return Math.round(iterations / 10 / ((Date.now() - start) / 1000));
+  };
+  const benchmarkIndexNoGC = () => {
+    const arrA: number[] = [];
+    const arrB: number[] = [];
+    for (let i = 0; i < 100000; i++) {
+      arrA[i] = arrB[i] = i;
+    }
+    const start = Date.now();
+    let iterations = 0;
+    while (iterations % 10 !== 0 || Date.now() - start < 500) {
+      const src = iterations % 2 === 0 ? arrA : arrB;
+      const tgt = iterations % 2 === 0 ? arrB : arrA;
+      for (let j = 0; j < src.length; j++) {
+        tgt[j] = src[j];
+      }
+      iterations++;
+    }
+    return Math.round(iterations / 10 / ((Date.now() - start) / 1000));
+  };
+  return (benchmarkIndexGC() + benchmarkIndexNoGC()) / 2;
+};
+
+const measureCpuRate = async (page: Page) => {
+  const indexes: number[] = [];
+  for (let i = 0; i < 3; i++) {
+    indexes.push(await page.evaluate(computeBenchmarkIndex));
+  }
+  const median = indexes.sort((a, b) => a - b)[1];
+  return Math.max(1, median / MID_TIER_PHONE_INDEX);
+};
+
+export const throttleLikeAMidTierPhone = async (page: Page) => {
+  const cdp = await page.context().newCDPSession(page);
+  await page.goto('about:blank');
+  const cpuRate = await measureCpuRate(page);
+  await cdp.send('Network.enable');
+  await cdp.send('Network.emulateNetworkConditions', SLOW_NETWORK);
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuRate });
+  return cpuRate;
+};
+
+export type TraceEvent = {
+  name: string;
+  ph: string;
+  ts: number;
+  dur?: number;
+  tts?: number;
+  tdur?: number;
+  pid: number;
+  tid: number;
+  args?: {
+    name?: string;
+    fileName?: string;
+    data?: { url?: string; fileName?: string; functionName?: string; lineNumber?: number };
+  };
+};
+
+export type LongTask = {
+  durationMs: number;
+  preloaderMs: number;
+  scripts: string[];
+  longestEvents: { name: string; source: string; wallMs: number; cpuMs: number }[];
+};
+
+const SCRIPT_EVENTS = new Set([
+  'FunctionCall',
+  'EvaluateScript',
+  'v8.compile',
+  'v8.compileModule',
+  'v8.evaluateModule',
+]);
+
+const GC_EVENTS = new Set(['MajorGC', 'MinorGC']);
+const LONGEST_EVENTS_KEPT = 8;
+
+const urlOf = (event: TraceEvent) =>
+  event.args?.data?.url ?? event.args?.fileName ?? event.args?.data?.fileName ?? '';
+
+const hasThreadTime = (event: TraceEvent) => event.tts !== undefined && event.tdur !== undefined;
+
+const cpuDuration = (event: TraceEvent) => event.tdur ?? event.dur!;
+
+const wallInterval = (event: TraceEvent): [number, number] => [event.ts, event.ts + event.dur!];
+
+const cpuInterval = (event: TraceEvent): [number, number] => [event.tts!, event.tts! + event.tdur!];
+
+const toMs = (microseconds: number) => Math.round(microseconds / 100) / 10;
+
+const describeEvent = (event: TraceEvent) => {
+  const { functionName = '', lineNumber } = event.args?.data ?? {};
+  const file = urlOf(event).split('/').pop();
+  const line = lineNumber === undefined ? '' : `:${lineNumber}`;
+  return {
+    name: event.name,
+    source: `${functionName} ${file}${line}`.trim(),
+    wallMs: toMs(event.dur!),
+    cpuMs: toMs(cpuDuration(event)),
+  };
+};
+
+const mergedDuration = (intervals: [number, number][]) => {
+  let total = 0;
+  let end = -Infinity;
+  for (const [from, to] of intervals.sort((a, b) => a[0] - b[0])) {
+    if (to > end) {
+      total += to - Math.max(from, end);
+      end = to;
+    }
+  }
+  return total;
+};
+
+const findRendererMainThread = (events: TraceEvent[]) => {
+  const candidates = events.filter(
+    (event) => event.name === 'thread_name' && event.args?.name === 'CrRendererMain'
+  );
+  let best: TraceEvent | undefined;
+  let bestCount = -1;
+  for (const candidate of candidates) {
+    const count = events.filter(
+      (event) =>
+        event.pid === candidate.pid && event.tid === candidate.tid && event.name === 'RunTask'
+    ).length;
+    if (count > bestCount) {
+      best = candidate;
+      bestCount = count;
+    }
+  }
+  return best;
+};
+
+export const findLongTasks = (
+  events: TraceEvent[],
+  preloaderUrl: string,
+  preloadedUrls: Set<string>
+): LongTask[] => {
+  const main = findRendererMainThread(events);
+  if (!main) {
+    throw new Error('The trace has no renderer main thread to measure');
+  }
+  const onMain = events.filter(
+    (event) => event.pid === main.pid && event.tid === main.tid && event.ph === 'X' && event.dur
+  );
+  return onMain
+    .filter((event) => event.name === 'RunTask' && cpuDuration(event) >= LONG_TASK_MS * 1000)
+    .map((task) => {
+      const inTheTask = onMain.filter(
+        (event) =>
+          event !== task && event.ts >= task.ts && event.ts + event.dur! <= task.ts + task.dur!
+      );
+      const scripts = inTheTask.filter((event) => SCRIPT_EVENTS.has(event.name));
+      const isPreloaderWork = (event: TraceEvent) =>
+        urlOf(event) === preloaderUrl ||
+        (event.name.startsWith('v8.compile') && preloadedUrls.has(urlOf(event)));
+      const preloaderEvents = scripts.filter(isPreloaderWork);
+      const intervalOf = preloaderEvents.every(hasThreadTime) ? cpuInterval : wallInterval;
+      return {
+        durationMs: Math.round(cpuDuration(task) / 1000),
+        preloaderMs: Math.round(mergedDuration(preloaderEvents.map(intervalOf)) / 1000),
+        scripts: [
+          ...new Set(scripts.map((event) => `${event.name} ${urlOf(event).split('/').pop()}`)),
+        ],
+        longestEvents: inTheTask
+          .filter((event) => SCRIPT_EVENTS.has(event.name) || GC_EVENTS.has(event.name))
+          .sort((a, b) => b.dur! - a.dur!)
+          .slice(0, LONGEST_EVENTS_KEPT)
+          .map(describeEvent),
+      };
+    });
+};
+
+export const longTasksFromThePreloader = (tasks: LongTask[]) =>
+  tasks.filter(
+    (task) =>
+      task.preloaderMs >= LONG_TASK_MS ||
+      (task.preloaderMs > 0 && task.durationMs - task.preloaderMs < LONG_TASK_MS)
+  );
+
+export const traceLongTasks = async (
+  browser: Browser,
+  page: Page,
+  run: () => Promise<void>,
+  preloaderUrl: () => string,
+  preloadedUrls: () => Promise<Set<string>>
+) => {
+  await browser.startTracing(page, {
+    categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline', 'v8', 'v8.execute'],
+  });
+  await run();
+  const trace = JSON.parse((await browser.stopTracing()).toString());
+  return findLongTasks(trace.traceEvents ?? trace, preloaderUrl(), await preloadedUrls());
+};
+
+```
+
+### Core Architecture Module: `e2e/preloader-e2e/utils/scenarios.ts`
+```
+import { expect, type Page } from '@playwright/test';
+import type { Fixture } from './fixtures';
+import {
+  countRoundTrips,
+  createGate,
+  openCold,
+  openWarm,
+  recordSpeculativePreloads,
+  releaseAll,
+  resultIsDone,
+  type Gate,
+} from './gate';
+
+export type OpenFixture = {
+  page: Page;
+  fixture: Fixture;
+  gate: Gate;
+};
+
+export const fixtureRoot = (page: Page, fixture: Fixture) =>
+  page.locator(`[data-fixture="${fixture.id}"]`);
+
+export const fixtureResult = (page: Page, fixture: Fixture) =>
+  fixtureRoot(page, fixture).locator('[data-testid=result]');
+
+export const expectResult = async (page: Page, fixture: Fixture) => {
+  const result = fixtureResult(page, fixture).filter({ visible: true });
+  await expect(result).toHaveAttribute('data-done');
+  if (fixture.expected) {
+    await expect(result).toHaveText(fixture.expected);
+  }
+};
+
+export const openFixture = async (
+  page: Page,
+  fixture: Fixture,
+  state: 'cold' | 'warm'
+): Promise<OpenFixture> => {
+  await recordSpeculativePreloads(page);
+  const gate = await createGate(page);
+  await (state === 'cold' ? openCold : openWarm)(page, gate, fixture.path);
+  return { page, fixture, gate };
+};
+
+export const countFixtureRoundTrips = (
+  { page, gate }: OpenFixture,
+  action: () => Promise<unknown>,
+  isDone: () => Promise<boolean>
+) => countRoundTrips(page, gate, action, isDone);
+
+export const clickTrigger = (opened: OpenFixture) =>
+  countFixtureRoundTrips(
+    opened,
+    () => fixtureRoot(opened.page, opened.fixture).locator('[data-testid=trigger]').click(),
+    resultIsDone(fixtureResult(opened.page, opened.fixture))
+  );
+
+const clickOnce = async (page: Page, fixture: Fixture, state: 'cold' | 'warm') => {
+  const opened = await openFixture(page, fixture, state);
+  const roundTrips = await clickTrigger(opened);
+  await releaseAll(opened.gate);
+  await expectResult(page, fixture);
+  return roundTrips;
+};
+
+export const coldClick = (page: Page, fixture: Fixture) => clickOnce(page, fixture, 'cold');
+
+export const warmClick = (page: Page, fixture: Fixture) => clickOnce(page, fixture, 'warm');
 
 ```
 
@@ -420,706 +1301,17 @@ export const EventsLifecycle = component$(() => {
 
 ```
 
-### Core Architecture Module: `e2e/qwik-e2e/apps/e2e/src/components/factory/utils.tsx`
-```
-import { component$, implicit$FirstArg, type QRL } from '@qwik.dev/core';
-
-export function factoryQrl<P extends Record<string, any>>(componentQRL: QRL<(props: P) => any>) {
-  return component$((props: P) => {
-    const component = componentQRL.resolve();
-    return (
-      <div>
-        {component.then((Cmp) => (
-          <Cmp {...props} />
-        ))}
-      </div>
-    );
-  });
-}
-export const factory$ = implicit$FirstArg(factoryQrl);
-
-```
-
-### Core Architecture Module: `e2e/qwik-e2e/apps/e2e/src/components/render/render.tsx`
-```
-import {
-  component$,
-  createContextId,
-  event$,
-  isServer,
-  jsx,
-  SkipRender,
-  Slot,
-  useContext,
-  useContextProvider,
-  useSignal,
-  useStore,
-  useStylesScoped$,
-  useTask$,
-  type JSXOutput,
-  type PropsOf,
-  type QRL,
-  type Signal,
-} from '@qwik.dev/core';
-import { h, SSRComment, SSRRaw } from '@qwik.dev/core/internal';
-import { delay } from '../streaming/demo';
-
-export const Render = component$(() => {
-  const rerender = useSignal(0);
-  return (
-    <>
-      <button id="rerender" data-v={rerender.value} onClick$={() => rerender.value++}>
-        Rerender
-      </button>
-      <RenderChildren v={rerender.value} key={rerender.value} />
-    </>
-  );
-});
-export const RenderChildren = component$<{ v: number }>(({ v }) => {
-  const parent = {
-    counter: {
-      count: 0,
-    },
-    count: 0,
-    children: [] as any[],
-  };
-  parent.children.push(parent);
-
-  const state = useStore(parent, { deep: true });
-  return (
-    <>
-      <div id="rerenderCount">Render {v}</div>
-      <button
-        id="increment"
-        onClick$={() => {
-          state.counter.count++;
-          state.count++;
-        }}
-      >
-        Increment
-      </button>
-      <Child counter={state.counter}></Child>
-      <InlineJsxComponentOrderIssue1475 />
-      <BindingsNotPrintingIssue2563 />
-      <BrokenRenderingBehaviorIssue2608 />
-      <StoreNewKeyReactivityIssue2800 />
-      <DateSerializationDeepStoreIssue2889 />
-      <PropRenderFunctionIssue3116 />
-      <CounterToggle />
-      <PropsDestructuring
-        message="Hello"
-        count={state.count}
-        id="props-destructuring"
-        aria-hidden="true"
-      />
-      <PropsDestructuringNo count={state.count} id="props-destructuring-no" aria-hidden="true" />
-      <PropsDestructuring
-        message="Count"
-        count={state.count}
-        id="props-destructuring-count"
-        aria-count={state.count}
-      />
-      <IssueReorder />
-      <ArrayItemsDisplayOrderIssue2414 />
-      <ProxyOwnKeysSymbolIssue3178 />
-      <DynamicElementTagSetPropertyIssue3398 />
-      <ClickHandlersExecutedMultipleTimesIssue3479 />
-      <SpreadReplacesExistingPropsIssue3481 />
-      <ReactImportKeySpreadLoopIssue3468 />
-      <Pr3475 />
-      <DestructuringAssignmentBrokenIssue3561 />
-      <UndefinedVariableAfterUpgradeIssue3542 atom={{ code: 1 }} />
-      <ForLoopItemsAccumulateIssue3643 />
-      <IssueChildrenSpread />
-      <WrongDynamicListRenderingIssue3731 />
-      <OptimizerSyntaxErrorConditionalIssue3702 />
-      <VariableAssignmentsOptimizedIssue3795 />
-      <DynamicComponentsWithSignalsIssue4029 />
-      <UndefinedRefPropIssue4346 />
-      <SkipRenderTest />
-      <SSRRawTest />
-      <ProxyOwnKeysDuplicateEntriesIssue4292 />
-      <OptimizerRemovesLocalConstIssue4386 />
-      <RangeInputInitialValueStepIssue4455 />
-      <DynamicTagBreaksReactivityIssue5266 />
-      <DynamicButton id="dynamic-button" />;
-      <RerenderOnce />
-      <PropSpreadLogicBrokenCsrIssue8213 />
-    </>
-  );
-});
-
-export const Child = component$((props: { counter: { count: number } }) => {
-  const state = useStore({
-    hideAttributes: false,
-  });
-  useStylesScoped$(`
-  .even::before{
-    content: "even"
-  }
-  .odd::after{
-    content: "odd"
-  }
-  `);
-
-  if (state.hideAttributes) {
-    const count = props.counter.count;
-    return (
-      <>
-        <span id="rerenders">Rerender {count}</span>
-        <div id="attributes">
-          <button id="toggle" onClick$={() => (state.hideAttributes = !state.hideAttributes)}>
-            Toggle attributes
-          </button>
-        </div>
-      </>
-    );
-  }
-  const count = props.counter.count;
-  return (
-    <>
-      <span id="rerenders">Rerender {count}</span>
-      <div
-        id="attributes"
-        preventdefault:click
-        autoCorrect="all"
-        aria-hidden="true"
-        class={{
-          even: count % 2 === 0,
-          odd: count % 2 === 1,
-          stable0: true,
-          hidden: false,
-        }}
-      >
-        <button id="toggle" onClick$={() => (state.hideAttributes = !state.hideAttributes)}>
-          Toggle attributes
-        </button>
-      </div>
-    </>
-  );
-});
-
-export const InlineJsxComponentOrderIssue1475 = component$(() => {
-  const render = useSignal(false);
-  return (
-    <>
-      <button id="issue-1475-button" onClick$={() => (render.value = true)}>
-        Render
-      </button>
-      <div id="issue-1475-result">
-        {render.value ? (
-          <>
-            <h1>1. Before</h1>
-            2. Some text
-            <LazyInlineJsxComponentOrderIssue1475 />
-            {'\n'}
-            <h2>3 After</h2>
-            <p>Stuff</p>
-          </>
-        ) : (
-          <>
-            <h1>Welcome</h1>
-            <ul></ul>
-            <h2>Here</h2>
-          </>
-        )}
-      </div>
-    </>
-  );
-});
-
-export const LazyInlineJsxComponentOrderIssue1475 = component$(() => {
-  useTask$(async () => {
-    await delay(50);
-  });
-
-  return <div>Middle</div>;
-});
-
-export const CounterToggle = component$(() => {
-  const cond = useSignal({ cond: true });
-  return (
-    <>
-      <button id="counter-toggle-btn" onClick$={() => (cond.value = { cond: !cond.value.cond })}>
-        Toggle
-      </button>
-      {cond.value.cond ? <CounterToggleShow text="even" /> : <CounterToggleShow text="odd" />}
-      <CounterToggleShow2 cond={cond.value.cond} />
-    </>
-  );
-});
-
-export const CounterToggleShow = component$((props: { text: string }) => {
-  return (
-    <>
-      <div id="counter-toggle-show">{props.text}</div>
-    </>
-  );
-});
-
-export const CounterToggleShow2 = component$((props: { cond: boolean }) => {
-  return (
-    <>
-      <div id="counter-toggle-show-2">{String(props.cond)}</div>
-    </>
-  );
-});
-
-export const PropsDestructuring = component$(
-  ({ message, id, count: c, ...rest }: Record<string, any>) => {
-    const renders = useStore(
-      { renders: 0 },
-      {
-        reactive: false,
-      }
-    );
-    renders.renders++;
-    const rerenders = renders.renders + 0;
-
-    return (
-      <div id={id}>
-        <span {...rest}>
-          {message} {c}
-        </span>
-        <div class="renders">{rerenders}</div>
-      </div>
-    );
-  }
-);
-
-export const PropsDestructuringNo = component$(
-  ({ message = 'Default', count, id, ...rest }: Record<string, any>) => {
-    const renders = useStore(
-      { renders: 0 },
-      {
-        reactive: false,
-      }
-    );
-    renders.renders++;
-    const rerenders = renders.renders + 0;
-    return (
-      <div id={id}>
-        <span {...rest}>
-          {message} {count}
-        </span>
-        <div class="renders">{rerenders}</div>
-      </div>
-    );
-  }
-);
-
-export const BindingsNotPrintingIssue2563 = component$(() => {
-  const html = `hola`;
-  const obj = { length: 4 };
-  return (
-    <ul>
-      <li id="issue-2563-string">4={html.length}</li>
-      <li id="issue-2563-obj">4={obj.length}</li>
-      <li id="issue-2563-operation">4+1={html.length + 1}</li>
-    </ul>
-  );
-});
-
-export const BrokenRenderingBehaviorIssue2608 = component$(() => {
-  const show = useSignal(false);
-  return (
-    <>
-      <button id="issue-2608-btn" onClick$={() => (show.value = !show.value)}>
-        Toggle
-      </button>
-      {show.value && <div>Content</div>}
-      <div>
-        <input id="issue-2608-input" type="text" />
-      </div>
-    </>
-  );
-});
-
-export const StoreNewKeyReactivityIssue2800 = component$(() => {
-  const store = useStore<Record<string, number>>({
-    alpha: 1,
-    bravo: 2,
-    charlie: 3,
-  });
-
-  return (
-    <div>
-      <button
-        id="issue-2800-btn"
-        onClick$={() => {
-          const keys = Object.keys(store);
-          store[`extra${keys.length}`] = 1;
-        }}
-      >
-        Add key
-      </button>
-      <ul id="issue-2800-result">
-        {Object.entries(store).map(([key, value]) => (
-          <li key={key}>
-            {key} - {value}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-});
-
-export const DateSerializationDeepStoreIssue2889 = component$(() => {
-  const appState = useStore(
-    {
-      events: [
-        { created: new Date(2022, 1, 15), count: 2 },
-        { created: new Date(2022, 1, 18), count: 8 },
-        { created: new Date(2022, 1, 21), count: 3 },
-        { created: new Date(2022, 1, 26), count: 6 },
-      ],
-    },
-    { deep: true }
-  );
-
-  const filteredEvents = useSignal<{ created: Date; count: number }[]>();
-
-  useTask$(({ track }) => {
-    const list = track(() => appState.events);
-    filteredEvents.value = list.filter((x) => x.created >= new Date(2022, 1, 20));
-  });
-
-  return (
-    <>
-      <h2 id="issue-2889-result1">Deeds: {appState.events.length}</h2>
-      <h2 id="issue-2889-result2">Filtered Deeds: {(filteredEvents.value || []).length}</h2>
-    </>
-  );
-});
-
-type Product = string;
-
-export type ProductRelationProps = {
-  render$: QRL<(products: Product[]) => JSXOutput>;
-};
-
-export const ProductRelations = component$((props: ProductRelationProps) => {
-  return <div>{props.render$(['this comes from render$'])}</div>;
-});
-
-export const PropRenderFunctionIssue3116 = component$(() => {
-  return (
-    <>
-      <ProductRelations
-        render$={(products) => <div id="issue-3116-result">{products.join('hi')}</div>}
-      />
-    </>
-  );
-});
-
-export const IssueReorder = component$(() => {
-  const cond = useSignal(false);
-
-  return (
-    <div>
-      {!cond.value && (
-        <p id="running" class="issue-order">
-          TOP
-        </p>
-      )}
-
-      <div class="issue-order" data-value="first">
-        1. First
-      </div>
-      <div class="issue-order" data-value="second">
-        2. Second
-      </div>
-
-      {cond.value && (
-        <p id="form-error" class="issue-order">
-          BOTTOM
-        </p>
-      )}
-      <button
-        id="issue-order-btn"
-        type="button"
-        onClick$={() => {
-          cond.value = true;
-        }}
-      >
-        Submit
-      </button>
-    </div>
-  );
-});
-
-const ArrayItemsDisplayOrderIssue2414 = component$(() => {
-  const sort = useSignal<'id' | 'size' | 'age'>('size');
-  const showTable =
-```
-
-### Core Architecture Module: `e2e/qwik-e2e/apps/e2e/src/components/signals/utils/utils.tsx`
-```
-/* eslint-disable no-console */
-
-import { component$, Slot } from '@qwik.dev/core';
-
-export const TestC = component$((props: { color: string }) => {
-  console.log('TestC');
-  return (
-    <p class={props.color}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-export const TestAC = component$((props: { color: string }) => {
-  console.log('TestAC');
-  return (
-    <p class={[props.color]}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-export const TestCStr = component$((props: { color: string }) => {
-  console.log('TestCStr');
-  return (
-    <p class={`${props.color}`}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-export const TestACStr = component$((props: { color: string }) => {
-  console.log('TestACStr');
-  return (
-    <p class={[`${props.color}`]}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-
-export const TestCN = component$((props: { color: string }) => {
-  console.log('TestCN');
-  return (
-    <p class={props.color}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-export const TestACN = component$((props: { color: string }) => {
-  console.log('TestACN');
-  return (
-    <p class={[props.color] as any}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-export const TestCNStr = component$((props: { color: string }) => {
-  console.log('TestCNStr');
-  return (
-    <p class={`${props.color}`}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-export const TestACNStr = component$((props: { color: string }) => {
-  console.log('TestACNStr');
-  return (
-    <p class={[`${props.color}`] as any}>
-      {' '}
-      <Slot />
-    </p>
-  );
-});
-
-export const TestCWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestCWithFlag');
-  return (
-    <p class={props.color}>
-      <span class={props.flag ? 'true' : 'false'}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-export const TestACWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestACWithFlag');
-  return (
-    <p class={[props.color]}>
-      <span class={[props.flag ? 'true' : 'false']}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-export const TestCStrWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestCStr');
-  return (
-    <p class={`${props.color}`}>
-      <span class={`${props.flag ? 'true' : 'false'}`}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-export const TestACStrWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestACStrWithFlag');
-  return (
-    <p class={[`${props.color}`]}>
-      <span class={[`${props.flag ? 'true' : 'false'}`]}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-
-export const TestCNWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestCNWithFlag');
-  return (
-    <p class={props.color}>
-      <span class={props.flag ? 'true' : 'false'}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-export const TestACNWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestACNWithFlag');
-  return (
-    <p class={[props.color] as any}>
-      <span class={[props.flag ? 'true' : 'false'] as any}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-export const TestCNStrWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestCNStrWithFlag');
-  return (
-    <p class={`${props.color}`}>
-      <span class={`${props.flag ? 'true' : 'false'}`}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-export const TestACNStrWithFlag = component$((props: { color: string; flag: boolean }) => {
-  console.log('TestACNStrWithFlag');
-  return (
-    <p class={[`${props.color}`] as any}>
-      <span class={[`${props.flag ? 'true' : 'false'}`] as any}>In {props.color}</span> <Slot />
-    </p>
-  );
-});
-
-```
-
-### Core Architecture Module: `e2e/qwik-e2e/apps/e2e/src/components/worker/worker.tsx`
-```
-import { component$, useSignal, $, useTask$ } from '@qwik.dev/core';
-import { worker$ } from '@qwik.dev/core/worker';
-
-const serverWorker = worker$(() => {
-  return 'hello from worker';
-});
-
-const incrementInWorker = worker$((count: number) => count + 1);
-
-const inspectEventInWorker = worker$((event: Event | null) => {
-  return event === null ? 'null' : 'event';
-});
-
-const submitInWorker = worker$((data: FormData) => {
-  return `${data.get('name')}:${data.get('count')}`;
-});
-
-const formatError = (err: unknown) => {
-  if (err instanceof Error) {
-    return err.stack || err.message;
-  }
-  return String(err);
-};
-
-export const WorkerRoot = component$(() => {
-  const count = useSignal(0);
-  const serverWorkerResult = useSignal('');
-  const eventResult = useSignal('pending');
-  const formResult = useSignal('pending');
-  const status = useSignal('idle');
-
-  useTask$(async () => {
-    serverWorkerResult.value = await serverWorker();
-  });
-
-  return (
-    <div>
-      <button
-        id="worker-add"
-        onClick$={async () => {
-          status.value = 'increment:start';
-          try {
-            count.value = await incrementInWorker(count.value);
-            status.value = 'increment:done';
-          } catch (err) {
-            status.value = `increment:error:${formatError(err)}`;
-          }
-        }}
-      >
-        Increment in worker
-      </button>
-      <div id="worker-add-result">{count.value}</div>
-
-      <button
-        id="worker-event"
-        onClick$={async (event) => {
-          status.value = 'event:start';
-          try {
-            eventResult.value = await inspectEventInWorker(event);
-            status.value = 'event:done';
-          } catch (err) {
-            status.value = `event:error:${formatError(err)}`;
-          }
-        }}
-      >
-        Inspect event in worker
-      </button>
-      <div id="worker-event-result">{eventResult.value}</div>
-
-      <form
-        id="worker-form"
-        preventdefault:submit
-        onSubmit$={async (event) => {
-          status.value = 'form:start';
-          try {
-            formResult.value = await submitInWorker(event);
-            status.value = 'form:done';
-          } catch (err) {
-            status.value = `form:error:${formatError(err)}`;
-          }
-        }}
-      >
-        <input name="name" value="qwik" />
-        <input name="count" value="2" />
-        <button id="worker-form-submit" type="submit">
-          Submit to worker
-        </button>
-      </form>
-      <div id="worker-form-result">{formResult.value}</div>
-      <div id="worker-status">{status.value}</div>
-      <div id="worker-server-result">{serverWorkerResult.value}</div>
-    </div>
-  );
-});
-
-```
-
-### Core Architecture Module: `e2e/qwik-e2e/apps/error-handling.prod/src/routes/render-crash/index.tsx`
-```
-export { default, onGet } from '../../../../error-handling/src/routes/render-crash/index';
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #9402** (2026-11-09): **[🐞] v2 rc.4 dev server breaks on StackBlitz: createOptimizer is not a constructor**
+  *Symptoms*: ### Which component is affected?  Qwik Rollup / Vite plugin  ### Describe the bug  Since `2.0.0-rc.4`, the dev server fails on StackBlitz (WebContainer), which breaks qwik.new. Every request fails with:  ``` [vite] (ssr) Error when evaluating SSR module src/entry.ssr: _qwik_dev_optimizer.createOptimizer is not a constructor   Plugin: vite-plugin-qwik   File: /home/projects/.../node_modules/@qwik.dev/core/dist/core.mjs       at e.split (.../@qwik.dev/core/dist/optimizer.mjs:647:11)       at e._splitChunk (.../@qwik.dev/core/dist/optimizer.mjs:1102:13)       ...       at e.replace (.../@qwik.dev/core/dist/optimizer.mjs:1190:38)       at Object._e [as transform] (.../@qwik.dev/core/dist/optimizer.mjs:1641:6) ```  The same project works on plain Node (24.21.0, Linux).  **Cause:** an identifier collision in the minified `dist/optimizer.mjs`, which trips a scoping bug in WebContainer's module handling.  - `packages/qwik-vite/src/index.ts:15` has `export { createOptimizer } from '@qwik.dev/optimizer'`, which ends up as `import { createOptimizer as e } from "@qwik.dev/optimizer"` at the top of the bundle. - The same bundle inlines `magic-string`, whose classes are minified to named class expressions: `_e = class e { … split(t) { … new e(t, this.end, i) … } }`.  This is valid JS, and `new e()` should resolve to the class. WebContainer resolves it to the import instead, so the first `MagicString` chunk split throws. That is why a `createOptimizer` error comes out of a `magic-string` st
+
 - **Issue #9041** (2026-10-26): **router: visible `<Link>` prefetch skips bundles for dynamic and catch-all routes**
   *Symptoms*: # What is it?  - Bug  # Description  A visible `<Link>` (`prefetchBundles="visible"`, the default) preloads nothing for dynamic routes. `link-prefetch.ts` calls `preloadRouteBundles(url.pathname)`, so the preloader gets `products/123/`, but the bundle graph keys routes by name (`products/[id]/`, see `get-route-imports.ts`). Static routes work because their pathname is their route name. Link clicks and SPA navigation go through `prefetchRoute()`, which resolves the route name first. 48fb84ed0 had moved the visible path to `prefetchRoute()` too, but the merge with the shared-observer refactor (4ba1ad594) only carried over the data branch.  Catch-all routes miss even through `prefetchRoute()`. The build keys `docs/[...slug]/index.tsx` as `docs/[...slug]` with no trailing slash, because `normalizePathname` treats a last segment containing `.` as a file name. `prefetchRoute()` calls `ensureSlash` and looks up `docs/[...slug]/`, so Link clicks and SPA navigation miss catch-all bundles too. Other routes whose last segment contains a dot, and maybe every route with `trailingSlash: false`, likely hit the same mismatch (not checked).  Reproduced on a production build of the `qwikrouter-test.prod` e2e app with temporary `[id]`, `[...slug]` and static routes: only the static link's bundles loaded. #9040 (closed, untested) switched the observer to `prefetchRoute()`. With it, `[id]` links loaded their route module and component bundle, but `[...slug]` links only got their route module. `pr
-
-- **Issue #8962** (2026-10-10): **core: failed handler-chunk import reaches the boundary after resume, bypassing the importError skip**
-  *Symptoms*: # What is it?  - Bug  # Description  The client `qerror` listener deliberately skips `importError` events so a failed chunk import never routes to an `<ErrorBoundary>` (`error-handling.ts` — chunk 404s are a version-skew problem, #8795). After the Vite 8 / rolldown merge on #8745, a resumed container dispatches handlers through core (`_qDispatch` / `run-qrl`) instead of the qwikloader import path, so a failed handler-chunk fetch now lands in the nearest boundary as a plain error and the fallback renders the raw browser message (`Failed to fetch dynamically imported module: …`). No `qerror` event fires at all.  Two channels now disagree: the loader path still skips import errors, the core dispatch path catches them. Decide which behavior is intended (skip everywhere per #8795, or boundary-catches everywhere — possibly as `NetworkError`, #8882) and align both paths.  The e2e pin (`error-handling.e2e.ts` — "a failed qwikloader dynamic import (chunk 404) leaves the boundary inert") is parked on this issue.
-  **Post-Mortem & Fix Analysis**:
-  > I'd like to work on this
-  > @akasakariko go for it!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1136,890 +1328,553 @@ export { default, onGet } from '../../../../error-handling/src/routes/render-cra
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da290682` (2026-10-23)
-**Commit Message**: fix(router): replace a crashed ssg worker
+### Incident Patch 1: `7a5562d2` (2026-11-11)
+**Commit Message**: fix(router): isolate concurrent adapter build entries
 
-A crashed worker stayed in rotation, so the next routes sent to it hung until the 30s render timeout. A worker that dies before it is ready would die again, so it is not replaced; the build stops with its startup error instead.
+Builds sharing a root can use different SSR output directories. Keep their entries and cleanup independent.
 
-**File**: `.changeset/ssg-crashed-worker.md` (added, +5/-0)
+**File**: `.changeset/ssg-adapter-app-build-state.md` (modified, +1/-1)
+```diff
+@@ -2,4 +2,4 @@
+ '@qwik.dev/router': patch
+ ---
+ 
+-fix: the SSG adapter no longer warns "Qwik Router SSG was skipped" on builds that prerender, and passes the server entries to the adapter's `generate()`
++fix: correct ssg warnings and isolate server entries per build
+```
+
+**File**: `packages/qwik-router/src/adapters/shared/vite/index.ts` (modified, +16/-13)
+```diff
+@@ -20,12 +20,13 @@ const QWIK_SSG_ENTRY_RESOLVED = '\0@qwik-ssg-entry';
+ const QWIK_SSG_WORKER_ENTRY_ID = '@qwik-ssg-worker-entry';
+ const QWIK_SSG_WORKER_ENTRY_RESOLVED = '\0@qwik-ssg-worker-entry';
+ 
+-// App builds in progress, by resolved root. `buildApp` runs on the top-level instance of the
+-// adapter plugin, but Vite resolves the config again for each environment, which creates new
+-// plugin instances (unless a plugin sets `sharedDuringBuild`). So the `ssr` build's
+-// `generateBundle` cannot reach `buildApp` through the plugin closure, and finds it here instead.
++// Vite creates separate adapter instances for each build environment.
+ const appBuilds = new Map<string, { outputEntries: string[] }>();
+ 
++function getAppBuildKey(root: string, outDir: string) {
++  return JSON.stringify([resolve(root), resolve(root, outDir)]);
++}
++
+ /** @public */
+ export function viteAdapter(opts: ViteAdapterPluginOptions) {
+   let qwikRouterPlugin: QwikRouterPlugin | null = null;
+@@ -222,7 +223,8 @@ export function viteAdapter(opts: ViteAdapterPluginOptions) {
+     generateBundle(_, bundles) {
+       // Capture the deployed entries (the `ssr` environment), not the throwaway `ssg` output.
+       if (this.environment.name === 'ssr') {
+-        const appBuild = appBuilds.get(resolve(this.environment.config.root));
++        const { root, build } = this.environment.config;
++        const appBuild = appBuilds.get(getAppBuildKey(root, build.outDir));
+         if (appBuild) {
+           appBuild.outputEntries.length = 0;
+           for (const fileName in bundles) {
+@@ -252,17 +254,18 @@ export function viteAdapter(opts: ViteAdapterPluginOptions) {
+     // prerendered route code never reaches the `ssr` bundle — then render the pages and post-build.
+     // (The client builds in its own `vite build`.)
+     async buildApp(builder: ViteBuilder) {
+-      const root = resolve(builder.config.root);
++      const ssr = builder.environments.ssr;
++      if (!ssr) {
++        return;
++      }
++      const buildKey = getAppBuildKey(ssr.config.root, ssr.config.build.outDir);
+       const appBuild = { outputEntries: [] as string[] };
+-      appBuilds.set(root, appBuild);
++      appBuilds.set(buildKey, appBuild);
+       try {
+-        const ssr = builder.environments.ssr;
+-        if (ssr) {
+-          await builder.build(ssr);
+-        }
++        await builder.build(ssr);
+         // Read the deployed server outDir from the `ssr` environment, not a closure: in builder mode
+         // `configResolved` runs per environment, so the later `ssg` build would clobber a shared value.
+-        const serverOutDir = ssr?.config.build.outDir;
++        const serverOutDir = ssr.config.build.outDir;
+         if (!serverOutDir || !qwikRouterPlugin?.api || !qwikVitePlugin?.api) {
+           return;
+         }
+@@ -344,7 +347,7 @@ export function viteAdapter(opts: ViteAdapterPluginOptions) {
+             `\n==============================================`
+         );
+       } finally {
+-        appBuilds.delete(root);
++        appBuilds.delete(buildKey);
+       }
+     },
+   };
+```
+
+**File**: `packages/qwik-router/src/adapters/shared/vite/index.unit.ts` (modified, +90/-25)
+```diff
+@@ -77,35 +77,91 @@ describe('viteAdapter app build', () => {
+     'entry.azure-swa.js': { type: 'chunk', isEntry: true },
+     'q-chunk.js': { type: 'chunk', isEntry: false },
+   };
++  const ssrConfig = { root: '/app', build: { outDir: '/app/server' } };
+ 
+-  it('hands the ssr entries to generate() without warning, across plugin instances', async () => {
+-    const generate = vi.fn();
+-    const opts = { name: 'test', origin: 'https://example.com', generate };
+-    // Vite resolves the config again for each environment, so the `ssr` build uses another
+-    // instance of the plugin than the one `buildApp` runs on.
+-    const [topLevelPlugin] = viteAdapter(opts) as any[];
+-    const [ssrPlugin] = viteAdapter(opts) as any[];
+-    topLevelPlugin.configResolved(resolvedConfig);
+-    ssrPlugin.configResolved(resolvedConfig);
++  it.each(['/app/server', 'server'])(
++    'hands the ssr entries across plugin instances with server output %s',
++    async (outDir) => {
++      const generate = vi.fn();
++      const opts = { name: 'test', origin: 'https://example.com', generate };
++      // Vite resolves the config again for each environment, so the `ssr` build uses another
++      // instance of the plugin than the one `buildApp` runs on.
++      const [topLevelPlugin] = viteAdapter(opts) as any[];
++      const [ssrPlugin] = viteAdapter(opts) as any[];
++      topLevelPlugin.configResolved(resolvedConfig);
++      ssrPlugin.configResolved(resolvedConfig);
+ 
+-    const warn = vi.fn();
+-    const ssr = { config: { build: { outDir: '/app/server' } } };
+-    await topLevelPlugin.buildApp({
+-      environments: { ssr },
+-      config: { root: '/app', define: {}, logger: { warn() {} } },
++      const warn = vi.fn();
++      const ssr = { config: { ...ssrConfig, build: { outDir } } };
++      await topLevelPlugin.buildApp({
++        environments: { ssr },
++        config: { root: '/app', define: {}, logger: { warn() {} } },
++        build: async () => {
++          ssrPlugin.generateBundle.call(
++            { environment: { name: 'ssr', config: ssrConfig }, warn },
++            {},
++            ssrBundles
++          );
++        },
++      });
++
++      expect(warn).not.toHaveBeenCalled();
++      expect(generate).toHaveBeenCalledWith(
++        expect.objectContaining({ outputEntries: ['entry.azure-swa.js'] })
++      );
++    }
++  );
++
++  it('keeps parallel builds of one root with different server outputs apart', async () => {
++    const firstGenerate = vi.fn();
++    const secondGenerate = vi.fn();
++    const opts = { name: 'test', origin: 'https://example.com', ssg: null };
++    const [firstPlugin] = viteAdapter({ ...opts, generate: firstGenerate }) as any[];
++    const [secondPlugin] = viteAdapter({ ...opts, generate: secondGenerate }) as any[];
++    const [firstSsrPlugin] = viteAdapter(opts) as any[];
++    const [secondSsrPlugin] = viteAdapter(opts) as any[];
++    for (const plugin of [firstPlugin, secondPlugin, firstSsrPlugin, secondSsrPlugin]) {
++      plugin.configResolved(resolvedConfig);
++    }
++
++    const config = { root: '/app', define: {}, logger: { warn() {} } };
++    const firstSsr = { config: { root: '/app', build: { outDir: '/app/server-first' } } };
++    const secondSsr = { config: { root: '/app', build: { outDir: '/app/server-second' } } };
++    let finishFirstBuild!: () => void;
++    const firstBuild = firstPlugin.buildApp({
++      environments: { ssr: firstSsr },
++      config,
++      build: () =>
++        new Promise<void>((resolve) => {
++          finishFirstBuild = resolve;
++        }),
++    });
++
++    await secondPlugin.buildApp({
++      environments: { ssr: secondSsr },
++      config,
+       build: async () => {
+-        ssrPlugin.generateBundle.call(
+-          { environment: { name: 'ssr', config: { root: '/app' } }, warn },
++        firstSsrPlugin.generateBundle.call(
++          { environment: { name: 'ssr', config: firstSsr.config }, warn: vi.fn() },
+           {},
+           ssrBundles
+         );
++        finishFirstBuild();
++        await firstBuild;
++        secondSsrPlugin.generateBundle.call(
++          { environment: { name: 'ssr', config: secondSsr.config }, warn: vi.fn() },
++          {},
++          { 'entry.second.js': { type: 'chunk', isEntry: true } }
++        );
+       },
+     });
+ 
+-    expect(warn).not.toHaveBeenCalled();
+-    expect(generate).toHaveBeenCalledWith(
++    expect(firstGenerate).toHaveBeenCalledWith(
+       expect.objectContaining({ outputEntries: ['entry.azure-swa.js'] })
+     );
++    expect(secondGenerate).toHaveBeenCalledWith(
++      expect.objectContaining({ outputEntries: ['entry.second.js'] })
++    );
+   });
+ 
+   it('warns when the ssr environment is built outside buildApp', () => {
+@@ -114,7 +170,7 @@ describe('viteAdapter app build', () => {
+ 
+     const warn = vi.fn();
+     plugin.generateBundle.call(
+-      { environment: { name: 'ssr', config: { root: '/app' } }, warn },
++      { environment: { name: 'ssr', config: ssrConfig }, warn },
+       {},
+       ssrBundles
+     
+```
+
+---
+
+### Incident Patch 2: `2fe2eec9` (2026-11-11)
+**Commit Message**: Merge pull request #9393 from alloutflo/fix/router-send-stream-errors
+
+fix(router): handle response stream failures from send
+
+**File**: `.changeset/stable-birds-stream.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@qwik.dev/router': patch
++"@qwik.dev/router": patch
 +---
 +
-+fix: a crashed ssg worker no longer stalls the build until it times out
++fix: prevent response stream failures from crashing the server
 ```
 
-**File**: `packages/qwik-router/src/ssg/worker-pool.ts` (modified, +33/-3)
+**File**: `packages/qwik-router/src/middleware/node/http.unit.ts` (modified, +61/-0)
 ```diff
-@@ -18,6 +18,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-   const ssgWorkers: SsgWorker[] = [];
-   const sitemapBuffer: string[] = [];
-   let sitemapStream: fs.WriteStream | null = null;
-+  let isClosing = false;
+@@ -11,6 +11,7 @@ import { connect } from 'node:net';
+ import { performance } from 'node:perf_hooks';
+ import { Readable } from 'node:stream';
+ import { assert, describe, expect, test, vi } from 'vitest';
++import { createRequestEvent } from '../request-handler/request-event-core';
+ import { fromNodeHttp, normalizeUrl } from './http';
  
-   opts = { ...opts };
- 
-@@ -69,11 +70,19 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-     const mainTasks = new Map<string, WorkerMainTask>();
-     let terminateTimeout: number | null = null;
- 
-+    let isReady = false;
-+    let startupError: Error | undefined;
-     let markWorkerReady!: () => void;
-+    let failWorkerStart!: (error: Error) => void;
-     // Bun drops messages posted before the worker listens, so wait for its ready signal.
--    const workerReady = new Promise<void>((resolve) => {
--      markWorkerReady = resolve;
-+    const workerReady = new Promise<void>((resolve, reject) => {
-+      markWorkerReady = () => {
-+        isReady = true;
-+        resolve();
-+      };
-+      failWorkerStart = reject;
-     });
-+    workerReady.catch(() => {});
- 
-     const nodeWorker = new Worker(workerFilePath, { workerData });
-     nodeWorker.unref();
-@@ -112,7 +121,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-             await nodeWorker.terminate();
-             resolve();
-           }, 1000) as unknown as number;
--          workerReady.then(() => nodeWorker.postMessage(msg));
-+          workerReady.then(() => nodeWorker.postMessage(msg)).catch(() => {});
-         });
-         // If worker responded gracefully, cancel the force-terminate
-         if (terminateTimeout) {
-@@ -149,6 +158,9 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
- 
-     nodeWorker.on('error', (e) => {
-       log.error(`worker error`, e);
-+      if (!isReady) {
-+        startupError = e instanceof Error ? e : new Error(String(e));
-+      }
-     });
- 
-     nodeWorker.on('exit', (code) => {
-@@ -157,6 +169,13 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-         clearTimeout(terminateTimeout);
-         terminateTimeout = null;
-       }
-+      if (!isReady && !isClosing) {
-+        const cause = startupError ? `: ${startupError.message}` : '';
-+        failWorkerStart(
-+          new Error(`SSG worker exited with code ${code} before it was ready${cause}`)
-+        );
-+        return;
-+      }
-       // Resolve any pending tasks so the main thread doesn't hang
-       if (mainTasks.size > 0) {
-         for (const [pathname, resolve] of mainTasks) {
-@@ -182,11 +201,21 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-       if (code !== 0) {
-         console.error(`worker exit ${code}`);
-       }
-+      if (!isClosing) {
-+        replaceWorker(ssgWorker);
-+      }
-     });
- 
-     return ssgWorker;
-   };
- 
-+  const replaceWorker = (deadWorker: SsgWorker) => {
-+    const index = ssgWorkers.indexOf(deadWorker);
-+    if (index !== -1) {
-+      ssgWorkers[index] = createWorker();
-+    }
-+  };
-+
-   const getNextWorker = () => ssgWorkers.sort(ssgWorkerCompare)[0];
- 
-   const hasAvailableWorker = () => {
-@@ -216,6 +245,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-   };
- 
-   const close = async () => {
-+    isClosing = true;
-     const promises: Promise<unknown>[] = [];
- 
-     if (sitemapStream) {
-```
-
-**File**: `packages/qwik-router/src/ssg/worker-pool.unit.ts` (modified, +100/-26)
-```diff
-@@ -1,6 +1,11 @@
- import { EventEmitter } from 'node:events';
- import { afterEach, describe, expect, it, vi } from 'vitest';
--import type { System, WorkerInputMessage, WorkerOutputMessage } from './types';
-+import type {
-+  SsgWorkerRenderResult,
-+  System,
-+  WorkerInputMessage,
-+  WorkerOutputMessage,
-+} from './types';
- 
- const workers = vi.hoisted(() => [] as InstanceType<typeof FakeWorker>[]);
- 
-@@ -35,35 +40,104 @@ const sys = {
-   createLogger: async () => ({ debug() {}, error() {}, info() {} }),
- } as unknown as System;
- 
-+const renderResult = (pathname: string, overrides: Partial<SsgWorkerRenderResult> = {}) =>
-+  ({
-+    type: 'render',
-+    pathname,
-+    url: `https://qwik.dev${pathname}`,
-+    ok: true,
-+    error: null,
-+    filePath: null,
-+    contentType: 'text/html',
-+    resourceType: 'page',
-+    ...overrides,
-+  }) satisfies WorkerOutputMessage;
-+
- describe('createWorkerPool', () => {
-   afterEach(() => {
-     workers.length = 0;
-+    vi.restoreAllMocks();
+ [
+@@ -474,6 +475,66 @@ describe('fromNodeHttp()', () => {
+     expect(res.end).not.toHaveBeenCalled();
    });
  
--  it('holds render messages until the worker is ready', async () => {
--    const pool = await createWorkerPool(sys, {
--      outDir: '/out',
--      sitemapOutFile: null,
--      maxWorkers: 1,
--      workerFilePath: '/run-ssg-worker.js',
--    } as any);
--    const [worker] = workers;
--
--    const rendered = pool.render({ type: 'render', pathname: '/', params: undefined } as any);
--    await Promise.resolve();
--    worker.attachListener();
--    await vi.waitFor(() => expect(worker.received).toHaveLength(1));
--
--    worker.emit('message', {
--      type: 'render',
--      pathname: '/',
--      url: 'https://example.com/',
--      ok: true,
--      error: null,
--      filePath: null,
--      contentType: null,
--      resourceType: null,
--    } satisfies WorkerOutputMessage);
--    await expect(rendered).resolves.toMatchObject({ pathname: '/', ok: true });
-+  describe('worker startup', () => {
-+    it('holds render messages until the worker is ready', async () => {
-+      const pool = await createWorkerPool(sys, {
-+        outDir: '/out',
-+        sitemapOutFile: null,
-+        maxWorkers: 1,
-+        workerFilePath: '/run-ssg-worker.js',
-+      } as any);
-+      const [worker] = workers;
-+
-+      const rendered = pool.render({ type: 'render', pathname: '/', params: undefined } as any);
-+      await Promise.resolve();
-+      worker.attachListener();
-+      await vi.waitFor(() => expect(worker.received).toHaveLength(1));
-+
-+      worker.emit('message', {
-+        type: 'render',
-+        pathname: '/',
-+        url: 'https://example.com/',
-+        ok: true,
-+        error: null,
-+        filePath: null,
-+        contentType: null,
-+        resourceType: null,
-+      } satisfies WorkerOutputMessage);
-+      await expect(rendered).resolves.toMatchObject({ pathname: '/', ok: true });
-+    });
-+
-+    it('does not replace a worker that crashes during startup', async () => {
-+      vi.spyOn(console, 'error').mockImplementation(() => {});
-+      await createWorkerPool(sys, {
-+        outDir: '/out',
-+        sitemapOutFile: null,
-+        maxWorkers: 1,
-+        workerFilePath: '/run-ssg-worker.js',
-+      } as any);
-+
-+      workers[0].emit('error', new Error('entry.ssr failed to load'));
-+      workers[0].emit('exit', 1);
-+
-+      expect(workers).toHaveLength(1);
-+    });
-+
-+    it('fails waiting routes with the startup error when a worker crashes during startup', async () => {
-+      vi.spyOn(console, 'error').mockImplementation(() => {});
-+      const pool = await createWorkerPool(sys, {
-+        outDir: '/out',
-+        sitemapOutFile: null,
-+        maxWorkers: 1,
-+        workerFilePath: '/run-ssg-worker.js',
-+      } as any);
-+
-+      const rendered = pool.render({ type: 'render', pathname: '/', params: undefined });
-+      workers[0].emit('error', new Error('entry.ssr failed to load'));
-+      workers[0].emit('exit', 1);
-+
-+      await expect(rendered).rejects.toThrow('entry.ssr failed to load');
-+    });
-+  });
-+
-+  describe('worker crashes', () => {
-+    it('replaces a crashed worker so later routes still render', async () => {
-+      vi.spyOn(console, 'error').mockImplementation(() => {});
-+      const pool = await createWorkerPool(sys, {
-+        outDir: '/out',
-+        sitemapOutFile: null,
-+        maxWorkers: 1,
-+        workerFilePath: '/run-ssg-worker.js',
-+      } as any);
-+      workers[0].attachListener();
-+
-+      const crashed = pool.render({ type: 'render', pathname: '/crash', params: undefined });
-+      workers[0].emit('exit', 1);
-+      const next = pool.render({ type: 'render', pathname: '/fine', params: undefined });
-+      workers[1].attachListener();
-+      workers[1].emit('message', renderResult('/fine'));
-+
-+      expect((await crashed).error?.message).toContain('Worker exited');
-+      expect((await next).ok).toBe(true);
-+    });
-   });
- });
-```
-
----
-
-### Incident Patch 2: `25e1606e` (2026-11-03)
-**Commit Message**: fix(router): drain the ssg queue after a retryable render error
-
-A failed render frees its worker slot, but queued routes waited out the
-retry delay before they started.
-
-**File**: `packages/qwik-router/src/ssg/orchestrator.ts` (modified, +1/-0)
-```diff
-@@ -175,6 +175,7 @@ export async function mainThread(sys: System) {
- 
-           if (result.error && hasRetriesLeft(staticRoute)) {
-             retryLater(staticRoute, result.error.message);
-+            flushQueue();
-             return;
-           }
- 
-```
-
-**File**: `packages/qwik-router/src/ssg/orchestrator.unit.ts` (modified, +30/-0)
-```diff
-@@ -311,6 +311,36 @@ describe('retries', () => {
-       assert.deepEqual(waits, [650, 1300, 2600, 2600]);
-     });
- 
-+    test('starts a queued route while a failed route waits for its retry', async () => {
-+      let activeRenders = 0;
-+      let indexRenderCount = 0;
-+      let aboutStartedAt: number | undefined;
-+      const sys = createSystem({
-+        routes: {
-+          _I: async () => ({ default: () => null as any }),
-+          about: { _I: async () => ({ default: () => null as any }) },
-+        },
-+        hasAvailableWorker: () => activeRenders === 0,
-+        render: async ({ pathname }) => {
-+          activeRenders++;
-+          if (pathname === '/about') {
-+            aboutStartedAt ??= Date.now();
++  test.each([
++    { source: 'response error event', timing: 'during write', abortsRequest: true },
++    { source: 'write callback', timing: 'during write', abortsRequest: false },
++    { source: 'response error event', timing: 'before drain', abortsRequest: true },
++    { source: 'write callback', timing: 'before drain', abortsRequest: false },
++  ])('logs unexpected errors from the $source $timing', async ({ timing, abortsRequest }) => {
++    const error = new Error('unexpected write failure');
++    const req = createBodyRequest([]);
++    const res = createResponse();
++    const waitsForDrain = timing === 'before drain';
++    let drainListenersAtFailure: number | undefined;
++    res.setHeader = vi.fn();
++    res.write = vi.fn(
++      (
++        _chunk: Uint8Array,
++        encoding?: BufferEncoding | ((error?: Error | null) => void),
++        callback?: (error?: Error | null) => void
++      ) => {
++        const onWrite = typeof encoding === 'function' ? encoding : callback;
++        const fail = () => {
++          drainListenersAtFailure = res.listenerCount('drain');
++          if (abortsRequest) {
++            res.emit('error', error);
++          } else {
++            onWrite?.(error);
 +          }
-+          await Promise.resolve();
-+          activeRenders--;
-+          return pathname === '/' && indexRenderCount++ === 0
-+            ? createFailedRenderResult(pathname)
-+            : createRenderResult(pathname);
-+        },
-+        retries: 1,
-+      });
-+      const startedAt = Date.now();
++        };
++        if (waitsForDrain) {
++          queueMicrotask(fail);
++        } else {
++          fail();
++        }
++        return false;
++      }
++    );
++    const serverRequestEv = await fromNodeHttp(new URL('http://localhost/'), req, res, 'server');
++    const requestEv = createRequestEvent(
++      serverRequestEv,
++      { $routeName$: '/', $params$: {}, $mods$: [] },
++      [],
++      '/',
++      vi.fn()
++    );
++    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 +
-+      await runMainThread(sys);
-+
-+      assert.isBelow(aboutStartedAt! - startedAt, 500);
-+    });
-+
-     test('does not finish the build while a retry is waiting', async () => {
-       let indexRenderCount = 0;
-       const sys = createSystem({
-```
-
----
-
-### Incident Patch 3: `c2733303` (2026-10-23)
-**Commit Message**: feat(router): retry ssg renders that time out
-
-A hung render held its worker slot, so a timeout stopped the whole build. With retries left, the worker is restarted first and the route is retried on a fresh one; the other renders it stopped start again without using a retry. With none left, the build stops as before.
-
-**File**: `packages/docs/src/routes/api/qwik-router-ssg/api.json` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@
-         }
-       ],
-       "kind": "Interface",
--      "content": "```typescript\nexport interface SsgRenderOptions extends RenderOptions \n```\n**Extends:** RenderOptions\n\n\n<table><thead><tr><th>\n\nProperty\n\n\n</th><th>\n\nModifiers\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\nemitData?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated per-loader data files should not be written to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nemitHtml?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated static HTML files should not be written to disk. Setting to `false` is useful if the SSG should only write the per-loader data files to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nexclude?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\\[\\]\n\n\n</td><td>\n\n_(Optional)_ Defines file system routes relative to the source `routes` directory that should not be static generated. Accepts wildcard behavior. This should not include the \"base\" pathname. `exclude` always takes priority over `include`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\ninclude?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\\[\\]\n\n\n</td><td>\n\n_(Optional)_ Defines file system routes relative to the source `routes` directory that should be static generated. Accepts wildcard behavior. This should not include the \"base\" pathname. If not provided, all routes will be static generated. `exclude` always takes priority over `include`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nlog?\n\n\n</td><td>\n\n\n</td><td>\n\n'debug' \\| 'quiet'\n\n\n</td><td>\n\n_(Optional)_ Log level. `'quiet'` suppresses per-page output, `'debug'` enables verbose logging.\n\n\n</td></tr>\n<tr><td>\n\nmaxTasksPerWorker?\n\n\n</td><td>\n\n\n</td><td>\n\nnumber\n\n\n</td><td>\n\n_(Optional)_ Maximum number of tasks to be running at one time per worker. Defaults to `20`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nmaxWorkers?\n\n\n</td><td>\n\n\n</td><td>\n\nnumber\n\n\n</td><td>\n\n_(Optional)_ Maximum number of workers to use while generating the static pages. Defaults to the number of CPUs available.\n\n\n</td></tr>\n<tr><td>\n\norigin\n\n\n</td><td>\n\n\n</td><td>\n\nstring\n\n\n</td><td>\n\nThe URL `origin`<!-- -->, which is a combination of the scheme (protocol) and hostname (domain). For example, `https://qwik.dev` has the protocol `https://` and domain `qwik.dev`<!-- -->. However, the `origin` does not include a `pathname`<!-- -->.\n\nThe `origin` is used to provide a full URL during Static Site Generation (SSG), and to simulate a complete URL rather than just the `pathname`<!-- -->. For example, in order to render a correct canonical tag URL or URLs within the `sitemap.xml`<!-- -->, the `origin` must be provided too.\n\nIf the site also starts with a pathname other than `/`<!-- -->, please use the `basePathname` option in the Qwik Router config options.\n\n\n</td></tr>\n<tr><td>\n\noutDir\n\n\n</td><td>\n\n\n</td><td>\n\nstring\n\n\n</td><td>\n\nFile system directory where the static files should be written.\n\n\n</td></tr>\n<tr><td>\n\nretries?\n\n\n</td><td>\n\n\n</td><td>\n\nnumber\n\n\n</td><td>\n\n_(Optional)_ Number of times to retry a route whose render failed, or an `onStaticGenerate` call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at random. Defaults to `0` (the first failure is final).\n\n\n</td></tr>\n<tr><td>\n\nsitemapOutFile?\n\n\n</td><td>\n\n\n</td><td>\n\nstring \\| null\n\n\n</td><td>\n\n_(Optional)_ File system path to write the `sitemap.xml` to. Defaults to `sitemap.xml` and written to the root of the `outDir`<!-- -->. Setting to `null` will prevent the sitemap from being created.\n\n\n</td></tr>\n</tbody></table>",
-+      "content": "```typescript\nexport interface SsgRenderOptions extends RenderOptions \n```\n**Extends:** RenderOptions\n\n\n<table><thead><tr><th>\n\nProperty\n\n\n</th><th>\n\nModifiers\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\nemitData?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated per-loader data files should not be written to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nemitHtml?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated static HTML files should not be written to disk. Setting to `false` is useful if the SSG should only write the per-loader data files to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nexclude?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\\[\\]\n\n\n</td><td>\n\n_(Optional)_ Defines file system routes relative to the source `routes` directory that should not be static generated. Accepts wildcard behavior. This should not include the \"base\" pathname. `exclude` always takes priority ov
-```
-
-**File**: `packages/docs/src/routes/api/qwik-router-ssg/index.mdx` (modified, +1/-1)
-```diff
-@@ -397,7 +397,7 @@ number
- 
- </td><td>
- 
--_(Optional)_ Number of times to retry a route whose render failed, or an `onStaticGenerate` call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at random. Defaults to `0` (the first failure is final).
-+_(Optional)_ Number of times to retry a route whose render failed or timed out, or an `onStaticGenerate` call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at random. Defaults to `0` (the first failure is final).
- 
- </td></tr>
- <tr><td>
-```
-
-**File**: `packages/qwik-router/src/ssg/orchestrator.ts` (modified, +19/-5)
-```diff
-@@ -149,16 +149,30 @@ export async function mainThread(sys: System) {
- 
-           const result = await Promise.race([
-             main.render({ type: 'render', ...staticRoute }),
--            new Promise<never>((_, reject) =>
--              setTimeout(
--                () => reject(new Error(`SSG render timed out after ${renderTimeout}ms`)),
--                renderTimeout
--              )
-+            new Promise<undefined>((resolve) =>
-+              setTimeout(() => resolve(undefined), renderTimeout)
-             ),
-           ]);
- 
-           log.debug(`render done: ${staticRoute.pathname}`);
- 
-+          if (!result) {
-+            const timeoutMessage = `SSG render timed out after ${renderTimeout}ms`;
-+            if (!hasRetriesLeft(staticRoute)) {
-+              throw new Error(timeoutMessage);
-+            }
-+            await main.restartWorker(staticRoute.pathname);
-+            retryLater(staticRoute, timeoutMessage);
-+            flushQueue();
-+            return;
-+          }
-+
-+          if (result.isInterrupted) {
-+            queue.push(staticRoute);
-+            flushQueue();
-+            return;
-+          }
-+
-           if (result.error && hasRetriesLeft(staticRoute)) {
-             retryLater(staticRoute, result.error.message);
-             return;
-```
-
-**File**: `packages/qwik-router/src/ssg/orchestrator.unit.ts` (modified, +148/-2)
-```diff
-@@ -2,7 +2,7 @@ import type { QwikRouterConfig, RouteData } from '@qwik.dev/router';
- import { afterEach, assert, beforeEach, describe, test, vi } from 'vitest';
- import { getLoaderName } from '../middleware/request-handler/request-path';
- import { mainThread } from './orchestrator';
--import type { Logger, MainContext, System } from './types';
-+import type { Logger, MainContext, SsgWorkerRenderResult, System } from './types';
- 
- const noopLogger: Logger = {
-   info: () => {},
-@@ -392,6 +392,147 @@ describe('retries', () => {
-       assert.equal(callCount, 3);
-     });
-   });
-+
-+  describe('timeouts', () => {
-+    test('stops the build when a render times out with no retries left', async () => {
-+      vi.spyOn(console, 'error').mockImplementation(() => {});
-+      const sys = createSystem({
-+        routes: { _I: async () => ({ default: () => null as any }) },
-+        render: () => new Promise<never>(() => {}),
-+      });
-+
-+      const done = mainThread(sys).catch((error: Error) => error);
-+      await vi.runAllTimersAsync();
-+
-+      assert.include(String(await done), 'timed out');
-+    });
-+
-+    test('restarts the worker and retries a route whose render timed out', async () => {
-+      const restarted: string[] = [];
-+      let renderCount = 0;
-+      const sys = createSystem({
-+        routes: { _I: async () => ({ default: () => null as any }) },
-+        render: ({ pathname }) => {
-+          renderCount++;
-+          return renderCount === 1
-+            ? new Promise<never>(() => {})
-+            : Promise.resolve(createRenderResult(pathname));
-+        },
-+        restartWorker: async (pathname) => {
-+          restarted.push(pathname);
-+        },
-+        retries: 1,
-+      });
-+
-+      const result = await runMainThread(sys);
-+
-+      assert.deepEqual(restarted, ['/']);
-+      assert.equal(renderCount, 2);
-+      assert.equal(result.rendered, 1);
-+    });
-+
-+    test('still retries a timed-out route when the worker restart is slow', async () => {
-+      let busySlots = 0;
-+      let renderCount = 0;
-+      const sys = createSystem({
-+        routes: { _I: async () => ({ default: () => null as any }) },
-+        hasAvailableWorker: () => busySlots === 0,
-+        render: ({ pathname }) => {
-+          renderCount++;
-+          if (renderCount === 1) {
-+            busySlots++;
-+            return new Promise<never>(() => {});
-+          }
-+          return Promise.resolve(createRenderResult(pathname));
-+        },
-+        restartWorker: () =>
-+          new Promise<void>((resolve) =>
-+            setTimeout(() => {
-+              busySlots = 0;
-+              resolve();
-+            }, 1000)
-+          ),
-+        retries: 1,
-+      });
-+
-+      const result = await runMainThread(sys);
-+
-+      assert.equal(renderCount, 2);
-+      assert.equal(result.rendered, 1);
-+    });
-+
-+    test("does not use a retry for a route stopped by another route's timeout", async () => {
-+      let interruptAbout: (() => void) | undefined;
-+      const aboutRenders = [
-+        () =>
-+          new Promise<SsgWorkerRenderResult>((resolve) => {
-+            interruptAbout = () =>
-+              resolve({ ...createFailedRenderResult('/about'), isInterrupted: true });
-+          }),
-+        () => Promise.resolve(createFailedRenderResult('/about')),
-+        () => Promise.resolve(createRenderResult('/about')),
-+      ];
-+      let indexRenderCount = 0;
-+      const sys = createSystem({
-+        routes: {
-+          _I: async () => ({ default: () => null as any }),
-+          about: { _I: async () => ({ default: () => null as any }) },
-+        },
-+        render: ({ pathname }) => {
-+          if (pathname === '/about') {
-+            return aboutRenders.shift()!();
-+          }
-+          return indexRenderCount++ === 0
-+            ? new Promise<never>(() => {})
-+            : Promise.resolve(createRenderResult(pathname));
-+        },
-+        restartWorker: async () => {
-+          interruptAbout?.();
-+        },
-+        retries: 1,
-+      });
-+
-+      const result = await runMainThread(sys);
-+
-+      assert.equal(result.errors, 0);
-+      assert.sameMembers(result.staticPaths, ['/', '/about']);
-+    });
-+
-+    test('retries each route once when two routes on one worker time out together', async () => {
-+      const renderCounts = new Map<string, number>();
-+      const hungRenders = new Map<string, (result: SsgWorkerRenderResult) => void>();
-+      const sys = createSystem({
-+        routes: {
-+          _I: async () => ({ default: () => null as any }),
-+          about: { _I: async () => ({ default: () => null as any }) },
-+        },
-+        render: ({ pathname }) => {
-+          const renderCount = (renderCounts.get(pathname) ?? 0) + 1;
-+          renderCounts.set(pathname, renderCount);
-+          if (renderCount === 1) {
-+            return new Promise((resolve) => hungRenders.set(pathname, resolve));
-+          }
-+          return Promise.resolve(createRenderResult(pathname));
-+        },
-+        restart
-```
-
-**File**: `packages/qwik-router/src/ssg/types.ts` (modified, +5/-3)
-```diff
-@@ -26,6 +26,7 @@ export interface StaticStreamWriter extends StreamWriter {
- export interface MainContext {
-   hasAvailableWorker: () => boolean;
-   render: (staticRoute: SsgRenderInput) => Promise<SsgWorkerRenderResult>;
-+  restartWorker: (pathname: string) => Promise<void>;
-   close: () => Promise<void>;
- }
- 
-@@ -61,9 +62,9 @@ export interface SsgRenderOptions extends RenderOptions {
-   /** Maximum number of tasks to be running at one time per worker. Defaults to `20`. */
-   maxTasksPerWorker?: number;
-   /**
--   * Number of times to retry a route whose render failed, or an `onStaticGenerate` call that threw,
--   * before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at
--   * random. Defaults to `0` (the first failure is final).
-+   * Number of times to retry a route whose render failed or timed out, or an `onStaticGenerate`
-+   * call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up
-+   * to 30% at random. Defaults to `0` (the first failure is final).
-    */
-   retries?: number;
-   /**
-@@ -165,6 +166,7 @@ export interface SsgWorkerRenderResult {
-   filePath: string | null;
-   contentType: string | null;
-   resourceType: 'page' | null;
-+  isInterrupted?: boolean;
- }
- 
- /** @public */
-```
-
-**File**: `packages/qwik-router/src/ssg/worker-pool.threads.unit.ts` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+import { access, mkdtemp, rm, writeFile } from 'node:fs/promises';
-+import { tmpdir } from 'node:os';
-+import { join } from 'node:path';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-+import type { System } from './types';
-+import { createWorkerPool } from './worker-pool';
-+
-+const fixtureWorker = `
-+import { writeFileSync } from 'node:fs';
-+import { parentPort, workerData } from 'node:worker_threads';
-+
-+parentPort.on('message', (msg) => {
-+  if (msg.type === 'close') {
-+    parentPort.postMessage({ type: 'close' });
-+    parentPort.close();
-+    return;
-+  }
-+  const filePath = workerData.outDir + msg.pathname + '.html';
-+  parentPort.postMessage({ type: 'file', pathname: msg.pathname, filePath });
-+  writeFileSync(filePath, '<html>' + msg.pathname + '</html>');
-+  if (msg.pathname === '/hang') {
-+    return;
-+  }
-+  parentPort.postMessage({
-+    type: 'render',
-+    pathname: msg.pathname,
-+    url: 'https://qwik.dev' + msg.pathname,
-+    ok: true,
-+    error: null,
-+    filePath,
-+    contentType: 'text/html',
-+    resourceType: 'page',
-+  });
-+});
-+parentPort.postMessage({ type: 'ready' });
-+`;
-+
-+const sys = {
-+  createLogger: async () => ({ debug() {}, error() {}, info() {}, warn() {} }),
-+} as unknown as System;
-+
-+describe('createWorkerPool with real worker threads', () => {
-+  let outDir: string;
-+
-+  beforeEach(async () => {
-+    outDir = await mkdtemp(join(tmpdir(), 'qwik-router-ssg-threads-'));
-+  });
-+
-+  afterEach(async () => {
-+    await rm(outDir, { recursive: true, force: true });
-+  });
-+
-+  it("deletes a timed-out route's files before the worker restart finishes", async () => {
-+    const workerFilePath = join(outDir, 'worker.mjs');
-+    await writeFile(workerFilePath, fixtureWorker);
-+    const pool = await createWorkerPool(sys, {
-+      outDir,
-+      sitemapOutFile: null,
-+      maxWorkers: 1,
-+      workerFilePath,
-+    } as any);
 +    try {
-+      const hangPath = join(outDir, 'hang.html');
-+      void pool.render({ type: 'render', pathname: '/hang', params: undefined });
-+      await vi.waitFor(() => access(hangPath));
++      requestEv.send(200, 'hello');
 +
-+      await pool.restartWorker('/hang');
-+
-+      await expect(access(hangPath)).rejects.toThrow();
-+      const fine = await pool.render({ type: 'render', pathname: '/fine', params: undefined });
-+      expect(fine.ok).toBe(true);
++      await vi.waitFor(() =>
++        expect(consoleError).toHaveBeenCalledWith('Response stream failed:', error)
++      );
++      expect(consoleError).toHaveBeenCalledTimes(1);
++      expect(requestEv.signal.aborted).toBe(abortsRequest);
++      expect(drainListenersAtFailure).toBe(waitsForDrain ? 1 : 0);
++      expect(res.listenerCount('drain')).toBe(0);
 +    } finally {
-+      await pool.close();
++      consoleError.mockRestore();
 +    }
 +  });
-+});
++
+   // Verifies the Node adapter starts making response-write progress before a large SSR render fully completes.
+   test('should make Node response progress before render completes', async () => {
+     const timings = {
 ```
 
-**File**: `packages/qwik-router/src/ssg/worker-pool.ts` (modified, +31/-4)
+**File**: `packages/qwik-router/src/middleware/request-handler/request-event-core.ts` (modified, +19/-4)
 ```diff
-@@ -70,6 +70,8 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-     const mainTasks = new Map<string, WorkerMainTask>();
-     const taskFiles = new Map<string, string[]>();
-     let terminateTimeout: number | null = null;
-+    let stoppedPathname: string | undefined;
-+    let exitCleanup: Promise<unknown> = Promise.resolve();
+@@ -50,6 +50,7 @@ export const RequestEvCaughtError = '@caughtError';
+ export const RequestEvSentServerError = '@sentServerError';
+ export const RequestEvHttpStatusMessage = '@httpStatusMessage';
  
-     let isReady = false;
-     let startupError: Error | undefined;
-@@ -92,6 +94,14 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-       activeTasks: 0,
-       totalTasks: 0,
- 
-+      isRendering: (pathname) => mainTasks.has(pathname),
-+
-+      restart: async (pathname) => {
-+        stoppedPathname = pathname;
-+        await nodeWorker.terminate();
-+        await exitCleanup;
-+      },
-+
-       render: (staticRoute) => {
-         return new Promise((resolve, reject) => {
-           ssgWorker.activeTasks++;
-@@ -185,7 +195,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-         clearTimeout(terminateTimeout);
-         terminateTimeout = null;
-       }
--      if (!isReady && !isClosing) {
-+      if (!isReady && !isClosing && !stoppedPathname) {
-         const cause = startupError ? `: ${startupError.message}` : '';
-         failWorkerStart(
-           new Error(`SSG worker exited with code ${code} before it was ready${cause}`)
-@@ -194,29 +204,38 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-       }
-       // Resolve any pending tasks so the main thread doesn't hang
-       if (mainTasks.size > 0) {
-+        const cleanups: Promise<void>[] = [];
-         for (const [pathname, resolve] of mainTasks) {
-           ssgWorker.activeTasks--;
--          removeFiles(takeTaskFiles(pathname)).then(() =>
-+          const cleanup = removeFiles(takeTaskFiles(pathname)).then(() =>
-             resolve({
-               type: 'render',
-               pathname,
-               url: '',
-               ok: false,
--              error: { message: `Worker exited with code ${code}`, stack: undefined },
-+              error: {
-+                message: stoppedPathname
-+                  ? `Worker restarted to stop the render of ${stoppedPathname}`
-+                  : `Worker exited with code ${code}`,
-+                stack: undefined,
-+              },
-+              isInterrupted: stoppedPathname !== undefined && pathname !== stoppedPathname,
-               filePath: null,
-               contentType: null,
-               resourceType: null,
-             })
-           );
-+          cleanups.push(cleanup);
-         }
-+        exitCleanup = Promise.all(cleanups);
-         mainTasks.clear();
-       }
-       // Resolve terminate if it was waiting
-       if (terminateResolve) {
-         terminateResolve();
-         terminateResolve = null;
-       }
--      if (code !== 0) {
-+      if (code !== 0 && !stoppedPathname) {
-         console.error(`worker exit ${code}`);
-       }
-       if (!isClosing) {
-@@ -234,6 +253,11 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
++/** Builds shared request state and controls route handler execution. */
+ export function createRequestEvent(
+   serverRequestEv: ServerRequestEvent,
+   loadedRoute: LoadedRoute,
+@@ -125,14 +126,18 @@ export function createRequestEvent(
      }
    };
  
-+  const restartWorker = async (pathname: string) => {
-+    const ssgWorker = ssgWorkers.find((worker) => worker.isRendering(pathname));
-+    await ssgWorker?.restart(pathname);
-+  };
-+
-   const getNextWorker = () => ssgWorkers.sort(ssgWorkerCompare)[0];
- 
-   const hasAvailableWorker = () => {
-@@ -330,6 +354,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
-   const mainCtx: MainContext = {
-     hasAvailableWorker,
-     render,
-+    restartWorker,
-     close,
++  /** Exits the route synchronously while handling stream failures asynchronously. */
+   const send = (statusOrResponse: number | Response, body: string | Uint8Array) => {
+     check();
++    let responseWrite: Promise<unknown>;
+     if (typeof statusOrResponse === 'number') {
+       status = statusOrResponse;
+       const writableStream = requestEv.getWritableStream();
+       const writer = writableStream.getWriter();
+-      writer.write(typeof body === 'string' ? encoder.encode(body) : body);
+-      writer.close();
++      responseWrite = Promise.all([
++        writer.write(typeof body === 'string' ? encoder.encode(body) : body),
++        writer.close(),
++      ]);
+     } else {
+       status = statusOrResponse.status;
+       statusOrResponse.headers.forEach((value, key) => {
+@@ -152,11 +157,21 @@ export function createRequestEvent(
+       });
+       if (statusOrResponse.body) {
+         const writableStream = requestEv.getWritableStream();
+-        statusOrResponse.body.pipeTo(writableStream);
++        responseWrite = statusOrResponse.body.pipeTo(writableStream);
+       } else {
+-        requestEv.getWritableStream().getWriter().close();
++        responseWrite = requestEv.getWritableStream().getWriter().close();
+       }
+     }
++    void responseWrite.catch((error) => {
++      const signal = request.signal;
++      if (
++        signal.aborted &&
++        ((error instanceof Error && error.name === 'AbortError') || error === signal.reason)
++      ) {
++        return;
++      }
++      console.error('Response stream failed:', error);
++    });
+     return exit();
    };
  
-@@ -354,6 +379,8 @@ type WorkerMainTask = (result: SsgWorkerRenderResult) => void;
- interface SsgWorker {
-   activeTasks: number;
-   totalTasks: number;
-+  isRendering: (pathname: string) => boolean;
-+  restart: (stoppedPathname: string) => Promise<void>;
-   render: (staticRoute: SsgRoute) => Promise<SsgWorkerRenderResult>;
-   terminate: () => Promise<void>;
- }
 ```
 
-**File**: `packages/qwik-router/src/ssg/worker-pool.unit.ts` (modified, +107/-2)
+**File**: `packages/qwik-router/src/middleware/request-handler/request-event.unit.ts` (modified, +85/-0)
 ```diff
-@@ -22,8 +22,15 @@ class FakeWorker extends EventEmitter {
-     workers.push(this);
-   }
-   unref() {}
--  async terminate() {
--    return 0;
-+  exited?: Promise<number>;
-+  terminate() {
-+    this.exited ??= new Promise((resolve) =>
-+      setImmediate(() => {
-+        this.emit('exit', 1);
-+        resolve(1);
-+      })
-+    );
-+    return this.exited;
-   }
-   postMessage(msg: WorkerInputMessage) {
-     if (this.isListening) {
-@@ -268,4 +275,102 @@ describe('createWorkerPool', () => {
-       expect((await failed).error?.message).toBe('caught');
-     });
+@@ -91,6 +91,91 @@ describe('request-event internalRequest', () => {
    });
+ });
+ 
++describe('request-event send', () => {
++  describe.each([
++    new Error('broken response stream'),
++    new DOMException('Upstream cancelled', 'AbortError'),
++  ])('reports $name stream failures for active requests', (error) => {
++    it.each([
++      {
++        name: 'reading a response body',
++        send: (ev: ReturnType<typeof createMockRequestEvent>, error: Error) =>
++          ev.send(
++            new Response(new ReadableStream({ start: (controller) => controller.error(error) }))
++          ),
++        sink: () => ({}),
++      },
++      {
++        name: 'writing a response body',
++        send: (ev: ReturnType<typeof createMockRequestEvent>) => ev.send(200, 'hello'),
++        sink: (error: Error) => ({
++          write: () => {
++            throw error;
++          },
++        }),
++      },
++      {
++        name: 'closing an empty response',
++        send: (ev: ReturnType<typeof createMockRequestEvent>) => ev.send(new Response(null)),
++        sink: (error: Error) => ({
++          close: () => {
++            throw error;
++          },
++        }),
++      },
++    ])('handles failures while $name', async ({ send, sink }) => {
++      const serverRequestEv = createMockServerRequestEvent();
++      vi.mocked(serverRequestEv.getWritableStream).mockReturnValue(new WritableStream(sink(error)));
++      const requestEv = createRequestEvent(serverRequestEv, mockRoute, [], '/', vi.fn());
++      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 +
-+  describe('worker restarts', () => {
-+    it('restarting a worker for a timed-out route stops its other routes and renders on a new worker', async () => {
-+      const pool = await createWorkerPool(sys, {
-+        outDir: '/out',
-+        sitemapOutFile: null,
-+        maxWorkers: 1,
-+        workerFilePath: '/run-ssg-worker.js',
-+      } as any);
-+      workers[0].attachListener();
-+
-+      const hung = pool.render({ type: 'render', pathname: '/hang', params: undefined });
-+      const hungToo = pool.render({ type: 'render', pathname: '/hang-too', params: undefined });
-+      await pool.restartWorker('/hang');
-+      const next = pool.render({ type: 'render', pathname: '/fine', params: undefined });
-+      workers[1].attachListener();
-+      workers[1].emit('message', renderResult('/fine'));
-+
-+      expect((await hung).error?.message).toContain('/hang');
-+      expect((await hung).isInterrupted).toBeFalsy();
-+      expect((await hungToo).isInterrupted).toBe(true);
-+      expect((await next).ok).toBe(true);
-+    });
-+
-+    it("finishes a worker restart only after the timed-out route's files are deleted", async () => {
-+      const outDir = await mkdtemp(join(tmpdir(), 'qwik-router-ssg-pool-'));
 +      try {
-+        const indexPath = join(outDir, 'index.html');
-+        const realRm = fs.promises.rm;
-+        const heldRemovals: Array<() => Promise<void>> = [];
-+        vi.spyOn(fs.promises, 'rm').mockImplementation(
-+          (...args) =>
-+            new Promise<void>((resolve, reject) => {
-+              heldRemovals.push(() => realRm(...args).then(resolve, reject));
-+            })
++        send(requestEv, error);
++
++        expect(requestEv.exited).toBe(true);
++        await vi.waitFor(() =>
++          expect(consoleError).toHaveBeenCalledWith('Response stream failed:', error)
 +        );
-+        const pool = await createWorkerPool(sys, {
-+          outDir,
-+          sitemapOutFile: null,
-+          maxWorkers: 1,
-+          workerFilePath: '/run-ssg-worker.js',
-+        } as any);
-+        workers[0].attachListener();
-+        pool.render({ type: 'render', pathname: '/hang', params: undefined });
-+        workers[0].emit('message', { type: 'file', pathname: '/hang', filePath: indexPath });
-+        await writeFile(indexPath, '<html>partial');
-+
-+        let isRestarted = false;
-+        const restarted = pool.restartWorker('/hang').then(() => {
-+          isRestarted = true;
-+        });
-+        await new Promise((resolve) => setImmediate(resolve));
-+        expect(heldRemovals).toHaveLength(1);
-+        expect(isRestarted).toBe(false);
-+
-+        await heldRemovals[0]();
-+        await restarted;
-+        await writeFile(indexPath, '<html>retried</html>');
-+
-+        expect(await readFile(indexPath, 'utf-8')).toBe('<html>retried</html>');
++        expect(consoleError).toHaveBeenCalledTimes(1);
 +      } finally {
-+        await rm(outDir, { recursive: true, force: true });
++        consoleError.mockRestore();
 +      }
 +    });
-+
-+    it('restarts the worker once when two of its routes time out together', async () => {
-+      const pool = await createWorkerPool(sys, {
-+        outDir: '/out',
-+        sitemapOutFile: null,
-+        maxWorkers: 1,
-+        workerFilePath: '/run-ssg-worker.js',
-+      } as any);
-+      workers[0].attachListener();
-+      const first = pool.render({ type: 'render', pathname: '/slow-a', params: undefined });
-+      const second = pool.render({ type: 'render', pathname: '/slow-b', params: undefined });
-+
-+      await Promise.all([pool.restartWorker('/slow-a'), pool.restartWorker('/slow-b')]);
-+
-+      expect(workers).toHaveLength(2);
-+      expect((await first).error).not.toBeNull();
-+      expect((await second).error).not.toBeNull();
-+    });
-+
-+    it('restarts a worker that is still starting instead of reporting a startup crash', async () => {
-+      const pool = await createWorkerPool(sys, {
-+        outDir: '/out',
-+        sitemapOutFile: null,
-+        maxWorkers: 1,
-+        workerFilePath: '/run-ssg-worker.js',
-+      } as any);
-+
-+      const slow = pool.render({ type: 'render', pathname: '/slow', params: undefined });
-+      await pool.restartWorker('/slow');
-+
-+      expect((await slow).error?.message).toContain('/slow');
-+      expect(workers).toHaveLength(2);
-+    });
 +  });
- });
++
++  it.each([
++    ['an abort error', new DOMException('Client disconnected', 'AbortError'), false],
++    ['an aborted request', new Error('Client disconnected'), true],
++  ] as const)('does not report %s', async (_, error, useAbortReason) => {
++    const controller = new AbortController();
++    const serverRequestEv = createMockServerRequestEvent(undefined, { signal: controller.signal });
++    vi.mocked(serverRequestEv.getWritableStream).mockReturnValue(
++      new WritableStream({
++        write() {
++          controller.abort(useAbortReason ? error : undefined);
++          throw error;
++        },
++      })
++    );
++    const requestEv = createRequestEvent(serverRequestEv, mockRoute, [], '/', vi.fn());
++    const cancel = vi.fn();
++    const body = new ReadableStream({
++      start: (stream) => stream.enqueue(new TextEncoder().encode('hello')),
++      cancel,
++    });
++    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
++
++    try {
++      requestEv.send(new Response(body));
++
++      await vi.waitFor(() => expect(cancel).toHaveBeenCalledWith(error));
++      expect(consoleError).not.toHaveBeenCalled();
++    } finally {
++      consoleError.mockRestore();
++    }
++  });
++});
++
+ describe('request-event redirect', () => {
+   it('should not cache redirects by default', () => {
+     const requestEv = createMockRequestEvent();
+```
+
+---
+
+### Incident Patch 3: `c8ac60ac` (2026-11-12)
+**Commit Message**: Merge bundle overview review fix into relationships
+
+**File**: `packages/insights/src/routes/app/[publicApiKey]/symbols/bundles/bundle-view.ts` (modified, +4/-0)
+```diff
+@@ -44,6 +44,10 @@ export function createBundleViewData(vectors: SymbolVectors, bundles: Bundle[])
+   };
+ }
+ 
++export function getSelectedBundleIndex(selectedIndex: number, bundleCount: number): number {
++  return selectedIndex >= 0 && selectedIndex < bundleCount ? selectedIndex : 0;
++}
++
+ export function getBundleExecutionCount(bundle: {
+   name: string;
+   symbols: { count: number }[];
+```
+
+**File**: `packages/insights/src/routes/app/[publicApiKey]/symbols/bundles/bundle-view.unit.ts` (modified, +8/-0)
+```diff
+@@ -1,13 +1,21 @@
+ import { describe, expect, it } from 'vitest';
+ import {
+   getBundleExecutionCount,
++  getSelectedBundleIndex,
+   createBundleViewData,
+   getMatrixCellColor,
+   getStrongestRelationships,
+ } from './bundle-view';
+ import type { Symbol } from '~/stats/edges';
+ 
+ describe('bundle view', () => {
++  it('falls back to the first group when navigation returns fewer groups', () => {
++    expect(getSelectedBundleIndex(2, 3)).toBe(2);
++    expect(getSelectedBundleIndex(2, 1)).toBe(0);
++    expect(getSelectedBundleIndex(2, 0)).toBe(0);
++    expect(getSelectedBundleIndex(-1, 3)).toBe(0);
++  });
++
+   it('sends only matrix cells that are visible in the report', () => {
+     const vectors = {
+       symbols: [],
+```
+
+**File**: `packages/insights/src/routes/app/[publicApiKey]/symbols/bundles/index.tsx` (modified, +5/-3)
+```diff
+@@ -13,6 +13,7 @@ import {
+ import {
+   createBundleViewData,
+   getBundleExecutionCount,
++  getSelectedBundleIndex,
+   getMatrixCellColor,
+   type MatrixCell,
+ } from './bundle-view';
+@@ -51,7 +52,8 @@ export default component$(() => {
+   const selectedIndex = useSignal(0);
+   const selectedSymbol = useSignal('');
+   const selectedRelationship = useSignal(-1);
+-  const selectedBundle = data.value.bundles.at(selectedIndex.value) ?? data.value.bundles.at(0);
++  const effectiveIndex = getSelectedBundleIndex(selectedIndex.value, data.value.bundles.length);
++  const selectedBundle = data.value.bundles.at(effectiveIndex);
+   const strongestRelationships = selectedSymbol.value
+     ? (selectedBundle?.symbolRelationships[selectedSymbol.value] ?? [])
+     : (selectedBundle?.relationships ?? []);
+@@ -78,7 +80,7 @@ export default component$(() => {
+         {selectedBundle && (
+           <div class="md:text-right">
+             <code class="font-editorial-mono text-editorial-20 font-semibold">
+-              Group {selectedIndex.value + 1}
++              Group {effectiveIndex + 1}
+             </code>
+             <p class="mt-editorial-1 text-editorial-12 text-editorial-secondary">
+               {selectedBundle.symbols.length.toLocaleString('en')} symbols ·{' '}
+@@ -142,7 +144,7 @@ export default component$(() => {
+               </div>
+               <ol class="p-editorial-2">
+                 {data.value.bundles.map((bundle, index) => {
+-                  const isSelected = index === selectedIndex.value;
++                  const isSelected = index === effectiveIndex;
+                   return (
+                     <li key={bundle.name}>
+                       <button
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9386** (2026-11-07): fix(qwik-vite): readable names for split segment chunks (@maiieul)
-- **PR #9380** (2026-11-06): fix(optimizer): preserve purity of migrated QRLs (@Varixo)
-- **PR #9378** (2026-11-05): fix(router): reject server$ calls that get a non-server$ response (@thelastbackspace)
-- **PR #9377** (2026-11-05): fix(ssr): keep streamed scripts out of colgroup (@wmertens)
-- **PR #9376** (2026-11-04): docs: add roadmap page (@Varixo)
-- **PR #9375** (2026-11-06): fix(router): exclude the document root from typed view transitions (@Nelmad)
+- **PR #9462** (2026-11-12): test(preloader): send held speculative preloads once a cold click needs them (@wmertens)
+- **PR #9452** (2026-11-12): Lead bundle exploration with relationships and selectable views (@mhevery)
+- **PR #9451** (2026-11-12): Explain directional symbol relationships with selectable details (@mhevery)
+- **PR #9450** (2026-11-12): Clarify suggested bundle groups and their sizes (@mhevery)
+- **PR #9432** (2026-11-11): feat(insights): configure source previews and migrate before deployment (@mhevery)
+- **PR #9431** (2026-11-11): feat(insights): keep the current application visible across reports (@mhevery)
 
 ---
 
@@ -2039,32 +1894,28 @@ A hung render held its worker slot, so a timeout stopped the whole build. With r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. router): replace a crashed ssg worker
+## X. router): isolate concurrent adapter build entries
 
 **RULE**:
-When implementing operations in `.changeset/ssg-crashed-worker.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/ssg-adapter-app-build-state.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da290682`: router): replace a crashed ssg worker. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a5562d2`: router): isolate concurrent adapter build entries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/ssg-crashed-worker.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/ssg-adapter-app-build-state.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'@qwik.dev/router': patch
----
-
-fix: a crashed ssg worker no longer stalls the build until it times out
+fix: correct ssg warnings and isolate server entries per build
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+fix: the SSG adapter no longer warns "Qwik Router SSG was skipped" on builds that prerender, and passes the server entries to the adapter's `generate()`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da290682` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a5562d2` are properly handled with clean fallback behavior.

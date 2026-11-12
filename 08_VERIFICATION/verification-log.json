@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-MOG3",
-    "timestamp": "2026-11-09T07:20:59.715Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "4866bb9ad501ba5c96414f7fd973aee2e1b98ecd934cf31bbf83b2bb584e33b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-MRLD",
     "timestamp": "2026-11-09T07:21:03.793Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7490,6 +7475,21 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "b294ca60d16c4ee225e74c8ba611fa806b5174a8caa4ecae6f94482c98720975",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-CCL6",
+    "timestamp": "2026-11-12T14:31:52.506Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "953415d49d9b9771a6e542adcc0efd74afc9d839bcdcbd564147f9e6e2ef009f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
