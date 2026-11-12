@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T01:12:10.867Z",
+  "last_updated": "2026-11-12T01:23:37.426Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
-      "verified_at": "2026-11-09T15:51:36.468Z",
+      "content_hash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
+      "verified_at": "2026-11-12T01:23:32.245Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T15:51:36.468Z"
+      "last_updated": "2026-11-12T01:23:32.245Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
-      "verified_at": "2026-11-09T14:18:11.104Z",
+      "content_hash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
+      "verified_at": "2026-11-12T01:23:37.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T14:18:11.104Z"
+      "last_updated": "2026-11-12T01:23:37.425Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -11886,14 +11886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xcodesorg-xcodesapp",
-      "content_hash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
-      "verified_at": "2026-10-19T11:35:13.756Z",
+      "content_hash": "9564bc00ea98fe65773b3ab2c93adb74729cbb8ae1378cf00b62cc4ad8be55b2",
+      "verified_at": "2026-11-12T01:23:29.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:35:13.756Z"
+      "last_updated": "2026-11-12T01:23:29.068Z"
     },
     "lapce/lapce": {
       "repository": "lapce/lapce",
@@ -17391,14 +17391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "content_hash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
-      "verified_at": "2026-11-07T03:02:03.070Z",
+      "content_hash": "d39ed7a70db5c3766e0a3ba00bc239d1d9993505b2ad0040067dc7ff9c3b9aef",
+      "verified_at": "2026-11-12T01:23:10.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:02:03.070Z"
+      "last_updated": "2026-11-12T01:23:10.430Z"
     },
     "mobile-next/mobile-mcp": {
       "repository": "mobile-next/mobile-mcp",

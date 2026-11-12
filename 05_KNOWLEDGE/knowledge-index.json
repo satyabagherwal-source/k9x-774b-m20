@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T01:12:10.709Z",
+  "last_updated": "2026-11-12T01:23:37.315Z",
   "total_verified_learnings": 1256,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17078,8 +17078,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "fc736e32",
-      "content_hash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
+      "source_version": "fce8d5b9",
+      "content_hash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -17096,6 +17096,11 @@
         {
           "number": null,
           "title": "Update storage guides and automate README release links (#2070)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Unify Query Builder result assertions (#2075)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17119,7 +17124,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T14:18:10.887Z",
+      "verified_at": "2026-11-12T01:23:37.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38972,8 +38977,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "7490cf4b",
-      "content_hash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
+      "source_version": "42846c40",
+      "content_hash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -38985,6 +38990,11 @@
         {
           "number": null,
           "title": "test: fix five flakes that only passed in CI on rerun (#15002)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "envoy_modules: build from the dependency stage with --locked (#15024)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39058,7 +39068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T15:51:36.318Z",
+      "verified_at": "2026-11-12T01:23:31.899Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66953,11 +66963,16 @@
       "slug": "xcodesorg-xcodesapp",
       "platform": "github",
       "source_url": "https://github.com/XcodesOrg/XcodesApp",
-      "source_version": "45722c72",
-      "content_hash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
+      "source_version": "9836fd83",
+      "content_hash": "9564bc00ea98fe65773b3ab2c93adb74729cbb8ae1378cf00b62cc4ad8be55b2",
       "dossier_path": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "installed and active state not refreshing after install, select, and uninstall",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2541,
           "title": "notify on new Xcode version identity, not array-count growth",
@@ -66969,7 +66984,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:35:13.695Z",
+      "verified_at": "2026-11-12T01:23:28.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166348,7 +166363,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
+      "content_hash": "d39ed7a70db5c3766e0a3ba00bc239d1d9993505b2ad0040067dc7ff9c3b9aef",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "promoted_rules": [
@@ -166388,7 +166403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:02:02.946Z",
+      "verified_at": "2026-11-12T01:23:10.284Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

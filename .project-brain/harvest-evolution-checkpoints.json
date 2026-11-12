@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T01:12:31.503Z",
+  "last_updated": "2026-11-12T01:23:58.106Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T00:23:23.329Z",
@@ -626,9 +626,24 @@
       "processed_at": "2026-11-12T01:12:31.486Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-liquidai-lfm3-audio-2b-learnings.md": {
+      "processed_at": "2026-11-12T01:23:57.637Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "xcodesorg-xcodesapp-learnings.md": {
+      "processed_at": "2026-11-12T01:23:57.648Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "kgateway-dev-kgateway-learnings.md": {
+      "processed_at": "2026-11-12T01:23:58.087Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 159,
-  "total_canonical_promoted": 20,
-  "total_staged_for_review": 136
+  "total_dossiers_evaluated": 162,
+  "total_canonical_promoted": 21,
+  "total_staged_for_review": 138
 }

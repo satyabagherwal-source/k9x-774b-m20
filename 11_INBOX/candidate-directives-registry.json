@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T01:12:31.485Z",
+  "last_updated": "2026-11-12T01:23:58.085Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5720,6 +5720,24 @@
       "source_repo": "darrylmorley-whatcable",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-20ABE5-mirror-from-private-2ebfc38a-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-277EA1",
+      "directive_title": "installed and active state not refreshing after install, select, and uninstall",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "xcodesorg-xcodesapp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-277EA1-installed-and-active-state-not-refreshin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BAAAA2",
+      "directive_title": "envoy_modules: build from the dependency stage with --locked (#15024)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kgateway-dev-kgateway",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BAAAA2-envoy-modules-build-from-the-dependency-.md",
       "staged_date": "2026-11-12"
     }
   ]

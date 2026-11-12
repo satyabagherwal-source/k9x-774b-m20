@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T01:12:31.502Z",
+  "updated_at": "2026-11-12T01:23:58.102Z",
   "stats": {
-    "total_discovered": 368,
-    "approved_pending_harvest": 332,
+    "total_discovered": 381,
+    "approved_pending_harvest": 343,
     "harvested_count": 0,
-    "rejected_count": 36,
+    "rejected_count": 38,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 340,
+      "COMMUNITY_AND_EXPERT": 353,
       "OFFICIAL_DOCUMENTATION": 14,
       "STANDARDS_AND_SPECIFICATIONS": 13,
       "ENGINEERING_BLOGS": 1
@@ -7859,6 +7859,278 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
         "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-593F43913DCD": {
+      "id": "SRC-593F43913DCD",
+      "url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
+      "title": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:57.639Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
+        "fileName": "hf-liquidai-lfm3-audio-2b-learnings.md"
+      }
+    },
+    "SRC-349DA36948ED": {
+      "id": "SRC-349DA36948ED",
+      "url": "https://github.com/XcodesOrg/XcodesApp",
+      "title": "https://github.com/XcodesOrg/XcodesApp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:57.650Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-3792234F26DD": {
+      "id": "SRC-3792234F26DD",
+      "url": "https://developer.apple.com/documentation/xcode-release-notes/xcode-12_3-release-notes",
+      "title": "https://developer.apple.com/documentation/xcode-release-notes/xcode-12_3-release-notes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:57.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-7D4E54A37F54": {
+      "id": "SRC-7D4E54A37F54",
+      "url": "https://github.com/user-attachments/assets/544dfa30-32c6-4f50-8d77-f6f5eb3321ff",
+      "title": "https://github.com/user-attachments/assets/544dfa30-32c6-4f50-8d77-f6f5eb3321ff",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:57.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-62B6CC236FFF": {
+      "id": "SRC-62B6CC236FFF",
+      "url": "https://github.com/XcodesOrg/XcodesApp/releases/download/v4.1.0b40/Xcodes.zip%60",
+      "title": "https://github.com/XcodesOrg/XcodesApp/releases/download/v4.1.0b40/Xcodes.zip%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:57.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-3C4C53F14F4E": {
+      "id": "SRC-3C4C53F14F4E",
+      "url": "https://github.com/XcodesOrg/XcodesApp/releases/download/v4.1.0b40/Xcodes.zip",
+      "title": "https://github.com/XcodesOrg/XcodesApp/releases/download/v4.1.0b40/Xcodes.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:57.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-2E764057DFE5": {
+      "id": "SRC-2E764057DFE5",
+      "url": "https://apple.com/xcode.xip",
+      "title": "https://apple.com/xcode.xip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:57.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-9B038DCD62EE": {
+      "id": "SRC-9B038DCD62EE",
+      "url": "https://github.com/kgateway-dev/kgateway",
+      "title": "https://github.com/kgateway-dev/kgateway",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:58.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
+        "fileName": "kgateway-dev-kgateway-learnings.md"
+      }
+    },
+    "SRC-A31A28AA9E4B": {
+      "id": "SRC-A31A28AA9E4B",
+      "url": "https://kgateway.dev/",
+      "title": "https://kgateway.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:58.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
+        "fileName": "kgateway-dev-kgateway-learnings.md"
+      }
+    },
+    "SRC-54DD7B22F5D0": {
+      "id": "SRC-54DD7B22F5D0",
+      "url": "https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/http_option_limits.h",
+      "title": "https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/http_option_limits.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:58.094Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
+        "fileName": "kgateway-dev-kgateway-learnings.md"
+      }
+    },
+    "SRC-8D1F0B08D7C2": {
+      "id": "SRC-8D1F0B08D7C2",
+      "url": "https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/utility.cc",
+      "title": "https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/utility.cc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:23:58.097Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
+        "fileName": "kgateway-dev-kgateway-learnings.md"
+      }
+    },
+    "SRC-40850E67EF1F": {
+      "id": "SRC-40850E67EF1F",
+      "url": "http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g",
+      "title": "http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:23:58.099Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
+        "fileName": "kgateway-dev-kgateway-learnings.md"
+      }
+    },
+    "SRC-A8BA253F7618": {
+      "id": "SRC-A8BA253F7618",
+      "url": "http://security.ubuntu.com|http://azure.archive.ubuntu.com|g",
+      "title": "http://security.ubuntu.com|http://azure.archive.ubuntu.com|g",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:23:58.102Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
+        "fileName": "kgateway-dev-kgateway-learnings.md"
       }
     }
   }

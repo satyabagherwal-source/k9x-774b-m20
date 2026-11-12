@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `fc736e32`  
+> **Source Version**: `fce8d5b9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T14:18:09.416Z  
+> **Timestamp**: 2026-11-12T01:23:23.139Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T14:13:07.558Z  
+> **Harvest Timestamp**: 2026-11-12T01:23:23.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3135 stars
+- **Stars / Engagement**: 3136 stars
 
 ---
 
@@ -2058,281 +2058,629 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0d26db2` (2026-11-09)
-**Commit Message**: Update storage guides and automate README release links (#2070)
+### Incident Patch 1: `fce8d5b9` (2026-11-11)
+**Commit Message**: Unify Query Builder result assertions (#2075)
 
-Add SlateDB to the README and storage overview, and include the missing
-Redis overview. Clarify storage trait responsibilities, metadata queries,
-and the shared test suite's limitations for SELECT-only adapters.
+Share payload comparison between SQL fixtures and Query Builder cases so
+floating-point results use the same tolerances. Route builder assertions
+through a local test macro and preserve the failing call site.
 
-Fix the storage overview link and use dev documentation URLs in the
-README. Rewrite dev and existing versioned links to the new Cargo
-version during release preparation so published package READMEs point
-to the matching release documentation.
-
-**File**: `.github/workflows/prepare-release.yml` (modified, +13/-0)
+**File**: `test-suite/src/fixture.rs` (modified, +1/-142)
 ```diff
-@@ -27,6 +27,19 @@ jobs:
-         run: |
-           cargo release version ${{ github.event.inputs.version }} --workspace --execute --no-confirm
-           NEW_VERSION="v$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n 1)"
-+
-+          python3 - "${NEW_VERSION#v}" <<'PY'
-+          import re
-+          import sys
-+          from pathlib import Path
-+
-+          readme = Path("README.md")
-+          content = readme.read_text()
-+          pattern = r"https://gluesql\.org/docs/(?:dev|[0-9][0-9A-Za-z.+-]*)/"
-+          content = re.sub(pattern, f"https://gluesql.org/docs/{sys.argv[1]}/", content)
-+          readme.write_text(content)
-+          PY
-+
-           NEW_BRANCH="prepare-release-$NEW_VERSION"
-           git checkout -b $NEW_BRANCH
-           git config --local user.email "taehoon.moon@outlook.com"
-```
-
-**File**: `README.md` (modified, +14/-13)
-```diff
-@@ -17,11 +17,11 @@ It is also available for JavaScript applications in the browser and Node.js.
+@@ -1,5 +1,5 @@
+ use {
+-    crate::{Tester, test_indexes},
++    crate::{Tester, test_indexes, tester::assertions::assert_payload},
+     chrono::{NaiveDate, NaiveDateTime, NaiveTime},
+     gluesql_core::{
+         ast::{DataType, IndexOperator},
+@@ -19,8 +19,6 @@ use {
  
- GlueSQL is quite sticky: it brings SQL to your application's storage. Use a provided storage backend or implement a custom adapter to query existing data without moving it into a separate database. GlueSQL handles SQL parsing, planning, and execution.
+ static FIXTURES: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/fixtures");
  
--- **Choose a storage backend:** use in-memory storage, embedded databases, local files, or external databases.
-+- **Choose a storage backend:** use in-memory storage, embedded databases, local files, object stores, or external databases.
- - **Work with flexible data:** query schema-defined and schemaless tables together, including MAP and LIST values.
- - **Choose a query interface:** write SQL or compose queries with the Rust Query Builder, both backed by the same engine.
+-const F32_TOLERANCE: f64 = 1e-6;
+-const F64_TOLERANCE: f64 = 1e-12;
+ const F32_DECIMAL_PLACES: usize = 6;
+ const F64_DECIMAL_PLACES: usize = 12;
  
--[Explore the documentation →](https://gluesql.org/docs)
-+[Explore the documentation →](https://gluesql.org/docs/dev/)
- 
- ## Installation
- 
-@@ -47,24 +47,25 @@ For more JS library information, check out the [gluesql-js repository](https://g
- 
- ## Supported Reference Storages
- 
--GlueSQL provides reference storage implementations for in-memory data, embedded databases, local files, and external databases. Use the table below to choose a storage for your use case.
-+GlueSQL provides reference storage implementations for in-memory data, embedded databases, local files, object stores, and external databases. Use the table below to choose a storage for your use case.
- 
- | Use case | Recommended storage |
- | --- | --- |
--| Persistent embedded database | [Redb](https://gluesql.org/docs/0.20.0/storages/supported-storages/redb-storage/) |
--| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/0.20.0/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/0.20.0/storages/supported-storages/redis-storage/) |
--| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/0.20.0/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/0.20.0/storages/supported-storages/shared-memory-storage/) |
--| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/0.20.0/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/0.20.0/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/0.20.0/storages/supported-storages/parquet-storage/) |
--| Lightweight filesystem persistence | [File](https://gluesql.org/docs/0.20.0/storages/supported-storages/file-storage/) |
--| Version-controlled data | [Git](https://gluesql.org/docs/0.20.0/storages/supported-storages/git-storage/) |
--| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/0.20.0/storages/supported-storages/composite-storage/) |
-+| Persistent embedded database | [Redb](https://gluesql.org/docs/dev/storages/supported-storages/redb-storage/) |
-+| Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage/) |
-+| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/dev/storages/supported-storages/redis-storage/) |
-+| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/dev/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage/) |
-+| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/dev/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/dev/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage/) |
-+| Lightweight filesystem persistence | [File](https://gluesql.org/docs/dev/storages/supported-storages/file-storage/) |
-+| Version-controlled data | [Git](https://gluesql.org/docs/dev/storages/supported-storages/git-storage/) |
-+| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/dev/storages/supported-storages/composite-storage/) |
- | Browser / JS applications | [JavaScript: memory, local Storage, or OPFS](https://github.com/gluesql/gluesql-js#pick-the-storage-that-matches-your-data) |
- 
--See the [Storage documentation](https://gluesql.org/docs/0.20.0/storages/) for setup, examples, and limitations.
-+See the [Storage documentation](https://gluesql.org/docs/dev/storages/intro/) for setup, examples, and limitations.
- 
- ## SQL and Query Builder
- 
--GlueSQL supports both SQL and a Query Builder. Use SQL for familiar or dynamic queries, and use the Query Builder when composing queries in Rust or controlling execution more precisely. Both interfaces run through the same GlueSQL engine and storage backend. For more information, check out the [Query Builder documentation](https://gluesql.org/docs/0.20.0/query-builder/intro/) and [SQL documentation](https://gl
-```
-
-**File**: `docs/docs/index.md` (modified, +9/-7)
-```diff
-@@ -66,7 +66,7 @@ SELECT * FROM Names JOIN Logs ON Names.id = Logs.id;
- ```
- 
- ## Supported Reference Storages
--GlueSQL provides a variety of reference storages out of the box, including simple in-memory storage, key-value databases, and log file-based storage like JSON & JSONL. These reference storages are readily available for use and can be easily adapted to a variety of storage systems. Additionally, GlueSQL is constantly expanding its list of supported storages, making it a versatile tool for developers.
-+GlueSQL provides reference storages for in-memory data, embedded databases, local files, object stores, and external databases. See the [storage documentation](storages/intro.md) for setup, examples, and limitations.
- 
- ### Memory Storage
- Memory Storage is a foundational storage option designed for in-memory, non-persistent data. It is a simple yet robust storage option that can be used in production environments.
-@@ -77,6 +77,9 @@ Shared Memory Storage is a storage option designed to provide more comfortable u
- ### Redb Storage
- Redb Storage leverages the [redb](https://docs.rs/redb) embedded database for persistent storage with transactional support. It keeps all tables in a single database file, offering another simple way to keep your data on disk while enjoying GlueSQL's query capabilities.
- 
-+### SlateDB Storage
-+[SlateDB Storage](storages/supported-storages/slatedb-storage.md) stores GlueSQL schemas and rows in an embedded key-value engine backed by object storage, including Amazon S3 and Cloudflare R2. It supports reads, writes, and transactions, while SlateDB manages caching and compaction.
-+
- ### JSON Storage
- With GlueSQL, you can use JSONL or JSON files as a database that supports SQL and Query Builder, making it a powerful option for developers who need to work with JSON data. JSON Storage is a storage system that uses two types of files: a schema file (optional) and a data file. The schema file is written in Standard SQL and stores the structure of the table, while the data file contains the actual data and supports two file formats: `*.json` and `*.jsonl`. JSON Storage supports all DML features, but is particularly specialized for SELECT and INSERT.
- 
-@@ -97,17 +100,16 @@ Git Storage is a custom storage option in GlueSQL that integrates seamlessly wit
- ### Mongo Storage
- With Mongo storage, you can use mongodb as a storage for SQL queries. You can use all the features supported by GlueSQL, such as aggregations and joins, which were previously difficult to handle on an unstructured database. In particular, you can use GlueSQL's powerful schema system on mongodb, which is as strong as an RDBMS.
- 
-+### Redis Storage
-+[Redis Storage](storages/supported-storages/redis-storage.md) stores GlueSQL schemas and rows in a running Redis server. A namespace keeps each database's keys separate within the server.
-+
- ### Composite Storage
- Composite Storage is a powerful feature of GlueSQL that allows you to bundle together multiple existing storages, enabling you to perform JOIN operations across two distinct storages. This makes it useful for scenarios where data has to be queried or moved across different storage systems through the same SQL interface.
- 
- ## Adapting GlueSQL to Your Environment: Creating Custom Storage
--GlueSQL is designed to be adaptable to a wide variety of environments, including file systems, key-value databases, complex NoSQL databases, and remote APIs. To create a custom storage for GlueSQL, you only need to implement the Store and StoreMut traits provided by GlueSQL. These traits allow you to support SELECT queries and modify data, such as INSERT, UPDATE, and DELETE.
--
--If you want to support additional features, such as schema changes, transactions, or custom functions, you can implement the corresponding traits. However, these traits are optional, and you can choose to implement only the ones that are relevant to your storage system.
--
--To make it even easier to develop custom storages, GlueSQL provides a Test Suite that allows you to test your storage implementation against a set of standard SQL queries. This ensures that your storage system is compatible with GlueSQL and can handle common SQL operations.
-+Connect GlueSQL to your files, databases, or APIs through the storage traits. `Store` handles reads and `StoreMut` handles writes. Additional traits support features such as transactions, indexes, and custom functions.
- 
--Overall, creating a custom storage for GlueSQL is a straightforward process that allows you to adapt SQL and the Query Builder to your environment with ease.
-+See the [custom storage guide](storages/developing-custom-storages/intro.md) for implementation details and the [Test Suite](storages/developing-custom-storages/using-test-suite.md) for shared SQL tests.
- 
- ## GlueSQL Custom Storage: Let Us Handle It for You
- Although anyone can develop a custom storage for GlueSQL with ease, our GlueSQL team can also implement and maintain it for you. This is es
-```
-
-**File**: `docs/docs/storages/developing-custom-storages/intro.md` (modified, +15/-17)
-```diff
-@@ -6,32 +6,30 @@ sidebar_position: 1
- 
- With GlueSQL, you can adapt SQL and the Query Builder to a wide variety of environments. This includes file systems, key-value databases, complex NoSQL databases, and even remote APIs. As long as a system supports reading, it can support SELECT queries. If it supports both reading and writing, it can support most SQL operations, including UPDATE and DELETE.
- 
--To implement GlueSQL, you only need to know two things:
-+Custom storage development has two main parts:
-+
- 1. Understanding Store traits
- 2. Using the Test Suite
- 
- These topics are covered in more detail in their respective pages, but here we will provide a brief overview.
- 
- ## Understanding Store Traits
- 
--GlueSQL is available in both Rust and JavaScript environments, with plans to expand its support to other languages. Since the GlueSQL project itself is written in Rust, using Rust is essential for developing custom storages. To create a custom storage, you need to implement the Store traits provided by GlueSQL. There are currently 9 traits:
--
--* `Store` - A trait for read operations to support SELECT queries.
--* `StoreMut` - A trait for modifying data, such as INSERT, UPDATE, and DELETE.
--* `AlterTable` - A trait for supporting schema changes.
--* `Transaction` - A trait for supporting transactions.
--* `CustomFunction` - A trait for supporting user-level custom functions.
--* `CustomFunctionMut` - A trait for creating or deleting user-level custom functions.
--* `Index` - A trait for supporting non-clustered indexes. This trait allows you to process pre-registered indexes.
--* `IndexMut` - A trait for creating or deleting non-clustered indexes.
--* `Metadata` - A trait for querying metadata.
-+A Rust storage implements these traits:
- 
--To develop a custom storage, you can implement these 9 traits. Although this may seem like a lot of work, don't worry. All traits except for `Store` and `StoreMut` are optional. In other words, you don't have to implement them. If you don't want to support the `AlterTable` trait, simply don't implement it. It's that simple.
-+* `Store` - Reads schemas and rows.
-+* `StoreMut` - Writes schemas and rows.
-+* `AlterTable` - Changes table schemas.
-+* `Transaction` - Begins, commits, and rolls back transactions.
-+* `CustomFunction` - Reads user-defined functions.
-+* `CustomFunctionMut` - Creates and deletes user-defined functions.
-+* `Index` - Reads rows through secondary indexes.
-+* `IndexMut` - Creates and drops secondary indexes.
-+* `Metadata` - Returns table metadata.
-+* `Planner` - Plans queries.
- 
--Furthermore, if you only want to support SELECT queries, you don't need to implement `StoreMut`. By implementing only the `Store` trait, you can create a custom storage that supports SQL SELECT queries.
-+`Store` requires four read methods. For the other traits, start with empty implementations and override the methods your storage needs. For example, `impl Planner for MyStorage {}` uses GlueSQL's default planner. Each trait's page describes its defaults.
- 
- ## Using the Test Suite
- 
--The minimum requirement for developing a custom storage is implementing the Store traits. However, you may want to verify that your implementation is correct. That's where the Test Suite comes in.
--
--GlueSQL provides a test case library to make it easy to validate custom storage development. Developers can implement the desired Store traits and use the Test Suite to verify that their implementation is correct. The line coverage of GlueSQL's core project is almost 99%, which means that passing the Test Suite alone can complete most of the feature verification. All you need to do is ensure your custom storage passes the Test Suite and write additional tests for any specialized features specific to your storage.
-\ No newline at end of file
-+The [Test Suite](using-test-suite.md) provides shared tests for the SQL features your storage supports. You can add tests for behavior specific to your implementation, such as persistence across restarts or transaction isolation.
-```
-
-**File**: `docs/docs/storages/developing-custom-storages/store-traits/alter-table.md` (modified, +2/-2)
-```diff
-@@ -4,9 +4,9 @@ sidebar_position: 3
- 
- # AlterTable
- 
--The `AlterTable` trait corresponds to the SQL ALTER TABLE statement and is used for modifying existing schemas. It is not necessary to implement the `AlterTable` trait. If you are dealing with data that is difficult to modify schema-wise or schemaless data, there is no need to implement the `AlterTable` trait. It is an optional trait that custom storage developers can choose to implement.
-+`AlterTable` handles SQL ALTER TABLE statements. Its default methods use `Store` and `StoreMut`. Override them for storage-specific schema changes, such as updating secondary indexes.
- 
--Similar to the `Store` & `StoreMut` combination, if you implement the `AlterTable` trait, you can use additional tests in the Test Suite to verify your implementation. There are currently four types of methods supported by `AlterTable`:
-+It provides four methods:
- 
- 1. `rename_schema`: Corresponds to the SQL statement `ALTER TABLE {table-name} RENAME TO {other-name};`. This method renames a schema.
- 
-```
-
-**File**: `docs/docs/storages/developing-custom-storages/store-traits/custom-function.md` (modified, +3/-3)
-```diff
-@@ -4,11 +4,11 @@ sidebar_position: 5
- 
- # CustomFunction
- 
--The `CustomFunction` trait is an optional trait for supporting user-level custom functions. Through the `CustomFunction` trait, you can retrieve custom functions stored in the storage system. You can choose to implement the `CustomFunction` trait alone or together with the `CustomFunctionMut` trait.
-+`CustomFunction` reads user-defined functions from storage. Override its methods to expose functions; their defaults return unsupported errors.
- 
--In some cases, you might want to provide storage-specific functions pre-built and separately available for each storage system. In such cases, you can implement the `CustomFunction` trait and create additional functions stored in advance when using it. To achieve this, the `CustomFunction` and `CustomFunctionMut` traits are provided separately for implementation.
-+For example, a storage can provide a fixed set of functions through `CustomFunction`. Use `CustomFunctionMut` to support creating and deleting functions.
- 
--There are two methods available:
-+It provides two methods:
- 
- 1. `fetch_function`: This method retrieves a custom function from the storage system using the provided function name.
- 
-```
-
-**File**: `docs/docs/storages/developing-custom-storages/store-traits/index-mut.md` (modified, +1/-7)
-```diff
-@@ -4,11 +4,7 @@ sidebar_position: 8
- 
- # IndexMut
- 
--The `IndexMut` trait, when implemented along with the `Index` trait, allows custom storage developers to provide users with the ability to create, use, and delete non-clustered indexes. Implementing the `IndexMut` trait enhances the storage system's capabilities by providing support for dynamic index management.
--
--Non-clustered indexes can improve query performance by reducing the amount of data that needs to be read during search operations. Users can create multiple non-clustered indexes tailored to their specific use cases, providing a more efficient and optimized experience when working with large datasets.
--
--The `IndexMut` trait requires the implementation of two methods:
-+`IndexMut` creates and drops secondary indexes. Override its two methods to support CREATE INDEX and DROP INDEX; both return unsupported errors by default.
- 
- 1. `create_index`: This method creates a new non-clustered index on the specified column with a given index name for the provided table. The index can be used to speed up queries involving the indexed column.
- 
-@@ -26,5 +22,3 @@ pub trait IndexMut {
-     fn drop_index(&mut self, table_name: &str, index_name: &str) -> Result<()>;
+@@ -144,118 +142,6 @@ where
+     }
  }
- ```
+ 
+-fn assert_payload(actual: &Payload, expected: &Payload, context: &str) {
+-    match (actual, expected) {
+-        (
+-            Payload::Select {
+-                labels: actual_labels,
+-                rows: actual_rows,
+-            },
+-            Payload::Select {
+-                labels: expected_labels,
+-                rows: expected_rows,
+-            },
+-        ) => {
+-            pretty_assert_eq!(actual_labels, expected_labels, "{context}\nlabel mismatch");
+-            pretty_assert_eq!(
+-                actual_rows.len(),
+-                expected_rows.len(),
+-                "{context}\nrow count mismatch"
+-            );
 -
--By implementing both the `Index` and `IndexMut` traits, custom storage developers can provide users with the ability to manage non-clustered indexes according to their specific needs, improving overall query performance and providing a more tailored experience.
+-            for (row_index, (actual_row, expected_row)) in
+-                actual_rows.iter().zip(expected_rows).enumerate()
+-            {
+-                pretty_assert_eq!(
+-                    actual_row.len(),
+-                    expected_row.len(),
+-                    "{context}\ncolumn count mismatch in row {row_index}"
+-                );
+-
+-                for (column_index, (actual, expected)) in
+-                    actual_row.iter().zip(expected_row).enumerate()
+-                {
+-                    let label = &expected_labels[column_index];
+-                    assert_value(
+-                        actual,
+-                        expected,
+-                        &format!(
+-                            "{context}\nvalue mismatch in row {row_index}, column {column_index} ({label})"
+-                        ),
+-                    );
+-                }
+-            }
+-        }
+-        (Payload::SelectMap(actual_rows), Payload::SelectMap(expected_rows)) => {
+-            pretty_assert_eq!(
+-                actual_rows.len(),
+-                expected_rows.len(),
+-                "{context}\nrow count mismatch"
+-            );
+-
+-            for (row_index, (actual, expected)) in actual_rows.iter().zip(expected_rows).enumerate()
+-            {
+-                assert_value(
+-                    &Value::Map(actual.clone()),
+-                    &Value::Map(expected.clone()),
+-                    &format!("{context}\nvalue mismatch in map row {row_index}"),
+-                );
+-            }
+-        }
+-        _ => pretty_assert_eq!(actual, expected, "{context}\npayload mismatch"),
+-    }
+-}
+-
+-fn assert_value(actual: &Value, expected: &Value, context: &str) {
+-    match (actual, expected) {
+-        (Value::F32(actual), Value::F32(expected)) => {
+-            assert_float(
+-                f64::from(*actual),
+-                f64::from(*expected),
+-                F32_TOLERANCE,
+-                context,
+-            );
+-        }
+-        (Value::F64(actual), Value::F64(expected)) => {
+-            assert_float(*actual, *expected, F64_TOLERANCE, context);
+-        }
+-        (Value::Map(actual), Value::Map(expected)) => {
+-            let actual_keys = actual.keys().collect::<Vec<_>>();
+-            let expected_keys = expected.keys().collect::<Vec<_>>();
+-            pretty_assert_eq!(actual_keys, expected_keys, "{context}\nmap key mismatch");
+-
+-            for (key, expected) in expected {
+-                assert_value(&actual[key], expected, &format!("{context}, key {key:?}"));
+-            }
+-        }
+-        (Value::List(actual), Value::List(expected)) => {
+-            pretty_assert_eq!(
+-                actual.len(),
+-                expected.len(),
+-                "{context}\nlist length mismatch"
+-            );
+-
+-            for (index, (actual, expected)) in actual.iter().zip(expected).enumerate() {
+-                assert_value(actual, expected, &format!("{context}, list index {index}"));
+-            }
+-        }
+-        _ => pretty_assert_eq!(actual, expected, "{context}"),
+-    }
+-}
+-
+-fn assert_float(actual: f64, expected: f64, tolerance: f64, context: &str) {
+-    let matches = (actual.is_nan() && expected.is_nan())
+-        || actual == expected
+-        || (actual.is_finite()
+-            && expected.is_finite()
+-            && (actual - expected).abs() <= tolerance * actual.abs().max(expected.abs()).max(1.0));
+-
+-    assert!(
+-        matches,
+-        "{context}\nexpected {expected:?}, found {actual:?}, tolerance {tolerance:e}"
+-    );
+-}
+-
+ fn assert_indexes_with_context(
+     statement: &gluesql_core::plan::StatementPlan,
+     indexes: Vec<TableAccessPlan>,
+@@ -1061,33 +947,6 @@ SELECT * FROM Example;
+         assert!(rows.is_empty());
+     }
+ 
+-    #[test]
+-    fn compares_float_values_with_toler
 ```
 
-**File**: `docs/docs/storages/developing-custom-storages/store-traits/index-trait.md` (modified, +3/-9)
+**File**: `test-suite/src/query_builder.rs` (modified, +6/-0)
 ```diff
-@@ -4,17 +4,11 @@ sidebar_position: 7
+@@ -1,3 +1,9 @@
++macro_rules! test {
++    ($actual:expr, $expected:expr, $name:literal $(,)?) => {
++        $crate::tester::assertions::assert_result(&$actual, &$expected, &format!($name));
++    };
++}
++
+ pub mod alias_as;
+ pub mod basic;
+ pub mod delete;
+```
+
+**File**: `test-suite/src/query_builder/alias_as.rs` (modified, +26/-21)
+```diff
+@@ -13,7 +13,7 @@ test_case!(alias_as, {
+         .add_column("category_name TEXT")
+         .execute(glue);
+     let expected = Ok(Payload::Create);
+-    assert_eq!(actual, expected, "create table - Category");
++    test!(actual, expected, "create table - Category");
  
- # Index
+     // create table - Item
+     let actual = table("Item")
+@@ -24,15 +24,15 @@ test_case!(alias_as, {
+         .add_column("price INTEGER")
+         .execute(glue);
+     let expected = Ok(Payload::Create);
+-    assert_eq!(actual, expected, "create table - Item");
++    test!(actual, expected, "create table - Item");
  
--The `Index` trait is designed to support non-clustered indexes. If you only need to support pre-built non-clustered indexes, implementing the `Index` trait without the `IndexMut` trait is sufficient. Note that clustered indexes (PRIMARY KEY) are automatically supported by the `Store` & `StoreMut` implementations. The `Index` trait is specifically for non-clustered index support.
-+`Index` reads rows using the secondary index selected in the query plan. Implement `scan_indexed_data` to support index lookups; the default returns an unsupported error.
+     // insert into Category
+     let actual = table("Category")
+         .insert()
+         .values(vec!["1, 'Fruit'", "2, 'Meat'", "3, 'Drink'"])
+         .execute(glue);
+     let expected = Ok(Payload::Insert(3));
+-    assert_eq!(actual, expected, "insert into Category");
++    test!(actual, expected, "insert into Category");
  
--Currently, GlueSQL's query planner only supports a logical planner, so the performance of finding non-clustered indexes is not optimal yet, but it is being improved. If you want to use non-clustered indexes more precisely, using the Query Builder to directly specify the index you want to use can be a good approach.
-+Primary-key lookups use `Store` and do not need secondary-index support.
+     // insert into Item
+     let actual = table("Item")
+@@ -46,7 +46,7 @@ test_case!(alias_as, {
+         ])
+         .execute(glue);
+     let expected = Ok(Payload::Insert(5));
+-    assert_eq!(actual, expected, "insert into Item");
++    test!(actual, expected, "insert into Item");
  
--A brief explanation of non-clustered and clustered indexes:
--
--- Non-clustered index: A non-clustered index is an index that doesn't affect the physical ordering of the data rows in the table. Instead, it maintains a separate data structure that contains a reference to the actual data rows, allowing for faster search operations without rearranging the data itself.
--
--- Clustered index: A clustered index determines the physical order of the data in the table. In other words, the data rows are stored on disk in the same order as the index. There can be only one clustered index per table, which is usually defined by the PRIMARY KEY constraint.
--
--There is one method to implement for the `Index` trait:
-+It provides one method:
+     // select -> derived subquery
+     let actual = table("Item")
+@@ -63,7 +63,7 @@ test_case!(alias_as, {
+         400        3             "Coffee".to_owned()         25;
+         500        3             "Orange juice".to_owned()   60
+     ));
+-    assert_eq!(actual, expected, "select -> derived subquery");
++    test!(actual, expected, "select -> derived subquery");
  
- 1. `scan_indexed_data`: This method retrieves indexed data from the storage system using the provided table name, index name, sorting order, and comparison value.
+     // select -> filter -> derived subquery
+     let actual = table("Item")
+@@ -77,7 +77,7 @@ test_case!(alias_as, {
+         I64      | I64         | Str                     | I64;
+         300        1             "Strawberry".to_owned()   30
+     ));
+-    assert_eq!(actual, expected, "select -> filter -> derived subquery");
++    test!(actual, expected, "select -> filter -> derived subquery");
  
+     // select -> project -> derived subquery
+     let actual = table("Item")
+@@ -95,7 +95,7 @@ test_case!(alias_as, {
+         400;
+         500
+     ));
+-    assert_eq!(actual, expected, "select -> project -> derived subquery");
++    test!(actual, expected, "select -> project -> derived subquery");
+ 
+     // select -> join(cartesian) -> derived subquery
+     let actual = table("Item")
+@@ -124,8 +124,9 @@ test_case!(alias_as, {
+         500       3             "Orange juice".to_owned()   60      2             "Meat".to_owned();
+         500       3             "Orange juice".to_owned()   60      3             "Drink".to_owned()
+     ));
+-    assert_eq!(
+-        actual, expected,
++    test!(
++        actual,
++        expected,
+         "select -> join(cartesian) -> derived subquery"
+     );
+ 
+@@ -149,7 +150,7 @@ test_case!(alias_as, {
+         "Coffee".to_owned()         "Drink".to_owned();
+         "Orange juice".to_owned()   "Drink".to_owned()
+     ));
+-    assert_eq!(actual, expected, "select -> join -> on -> derived subquery");
++    test!(actual, expected, "select -> join -> on -> derived subquery");
+ 
+     // select -> join -> hash -> derived subquery
+     let actual = table("Item")
+@@ -170,8 +171,9 @@ test_case!(alias_as, {
+         "Coffee".to_owned()         "Drink".to_owned();
+         "Orange juice".to_owned()   "Drink".to_owned()
+     ));
+-    assert_eq!(
+-        actual, expected,
++    test!(
++        actual,
++        expected,
+         "select -> join -> hash -> derived subquery"
+     );
+ 
+@@ -192,8 +194,9 @@ test_case!(alias_as, {
+         "Meat".to_owned();
+         "Drink".to_owned()
+     ));
+-    assert_eq!(
+-        actual, expected,
++    test!(
++        actual,
++        expected,
+         "select -> project -> derived subquery -> select -> group_by -> derived subquery"
+     );
+ 
+@@ -213,8 +216,9 @@ test_case!(alias_as, {
+         Str;
+         "Meat".to_owned()
+     ));
+-    assert_eq!(
+-        actual, expected,
++    test!(
++        actual,
++        expected,
+         "select -> project -> derived subquery -> select -> group_by -> having -> derived subquery"
+     );
+ 
+@@ -234,7 +238,7 @@ test_case!(alias_as, {
+         300        1             "Strawberry".to_owned()     30;
+         400        3             "Coffee".to_owned()         25
+     ));
+-    assert_eq!(actual, expected, "select -> order_by -> derived subquery");
++    test!(actual, expected, "select -> order_by -> derived subquery");
+ 
+     // select -> offset -> derived subquery
+     let actual = table("Item")
+@@ -248,7 +252,7 @@ test_case!(alias_as, {
+         I64      | I64         | Str                       | I64;
+         500        3             "Orange juice".to_owned()   60
+     ));
+-    assert_eq!(actual, expected, "select -> offset -> derived subquery");
++    test!(actual, expected, "select -> offset -> derived subquery");
+ 
+     // select -> limit -> derived subquery
+     let actual = table("Item")
+@@ -262,7 +266,7 @@ test_case!(alias_as, {
+         I64      | I64    
+```
+
+**File**: `test-suite/src/query_builder/basic.rs` (modified, +9/-9)
+```diff
+@@ -12,7 +12,7 @@ test_case!(basic, {
+         .add_column("name TEXT")
+         .execute(glue);
+     let expected = Ok(Payload::Create);
+-    assert_eq!(actual, expected, "create table");
++    test!(actual, expected, "create table");
+ 
+     let actual = table("Foo")
+         .insert()
+@@ -23,7 +23,7 @@ test_case!(basic, {
+         ])
+         .execute(glue);
+     let expected = Ok(Payload::Insert(2));
+-    assert_eq!(actual, expected, "insert");
++    test!(actual, expected, "insert");
+ 
+     let actual = table("Foo").select().project("id, name").execute(glue);
+     let expected = Ok(select!(
+@@ -32,15 +32,15 @@ test_case!(basic, {
+         100   "Pickle".to_owned();
+         200   "Lemon".to_owned()
+     ));
+-    assert_eq!(actual, expected, "select");
++    test!(actual, expected, "select");
+ 
+     let actual = table("Foo")
+         .update()
+         .filter(col("id").eq(200))
+         .set("id", col("id").mul(2))
+         .execute(glue);
+     let expected = Ok(Payload::Update(1));
+-    assert_eq!(actual, expected, "update");
++    test!(actual, expected, "update");
+ 
+     let actual = table("Foo")
+         .select()
+@@ -52,31 +52,31 @@ test_case!(basic, {
+         I64 | Str;
+         400   "Lemon".to_owned()
+     ));
+-    assert_eq!(actual, expected, "select after update");
++    test!(actual, expected, "select after update");
+ 
+     let actual = table("Foo")
+         .delete()
+         .filter(col("id").gt(200))
+         .execute(glue);
+     let expected = Ok(Payload::Delete(1));
+-    assert_eq!(actual, expected, "delete");
++    test!(actual, expected, "delete");
+ 
+     let actual = table("Foo").select().execute(glue);
+     let expected = Ok(select!(
+         id  | name
+         I64 | Str;
+         100   "Pickle".to_owned()
+     ));
+-    assert_eq!(actual, expected, "select after delete");
++    test!(actual, expected, "select after delete");
+ 
+     let actual = table("Foo").drop_table().execute(glue);
+     let expected = Ok(Payload::DropTable(1));
+-    assert_eq!(actual, expected, "drop table");
++    test!(actual, expected, "drop table");
+ 
+     let actual = table("Foo")
+         .select()
+         .filter(num("NAN").gt(300))
+         .execute(glue);
+     let expected = Err(QueryBuilderError::FailedToParseNumeric("NAN".to_owned()).into());
+-    assert_eq!(actual, expected, "error");
++    test!(actual, expected, "error");
+ });
+```
+
+**File**: `test-suite/src/query_builder/delete.rs` (modified, +7/-7)
+```diff
+@@ -13,7 +13,7 @@ test_case!(delete, {
+         .add_column("flag BOOLEAN")
+         .execute(glue);
+     let expected = Ok(Payload::Create);
+-    assert_eq!(actual, expected, "create table - Foo");
++    test!(actual, expected, "create table - Foo");
+ 
+     let actual = table("Foo")
+         .insert()
+@@ -24,7 +24,7 @@ test_case!(delete, {
+         ])
+         .execute(glue);
+     let expected = Ok(Payload::Insert(3));
+-    assert_eq!(actual, expected, "insert into Foo");
++    test!(actual, expected, "insert into Foo");
+ 
+     let actual = table("Foo").select().execute(glue);
+     let expected = Ok(select!(
+@@ -34,15 +34,15 @@ test_case!(delete, {
+         2     300     false;
+         3     700     true
+     ));
+-    assert_eq!(actual, expected, "select * from Foo");
++    test!(actual, expected, "select * from Foo");
+ 
+     // delete using filter
+     let actual = table("Foo")
+         .delete()
+         .filter(col("flag").eq(false))
+         .execute(glue);
+     let expected = Ok(Payload::Delete(1));
+-    assert_eq!(actual, expected, "delete using filter");
++    test!(actual, expected, "delete using filter");
+ 
+     let actual = table("Foo").select().execute(glue);
+     let expected = Ok(select!(
+@@ -51,17 +51,17 @@ test_case!(delete, {
+         1     100     true;
+         3     700     true
+     ));
+-    assert_eq!(actual, expected, "select * from Foo");
++    test!(actual, expected, "select * from Foo");
+ 
+     // delete all
+     let actual = table("Foo").delete().execute(glue);
+     let expected = Ok(Payload::Delete(2));
+-    assert_eq!(actual, expected, "delete all");
++    test!(actual, expected, "delete all");
+ 
+     let actual = table("Foo").select().execute(glue);
+     let expected = Ok(Payload::Select {
+         labels: vec!["id".to_owned(), "score".to_owned(), "flag".to_owned()],
+         rows: vec![],
+     });
+-    assert_eq!(actual, expected, "select * from Foo");
++    test!(actual, expected, "select * from Foo");
+ });
+```
+
+**File**: `test-suite/src/query_builder/expr/pattern_matching.rs` (modified, +10/-10)
+```diff
+@@ -13,15 +13,15 @@ test_case!(pattern_matching, {
+         .add_column("name TEXT")
+         .execute(glue);
+     let expected = Ok(Payload::Create);
+-    assert_eq!(actual, expected, "create table - Category");
++    test!(actual, expected, "create table - Category");
+ 
+     // insert into Category
+     let actual = table("Category")
+         .insert()
+         .values(vec!["1, 'Meat'", "2, 'meat'", "3, 'Drink'", "4, 'drink'"])
+         .execute(glue);
+     let expected = Ok(Payload::Insert(4));
+-    assert_eq!(actual, expected, "insert into - Category");
++    test!(actual, expected, "insert into - Category");
+ 
+     // like
+     let actual = table("Category")
+@@ -38,7 +38,7 @@ test_case!(pattern_matching, {
+         1     "Meat".to_owned();
+         3     "Drink".to_owned()
+     ));
+-    assert_eq!(actual, expected, "like");
++    test!(actual, expected, "like");
+ 
+     // ilike
+     let actual = table("Category")
+@@ -57,7 +57,7 @@ test_case!(pattern_matching, {
+         3     "Drink".to_owned();
+         4     "drink".to_owned()
+     ));
+-    assert_eq!(actual, expected, "ilike");
++    test!(actual, expected, "ilike");
+ 
+     // not_like
+     let actual = table("Category")
+@@ -74,7 +74,7 @@ test_case!(pattern_matching, {
+         2     "meat".to_owned();
+         4     "drink".to_owned()
+     ));
+-    assert_eq!(actual, expected, "not_like");
++    test!(actual, expected, "not_like");
+ 
+     // not_ilike
+     let actual = table("Category")
+@@ -89,7 +89,7 @@ test_case!(pattern_matching, {
+         labels: vec!["id".to_owned(), "name".to_owned()],
+         rows: vec![],
+     });
+-    assert_eq!(actual, expected, "not_ilike");
++    test!(actual, expected, "not_ilike");
+ 
+     // regex
+     let actual = table("Category")
+@@ -101,7 +101,7 @@ test_case!(pattern_matching, {
+         I64 | Str;
+         1     "Meat".to_owned()
+     ));
+-    assert_eq!(actual, expected, "regex");
++    test!(actual, expected, "regex");
+ 
+     // iregex
+     let actual = table("Category")
+@@ -114,7 +114,7 @@ test_case!(pattern_matching, {
+         1     "Meat".to_owned();
+         2     "meat".to_owned()
+     ));
+-    assert_eq!(actual, expected, "iregex");
++    test!(actual, expected, "iregex");
+ 
+     // not_regex
+     let actual = table("Category")
+@@ -128,7 +128,7 @@ test_case!(pattern_matching, {
+         3     "Drink".to_owned();
+         4     "drink".to_owned()
+     ));
+-    assert_eq!(actual, expected, "not_regex");
++    test!(actual, expected, "not_regex");
+ 
+     // not_iregex
+     let actual = table("Category")
+@@ -139,5 +139,5 @@ test_case!(pattern_matching, {
+         labels: vec!["id".to_owned(), "name".to_owned()],
+         rows: vec![],
+     });
+-    assert_eq!(actual, expected, "not_iregex");
++    test!(actual, expected, "not_iregex");
+ });
+```
+
+**File**: `test-suite/src/query_builder/function/datetime/conversion.rs` (modified, +5/-5)
+```diff
+@@ -20,7 +20,7 @@ test_case!(conversion, {
+         .add_column("visit_time_stamp TEXT")
+         .execute(glue);
+     let expected = Ok(Payload::Create);
+-    assert_eq!(actual, expected, "create table - Visitor");
++    test!(actual, expected, "create table - Visitor");
+ 
+     let actual = table("Visitor")
+         .insert()
+@@ -30,7 +30,7 @@ test_case!(conversion, {
+         ])
+         .execute(glue);
+     let expected = Ok(Payload::Insert(2));
+-    assert_eq!(actual, expected, "insert - Visitor");
++    test!(actual, expected, "insert - Visitor");
+ 
+     // Date
+     let actual = table("Visitor")
+@@ -46,7 +46,7 @@ test_case!(conversion, {
+         1    "Bryanna".to_owned()   NaiveDate::from_ymd_opt(2022, 12, 23).unwrap()   NaiveDate::from_ymd_opt(2022, 12, 23).unwrap();
+         2    "Ash".to_owned()       NaiveDate::from_ymd_opt(2023, 4, 1).unwrap()     NaiveDate::from_ymd_opt(2023, 4, 1).unwrap()
+     ));
+-    assert_eq!(actual, expected, "to_date");
++    test!(actual, expected, "to_date");
+ 
+     // Time
+     let actual = table("Visitor")
+@@ -62,7 +62,7 @@ test_case!(conversion, {
+         1    "Bryanna".to_owned()   NaiveTime::from_hms_opt(13, 5, 26).unwrap()   NaiveTime::from_hms_opt(13, 5, 26).unwrap();
+         2    "Ash".to_owned()       NaiveTime::from_hms_opt(23, 24, 11).unwrap()  NaiveTime::from_hms_opt(23, 24, 11).unwrap()
+     ));
+-    assert_eq!(actual, expected, "to_time");
++    test!(actual, expected, "to_time");
+ 
+     // Timestamp
+     let actual = table("Visitor")
+@@ -78,5 +78,5 @@ test_case!(conversion, {
+         1    "Bryanna".to_owned()    NaiveDate::from_ymd_opt(2022, 12, 23).unwrap().and_hms_opt(13, 5, 26).unwrap()   NaiveDate::from_ymd_opt(2022, 12, 23).unwrap().and_hms_opt(13, 5, 26).unwrap();
+         2    "Ash".to_owned()        NaiveDate::from_ymd_opt(2023, 4, 1).unwrap().and_hms_opt(23, 24, 11).unwrap()    NaiveDate::from_ymd_opt(2023, 4, 1).unwrap().and_hms_opt(23, 24, 11).unwrap()
+     ));
+-    assert_eq!(actual, expected, "to_timestamp");
++    test!(actual, expected, "to_timestamp");
+ });
+```
+
+**File**: `test-suite/src/query_builder/function/datetime/current_date_and_time.rs` (modified, +3/-3)
+```diff
+@@ -21,7 +21,7 @@ test_case!(current_date_and_time, {
+         .add_column("time_stamp TIMESTAMP")
+         .execute(glue);
+     let expected = Ok(Payload::Create);
+-    assert_eq!(actual, expected, "create table - Record");
++    test!(actual, expected, "create table - Record");
+ 
+     let actual = table("Record")
+         .insert()
+@@ -32,7 +32,7 @@ test_case!(current_date_and_time, {
+         ])
+         .execute(glue);
+     let expected = Ok(Payload::Insert(3));
+-    assert_eq!(actual, expected, "insert - Record");
++    test!(actual, expected, "insert - Record");
+ 
+     // Now
+     let actual = table("Record")
+@@ -45,5 +45,5 @@ test_case!(current_date_and_time, {
+         I64 | Timestamp;
+         3     t!("9999-12-31T23:59:40.364832862")
+     ));
+-    assert_eq!(actual, expected, "now");
++    test!(actual, expected, "now");
+ });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2075** (2026-11-11): Unify Query Builder result assertions (@panarch)
+- **PR #2074** (2026-11-11): Simplify numeric samples in floating-point examples (@panarch)
+- **PR #2073** (2026-11-11): Stop publishing coverage reports to gluesql.org (@panarch)
+- **PR #2072** (2026-11-11): Plan source columns for projected storage scans (@panarch)
 - **PR #2071** (2026-11-09): Clarify test responsibilities and maintenance costs (@panarch)
 - **PR #2070** (2026-11-09): Update storage guides and automate README release links (@panarch)
-- **PR #2068** (2026-11-09): Add SlateDB storage backed by object stores (@panarch)
-- **PR #2067** (2026-11-08): Align transaction variable names in the redb I/O error test (@panarch)
-- **PR #2066** (2026-11-08): Remove deprecated Sled storage (@panarch)
-- **PR #2065** (2026-11-08): Decouple CLI SQL dump from Sled storage (@panarch)
 
 ---
 
@@ -2352,40 +2700,60 @@ to the matching release documentation.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update storage guides and automate README release links (#2070)
+## X. Unify Query Builder result assertions (#2075)
 
 **RULE**:
-When implementing operations in `.github/workflows/prepare-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test-suite/src/fixture.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0d26db2`: Update storage guides and automate README release links (#2070). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fce8d5b9`: Unify Query Builder result assertions (#2075). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/prepare-release.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test-suite/src/fixture.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-          python3 - "${NEW_VERSION#v}" <<'PY'
-          import re
-          import sys
-          from pathlib import Path
-
-          readme = Path("README.md")
-          content = readme.read_text()
-          pattern = r"https://gluesql\.org/docs/(?:dev|[0-9][0-9A-Za-z.+-]*)/"
-          content = re.sub(pattern, f"https://gluesql.org/docs/{sys.argv[1]}/", content)
-          readme.write_text(content)
-          PY
-
+    crate::{Tester, test_indexes, tester::assertions::assert_payload},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    crate::{Tester, test_indexes},
+const F32_TOLERANCE: f64 = 1e-6;
+const F64_TOLERANCE: f64 = 1e-12;
+fn assert_payload(actual: &Payload, expected: &Payload, context: &str) {
+    match (actual, expected) {
+        (
+            Payload::Select {
+                labels: actual_labels,
+                rows: actual_rows,
+            },
+            Payload::Select {
+                labels: expected_labels,
+                rows: expected_rows,
+            },
+        ) => {
+            pretty_assert_eq!(actual_labels, expected_labels, "{context}\nlabel mismatch");
+            pretty_assert_eq!(
+                actual_rows.len(),
+                expected_rows.len(),
+                "{context}\nrow count mismatch"
+            );
+
+            for (row_index, (actual_row, expected_row)) in
+                actual_rows.iter().zip(expected_rows).enumerate()
+            {
+                pretty_assert_eq!(
+                    actual_row.len(),
+                    expected_row.len(),
+                    "{context}\ncolumn count mismatch in row {row_index}"
+                );
+
+                for (column_index, (actual, expected)) in
+                    actual_row.iter().zip(expected_row).enumerat
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0d26db2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fce8d5b9` are properly handled with clean fallback behavior.

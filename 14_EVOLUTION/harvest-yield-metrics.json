@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T01:12:10.862Z",
-  "total_cycles_completed": 8866,
-  "total_learnings_persisted": 8866,
-  "total_rules_promoted": 8720,
+  "last_updated": "2026-11-12T01:23:37.422Z",
+  "total_cycles_completed": 8870,
+  "total_learnings_persisted": 8870,
+  "total_rules_promoted": 8723,
   "history": [
-    {
-      "timestamp": "2026-11-10T00:59:51.662Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T01:02:32.910Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T01:19:18.363Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T01:19:26.295Z",
-      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T01:19:28.796Z",
       "repository": "sigstore/cosign",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T01:12:10.862Z",
       "repository": "karmada-io/karmada",
       "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:23:10.426Z",
+      "repository": "LiquidAI/LFM3-Audio-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:23:29.064Z",
+      "repository": "XcodesOrg/XcodesApp",
+      "learningId": "learn-github-xcodesorg-xcodesapp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:23:32.222Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:23:37.422Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "7490cf4b",
+    "sourceVersion": "42846c40",
     "license": "Apache-2.0",
-    "contentHash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
-    "lastHarvestedAt": "2026-11-09T15:51:36.447Z",
+    "contentHash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
+    "lastHarvestedAt": "2026-11-12T01:23:32.213Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "fc736e32",
+    "sourceVersion": "fce8d5b9",
     "license": "Apache-2.0",
-    "contentHash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
-    "lastHarvestedAt": "2026-11-09T14:18:11.096Z",
+    "contentHash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
+    "lastHarvestedAt": "2026-11-12T01:23:37.416Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -7903,10 +7903,10 @@
     "repository": "XcodesOrg/XcodesApp",
     "platform": "github",
     "sourceUrl": "https://github.com/XcodesOrg/XcodesApp",
-    "sourceVersion": "45722c72",
+    "sourceVersion": "9836fd83",
     "license": "MIT",
-    "contentHash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
-    "lastHarvestedAt": "2026-10-19T11:35:13.750Z",
+    "contentHash": "9564bc00ea98fe65773b3ab2c93adb74729cbb8ae1378cf00b62cc4ad8be55b2",
+    "lastHarvestedAt": "2026-11-12T01:23:29.022Z",
     "learningId": "learn-github-xcodesorg-xcodesapp"
   },
   "lapce-lapce": {
@@ -11565,8 +11565,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
     "sourceVersion": "hf-liquidai-lfm3-audio-2b",
     "license": "Open-Source",
-    "contentHash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
-    "lastHarvestedAt": "2026-11-07T03:02:03.063Z",
+    "contentHash": "d39ed7a70db5c3766e0a3ba00bc239d1d9993505b2ad0040067dc7ff9c3b9aef",
+    "lastHarvestedAt": "2026-11-12T01:23:10.421Z",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b"
   },
   "mobile-next-mobile-mcp": {

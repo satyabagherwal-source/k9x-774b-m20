@@ -9034,3 +9034,8 @@ Every entry in this ledger must capture:
 | `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `6d8580a0` | Multi-dimensional audit evidence | 2026-11-12T01:12:06.365Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `fa001f3a` | Multi-dimensional audit evidence | 2026-11-12T01:12:10.842Z |
 | `learn-dom-d-1a1383cc` | `project://hf-zyphra-zonos3-mini` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | 2026-11-12T01:12:31.449Z |
+| `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-12T01:23:10.421Z |
+| `learn-github-xcodesorg-xcodesapp` | `https://github.com/XcodesOrg/XcodesApp` | `9836fd83` | Multi-dimensional audit evidence | 2026-11-12T01:23:29.022Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `42846c40` | Multi-dimensional audit evidence | 2026-11-12T01:23:32.213Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `fce8d5b9` | Multi-dimensional audit evidence | 2026-11-12T01:23:37.416Z |
+| `learn-dom-d-66b0e6dd` | `project://hf-liquidai-lfm3-audio-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | 2026-11-12T01:23:57.637Z |

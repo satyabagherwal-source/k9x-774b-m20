@@ -9025,3 +9025,8 @@
 | `CYCLE-20261112-RU8N` | `2026-11-12T01:12:06.359Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3789f30e...`) |
 | `CYCLE-20261112-RXP3` | `2026-11-12T01:12:10.839Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31149f03...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T01:12:31.449Z` | `hf-zyphra-zonos3-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1A1383CC` [Domain D] | Yes (`22181792...`) |
+| `CYCLE-20261112-62MP` | `2026-11-12T01:23:10.417Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | Yes (`d39ed7a7...`) |
+| `CYCLE-20261112-6GZD` | `2026-11-12T01:23:29.017Z` | `XcodesOrg/XcodesApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9564bc00...`) |
+| `CYCLE-20261112-6JG0` | `2026-11-12T01:23:32.208Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b97768bd...`) |
+| `CYCLE-20261112-6NGL` | `2026-11-12T01:23:37.413Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4a0631ff...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T01:23:57.637Z` | `hf-liquidai-lfm3-audio-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-66B0E6DD` [Domain D] | Yes (`72bb14f4...`) |
