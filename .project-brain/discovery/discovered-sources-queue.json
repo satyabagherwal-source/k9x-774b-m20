@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T03:30:59.333Z",
+  "updated_at": "2026-11-12T03:49:14.495Z",
   "stats": {
-    "total_discovered": 670,
-    "approved_pending_harvest": 613,
+    "total_discovered": 706,
+    "approved_pending_harvest": 648,
     "harvested_count": 0,
-    "rejected_count": 57,
+    "rejected_count": 58,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 629,
-      "OFFICIAL_DOCUMENTATION": 21,
+      "COMMUNITY_AND_EXPERT": 664,
+      "OFFICIAL_DOCUMENTATION": 22,
       "STANDARDS_AND_SPECIFICATIONS": 18,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 1
@@ -14358,6 +14358,791 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
         "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-119749674AE1": {
+      "id": "SRC-119749674AE1",
+      "url": "https://github.com/PeerDB-io/peerdb",
+      "title": "https://github.com/PeerDB-io/peerdb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-40E3659AE13C": {
+      "id": "SRC-40E3659AE13C",
+      "url": "https://github.com/aws/aws-sdk-go-v2/blob/feature/s3/transfermanager/v0.3.10/feature/s3/transfermanager/api_op_UploadObject.go",
+      "title": "https://github.com/aws/aws-sdk-go-v2/blob/feature/s3/transfermanager/v0.3.10/feature/s3/transfermanager/api_op_UploadObject.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-5765E1BB445B": {
+      "id": "SRC-5765E1BB445B",
+      "url": "https://hub.docker.com/u/minio/minio",
+      "title": "https://hub.docker.com/u/minio/minio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-AB33AABC5437": {
+      "id": "SRC-AB33AABC5437",
+      "url": "https://linear.app/clickhouse/issue/DBI-1316/classify-unhandled-postgres-qrep-error-child-table-block-count-null",
+      "title": "https://linear.app/clickhouse/issue/DBI-1316/classify-unhandled-postgres-qrep-error-child-table-block-count-null",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.407Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-DCC6E371890B": {
+      "id": "SRC-DCC6E371890B",
+      "url": "https://docs.cloud.google.com/storage/docs/retry-strategy",
+      "title": "https://docs.cloud.google.com/storage/docs/retry-strategy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-1BFF3C2B4364": {
+      "id": "SRC-1BFF3C2B4364",
+      "url": "https://redirect.github.com/temporalio/ui-server",
+      "title": "https://redirect.github.com/temporalio/ui-server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.412Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-AEF55A47124D": {
+      "id": "SRC-AEF55A47124D",
+      "url": "https://redirect.github.com/temporalio/ui-server/releases/tag/v2.58.0",
+      "title": "https://redirect.github.com/temporalio/ui-server/releases/tag/v2.58.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-7A5F6F2F1900": {
+      "id": "SRC-7A5F6F2F1900",
+      "url": "https://redirect.github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0",
+      "title": "https://redirect.github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-3326AD24B382": {
+      "id": "SRC-3326AD24B382",
+      "url": "https://redirect.github.com/temporalio/ui/releases/tag/v2.58.0",
+      "title": "https://redirect.github.com/temporalio/ui/releases/tag/v2.58.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-AA3397F6E89D": {
+      "id": "SRC-AA3397F6E89D",
+      "url": "https://redirect.github.com/rossnelson",
+      "title": "https://redirect.github.com/rossnelson",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-D4AA722C81C0": {
+      "id": "SRC-D4AA722C81C0",
+      "url": "https://redirect.github.com/temporalio/ui-server/pull/344",
+      "title": "https://redirect.github.com/temporalio/ui-server/pull/344",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-58067DC9D49E": {
+      "id": "SRC-58067DC9D49E",
+      "url": "https://github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0",
+      "title": "https://github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.426Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-E66A10ED484A": {
+      "id": "SRC-E66A10ED484A",
+      "url": "http://localhost:3030/",
+      "title": "http://localhost:3030/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:49:14.428Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-46078DFF8D76": {
+      "id": "SRC-46078DFF8D76",
+      "url": "https://github.com/apache/zookeeper",
+      "title": "https://github.com/apache/zookeeper",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.434Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-4AD1FB94E635": {
+      "id": "SRC-4AD1FB94E635",
+      "url": "https://github.com/apache/spark/blob/master/dev/merge_spark_pr.py",
+      "title": "https://github.com/apache/spark/blob/master/dev/merge_spark_pr.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.438Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-1696874856C7": {
+      "id": "SRC-1696874856C7",
+      "url": "https://issues.apache.org/jira/secure/ViewProfile.jspa",
+      "title": "https://issues.apache.org/jira/secure/ViewProfile.jspa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.440Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-2C4CFC129F62": {
+      "id": "SRC-2C4CFC129F62",
+      "url": "https://github.com/settings/tokens",
+      "title": "https://github.com/settings/tokens",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.443Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-502BD1D4C29F": {
+      "id": "SRC-502BD1D4C29F",
+      "url": "https://github.com/%s/%s/pull",
+      "title": "https://github.com/%s/%s/pull",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.445Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-14BACBAE10CE": {
+      "id": "SRC-14BACBAE10CE",
+      "url": "https://api.github.com/repos/%s/%s",
+      "title": "https://api.github.com/repos/%s/%s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-69907CC3703A": {
+      "id": "SRC-69907CC3703A",
+      "url": "https://issues.apache.org/jira/browse",
+      "title": "https://issues.apache.org/jira/browse",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-C35A9A199818": {
+      "id": "SRC-C35A9A199818",
+      "url": "https://issues.apache.org/jira",
+      "title": "https://issues.apache.org/jira",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-6FD3F5A77988": {
+      "id": "SRC-6FD3F5A77988",
+      "url": "https://api.github.com/repos/%7BPUSH_REMOTE_NAME",
+      "title": "https://api.github.com/repos/%7BPUSH_REMOTE_NAME",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-C2423E7A0DF2": {
+      "id": "SRC-C2423E7A0DF2",
+      "url": "https://github.com/user-attachments/assets/bf094caf-762f-45fe-bbc7-6be899d38f36",
+      "title": "https://github.com/user-attachments/assets/bf094caf-762f-45fe-bbc7-6be899d38f36",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-411D86357C3F": {
+      "id": "SRC-411D86357C3F",
+      "url": "https://github.com/user-attachments/assets/ab38ffd5-cd93-4332-bd5e-0727134b35f2",
+      "title": "https://github.com/user-attachments/assets/ab38ffd5-cd93-4332-bd5e-0727134b35f2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+        "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-B5BC9F2D2A6B": {
+      "id": "SRC-B5BC9F2D2A6B",
+      "url": "https://github.com/NucleoidAI/Nucleoid",
+      "title": "https://github.com/NucleoidAI/Nucleoid",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.469Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-B2391FDB79BE": {
+      "id": "SRC-B2391FDB79BE",
+      "url": "https://github.com/yahoo/serialize-javascript",
+      "title": "https://github.com/yahoo/serialize-javascript",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-54B697DE6A5D": {
+      "id": "SRC-54B697DE6A5D",
+      "url": "https://github.com/mochajs/mocha",
+      "title": "https://github.com/mochajs/mocha",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-9A1C390ED2AB": {
+      "id": "SRC-9A1C390ED2AB",
+      "url": "https://github.com/yahoo/serialize-javascript/releases",
+      "title": "https://github.com/yahoo/serialize-javascript/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-2AC28E548390": {
+      "id": "SRC-2AC28E548390",
+      "url": "https://redirect.github.com/yahoo/serialize-javascript/issues/173",
+      "title": "https://redirect.github.com/yahoo/serialize-javascript/issues/173",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-4162EAD70456": {
+      "id": "SRC-4162EAD70456",
+      "url": "https://redirect.github.com/yahoo/serialize-javascript/issues/171",
+      "title": "https://redirect.github.com/yahoo/serialize-javascript/issues/171",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.481Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-9795ECAF383F": {
+      "id": "SRC-9795ECAF383F",
+      "url": "https://redirect.github.com/yahoo/serialize-javascript/issues/146",
+      "title": "https://redirect.github.com/yahoo/serialize-javascript/issues/146",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.483Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-79A0A5FC40BD": {
+      "id": "SRC-79A0A5FC40BD",
+      "url": "https://redirect.github.com/yahoo/serialize-javascript/issues/164",
+      "title": "https://redirect.github.com/yahoo/serialize-javascript/issues/164",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.485Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-8ABE6A3CDAEF": {
+      "id": "SRC-8ABE6A3CDAEF",
+      "url": "https://github.com/yahoo/serialize-javascript/compare/v6.0.1...v6.0.2",
+      "title": "https://github.com/yahoo/serialize-javascript/compare/v6.0.1...v6.0.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.488Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-1D677881A717": {
+      "id": "SRC-1D677881A717",
+      "url": "https://github.com/dependabot",
+      "title": "https://github.com/dependabot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-C1536CB17620": {
+      "id": "SRC-C1536CB17620",
+      "url": "https://redirect.github.com/yahoo/serialize-javascript/pull/126",
+      "title": "https://redirect.github.com/yahoo/serialize-javascript/pull/126",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-0530D44B4B44": {
+      "id": "SRC-0530D44B4B44",
+      "url": "https://claude.ai/code/session_01AJtz8dK76dRFHqR3mPaGA6",
+      "title": "https://claude.ai/code/session_01AJtz8dK76dRFHqR3mPaGA6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:49:14.495Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
       }
     }
   }

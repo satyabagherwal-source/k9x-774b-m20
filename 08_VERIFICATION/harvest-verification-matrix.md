@@ -9062,3 +9062,6 @@
 | `CYCLE-20261112-HJ1A` | `2026-11-12T03:24:03.358Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`97bf868b...`) |
 | `CYCLE-20261112-Q77N` | `2026-11-12T03:30:47.939Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fae37663...`) |
 | `CYCLE-20261112-QBUT` | `2026-11-12T03:30:53.957Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9f910c02...`) |
+| `CYCLE-20261112-DDTP` | `2026-11-12T03:48:49.597Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`41bdfc7f...`) |
+| `CYCLE-20261112-DFK1` | `2026-11-12T03:48:51.841Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d500403e...`) |
+| `CYCLE-20261112-DSZO` | `2026-11-12T03:49:09.252Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0422ac87...`) |

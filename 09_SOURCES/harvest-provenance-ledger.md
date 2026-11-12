@@ -9071,3 +9071,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `fcc9870c` | Multi-dimensional audit evidence | 2026-11-12T03:24:03.363Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `d73d3cc5` | Multi-dimensional audit evidence | 2026-11-12T03:30:47.942Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `d1c0035f` | Multi-dimensional audit evidence | 2026-11-12T03:30:53.960Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `5dd643fb` | Multi-dimensional audit evidence | 2026-11-12T03:48:49.602Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `cc21315a` | Multi-dimensional audit evidence | 2026-11-12T03:48:51.844Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `ca8ac478` | Multi-dimensional audit evidence | 2026-11-12T03:49:09.255Z |

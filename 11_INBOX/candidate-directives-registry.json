@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:30:59.335Z",
+  "last_updated": "2026-11-12T03:49:14.467Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6019,6 +6019,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E95373-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D3C420",
+      "directive_title": "snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "peerdb-io-peerdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D3C420-snapshot-skip-child-tables-dropped-after.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-02CF89",
+      "directive_title": "Revert \"ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigExcepti",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-zookeeper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-02CF89-revert-zookeeper-4966-decouple-zkconfig-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C4C7F9",
+      "directive_title": "Draft NUC 106 Intersect and Except Reasoning Selections",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4C7F9-draft-nuc-106-intersect-and-except-reaso.md",
       "staged_date": "2026-11-12"
     }
   ]

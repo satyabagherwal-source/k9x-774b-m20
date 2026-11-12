@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T03:30:53.863Z",
+  "last_updated": "2026-11-12T03:49:09.143Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2711,14 +2711,19 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "61f8849c",
-      "content_hash": "35a7ef7e08a86d5d263726aa8ac854a4d56464e990c95193fdb02fe1d2052ba7",
+      "source_version": "5dd643fb",
+      "content_hash": "41bdfc7fc9fc362553fb53aa0be7f5521aa257012d23b7a4ef0d00c3889ef72d",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zo",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Revert \"ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigExcepti",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2762,7 +2767,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:29:34.224Z",
+      "verified_at": "2026-11-12T03:48:49.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48489,8 +48494,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "b9fd2de0",
-      "content_hash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
+      "source_version": "cc21315a",
+      "content_hash": "d500403ec0d1d2401c3c0645cd3f3c6c3561dd617981c574c13fb0a329b1697d",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48662,6 +48667,11 @@
         {
           "number": null,
           "title": "Draft NUC 105 List and Population Sorting by Key",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Draft NUC 106 Intersect and Except Reasoning Selections",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48955,7 +48965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T16:35:58.279Z",
+      "verified_at": "2026-11-12T03:48:51.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51901,8 +51911,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "f7f8b7e5",
-      "content_hash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
+      "source_version": "ca8ac478",
+      "content_hash": "0422ac875b0a36d147229fb091d7187c98f40dbf867df9f77b2a2111daaf3616",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -51914,6 +51924,11 @@
         {
           "number": null,
           "title": "resync): keep internal version when resyncing completed/failed mirrors (#5031)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51987,7 +52002,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T18:11:17.778Z",
+      "verified_at": "2026-11-12T03:49:09.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

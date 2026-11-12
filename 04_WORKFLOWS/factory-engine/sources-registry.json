@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T18:03:45.960Z",
-    "lastVerified": "2026-11-11T18:03:45.960Z",
+    "lastChecked": "2026-11-12T03:48:34.327Z",
+    "lastVerified": "2026-11-12T03:48:34.327Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f68d6d29"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -38,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T03:30:59.184Z",
-    "lastVerified": "2026-11-12T03:30:59.184Z",
+    "lastChecked": "2026-11-12T03:49:14.313Z",
+    "lastVerified": "2026-11-12T03:49:14.313Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -453,22 +454,21 @@
     "revisionIdentifier": "fe107aab"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T02:56:24.736Z",
-    "lastVerified": "2026-11-12T02:56:24.736Z",
+    "lastChecked": "2026-11-12T03:48:43.027Z",
+    "lastVerified": "2026-11-12T03:48:43.027Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
-    "promotedRulesCount": 0,
+    "contentHash": "d500403ec0d1d2401c3c0645cd3f3c6c3561dd617981c574c13fb0a329b1697d",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b9fd2de0"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -3871,14 +3871,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T18:11:16.359Z",
-    "lastVerified": "2026-11-09T18:11:16.359Z",
+    "lastChecked": "2026-11-12T03:48:36.102Z",
+    "lastVerified": "2026-11-12T03:48:36.102Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "0422ac875b0a36d147229fb091d7187c98f40dbf867df9f77b2a2111daaf3616",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4160,8 +4160,8 @@
     "officialUrl": "https://github.com/svenstaro/miniserve",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T09:09:48.073Z",
-    "lastVerified": "2026-11-09T09:09:48.073Z",
+    "lastChecked": "2026-11-12T03:48:24.312Z",
+    "lastVerified": "2026-11-12T03:48:24.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-svenstaro-miniserve",
@@ -6343,22 +6343,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-zookeeper": {
-    "name": "zookeeper",
+    "name": "apache/zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T16:59:48.316Z",
-    "lastVerified": "2026-11-09T16:59:48.316Z",
+    "lastChecked": "2026-11-12T03:48:40.861Z",
+    "lastVerified": "2026-11-12T03:48:40.861Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "35a7ef7e08a86d5d263726aa8ac854a4d56464e990c95193fdb02fe1d2052ba7",
+    "contentHash": "41bdfc7fc9fc362553fb53aa0be7f5521aa257012d23b7a4ef0d00c3889ef72d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "61f8849c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubearmor-kubearmor": {
     "name": "KubeArmor",
@@ -9612,9 +9611,9 @@
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
     "officialUrl": "https://github.com/github/CopilotForXcode",
-    "lastChecked": "2026-11-08T04:02:47.318Z",
+    "lastChecked": "2026-11-12T03:48:29.252Z",
     "revisionIdentifier": "258d4577",
-    "lastVerified": "2026-11-08T04:02:47.318Z"
+    "lastVerified": "2026-11-12T03:48:29.252Z"
   },
   "istifano-seo-auditor": {
     "name": "seo-auditor",
@@ -11492,12 +11491,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "syntax-tree-hast-util-from-html": {
-    "name": "syntax-tree/hast-util-from-html",
+    "name": "hast-util-from-html",
     "officialUrl": "https://github.com/syntax-tree/hast-util-from-html",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T04:44:18.597Z",
-    "lastVerified": "2026-11-07T04:44:18.597Z",
+    "lastChecked": "2026-11-12T03:48:26.754Z",
+    "lastVerified": "2026-11-12T03:48:26.754Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-syntax-tree-hast-util-from-html",
@@ -11506,7 +11505,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3bf56434"
   },
   "kitlangton-hex": {
     "name": "Hex",

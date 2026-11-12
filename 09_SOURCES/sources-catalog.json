@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "b9fd2de0",
+    "sourceVersion": "cc21315a",
     "license": "Apache-2.0",
-    "contentHash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
-    "lastHarvestedAt": "2026-11-11T16:35:58.437Z",
+    "contentHash": "d500403ec0d1d2401c3c0645cd3f3c6c3561dd617981c574c13fb0a329b1697d",
+    "lastHarvestedAt": "2026-11-12T03:48:51.844Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "f7f8b7e5",
+    "sourceVersion": "ca8ac478",
     "license": "AGPL-3.0",
-    "contentHash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
-    "lastHarvestedAt": "2026-11-09T18:11:18.581Z",
+    "contentHash": "0422ac875b0a36d147229fb091d7187c98f40dbf867df9f77b2a2111daaf3616",
+    "lastHarvestedAt": "2026-11-12T03:49:09.255Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "61f8849c",
+    "sourceVersion": "5dd643fb",
     "license": "Apache-2.0",
-    "contentHash": "35a7ef7e08a86d5d263726aa8ac854a4d56464e990c95193fdb02fe1d2052ba7",
-    "lastHarvestedAt": "2026-11-07T21:29:34.324Z",
+    "contentHash": "41bdfc7fc9fc362553fb53aa0be7f5521aa257012d23b7a4ef0d00c3889ef72d",
+    "lastHarvestedAt": "2026-11-12T03:48:49.602Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {

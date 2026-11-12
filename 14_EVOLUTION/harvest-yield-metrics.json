@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:30:53.975Z",
-  "total_cycles_completed": 8899,
-  "total_learnings_persisted": 8899,
-  "total_rules_promoted": 8748,
+  "last_updated": "2026-11-12T03:49:09.269Z",
+  "total_cycles_completed": 8902,
+  "total_learnings_persisted": 8902,
+  "total_rules_promoted": 8751,
   "history": [
-    {
-      "timestamp": "2026-11-10T04:51:56.950Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T04:51:58.949Z",
-      "repository": "Diffuspace/Clover-35B-A3B-Preview",
-      "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T04:59:19.500Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T04:59:26.611Z",
       "repository": "pyannote/speaker-diarization-3.1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T03:30:53.975Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:48:49.607Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:48:51.861Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:49:09.269Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

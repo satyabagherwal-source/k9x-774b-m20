@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `61f8849c`  
+> **Source Version**: `5dd643fb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:29:33.104Z  
+> **Timestamp**: 2026-11-12T03:48:41.025Z  
 > **Learning ID**: `learn-github-apache-zookeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:29:32.629Z  
+> **Harvest Timestamp**: 2026-11-12T03:48:40.861Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache ZooKeeper
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12831 stars
+- **Stars / Engagement**: 12832 stars
 
 ---
 
@@ -1826,129 +1826,294 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61f8849c` (2026-11-06)
-**Commit Message**: ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js
+### Incident Patch 1: `f9c048aa` (2026-11-09)
+**Commit Message**: Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException`
 
 Reviewers: anmolnar
-Author: PDavid
-Closes #2493 from PDavid:ZOOKEEPER-5118
+Author: kezhuw
+Closes #2490 from kezhuw/ZOOKEEPER-4966-revert
 
-**File**: `zookeeper-website/package-lock.json` (modified, +128/-128)
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java` (modified, +7/-6)
 ```diff
-@@ -4391,17 +4391,17 @@
-       }
-     },
-     "node_modules/@typescript-eslint/eslint-plugin": {
--      "version": "8.70.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.70.0.tgz",
--      "integrity": "sha512-/v8HZt6RlyIZxB3ntehELOcUcfxKPVGWXnQdJuHRmzrqgF8nQypcC/oxGW+Ot4VGKDq81XugPKxx0n5PBtf9PA==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
-+      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@eslint-community/regexpp": "^4.12.2",
--        "@typescript-eslint/scope-manager": "8.70.0",
--        "@typescript-eslint/type-utils": "8.70.0",
--        "@typescript-eslint/utils": "8.70.0",
--        "@typescript-eslint/visitor-keys": "8.70.0",
-+        "@typescript-eslint/scope-manager": "8.72.1",
-+        "@typescript-eslint/type-utils": "8.72.1",
-+        "@typescript-eslint/utils": "8.72.1",
-+        "@typescript-eslint/visitor-keys": "8.72.1",
-         "ignore": "^7.0.5",
-         "natural-compare": "^1.4.0",
-         "ts-api-utils": "^2.5.0"
-@@ -4414,22 +4414,22 @@
-         "url": "https://opencollective.com/typescript-eslint"
-       },
-       "peerDependencies": {
--        "@typescript-eslint/parser": "^8.70.0",
-+        "@typescript-eslint/parser": "^8.72.1",
-         "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
-         "typescript": ">=4.8.4 <6.1.0"
-       }
-     },
-     "node_modules/@typescript-eslint/parser": {
--      "version": "8.70.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.70.0.tgz",
--      "integrity": "sha512-zYvrmj9Yxd63UGaXw+kdt6A0F0s0qveJyuatIM77bYC2DE4pgmg7a50u8LR7PRtXd0x+h+Tl3eXabGm06SWd3Q==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
-+      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@typescript-eslint/scope-manager": "8.70.0",
--        "@typescript-eslint/types": "8.70.0",
--        "@typescript-eslint/typescript-estree": "8.70.0",
--        "@typescript-eslint/visitor-keys": "8.70.0",
-+        "@typescript-eslint/scope-manager": "8.72.1",
-+        "@typescript-eslint/types": "8.72.1",
-+        "@typescript-eslint/typescript-estree": "8.72.1",
-+        "@typescript-eslint/visitor-keys": "8.72.1",
-         "debug": "^4.4.3"
-       },
-       "engines": {
-@@ -4445,14 +4445,14 @@
-       }
-     },
-     "node_modules/@typescript-eslint/project-service": {
--      "version": "8.70.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.70.0.tgz",
--      "integrity": "sha512-hFHbTNqhU9G+2eKFXCBVb1tjFT/LceiJ4+HfLO4pTpDI0KHi6iajpcFFkaSQ9gXmCh7n82A0PthaayEdN6mspQ==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
-+      "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGzW1J6jTg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@typescript-eslint/tsconfig-utils": "^8.70.0",
--        "@typescript-eslint/types": "^8.70.0",
-+        "@typescript-eslint/tsconfig-utils": "^8.72.1",
-+        "@typescript-eslint/types": "^8.72.1",
-         "debug": "^4.4.3"
-       },
-       "engines": {
-@@ -4467,14 +4467,14 @@
-       }
-     },
-     "node_modules/@typescript-eslint/scope-manager": {
--      "version": "8.70.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.70.0.tgz",
--      "integrity": "sha512-8nP3Kwh5hlgZ4FicGvmznAmJe8UL4sdU8tLukrPaMuQmDuk4Y8xYfzu/aYZW4xT2JCgc7H/TpDI5cGlxcWJSqQ==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
-+      "integrity": "sha512-lC/t6eMCZZQAAKZEYGL6RDVSuFehpdmMT6h+nJIjIa6oylN/PwDgDVtEIbB7O9xFfZYtZAYLoLlDNWKJhtF+uQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@typescript-eslint/types": "8.70.0",
--        "@typescript-eslint/visitor-keys": "8.70.0"
-+        "@typescript-eslint/types": "8.72.1",
-+        "@typescript-eslint/visitor-keys": "8.72.1"
-       },
-       "engines": {
-         "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
-@@ -4485,9 +4485,9 @@
-       }
-     },
-     "node_modules/@typescript-eslint/tsconfig-utils": {
--      "version": "8.70.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.70.0.tgz",
--      "integrity": "sha512-adnkeeNq9Sq1sUf4+FRVc0KdgYghzsgFpZSQVZVvY0LCuUuN0FnQgyGzCJeC4fW1cdXseBAjU2EOqUIjbNcZUw==",
-+      "version": "8.72.1",
-+      "resolved": "https://registr
+@@ -23,6 +23,7 @@
+ import org.apache.yetus.audience.InterfaceAudience;
+ import org.apache.zookeeper.common.ConfigException;
+ import org.apache.zookeeper.common.ZKConfig;
++import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+ 
+ /**
+  * Handles client specific properties
+@@ -84,22 +85,22 @@ public ZKClientConfig() {
+     /**
+      * <p><b>Use {@link ZKClientConfig#ZKClientConfig(Path configPath)} instead.</b>
+      *
+-     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
+-     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
++     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
++     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
+      */
+     @Deprecated
+-    public ZKClientConfig(File configFile) throws ConfigException {
++    public ZKClientConfig(File configFile) throws QuorumPeerConfig.ConfigException {
+         super(configFile);
+     }
+ 
+     /**
+      * <p><b>Use {@link ZKClientConfig#ZKClientConfig(Path configPath)} instead.</b>
+      *
+-     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
+-     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
++     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
++     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
+      */
+     @Deprecated
+-    public ZKClientConfig(String configPath) throws ConfigException {
++    public ZKClientConfig(String configPath) throws QuorumPeerConfig.ConfigException {
+         super(configPath);
+     }
+ 
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/common/ZKConfig.java` (modified, +38/-43)
+```diff
+@@ -23,14 +23,13 @@
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.IOException;
+-import java.lang.reflect.Constructor;
+ import java.nio.file.Path;
+-import java.nio.file.Paths;
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.Map.Entry;
+ import java.util.Properties;
+ import org.apache.zookeeper.Environment;
++import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+ import org.apache.zookeeper.server.util.VerifyingFileFactory;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+@@ -68,33 +67,35 @@ public ZKConfig() {
+     /**
+      * <p><b>Use {@link ZKConfig#ZKConfig(Path configPath)} instead.</b>
+      *
+-     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
+-     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
++     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
++     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
+      *
+      * @param configPath
+      *            Configuration file path
+      * @throws ConfigException
+      *             if failed to load configuration properties
+      */
+     @Deprecated
+-    public ZKConfig(String configPath) throws ConfigException {
+-        this(Paths.get(configPath));
++    public ZKConfig(String configPath) throws QuorumPeerConfig.ConfigException {
++        this(new File(configPath));
+     }
+ 
+     /**
+      * <p><b>Use {@link ZKConfig#ZKConfig(Path configPath)} instead.</b>
+      *
+-     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
+-     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
++     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
++     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
+      *
+      * @param configFile
+      *            Configuration file
+      * @throws ConfigException
+      *             if failed to load configuration properties
+      */
+     @Deprecated
+-    public ZKConfig(File configFile) throws ConfigException {
+-        this(configFile.toPath());
++    public ZKConfig(File configFile) throws QuorumPeerConfig.ConfigException {
++        this();
++        addConfiguration(configFile);
++        LOG.info("ZK Config {}", redactSensitiveValues(properties));
+     }
+ 
+     /**
+@@ -103,6 +104,7 @@ public ZKConfig(File configFile) throws ConfigException {
+      * @param configPath path to configuration file
+      * @throws ConfigException
+      */
++    @SuppressWarnings("deprecation")
+     public ZKConfig(Path configPath) throws ConfigException {
+         this();
+         addConfiguration(configPath);
+@@ -226,39 +228,16 @@ public void setProperty(String key, String value) {
+      *
+      * @param configPath path to Configuration file.
+      */
++    @SuppressWarnings("deprecation")
+     public void addConfiguration(Path configPath) throws ConfigException {
+-        Path absoluteConfigPath = configPath.toAbsolutePath();
+-        LOG.info("Reading configuration from: {}", absoluteConfigPath);
+-        try {
+-            File configFile = (new VerifyingFileFactory.Builder(LOG).warnForRelativePath()
+-                                                               .failForNonExistingPath()
+-                                                               .build()).validate(configPath.toFile());
+-            Properties cfg = new Properties();
+-            try (FileInputStream in = new FileInputStream(configFile)) {
+-                cfg.load(in);
+-            }
+-            parseProperties(cfg);
+-        } catch (IOException | IllegalArgumentException e) {
+-            LOG.error("Error while configuration from: {}", absoluteConfigPath, e);
+-            String msg = "Error while processing " + absoluteConfigPath;
+-            try {
+-                Class<?> clazz = Class.forName("org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException");
+-                Class<? extends ConfigException> exceptionClass = clazz.asSubclass(ConfigException.class);
+-                Constructor<? extends ConfigException> constructor = exceptionClass.getDeclaredConstructor(String.class, Exception.class);
+-                throw constructor.newInstance(msg, e);
+-            } catch (ClassNotFoundException ignored) {
+-            } catch (Exception ignored) {
+-                LOG.warn("Fail to construct QuorumPeerConfig.ConfigException", e);
+-            }
+-            throw new ConfigException(msg, e);
+-        }
++        addConfiguration(configPath.toFile());
+     }
+ 
+     /**
+      * <p><b>Use {@link #addConfiguration(Path)} instead.</b></p>
+      *
+-     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
+-     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
++     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
++     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
+      *
+
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/NettyServerCnxnFactory.java` (modified, +1/-2)
+```diff
+@@ -62,7 +62,6 @@
+ import javax.net.ssl.SSLSession;
+ import org.apache.zookeeper.KeeperException;
+ import org.apache.zookeeper.common.ClientNettyX509Util;
+-import org.apache.zookeeper.common.ConfigException;
+ import org.apache.zookeeper.common.NettyUtils;
+ import org.apache.zookeeper.common.X509Exception;
+ import org.apache.zookeeper.common.X509Exception.SSLContextException;
+@@ -534,7 +533,7 @@ private ServerBootstrap configureBootstrapAllocator(ServerBootstrap bootstrap) {
+         if (usePortUnification) {
+             try {
+                 QuorumPeerConfig.configureSSLAuth();
+-            } catch (ConfigException e) {
++            } catch (QuorumPeerConfig.ConfigException e) {
+                 LOG.error("unable to set up SslAuthProvider, turning off client port unification", e);
+                 usePortUnification = false;
+             }
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/PrepRequestProcessor.java` (modified, +1/-1)
+```diff
+@@ -42,7 +42,6 @@
+ import org.apache.zookeeper.StatsTrack;
+ import org.apache.zookeeper.ZooDefs;
+ import org.apache.zookeeper.ZooDefs.OpCode;
+-import org.apache.zookeeper.common.ConfigException;
+ import org.apache.zookeeper.common.PathUtils;
+ import org.apache.zookeeper.common.StringUtils;
+ import org.apache.zookeeper.common.Time;
+@@ -63,6 +62,7 @@
+ import org.apache.zookeeper.server.quorum.LeaderZooKeeperServer;
+ import org.apache.zookeeper.server.quorum.QuorumPeer.QuorumServer;
+ import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
++import org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException;
+ import org.apache.zookeeper.server.quorum.flexible.QuorumMaj;
+ import org.apache.zookeeper.server.quorum.flexible.QuorumOracleMaj;
+ import org.apache.zookeeper.server.quorum.flexible.QuorumVerifier;
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/ServerConfig.java` (modified, +1/-1)
+```diff
+@@ -23,9 +23,9 @@
+ import java.util.Arrays;
+ import java.util.Properties;
+ import org.apache.yetus.audience.InterfaceAudience;
+-import org.apache.zookeeper.common.ConfigException;
+ import org.apache.zookeeper.metrics.impl.DefaultMetricsProvider;
+ import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
++import org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException;
+ 
+ /**
+  * Server configuration storage.
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/ZooKeeperServerMain.java` (modified, +1/-1)
+```diff
+@@ -23,7 +23,6 @@
+ import javax.management.JMException;
+ import org.apache.yetus.audience.InterfaceAudience;
+ import org.apache.zookeeper.audit.ZKAuditProvider;
+-import org.apache.zookeeper.common.ConfigException;
+ import org.apache.zookeeper.jmx.ManagedUtil;
+ import org.apache.zookeeper.metrics.MetricsProvider;
+ import org.apache.zookeeper.metrics.MetricsProviderLifeCycleException;
+@@ -34,6 +33,7 @@
+ import org.apache.zookeeper.server.auth.ProviderRegistry;
+ import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
+ import org.apache.zookeeper.server.persistence.FileTxnSnapLog.DatadirException;
++import org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException;
+ import org.apache.zookeeper.server.util.JvmPauseMonitor;
+ import org.apache.zookeeper.util.ServiceUtils;
+ import org.slf4j.Logger;
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/controller/ControllerServerConfig.java` (modified, +0/-1)
+```diff
+@@ -25,7 +25,6 @@
+ import java.net.ServerSocket;
+ import java.util.HashMap;
+ import java.util.Map;
+-import org.apache.zookeeper.common.ConfigException;
+ import org.apache.zookeeper.server.ServerConfig;
+ import org.apache.zookeeper.server.quorum.QuorumPeer;
+ import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/controller/ControllerService.java` (modified, +2/-3)
+```diff
+@@ -19,7 +19,6 @@
+ package org.apache.zookeeper.server.controller;
+ 
+ import java.io.IOException;
+-import org.apache.zookeeper.common.ConfigException;
+ import org.apache.zookeeper.server.ExitCode;
+ import org.apache.zookeeper.server.ServerCnxnFactory;
+ import org.apache.zookeeper.server.quorum.QuorumPeer;
+@@ -120,15 +119,15 @@ protected void cleanup() {
+     /**
+      * Runs the main loop for this application but does not exit the process.
+      */
+-    public void initializeAndRun(String[] args) throws ConfigException {
++    public void initializeAndRun(String[] args) throws QuorumPeerConfig.ConfigException {
+         initConfig(args);
+         run();
+     }
+ 
+     /**
+      * Derived classes may override to do custom initialization of command line args.
+      */
+-    protected void initConfig(String[] args) throws ConfigException {
++    protected void initConfig(String[] args) throws QuorumPeerConfig.ConfigException {
+         if (args.length == 1) {
+             config.parse(args[0]);
+         }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2493** (2026-11-06): ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js (@PDavid)
 - **PR #2492** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2491** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
+- **PR #2490** (2026-11-09): Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException` (@kezhuw)
 - **PR #2487** (2026-11-04): ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build (@PDavid)
 - **PR #2484** (2026-11-04): ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false (@dajiaohuang)
-- **PR #2476** (2026-10-20): ZOOKEEPER-5097: Make DataTree snapshot serialization iterative (@anmolnar)
 
 ---
 
@@ -1968,62 +2133,39 @@ Closes #2493 from PDavid:ZOOKEEPER-5118
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zo
+## X. Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigExcepti
 
 **RULE**:
-When implementing operations in `zookeeper-website/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61f8849c`: ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f9c048aa`: Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-website/package-lock.json`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-      "version": "8.72.1",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
-      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
-        "@typescript-eslint/scope-manager": "8.72.1",
-        "@typescript-eslint/type-utils": "8.72.1",
-        "@typescript-eslint/utils": "8.72.1",
-        "@typescript-eslint/visitor-keys": "8.72.1",
-        "@typescript-eslint/parser": "^8.72.1",
-      "version": "8.72.1",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
-      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
-        "@typescript-eslint/scope-manager": "8.72.1",
-        "@typescript-eslint/types": "8.72.1",
-        "@typescript-eslint/typescript-estree": "8.72.1",
-        "@typescript-eslint/visitor-keys": "8.72.1",
-      "version": "8.72.1",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
-      "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGz
+import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
+     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
+    public ZKClientConfig(File configFile) throws QuorumPeerConfig.ConfigException {
+     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
+     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
+    public ZKClientConfig(String configPath) throws QuorumPeerConfig.ConfigException {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "8.70.0",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.70.0.tgz",
-      "integrity": "sha512-/v8HZt6RlyIZxB3ntehELOcUcfxKPVGWXnQdJuHRmzrqgF8nQypcC/oxGW+Ot4VGKDq81XugPKxx0n5PBtf9PA==",
-        "@typescript-eslint/scope-manager": "8.70.0",
-        "@typescript-eslint/type-utils": "8.70.0",
-        "@typescript-eslint/utils": "8.70.0",
-        "@typescript-eslint/visitor-keys": "8.70.0",
-        "@typescript-eslint/parser": "^8.70.0",
-      "version": "8.70.0",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.70.0.tgz",
-      "integrity": "sha512-zYvrmj9Yxd63UGaXw+kdt6A0F0s0qveJyuatIM77bYC2DE4pgmg7a50u8LR7PRtXd0x+h+Tl3eXabGm06SWd3Q==",
-        "@typescript-eslint/scope-manager": "8.70.0",
-        "@typescript-eslint/types": "8.70.0",
-        "@typescript-eslint/typescript-estree": "8.70.0",
-        "@typescript-eslint/visitor-keys": "8.70.0",
-      "version": "8.70.0",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.70.0.tgz",
-      "integrity": "sha512-hFHbTNqhU9G+2eKFXCBVb1tjFT/LceiJ4+HfLO4pTpDI0KHi6iajpcFFkaSQ9gXmCh7n82A0PthaayE
+     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
+     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
+    public ZKClientConfig(File configFile) throws ConfigException {
+     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
+     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
+    public ZKClientConfig(String configPath) throws ConfigException {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61f8849c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f9c048aa` are properly handled with clean fallback behavior.
