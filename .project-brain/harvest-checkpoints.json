@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T05:57:19.126Z",
+  "last_updated": "2026-11-12T06:20:20.714Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
-      "verified_at": "2026-11-08T07:08:52.766Z",
+      "content_hash": "637610b57cf531ad29597ce3255d97fe999594d4e41de20ccf59cc8d17573adf",
+      "verified_at": "2026-11-12T06:19:50.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T07:08:52.766Z"
+      "last_updated": "2026-11-12T06:19:50.425Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -12216,14 +12216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "content_hash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
-      "verified_at": "2026-11-08T05:26:23.218Z",
+      "content_hash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
+      "verified_at": "2026-11-12T06:20:20.713Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:26:23.218Z"
+      "last_updated": "2026-11-12T06:20:20.713Z"
     },
     "MohamedRejeb/Calf": {
       "repository": "MohamedRejeb/Calf",

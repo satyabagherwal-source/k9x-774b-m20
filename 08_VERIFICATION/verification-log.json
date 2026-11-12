@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-GZWX",
-    "timestamp": "2026-11-09T01:12:39.633Z",
-    "repository": "mikelikesdesign/SwiftUI-experiments",
-    "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
-    "contentHash": "b026177aebd55bbe20372d651999ed0f3755d148b2f23b8a69d401cae60525c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-H10C",
-    "timestamp": "2026-11-09T01:12:41.052Z",
-    "repository": "openbmb/MiniCPM-OCR-1.0",
-    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-    "contentHash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-PIYH",
     "timestamp": "2026-11-09T01:19:17.561Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7490,6 +7460,36 @@
     "repository": "urllib3/urllib3",
     "learningId": "learn-github-urllib3-urllib3",
     "contentHash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-RL51",
+    "timestamp": "2026-11-12T06:19:50.341Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "637610b57cf531ad29597ce3255d97fe999594d4e41de20ccf59cc8d17573adf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-S8JW",
+    "timestamp": "2026-11-12T06:20:20.684Z",
+    "repository": "vanniktech/gradle-maven-publish-plugin",
+    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+    "contentHash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

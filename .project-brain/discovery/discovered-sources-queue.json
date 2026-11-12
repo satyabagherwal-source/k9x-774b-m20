@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T05:57:23.729Z",
+  "updated_at": "2026-11-12T06:20:28.293Z",
   "stats": {
-    "total_discovered": 859,
-    "approved_pending_harvest": 779,
+    "total_discovered": 870,
+    "approved_pending_harvest": 790,
     "harvested_count": 0,
     "rejected_count": 80,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 803,
-      "OFFICIAL_DOCUMENTATION": 23,
+      "COMMUNITY_AND_EXPERT": 813,
+      "OFFICIAL_DOCUMENTATION": 24,
       "STANDARDS_AND_SPECIFICATIONS": 31,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 1
@@ -18355,6 +18355,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
         "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-62CDD3F1B3D2": {
+      "id": "SRC-62CDD3F1B3D2",
+      "url": "https://github.com/kucherenko/jscpd",
+      "title": "https://github.com/kucherenko/jscpd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-CB6D64FC235C": {
+      "id": "SRC-CB6D64FC235C",
+      "url": "https://docs.rs/basta",
+      "title": "https://docs.rs/basta",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.234Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-AD270C30A1E2": {
+      "id": "SRC-AD270C30A1E2",
+      "url": "https://github.com/kucherenko/jscpd/tree/master-v4",
+      "title": "https://github.com/kucherenko/jscpd/tree/master-v4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-97E2BCBAF94D": {
+      "id": "SRC-97E2BCBAF94D",
+      "url": "https://github.c/",
+      "title": "https://github.c/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-6028A22155DA": {
+      "id": "SRC-6028A22155DA",
+      "url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+      "title": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.258Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
+        "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
+      }
+    },
+    "SRC-7CCB158BA886": {
+      "id": "SRC-7CCB158BA886",
+      "url": "https://central.sonatype.org/publish/publish-portal-api",
+      "title": "https://central.sonatype.org/publish/publish-portal-api",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
+        "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
+      }
+    },
+    "SRC-A2EE7C584FFD": {
+      "id": "SRC-A2EE7C584FFD",
+      "url": "https://central.sonatype.com/publishing/deployments",
+      "title": "https://central.sonatype.com/publishing/deployments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.270Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
+        "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
+      }
+    },
+    "SRC-DBDAE9B6EF1D": {
+      "id": "SRC-DBDAE9B6EF1D",
+      "url": "https://central.sonatype.org/publish/generate-portal-token",
+      "title": "https://central.sonatype.org/publish/generate-portal-token",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
+        "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
+      }
+    },
+    "SRC-A41318EC07D5": {
+      "id": "SRC-A41318EC07D5",
+      "url": "https://central.sonatype.com/repository/maven-snapshots",
+      "title": "https://central.sonatype.com/repository/maven-snapshots",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
+        "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
+      }
+    },
+    "SRC-3723A8418A89": {
+      "id": "SRC-3723A8418A89",
+      "url": "https://github.com/gradle/gradle/issues/20232",
+      "title": "https://github.com/gradle/gradle/issues/20232",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
+        "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
+      }
+    },
+    "SRC-1AC7291F2DFC": {
+      "id": "SRC-1AC7291F2DFC",
+      "url": "https://github.com/sqldelight/sql-psi",
+      "title": "https://github.com/sqldelight/sql-psi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:20:28.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
+        "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
       }
     }
   }

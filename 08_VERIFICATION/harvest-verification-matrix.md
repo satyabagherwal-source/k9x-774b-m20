@@ -9085,3 +9085,5 @@
 | `CYCLE-20261112-M3O9` | `2026-11-12T05:47:34.809Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | Yes (`08974c3b...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T05:47:56.937Z` | `hf-abenzerps-qwen-image-2.1-turbo-quantized` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0C67C5DB` [Domain D] | Yes (`f87d27bb...`) |
 | `CYCLE-20261112-YMIT` | `2026-11-12T05:57:19.109Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fff051ed...`) |
+| `CYCLE-20261112-RL51` | `2026-11-12T06:19:50.341Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`637610b5...`) |
+| `CYCLE-20261112-S8JW` | `2026-11-12T06:20:20.684Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1f8f509...`) |

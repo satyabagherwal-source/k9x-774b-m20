@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:57:23.744Z",
+  "last_updated": "2026-11-12T06:20:28.299Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6273,6 +6273,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4A698A-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-35B8F9",
+      "directive_title": "Merge pull request #1288 from abrahamguo/get-jscpd-report",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kucherenko-jscpd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-35B8F9-merge-pull-request-1288-from-abrahamguo-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EAE998",
+      "directive_title": "Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vanniktech-gradle-maven-publish-plugin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EAE998-update-dependency-org-jetbrains-kotlin-j.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2EFD1D",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2EFD1D-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-12"
     }
   ]

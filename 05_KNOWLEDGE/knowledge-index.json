@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T05:57:18.962Z",
+  "last_updated": "2026-11-12T06:20:20.528Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40283,8 +40283,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "b82d8418",
-      "content_hash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
+      "source_version": "527eec41",
+      "content_hash": "637610b57cf531ad29597ce3255d97fe999594d4e41de20ccf59cc8d17573adf",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -40296,6 +40296,11 @@
         {
           "number": null,
           "title": "release: cpd-v5.4.3",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #1288 from abrahamguo/get-jscpd-report",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40374,7 +40379,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T07:08:52.622Z",
+      "verified_at": "2026-11-12T06:19:50.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65330,14 +65335,19 @@
       "slug": "vanniktech-gradle-maven-publish-plugin",
       "platform": "github",
       "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-      "source_version": "8c6a683a",
-      "content_hash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
+      "source_version": "086c4bd6",
+      "content_hash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
       "dossier_path": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Update Gradle to v9.9.0 (#1470)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65366,7 +65376,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:26:23.133Z",
+      "verified_at": "2026-11-12T06:20:20.502Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

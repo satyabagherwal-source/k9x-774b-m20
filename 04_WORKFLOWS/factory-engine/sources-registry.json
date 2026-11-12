@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T05:57:23.539Z",
-    "lastVerified": "2026-11-12T05:57:23.539Z",
+    "lastChecked": "2026-11-12T06:20:28.083Z",
+    "lastVerified": "2026-11-12T06:20:28.083Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,8 +255,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T05:27:04.191Z",
-    "lastVerified": "2026-11-12T05:27:04.191Z",
+    "lastChecked": "2026-11-12T06:19:42.364Z",
+    "lastVerified": "2026-11-12T06:19:42.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1003,8 +1003,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T23:56:56.410Z",
-    "lastVerified": "2026-11-11T23:56:56.410Z",
+    "lastChecked": "2026-11-12T06:19:37.300Z",
+    "lastVerified": "2026-11-12T06:19:37.300Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -4475,9 +4475,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-09T23:07:21.569Z",
+    "lastChecked": "2026-11-12T06:19:34.855Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-09T23:07:21.569Z"
+    "lastVerified": "2026-11-12T06:19:34.855Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -4772,22 +4772,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kucherenko-jscpd": {
-    "name": "jscpd",
+    "name": "kucherenko/jscpd",
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T12:42:01.196Z",
-    "lastVerified": "2026-11-09T12:42:01.196Z",
+    "lastChecked": "2026-11-12T06:19:30.261Z",
+    "lastVerified": "2026-11-12T06:19:30.261Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
+    "contentHash": "637610b57cf531ad29597ce3255d97fe999594d4e41de20ccf59cc8d17573adf",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b82d8418"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-minimaxai-minimax-h3": {
     "name": "MiniMaxAI/MiniMax-H3",
@@ -6948,9 +6947,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-09T22:27:05.094Z",
+    "lastChecked": "2026-11-12T06:19:39.822Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-09T22:27:05.094Z"
+    "lastVerified": "2026-11-12T06:19:39.822Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -9795,12 +9794,12 @@
     "officialUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T05:26:21.798Z",
-    "lastVerified": "2026-11-08T05:26:21.798Z",
+    "lastChecked": "2026-11-12T06:19:35.683Z",
+    "lastVerified": "2026-11-12T06:19:35.683Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-    "contentHash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
+    "contentHash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -11716,9 +11715,9 @@
   "encode-httpx": {
     "name": "httpx",
     "officialUrl": "https://github.com/encode/httpx",
-    "lastChecked": "2026-11-07T06:17:38.690Z",
+    "lastChecked": "2026-11-12T06:19:29.819Z",
     "revisionIdentifier": "b5addb64",
-    "lastVerified": "2026-11-07T06:17:38.690Z"
+    "lastVerified": "2026-11-12T06:19:29.819Z"
   },
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",

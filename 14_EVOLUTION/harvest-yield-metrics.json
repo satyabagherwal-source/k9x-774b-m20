@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:57:19.121Z",
-  "total_cycles_completed": 8919,
-  "total_learnings_persisted": 8919,
-  "total_rules_promoted": 8765,
+  "last_updated": "2026-11-12T06:20:20.709Z",
+  "total_cycles_completed": 8921,
+  "total_learnings_persisted": 8921,
+  "total_rules_promoted": 8767,
   "history": [
-    {
-      "timestamp": "2026-11-11T06:33:33.905Z",
-      "repository": "react-native-webrtc/react-native-webrtc",
-      "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T06:33:42.082Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T06:33:46.448Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T05:57:19.121Z",
       "repository": "urllib3/urllib3",
       "learningId": "learn-github-urllib3-urllib3",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T06:19:50.420Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T06:20:20.709Z",
+      "repository": "vanniktech/gradle-maven-publish-plugin",
+      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

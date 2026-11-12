@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `b82d8418`  
+> **Source Version**: `527eec41`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T07:08:51.296Z  
+> **Timestamp**: 2026-11-12T06:19:38.306Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T07:08:49.828Z  
+> **Harvest Timestamp**: 2026-11-12T06:19:30.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6515 stars
+- **Stars / Engagement**: 6539 stars
 
 ---
 
@@ -1878,301 +1878,728 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b82d8418` (2026-11-08)
-**Commit Message**: release: cpd-v5.4.3
+### Incident Patch 1: `527eec41` (2026-11-12)
+**Commit Message**: Merge pull request #1288 from abrahamguo/get-jscpd-report
 
-**File**: `CITATION.cff` (modified, +2/-2)
+feat(npm): getJscpdReport returns the parsed JSON report
+
+**File**: `.github/workflows/rust.yml` (modified, +3/-3)
 ```diff
-@@ -14,8 +14,8 @@ authors:
-   - family-names: Kucherenko
-     given-names: Andrey
-     email: kucherenko.andrey@gmail.com
--version: 5.4.2
--date-released: 2026-10-20
-+version: 5.4.3
-+date-released: 2026-11-08
- license: MIT
- repository-code: "https://github.com/kucherenko/jscpd"
- url: "https://jscpd.dev"
+@@ -317,9 +317,9 @@ jobs:
+         working-directory: rust
+         run: cargo build --release -p jscpd --locked
+ 
+-      # The npm package's launcher and runJscpd(), against the binary just
+-      # built: index.js falls back to target/release when no platform
+-      # package is installed.
++      # The npm package's launcher, runJscpd() and getJscpdReport(), against
++      # the binary just built: index.js falls back to target/release when no
++      # platform package is installed.
+       - name: Test the npm launcher
+         run: node --test rust/jscpd/test/run-jscpd.test.js
+ 
 ```
 
-**File**: `docs/ci-and-hooks.md` (modified, +5/-5)
+**File**: `docs/api.md` (modified, +1/-1)
 ```diff
-@@ -23,7 +23,7 @@ jobs:
+@@ -65,6 +65,6 @@ See [Packages](./packages.md) for versions and paths.
  
- This scans the entire repository with default settings and uploads SARIF results to GitHub Code Scanning.
+ ## Other languages
  
--`@v5` is a moving tag that follows the latest 5.x release of the action. Pin to an exact release tag (e.g. `kucherenko/jscpd@v5.4.2`) or its commit SHA if you need reproducible runs, and see [Pin a specific version](#pin-a-specific-version) for the jscpd release it installs.
-+`@v5` is a moving tag that follows the latest 5.x release of the action. Pin to an exact release tag (e.g. `kucherenko/jscpd@v5.4.3`) or its commit SHA if you need reproducible runs, and see [Pin a specific version](#pin-a-specific-version) for the jscpd release it installs.
+-There is no Node.js (or other language) binding for the v5 engine. From another language, run the binary and read the `json` reporter's output (`--reporters json --output <dir>` writes `<dir>/jscpd-report.json`), or talk to it over the [MCP stdio transport](./ai-ready.md#stdio-transport-rust-v5).
++There is no Node.js (or other language) binding for the v5 engine. From another language, run the binary and read the `json` reporter's output (`--reporters json --output <dir>` writes `<dir>/jscpd-report.json`), or talk to it over the [MCP stdio transport](./ai-ready.md#stdio-transport-rust-v5). In Node.js, `getJscpdReport(args)` from the `jscpd` npm package does the first and returns the parsed report; see [Running from Node.js](../rust/jscpd/README.md#running-from-nodejs).
  
- ### Fail on Threshold
+ The TypeScript API of jscpd v4 (`jscpd()`, `detectClones()`, `@jscpd/core`, LevelDB/Redis stores) is maintained on the [`master-v4`](https://github.com/kucherenko/jscpd/tree/master-v4) branch and published as `jscpd@4`.
+```
+
+**File**: `docs/rust.md` (modified, +1/-1)
+```diff
+@@ -1310,7 +1310,7 @@ jscpd v4 (TypeScript engine) is maintained on the [`master-v4`](https://github.c
+ | `--store` (LevelDB/Redis) | Persistent store for large repos | Not supported; the flag is ignored with a warning. Available on the `master-v4` line. |
+ | `--formats-exts` | Custom format-to-extension mapping | Same flag name, same behavior |
+ | `--formats-names` | Custom format-to-filename mapping | Same flag name, same behavior |
+-| Programming API | `jscpd()` Promise API, `detectClones()` | Rust API via `cpd-finder` crate; from Node.js, `runJscpd()` in the `jscpd` package runs the binary, no in-process API |
++| Programming API | `jscpd()` Promise API, `detectClones()` | Rust API via `cpd-finder` crate; from Node.js, `runJscpd()` in the `jscpd` package runs the binary and `getJscpdReport()` returns its JSON report, no in-process API |
+ | Config file | `.jscpd.json` with camelCase keys | Same — `.jscpd.json` with camelCase keys |
+ | Cross-format detection | Vue SFC, Svelte, Astro, Markdown | Same — per-block tokenization |
+ | Token counts | Varies by tokenizer | May differ by 1-2% due to Rust tokenizer; clone detection matches |
+```
+
+**File**: `rust/jscpd/README.md` (modified, +14/-1)
+```diff
+@@ -164,14 +164,27 @@ const { status } = runJscpd(["src", "--silent", "--reporters", "json"]);
  
-@@ -130,7 +130,7 @@ The workflow fails if more than 5% of the code is duplicated.
+ It throws an `Error` with `code === "JSCPD_NO_BINARY"` when there is no prebuilt binary for this platform or the platform package is not installed. A binary that is missing on disk comes back in `result.error` with code `ENOENT`, as from `spawnSync`. The v4 functions `jscpd()` and `detectClones()` are not exported: detection runs only in the binary.
  
- #### Pin a specific version
++`getJscpdReport(args, options)` runs the binary the same way, with the `json` reporter writing into a temporary directory, and returns the parsed `jscpd-report.json` (`index.d.ts` has its types):
++
++```js
++const { getJscpdReport } = require("jscpd");
++
++const { statistics, duplicates } = getJscpdReport(["src", "--min-tokens", "30"]);
++for (const { firstFile, secondFile } of duplicates) {
++  console.log(`${firstFile.name}:${firstFile.start} = ${secondFile.name}:${secondFile.start}`);
++}
++```
++
++The directory is removed afterwards. The report comes back even when a gate such as `--threshold` fails the run. What jscpd prints to stdout is dropped; pass `stdio` in `options` to see it. `args` that set `--output` or `--report-name`, or a mode that writes another file (`--dead-code`, `--health`, `--compare`, `--complexity`, `--dashboard`) or none (`--mcp`, `--lsp`, `--list`), make it throw an `Error` with `code === "JSCPD_UNSUPPORTED_ARG"` and the flag in `arg` before anything runs; use `runJscpd` for those modes. When jscpd writes no report, for example for a path that does not exist, it throws an `Error` with `code === "JSCPD_NO_REPORT"` and the run's `status` and `stderr`. In `startLoc` and `endLoc`, lines count from 1, and columns and positions count bytes from 0.
++
+ ## Coming from jscpd v4
  
--By default the action installs the jscpd release its ref belongs to, so pinning the action to a release tag or its commit SHA pins jscpd too, and a Dependabot or Renovate bump of the action updates both. This starts with the first release after 5.4.2: v5.4.2 and older tags install the newest jscpd.
-+By default the action installs the jscpd release its ref belongs to, so pinning the action to a release tag or its commit SHA pins jscpd too, and a Dependabot or Renovate bump of the action updates both. This starts with v5.4.3: v5.4.2 and older tags install the newest jscpd.
+ Flags, config file and reporters are the same. The differences:
  
- A commit between releases installs the release before it, so pin a release rather than a commit on `master`. While a release is being published, `@master` already names the new version, and the action installs the latest release with a warning until the new one is out.
+ | Feature | jscpd v4 (Node.js) | jscpd v5 (Rust) |
+ |---------|--------------------|-----------------|
+ | `--store` (LevelDB/Redis) | Persistent store for large repos | Not supported (flag ignored with a warning) |
+-| Programming API | `jscpd()` Promise, `detectClones()` | Rust crate API; from Node.js, `runJscpd()` runs the binary, `jscpd()` / `detectClones()` are gone |
++| Programming API | `jscpd()` Promise, `detectClones()` | Rust crate API; from Node.js, `runJscpd()` runs the binary and `getJscpdReport()` returns its JSON report, `jscpd()` / `detectClones()` are gone |
+ | `--reporters` | All v4 reporters | All except `full` (use `console-full`) |
+ | Output filenames | `jscpd-report.json`, `html/` dir | `jscpd-report.*` prefix |
  
-@@ -139,7 +139,7 @@ Set `version` to install another release, or `latest` for the newest one:
- ```yaml
- - uses: kucherenko/jscpd@v5
-   with:
--    version: "5.4.2"
-+    version: "5.4.3"
+```
+
+**File**: `rust/jscpd/index.d.ts` (modified, +98/-0)
+```diff
+@@ -26,3 +26,101 @@ export function runJscpd(
+   args: readonly string[],
+   options?: SpawnSyncOptions
+ ): SpawnSyncReturns<string | Buffer>;
++
++/** A point in a file. */
++export interface JscpdLocation {
++  /** Counts from 1. */
++  line: number;
++  /** Bytes from the start of the line, counting from 0. */
++  column: number;
++  /** Bytes from the start of the file, counting from 0. */
++  position: number;
++}
++
++/** One of the two fragments of a clone. */
++export interface JscpdFragment {
++  /** The file's path, as the other reports name it; absolute with `--absolute`. */
++  name: string;
++  /** The first line of the fragment. */
++  start: number;
++  /** The last line of the fragment. */
++  end: number;
++  startLoc: JscpdLocation;
++  endLoc: JscpdLocation;
++  /** With `--similarity`: the size of the function's normalized syntax tree. */
++  nodes?: number;
++  /** With `--blame`: the commit that last changed the fragment. */
++  blame?: { commitSha: string; author: string };
++}
++
++/** One entry of `duplicates` in `jscpd-report.json`. */
++export interface JscpdDuplicate {
++  format: string;
++  /** How many lines the first fragment spans. */
++  lines: number;
++  /** The first fragment's lines, whole. */
++  fragment: string;
++  tokens: number;
++  firstFile: JscpdFragment;
++  secondFile: JscpdFragment;
++  /** Not in the baseline (`--baseline`, `--baseline-from-ref`, `--changed`). */
++  isNew: boolean;
++  kind: "exact" | "renamed" | "similar" | "semantic";
++  /** A `similar` or `semantic` clone's similarity. */
++  similarity?: number;
++  /** How a `similar` clone was found: `--max-gap-lines` or `--similarity`. */
++  method?: "gap" | "ast";
++}
++
++/** The statistics of all files, or of one format. */
++export interface JscpdStatisticsRow {
++  lines: number;
++  tokens: number;
++  sources: number;
++  clones: number;
++  duplicatedLines: number;
++  duplicatedTokens: number;
++  percentage: number;
++  percentageTokens: number;
++  newDuplicatedLines: number;
++  newClones: number;
++}
++
++/** `jscpd-report.json`, the `json` reporter's output. */
++export interface JscpdReport {
++  statistics: {
++    total: JscpdStatisticsRow;
++    formats: Record<string, JscpdStatisticsRow>;
++    detectionDate: string;
++  };
++  duplicates: JscpdDuplicate[];
++  /** With `--summary`. */
++  summary?: unknown;
++  /** With `--history`. */
++  history?: unknown;
++  /** When the config has `boundaries` rules. */
++  boundaries?: unknown;
++}
++
++/**
++ * Runs jscpd with `args` and `options` as `runJscpd` does, with the `json`
++ * reporter writing into a temporary directory, and returns the parsed
++ * `jscpd-report.json`. The directory is removed afterwards. What jscpd
++ * prints to stdout is dropped unless `options.stdio` says otherwise.
++ *
++ * Throws an `Error` whose `code` is `"JSCPD_UNSUPPORTED_ARG"`, with the flag
++ * in `arg`, before running anything, when `args` set `--output` or
++ * `--report-name`, or a mode that writes no `jscpd-report.json`
++ * (`--dead-code`, `--health`, `--compare`, `--complexity`, `--dashboard`,
++ * `--mcp`, `--lsp`, `--list`, `--help`, `--version`).
++ *
++ * The report is returned whenever jscpd wrote it, even when a gate such as
++ * `--threshold` failed the run. Throws `result.error` when the binary could
++ * not run, and an `Error` whose `code` is `"JSCPD_NO_REPORT"`, with the exit
++ * `status` and `stderr`, when it wrote no report (for example, a path that
++ * does not exist). Throws as `runJscpd` does when there is no binary.
++ */
++export function getJscpdReport(
++  args: readonly string[],
++  options?: SpawnSyncOptions
++): JscpdReport;
+```
+
+**File**: `rust/jscpd/index.js` (modified, +118/-2)
+```diff
+@@ -1,5 +1,7 @@
+ "use strict";
+ 
++const fs = require("fs");
++const os = require("os");
+ const path = require("path");
+ const { spawnSync } = require("child_process");
+ const {
+@@ -11,6 +13,31 @@ const {
+ 
+ /** `error.code` of the errors runJscpd throws itself. */
+ const NO_BINARY = "JSCPD_NO_BINARY";
++/** `error.code` of the error getJscpdReport throws when jscpd wrote no report. */
++const NO_REPORT = "JSCPD_NO_REPORT";
++/** `error.code` of the error getJscpdReport throws for an arg it can't run with. */
++const UNSUPPORTED_ARG = "JSCPD_UNSUPPORTED_ARG";
++
++// Flags getJscpdReport sets itself. jscpd takes each of them once.
++const OWN_FLAGS = new Set(["--output", "-o", "--report-name"]);
++// Modes that write another file instead of jscpd-report.json, or none at
++// all: --dead-code writes basta-report.json, --health jscpd-health.json,
++// --mcp and --lsp wait for a client on stdin.
++const OTHER_MODES = new Set([
++  "--dead-code",
++  "--basta",
++  "--compare",
++  "--complexity",
++  "--dashboard",
++  "--health",
++  "--mcp",
++  "--lsp",
++  "--list",
++  "--help",
++  "-h",
++  "--version",
++  "-V",
++]);
+ 
+ function noBinary(message) {
+   const error = new Error(message);
+@@ -54,7 +81,6 @@ function runJscpd(args, options) {
+       "release",
+       binaryName
+     );
+-    const fs = require("fs");
+     if (!fs.existsSync(localBuild)) {
+       throw noBinary(
+         `jscpd: Platform package "${entry.packageName}" not installed.` +
+@@ -68,4 +94,94 @@ function runJscpd(args, options) {
+   return spawnSync(binaryPath, args, options);
+ }
+ 
+-module.exports = { runJscpd };
++function unsupportedArg(arg, message) {
++  const error = new Error(`jscpd: getJscpdReport: ${message}`);
++  error.code = UNSUPPORTED_ARG;
++  error.arg = arg;
++  return error;
++}
++
++// Throws for an arg that would make jscpd fail or write no jscpd-report.json.
++// Everything after `--` is a path.
++function checkArgs(args) {
++  for (const arg of args) {
++    if (arg === "--") {
++      return;
++    }
++    const flag = arg.startsWith("--")
++      ? arg.split("=")[0]
++      : arg.startsWith("-o")
++        ? "-o"
++        : arg;
++    if (OWN_FLAGS.has(flag)) {
++      throw unsupportedArg(
++        flag,
++        `${flag} is set by getJscpdReport, leave it out of args`
++      );
++    }
++    if (OTHER_MODES.has(flag)) {
++      throw unsupportedArg(
++        flag,
++        `${flag} does not write jscpd-report.json, run it with runJscpd`
++      );
++    }
++  }
++}
++
++/**
++ * Runs jscpd with `args` and `options` as runJscpd does, with the `json`
++ * reporter writing into a temporary directory, and returns the parsed
++ * `jscpd-report.json`. The directory is removed afterwards. The report is
++ * returned whenever jscpd wrote it, even when a gate such as `--threshold`
++ * failed the run. What jscpd prints to stdout is dropped unless
++ * `options.stdio` says otherwise.
++ *
++ * Throws an Error with `code === "JSCPD_UNSUPPORTED_ARG"` and the flag in
++ * `arg`, before running anything, when `args` set `--output` or
++ * `--report-name`, or a mode that writes no jscpd-report.json (`--dead-code`,
++ * `--health`, `--compare`, `--mcp`...). Throws `result.error` when the binary
++ * could not run, and an Error with `code === "JSCPD_NO_REPORT"`, the exit
++ * `status` and `stderr` when it wrote no report (for example, a path that
++ * does not exist).
++ */
++function getJscpdReport(args, options) {
++  checkArgs(args);
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jscpd-"));
++  try {
++    // First, so that a `--` in args can't turn them into paths.
++    const result = runJscpd(
++      [
++        "--reporters",
++        "json",
++        "--output",
++        dir,
++        "--report-name",
++        "jscpd-report",
++        ...args,
++      ],
++      // stdout is not returned, and an extra console reporter there could
++      // overflow spawnSync's maxBuffer and kill the run.
++      { stdio: ["pipe", "ignore", "pipe"], ...options }
++    );
++    if (result.error) {
++      throw result.error;
++    }
++    const reportPath = path.join(dir, "jscpd-report.json");
++    if (fs.existsSync(reportPath)) {
++      return JSON.parse(fs.readFileSync(reportPath, "utf8"));
++    }
++    const stderr = String(result.stderr ?? "");
++    const error = new Error(
++      `jscpd: no report (exit code ${result.status})` +
++        (stderr ? `\n${stderr.trimEnd()}` : "")
++    );
++    error.code = NO_REPORT;
++    error.status = result.status;
++    error.stderr = stderr;
++    throw error;
++  } finally {
++    fs.rmSync(dir, { recursive: true, force: true });
++  }
++}
++
++module.exports = { runJscpd, getJscpdReport };
+```
+
+**File**: `rust/jscpd/test/run-jscpd.test.js` (modified, +197/-1)
+```diff
+@@ -7,12 +7,13 @@
+ const test = require("node:test");
+ const assert = require("node:assert/strict");
+ const fs = require("node:fs");
++const os = require("node:os");
+ const path = require("node:path");
+ const { spawnSync } = require("node:child_process");
+ 
+ const packageDir = path.join(__dirname, "..");
+ const launcher = path.join(packageDir, "run-jscpd.js");
+-const { runJscpd } = require(packageDir);
++const { runJscpd, getJscpdReport } = require(packageDir);
+ const { getPlatformKey, PLATFORM_MAP } = require(
+   path.join(packageDir, "platform-map")
+ );
+@@ -26,6 +27,28 @@ function node(args) {
+   return spawnSync(process.execPath, args, { encoding: "utf8" });
+ }
+ 
++// A temporary directory with two files that share one function: one clone at
++// CLONE_ARGS. Removed after the test.
++function projectWithClone(t) {
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jscpd-test-"));
++  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
++  const total = [
++    "function total(items) {",
++    "  let sum = 0;",
++    "  for (const item of items) {",
++    "    sum += item.price * item.quantity;",
++    "  }",
++    "  return sum;",
++    "}",
++    "",
++  ].join("\n");
++  fs.writeFileSync(path.join(dir, "a.js"), `${total}module.exports = total;\n`);
++  fs.writeFileSync(path.join(dir, "b.js"), `const rate = 0.2;\n${total}`);
++  return dir;
++}
++
++const CLONE_ARGS = ["--min-tokens", "10", "--min-lines", "3"];
++
+ test("runJscpd returns the binary's output and exit code", () => {
+   const result = runJscpd(["--version"], { encoding: "utf8" });
+   assert.equal(result.error, undefined);
+@@ -138,3 +161,176 @@ test("a platform package without its binary: ENOENT in result.error, the command
+     });
+   }
+ });
++
++test("getJscpdReport returns the report the json reporter writes", (t) => {
++  const dir = projectWithClone(t);
++  const args = [dir, ...CLONE_ARGS];
++  const report = getJscpdReport(args);
++
++  const output = path.join(dir, "report");
++  const direct = runJscpd([...args, "--reporters", "json", "--output", output]);
++  assert.equal(direct.status, 0, `${direct.stderr}`);
++  const expected = JSON.parse(
++    fs.readFileSync(path.join(output, "jscpd-report.json"), "utf8")
++  );
++  delete report.statistics.detectionDate;
++  delete expected.statistics.detectionDate;
++  assert.deepEqual(report, expected);
++
++  // The keys index.d.ts types.
++  assert.equal(report.statistics.total.clones, 1);
++  const [duplicate] = report.duplicates;
++  assert.deepEqual(Object.keys(duplicate).sort(), [
++    "firstFile",
++    "format",
++    "fragment",
++    "isNew",
++    "kind",
++    "lines",
++    "secondFile",
++    "tokens",
++  ]);
++  assert.deepEqual(Object.keys(duplicate.firstFile).sort(), [
++    "end",
++    "endLoc",
++    "name",
++    "start",
++    "startLoc",
++  ]);
++  assert.deepEqual(Object.keys(duplicate.firstFile.startLoc).sort(), [
++    "column",
++    "line",
++    "position",
++  ]);
++  assert.deepEqual(Object.keys(report.statistics.total).sort(), [
++    "clones",
++    "duplicatedLines",
++    "duplicatedTokens",
++    "lines",
++    "newClones",
++    "newDuplicatedLines",
++    "percentage",
++    "percentageTokens",
++    "sources",
++    "tokens",
++  ]);
++});
++
++test("getJscpdReport takes paths after --", (t) => {
++  const dir = projectWithClone(t);
++  assert.equal(getJscpdReport([...CLONE_ARGS, "--", dir]).duplicates.length, 1);
++});
++
++test("getJscpdReport returns the report when --threshold fails the run", (t) => {
++  const args = [projectWithClone(t), ...CLONE_ARGS, "--threshold", "0"];
++  assert.equal(runJscpd(args).status, 1);
++  assert.equal(getJscpdReport(args).duplicates.length, 1);
++});
++
++test("getJscpdReport replaces the config's reporters, output and reportName", (t) => {
++  const dir = projectWithClone(t);
++  fs.writeFileSync(
++    path.join(dir, ".jscpd.json"),
++    JSON.stringify({
++      path: ["a.js", "b.js"],
++      minTokens: 10,
++      minLines: 3,
++      reporters: ["console", "html"],
++      output: "out",
++      reportName: "custom",
++    })
++  );
++  const report = getJscpdReport([], { cwd: dir });
++  assert.equal(report.duplicates.length, 1);
++  assert.deepEqual(fs.readdirSync(dir).sort(), [".jscpd.json", "a.js", "b.js"]);
++});
++
++test("no report: getJscpdReport throws JSCPD_NO_REPORT with the exit status and stderr", () => {
++  const missing = path.join(__dirname, "no-such-path");
++  assert.throws(
++    () => getJscpdReport([missing]),
++    (error) => {
++      assert.equal(error.code, "JSCPD_NO_REPORT");
++      assert.equal(error.status, 1);
++      assert.match(error.stderr, /no-such-path/);
++      assert.match(error.message, /^jscpd: no report \(exit code 1\)\n/);
++      return true;
++    }
++  );
++  assert.throws(() => getJscpdReport(["--no-such-flag"]), {
++    code: "JSCPD_NO_REPORT",
++    status: 2,
++  });
++});
++
++test("getJscpdReport removes its temporary directory", (t) => {
++  const project = projectWithClone(t);
++  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "jscpd-test-"));
++  t.after(()
+```
+
+---
+
+### Incident Patch 2: `e11da932` (2026-11-11)
+**Commit Message**: feat(npm): getJscpdReport rejects args that can't give a report
+
+--output, --report-name and the modes that write another file or none
+(--dead-code, --health, --compare, --complexity, --dashboard, --mcp,
+--lsp, --list, --help, --version) used to end as "no report (exit
+code 0)" or a hung spawnSync. They now throw JSCPD_UNSUPPORTED_ARG with
+the flag before anything runs. Paths after -- are not checked.
+
+stdout is ignored unless options.stdio says otherwise: it is never
+returned, and an extra console reporter could overflow maxBuffer.
+
+**File**: `rust/jscpd/README.md` (modified, +1/-1)
+```diff
+@@ -175,7 +175,7 @@ for (const { firstFile, secondFile } of duplicates) {
+ }
  ```
  
- #### Skip install (binary already in image)
-@@ -254,7 +254,7 @@ docker run --rm -v "$PWD:/src" ghcr.io/kucherenko/jscpd:5 --threshold 5 --report
- docker run --rm -v "$PWD:/src" ghcr.io/kucherenko/jscpd --reporters json,html --output report .
- ```
+-The directory is removed afterwards, so `args` must not set `--output` or `--report-name`. The report comes back even when a gate such as `--threshold` fails the run. When jscpd writes no report, for example for a path that does not exist, it throws an `Error` with `code === "JSCPD_NO_REPORT"` and the run's `status` and `stderr`. In `startLoc` and `endLoc`, lines count from 1, and columns and positions count bytes from 0.
++The directory is removed afterwards. The report comes back even when a gate such as `--threshold` fails the run. What jscpd prints to stdout is dropped; pass `stdio` in `options` to see it. `args` that set `--output` or `--report-name`, or a mode that writes another file (`--dead-code`, `--health`, `--compare`, `--complexity`, `--dashboard`) or none (`--mcp`, `--lsp`, `--list`), make it throw an `Error` with `code === "JSCPD_UNSUPPORTED_ARG"` and the flag in `arg` before anything runs; use `runJscpd` for those modes. When jscpd writes no report, for example for a path that does not exist, it throws an `Error` with `code === "JSCPD_NO_REPORT"` and the run's `status` and `stderr`. In `startLoc` and `endLoc`, lines count from 1, and columns and positions count bytes from 0.
  
--The working directory inside the container is `/src`. Tags: `latest`, `5`, `5.4`, `5.4.2` (major, minor, and exact version). The image contains only the static binary — `--blame` and `--baseline-from-ref` need `git`, which is not included. On Linux hosts, add `--user "$(id -u):$(id -g)"` so report files are owned by you rather than root.
-+The working directory inside the container is `/src`. Tags: `latest`, `5`, `5.4`, `5.4.3` (major, minor, and exact version). The image contains only the static binary — `--blame` and `--baseline-from-ref` need `git`, which is not included. On Linux hosts, add `--user "$(id -u):$(id -g)"` so report files are owned by you rather than root.
- 
- GitLab CI example, using the Code Quality and metrics reporters:
- 
-@@ -320,7 +320,7 @@ repos:
-         name: jscpd - copy/paste detector
-         entry: jscpd
-         language: python
--        additional_dependencies: ['jscpd==5.4.2']
-+        additional_dependencies: ['jscpd==5.4.3']
-         args: [--threshold, "5", --reporters, console,silent]
-         pass_filenames: false
-         always_run: true
-```
-
-**File**: `docs/packages.md` (modified, +6/-6)
-```diff
-@@ -8,23 +8,23 @@ A jscpd release is one Rust workspace published under several names. Everything
- 
- **Path:** `rust/crates/cpd`
- **crates.io:** [`jscpd`](https://crates.io/crates/jscpd)
--**Version:** 5.4.2
-+**Version:** 5.4.3
- 
- The CLI. `cargo install jscpd` installs two identical binaries, `jscpd` and `cpd`. Its library target is internal (test helpers only); depend on the crates below for programmatic use. See [Rust docs](./rust.md).
- 
- ### cpd-core
- 
- **Path:** `rust/crates/cpd-core`
- **crates.io:** [`cpd-core`](https://crates.io/crates/cpd-core)
--**Version:** 0.1.22
-+**Version:** 0.1.23
- 
- Core data models and the Rabin-Karp rolling hash implementation.
- 
- ### cpd-tokenizer
- 
- **Path:** `rust/crates/cpd-tokenizer`
- **crates.io:** [`cpd-tokenizer`](https://crates.io/crates/cpd-tokenizer)
--**Version:** 0.1.21
-+**Version:** 0.1.22
- 
- Source code tokenizer (224 formats, listed in [FORMATS.md](../FORMATS.md)). Uses `oxc_parser` for JavaScript/TypeScript/JSX, and per-block tokenization for Vue SFC, Svelte, Astro, and Markdown. Pure — no filesystem or network access (enforced in CI).
- 
-@@ -48,21 +48,21 @@ File walking, orchestration, baseline handling, and git blame. Uses `rayon` for
- 
- **Path:** `rust/crates/cpd-reporter`
- **crates.io:** [`cpd-reporter`](https://crates.io/crates/cpd-reporter)
--**Version:** 0.1.23
-+**Version:** 0.1.24
- 
- Output format rendering for the 15 reporters.
- 
- ### cpd-semantic
- 
- **Path:** `rust/crates/cpd-semantic`
- **crates.io:** [`cpd-semantic`](https://crates.io/crates/cpd-semantic)
--**Version:** 0.1.3
-+**Version:** 0.1.4
- 
- Semantic clones (`--semantic`, experimental): function extraction (oxc for JavaScript and TypeScript, the ruff parser for Python, a scanner for Rust, and tree-sitter grammars for C, C++, C#, Go, Java, Kotlin, PHP, Ruby, Scala and Swift), code embeddings from CodeRankEmbed or jina-embeddings-v2-base-code run in-process with candle or taken from an OpenAI-compatible API, the thresholds calibrated for nine models, a vector cache, and the pairing rule. It plugs into the finder as a clone pass (`cpd_finder::pass::ClonePass`), so the other crates build without its dependencies. Unlike the crates above, it reads and writes the user cache directory and makes network calls: the model download and the embeddings API.
- 
- ## npm packages
- 
--All npm packages share the engine version (5.4.2). None of them needs a Node.js runtime to run jscpd — Node.js is only the delivery mechanism.
-+All npm packages share the engine version (5.4.3). None of them needs a Node.js runtime to run jscpd — Node.js is only the delivery mechanism.
- 
- ### jscpd
+ ## Coming from jscpd v4
  
 ```
 
-**File**: `pyproject.toml` (modified, +2/-2)
+**File**: `rust/jscpd/index.d.ts` (modified, +8/-2)
 ```diff
-@@ -9,10 +9,10 @@ build-backend = "setuptools.build_meta"
- 
- [project]
- name = "jscpd-repo"
--version = "5.4.2"
-+version = "5.4.3"
- description = "jscpd repository root: installs the jscpd binary for pre-commit hooks"
- requires-python = ">=3.8"
--dependencies = ["jscpd==5.4.2"]
-+dependencies = ["jscpd==5.4.3"]
- 
- [tool.setuptools]
- packages = []
+@@ -105,8 +105,14 @@ export interface JscpdReport {
+ /**
+  * Runs jscpd with `args` and `options` as `runJscpd` does, with the `json`
+  * reporter writing into a temporary directory, and returns the parsed
+- * `jscpd-report.json`. The directory is removed afterwards. `args` must not
+- * set `--output` or `--report-name`.
++ * `jscpd-report.json`. The directory is removed afterwards. What jscpd
++ * prints to stdout is dropped unless `options.stdio` says otherwise.
++ *
++ * Throws an `Error` whose `code` is `"JSCPD_UNSUPPORTED_ARG"`, with the flag
++ * in `arg`, before running anything, when `args` set `--output` or
++ * `--report-name`, or a mode that writes no `jscpd-report.json`
++ * (`--dead-code`, `--health`, `--compare`, `--complexity`, `--dashboard`,
++ * `--mcp`, `--lsp`, `--list`, `--help`, `--version`).
+  *
+  * The report is returned whenever jscpd wrote it, even when a gate such as
+  * `--threshold` failed the run. Throws `result.error` when the binary could
 ```
 
-**File**: `rust/CHANGELOG.md` (modified, +47/-0)
+**File**: `rust/jscpd/index.js` (modified, +71/-4)
 ```diff
-@@ -4,6 +4,53 @@ All notable changes to **cpd (Rust)** are documented here. Releases follow [Sema
+@@ -15,6 +15,29 @@ const {
+ const NO_BINARY = "JSCPD_NO_BINARY";
+ /** `error.code` of the error getJscpdReport throws when jscpd wrote no report. */
+ const NO_REPORT = "JSCPD_NO_REPORT";
++/** `error.code` of the error getJscpdReport throws for an arg it can't run with. */
++const UNSUPPORTED_ARG = "JSCPD_UNSUPPORTED_ARG";
++
++// Flags getJscpdReport sets itself. jscpd takes each of them once.
++const OWN_FLAGS = new Set(["--output", "-o", "--report-name"]);
++// Modes that write another file instead of jscpd-report.json, or none at
++// all: --dead-code writes basta-report.json, --health jscpd-health.json,
++// --mcp and --lsp wait for a client on stdin.
++const OTHER_MODES = new Set([
++  "--dead-code",
++  "--basta",
++  "--compare",
++  "--complexity",
++  "--dashboard",
++  "--health",
++  "--mcp",
++  "--lsp",
++  "--list",
++  "--help",
++  "-h",
++  "--version",
++  "-V",
++]);
  
- ---
+ function noBinary(message) {
+   const error = new Error(message);
+@@ -71,16 +94,58 @@ function runJscpd(args, options) {
+   return spawnSync(binaryPath, args, options);
+ }
  
-+## 5.4.3
++function unsupportedArg(arg, message) {
++  const error = new Error(`jscpd: getJscpdReport: ${message}`);
++  error.code = UNSUPPORTED_ARG;
++  error.arg = arg;
++  return error;
++}
 +
-+### New Features
++// Throws for an arg that would make jscpd fail or write no jscpd-report.json.
++// Everything after `--` is a path.
++function checkArgs(args) {
++  for (const arg of args) {
++    if (arg === "--") {
++      return;
++    }
++    const flag = arg.startsWith("--")
++      ? arg.split("=")[0]
++      : arg.startsWith("-o")
++        ? "-o"
++        : arg;
++    if (OWN_FLAGS.has(flag)) {
++      throw unsupportedArg(
++        flag,
++        `${flag} is set by getJscpdReport, leave it out of args`
++      );
++    }
++    if (OTHER_MODES.has(flag)) {
++      throw unsupportedArg(
++        flag,
++        `${flag} does not write jscpd-report.json, run it with runJscpd`
++      );
++    }
++  }
++}
 +
-+- **`runJscpd()` runs the jscpd binary from Node.js.** `require("jscpd")` and `import { runJscpd } from "jscpd"` now export `runJscpd(args, options)`. It finds the platform binary the way the `jscpd` command does and returns the result of `spawnSync`, so a script no longer starts a second Node.js process to run the command, and tools such as knip see that the script uses `jscpd`. Where the command prints an error and exits, the function throws an `Error` with the same message. The types are in `index.d.ts`. Detection still runs only in the Rust binary, and nothing parses or returns clones in JavaScript. By [@abrahamguo](https://github.com/abrahamguo). ([#1238](https://github.com/kucherenko/jscpd/pull/1238))
-+
-+- **The HTML report shows both fragments of a clone and highlights the code.** "Show code" used to open only the first fragment. Now it opens both side by side, or one above the other on a narrow screen, each under its file with line numbers in a gutter, and a long line scrolls inside its pane. The report highlights the code with Prism 1.30.0 again, as the v4 report did, and inlines only the languages it shows. A block inside another file, such as `guide.md:typescript`, keeps the lines that detection gives it. ([#1263](https://github.com/kucherenko/jscpd/issues/1263), [#1265](https://github.com/kucherenko/jscpd/pull/1265))
-+
-+### Bug Fixes
-+
-+- **The GitHub Action installed the newest jscpd, whatever ref you pinned.** The `version` input defaulted to `latest`, so `kucherenko/jscpd@v5.4.1` installed 5.4.2 once it came out. Now an empty `version` installs the release that the action's own ref belongs to, so pinning the action pins jscpd, and a Dependabot bump of the action updates both. `version: latest` still installs the newest release. This works from v5.4.3 on: older tags still install the newest jscpd. Reported by [@dannystaple](https://github.com/dannystaple), fixed by [@sarankumar1325](https://github.com/sarankumar1325). ([#1240](https://github.com/kucherenko/jscpd/issues/1240), [#1249](https://github.com/kucherenko/jscpd/pull/1249))
-+
-+- **A `/*` or `//` inside a JS or TS string ended a `jscpd:ignore` region.** The tokenizer looked for the markers with a byte scan that took every `/*` and `//` for a comment, so `'a /* b'` inside a marked region opened a comment that ran to the end marker, and the code after the string came back as clones. The markers are now found by their text, as in the other languages, so a region runs from `jscpd:ignore-start` to the next `jscpd:ignore-end`. Markers inside template literals, such as the CSS of a styled component, keep working. Reported by [@bauchdj](https://github.com/bauchdj), fixed by [@sarankumar1325](https://github.com/sarankumar1325). ([#1257](https://github.com/kucherenko/jscpd/issues/1257), [#1258](https://github.com/kucherenko/jscpd/pull/1258))
-+
-+- **"Ignore this clone" in the language server broke JSX.** It wrote `// jscpd:ignore-start` among JSX children, where the page shows it as text, and could put a marker inside a tag, such as `< /* jscpd:ignore-end *//ul>`, which TypeScript can't parse. Now it writes `{/* jscpd:ignore-start */}` among children and never puts a marker inside a tag. The start goes before the tag and the end after it, so the region still covers the clone. Each copy of a `--cross-formats` clone gets the comment of its own format, JSX in the `<script lang="tsx">` of a Vue, Svelte or Astro component gets the JSX markers, and a marker after `/` gets a space so it doesn't turn into a line comment. ([#1260](https://github.com/kucherenko/jscpd/pull/1260), [#1264](https://github.com/kucherenko/jscpd/pull/1264))
-+
-+- **`--dead-code` reported a file loaded with ``import(`./x`)`` or `import('$lib/x')` as unused.** `import()` read only quoted specifiers and turned away any specifier with a `$` in it, so a backtick `import()` with nothing interpolated and SvelteKit's `$lib` alias were never followed. The importing file also lost 30 points of confidence on every finding. jscpd dropped ``import.meta.glob(`./pages/*.ts`)`` the same way. Now only `${` inside backticks counts as interpolation. On six repositories nothing new was reported. Reported with the cause by [@abrahamguo](https://github.com/abrahamguo). ([#1239](https://github.com/kucherenko/jscpd/issues/1239), [#1251](https://github.com/kucherenko/jscpd/pull/1251))
-+
-+- **`--dead-code` reported constructors and dunder methods as unused members.** `constructor` in JavaScript and `__init__` or `__repr__` in Python are called by the runtime, not by name, and the unused-member check didn't skip them. It does now. Reported by [@abrahamguo](https://github.com/abrahamguo), fixed by [@sarankumar1325](https://github.com/sarankumar1325). ([#1253](https://github.com/kucherenko/jscpd/issues/1253), [#1254](https://github.com/kucherenko/jscpd/pull/1254))
-+
-+- **`-
+ /**
+  * Runs jscpd with `args` and `options` as runJscpd does, with the `json`
+  * reporter writing into a temporary directory, and returns the parsed
+  * `jscpd-report.json`. The directory is removed afterwards. The report is
+  * returned whenever jscpd wrote it, even when a gate such as `--threshold`
+- * failed the run. Throws `result.error` when the binary could not run, and an
+- * Error with `code === "JSCPD_NO_REPORT"`, the exit `status` and `stderr` when
+- * it wrote no report (for example, a path that does not exist).
++ * failed the run. What jscpd prints to stdout is dropped unless
++ * `options.stdio` says otherwise.
++ *
++ * Throws an Error with `code === "JSCPD_UNSUPPORTED_ARG"` and the flag in
++ * `arg`, before running anything, when `args` set `--output` or
++ * `--report-name`, or a mode that writes no jscpd-report.json (`--dead-code`,
++ * `--health`, `--compare`, `--mcp`...). Throws `result.error` when the binary
++ * could not run, and an Error with `code === "JSCPD_NO_REPORT"`, the exit
++ * `status` and `stderr` when it wrote no report (for example, a path that
++ * does not exist).
+  */
+ function getJscpdReport(args, options) {
++  checkArgs(args);
+   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jscpd-"));
+   try {
+     // First, so that a `--` in args can't turn them into paths.
+@@ -94,7 +159,9 @@ function getJscpdReport(args, options) {
+         "jscpd-report",
+         ...args,
+       ],
+-      options
++      // stdout is not returned, and an extra console reporter there could
++      // overflow spawnSync's maxBuffer and kill the run.
++      { stdio: ["pipe", "ignore", "pipe"], ...options }
+     );
+     if (result.error) {
+       throw result.error;
 ```
 
-**File**: `rust/Cargo.lock` (modified, +6/-6)
+**File**: `rust/jscpd/test/run-jscpd.test.js` (modified, +60/-0)
 ```diff
-@@ -231,7 +231,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
- 
- [[package]]
- name = "basta"
--version = "0.3.2"
-+version = "0.3.3"
- dependencies = [
-  "chrono",
-  "clap",
-@@ -605,7 +605,7 @@ checksum = "417bef24afe1460300965a25ff4a24b8b45ad011948302ec221e8a0a81eb2c79"
- 
- [[package]]
- name = "cpd-core"
--version = "0.1.22"
-+version = "0.1.23"
- dependencies = [
-  "rayon",
-  "rustc-hash",
-@@ -632,7 +632,7 @@ dependencies = [
- 
- [[package]]
- name = "cpd-reporter"
--version = "0.1.23"
-+version = "0.1.24"
- dependencies = [
-  "askama",
-  "cpd-core",
-@@ -647,7 +647,7 @@ dependencies = [
- 
- [[package]]
- name = "cpd-semantic"
--version = "0.1.3"
-+version = "0.1.4"
- dependencies = [
-  "candle-core",
-  "candle-nn",
-@@ -711,7 +711,7 @@ dependencies = [
- 
- [[package]]
- name = "cpd-tokenizer"
--version = "0.1.21"
-+version = "0.1.22"
- dependencies = [
-  "cpd-core",
-  "log",
-@@ -1774,7 +1774,7 @@ dependencies = [
- 
- [[package]]
- name = "jscpd"
--version = "5.4.2"
-+version = "5.4.3"
- dependencies = [
-  "basta",
-  "clap",
-```
-
-**File**: `rust/basta/package.json` (modified, +9/-9)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "basta",
--  "version": "0.3.2",
-+  "version": "0.3.3",
-   "description": "Dead code detector — finds unused files, exports, imports and private declarations across JavaScript, TypeScript and Python, and Rust through cargo's diagnostics. Rust engine, self-contained binary.",
-   "homepage": "https://jscpd.dev",
-   "funding": "https://opencollective.com/jscpd",
-@@ -13,14 +13,14 @@
-     "README.md"
-   ],
-   "optionalDependencies": {
--    "basta-linux-x64-gnu": "0.3.2",
--    "basta-linux-arm64-gnu": "0.3.2",
--    "basta-linux-x64-musl": "0.3.2",
--    "basta-linux-arm64-musl": "0.3.2",
--    "basta-darwin-arm64": "0.3.2",
--    "basta-darwin-x64": "0.3.2",
--    "basta-windows-x64-msvc": "0.3.2",
--    "basta-windows-arm64-msvc": "0.3.2"
-+    "basta-linux-x64-gnu": "0.3.3",
-+    "basta-linux-arm64-gnu": "0.3.3",
-+    "basta-linux-x64-musl": "0.3.3",
-+    "basta-linux-arm64-musl": "0.3.3",
-+    "basta-darwin-arm64": "0.3.3",
-+    "basta-darwin-x64": "0.3.3",
-+    "basta-windows-x64-msvc": "0.3.3",
-+    "basta-windows-arm64-msvc": "0.3.3"
-   },
-   "repository": {
-     "type": "git",
-```
-
-**File**: `rust/crates/basta/Cargo.toml` (modified, +4/-4)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "basta"
--version = "0.3.2"
-+version = "0.3.3"
- edition.workspace = true
- publish = false
- rust-version.workspace = true
-@@ -23,10 +23,10 @@ path = "src/main.rs"
- [dependencies]
- globset = "0.4"
- ignore = "0.4"
--cpd-core = { version = "0.1.22", path = "../cpd-core" }
-+cpd-core = { version = "0.1.23", path = "../cpd-core" }
- cpd-finder = { version = "0.1.22", path = "../cpd-finder" }
--cpd-reporter = { version = "0.1.23", path = "../cpd-reporter" }
--cpd-tokenizer = { version = "0.1.21", path = "../cpd-tokenizer" }
-+cpd-reporter = { version = "0.1.24", path = "../cpd-reporter" }
-+cpd-tokenizer = { version = "0.1.22", path = "../cpd-tokenizer" }
- oxc_allocator = "0.157"
- oxc_ast = "0.157"
- oxc_ast_visit = "0.157"
+@@ -274,3 +274,63 @@ test("getJscpdReport removes its temporary directory", (t) => {
+   });
+   assert.deepEqual(fs.readdirSync(tmp), []);
+ });
++
++test("getJscpdReport throws JSCPD_UNSUPPORTED_ARG for its own flags and other modes, before running", (t) => {
++  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "jscpd-test-"));
++  t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
++  t.mock.method(os, "tmpdir", () => tmp);
++  const cases = [
++    [["--output", "out"], "--output"],
++    [["--output=out"], "--output"],
++    [["-o", "out"], "-o"],
++    [["-oout"], "-o"],
++    [["--report-name", "x"], "--report-name"],
++    [["--report-name=x"], "--report-name"],
++    [["src", "--dead-code"], "--dead-code"],
++    [["--basta"], "--basta"],
++    [["--health"], "--health"],
++    [["--compare", "old", "new"], "--compare"],
++    [["--complexity"], "--complexity"],
++    [["--dashboard"], "--dashboard"],
++    [["--mcp"], "--mcp"],
++    [["--lsp"], "--lsp"],
++    [["--list"], "--list"],
++    [["--help"], "--help"],
++    [["-h"], "-h"],
++    [["--version"], "--version"],
++    [["-V"], "-V"],
++  ];
++  for (const [args, arg] of cases) {
++    assert.throws(
++      () => getJscpdReport(args),
++      (error) => {
++        assert.equal(error.code, "JSCPD_UNSUPPORTED_ARG", args.join(" "));
++        assert.equal(error.arg, arg);
++        assert.ok(
++          error.message.startsWith(`jscpd: getJscpdReport: ${arg} `),
++          error.message
++        );
++        return true;
++      }
++    );
++  }
++  // Nothing ran, so there was no temporary directory to remove.
++  assert.deepEqual(fs.readdirSync(tmp), []);
++});
++
++test("getJscpdReport reads flag names after -- as paths", (t) => {
++  const dir = projectWithClone(t);
++  fs.mkdirSync(path.join(dir, "--health"));
++  fs.renameSync(path.join(dir, "b.js"), path.join(dir, "--health", "b.js"));
++  const report = getJscpdReport([...CLONE_ARGS, "--", "a.js", "--health"], {
++    cwd: dir,
++  });
++  assert.equal(report.duplicates.length, 1);
++});
++
++test("getJscpdReport drops stdout, so a console reporter can't fill spawnSync's buffer", (t) => {
++  const args = [projectWithClone(t), ...CLONE_ARGS, "--reporters", "console-full"];
++  // The console-full output alone is a few kilobytes.
++  assert.equal(runJscpd(args, { maxBuffer: 512 }).error.code, "ENOBUFS");
++  assert.equal(getJscpdReport(args, { maxBuffer: 512 }).duplicates.length, 1);
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1288** (2026-11-12): feat(npm): getJscpdReport returns the parsed JSON report (@abrahamguo)
 - **PR #1287** (2026-11-06): docs(readme): sync Who Uses jscpd with the jscpd.dev logo wall (@kucherenko)
 - **PR #1286** (2026-11-06): chore(deps): bump ureq from 3.5.0 to 3.5.1 in /rust (@dependabot[bot])
 - **PR #1285** (2026-11-06): chore(deps): bump log from 0.4.34 to 0.4.35 in /rust (@dependabot[bot])
 - **PR #1284** (2026-11-06): chore(deps): bump ignore from 0.4.33 to 0.4.34 in /rust (@dependabot[bot])
 - **PR #1283** (2026-11-06): chore(deps): bump tree-sitter-scala from 0.26.3 to 0.26.4 in /rust (@dependabot[bot])
-- **PR #1282** (2026-11-06): chore(deps): bump the oxc group in /rust with 7 updates (@dependabot[bot])
 
 ---
 
@@ -2192,30 +2619,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release: cpd-v5.4.3
+## X. Merge pull request #1288 from abrahamguo/get-jscpd-report
 
 **RULE**:
-When implementing operations in `CITATION.cff`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b82d8418`: release: cpd-v5.4.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `527eec41`: Merge pull request #1288 from abrahamguo/get-jscpd-report. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CITATION.cff`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version: 5.4.3
-date-released: 2026-11-08
+      # The npm package's launcher, runJscpd() and getJscpdReport(), against
+      # the binary just built: index.js falls back to target/release when no
+      # platform package is installed.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version: 5.4.2
-date-released: 2026-10-20
+      # The npm package's launcher and runJscpd(), against the binary just
+      # built: index.js falls back to target/release when no platform
+      # package is installed.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b82d8418` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `527eec41` are properly handled with clean fallback behavior.

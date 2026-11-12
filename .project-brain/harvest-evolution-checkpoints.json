@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:57:23.768Z",
+  "last_updated": "2026-11-12T06:20:28.332Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T05:57:23.736Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-12T01:52:12.660Z",
+      "processed_at": "2026-11-12T06:20:28.301Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -856,9 +856,19 @@
       "processed_at": "2026-11-12T05:57:23.670Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "kucherenko-jscpd-learnings.md": {
+      "processed_at": "2026-11-12T06:20:28.221Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "vanniktech-gradle-maven-publish-plugin-learnings.md": {
+      "processed_at": "2026-11-12T06:20:28.256Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 225,
+  "total_dossiers_evaluated": 228,
   "total_canonical_promoted": 27,
-  "total_staged_for_review": 195
+  "total_staged_for_review": 198
 }
