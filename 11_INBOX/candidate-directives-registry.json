@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:01:20.419Z",
+  "last_updated": "2026-11-12T11:19:08.451Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6761,6 +6761,24 @@
       "source_repo": "volcengine-openviking",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3C4886-react-improve-directory-guidance-and-fil.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-41EBAF",
+      "directive_title": "close reachable invalid state transitions in sessions, refs, trace, mcp and wait",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vercel-labs-agent-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-41EBAF-close-reachable-invalid-state-transition.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-894877",
+      "directive_title": "[Docs] Fix broken help-wanted search links in README.md (#23289)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshery-meshery",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-894877--docs-fix-broken-help-wanted-search-link.md",
       "staged_date": "2026-11-12"
     }
   ]

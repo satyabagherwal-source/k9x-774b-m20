@@ -9154,3 +9154,8 @@ Every entry in this ledger must capture:
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `e50f0f23` | Multi-dimensional audit evidence | 2026-11-12T11:01:10.486Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `bcdaac0c` | Multi-dimensional audit evidence | 2026-11-12T11:01:13.790Z |
 | `learn-dom-l-80d1f65c` | `project://volcengine-openviking` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | 2026-11-12T11:01:33.161Z |
+| `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-12T11:18:20.345Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `54855b62` | Multi-dimensional audit evidence | 2026-11-12T11:18:33.439Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `41ccfbfe` | Multi-dimensional audit evidence | 2026-11-12T11:18:43.589Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `c4e4e677` | Multi-dimensional audit evidence | 2026-11-12T11:18:47.823Z |
+| `learn-dom-d-e7997468` | `project://hf-microsoft-mage-vl-cowork` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | 2026-11-12T11:19:08.436Z |

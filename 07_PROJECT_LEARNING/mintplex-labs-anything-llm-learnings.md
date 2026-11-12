@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `ace9dad3`  
+> **Source Version**: `c4e4e677`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:44:01.719Z  
+> **Timestamp**: 2026-11-12T11:18:32.651Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:44:01.443Z  
+> **Harvest Timestamp**: 2026-11-12T11:18:32.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68117 stars
+- **Stars / Engagement**: 68207 stars
 
 ---
 
@@ -1309,440 +1309,241 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `194b8f03` (2026-11-09)
-**Commit Message**: fix: bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)
+### Incident Patch 1: `c4e4e677` (2026-11-12)
+**Commit Message**: fix: keep generic types like Promise<Response> in chat exports (#7124)
 
-* fix: bump lancedb to 0.30.0 and reject empty vectors before insert
+* fix: keep generic types like Promise<Response> in chat exports
 
-Rows with an empty vector made LanceDB 0.15.0 create a table with a
-0-dimension vector column. Every later read of that table panicked in
-lance-encoding (data.rs: attempt to divide by zero), which can take down
-the backend.
+stripThoughtChain removed any tag whose name started with a thought or wrapper tag name, in any letter case, so exports dropped text such as <Response> from assistant replies. It now matches the exact lowercase tag names.
 
-- Bump @lancedb/lancedb 0.15.0 -> 0.30.0 (still supports Node >= 18). It
-  refuses to create a 0-dim table, and a panic on an existing one comes
-  back as a catchable JS error.
-- LanceDb.updateOrCreateCollection now rejects any row with a missing or
-  empty vector, covering both fresh embeds and the vector cache.
+* chat export: match thought blocks by exact, case-sensitive tag name too, so JSX like <Thought> stays in exports
 
-Refs #7039
+* chat export: drop export test
 
-* remove comment in lance updateOrCreateCollection
-
-* fix: use import attributes in verifyPackageVersions for Node 22+
-
-Node 22 removed the 'assert' import syntax, so the check failed to parse
-on the workflow's Node 24 runner.
-
-**File**: `extras/scripts/verifyPackageVersions.mjs` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
--import serverPackageJson from '../../server/package.json' assert { type: 'json' };
--import collectorPackageJson from '../../collector/package.json' assert { type: 'json' };
-+import serverPackageJson from '../../server/package.json' with { type: 'json' };
-+import collectorPackageJson from '../../collector/package.json' with { type: 'json' };
- const { dependencies: serverDependencies } = serverPackageJson;
- const { dependencies: collectorDependencies } = collectorPackageJson;
- 
-```
-
-**File**: `server/package.json` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
-     "@breejs/later": "4.2.0",
-     "@datastax/astra-db-ts": "^0.1.3",
-     "@ladjs/graceful": "^3.2.2",
--    "@lancedb/lancedb": "0.15.0",
-+    "@lancedb/lancedb": "0.30.0",
-     "@langchain/anthropic": "0.1.16",
-     "@langchain/community": "0.0.53",
-     "@langchain/core": "0.1.61",
-```
-
-**File**: `server/utils/vectorDbProviders/lance/index.js` (modified, +5/-0)
-```diff
-@@ -253,6 +253,11 @@ class LanceDb extends VectorDatabase {
-    * @returns
-    */
-   async updateOrCreateCollection(client, data = [], namespace) {
-+    if (data.some((record) => !record.vector?.length))
-+      throw new Error(
-+        "Embedder returned an empty vector for one or more chunks. Check your embedding provider and model, then try again."
-+      );
-+
-     const hasNamespace = await this.hasNamespace(namespace);
-     if (hasNamespace) {
-       const collection = await client.openTable(namespace);
-```
-
-**File**: `server/yarn.lock` (modified, +46/-52)
-```diff
-@@ -671,61 +671,55 @@
-     lil-http-terminator "^1.2.2"
-     p-is-promise "3"
- 
--"@lancedb/lancedb-darwin-arm64@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.npmjs.org/@lancedb/lancedb-darwin-arm64/-/lancedb-darwin-arm64-0.15.0.tgz"
--  integrity sha512-e6eiS1dUdSx3G3JXFEn5bk6I26GR7UM2QwQ1YMrTsg7IvGDqKmXc/s5j4jpJH0mzm7rwqh+OAILPIjr7DoUCDA==
--
--"@lancedb/lancedb-darwin-x64@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-darwin-x64/-/lancedb-darwin-x64-0.15.0.tgz#ea54f35732ac6b0858f23ef361c4c8021c5df8cd"
--  integrity sha512-kEgigrqKf954egDbUdIp86tjVfFmTCTcq2Hydw/WLc+LI++46aeT2MsJv0CQpkNFMfh/T2G18FsDYLKH0zTaow==
--
--"@lancedb/lancedb-linux-arm64-gnu@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-gnu/-/lancedb-linux-arm64-gnu-0.15.0.tgz#81e3b4f8a64566cf24d8d5a166cf05a0f497612e"
--  integrity sha512-TnpbBT9kaSYQqastJ+S5jm4S5ZYBx18X8PHQ1ic3yMIdPTjCWauj+owDovOpiXK9ucjmi/FnUp8bKNxGnlqmEg==
--
--"@lancedb/lancedb-linux-arm64-musl@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-musl/-/lancedb-linux-arm64-musl-0.15.0.tgz#de46e61d0bf1fa3c4bbf015d83e8b2689b3e3bc0"
--  integrity sha512-fe8LnC9YKbLgEJiLQhyVj+xz1d1RgWKs+rLSYPxaD3xQBo3kMC94Esq+xfrdNkSFvPgchRTvBA9jDYJjJL8rcg==
--
--"@lancedb/lancedb-linux-x64-gnu@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-gnu/-/lancedb-linux-x64-gnu-0.15.0.tgz#5e4ddce1b8cae80fdac9c24cc3d755a13a524292"
--  integrity sha512-0lKEc3M06ax3RozBbxHuNN9qWqhJUiKDnRC3ttsbmo4VrOUBvAO3fKoaRkjZhAA8q4+EdhZnCaQZezsk60f7Ag==
--
--"@lancedb/lancedb-linux-x64-musl@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-musl/-/lancedb-linux-x64-musl-0.15.0.tgz#d33bf662ebef2881c9256e7ad4cb1b0f6a91685f"
--  integrity sha512-ls+ikV7vWyVnqVT7bMmuqfGCwVR5JzPIfJ5iZ4rkjU4iTIQRpY7u/cTe9rGKt/+psliji8x6PPZHpfdGXHmleQ==
--
--"@lancedb/lancedb-win32-arm64-msvc@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-arm64-msvc/-/lancedb-win32-arm64-msvc-0.15.0.tgz#6704025bf968bf82c49c565d1aab816ad3dc5baf"
--  integrity sha512-C30A+nDaJ4jhjN76hRcp28Eq+G48SR9wO3i1zGm0ZAEcRV1t9O1fAp6g18IPT65Qyu/hXJBgBdVHtent+qg9Ng==
--
--"@lancedb/lancedb-win32-x64-msvc@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-x64-msvc/-/lancedb-win32-x64-msvc-0.15.0.tgz#aa9b6516d75652b71cfbbff52ffc6e645268caa4"
--  integrity sha512-amXzIAxqrHyp+c9TpIDI8ze1uCqWC6HXQIoXkoMQrBXoUUo8tJORH2yGAsa3TSgjZDDjg0HPA33dYLhOLk1m8g==
--
--"@lancedb/lancedb@0.15.0":
--  version "0.15.0"
--  resolved "https://registry.npmjs.org/@lancedb/lancedb/-/lancedb-0.15.0.tgz"
--  integrity sha512-qm3GXLA17/nFGUwrOEuFNW0Qg2gvCtp+yAs6qoCM6vftIreqzp8d4Hio6eG/YojS9XqPnR2q+zIeIFy12Ywvxg==
-+"@lancedb/lancedb-darwin-arm64@0.30.0":
-+  version "0.30.0"
-+  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-darwin-arm64/-/lancedb-darwin-arm64-0.30.0.tgz#861ae7809a4c1df9c52ba47e9f08884555bdc2a8"
-+  integrity sha512-x6dmsjRIv0xumELYnFAEfyFDxqcO/n4rHYCJvC27RbRez0UmbByi6OMTgbSoSTatrQSPRCL7JJSa5pwNeawnIg==
-+
-+"@lancedb/lancedb-linux-arm64-gnu@0.30.0":
-+  version "0.30.0"
-+  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-gnu/-/lancedb-linux-arm64-gnu-0.30.0.tgz#d78f5a0255b2aa3c1d81fa622e41e12724074b63"
-+  integrity sha512-CWUex7hRNiLkXFeTQlUGPyy5VktbXoUmQdZuiVCETZ6ggljEC7c7Qvzu2ge+jEZML+UE7tXL2lVC3klRFGczng==
-+
-+"@lancedb/lancedb-linux-arm64-musl@0.30.0":
-+  version "0.30.0"
-+  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-musl/-/lancedb-linux-arm64-musl-0.30.0.tgz#0b9f71e92df1eafb6f34f25f99ffeb8b955c4464"
-+  integrity sha512-2MHmAS4tKePNVbwfgDrjCFj6BVuAgXlL2c9iWk7TfcwL+jcSxo52LFx03O0+ArpVCF2sI6aoDqZaQNre5zMniQ==
-+
-+"@lancedb/lancedb-linux-x64-gnu@0.30.0":
-+  version "0.30.0"
-+  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-gnu/-/lancedb-linux-x64-gnu-0.30.0.tgz#1b0b5cb3ecf5b1db350ebcf18445165fcb7320eb"
-+  integrity sha512-0OpDNxsDE4OXD+PIFd7KdE42xhYIE+fZL+jCm1v3dTug4UEhumWBuSgbUIBP7t0yJZHwh62/QivVh/V1cPB2Bg==
-+
-+"@lancedb/lancedb-linux-x64-musl@0.30.0":
-+  version "0.30.0"
-+  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-musl/-/lancedb-linux-x64-musl-0.30.0.tgz#b3d0fd9d76a610d7ec292ae1fcced0d6f999c08c"
-+  integrity sha512-4Bq7VngQt+lyxIcu79EN8nYJs8gvUnrIT6I/t2MSlpG/BXWHZG2A+PRii1Zq4GCUlRTTG+RlieCv8CBGSPm8bw==
-+
-+"@lancedb/lancedb-win32-arm64-msvc@0.30.0":
-+  version "0.30.0"
-+  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-arm64-msvc/-/lancedb-win32-arm64-msvc-0.30.0.tgz#8e522af8d36cd9d16a4fae3483ed80602725e02c"
-+  integrity sha512-N2DQg2XBWZirn5jS6kRJUxF679t3sKcIxBwP9zY4Idq5OVLAj0yfLueWIKhYxv8en7pBFYWdgw5j9dTS7XajyQ==
-+
-+"@lancedb/lancedb-win32-x64-msvc@0.30.0":
-+  version "0.30.0"
-+  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-x64-msvc/-/lancedb-win32-x64-msvc-0
-```
-
----
-
-### Incident Patch 2: `ace9dad3` (2026-11-09)
-**Commit Message**: fix: cap concurrent Paperless-ngx document downloads (#7096)
-
-* fix: cap concurrent Paperless-ngx document downloads
-
-Downloading every document at once with Promise.all exhausted the
-Paperless-ngx Postgres connection pool on larger instances, so most
-downloads returned 500 and were silently dropped. Downloads now run
-through a fixed pool of workers on the shared loader, and documents
-that fail to download are logged by ID.
-
-Fixes #7094
-
-* fix: time out and retry Paperless-ngx document downloads
-
-A stalled download held one of the pool's workers forever, and a single
-transient failure dropped the document from the import. Each download now
-times out after 120s, and network errors, timeouts, 429s and 5xx responses
-are retried twice with a 1s then 3s delay.
-
-**File**: `collector/__tests__/extensions/resync/paperless.resync.test.js` (modified, +17/-5)
-```diff
-@@ -82,7 +82,10 @@ describe("resyncPaperlessNgx", () => {
-     expect(fetchMock).toHaveBeenCalledTimes(1);
-     expect(fetchMock).toHaveBeenCalledWith(
-       "https://paperless.example.com/api/documents/123/download/",
--      { headers: { Authorization: `Token ${API_TOKEN}` } }
-+      expect.objectContaining({
-+        headers: { Authorization: `Token ${API_TOKEN}` },
-+        signal: expect.any(AbortSignal),
-+      })
-     );
-     expect(status).toHaveBeenCalledWith(200);
-     expect(json).toHaveBeenCalledWith({
-@@ -103,7 +106,10 @@ describe("resyncPaperlessNgx", () => {
- 
-     expect(fetchMock).toHaveBeenCalledWith(
-       "https://my.domain.com/paperless/api/documents/123/download/",
--      { headers: { Authorization: `Token ${API_TOKEN}` } }
-+      expect.objectContaining({
-+        headers: { Authorization: `Token ${API_TOKEN}` },
-+        signal: expect.any(AbortSignal),
-+      })
-     );
-     expect(json).toHaveBeenCalledWith({
-       success: true,
-@@ -150,7 +156,10 @@ describe("resyncPaperlessNgx", () => {
-     expect(json).toHaveBeenCalledWith({ success: false, content: null });
-   });
- 
--  test("a network level failure is reported as an unsuccessful resync", async () => {
-+  test("a network level failure is retried, then reported as an unsuccessful resync", async () => {
-+    // Skip the real backoff delays between attempts
-+    jest.spyOn(global, "setTimeout").mockImplementation((fn) => fn());
-+    jest.spyOn(console, "warn").mockImplementation(() => {});
-     fetchMock.mockRejectedValue(
-       new Error("ECONNREFUSED paperless.example.com")
-     );
-@@ -162,7 +171,7 @@ describe("resyncPaperlessNgx", () => {
- 
-     await handler({ chunkSource }, response);
- 
--    expect(fetchMock).toHaveBeenCalledTimes(1);
-+    expect(fetchMock).toHaveBeenCalledTimes(3);
-     expect(json).toHaveBeenCalledWith({ success: false, content: null });
-   });
- 
-@@ -182,7 +191,10 @@ describe("resyncPaperlessNgx", () => {
- 
-     expect(fetchMock).toHaveBeenCalledWith(
-       "https://paperless.example.com/api/documents//download/",
--      { headers: { Authorization: `Token ${API_TOKEN}` } }
-+      expect.objectContaining({
-+        headers: { Authorization: `Token ${API_TOKEN}` },
-+        signal: expect.any(AbortSignal),
-+      })
-     );
-     expect(json).toHaveBeenCalledWith({ success: false, content: null });
-   });
-```
-
-**File**: `collector/utils/extensions/PaperlessNgx/PaperlessNgxLoader/index.js` (modified, +86/-14)
-```diff
-@@ -2,6 +2,10 @@ const { htmlToText } = require("html-to-text");
- const pdf = require("pdf-parse");
- 
- class PaperlessNgxLoader {
-+  maxConcurrentDownloads = 5;
-+  downloadTimeoutMs = 120_000;
-+  downloadRetryDelaysMs = [1_000, 3_000];
-+
-   constructor({ baseUrl, apiToken }) {
-     const url = new URL(baseUrl);
-     this.baseUrl = `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
-@@ -73,12 +77,18 @@ class PaperlessNgxLoader {
-         })`
-       );
- 
--      const documentsWithContent = await Promise.all(
--        documents.map(async (doc) => {
--          const content = await this.fetchDocumentContent(doc.id);
--          return { ...doc, content };
--        })
-+      const documentsWithContent = await this.fetchAllDocumentContent(
-+        documents
-       );
-+      const failedIds = documentsWithContent
-+        .filter((doc) => !doc.content)
-+        .map((doc) => doc.id);
-+      if (failedIds.length)
-+        console.warn(
-+          `Could not fetch content for ${failedIds.length} of ${
-+            documents.length
-+          } Paperless-ngx documents: ${failedIds.join(", ")}`
-+        );
- 
-       return documentsWithContent.filter((doc) => !!doc.content);
-     } catch (error) {
-@@ -89,21 +99,84 @@ class PaperlessNgxLoader {
-   }
- 
-   /**
--   * Fetches the content of a document from Paperless-ngx
-+   * Fetches the content of every document with at most `maxConcurrentDownloads`
-+   * requests in flight, since each download holds a database connection on the
-+   * Paperless-ngx side and an unbounded burst exhausts its Postgres pool.
-+   * @param {{[key: string]: any, id: number}[]} documents
-+   * @returns {Promise<{[key: string]: any, content: string}[]>} In input order
-+   */
-+  async fetchAllDocumentContent(documents) {
-+    const results = new Array(documents.length);
-+    let next = 0;
-+    const worker = async () => {
-+      while (next < documents.length) {
-+        const index = next++;
-+        const doc = documents[index];
-+        results[index] = {
-+          ...doc,
-+          content: await this.fetchDocumentContent(doc.id),
-+        };
-+      }
-+    };
-+
-+    const workerCount = Math.min(this.maxConcurrentDownloads, documents.length);
-+    await Promise.all(Array.from({ length: workerCount }, worker));
-+    return results;
-+  }
-+
-+  /**
-+   * Fetches the content of a document from Paperless-ngx, retrying network
-+   * errors, timeouts, 429s and 5xx responses with a growing delay.
-    * @param {string} documentId - The ID of the document to fetch
--   * @returns {Promise<string>} The content of the document
-+   * @returns {Promise<string>} The content of the document, or "" on failure
-    */
-   async fetchDocumentContent(documentId) {
-+    for (let attempt = 0; ; attempt++) {
-+      try {
-+        return await this.downloadDocumentContent(documentId);
-+      } catch (error) {
-+        if (error.retryable && attempt < this.downloadRetryDelaysMs.length) {
-+          const delay = this.downloadRetryDelaysMs[attempt];
-+          console.warn(
-+            `Retrying document ${documentId} in ${delay}ms: ${error.message}`
-+          );
-+          await new Promise((resolve) => setTimeout(resolve, delay));
-+          continue;
-+        }
-+
-+        console.error(
-+          `Failed to fetch content for document ${documentId}:`,
-+          error
-+        );
-+        return "";
-+      }
-+    }
-+  }
-+
-+  /**
-+   * A single download attempt. Throws on failure, with `retryable` set when
-+   * another attempt could succeed.
-+   * @param {string} documentId
-+   * @returns {Promise<string>}
-+   */
-+  async downloadDocumentContent(documentId) {
-     try {
-       const response = await fetch(
-         `${this.baseUrl}/api/documents/${documentId}/download/`,
-         {
-           headers: this.baseHeaders,
-+          // Also bounds reading the body, so a stalled transfer frees its worker
-+          signal: AbortSignal.timeout(this.downloadTimeoutMs),
-         }
-       );
- 
--      if (!response.ok)
--        throw new Error(`Failed to fetch document content: ${response.status}`);
-+      if (!response.ok) {
-+        const error = new Error(
-+          `Failed to fetch document content: ${response.status}`
-+        );
-+        error.retryable = response.status === 429 || response.status >= 500;
-+        throw error;
-+      }
- 
-       // The media type without parameters such as `; charset=utf-8`
-       const contentType = response.headers
-@@ -126,11 +199,10 @@ class PaperlessNgxLoader {
-           return await response.text();
-       }
-     } catch (error) {
--      console.error(
--        `Failed to fetch content for document ${documentId}:`,
--        error
--      );
--      return "";
-+      // Network failures and timeouts reject from fetch or the body read
-+      // rather than producing a status code
-+      if (error.retryable === undefined) error.retryable = true;
-+      throw error;
-     }
-   }
- 
-```
-
----
-
-### Incident Patch 3: `45c0c538` (2026-11-09)
-**Commit Message**: fix: ignore stale thread history responses when switching threads (#7070)
-
-* fix: ignore stale thread history responses in WorkspaceChat
-
-* drop unreachable cancelled check in sync branch
-
-* remove comment
+* chat export: reword tag-matching comment
 
 ---------
 
-Co-authored-by: Sean Hatfield <[REDACTED_EMAIL]>
+Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `frontend/src/components/WorkspaceChat/index.jsx` (modified, +8/-0)
+**File**: `server/utils/chats/exportChatToFile.js` (modified, +8/-9)
 ```diff
-@@ -61,6 +61,8 @@ export default function WorkspaceChat({ loading, workspace }) {
-   }
+@@ -5,6 +5,11 @@ const {
+ const { convertToChatHistory } = require("../helpers/chat/responses.js");
  
-   useEffect(() => {
-+    let cancelled = false;
-+
-     async function getHistory() {
-       if (loading) return;
-       if (!workspace?.slug) {
-@@ -72,6 +74,8 @@ export default function WorkspaceChat({ loading, workspace }) {
-         ? await Workspace.threads.chatHistory(workspace.slug, threadSlug)
-         : await Workspace.chatHistory(workspace.slug);
+ const THOUGHT_TAGS = "thinking|think|thought|thought_chain";
++// A thought or wrapper tag is the exact lowercase name, optionally followed by
++// whitespace and attributes, the same rule the chat window uses. Anything else
++// in angle brackets, like Promise<Response> or a JSX <Thought>, is reply text.
++const TAG_ATTRS = "(?:\\s[^>]*)?";
++const THOUGHT_BLOCK = `<(${THOUGHT_TAGS})${TAG_ATTRS}>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`;
+ const THUMB_EDGE = 96;
+ const THUMB_GAP = 8;
+ const THUMB_COLUMNS = 4;
+@@ -23,10 +28,7 @@ const validExportTypes = ["pdf", "markdown", "plaintext", "json", "html"];
+ // Extract thought chain content from assistant messages.
+ function extractThoughtChain(text = "") {
+   const matches = [];
+-  const regex = new RegExp(
+-    `<(${THOUGHT_TAGS})[^>]*>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`,
+-    "gi"
+-  );
++  const regex = new RegExp(THOUGHT_BLOCK, "g");
+   let m;
+   while ((m = regex.exec(text)) !== null) matches.push(m[2].trim());
+   return matches.join("\n\n") || null;
+@@ -35,14 +37,11 @@ function extractThoughtChain(text = "") {
+ // Strip the assistant's thought chain so the export only contains the response.
+ function stripThoughtChain(text = "") {
+   return text
++    .replace(new RegExp(THOUGHT_BLOCK, "g"), "")
+     .replace(
+-      new RegExp(
+-        `<(${THOUGHT_TAGS})[^>]*>[\\s\\S]*?</(${THOUGHT_TAGS})\\s*>`,
+-        "gi"
+-      ),
++      new RegExp(`</?(${THOUGHT_TAGS}|response|answer)${TAG_ATTRS}>`, "g"),
+       ""
+     )
+-    .replace(new RegExp(`</?(${THOUGHT_TAGS}|response|answer)[^>]*>`, "gi"), "")
+     .trim();
+ }
  
-+      if (cancelled) return;
+```
+
+---
+
+### Incident Patch 2: `728586d7` (2026-11-10)
+**Commit Message**: fix: keep the Content-Type header set in an agent flow API Call block (#7108)
+
+The JSON and form body types always set Content-Type, replacing one set on the block. A lower-case content-type header got the default joined onto it by fetch instead.
+
+Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
+
+**File**: `server/__tests__/utils/agentFlows/executors/api-call.test.js` (modified, +61/-0)
+```diff
+@@ -259,6 +259,67 @@ describe("executeApiCall", () => {
+       expect(requestConfig.headers["Content-Type"]).toBe("application/json");
+     });
+ 
++    it("keeps a Content-Type header set on the block for json bodies", async () => {
++      const fetchMock = mockResponse("{}");
++      await executeApiCall(
++        {
++          url: "https://example.com/items",
++          method: "POST",
++          headers: [{ key: "Content-Type", value: "application/vnd.api+json" }],
++          bodyType: "json",
++          body: '{"data": {"type": "items"}}',
++        },
++        context
++      );
++      const [, requestConfig] = fetchMock.mock.calls[0];
++      expect(requestConfig.headers).toEqual({
++        "Content-Type": "application/vnd.api+json",
++      });
++    });
 +
-       setLoaded({
-         key: `${workspace.slug}:${threadSlug ?? "default"}`,
-         workspace,
-@@ -80,6 +84,10 @@ export default function WorkspaceChat({ loading, workspace }) {
-       });
-     }
-     getHistory();
++    it("does not add a second content type next to a lower-case header", async () => {
++      const fetchMock = mockResponse("{}");
++      await executeApiCall(
++        {
++          url: "https://example.com/items/42",
++          method: "PATCH",
++          headers: [
++            { key: "content-type", value: "application/merge-patch+json" },
++          ],
++          bodyType: "json",
++          body: '{"name": "widget"}',
++        },
++        context
++      );
++      const [, requestConfig] = fetchMock.mock.calls[0];
++      expect(new Headers(requestConfig.headers).get("content-type")).toBe(
++        "application/merge-patch+json"
++      );
++    });
 +
-+    return () => {
-+      cancelled = true;
++    it("keeps a Content-Type header set on the block for form bodies", async () => {
++      const fetchMock = mockResponse("{}");
++      await executeApiCall(
++        {
++          url: "https://example.com/items",
++          method: "POST",
++          headers: [
++            {
++              key: "Content-Type",
++              value: "application/x-www-form-urlencoded; charset=UTF-8",
++            },
++          ],
++          bodyType: "form",
++          formData: [{ key: "name", value: "widget" }],
++        },
++        context
++      );
++      const [, requestConfig] = fetchMock.mock.calls[0];
++      expect(requestConfig.headers).toEqual({
++        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
++      });
++    });
++
+     it("sends text bodies as strings", async () => {
+       const fetchMock = mockResponse("{}");
+       await executeApiCall(
+```
+
+**File**: `server/utils/agentFlows/executors/api-call.js` (modified, +8/-3)
+```diff
+@@ -22,12 +22,16 @@ async function executeApiCall(config, context) {
+   };
+ 
+   if (["POST", "PUT", "PATCH"].includes(method)) {
++    const hasContentType = Object.keys(requestConfig.headers).some(
++      (name) => name.toLowerCase() === "content-type"
++    );
+     if (bodyType === "form") {
+       const formDataObj = new URLSearchParams();
+       formData.forEach(({ key, value }) => formDataObj.append(key, value));
+       requestConfig.body = formDataObj.toString();
+-      requestConfig.headers["Content-Type"] =
+-        "application/x-www-form-urlencoded";
++      if (!hasContentType)
++        requestConfig.headers["Content-Type"] =
++          "application/x-www-form-urlencoded";
+     } else if (bodyType === "json") {
+       const parsedBody = safeJsonParse(body, null);
+       if (parsedBody !== null) {
+@@ -37,7 +41,8 @@ async function executeApiCall(config, context) {
+           "The request body of this API Call block is not valid JSON. Open the flow in the Agent Builder and check the body for syntax errors such as missing commas, brackets, or quotes."
+         );
+       }
+-      requestConfig.headers["Content-Type"] = "application/json";
++      if (!hasContentType)
++        requestConfig.headers["Content-Type"] = "application/json";
+     } else if (bodyType === "text") {
+       requestConfig.body = String(body);
+     } else {
+```
+
+---
+
+### Incident Patch 3: `bc003cbb` (2026-11-11)
+**Commit Message**: fix: surface the real error when a PGVector similarity search fails (#7113)
+
+performSimilaritySearch caught every error and returned { error, success: false }, which callers read as a search result, so chats failed with "vectorSearchResults.sources is not iterable". Let the error throw as the other providers do; the finally still closes the connection.
+
+Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
+
+**File**: `server/__tests__/utils/vectorDbProviders/pgvector/index.test.js` (modified, +21/-0)
+```diff
+@@ -76,3 +76,24 @@ describe("PGVector.sanitizeForJsonb", () => {
+     expect(resultArr).toEqual(["", { c: "bad" }]);
+   });
+ });
++
++describe("PGVector.performSimilaritySearch", () => {
++  it("rejects with the original error and still closes the connection", async () => {
++    const pgvector = new PGVectorClass();
++    const client = { end: jest.fn() };
++    jest.spyOn(pgvector, "connect").mockResolvedValue(client);
++    jest.spyOn(pgvector, "namespaceExists").mockResolvedValue(true);
++    const LLMConnector = {
++      embedTextInput: jest.fn().mockRejectedValue(new Error("embedder down")),
 +    };
-   }, [workspace, loading, threadSlug]);
- 
-   const hasPendingMessage = !!sessionStorage.getItem(PENDING_HOME_MESSAGE);
++
++    await expect(
++      pgvector.performSimilaritySearch({
++        namespace: "workspace",
++        input: "hello",
++        LLMConnector,
++      })
++    ).rejects.toThrow("embedder down");
++    expect(client.end).toHaveBeenCalledTimes(1);
++  });
++});
+```
+
+**File**: `server/utils/vectorDbProviders/pgvector/index.js` (modified, +0/-2)
+```diff
+@@ -767,8 +767,6 @@ class PGVector extends VectorDatabase {
+         sources: this.curateSources(sources),
+         message: false,
+       };
+-    } catch (err) {
+-      return { error: err.message, success: false };
+     } finally {
+       if (connection) await connection.end();
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7096** (2026-11-09): fix: cap concurrent Paperless-ngx document downloads (@timothycarambat)
-- **PR #7095** (2026-11-09): fix: escape double quotes in Telegram link hrefs (@timothycarambat)
-- **PR #7093** (2026-11-09): fix: bump lancedb to 0.30.0 and reject empty vectors before insert (@timothycarambat)
-- **PR #7091** (2026-11-09): feat: live elapsed timer while the model is thinking (@timothycarambat)
-- **PR #7090** (2026-11-09): docs: remove unsupported "all" target from push notification JSDoc (@timothycarambat)
-- **PR #7089** (2026-11-09): fix: show agent skill settings button on mobile (@timothycarambat)
+- **PR #7124** (2026-11-12): fix: keep generic types like Promise<Response> in chat exports (@Israel-Kli)
+- **PR #7122** (2026-11-11): fix: cap pending agent invocation caches (@timothycarambat)
+- **PR #7119** (closed): fix: expire stale agent invocation caches (@Bensonbenyi)
+- **PR #7117** (2026-11-11): fix: retain in-flight document uploads when adding files (@Max-Reisinger)
+- **PR #7113** (2026-11-11): fix: surface the real error when a PGVector similarity search fails (@Israel-Kli)
+- **PR #7111** (2026-11-11): fix: log collected error details in Gemini #logAPIError (@Bensonbenyi)
 
 ---
 
@@ -1762,30 +1563,43 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)
+## X. keep generic types like Promise<Response> in chat exports (#7124)
 
 **RULE**:
-When implementing operations in `extras/scripts/verifyPackageVersions.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/utils/chats/exportChatToFile.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `194b8f03`: bump lancedb to 0.30.0 and reject empty vectors before insert (#7093). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4e4e677`: keep generic types like Promise<Response> in chat exports (#7124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `extras/scripts/verifyPackageVersions.mjs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/chats/exportChatToFile.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import serverPackageJson from '../../server/package.json' with { type: 'json' };
-import collectorPackageJson from '../../collector/package.json' with { type: 'json' };
+// A thought or wrapper tag is the exact lowercase name, optionally followed by
+// whitespace and attributes, the same rule the chat window uses. Anything else
+// in angle brackets, like Promise<Response> or a JSX <Thought>, is reply text.
+const TAG_ATTRS = "(?:\\s[^>]*)?";
+const THOUGHT_BLOCK = `<(${THOUGHT_TAGS})${TAG_ATTRS}>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`;
+  const regex = new RegExp(THOUGHT_BLOCK, "g");
+    .replace(new RegExp(THOUGHT_BLOCK, "g"), "")
+      new RegExp(`</?(${THOUGHT_TAGS}|response|answer)${TAG_ATTRS}>`, "g"),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-import serverPackageJson from '../../server/package.json' assert { type: 'json' };
-import collectorPackageJson from '../../collector/package.json' assert { type: 'json' };
+  const regex = new RegExp(
+    `<(${THOUGHT_TAGS})[^>]*>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`,
+    "gi"
+  );
+      new RegExp(
+        `<(${THOUGHT_TAGS})[^>]*>[\\s\\S]*?</(${THOUGHT_TAGS})\\s*>`,
+        "gi"
+      ),
+    .replace(new RegExp(`</?(${THOUGHT_TAGS}|response|answer)[^>]*>`, "gi"), "")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `194b8f03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4e4e677` are properly handled with clean fallback behavior.

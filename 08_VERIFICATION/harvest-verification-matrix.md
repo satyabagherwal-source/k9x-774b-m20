@@ -9145,3 +9145,8 @@
 | `CYCLE-20261112-TDXU` | `2026-11-12T11:01:10.482Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cfe55aa3...`) |
 | `CYCLE-20261112-TGHM` | `2026-11-12T11:01:13.786Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa703bb2...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T11:01:33.161Z` | `volcengine-openviking` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-80D1F65C` [Domain L] | Yes (`aa8e98bb...`) |
+| `CYCLE-20261112-FGL0` | `2026-11-12T11:18:20.340Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | Yes (`4a1a7f61...`) |
+| `CYCLE-20261112-FQOQ` | `2026-11-12T11:18:33.434Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e924ac64...`) |
+| `CYCLE-20261112-FYIP` | `2026-11-12T11:18:43.585Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2048c481...`) |
+| `CYCLE-20261112-G1SA` | `2026-11-12T11:18:47.818Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`024dc9ae...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T11:19:08.436Z` | `hf-microsoft-mage-vl-cowork` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7997468` [Domain D] | Yes (`425f97f1...`) |

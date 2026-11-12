@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T11:01:33.161Z",
+  "updated_at": "2026-11-12T11:19:08.435Z",
   "statistics": {
-    "total_nodes": 19,
-    "total_edges": 6,
+    "total_nodes": 20,
+    "total_edges": 7,
     "domain_distribution": {
-      "D": 13,
+      "D": 14,
       "M": 1,
       "H": 2,
       "J": 1,
@@ -15,7 +15,7 @@
       "L": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 6
+      "CONSTRAINED_BY_ARCHITECTURE": 7
     }
   },
   "nodes": {
@@ -433,6 +433,29 @@
       ],
       "created_at": "2026-11-12T11:01:33.161Z",
       "updated_at": "2026-11-12T11:01:33.161Z"
+    },
+    "DOM-D-E7997468": {
+      "id": "DOM-D-E7997468",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Mage-VL-Cowork",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-microsoft-mage-vl-cowork/hf-microsoft-mage-vl-cowork-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T11:18:53.146Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-mage-vl-cowork)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T11:19:08.435Z",
+      "updated_at": "2026-11-12T11:19:08.435Z"
     }
   },
   "edges": [
@@ -495,6 +518,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-78355AEC [D] with Domain M",
       "created_at": "2026-11-12T09:55:51.213Z"
+    },
+    {
+      "id": "EDGE-D78C5936AAC5",
+      "sourceId": "DOM-D-E7997468",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-E7997468 [D] with Domain M",
+      "created_at": "2026-11-12T11:19:08.435Z"
     }
   ]
 }

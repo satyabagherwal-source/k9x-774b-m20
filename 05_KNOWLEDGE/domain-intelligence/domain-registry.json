@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T11:01:33.160Z",
-  "total_records": 67,
+  "last_updated": "2026-11-12T11:19:08.433Z",
+  "total_records": 68,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 32,
+      "total": 33,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -57,7 +57,8 @@
         "DOM-D-0C67C5DB",
         "DOM-D-2EFB96C5",
         "DOM-D-91EB11DA",
-        "DOM-D-78355AEC"
+        "DOM-D-78355AEC",
+        "DOM-D-E7997468"
       ]
     },
     "E": {
@@ -2704,6 +2705,48 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T11:01:33.158Z"
+    },
+    "DOM-D-E7997468": {
+      "record_id": "DOM-D-E7997468",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Mage-VL-Cowork",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/microsoft/Mage-VL-Cowork](https://huggingface.co/microsoft/Mage-VL-Cowork))  \n> **Source Version**: `hf-microsoft`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "425f97f141c65a7a4bd9cad1d2054b6c05f75ea908c214e95a4d6685ea957d05",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-microsoft-mage-vl-cowork/hf-microsoft-mage-vl-cowork-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T11:18:53.146Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-mage-vl-cowork)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-microsoft-mage-vl-cowork"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T11:19:08.431Z"
     }
   }
 }

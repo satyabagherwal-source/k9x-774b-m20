@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:01:33.185Z",
+  "last_updated": "2026-11-12T11:19:08.537Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T08:19:36.877Z",
@@ -1046,9 +1046,24 @@
       "processed_at": "2026-11-12T11:01:33.162Z",
       "promoted_canonical": 1,
       "staged_for_review": 1
+    },
+    "vercel-labs-agent-desktop-learnings.md": {
+      "processed_at": "2026-11-12T11:18:53.132Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-microsoft-mage-vl-cowork-learnings.md": {
+      "processed_at": "2026-11-12T11:19:08.436Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "meshery-meshery-learnings.md": {
+      "processed_at": "2026-11-12T11:19:08.452Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 282,
-  "total_canonical_promoted": 34,
-  "total_staged_for_review": 248
+  "total_dossiers_evaluated": 285,
+  "total_canonical_promoted": 35,
+  "total_staged_for_review": 250
 }

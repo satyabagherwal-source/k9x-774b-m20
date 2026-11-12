@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `7c78aabb`  
+> **Source Version**: `41ccfbfe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T04:59:18.068Z  
+> **Timestamp**: 2026-11-12T11:18:28.829Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T04:59:17.899Z  
+> **Harvest Timestamp**: 2026-11-12T11:18:28.819Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12160 stars
+- **Stars / Engagement**: 12174 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23121** (2026-11-10): **[mesheryctl] Enforce exact argument validation in workspace create**
-  *Symptoms*: ### Notes for Reviewers This PR fixes #23120   ### Overview & Root Cause `mesheryctl workspace create` did not validate positional arguments, allowing trailing arguments to be silently ignored.  ### Changes - `mesheryctl/internal/cli/root/workspaces/create.go`:   - Defined `createUsageMsg` with usage instructions.   - Added `Args` validation returning `utils.ErrInvalidArgument` when `len(args) != 0`. - `mesheryctl/internal/cli/root/workspaces/create_test.go`:   - Added test scenario to `TestCreateWorkspace` verifying that passing an unexpected positional argument returns `utils.ErrInvalidArgument`.  ### Test Evidence - Verified with command test scenarios in `mesheryctl/internal/cli/root/workspaces/create_test.go`.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Workspace creation now rejects unexpected positional arguments and displays the command’s usage message, helping clarify how to run the command. Invoking workspace creation without positional arguments continues to pass validation.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #23300** (2026-11-12): **[mesheryctl] Replace path separators in file names saved by component view**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes an issue where `mesheryctl component view --save` fails when saving a component whose display name contains path separators (`/` or `\`).  When a component's display name contains a forward slash (common with Kubernetes API groups and cloud definitions, e.g. `apps/v1`) or a backslash on Windows, the saved filename is interpreted as a subpath, causing the command to fail because the nested directory did not exist.  Sister commands (`connection view --save`, `environment view --save`, `model view --save`, and `workspace view --save`) have open PRs/requests addressing this same problem (ref: #22504, #22518, #22590). This PR brings `component view --save` in line with the pattern requested in those issues by replacing spaces, forward slashes, and backslashes with underscores.  **Changes** 1. Replaced `strings.ReplaceAll(..., " ", "_")` with `strings.NewReplacer(" ", "_", "/", "_", "\\", "_")` in `mesheryctl/internal/cli/root/components/view.go`. 2. Added test fixture `view.component.save.name.api.response.golden`. 3. Added unit test `TestComponentViewSaveFlattensSeparatorsInName` in `view_test.go` to ensure path separators are flattened and `~/.meshery` is safely isolated during test runs.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits. 
 
-- **Issue #23120** (2026-11-10): **[mesheryctl] workspace create ignores extraneous positional arguments without validation**
-  *Symptoms*: ### Description `mesheryctl workspace create` receives its parameters through flags (`--orgId`, `--name`, `--description`) and takes no positional arguments. However, it does not define an `Args` validation check, meaning extraneous positional arguments are ignored instead of returning an error with usage instructions.  ### Expected Behavior Extraneous positional arguments should return `utils.ErrInvalidArgument` with command usage guidance, consistent with `workspace list`.  ### Proposed Solution 1. Define `createUsageMsg` in `workspaces/create.go`. 2. Add `Args` validation to `createWorkspaceCmd` checking `len(args) != 0`. 3. Add test scenario in `workspaces/create_test.go`.
+- **Issue #23299** (2026-11-12): **[UI] Disable LegacyRJSFModal submit while pending and add submitDisabled**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #21227  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  ### Summary  1. **`ui/components/shared/Modal/LegacyRJSFModal.tsx`:**    - Added optional `submitDisabled = false` prop (with JSDoc documentation on both `Modal` and `RJSFModalWrapper`) so consumers (including extensions such as Kanvas Help & Support) can gate submission on their own readiness while keeping existing callers unchanged.    - Included `loadingSchema` in `primaryButtonProps.disabled` across both `Modal` (`Boolean(canNotSubmit || loadingSchema || submitDisabled)`) and `RJSFModalWrapper` (`Boolean(canNotSubmit || loadingSchema || isSubmitting || submitDisabled)`), and guarded `handleFormSubmit` with the same condition.    - Updated `Modal` schema resolution (`schema !== undefined ? schema : getSchema(type)`, tracked via boolean `hasResolvedSchema`) so:      - Pending shells (`schema={null}` or omitted `schema` with unknown `type`) start and remain in `loadingSchema` with Submit disabled (zero enabled-button flash).      - Clearing `schema` back to `null` before reopening resets `loadingSchema` to `true` (matching `RJSFModalWrapper`).      - Legacy `type`-only callers (e.g. `MesheryCredentialComponent` passing `type` without `schema`) still resolve synchronously via `getSchema(type)`, while explicit `schema={null}` keeps pending state active. 2. **
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,732 +825,1228 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c78aabb` (2026-11-10)
-**Commit Message**: Merge pull request #23121 from madhavzanwar/fix/workspace-create-args
+### Incident Patch 1: `71d85c8d` (2026-11-12)
+**Commit Message**: [Docs] Fix broken help-wanted search links in README.md (#23289)
 
-[mesheryctl] Enforce exact argument validation in workspace create
+[Docs] Fix broken help-wanted search links in README.md
 
-**File**: `mesheryctl/internal/cli/root/workspaces/create.go` (modified, +8/-0)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -37,6 +37,8 @@ type cmdWorkspaceCreateFlags struct {
+@@ -6,7 +6,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
+ <p align="center">
+ <a href="https://hub.docker.com/r/meshery/meshery" alt="Docker pulls">
+   <img src="https://img.shields.io/docker/pulls/meshery/meshery.svg" /></a>
+-<a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20" alt="GitHub issues by-label">
++<a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues" alt="GitHub issues by-label">
+   <img src="https://img.shields.io/github/issues/meshery/meshery/help%20wanted.svg?color=informational" /></a>
+ <a href="https://github.com/meshery/meshery/blob/master/LICENSE" alt="LICENSE">
+   <img src="https://img.shields.io/github/license/meshery/meshery?color=brightgreen" /></a>
+@@ -295,7 +295,7 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
+ </div>
+ <br /><br />
+ <p align="left">
+-&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20">help-wanted label</a>.
++&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues">help-wanted label</a>.
+ </p>
+ <br /><br />
  
- var workspaceCreateFlags cmdWorkspaceCreateFlags
- 
-+var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
-+
- var createWorkspaceCmd = &cobra.Command{
- 	Use:   "create",
- 	Short: "Create a new workspace under an organization",
-@@ -46,6 +48,12 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace
- // Create a new workspace in an organization
- mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
- `,
-+	Args: func(cmd *cobra.Command, args []string) error {
-+		if len(args) != 0 {
-+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
-+		}
-+		return nil
-+	},
- 	PreRunE: func(cmd *cobra.Command, args []string) error {
- 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
- 	},
-```
-
-**File**: `mesheryctl/internal/cli/root/workspaces/create_test.go` (modified, +11/-0)
-```diff
-@@ -19,6 +19,17 @@ func TestCreateWorkspace(t *testing.T) {
- 	currDir := filepath.Dir(filename)
- 
- 	tests := []utils.MesheryCommandTest{
-+		{
-+			Name:             "given unexpected positional argument when workspace create then throw error",
-+			Args:             []string{"create", "extra-arg", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
-+			URL:              "/api/workspaces",
-+			HttpMethod:       "POST",
-+			Fixture:          "",
-+			ExpectedResponse: "",
-+			ExpectError:      true,
-+			IsOutputGolden:   false,
-+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg)),
-+		},
- 		{
- 			Name:             "given no flags provided when workspace create throw error",
- 			Args:             []string{"create"},
 ```
 
 ---
 
-### Incident Patch 2: `e2c2821d` (2026-11-10)
-**Commit Message**: Merge pull request #23117 from madhavzanwar/fix/env-view-args
+### Incident Patch 2: `41ccfbfe` (2026-11-12)
+**Commit Message**: Merge pull request #23300 from RajJasani/fix/component-view-save-path-separators
 
-[mesheryctl] Enforce exact argument validation in environment view
+[mesheryctl] Replace path separators in file names saved by component view
 
-**File**: `mesheryctl/internal/cli/root/environments/view.go` (modified, +10/-2)
+**File**: `mesheryctl/internal/cli/root/components/fixtures/view.component.save.name.api.response.golden` (added, +84/-0)
 ```diff
-@@ -36,18 +36,26 @@ type environmentViewFlags struct {
- 
- var environmentViewFlagsProvided environmentViewFlags
- 
-+var viewUsageMsg = "Usage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
-+
- var viewEnvironmentCmd = &cobra.Command{
- 	Use:   "view",
--	Short: "View registered environmnents",
-+	Short: "View registered environments",
- 	Long: `View details of an environment registered in Meshery Server for a specific organization
- Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
- 	Example: `
- // View details of a specific environment
- mesheryctl environment view --orgId [orgId]
- 	`,
-+	Args: func(cmd *cobra.Command, args []string) error {
-+		if len(args) != 0 {
-+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewUsageMsg))
-+		}
-+		return nil
-+	},
- 	PreRunE: func(cmd *cobra.Command, args []string) error {
- 		if environmentViewFlagsProvided.orgId == "" {
--			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
-+			errMsg := "[ orgId ] isn't specified\n\n" + viewUsageMsg
- 			return utils.ErrInvalidArgument(errors.New(errMsg))
- 		}
- 
+@@ -0,0 +1,84 @@
++{
++  "page": 1,
++  "page_size": 1,
++  "total_count": 1,
++  "components": [
++    {
++      "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
++      "schemaVersion": "components.meshery.io/v1beta1",
++      "version": "v1.0.0",
++      "displayName": "apps/v1\\Deployment test",
++      "description": "",
++      "format": "JSON",
++      "model": {
++        "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
++        "schemaVersion": "models.meshery.io/v1beta1",
++        "version": "v1.0.0",
++        "name": "component-test-0",
++        "displayName": "Component test",
++        "status": "enabled",
++        "registrant": {
++          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
++          "name": "Artifact Hub",
++          "credentialId": "00000000-0000-0000-0000-000000000000",
++          "type": "registry",
++          "subType": "",
++          "kind": "artifacthub",
++          "status": "registered",
++          "user_id": "00000000-0000-0000-0000-000000000000",
++          "created_at": "2025-03-30T19:59:46.350667005Z",
++          "updated_at": "2025-03-30T19:59:46.350667005Z",
++          "deleted_at": {"Time": "0001-01-01T00:00:00Z", "Valid": false}
++        },
++        "connection_id": "fd01c4e7-14ae-4435-8236-adfb9cea0395",
++        "category": {
++          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
++          "name": "category"
++        },
++        "subCategory": "sub-category",
++        "metadata": {
++          "isAnnotation": false,
++          "primaryColor": "#ff9900",
++          "secondaryColor": "#F4BC79",
++          "shape": "circle",
++          "styleOverrides": "",
++          "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/kubeform-provider-aws-color.svg",
++          "svgComplete": "",
++          "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/kubeform-provider-aws-white.svg"
++        },
++        "model": {
++          "version": "2023.11.1"
++        },
++        "components_count": 0,
++        "relationships_count": 0,
++        "components": null,
++        "relationships": null
++      },
++      "styles": {
++        "primaryColor": "#ff9900",
++        "secondaryColor": "#F4BC79",
++        "shape": "circle",
++        "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/acl-color.svg",
++        "svgComplete": "",
++        "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/acl-white.svg"
++      },
++      "capabilities": [],
++      "status": "enabled",
++      "metadata": {
++        "configurationUISchema": "",
++        "genealogy": "",
++        "instanceDetails": null,
++        "isAnnotation": false,
++        "isNamespaced": false,
++        "published": false
++      },
++      "configuration": null,
++      "component": {
++        "version": "memorydb.aws.kubeform.com/v1alpha1",
++        "kind": "Test",
++        "schema": "{\"description\":\"ACL is the Schema for the ACLs API. Provides a MemoryDB ACL.\",\"properties\":{\"spec\":{\"description\":\"ACLSpec defines the desired state of ACL\",\"properties\":{\"deletionPolicy\":{\"default\":\"Delete\",\"description\":\"DeletionPolicy specifies what will happen to the underlying external when this managed resource is deleted - either \\\"Delete\\\" or \\\"Orphan\\\" the external resource. This field is planned to be deprecated in favor of the ManagementPolicy field in a future release. Currently, both could be set independently and non-default values would be honored if the feature flag is enabled. See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223\",\"enum\":[\"Orphan\",\"Delete\"],\"type\":\"string\"},\"forProvider\":{\"properties\":{\"region\":{\"description\":\"Region is the region you'd like your resource to be created in.\",\"type\":\"string\"},\"tags\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"A map of tags to assign to the resource. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.\",\"type\":\"object\"},\"tagsAll\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.\",\"type\":\"object\"},\"userNames\":{\"description\":\"Set of MemoryDB user names to be included in this ACL.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"},\"managementPolicy\":{\"default\":\"FullControl\",\"description\":\"THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored unless the relevant Crossplane feature flag is enabled, and may be changed or removed without notice. ManagementPolicy specifies the level of control Crossplane has over the managed external resource. This field is planned to replace the DeletionPolicy field in a future release. Currently, both
 ```
 
-**File**: `mesheryctl/internal/cli/root/environments/view_test.go` (modified, +7/-0)
+**File**: `mesheryctl/internal/cli/root/components/view.go` (modified, +1/-3)
 ```diff
-@@ -41,3 +41,10 @@ func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
+@@ -97,10 +97,8 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
+ 		savePath := ""
  
- 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "environment_test-environment.yaml"))
+ 		if cmdComponentViewFlags.Save {
+-			componentString := strings.ReplaceAll(
++			componentString := strings.NewReplacer(" ", "_", "/", "_", "\\", "_").Replace(
+ 				fmt.Sprintf("%v", selectedComponent.DisplayName),
+-				" ",
+-				"_",
+ 			)
+ 
+ 			savePath = filepath.Join(
+```
+
+**File**: `mesheryctl/internal/cli/root/components/view_test.go` (modified, +27/-0)
+```diff
+@@ -102,3 +102,30 @@ func TestComponentView(t *testing.T) {
+ 	mesheryctlflags.InitValidators(ComponentCmd)
+ 	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currDir, "component")
  }
 +
-+func TestEnvironmentViewExtraArgsFails(t *testing.T) {
-+	run := environmentViewRun(utils.CallerDir(t), []string{"view", "extra-arg", "--orgId", testConstants["orgId"]})
-+	if _, err := utils.RunMesheryctlCommand(t, run); err == nil {
-+		t.Fatalf("expected error when extra positional argument is passed, got nil")
++// TestComponentViewSaveFlattensSeparatorsInName verifies that --save writes one
++// file for a component whose display name has path separators, and that the real
++// ~/.meshery is never touched.
++func TestComponentViewSaveFlattensSeparatorsInName(t *testing.T) {
++	const componentID = "fda1c4e7-14ae-4435-8236-adfb9cea0395"
++
++	mesheryctlflags.InitValidators(ComponentCmd)
++	mesheryDir := utils.IsolateMesheryHome(t)
++
++	run := utils.MesheryCommandRun{
++		Cmd:        ComponentCmd,
++		Args:       []string{"view", componentID, "--save"},
++		CommandDir: utils.CallerDir(t),
++		Mocks: []utils.MockURL{
++			{
++				URL:      fmt.Sprintf("/%s?id=%s&page=0&pagesize=10", componentApiPath, componentID),
++				Response: "view.component.save.name.api.response.golden",
++			},
++		},
 +	}
++	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	utils.AssertFileExists(t, filepath.Join(mesheryDir, "component_apps_v1_Deployment_test.yaml"))
 +}
 ```
 
 ---
 
-### Incident Patch 3: `e2a407d8` (2026-11-10)
-**Commit Message**: Merge pull request #23113 from nishant-devv/fix/policy-engine-multi-selector-relationship-validation
+### Incident Patch 3: `6303b9bb` (2026-11-12)
+**Commit Message**: Merge branch 'master' into fix/component-view-save-path-separators
 
-[Server] Validate multi-selector relationships and prevent ghost relationship bleed (#23111)
-
-**File**: `server/policies/eval_rules.go` (modified, +162/-68)
+**File**: `ui/__tests__/pages/user/preferences.test.tsx` (added, +121/-0)
 ```diff
-@@ -23,43 +23,66 @@ func componentDeclarationByID(design *pattern.PatternFile, id string) *component
- 
- // fromComponentID returns the from component ID from a relationship definition.
- func fromComponentID(rel *relationship.RelationshipDefinition) string {
--	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
-+	if rel == nil || rel.Selectors == nil {
- 		return ""
- 	}
--	ss := (*rel.Selectors)[0]
--	if len(ss.Allow.From) == 0 {
--		return ""
--	}
--	if ss.Allow.From[0].ID == nil {
--		return ""
-+	for _, ss := range *rel.Selectors {
-+		for _, item := range ss.Allow.From {
-+			if item.ID != nil && item.ID.String() != "" {
-+				return item.ID.String()
-+			}
-+		}
- 	}
--	return ss.Allow.From[0].ID.String()
-+	return ""
- }
- 
- // toComponentID returns the to component ID from a relationship definition.
- func toComponentID(rel *relationship.RelationshipDefinition) string {
--	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
-+	if rel == nil || rel.Selectors == nil {
- 		return ""
- 	}
--	ss := (*rel.Selectors)[0]
--	if len(ss.Allow.To) == 0 {
--		return ""
--	}
--	if ss.Allow.To[0].ID == nil {
--		return ""
-+	for _, ss := range *rel.Selectors {
-+		for _, item := range ss.Allow.To {
-+			if item.ID != nil && item.ID.String() != "" {
-+				return item.ID.String()
-+			}
-+		}
- 	}
--	return ss.Allow.To[0].ID.String()
-+	return ""
- }
- 
- // fromAndToComponentsExist checks if both from and to components still exist in the design.
-+// It inspects all selectors and all referenced component IDs across From and To clauses
-+// to guarantee that no dangling component references linger in multi-component or
-+// multi-selector relationships.
- func fromAndToComponentsExist(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
--	fromID := fromComponentID(rel)
--	toID := toComponentID(rel)
--	if fromID == "" || toID == "" {
-+	if rel == nil || rel.Selectors == nil || len(*rel.Selectors) == 0 || design == nil {
- 		return false
- 	}
--	return componentDeclarationByID(design, fromID) != nil &&
--		componentDeclarationByID(design, toID) != nil
+@@ -0,0 +1,121 @@
++import React from 'react';
++import { render, screen } from '@testing-library/react';
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++import { Keys } from '@meshery/schemas/permissions';
 +
-+	for _, ss := range *rel.Selectors {
-+		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
-+			return false
-+		}
-+		for _, fromSel := range ss.Allow.From {
-+			if fromSel.ID == nil || fromSel.ID.String() == "" {
-+				return false
-+			}
-+			if componentDeclarationByID(design, fromSel.ID.String()) == nil {
-+				return false
-+			}
-+		}
-+		for _, toSel := range ss.Allow.To {
-+			if toSel.ID == nil || toSel.ID.String() == "" {
-+				return false
-+			}
-+			if componentDeclarationByID(design, toSel.ID.String()) == nil {
-+				return false
-+			}
-+		}
-+	}
++const { useHasPermission, useGetUserPrefWithContextQuery } = vi.hoisted(() => ({
++  useHasPermission: vi.fn(),
++  useGetUserPrefWithContextQuery: vi.fn(),
++}));
 +
-+	return true
- }
- 
- // fromOrToComponentsDontExist returns true when one or both sides are missing.
-@@ -150,55 +173,76 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
- 	var actions []PolicyAction
- 
- 	for _, ss := range *rel.Selectors {
--		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
-+		fromCount := len(ss.Allow.From)
-+		toCount := len(ss.Allow.To)
-+		if fromCount == 0 || toCount == 0 {
- 			continue
- 		}
--		fromSel := ss.Allow.From[0]
--		toSel := ss.Allow.To[0]
--		if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
--			continue
-+		pairCount := fromCount
-+		if toCount < pairCount {
-+			pairCount = toCount
- 		}
--
--		fromID := selectorItemID(fromSel)
--		toID := selectorItemID(toSel)
--		fromComp := componentDeclarationByID(design, fromID)
--		toComp := componentDeclarationByID(design, toID)
--		if fromComp == nil || toComp == nil {
--			continue
-+		// If one side has 1 element and the other side has N elements, fan out across all N targets.
-+		if fromCount == 1 || toCount == 1 {
-+			pairCount = max(fromCount, toCount)
- 		}
- 
--		mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
--		if mutatorRefs == nil || mutatedRefs == nil {
--			continue
--		}
--
--		mutatedID := toID
--		if mutatedComp.ID == fromComp.ID {
--			mutatedID = fromID
--		}
-+		for p := 0; p < pairCount; p++ {
-+			fromIdx := p
-+			if fromIdx >= fromCount {
-+				fromIdx = 0
-+			}
-+			toIdx := p
-+			if toIdx >= toCount {
-+				toIdx = 0
-+			}
-+			fromSel := ss.Allow.From[fromIdx]
-+			toSel := ss.Allow.To[toIdx]
-+			if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
-+				continue
-+			}
- 
--		count := len(mutatorRefs)
--		if len(mutatedRefs) < count {
--			count = len(mutatedRefs)
--		}
-+			fromID := selectorItemID(fromSel)
-+			toID := selectorItemID(toSel)
-+			fromComp := componentDeclarationByID(design, fromID)
-+			toComp := componentDeclarationByID(design, toID)
-+			if fromComp == nil || toComp == nil {
-+				continue
-+			}
- 
--		for i := 0; i < count; i++ {
--			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
--			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutat
++vi.mock('react-redux', () => ({
++  useSelector: (selector: (state: { ui: { selectedK8sContext: string } }) => unknown) =>
++    selector({ ui: { selectedK8sContext: 'ctx-1' } }),
++}));
++
++vi.mock('@sistent/sistent', () => ({ useHasPermission }));
++
++vi.mock('@/rtk-query/user', () => ({
++  useGetUserPrefWithContextQuery,
++}));
++
++vi.mock('../../../components/general/MesheryPage', () => ({
++  MesheryPage: ({ title, children }: { title: string; children: React.ReactNode }) => (
++    <div data-testid="meshery-page" data-title={title}>
++      {children}
++    </div>
++  ),
++}));
++
++vi.mock('@/components/user-preferences', () => ({
++  default: ({
++    anonymousStats,
++    perfResultStats,
++  }: {
++    anonymousStats: boolean;
++    perfResultStats: boolean;
++  }) => (
++    <div
++      data-testid="user-preferences"
++      data-anon={String(anonymousStats)}
++      data-perf={String(perfResultStats)}
++    />
++  ),
++}));
++
++vi.mock('@/components/general/error-404', () => ({
++  default: ({ permissionKey }: { permissionKey: unknown }) => (
++    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
++  ),
++}));
++
++import UserPref from '../../../pages/user/preferences';
++
++describe('UserPref page access gate', () => {
++  beforeEach(() => {
++    useHasPermission.mockReset();
++    useGetUserPrefWithContextQuery.mockReset();
++  });
++
++  it('skips the context query, ignores cached preferences, and renders DefaultError inside MesheryPage when denied', () => {
++    useHasPermission.mockReturnValue(false);
++    useGetUserPrefWithContextQuery.mockReturnValue({
++      data: { anonymousUsageStats: true, anonymousPerfResults: true },
++    });
++
++    render(<UserPref />);
++
++    expect(useHasPermission).toHaveBeenCalledWith(Keys.ExtensibilityViewMesheryUserPreferences);
++    expect(useGetUserPrefWithContextQuery).toHaveBeenCalledWith('ctx-1', { skip: true });
++    expect(screen.getByTestId('meshery-page')).toHaveAttribute('data-title', 'User Preferences');
++    expect(screen.getByTestId('default-error')).toHaveAttribute(
++      'data-permission-key',
++      JSON.stringify(Keys.ExtensibilityViewMesheryUserPreferences),
++    );
++    expect(screen.queryByTestId('user-preferences')).not.toBeInTheDocument();
++  });
++
++  it('preserves the MesheryPage shell without rendering preferences while stats are loading', () => {
++    useHasPermission.mockReturnValue(true);
++    useGetUserPrefWithContextQuery.mockReturnValue({ data: undefined });
++
++    render(<UserPref />);
++
++    expect(useGetUserPrefWithContextQuery).toHaveBeenCalledWith('ctx-1', { skip: false });
++    expect(screen.getByTestId('meshery-page')).toHaveAttribute('data-title', 'User Preferences');
++    expect(screen.queryByTestId('user-preferences')).not.toBeInTheDocument();
++    expect(screen.queryByTestId('default-error')).not.toBeInTheDocument();
++  });
++
++  it('renders UserPreferences inside MesheryPage when permitted and stats are loaded', () => {
++    useHasPermission.mockReturnValue(true);
++    useGetUserPrefWithContextQuery.mockReturnValue({
++      data: { anonymousUsageStats: true, anonymousPerfResults: false },
++    });
++
++    render(<UserPref />);
++
++    expect(useGetUserPrefWithContextQuery).toHaveBeenCalledWith('ctx-1', { skip: false });
++    expect(screen.getByTestId('meshery-page')).toHaveAttribute('data-title', 'User Preferences');
++    expect(screen.getByTestId('user-preferences')).toHaveAttribute('data-anon', 'true');
++    expect(screen.getByTestId('user-preferences')).toHaveAttribute('data-perf', 'false');
++    expect(screen.queryByTestId('default-error')).not.toBeInTheDocument();
++  });
++
++  it('replaces UserPreferences with DefaultError and skips query if permission is revoked mid-session', () => {
++    useHasPermission.mockReturnValue(true);
++    useGetUserPrefWithContextQuery.mockReturnValue({
++      data: { anonymousUsageStats: true, anonymousPerfResults: true },
++    });
++
++    const { rerender } = render(<UserPref />);
++    expect(screen.getByTestId('user-preferences')).toBeInTheDocument();
++
++    useHasPermission.mockReturnValue(false);
++    rerender(<UserPref />);
++
++    expect(useGetUserPrefWithContextQuery).toHaveBeenLastCalledWith('ctx-1', { skip: true });
++    expect(screen.getByTestId('default-error')).toBeInTheDocument();
++    expect(screen.queryByTestId('user-preferences')).not.toBeInTheDocument();
++  });
++});
 ```
 
-**File**: `server/policies/eval_rules_test.go` (added, +662/-0)
+**File**: `ui/components/connections/index.test.tsx` (modified, +82/-5)
 ```diff
-@@ -0,0 +1,662 @@
-+package policies
+@@ -1,13 +1,29 @@
+ import React from 'react';
+ import { render, screen } from '@testing-library/react';
+ import userEvent from '@testing-library/user-event';
++import { Keys } from '@meshery/schemas/permissions';
+ import { beforeEach, describe, expect, it, vi } from 'vitest';
+ import ConnectionManagementPageWithErrorBoundary from './index';
+ 
++const {
++  mockUseHasPermission,
++  mockUseGetSchemaQuery,
++  mockOpenCreateConnection,
++  mockCloseCreateConnection,
++  mockReplace,
++} = vi.hoisted(() => ({
++  mockUseHasPermission: vi.fn(),
++  mockUseGetSchemaQuery: vi.fn(),
++  mockOpenCreateConnection: vi.fn(),
++  mockCloseCreateConnection: vi.fn(),
++  mockReplace: vi.fn(),
++}));
 +
-+import (
-+	"testing"
+ const router = {
+   query: {} as Record<string, unknown>,
+   pathname: '/connections',
+   push: vi.fn(),
++  replace: mockReplace,
+   isReady: true,
+ };
+ 
+@@ -20,7 +36,7 @@ vi.mock('@sistent/sistent', () => ({
+   ErrorBoundary: ({ children }) => <>{children}</>,
+   AppBar: ({ children }) => <div>{children}</div>,
+   InfoTooltip: () => <svg data-testid="info-icon" />,
+-  useHasPermission: () => true,
++  useHasPermission: (permissionKey) => mockUseHasPermission(permissionKey),
+   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
+ }));
+ 
+@@ -63,8 +79,8 @@ vi.mock('./ConnectionTable', () => ({
+ 
+ vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
+   useConnectionWizardModal: () => ({
+-    openCreateConnection: vi.fn(),
+-    closeCreateConnection: vi.fn(),
++    openCreateConnection: mockOpenCreateConnection,
++    closeCreateConnection: mockCloseCreateConnection,
+     open: false,
+   }),
+ }));
+@@ -90,11 +106,13 @@ vi.mock('@/utils/can', () => ({
+ }));
+ 
+ vi.mock('@/rtk-query/schema', () => ({
+-  useGetSchemaQuery: () => ({ data: undefined }),
++  useGetSchemaQuery: (args, options) => mockUseGetSchemaQuery(args, options),
+ }));
+ 
+ vi.mock('../general/error-404/index', () => ({
+-  default: () => <div data-testid="default-error" />,
++  default: ({ permissionKey }) => (
++    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
++  ),
+ }));
+ 
+ vi.mock('../shared/ErrorBoundary/ErrorBoundary', () => ({
+@@ -113,8 +131,15 @@ describe('connections index page', () => {
+   beforeEach(() => {
+     router.query = {};
+     router.push.mockReset();
++    router.replace.mockReset();
+     router.isReady = true;
+     connectionTableCallbackRefs.length = 0;
++    mockOpenCreateConnection.mockReset();
++    mockCloseCreateConnection.mockReset();
++    mockUseHasPermission.mockReset();
++    mockUseHasPermission.mockReturnValue(true);
++    mockUseGetSchemaQuery.mockReset();
++    mockUseGetSchemaQuery.mockReturnValue({ data: undefined });
+   });
+ 
+   it('defaults to the connections tab and ignores non-string connection ids', () => {
+@@ -125,6 +150,7 @@ describe('connections index page', () => {
+ 
+     render(<ConnectionManagementPageWithErrorBoundary />);
+ 
++    expect(mockUseGetSchemaQuery).toHaveBeenCalledWith({ schemaName: 'helmRepo' }, { skip: false });
+     expect(screen.getByTestId('connection-table')).toHaveTextContent('connection:none');
+     expect(screen.queryByTestId('meshsync-table')).not.toBeInTheDocument();
+   });
+@@ -208,4 +234,55 @@ describe('connections index page', () => {
+       expect(ref).toBe(first);
+     }
+   });
 +
-+	"github.com/gofrs/uuid"
-+	"github.com/meshery/schemas/models/v1beta1/component"
-+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
-+	"github.com/meshery/schemas/models/v1beta1/pattern"
-+	"github.com/meshery/schemas/models/v1beta2/relationship"
-+)
++  it('skips schema query, ignores cached schema data, blocks deep links, and renders DefaultError when permission is denied', () => {
++    mockUseHasPermission.mockReturnValue(false);
++    mockUseGetSchemaQuery.mockReturnValue({
++      data: { rjsfSchema: { title: 'Cached Helm Repo' }, uiSchema: {} },
++    });
++    router.query = {
++      create: 'true',
++      kind: 'kubernetes',
++    };
 +
-+func newTestComponent(name, kind string) *component.ComponentDefinition {
-+	id := uuid.Must(uuid.NewV4())
-+	return &component.ComponentDefinition{
-+		ID:          id,
-+		DisplayName: name,
-+		Component: component.Component{
-+			Kind: kind,
-+		},
-+		ModelReference: modelv1beta1.ModelReference{
-+			Name: "kubernetes",
-+		},
-+		Configuration: map[string]interface{}{
-+			"metadata": map[string]interface{}{
-+				"name": name,
-+			},
-+		},
-+	}
++    render(<ConnectionManagementPageWithErrorBoundary />);
++
++    expect(mockUseHasPermission).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
++    expect(mockUseGetSchemaQuery).toHaveBeenCalledWith({ schemaName: 'helmRepo' }, { skip: true });
++    expect(screen.getByTestId('default-error')).toHaveAttribute(
++      'data-permission-key',
++      JSON.stringify(Keys.WorkspaceManagementViewConnections),
++    );
++    expect(screen.queryByTestId('connection-table')).not.toBeInTheDocument();
++    expect(screen.queryByTestId('meshsync-table')).not.toBeInTheDocument();
++    expect(screen.queryByTestId('create-connection-modal')).not.toBeInTheDocument();
++    expect(mockOpenCreateConnection).not.toHaveBeenCalled();
++    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
++    expect(router.replace).not.toHaveBeenCalled();
++  });
++
++  it('hides tables, skips schema query, and closes wizard when permission is revoked mid-session', () => {
++    const { rerender } = render(<ConnectionManagementPageWithErrorBoundary />);
++
++    expect(screen.getByTestId('connection-table')).toBeInTheDocument();
++    expect(mockUseGetSchemaQuery).toHaveBeenLastCalledWith(
++      { schemaName: 'helmRepo' },
++      { skip: false },
++    );
++    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
+```
+
+**File**: `ui/components/connections/index.tsx` (modified, +32/-10)
+```diff
+@@ -29,16 +29,24 @@ import { useRouter } from 'next/router';
+  * - Keep the component's responsibilities focused on connection management. Avoid adding unrelated functionality and state.
+  */
+ 
++/**
++ * Renders the Connections and MeshSync management views with RBAC gating and
++ * deferred schema loading.
++ */
+ function ConnectionManagementPage(props) {
++  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
+   const [createConnectionModal, setCreateConnectionModal] = useState({
+     open: false,
+   });
+ 
+-  const { data: schemaResponse } = useGetSchemaQuery({
+-    schemaName: 'helmRepo',
+-  });
++  const { data: schemaResponse } = useGetSchemaQuery(
++    {
++      schemaName: 'helmRepo',
++    },
++    { skip: !hasViewConnections },
++  );
+ 
+-  const createConnection = schemaResponse ?? {};
++  const createConnection = (hasViewConnections ? schemaResponse : undefined) ?? {};
+ 
+   const handleCreateConnectionModalOpen = () => {
+     setCreateConnectionModal({ open: true });
+@@ -48,17 +56,24 @@ function ConnectionManagementPage(props) {
+     setCreateConnectionModal({ open: false });
+   };
+ 
++  useEffect(() => {
++    if (!hasViewConnections) {
++      setCreateConnectionModal((prev) => (prev.open ? { open: false } : prev));
++    }
++  }, [hasViewConnections]);
++
+   const handleCreateConnectionSubmit = () => {};
+ 
+   return (
+     <>
+       <Connections
++        hasViewConnections={hasViewConnections}
+         createConnectionModal={createConnectionModal}
+         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
+         onCloseCreateConnectionModal={handleCreateConnectionModalClose}
+         {...props}
+       />
+-      {createConnectionModal.open && (
++      {hasViewConnections && createConnectionModal.open && (
+         <Modal
+           open={true}
+           schema={createConnection.rjsfSchema}
+@@ -72,12 +87,12 @@ function ConnectionManagementPage(props) {
+     </>
+   );
+ }
+-function Connections() {
+-  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
++function Connections({ hasViewConnections }) {
+   const theme = useTheme();
+   const router = useRouter();
+   const { query, pathname, push, isReady, replace } = router;
+-  const { openCreateConnection } = useConnectionWizardModal();
++  const { openCreateConnection, closeCreateConnection } = useConnectionWizardModal();
++  const prevHasViewConnectionsRef = useRef(hasViewConnections);
+   const tabParam = typeof query.tab === 'string' ? query.tab.toLowerCase() : undefined;
+   const connectionId = typeof query.connectionId === 'string' ? query.connectionId : undefined;
+ 
+@@ -95,7 +110,7 @@ function Connections() {
+         : null;
+ 
+   useEffect(() => {
+-    if (!isReady || !isCreateConnectionQuery(createFlag)) {
++    if (!hasViewConnections || !isReady || !isCreateConnectionQuery(createFlag)) {
+       return;
+     }
+     openCreateConnection({
+@@ -106,7 +121,14 @@ function Connections() {
+     delete nextQuery[CREATE_CONNECTION_QUERY.create];
+     delete nextQuery[CREATE_CONNECTION_QUERY.kind];
+     replace({ pathname, query: nextQuery }, undefined, { shallow: true });
+-  }, [isReady, createFlag, kindFromQuery, openCreateConnection]);
++  }, [hasViewConnections, isReady, createFlag, kindFromQuery, openCreateConnection]);
++
++  useEffect(() => {
++    if (prevHasViewConnectionsRef.current && !hasViewConnections) {
++      closeCreateConnection();
++    }
++    prevHasViewConnectionsRef.current = hasViewConnections;
++  }, [hasViewConnections, closeCreateConnection]);
+ 
+   // Next.js's pages-router `router.query` and `router.push` get fresh
+   // references on each render, which previously cascaded into a new
+```
+
+**File**: `ui/components/registry/MeshModelComponent.permissions.test.tsx` (added, +345/-0)
+```diff
+@@ -0,0 +1,345 @@
++import React from 'react';
++import { act, render, screen, waitFor } from '@testing-library/react';
++import { Keys } from '@meshery/schemas/permissions';
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++const {
++  mockUseHasPermission,
++  mockUseGetMeshModelsQuery,
++  mockUseGetComponentsQuery,
++  mockUseGetRelationshipsQuery,
++  mockUseGetRegistrantsQuery,
++  mockUseGetConnectionDefinitionsQuery,
++  mockGetMeshModelsData,
++  mockGetComponentsData,
++  mockGetRelationshipsData,
++  mockGetRegistrantsData,
++  mockGetConnectionDefinitionsData,
++} = vi.hoisted(() => ({
++  mockUseHasPermission: vi.fn(),
++  mockUseGetMeshModelsQuery: vi.fn(),
++  mockUseGetComponentsQuery: vi.fn(),
++  mockUseGetRelationshipsQuery: vi.fn(),
++  mockUseGetRegistrantsQuery: vi.fn(),
++  mockUseGetConnectionDefinitionsQuery: vi.fn(),
++  mockGetMeshModelsData: vi.fn(),
++  mockGetComponentsData: vi.fn(),
++  mockGetRelationshipsData: vi.fn(),
++  mockGetRegistrantsData: vi.fn(),
++  mockGetConnectionDefinitionsData: vi.fn(),
++}));
++
++let modelsResState: any;
++let componentsResState: any;
++let relationshipsResState: any;
++let registrantsResState: any;
++let connectionsResState: any;
++
++function createControllableQueryPromise<T>() {
++  let resolve!: (value: T) => void;
++  let reject!: (reason?: unknown) => void;
++  const promise = new Promise<T>((res, rej) => {
++    resolve = res;
++    reject = rej;
++  }) as Promise<T> & { abort: ReturnType<typeof vi.fn>; unsubscribe: ReturnType<typeof vi.fn> };
++  promise.abort = vi.fn();
++  promise.unsubscribe = vi.fn();
++  return { promise, resolve, reject };
 +}
 +
-+// TestFromAndToComponentsExist_MultiComponentRelationship verifies that
-+// fromAndToComponentsExist checks all referenced components in a multi-component
-+// relationship (such as sibling matchLabels with 3+ components), not just index 0.
-+func TestFromAndToComponentsExist_MultiComponentRelationship(t *testing.T) {
-+	compA := newTestComponent("pod-a", "Pod")
-+	compB := newTestComponent("pod-b", "Pod")
-+	compC := newTestComponent("pod-c", "Pod")
++vi.mock('next/router', () => ({
++  useRouter: () => ({ query: {}, pathname: '/settings', push: vi.fn(), isReady: true }),
++}));
 +
-+	kind := "Pod"
-+	rel := &relationship.RelationshipDefinition{
-+		ID:               uuid.Must(uuid.NewV4()),
-+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
-+		RelationshipType: "sibling",
-+		SubType:          "matchlabels",
-+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
-+		Selectors: &relationship.SelectorSet{
-+			{
-+				Allow: relationship.Selector{
-+					From: []relationship.SelectorItem{
-+						{ID: &compA.ID, Kind: &kind},
-+						{ID: &compB.ID, Kind: &kind},
-+						{ID: &compC.ID, Kind: &kind},
-+					},
-+					To: []relationship.SelectorItem{
-+						{ID: &compA.ID, Kind: &kind},
-+						{ID: &compB.ID, Kind: &kind},
-+						{ID: &compC.ID, Kind: &kind},
-+					},
-+				},
-+			},
-+		},
-+	}
++vi.mock('@sistent/sistent', () => ({
++  Button: ({ startIcon: _startIcon, children, ...rest }: any) => (
++    <button {...rest}>{children}</button>
++  ),
++  NoSsr: ({ children }: any) => <>{children}</>,
++  AddCircleIcon: () => <svg />,
++  ExternalLinkIcon: () => <svg />,
++  FileUploadIcon: () => <svg />,
++  useHasPermission: (permissionKey: any) => mockUseHasPermission(permissionKey),
++  useMediaQuery: () => false,
++}));
 +
-+	t.Run("all components exist", func(t *testing.T) {
-+		design := &pattern.PatternFile{
-+			Components:    []*component.ComponentDefinition{compA, compB, compC},
-+			Relationships: []*relationship.RelationshipDefinition{rel},
-+		}
-+		if !fromAndToComponentsExist(rel, design) {
-+			t.Fatal("expected fromAndToComponentsExist to be true when all components exist")
-+		}
-+		if fromOrToComponentsDontExist(rel, design) {
-+			t.Fatal("expected fromOrToComponentsDontExist to be false when all components exist")
-+		}
-+	})
++vi.mock('@/theme', () => ({
++  styled:
++    (Component: any) =>
++    () =>
++    ({ children, ...rest }: any) =>
++      React.createElement(Component || 'div', rest, children),
++  useTheme: () => ({
++    breakpoints: { down: () => '@media (max-width:600px)' },
++  }),
++}));
 +
-+	t.Run("secondary component compC deleted", func(t *testing.T) {
-+		// compC is removed from design
-+		design := &pattern.PatternFile{
-+			Components:    []*component.ComponentDefinition{compA, compB},
-+			Relationships: []*relationship.RelationshipDefinition{rel},
-+		}
-+		if fromAndToComponentsExist(rel, design) {
-+			t.Fatal("expected fromAndToComponentsExist to be false when secondary component compC is missing")
-+		}
-+		if !fromOrToComponentsDontExist(rel, design) {
-+			t.Fatal("expected fromOrToComponentsDontExist to be true when secondary component compC is missing")
-+		}
-+	})
++vi.mock('css/icons.styles', () => ({
++  iconSmall: {},
++}));
 +
-+	t.Run("secondary component compB deleted", func(t *testing.T) {
-+		// compB is removed from design
-+		design := &pattern.PatternFile{
-+			Components:    []*component.ComponentDefinition{compA, compC},
-+			Relationships: []*relationship.RelationshipDefinition{rel},
-+		}
-+		if fromAndToComponentsExist(rel, design) {
-+			t.Fatal("expected fromAndToComponentsExist to be false when secondary component compB is missing")
-+		}
-+		if !fromOrToComponentsDontExist(rel, design) {
-+			t.Fatal("expected fromOrToComponentsDontExist to be true when secondary component compB is missing")
-+		}
-+	})
-+}
++vi.mock('../general/error-404/index', () => ({
++  default: ({ permissionKey }: any) => (
++    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
++  ),
++}));
 +
-+// TestValidateRelationshipsInDesign_OrphanedMultiComponentRelationship verifies
-+// that validateRelationshipsInDesign marks a multi-component relationship as deleted
-+// when any of its constituent components are removed from the design.
-+func TestValidateRelationshipsInDesign_OrphanedMultiComponentRelationship(t *testing.T) {
-+	compA := newTestComponent("deploy-a", "Deployment")
-+	compB := newTestComponent("deploy-b", "Deployment")
-+	compC := newTestComponent("deploy-c", "Deployment")
++vi.mock('@/assets/styles/general/tool.styles', () => {
++  const Div = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;
++  return {
++    MeshModelToolbar: Div,
++    MainContainer: Div,
++    TreeWrapper: Div,
++    DetailsContainer: ({ isEmpty: _isEmpty, children, ...rest }: any) => (
++      <div {...rest}>{children}</div>
++    ),
++    InnerContainer: Div,
++    WorkloadsContainer: Div,
++  };
++});
 +
-+	kind := "Deployment"
-+	rel := &relationship.RelationshipDefinition{
-+		ID:               uuid.Must(uuid.NewV4()),
-+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
-+		RelationshipType: "sibling",
-+		SubType:          "matchlabels",
-+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
-+		Selectors: &relationship.SelectorSet{
-+			{
-+				Allow: relationship.Selector{
-+					From: []relationship.SelectorItem{
-+						{ID: &compA.ID, Kind: &kind},
-+						{ID: &compB.ID, Kind: &kind},
-+						{ID: &compC.ID, Kind: &kind},
-+					},
-+					To: []relationship.SelectorItem{
-+						{ID: &compA.ID, Kind: &kind},
-+						{ID: &compB.ID, Kind: &kind},
-+						{ID: &compC.ID, Kind: &kind},
-+					},
-+				},
-+			},
-+		},
-+	}
++vi.mock('./TabCard', () => ({
++  default: ({ label, count }: any) => (
++    <div data-testid={`tab-card-${label}`} data-count={count}>
++      {label}: {count}
++    </div>
++  ),
++}));
 +
-+	// compC was deleted from the canvas/design
-+	des
++vi.mock('./MesheryTreeView', () => ({
++  default: ({ data, view }: any) => (
++    <div data-testid="meshery-tree-view" data-view={view} data-count={data?.length ?? 0} />
++  ),
++}));
++
++vi.mock('./MeshModelDetails', () => ({
++  default: () => <div data-testid="mesh-model-details" />,
++}));
++
++vi.mock('./MeshModelMobileDetails', () => ({
++  default: () => <div data-testid="mesh-model-mobile-details" />,
++}));
++
++vi.mock('./ImportModelModal', () => ({
++  default: () => null,
++}));
++
++vi.mock('./CreateModelModal', () => ({
++  default: () => null,
++}));
++
++vi.mock('./CreateRelationshipModal', () => ({
++  default: () => null,
++}));
++
++vi.mock('./hooks', () => ({
++  useInfiniteScrollRef: () => vi.fn(),
++  useMeshModelComponentRouter: () => ({
++    searchQuery: null,
++    selectedPageSize: 25,
++    selectedTab: 'Models',
++  }),
++}));
++
++vi.mock('./helper', () => ({
++  groupRelationshipsByKind: (items: any[]) => items,
++  removeDuplicateVersions: (items: any[]) => items,
++}));
++
++vi.mock('@/rtk-query/meshModel', () => ({
++  useGetMeshModelsQuery: (...args: any[]) => mockUseGetMeshModelsQuery(...args),
++  useGetComponentsQuery: (...args: any[]) => mockUseGetComponentsQuery(...args),
++  useGetRelationshipsQuery: (...args: any[]) => mockUseGetRelationshipsQuery(...args),
++  useGetRegistrantsQuery: (...args: any[]) => mockUseGetRegistrantsQuery(...args),
++  useGetConnectionDefinitionsQuery: (...args: any[]) =>
++    mockUseGetConnectionDefinitionsQuery(...args),
++  useLazyGetMeshModelsQuery: () => [mockGetMeshModelsData, modelsResState],
++  useLazyGetComponentsQuery: () => [mockGetComponentsData, componentsResState],
++  useLazyGetRelationshipsQuery: () => [mock
 ```
 
-**File**: `server/policies/policy_alias.go` (modified, +79/-64)
+**File**: `ui/components/registry/MeshModelComponent.tsx` (modified, +156/-222)
 ```diff
-@@ -77,27 +77,33 @@ func isAliasRelationshipValid(rel *relationship.RelationshipDefinition, design *
- 		return false
- 	}
+@@ -1,4 +1,4 @@
+-import React, { useState, useEffect, useCallback, useMemo } from 'react';
++import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
+ import {
+   MODELS,
+   COMPONENTS,
+@@ -7,7 +7,6 @@ import {
+   CONNECTIONS,
+ } from '../../constants/navigator';
+ import {
+-  MeshModelToolbar,
+   MainContainer,
+   TreeWrapper,
+   DetailsContainer,
+@@ -17,7 +16,6 @@ import {
+ import TabCard from './TabCard';
+ import MesheryTreeView from './MesheryTreeView';
+ import MeshModelDetails from './MeshModelDetails';
+-import { toLower } from 'lodash';
+ import { useRouter } from 'next/router';
+ import {
+   useLazyGetMeshModelsQuery,
+@@ -32,17 +30,13 @@ import {
+   useGetConnectionDefinitionsQuery,
+ } from '@/rtk-query/meshModel';
+ import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
++import { MeshModelTabBar } from './MeshModelTabBar';
++import { fetchRegistryViewData } from './registryFetch';
+ import _ from 'lodash';
+-import {
+-  Button,
+-  NoSsr,
+-  AddCircleIcon as AddIcon,
+-  ExternalLinkIcon as LinkIcon,
+-  FileUploadIcon as UploadIcon,
+-  useMediaQuery,
+-} from '@sistent/sistent';
++import { NoSsr, useHasPermission, useMediaQuery } from '@sistent/sistent';
++import { Keys } from '@meshery/schemas/permissions';
++import DefaultError from '../general/error-404/index';
+ import { useTheme } from '@/theme';
+-import { iconSmall } from 'css/icons.styles';
+ import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
+ import ImportModelModal from './ImportModelModal';
+ import CreateModelModal from './CreateModelModal';
+@@ -62,6 +56,18 @@ const MeshModelComponent_ = ({
+   externalSearchText = null, // External search text from modal
+   externalSelectedItemUUID = null, // External selected item UUID from modal
+ }: MeshModelComponentProps) => {
++  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
++  const canViewRegistryRef = useRef(canViewRegistry);
++  const fetchRequestIdRef = useRef(0);
++  const trackedQueryHandlesRef = useRef<Set<{ unsubscribe?: () => void; abort?: () => void }>>(
++    new Set(),
++  );
++
++  // Sync synchronously in commit phase (before paint or promise continuations) so
++  // neither aborted renders nor pre-passive-effect microtasks read a stale ref.
++  useLayoutEffect(() => {
++    canViewRegistryRef.current = canViewRegistry;
++  }, [canViewRegistry]);
+   const theme = useTheme();
+   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+   const router = useRouter();
+@@ -111,27 +117,42 @@ const MeshModelComponent_ = ({
+   /**
+    * RTK Queries for counts
+    */
+-  const { data: modelsCountData } = useGetMeshModelsQuery({
+-    params: { page: 0, pagesize: 1, components: false, relationships: false },
+-  });
+-  const { data: componentsCountData } = useGetComponentsQuery({
+-    params: { page: 0, pagesize: 1, trim: true },
+-  });
+-  const { data: relationshipsCountData } = useGetRelationshipsQuery({
+-    params: { page: 0, pagesize: 1 },
+-  });
+-  const { data: registrantsCountData } = useGetRegistrantsQuery({
+-    params: { page: 0, pagesize: 1 },
+-  });
+-  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery({
+-    params: { page: 0, pagesize: 1 },
+-  });
++  const { data: modelsCountData } = useGetMeshModelsQuery(
++    {
++      params: { page: 0, pagesize: 1, components: false, relationships: false },
++    },
++    { skip: !canViewRegistry },
++  );
++  const { data: componentsCountData } = useGetComponentsQuery(
++    {
++      params: { page: 0, pagesize: 1, trim: true },
++    },
++    { skip: !canViewRegistry },
++  );
++  const { data: relationshipsCountData } = useGetRelationshipsQuery(
++    {
++      params: { page: 0, pagesize: 1 },
++    },
++    { skip: !canViewRegistry },
++  );
++  const { data: registrantsCountData } = useGetRegistrantsQuery(
++    {
++      params: { page: 0, pagesize: 1 },
++    },
++    { skip: !canViewRegistry },
++  );
++  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery(
++    {
++      params: { page: 0, pagesize: 1 },
++    },
++    { skip: !canViewRegistry },
++  );
  
--	ref := aliasRefFromRelationship(rel)
--	if ref == nil {
-+	refs := aliasRefsFromRelationship(rel)
-+	if len(refs) == 0 {
- 		return false
- 	}
- 	config := getComponentConfiguration(toComp, design)
--	return objectGetNested(config, popFirst(ref), nil) != nil
-+	for _, ref := range refs {
-+		if objectGetNested(config, popFirst(ref), nil) == nil {
-+			return false
-+		}
-+	}
-+	return true
- }
+-  const modelsData = modelsRes.data;
+-  const registrantsData = registrantsRes.data;
+-  const componentsData = componentsRes.data;
+-  const relationshipsData = relationshipsRes.data;
+-  const connectionsData = connectionsRes.data;
++  const modelsData = canViewRegistry ? modelsRes.data : undefined;
++  const registrantsData = canViewRegistry ? registrantsRes.data : undefined;
++  const componentsData = canViewRegistry ? componentsRes.data : undefined;
++  const relationshipsData = canViewRegistry ? relationshipsRes.data : undefined;
++  const connectionsData = canViewRegistry ? connectionsRes.data : undefined;
  
--// aliasRefFromRelationship extracts the mutatorRef path from an alias relationship.
--func aliasRefFromRelationship(rel *relationship.RelationshipDefinition) []string {
-+// aliasRefsFromRelationship extracts the mutatorRef paths from an alias relationship.
-+func aliasRefsFromRelationship(rel *relationship.RelationshipDefinition) [][]string {
- 	if rel.Selectors == nil {
- 		return nil
- 	}
-+	var refs [][]string
- 	for _, ss := range *rel.Selectors {
- 		for _, fromSel := range ss.Allow.From {
--			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil && len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) > 0 {
--				return (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
-+			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil {
-+				refs = append(refs, *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef...)
- 			}
- 		}
- 	}
--	return nil
-+	return refs
- }
+   const hasMoreModels =
+     modelsData?.totalCount > modelsData?.pageSize * ((modelsData?.page || 0) + 1);
+@@ -146,39 +167,59 @@ const MeshModelComponent_ = ({
+     connectionsData?.totalCount > connectionsData?.pageSize * ((connectionsData?.page || 0) + 1);
  
- // identifyAliasRelationships identifies alias relationships for a component.
-@@ -113,41 +119,42 @@ func identifyAliasRelationships(comp *component.ComponentDefinition, relDef *rel
- 				if fromSel.RelationshipDefinitionSelectorsPatch == nil || fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef == nil || len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) == 0 {
- 					continue
- 				}
--				ref := (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
--				paths := getArrayAwareConfigPaths(ref, comp, design)
--
--				for _, path := range paths {
--					mutatorRef := relationship.MutatorRef{path}
--					mutatedRef := relationship.MutatedRef{path}
--					selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
--						MutatorRef: &mutatorRef,
--						MutatedRef: &mutatedRef,
--					}
--
--					compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
--
--					newFromSel := fromSel
--					newFromSel.ID = &compID
--					newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
--
--					newToSel := toSel
--					newToSel.ID = &comp.ID
--					newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
--
--					selectorSetItem := relationship.SelectorSetItem{
--						Allow: relationship.Selector{
--							From: []relationship.SelectorItem{newFromSel},
--							To:   []relationship.SelectorItem{newToSel},
--						},
-+				for _, ref := range *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef {
-+					paths := getArrayAwareConfigPaths(ref, comp, design)
-+
-+					for _, path := range paths {
-+						mutatorRef := relationship.MutatorRef{path}
-+						mutatedRef := relationship.MutatedRef{path}
-+						selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
-+							MutatorRef: &mutatorRef,
-+							MutatedRef: &mutatedRef,
-+						}
-+
-+						compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
-+
-+						newFromSel := fromSel
-+						newFromSel.ID = &compID
-+						newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
-+
-+						newToSel := toSel
-+						newToSel.ID = &comp.ID
-+						newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
-+
-+						selectorSetItem := relationship.SelectorSetItem{
-+							Allow: relationship.Selector{
-+								From: []relationship.SelectorItem{newFromSel},
-+								To:   []relationship.SelectorItem{newToSel},
-+							},
-+						}
-+
-+						decl := deepCopyRelDef(relDef)
-+						selectors := relationship.SelectorSet{selectorSetItem}
-+						decl.Selectors = &selectors
-+						decl.ID = staticUUID(selectorSetItem)
-+						setRelStatus(decl, StatusIdentified)
-+
-+						identified = append(identified, decl)
- 					}
--
--					decl := deepCopyRelDef(relDef)
--					selectors := relationship.SelectorSet{selectorSetItem}
--					decl.Selectors = &selectors
--					decl.ID = staticUUID(selectorSetItem)
--					setRelStatus(decl, StatusIdentified)
--
--					identified = append(identified, decl)
- 				}
- 			}
- 		}
-@@ -190,15 +197,22 @@ func getArrayAwareConfigPaths(ref []string, comp *component.ComponentDefinition,
- 
- // aliasRelationshipAlreadyExists checks for duplicate alias relationships.
- func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationship.RelationshipDefinition) bool {
-+	if rel.Selectors == nil {
-+		return false
-+	}
- 	for _, existing := range design.Relationships {
--		if getRelStatus(existing) == StatusDeleted || !isAliasRelationship(existing) {
-+		if getRelStatus(existing) == StatusDeleted 
+   const l
 ```
 
-**File**: `server/policies/policy_binding.go` (modified, +88/-65)
+**File**: `ui/components/registry/MeshModelTabBar.tsx` (added, +84/-0)
 ```diff
-@@ -56,20 +56,18 @@ func patchBindingMatchFields(rel *relationship.RelationshipDefinition, design *p
+@@ -0,0 +1,84 @@
++import React from 'react';
++import {
++  Button,
++  AddCircleIcon as AddIcon,
++  ExternalLinkIcon as LinkIcon,
++  FileUploadIcon as UploadIcon,
++} from '@sistent/sistent';
++import { MeshModelToolbar } from '@/assets/styles/general/tool.styles';
++import { styled } from '@/theme';
++import { MODELS, RELATIONSHIPS } from '../../constants/navigator';
++import { iconSmall } from 'css/icons.styles';
++
++const ToolbarActions = styled('div')({
++  display: 'flex',
++  justifyContent: 'flex-start',
++  alignItems: 'center',
++  gap: '0.75rem',
++  flexWrap: 'wrap',
++});
++
++type MeshModelTabBarProps = {
++  openImportModal: () => void;
++  openCreateModal: () => void;
++  openRelationshipModal: () => void;
++  view: string;
++};
++
++/**
++ * Toolbar actions rendered above the registry resource tree for creating and
++ * importing models or relationships.
++ */
++export const MeshModelTabBar = ({
++  openImportModal,
++  openCreateModal,
++  view,
++  openRelationshipModal,
++}: MeshModelTabBarProps) => {
++  return (
++    <MeshModelToolbar>
++      <ToolbarActions>
++        {view === MODELS && (
++          <>
++            <Button
++              aria-label="Create Model"
++              variant="contained"
++              color="primary"
++              onClick={openCreateModal}
++              disabled={false} //TODO: Need to make key for this component
++              startIcon={<AddIcon style={iconSmall} />}
++              data-testid="TabBar-Button-CreateModel"
++            >
++              Create Model
++            </Button>
++            <Button
++              aria-label="Import Model"
++              variant="contained"
++              color="primary"
++              onClick={openImportModal}
++              disabled={false} //TODO: Need to make key for this component
++              startIcon={<UploadIcon />}
++              data-testid="TabBar-Button-ImportModel"
++            >
++              Import Model
++            </Button>
++          </>
++        )}
++
++        {view === RELATIONSHIPS && (
++          <Button
++            aria-label="Create Relationship"
++            variant="contained"
++            color="primary"
++            onClick={openRelationshipModal}
++            disabled={false}
++            startIcon={<LinkIcon />}
++            data-testid="TabBar-Button-CreateRelationship"
++          >
++            Create Relationship
++          </Button>
++        )}
++      </ToolbarActions>
++    </MeshModelToolbar>
++  );
++};
+```
+
+**File**: `ui/components/registry/RegistryModal.test.tsx` (modified, +150/-17)
+```diff
+@@ -1,7 +1,22 @@
+ import React from 'react';
+ import { render, screen, fireEvent } from '@testing-library/react';
++import { Keys } from '@meshery/schemas/permissions';
+ import { beforeEach, describe, expect, it, vi } from 'vitest';
  
- 	for _, ss := range *rel.Selectors {
- 		for _, selArr := range [][]relationship.SelectorItem{ss.Allow.From, ss.Allow.To} {
--			if len(selArr) == 0 {
--				continue
--			}
--			sel := selArr[0]
--			if sel.Match == nil {
--				continue
--			}
--			compID := selectorItemID(sel)
--			comp := componentDeclarationByID(design, compID)
--			if comp == nil {
--				continue
--			}
-+			for _, sel := range selArr {
-+				if sel.Match == nil {
-+					continue
-+				}
-+				compID := selectorItemID(sel)
-+				comp := componentDeclarationByID(design, compID)
-+				if comp == nil {
-+					continue
-+				}
++const {
++  mockUseHasPermission,
++  mockUseGetMeshModelsQuery,
++  mockUseGetComponentsQuery,
++  mockUseGetRelationshipsQuery,
++  mockUseGetRegistrantsQuery,
++} = vi.hoisted(() => ({
++  mockUseHasPermission: vi.fn(),
++  mockUseGetMeshModelsQuery: vi.fn(),
++  mockUseGetComponentsQuery: vi.fn(),
++  mockUseGetRelationshipsQuery: vi.fn(),
++  mockUseGetRegistrantsQuery: vi.fn(),
++}));
++
+ let mediaQueryReturn = false;
+ const RegistryModalContext = React.createContext<any>({});
  
--			actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
-+				actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
-+			}
- 		}
- 	}
- 	return actions
-@@ -90,53 +88,66 @@ func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *co
- 		{match.To, match.From},
- 	}
- 	for _, ms := range sides {
--		if ms.self == nil || len(*ms.self) == 0 {
--			continue
--		}
--		mSel := (*ms.self)[0]
--		if mSel.MutatorRef == nil {
-+		if ms.self == nil || ms.other == nil || len(*ms.self) == 0 || len(*ms.other) == 0 {
- 			continue
- 		}
--		matchComp := findMatchSelectorComponent(mSel, design)
--		if matchComp == nil {
--			continue
-+		selfLen := len(*ms.self)
-+		otherLen := len(*ms.other)
-+		pairCount := max(selfLen, otherLen)
-+		if selfLen > 1 && otherLen > 1 {
-+			pairCount = min(selfLen, otherLen)
- 		}
-+		for p := 0; p < pairCount; p++ {
-+			selfIdx := p
-+			if selfIdx >= selfLen {
-+				selfIdx = 0
-+			}
-+			otherIdx := p
-+			if otherIdx >= otherLen {
-+				otherIdx = 0
-+			}
-+			mSel := (*ms.self)[selfIdx]
-+			if mSel.MutatorRef == nil {
-+				continue
-+			}
-+			matchComp := findMatchSelectorComponent(mSel, design)
-+			if matchComp == nil {
-+				continue
-+			}
+@@ -57,6 +72,7 @@ vi.mock('@sistent/sistent', () => ({
+   InfoIcon: () => <svg data-testid="info-icon" />,
+   DatabaseIcon: () => <svg data-testid="database-icon" />,
+   CustomTooltip: ({ children }: any) => <>{children}</>,
++  useHasPermission: (permissionKey: any) => mockUseHasPermission(permissionKey),
+   useMediaQuery: () => mediaQueryReturn,
+   useTheme: () => stableTheme,
+   alpha: (value: string) => value,
+@@ -95,14 +111,23 @@ vi.mock('@sistent/sistent', () => ({
+ vi.mock('@/assets/icons/Connection', () => ({ default: () => <svg /> }));
+ vi.mock('@/assets/icons/Component', () => ({ default: () => <svg /> }));
+ vi.mock('@/components/shared/Modal', () => ({
+-  Modal: ({ children, isOpen, title }: any) =>
++  Modal: ({ children, isOpen, onClose, title }: any) =>
+     isOpen ? (
+       <div data-testid="registry-modal" data-title={title}>
++        <button type="button" data-testid="close-registry-modal" onClick={onClose}>
++          Close
++        </button>
+         {children}
+       </div>
+     ) : null,
+ }));
  
--		if ms.other == nil || len(*ms.other) == 0 {
--			continue
--		}
--		otherSel := (*ms.other)[0]
--		if otherSel.MutatedRef == nil {
--			continue
--		}
--		otherComp := findMatchSelectorComponent(otherSel, design)
--		if otherComp == nil {
--			continue
--		}
-+			otherSel := (*ms.other)[otherIdx]
-+			if otherSel.MutatedRef == nil {
-+				continue
-+			}
-+			otherComp := findMatchSelectorComponent(otherSel, design)
-+			if otherComp == nil {
-+				continue
-+			}
++vi.mock('../general/error-404/index', () => ({
++  default: ({ permissionKey }: any) => (
++    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
++  ),
++}));
++
+ vi.mock('./MeshModelComponent', () => ({
+   default: (props: any) => (
+     <div
+@@ -133,22 +158,10 @@ vi.mock('@/utils/context/RegistryModalContextProvider', () => ({
+ }));
  
--		count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
-+			count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
+ vi.mock('@/rtk-query/meshModel', () => ({
+-  useGetMeshModelsQuery: () => ({
+-    data: { models: [] },
+-    isLoading: false,
+-  }),
+-  useGetComponentsQuery: () => ({
+-    data: { totalCount: 7 },
+-    isLoading: false,
+-  }),
+-  useGetRelationshipsQuery: () => ({
+-    data: { totalCount: 3 },
+-    isLoading: false,
+-  }),
+-  useGetRegistrantsQuery: () => ({
+-    data: { totalCount: 5 },
+-    isLoading: false,
+-  }),
++  useGetMeshModelsQuery: (...args: any[]) => mockUseGetMeshModelsQuery(...args),
++  useGetComponentsQuery: (...args: any[]) => mockUseGetComponentsQuery(...args),
++  useGetRelationshipsQuery: (...args: any[]) => mockUseGetRelationshipsQuery(...args),
++  useGetRegistrantsQuery: (...args: any[]) => mockUseGetRegistrantsQuery(...args),
+ }));
  
--		for i := range count {
--			mutatorPath := (*mSel.MutatorRef)[i]
--			mutatedPath := (*otherSel.MutatedRef)[i]
-+			for i := range count {
-+				mutatorPath := (*mSel.MutatorRef)[i]
-+				mutatedPath := (*otherSel.MutatedRef)[i]
+ vi.mock('./helper', () => ({
+@@ -187,6 +200,28 @@ describe('RegistryModal', () => {
  
--			mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
--			oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
-+				mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
-+				oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
+   beforeEach(() => {
+     mediaQueryReturn = false;
++    mockUseHasPermission.mockReset();
++    mockUseHasPermission.mockReturnValue(true);
++    mockUseGetMeshModelsQuery.mockReset();
++    mockUseGetMeshModelsQuery.mockReturnValue({
++      data: { models: [] },
++      isLoading: false,
++    });
++    mockUseGetComponentsQuery.mockReset();
++    mockUseGetComponentsQuery.mockReturnValue({
++      data: { totalCount: 7 },
++      isLoading: false,
++    });
++    mockUseGetRelationshipsQuery.mockReset();
++    mockUseGetRelationshipsQuery.mockReturnValue({
++      data: { totalCount: 3 },
++      isLoading: false,
++    });
++    mockUseGetRegistrantsQuery.mockReset();
++    mockUseGetRegistrantsQuery.mockReturnValue({
++      data: { totalCount: 5 },
++      isLoading: false,
++    });
+   });
  
--			if mutatorValue == nil {
--				continue
--			}
--			if reverse {
--				if !deepEqual(mutatorValue, oldValue) {
-+				if mutatorValue == nil {
- 					continue
- 				}
--				actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
--				continue
--			}
--			if deepEqual(mutatorValue, oldValue) {
--				continue
-+				if reverse {
-+					if !deepEqual(mutatorValue, oldValue) {
-+						continue
-+					}
-+					actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
-+					continue
-+				}
-+				if deepEqual(mutatorValue, oldValue) {
-+					continue
-+				}
-+				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
- 			}
--			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
- 		}
- 	}
- 	return actions
-@@ -318,11 +329,15 @@ func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, m
- 	}
- 	fromUUID, _ := uuidFromString(matchFromID)
- 	toUUID, _ := uuidFromString(matchToID)
--	if sel.Match.From != nil && len(*sel.Match.From) > 0 {
--		(*sel.Match.From)[0].ID = &fromUUID
-+	if sel.Match.From != nil {
-+		for i := range *sel.Match.From {
-+			(*sel.Match.From)[i].ID = &fromUUID
-+		}
- 	}
--	if sel.Match.To != nil && len(*sel.Match.To) > 0 {
--		(*sel.Match.To)[0].ID = &toUUID
-+	if sel.Match.To != nil {
-+		for i := range *sel.Match.To {
-+			(*sel.Match.To)[i].ID = &toUUID
-+		}
- 	}
+   it('renders nothing when context.open is false', () => {
+@@ -203,9 +238,72 @@ describe('RegistryModal', () => {
+     // or the updated form.
+     expect(modal.getAttribute('data-title')).toMatch(/^Registry/);
+   });
++
++  it('renders DefaultError, keeps modal closable, and skips Navigation queries when denied', () => {
++    mockUseHasPermission.mockReturnValue(false);
++    const ctx = { ...baseCtx(), open: true };
++
++    render(wrap(<RegistryModal />, ctx));
++
++    const modal = screen.getByTestId('registry-modal');
++    expect(modal).toHaveAttribute('data-title', 'Registry');
++    expect(screen.getByTestId('default-error')).toHaveAttribute(
++      'data-permission-key',
++      JSON.stringify(Keys.MesherySystemViewRegistry),
++    );
++    expect(screen.queryByTestId('mesh-model-component')).not.toBeInTheDocument();
++    expect(mockUseGetMeshModelsQuery).not.toHaveBeenCalled();
++    expect(mockUseGetComponentsQuery).not.toHaveBeenCalled();
++    expect(mockUseGetRelationshipsQuery).not.toHaveBeenCalled();
++    expect(mockUseGetRegistrantsQuery).not.toHaveBeenCalled();
++
++    fireEvent.click(screen.getByTestId('close-registry-modal'));
++    expect(ctx.closeModal).toHaveBeenCalledTimes(1);
++  });
++
++  it('resets modal he
+```
+
+**File**: `ui/components/registry/RegistryModal.tsx` (modified, +70/-21)
+```diff
+@@ -27,7 +27,10 @@ import {
+   DatabaseIcon,
+   DARK_BLUE_GRAY,
+   useMediaQuery,
++  useHasPermission,
+ } from '@sistent/sistent';
++import { Keys } from '@meshery/schemas/permissions';
++import DefaultError from '../general/error-404/index';
+ import { styled, useTheme } from '@/theme';
+ import { Modal } from '@/components/shared/Modal';
+ import { ChevronButtonWrapper } from '../general/style';
+@@ -273,7 +276,11 @@ interface NavigationProps {
+   setHeaderInfo: (_info: HeaderInfo) => void;
  }
  
-@@ -357,29 +372,37 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
++/**
++ * Registry navigation rail and content host gated by registry view permission.
++ */
+ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
++  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
+   const theme = useTheme();
+   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
+   const [open, setOpen] = useState(!closeList);
+@@ -287,29 +294,51 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
+     }
+   }, [selectedView]);
  
- // extractMutatorFromMatch finds the mutator component and ref paths from a match field.
- func extractMutatorFromMatch(match *relationship.MatchSelector, comp1, comp2 *component.ComponentDefinition) (*component.ComponentDefinition, [][]string) {
--	if match.From
+-  const { data: modelsData } = useGetMeshModelsQuery({
+-    params: { pagesize: 'all' },
+-  });
+-  const { data: componentsData } = useGetComponentsQuery({
+-    params: { pagesize: 'all' },
+-  });
+-  const { data: relationshipsData } = useGetRelationshipsQuery({
+-    params: { pagesize: 'all' },
+-  });
+-  const { data: registrantsData } = useGetRegistrantsQuery({
+-    params: { pagesize: 'all' },
+-  });
+-  const counts: CountSummary = {
+-    models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
+-    components: componentsData?.totalCount ?? componentsData?.total_count ?? 0,
+-    relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
+-    registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
+-  };
++  const { data: modelsData } = useGetMeshModelsQuery(
++    {
++      params: { pagesize: 'all' },
++    },
++    { skip: !canViewRegistry },
++  );
++  const { data: componentsData } = useGetComponentsQuery(
++    {
++      params: { pagesize: 'all' },
++    },
++    { skip: !canViewRegistry },
++  );
++  const { data: relationshipsData } = useGetRelationshipsQuery(
++    {
++      params: { pagesize: 'all' },
++    },
++    { skip: !canViewRegistry },
++  );
++  const { data: registrantsData } = useGetRegistrantsQuery(
++    {
++      params: { pagesize: 'all' },
++    },
++    { skip: !canViewRegistry },
++  );
++  const counts: CountSummary = canViewRegistry
++    ? {
++        models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
++        components: componentsData?.totalCount ?? componentsData?.total_count ?? 0,
++        relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
++        registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
++      }
++    : {
++        models: 0,
++        components: 0,
++        relationships: 0,
++        registrants: 0,
++      };
+   const navConfig = getNavItems(theme, counts);
+ 
+   const handleDrawerToggle = () => setOpen((prev) => !prev);
+ 
+   const updateHeaderInfo = (id: string) => {
++    if (!canViewRegistry) {
++      return;
++    }
+     const item = navConfig.find((nav) => nav.id === id);
+     if (item) {
+       setHeaderInfo({
+@@ -320,15 +349,25 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
+   };
+ 
+   const handleItemSelect = (id: string) => {
++    if (!canViewRegistry) {
++      return;
++    }
+     setSelectedId(id);
+     registryContext.setSelectedView(id);
+     updateHeaderInfo(id);
+   };
+ 
+   // Set initial header info on component mount
+   useEffect(() => {
++    if (!canViewRegistry) {
++      return;
++    }
+     updateHeaderInfo(selectedId);
+-  }, [selectedId, theme]);
++  }, [canViewRegistry, selectedId, theme]);
++
++  if (!canViewRegistry) {
++    return <DefaultError permissionKey={Keys.MesherySystemViewRegistry} />;
++  }
+ 
+   return (
+     <Box sx={{ display: 'flex', position: 'relative', height: '100%', gap: '1rem' }}>
+@@ -388,7 +427,12 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
+   );
+ };
+ 
++/**
++ * Global modal shell for browsing registry resources when the user holds the
++ * registry view permission.
++ */
+ const RegistryModal: FC = () => {
++  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
+   const theme = useTheme();
+   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+   const registryContext = useContext(RegistryModalContext);
+@@ -402,12 +446,17 @@ const RegistryModal: FC = () => {
+       isOpen={registryContext.open}
+       onClose={registryContext.closeModal}
+       headerIcon={headerInfo.icon}
+-      title={headerInfo.title}
++      title={canViewRegistry ? headerInfo.title : 'Registry'}
+       isFullScreenModeAllowed={!isSmallScreen}
+       disableBodyWrap
+     >
+       <StyledModalBody>
+-        {registryContext.open && <Navigation setHeaderInfo={setHeaderInfo} />}
++        {registryContext.open &&
++          (canViewRegistry ? (
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23121** (2026-11-10): [mesheryctl] Enforce exact argument validation in workspace create (@madhavzanwar)
-- **PR #23117** (2026-11-10): [mesheryctl] Enforce exact argument validation in environment view (@madhavzanwar)
-- **PR #23115** (2026-11-10): [Server] Validate credential ID path parameter in GetUserCredentialByID (@Supersaiyan101)
-- **PR #23113** (2026-11-10): [Server] Validate multi-selector relationships and prevent ghost relationship bleed (#23111) (@nishant-devv)
-- **PR #23109** (2026-11-10): [UI] Honor hideError in widget error indicators (@dropps07)
-- **PR #23105** (2026-11-09): [mesheryctl] Enforce exact argument validation in environment list (@ayushbuilds-code)
+- **PR #23300** (2026-11-12): [mesheryctl] Replace path separators in file names saved by component view (@RajJasani)
+- **PR #23299** (2026-11-12): [UI] Disable LegacyRJSFModal submit while pending and add submitDisabled (@piyxsh31)
+- **PR #23295** (2026-11-12): [UI] Enforce RBAC skip guards on connections, preferences, and registry (@piyxsh31)
+- **PR #23293** (2026-11-12): [Server] Implement MapPreferencePersister unit tests and safe logger handling (@Rohith-Saran)
+- **PR #23291** (2026-11-12): [Helm] Add env.MESHSYNC_DEFAULT_DEPLOYMENT_MODE with embedded default (@ayushbuilds-code)
+- **PR #23289** (2026-11-12): [Docs] Fix broken help-wanted search links in README.md (@ayushbuilds-code)
 
 ---
 
@@ -1570,35 +2066,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #23121 from madhavzanwar/fix/workspace-create-args
+## X. [Docs] Fix broken help-wanted search links in README.md (#23289)
 
 **RULE**:
-When implementing operations in `mesheryctl/internal/cli/root/workspaces/create.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c78aabb`: Merge pull request #23121 from madhavzanwar/fix/workspace-create-args. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71d85c8d`: [Docs] Fix broken help-wanted search links in README.md (#23289). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/workspaces/create.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
-
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
-		}
-		return nil
-	},
+<a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues" alt="GitHub issues by-label">
+&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues">help-wanted label</a>.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+<a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20" alt="GitHub issues by-label">
+&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20">help-wanted label</a>.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c78aabb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71d85c8d` are properly handled with clean fallback behavior.

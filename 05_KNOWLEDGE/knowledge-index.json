@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T11:01:13.656Z",
+  "last_updated": "2026-11-12T11:18:47.677Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44029,8 +44029,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "7c78aabb",
-      "content_hash": "e3df3a0aea1a1c27e6dd3362df1b446416cb2f3b7b9e0393d8600665131ffe0d",
+      "source_version": "41ccfbfe",
+      "content_hash": "2048c481b74ec9918eaf4b013438548a3c57a8c31d57b23126708ac36ac6c9a1",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -44052,6 +44052,11 @@
         {
           "number": null,
           "title": "Merge pull request #23121 from madhavzanwar/fix/workspace-create-args",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[Docs] Fix broken help-wanted search links in README.md (#23289)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44140,7 +44145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T04:59:19.354Z",
+      "verified_at": "2026-11-12T11:18:43.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45565,8 +45570,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "ace9dad3",
-      "content_hash": "ac64b1969812ac6466c57f592f8cc2edbe120373665ce21e519a75b7ee60999d",
+      "source_version": "c4e4e677",
+      "content_hash": "024dc9aed457d25bcd6eb839f20cf6ecac30ba4e0750172fe97f7c5bc457defc",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -45578,6 +45583,11 @@
         {
           "number": null,
           "title": "bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "keep generic types like Promise<Response> in chat exports (#7124)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45661,7 +45671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:44:03.412Z",
+      "verified_at": "2026-11-12T11:18:47.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173217,11 +173227,16 @@
       "slug": "vercel-labs-agent-desktop",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/agent-desktop",
-      "source_version": "b43ac4f6",
-      "content_hash": "60d4e7803863a1edcffe1aed95d63bda7f69ec430d7b9e979c58be0bd70cde4f",
+      "source_version": "54855b62",
+      "content_hash": "e924ac6473db9f0c0be8848a56e7c37fdb3142e6f8410297f9f228970f6032b5",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "close reachable invalid state transitions in sessions, refs, trace, mcp and wait",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 6163,
           "title": "windows): stop commands crashing at exit (#342)",
@@ -173248,7 +173263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:23:08.185Z",
+      "verified_at": "2026-11-12T11:18:33.191Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181850,7 +181865,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
       "source_version": "hf-microsoft-mage-vl-cowork",
-      "content_hash": "8befd3d5f8e816ba96ad97736408e229520188fae5db8e64367d0de1e3cf2493",
+      "content_hash": "4a1a7f61529e9901abf9e151b6244b5dafa044bd4737e84cde591b5bfc35a73d",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "promoted_rules": [
@@ -181885,7 +181900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:47:51.980Z",
+      "verified_at": "2026-11-12T11:18:20.187Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

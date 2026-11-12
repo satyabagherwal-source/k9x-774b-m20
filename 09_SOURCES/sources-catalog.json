@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "7c78aabb",
+    "sourceVersion": "41ccfbfe",
     "license": "Apache-2.0",
-    "contentHash": "e3df3a0aea1a1c27e6dd3362df1b446416cb2f3b7b9e0393d8600665131ffe0d",
-    "lastHarvestedAt": "2026-11-10T04:59:19.484Z",
+    "contentHash": "2048c481b74ec9918eaf4b013438548a3c57a8c31d57b23126708ac36ac6c9a1",
+    "lastHarvestedAt": "2026-11-12T11:18:43.589Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "ace9dad3",
+    "sourceVersion": "c4e4e677",
     "license": "MIT",
-    "contentHash": "ac64b1969812ac6466c57f592f8cc2edbe120373665ce21e519a75b7ee60999d",
-    "lastHarvestedAt": "2026-11-10T02:44:03.546Z",
+    "contentHash": "024dc9aed457d25bcd6eb839f20cf6ecac30ba4e0750172fe97f7c5bc457defc",
+    "lastHarvestedAt": "2026-11-12T11:18:47.823Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "b43ac4f6",
+    "sourceVersion": "54855b62",
     "license": "Apache-2.0",
-    "contentHash": "60d4e7803863a1edcffe1aed95d63bda7f69ec430d7b9e979c58be0bd70cde4f",
-    "lastHarvestedAt": "2026-11-05T10:23:08.282Z",
+    "contentHash": "e924ac6473db9f0c0be8848a56e7c37fdb3142e6f8410297f9f228970f6032b5",
+    "lastHarvestedAt": "2026-11-12T11:18:33.439Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {
@@ -11855,8 +11855,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
     "sourceVersion": "hf-microsoft-mage-vl-cowork",
     "license": "Open-Source",
-    "contentHash": "8befd3d5f8e816ba96ad97736408e229520188fae5db8e64367d0de1e3cf2493",
-    "lastHarvestedAt": "2026-11-07T19:47:52.100Z",
+    "contentHash": "4a1a7f61529e9901abf9e151b6244b5dafa044bd4737e84cde591b5bfc35a73d",
+    "lastHarvestedAt": "2026-11-12T11:18:20.345Z",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork"
   },
   "hf-qwen-qwen3-embedding-0.6b": {
