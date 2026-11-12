@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "0b6f11ab",
+    "sourceVersion": "0863eb48",
     "license": "NOASSERTION",
-    "contentHash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
-    "lastHarvestedAt": "2026-11-11T06:24:02.920Z",
+    "contentHash": "fc748c159be027ef4226654eefb9b9f11f49103d094fbdd77db8a5f7160c237f",
+    "lastHarvestedAt": "2026-11-12T14:44:54.863Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "f21f224b",
+    "sourceVersion": "47c87ebb",
     "license": "MIT",
-    "contentHash": "1b265e7902747b0c5714afaa12aadf7613f0b508c9be1b35c4470f82b0e67544",
-    "lastHarvestedAt": "2026-11-07T21:36:29.767Z",
+    "contentHash": "b4fa5b2d9d1e4cab74d6c8323d790e2e2f7b6979596be426309deb5316fe6fcc",
+    "lastHarvestedAt": "2026-11-12T14:44:44.065Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

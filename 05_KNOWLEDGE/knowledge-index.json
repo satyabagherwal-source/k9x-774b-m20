@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T14:31:52.382Z",
+  "last_updated": "2026-11-12T14:44:54.750Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8597,8 +8597,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "0b6f11ab",
-      "content_hash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
+      "source_version": "0863eb48",
+      "content_hash": "fc748c159be027ef4226654eefb9b9f11f49103d094fbdd77db8a5f7160c237f",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -8610,6 +8610,11 @@
         {
           "number": null,
           "title": "LLM benchmark health-check timeouts and C# references (#6408)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "TypeScript SDK crash on React Native with automatic reconnect (#6511)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8708,7 +8713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:24:02.786Z",
+      "verified_at": "2026-11-12T14:44:54.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84505,14 +84510,19 @@
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "f21f224b",
-      "content_hash": "1b265e7902747b0c5714afaa12aadf7613f0b508c9be1b35c4470f82b0e67544",
+      "source_version": "47c87ebb",
+      "content_hash": "b4fa5b2d9d1e4cab74d6c8323d790e2e2f7b6979596be426309deb5316fe6fcc",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "cache): treat a removed cache file as a miss (#11861)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update dependency happy-dom to v21.0.4 [security] (#11736)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84556,7 +84566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:36:29.651Z",
+      "verified_at": "2026-11-12T14:44:43.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

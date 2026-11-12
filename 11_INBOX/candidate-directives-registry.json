@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T14:31:57.676Z",
+  "last_updated": "2026-11-12T14:45:15.057Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7058,6 +7058,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-03D931-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-75EEF1",
+      "directive_title": "deps): update dependency happy-dom to v21.0.4 [security] (#11736)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vitest-dev-vitest",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-75EEF1-deps-update-dependency-happy-dom-to-v21-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-431057",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-431057-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -9183,3 +9183,6 @@
 | `CYCLE-20261112-2A20` | `2026-11-12T14:24:02.664Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b411170a...`) |
 | `CYCLE-20261112-2DCQ` | `2026-11-12T14:24:06.938Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b294ca60...`) |
 | `CYCLE-20261112-CCL6` | `2026-11-12T14:31:52.506Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`953415d4...`) |
+| `CYCLE-20261112-SVX8` | `2026-11-12T14:44:44.060Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b4fa5b2d...`) |
+| `CYCLE-20261112-T496` | `2026-11-12T14:44:54.858Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fc748c15...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T14:45:15.021Z` | `clockworklabs-spacetimedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B77A0FED` [Domain H] | Yes (`5acd248a...`) |

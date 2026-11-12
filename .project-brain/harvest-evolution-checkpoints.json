@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T14:31:57.691Z",
+  "last_updated": "2026-11-12T14:45:15.103Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-12T14:08:51.266Z",
+      "processed_at": "2026-11-12T14:45:15.058Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1176,9 +1176,19 @@
       "processed_at": "2026-11-12T14:31:57.584Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "vitest-dev-vitest-learnings.md": {
+      "processed_at": "2026-11-12T14:45:00.249Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "clockworklabs-spacetimedb-learnings.md": {
+      "processed_at": "2026-11-12T14:45:15.021Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 321,
-  "total_canonical_promoted": 39,
-  "total_staged_for_review": 281
+  "total_dossiers_evaluated": 324,
+  "total_canonical_promoted": 40,
+  "total_staged_for_review": 283
 }

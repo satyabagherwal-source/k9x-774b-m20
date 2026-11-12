@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T13:15:27.331Z",
-  "total_records": 72,
+  "last_updated": "2026-11-12T14:45:15.016Z",
+  "total_records": 73,
   "domains": {
     "A": {
       "total": 1,
@@ -82,7 +82,7 @@
       ]
     },
     "H": {
-      "total": 18,
+      "total": 19,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -101,7 +101,8 @@
         "DOM-H-F56DBC84",
         "DOM-H-7D775901",
         "DOM-H-EE08D822",
-        "DOM-H-B173C8F8"
+        "DOM-H-B173C8F8",
+        "DOM-H-B77A0FED"
       ]
     },
     "I": {
@@ -2919,6 +2920,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T13:15:27.329Z"
+    },
+    "DOM-H-B77A0FED": {
+      "record_id": "DOM-H-B77A0FED",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "TypeScript SDK crash on React Native with automatic reconnect (#6511)",
+      "content": "When implementing operations in `crates/bindings-typescript/src/sdk/db_connection_impl.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "5acd248a98ddcba673a2fdcb4fde06319494e77a7ec4c461be9f16627f99c84c",
+      "summary": "Prevents defects observed in production commit `0863eb48`: TypeScript SDK crash on React Native with automatic reconnect (#6511). Unvalidate -> When implementing operations in `crates/bindings-typescript/src/sdk/db_connection_impl.ts`, engineers MUST enforce rigorous boundary validat",
+      "provenance": {
+        "source_uri": "project://clockworklabs-spacetimedb/clockworklabs-spacetimedb-learnings.md",
+        "source_version": "0863eb48",
+        "observed_at": "2026-11-12T14:44:41.630Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (clockworklabs-spacetimedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of clockworklabs-spacetimedb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T14:45:15.014Z"
     }
   }
 }

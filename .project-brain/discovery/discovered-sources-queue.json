@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T14:31:57.602Z",
+  "updated_at": "2026-11-12T14:45:15.048Z",
   "stats": {
-    "total_discovered": 1394,
-    "approved_pending_harvest": 1272,
+    "total_discovered": 1412,
+    "approved_pending_harvest": 1289,
     "harvested_count": 0,
-    "rejected_count": 122,
+    "rejected_count": 123,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1279,
-      "OFFICIAL_DOCUMENTATION": 60,
+      "COMMUNITY_AND_EXPERT": 1296,
+      "OFFICIAL_DOCUMENTATION": 61,
       "STANDARDS_AND_SPECIFICATIONS": 52,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
@@ -29831,6 +29831,395 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
         "fileName": "qwikdev-qwik-learnings.md"
+      }
+    },
+    "SRC-9E1C0F60F2CB": {
+      "id": "SRC-9E1C0F60F2CB",
+      "url": "https://github.com/vitest-dev/vitest",
+      "title": "https://github.com/vitest-dev/vitest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-590734A3ECAF": {
+      "id": "SRC-590734A3ECAF",
+      "url": "https://vitejs.dev/config/server-options.html",
+      "title": "https://vitejs.dev/config/server-options.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-F7F396359D20": {
+      "id": "SRC-F7F396359D20",
+      "url": "https://vitest.dev/config/browser/api.%60",
+      "title": "https://vitest.dev/config/browser/api.%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.278Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-CD683B28FE68": {
+      "id": "SRC-CD683B28FE68",
+      "url": "https://github.com/jestjs/jest/blob/905bcbced3d40cdf7aadc4cdf6fb731c4bb3dbe3/packages/expect-utils/src/utils.ts",
+      "title": "https://github.com/jestjs/jest/blob/905bcbced3d40cdf7aadc4cdf6fb731c4bb3dbe3/packages/expect-utils/src/utils.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-1772B03588AA": {
+      "id": "SRC-1772B03588AA",
+      "url": "http://underscorejs.org/",
+      "title": "http://underscorejs.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T14:45:00.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-D294A49D95C4": {
+      "id": "SRC-D294A49D95C4",
+      "url": "https://nodejs.org/docs/latest-v22.x/api/assert.html",
+      "title": "https://nodejs.org/docs/latest-v22.x/api/assert.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-E0CC3AD5B0AA": {
+      "id": "SRC-E0CC3AD5B0AA",
+      "url": "https://github.com/user-attachments/assets/b31d5906-3b42-4c22-9b43-d9bbe4fc6552",
+      "title": "https://github.com/user-attachments/assets/b31d5906-3b42-4c22-9b43-d9bbe4fc6552",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-6F3855AA41FA": {
+      "id": "SRC-6F3855AA41FA",
+      "url": "https://github.com/user-attachments/assets/b62876b6-6b13-4719-bff3-3f136afe7917",
+      "title": "https://github.com/user-attachments/assets/b62876b6-6b13-4719-bff3-3f136afe7917",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-1EBC34F15D52": {
+      "id": "SRC-1EBC34F15D52",
+      "url": "https://github.com/vitest-dev/vitest/blob/main/CODE_OF_CONDUCT.md",
+      "title": "https://github.com/vitest-dev/vitest/blob/main/CODE_OF_CONDUCT.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-F7893F494E2D": {
+      "id": "SRC-F7893F494E2D",
+      "url": "https://github.com/vitest-dev/vitest/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/vitest-dev/vitest/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.336Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-6E16A250258E": {
+      "id": "SRC-6E16A250258E",
+      "url": "https://vitest.dev/guide",
+      "title": "https://vitest.dev/guide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-445A2F14F2FB": {
+      "id": "SRC-445A2F14F2FB",
+      "url": "https://github.com/vitest-dev/vitest/issues",
+      "title": "https://github.com/vitest-dev/vitest/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-70898F13EDE6": {
+      "id": "SRC-70898F13EDE6",
+      "url": "https://github.com/vitest-dev/vitest/dis",
+      "title": "https://github.com/vitest-dev/vitest/dis",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.362Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-64FFF8C8DCFF": {
+      "id": "SRC-64FFF8C8DCFF",
+      "url": "https://github.com/vitest-dev/vitest/issues/11305",
+      "title": "https://github.com/vitest-dev/vitest/issues/11305",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.369Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-166FC9057E07": {
+      "id": "SRC-166FC9057E07",
+      "url": "https://vitest.dev/api",
+      "title": "https://vitest.dev/api",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:00.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-1FAB87E63BED": {
+      "id": "SRC-1FAB87E63BED",
+      "url": "https://github.com/clockworklabs/SpacetimeDB",
+      "title": "https://github.com/clockworklabs/SpacetimeDB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:15.028Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-F7CD28CB0545": {
+      "id": "SRC-F7CD28CB0545",
+      "url": "https://spacetimedb.com/features",
+      "title": "https://spacetimedb.com/features",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:15.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-3FB9CE81F1C1": {
+      "id": "SRC-3FB9CE81F1C1",
+      "url": "https://github.com/user-attachments/assets/da03c53c-edef-4c71-8e5f-46c612bad469",
+      "title": "https://github.com/user-attachments/assets/da03c53c-edef-4c71-8e5f-46c612bad469",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:45:15.048Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
       }
     }
   }
