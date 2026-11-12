@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T06:41:45.382Z",
+  "last_updated": "2026-11-12T06:56:24.376Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15877,8 +15877,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "acae3b45",
-      "content_hash": "1bf2cab605ca8e61df295726eadda3dd6774e328bd05a1262be275a8fd0771a4",
+      "source_version": "41d49a9e",
+      "content_hash": "3186e47c62c7a4785af26c5f924752925907221f9156f4fa8fd9782f58a6fc8b",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15945,6 +15945,11 @@
         {
           "number": null,
           "title": "transport): a loss gate in front of QUIC Cubic, so random loss does not collapse",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): report the QUIC endpoint state in telemetry; deprecate transport-qui",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16163,7 +16168,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T00:58:45.597Z",
+      "verified_at": "2026-11-12T06:56:24.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63852,14 +63857,19 @@
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "ae659a0c",
-      "content_hash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
+      "source_version": "987b8c5a",
+      "content_hash": "5a8ffc2eb5da6ce435bb444cacaa541e522927260dba74bf29148b7890b97579",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "mysql): decode DECIMAL columns into integer types correctly (#4503)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "postgres): keep draining resolved type dependencies in fill_cache. (#4498)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63888,7 +63898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:21:44.713Z",
+      "verified_at": "2026-11-12T06:56:13.483Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190471,7 +190481,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
-      "content_hash": "41e83055c47f23e0775717b1622d7e979845101a5a35299b745c82f15ec41111",
+      "content_hash": "77a8eaccb0819c2934c53c701be3ee9ab2516c73b87f67d6346f19cd8b949421",
       "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
       "promoted_rules": [],
@@ -190480,7 +190490,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:40:38.479Z",
+      "verified_at": "2026-11-12T06:56:00.656Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "acae3b45",
+    "sourceVersion": "41d49a9e",
     "license": "NOASSERTION",
-    "contentHash": "1bf2cab605ca8e61df295726eadda3dd6774e328bd05a1262be275a8fd0771a4",
-    "lastHarvestedAt": "2026-11-12T00:58:45.811Z",
+    "contentHash": "3186e47c62c7a4785af26c5f924752925907221f9156f4fa8fd9782f58a6fc8b",
+    "lastHarvestedAt": "2026-11-12T06:56:24.518Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5283,10 +5283,10 @@
     "repository": "transact-rs/sqlx",
     "platform": "github",
     "sourceUrl": "https://github.com/transact-rs/sqlx",
-    "sourceVersion": "ae659a0c",
+    "sourceVersion": "987b8c5a",
     "license": "Apache-2.0",
-    "contentHash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
-    "lastHarvestedAt": "2026-11-09T13:21:44.891Z",
+    "contentHash": "5a8ffc2eb5da6ce435bb444cacaa541e522927260dba74bf29148b7890b97579",
+    "lastHarvestedAt": "2026-11-12T06:56:13.633Z",
     "learningId": "learn-github-transact-rs-sqlx"
   },
   "bergside-typeui": {
@@ -12115,8 +12115,8 @@
     "sourceUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
     "sourceVersion": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
     "license": "Open-Source",
-    "contentHash": "41e83055c47f23e0775717b1622d7e979845101a5a35299b745c82f15ec41111",
-    "lastHarvestedAt": "2026-11-07T17:40:38.651Z",
+    "contentHash": "77a8eaccb0819c2934c53c701be3ee9ab2516c73b87f67d6346f19cd8b949421",
+    "lastHarvestedAt": "2026-11-12T06:56:00.792Z",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic"
   },
   "hf-prunaai-p-h3-image": {

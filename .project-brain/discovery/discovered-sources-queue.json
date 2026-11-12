@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T06:41:50.181Z",
+  "updated_at": "2026-11-12T06:56:30.422Z",
   "stats": {
-    "total_discovered": 934,
-    "approved_pending_harvest": 848,
+    "total_discovered": 938,
+    "approved_pending_harvest": 852,
     "harvested_count": 0,
     "rejected_count": 86,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 862,
+      "COMMUNITY_AND_EXPERT": 866,
       "OFFICIAL_DOCUMENTATION": 26,
       "STANDARDS_AND_SPECIFICATIONS": 43,
       "ENGINEERING_BLOGS": 1,
@@ -19963,6 +19963,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
         "fileName": "mohamedrejeb-calf-learnings.md"
+      }
+    },
+    "SRC-E9A66C85C44A": {
+      "id": "SRC-E9A66C85C44A",
+      "url": "https://github.com/transact-rs/sqlx",
+      "title": "https://github.com/transact-rs/sqlx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:56:30.396Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
+        "fileName": "transact-rs-sqlx-learnings.md"
+      }
+    },
+    "SRC-66AB21B25BDF": {
+      "id": "SRC-66AB21B25BDF",
+      "url": "https://github.com/launchbadge/sqlx/issues/1015",
+      "title": "https://github.com/launchbadge/sqlx/issues/1015",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:56:30.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
+        "fileName": "transact-rs-sqlx-learnings.md"
+      }
+    },
+    "SRC-2F4543DF968B": {
+      "id": "SRC-2F4543DF968B",
+      "url": "https://www.postgresql.org/docs/current/protocol-flow.html",
+      "title": "https://www.postgresql.org/docs/current/protocol-flow.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:56:30.408Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
+        "fileName": "transact-rs-sqlx-learnings.md"
+      }
+    },
+    "SRC-5137EAFBC949": {
+      "id": "SRC-5137EAFBC949",
+      "url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "title": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:56:30.422Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
+        "fileName": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md"
       }
     }
   }

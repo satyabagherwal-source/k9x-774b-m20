@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T06:41:50.222Z",
+  "last_updated": "2026-11-12T06:56:30.436Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T06:41:50.188Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-12T00:58:53.177Z",
+      "processed_at": "2026-11-12T06:56:30.433Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -886,9 +886,19 @@
       "processed_at": "2026-11-12T06:41:50.159Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "transact-rs-sqlx-learnings.md": {
+      "processed_at": "2026-11-12T06:56:30.388Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md": {
+      "processed_at": "2026-11-12T06:56:30.418Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 234,
+  "total_dossiers_evaluated": 237,
   "total_canonical_promoted": 27,
-  "total_staged_for_review": 204
+  "total_staged_for_review": 207
 }

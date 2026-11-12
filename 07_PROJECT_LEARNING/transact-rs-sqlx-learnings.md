@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `ae659a0c`  
+> **Source Version**: `987b8c5a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T13:21:43.732Z  
+> **Timestamp**: 2026-11-12T06:56:01.366Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T13:21:42.939Z  
+> **Harvest Timestamp**: 2026-11-12T06:56:01.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17641 stars
+- **Stars / Engagement**: 17658 stars
 
 ---
 
@@ -960,11 +960,11 @@ impl FromStr for AnyKind {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4497** (2026-11-09): **Postgres: "unable to resolve type OIDs" when resolving nested composite types — `fill_cache` drops pending rows on `continue 'outer`**
+  *Symptoms*: ### I have found these related issues/pull requests  I searched for "unable to resolve type OIDs" and found no existing reports of this problem. Related, but different:  - #4361 (fixes #4305): touched the same type-resolution path in `resolve.rs` (unnamed statement destroyed by the catalog lookup), but does not change the `fill_cache` dependency loop. - #1672: problems with arrays of custom types inside records, on the decoding side; this report is about OID resolution before decoding. - #2133: custom type name → OID resolution ignoring `search_path`; a different resolution bug.  ### Description  ### Bug Description  `TypeResolver::fill_cache` in `sqlx-postgres/src/connection/resolve.rs` can lose types it still has to resolve. The query then fails with:  ``` Protocol("unable to resolve type OIDs: [Oid(…)]") ```  It happens when one catalog row resolves a type that **several** pending rows depend on, and one of those dependents still needs **another** type that isn't cached yet.  In that case the loop runs `continue 'outer` and throws away the rest of `resolved_dependencies`. Those rows were already taken out of `missing_dependencies` and are never processed again. Any type that was waiting on one of them stays in `missing_dependencies` forever, and the function returns the error above.  The type cache is per connection, so in practice this shows up as intermittent errors on **fresh connections only**. A connection that already cached the leaf types through an earlier query do
+
 - **Issue #4484** (2026-10-27): **PgConnection errors on NOTIFY delivered to a non-PgListener connection**
   *Symptoms*: ### I have found these related issues/pull requests  - #67 (PgBouncer support) covers prepared statements, startup parameters and session advisory locks in transaction mode, but not notifications. - #2956 (`PgListener` "unknown message type") is a different error, on a listener connection. - pgbouncer/pgbouncer#655: `LISTEN` isn't supported in transaction pooling, which is how the notification reaches other clients in the second case below.  ### Description  On a `PgConnection` that isn't a `PgListener`, a NotificationResponse from the server fails the query in progress with `Protocol("execute: unexpected message: NotificationResponse")`. The statement has already run, and its transaction has committed.  In `PgStream::recv` (`sqlx-postgres/src/connection/stream.rs`), a NotificationResponse is consumed only when `self.notifications` is set, that is, on a `PgListener`'s connection. Otherwise it falls through to the executor, which treats any unexpected message as a protocol error (`executor.rs:366`).  The Postgres protocol says a frontend must accept it anywhere ([Asynchronous Operations](https://www.postgresql.org/docs/current/protocol-flow.html#PROTOCOL-ASYNC)): "Frontends must be prepared to deal with these messages at any time, even when not engaged in a query", and "Good practice is to be able to accept NotificationResponse at any point in the protocol."  There are two ways an ordinary connection can receive a NotificationResponse:  1. **The connection ran `LISTEN` itself*
-
-- **Issue #4430** (2026-10-03): **SQLCipher crashes on a segfault**
-  *Symptoms*: ### I have found these related issues/pull requests  I don't see any issues mentioning any SQLCipher crashes in this repo, but did come across this related issue in the sqlcipher repo: https://github.com/sqlcipher/sqlcipher/issues/598  ### Description  In my testing, the sqlcipher test suite crashes about 8% of the time. I recently saw this while rebasing a PR of mine (#4343), and decided to have a robot look into it.  Here are all the failures exclusively caused by SQLCipher segfaults since 2026-07-01:  * https://github.com/transact-rs/sqlx/actions/runs/36413688549/job/108900510675 * https://github.com/transact-rs/sqlx/actions/runs/35104419529/job/104823079570 * https://github.com/transact-rs/sqlx/actions/runs/34564198418/job/103153392092 * https://github.com/transact-rs/sqlx/actions/runs/34534510553/job/103063488008 * https://github.com/transact-rs/sqlx/actions/runs/33692629721/job/100461951727 * https://github.com/transact-rs/sqlx/actions/runs/32526655032/job/96910377835 * https://github.com/transact-rs/sqlx/actions/runs/32071123060/job/95515306920 * https://github.com/transact-rs/sqlx/actions/runs/31418818610/job/93555336615 * https://github.com/transact-rs/sqlx/actions/runs/28627420274/job/84897256505 * https://github.com/transact-rs/sqlx/actions/runs/28499215476/job/84472614197  And a few more where there were additional errors, but SQLCipher also segfaulted:  * https://github.com/transact-rs/sqlx/actions/runs/36420553996/job/108922827779 * https://github.com/transact-r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -981,690 +981,350 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae659a0c` (2026-11-08)
-**Commit Message**: fix(mysql): decode DECIMAL columns into integer types correctly (#4503)
+### Incident Patch 1: `47b9f8e7` (2026-11-09)
+**Commit Message**: fix(postgres): keep draining resolved type dependencies in fill_cache. (#4498)
 
-MySQL sends DECIMAL/NEWDECIMAL as ASCII text even over the binary
-protocol, but int_decode/uint_decode read those bytes as a little-endian
-integer. Decoding e.g. SUM(int_col) into u64 via a type override or
-try_get_unchecked silently produced garbage (b"13" read as 0x3331 =
-13105 instead of 13).
+`resolved_dependencies` contains rows already removed from
+`missing_dependencies`. When a dependent row still had an uncached
+dependency, `continue 'outer` discarded the rest of the deque, leaving
+their dependents unresolved.
 
-Parse the text for DECIMAL columns and require it to be integral:
-integral values decode correctly, while fractional ones now return an
-error instead of a corrupted result.
+Keep draining the deque after re-registering the blocked row.
 
-Type::compatible is left unchanged, so query! inference still maps
-DECIMAL columns to Decimal/BigDecimal.
+Fixes #4497.
 
-**File**: `sqlx-mysql/src/types/int.rs` (modified, +22/-0)
+**File**: `sqlx-postgres/src/connection/resolve.rs` (modified, +9/-1)
 ```diff
-@@ -90,7 +90,29 @@ impl Encode<'_, MySql> for i64 {
-     }
+@@ -453,7 +453,15 @@ impl TypeResolver {
+ 
+                         self.push_type("NULL", missing_oid.0);
+ 
+-                        continue 'outer;
++                        // Keep draining rows whose dependency was just resolved;
++                        // abandoning them here would leave them unresolved forever.
++                        match resolved_dependencies.pop_back() {
++                            Some(next_row) => {
++                                type_row = next_row;
++                                continue;
++                            }
++                            None => continue 'outer,
++                        }
+                     }
+ 
+                     resolved_dependencies.extend(
+```
+
+**File**: `tests/postgres/describe.rs` (modified, +30/-0)
+```diff
+@@ -119,3 +119,33 @@ async fn it_describes_composite() -> anyhow::Result<()> {
+ 
+     Ok(())
  }
- 
-+/// Integer part of a textual `DECIMAL`, erroring if it has a nonzero fraction.
-+pub(super) fn integral_decimal_str(s: &str) -> Result<&str, BoxDynError> {
-+    let (int_part, frac_part) = s.split_once('.').unwrap_or((s, ""));
 +
-+    if frac_part.bytes().any(|b| b != b'0') {
-+        return Err(format!("DECIMAL value `{s}` has a fractional part").into());
-+    }
-+
-+    Ok(int_part)
-+}
-+
- fn int_decode(value: MySqlValueRef<'_>) -> Result<i64, BoxDynError> {
-+    // DECIMAL is ASCII text even over the binary protocol, so parse the digits
-+    // instead of reading the bytes as a little-endian integer.
-+    if matches!(
-+        value.type_info.r#type,
-+        ColumnType::Decimal | ColumnType::NewDecimal
-+    ) {
-+        return integral_decimal_str(value.as_str()?)?
-+            .parse()
-+            .map_err(Into::into);
-+    }
-+
-     Ok(match value.format() {
-         MySqlValueFormat::Text => value.as_str()?.parse()?,
-         MySqlValueFormat::Binary => {
-```
-
-**File**: `sqlx-mysql/src/types/uint.rs` (modified, +12/-0)
-```diff
-@@ -1,3 +1,4 @@
-+use super::int::integral_decimal_str;
- use crate::collation::Collation;
- use crate::decode::Decode;
- use crate::encode::{Encode, IsNull};
-@@ -115,6 +116,17 @@ fn uint_decode(value: MySqlValueRef<'_>) -> Result<u64, BoxDynError> {
-         return Ok(value);
-     }
- 
-+    // DECIMAL is ASCII text even over the binary protocol (e.g. `SUM()` over
-+    // integers yields one); parse the digits rather than the raw bytes.
-+    if matches!(
-+        value.type_info.r#type,
-+        ColumnType::Decimal | ColumnType::NewDecimal
-+    ) {
-+        return integral_decimal_str(value.as_str()?)?
-+            .parse()
-+            .map_err(Into::into);
-+    }
-+
-     Ok(match value.format() {
-         MySqlValueFormat::Text => value.as_str()?.parse()?,
- 
-```
-
-**File**: `tests/mysql/types.rs` (modified, +37/-0)
-```diff
-@@ -31,6 +31,43 @@ test_type!(i32(MySql, "2141512" == 2141512_i32));
- test_type!(u64(MySql, "CAST(2141512 AS UNSIGNED)" == 2141512_u64));
- test_type!(i64(MySql, "2141512" == 2141512_i64));
- 
-+// A DECIMAL (e.g. `SUM()` over integers) is sent as text even over the binary
-+// protocol, so decoding one into an integer must parse the digits rather than
-+// read the ASCII bytes as a little-endian integer.
++// Regression test for #4497: resolving one custom type could drop other
++// pending dependencies, leaving them unresolved on a cold type cache.
 +#[sqlx_macros::test]
-+async fn decode_integer_from_decimal() -> anyhow::Result<()> {
-+    let mut conn = new::<MySql>().await?;
++async fn it_describes_nested_custom_types() -> anyhow::Result<()> {
++    let mut conn = new::<Postgres>().await?;
++    conn.execute(
++        r#"
++DROP TYPE IF EXISTS issue_4497_holder CASCADE;
++DROP TYPE IF EXISTS issue_4497_pair CASCADE;
++DROP TYPE IF EXISTS issue_4497_leaf_b CASCADE;
++DROP TYPE IF EXISTS issue_4497_leaf_a CASCADE;
 +
-+    // Prepared statement => binary protocol; b"13" read as LE would be 13105.
-+    let row = sqlx::query("SELECT CAST(13 AS DECIMAL(4, 0))")
-+        .fetch_one(&mut conn)
-+        .await?;
-+    assert_eq!(row.try_get_unchecked::<u64, _>(0)?, 13);
-+    assert_eq!(row.try_get_unchecked::<i64, _>(0)?, 13);
++CREATE TYPE issue_4497_leaf_a AS (x int4);
++CREATE TYPE issue_4497_leaf_b AS (y int4);
++CREATE TYPE issue_4497_pair AS (a issue_4497_leaf_a, b issue_4497_leaf_b);
++CREATE TYPE issue_4497_holder AS (items issue_4497_leaf_a[]);
++"#,
++    )
++    .await?;
 +
-+    // Integral value with a nonzero scale.
-+    let row = sqlx::query("SELECT CAST(13.00 AS DECIMAL(6, 2))")
-+        .fetch_one(&mut conn)
-+        .await?;
-+    assert_eq!(row.try_get_unchecked::<u64, _>(0)?, 13);
-+
-+    // Negative values are signed-only.
-+    let row = sqlx::query("SELECT CAST(-7 AS DECIMAL(4, 0))")
-+        .fetch_one(&mut conn)
-+        .await?;
-+    assert_eq!(row.try_get_unchecked::<i64, _>(0)?, -7);
-+    assert!(row.try_get_unchecked::<u64, _>(0).is_err());
-+
-+    // A real fraction errors instead of silently corrupting.
-+    let row = sqlx::query("SELECT CAST(13.5 AS DECIMAL(4, 1))")
-+        .fetch_one(&mut conn)
-+        .await?;
-+    let err = row.try_get_unchecked::<u64, _>(0).unwrap_err().to_string();
-+    assert!(err.contains("fractional"), "unexpected error: {err}");
++    // A fresh connection so the type-OID cache is cold.
++    let mut conn = new::<Postgres>().await?;
++    conn.describe(
++        "SELECT NULL::issue_4497_pair[] AS pairs, NULL::issue_4497_holder AS holder".into_sql_str(),
++    )
++    .await?;
 +
 +    Ok(())
 +}
-+
- test_type!(f64(MySql, "3.14159265e0" == 3.14159265_f64));
- 
- // NOTE: This behavior can be very surprising. MySQL implicitly widens FLOAT bind parameters
 ```
 
 ---
 
-### Incident Patch 2: `4df44151` (2026-11-08)
-**Commit Message**: fix(mysql): quote charset/collation/time_zone in connect-time SET (#4496)
+### Incident Patch 2: `987b8c5a` (2026-11-10)
+**Commit Message**: fix(postgres): preserve quoted "NULL" elements when decoding text arrays (#4488)
 
-Fixes #4491
+* fix(postgres): preserve quoted "NULL" elements when decoding text arrays
 
-Co-authored-by: Nacl-HCl <[REDACTED_EMAIL]>
+In PostgreSQL's text array serialization format, an unquoted `NULL` element represents SQL NULL, whereas a quoted `"NULL"` element represents the literal four-character string `"NULL"`.
 
-**File**: `sqlx-mysql/src/options/connect.rs` (modified, +159/-13)
+Previously, the text array decoder unquoted the element text before checking `if value == "NULL"`, erroneously decoding string `"NULL"` into `None` (SQL NULL) and causing silent data loss.
+
+This patch tracks whether the parsed element was surrounded by quotes (`was_quoted`) so that only unquoted `NULL` tokens are treated as SQL NULL.
+
+Closes #4452
+
+* style: format sqlx-postgres/src/types/array.rs with cargo fmt
+
+**File**: `sqlx-postgres/src/types/array.rs` (modified, +42/-1)
 ```diff
-@@ -27,6 +27,30 @@ impl ConnectOptions for MySqlConnectOptions {
-         // After the connection is established, we initialize by configuring a few
-         // connection parameters
+@@ -269,6 +269,7 @@ where
+                 let delimiter = ',';
+                 let mut done = false;
+                 let mut in_quotes = false;
++                let mut was_quoted = false;
+                 let mut in_escape = false;
+                 let mut value = String::with_capacity(10);
+                 let mut chars = s.chars();
+@@ -285,6 +286,7 @@ where
  
-+        if let Some(statement) = self.connect_init_statement() {
-+            conn.execute(AssertSqlSafe(statement)).await?;
-+        }
-+
-+        Ok(conn)
-+    }
-+
-+    fn log_statements(mut self, level: LevelFilter) -> Self {
-+        self.log_settings.log_statements(level);
-+        self
-+    }
-+
-+    fn log_slow_statements(mut self, level: LevelFilter, duration: Duration) -> Self {
-+        self.log_settings.log_slow_statements(level, duration);
-+        self
-+    }
-+}
-+
-+impl MySqlConnectOptions {
-+    /// Build the `SET ...;` statement sent right after connecting.
-+    ///
-+    /// Kept as a pure function of the options (no I/O) so it can be
-+    /// unit-tested without a live connection.
-+    fn connect_init_statement(&self) -> Option<String> {
-         // https://mariadb.com/kb/en/sql-mode/
+                                 '"' => {
+                                     in_quotes = !in_quotes;
++                                    was_quoted = true;
+                                 }
  
-         // PIPES_AS_CONCAT - Allows using the pipe character (ASCII 124) as string concatenation operator.
-@@ -66,38 +90,160 @@ impl ConnectOptions for MySqlConnectOptions {
+                                 '\\' => {
+@@ -307,7 +309,7 @@ where
+                         }
+                     }
+ 
+-                    let value_opt = if value == "NULL" {
++                    let value_opt = if !was_quoted && value == "NULL" {
+                         None
+                     } else {
+                         Some(value.as_bytes())
+@@ -321,10 +323,49 @@ where
+                     })?);
+ 
+                     value.clear();
++                    was_quoted = false;
+                 }
+ 
+                 Ok(elements)
+             }
          }
- 
-         if let Some(timezone) = &self.timezone {
--            options.push(format!(r#"time_zone='{}'"#, timezone));
-+            options.push(format!("time_zone={}", quote_string_literal(timezone)));
-         }
- 
-         if self.set_names {
-             // As it turns out, we don't _have_ to set a collation if we don't want to.
-             // We can let the server choose the default collation for the charset.
-             let set_names = if let Some(collation) = &self.collation {
--                format!(r#"NAMES {} COLLATE {collation}"#, self.charset,)
-+                format!(
-+                    "NAMES {} COLLATE {}",
-+                    quote_string_literal(&self.charset),
-+                    quote_string_literal(collation),
-+                )
-             } else {
-                 // Leaves the default collation up to the server,
-                 // but ensures statements and results are encoded using the proper charset.
--                format!("NAMES {}", self.charset)
-+                format!("NAMES {}", quote_string_literal(&self.charset))
-             };
- 
-             options.push(set_names);
-         }
- 
--        if !options.is_empty() {
--            conn.execute(AssertSqlSafe(format!(r#"SET {};"#, options.join(","))))
--                .await?;
-+        if options.is_empty() {
-+            None
-+        } else {
-+            Some(format!(r#"SET {};"#, options.join(",")))
-         }
-+    }
-+}
- 
--        Ok(conn)
-+/// Render `value` as a MySQL string literal: wrapped in single quotes with
-+/// embedded backslashes and single quotes escaped.
-+///
-+/// `charset`, `collation` and `time_zone` are taken from the connection URL
-+/// (or the builder methods) and used to be interpolated into the connect-time
-+/// `SET` statement without quoting, so a crafted value could break out of the
-+/// statement and inject arbitrary SQL. Quoting them as string literals closes
-+/// that hole.
-+///
-+/// Doubling single quotes is safe regardless of the `NO_BACKSLASH_ESCAPES`
-+/// sql mode; backslashes are escaped as well so one cannot combine with a
-+/// following quote into an escape sequence.
-+fn quote_string_literal(value: &str) -> String {
-+    let mut quoted = String::with_capacity(value.len() + 2);
-+    quoted.push('\'');
-+    for ch in value.chars() {
-+        match ch {
-+            '\\' => quoted.push_str(r#"\\"#),
-+            '\'' => quoted.push_str("''"),
-+            _ => quoted.push(ch),
-+        }
-+    }
-+    quoted.push('\'');
-+    quoted
-+}
+     }
+ }
 +
 +#[cfg(test)]
 +mod tests {
 +    use super::*;
-+    use crate::MySqlConnectOptions;
-+    use std::str::FromStr;
++    use crate::decode::Decode;
 +
-+    fn statement_for(url: &str) -> String {
-+        MySqlConnectOptions::from_str(url)
-+            .expect("valid URL")
-+            .connect_init_statement()
-+            .expect("connect-time SET statement")
-     }
- 
--    fn log_statements(mut self, level: LevelFilter) -> Self {
--        self.log_settings.log_statements(level);
--        self
 +    #[test]
-+    fn init_statement_quotes_charset_and_collation() {
-+        let stmt = statement_for("mysql://user:password@localhost/database");
++    fn test_text_array_decode_quoted_null() {
++        let s = "{\"NULL\",NULL,null}";
++        let value_ref = PgValueRef {
++            value: Some(s.as_bytes()),
++            row: None,
++            type_info: PgTypeInfo::with_name("text[]"),
++            format: PgValueFormat::Text,
++        };
 +
-+        // Defaults (`pipes_as_concat`, `no_engine_substitution`, `+00:00`,
-+        // `utf8mb4`) are preserved; `NAMES` charset is quoted as a string literal.
++        let decoded: Vec<Option<String>> =
++            <Vec<Option<String>> as Decode<Postgres>>::decode(value_ref).unwrap();
 +        assert_eq!(
-+            stmt,
-+            "SET sql_mode=(SELECT CONCAT(@@sql_mode, ',PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION')),\
-+             time_zone='+00:00',NAMES 'utf8mb4';"
++            decoded,
++            vec![Some("NULL".to_string()), None, Some("null".to_string()),]
 +        );
-     }
- 
--    fn log_slow_statements(mut self, level: LevelFilter, duration: Duration) -> Self {
--        self.log_settings.log_slow_statements(level, duration);
--        self
-+    #[test]
-+    fn init_statement_quotes_time_zone() {
-+        let stmt = statement_for("mysql://user:password@localhost/database?timezone=%2B08:00");
++    }
 +
-+      
++    #[test]
++    fn test_text_array_decode_string_vec_quoted_null() {
++        let s = "{\"NULL\",\"foo\"}";
++        let value_ref = PgValueRef {
++            value: Some(s.as_bytes()),
++            row: None,
++            type_info: PgTypeInfo::with_name("text[]"),
++            format: PgValueFormat::Text,
++        };
++
++        let decoded: Vec<String> = <Vec<String> as Decode<Postgres>>::decode(value_ref).unwrap();
++        assert_eq!(decoded, vec!["NULL".to_string(), "foo".to_string(),]);
++    }
++}
+```
+
+**File**: `tests/postgres/types.rs` (modified, +8/-0)
+```diff
+@@ -86,6 +86,14 @@ test_type!(string_vec<Vec<String>>(Postgres,
+ 
+     "array['Hello, World', '', 'Goodbye']::text[]"
+         == vec!["Hello, World", "", "Goodbye"],
++
++    "array['NULL', 'null']::text[]"
++        == vec!["NULL", "null"],
++));
++
++test_type!(string_vec_opt<Vec<Option<String>>>(Postgres,
++    "array['NULL', NULL, 'null']::text[]"
++        == vec![Some("NULL".to_string()), None, Some("null".to_string())],
+ ));
+ 
+ test_type!(string_array<[String; 3]>(Postgres,
 ```
 
 ---
 
-### Incident Patch 3: `a07bb1ea` (2026-11-08)
-**Commit Message**: fix(postgres): make `hostaddr` semantics match `libpq` (#4514)
+### Incident Patch 3: `fd56e1df` (2026-11-09)
+**Commit Message**: fix(macros): reject `#[repr(C)]` on enums in `derive(Type)` (#4508)
 
-* refactor(test): generate TLS certs on-demand
+* fix(macros): ignore non-integer reprs like repr(C) when deriving Type for enums
 
-* fix(postgres): implement proper `hostaddr` semantics
+The derive took the first path-only item of #[repr(..)] as the integer type, so #[repr(C)] produced `as C` casts that don't compile. Only use integer reprs; anything else is treated like an enum without a repr.
 
-* fix: `hostaddr` unit test
+* fix(macros): reject #[repr(C)] on enums in derive(Type)
 
-* chore: add certificate printout to `gen-certs.sh`
+repr(C) doesn't say whether the enum should be encoded as a string or as a
+C-like integer, and the C integer type differs per target. Instead of guessing,
+emit a compile error that points at #[repr(i32)] or removing the repr.
 
-* fix(tests): don't use query macro in `tests/postgres/postgres.rs`
+Integer reprs work as before (also combined with C, e.g. #[repr(C, u8)]).
+Layout-only reprs like align(..), packed, transparent and Rust are still
+ignored since they don't affect the encoding.
 
-* fix(tests): force x509v3 generation in `gen-certs.sh`
-
-* fix(tests): set unique subject lines for generated certs
-
-* fix(tests): set unique subject lines for generated certs (2)
-
-* fix(tests): re-enable `mysql_native_password` plugin on MySQL 8.4+
-
-**File**: `.github/workflows/sqlx.yml` (modified, +39/-0)
+**File**: `sqlx-macros-core/src/derives/attributes.rs` (modified, +80/-2)
 ```diff
-@@ -277,6 +277,10 @@ jobs:
-           --no-default-features
-           --features postgres,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }},macros,migrate
+@@ -57,6 +57,8 @@ pub struct SqlxContainerAttributes {
+     pub type_name: Option<TypeName>,
+     pub rename_all: Option<RenameAll>,
+     pub repr: Option<Ident>,
++    /// Set when `#[repr(C)]` is present; enums reject this (see `check_enum_attributes`).
++    pub repr_c: Option<Ident>,
+     pub no_pg_array: bool,
+     pub default: bool,
+ }
+@@ -78,6 +80,7 @@ pub struct SqlxChildAttributes {
+ pub fn parse_container_attributes(input: &[Attribute]) -> syn::Result<SqlxContainerAttributes> {
+     let mut transparent = None;
+     let mut repr = None;
++    let mut repr_c = None;
+     let mut type_name = None;
+     let mut rename_all = None;
+     let mut no_pg_array = None;
+@@ -127,15 +130,25 @@ pub fn parse_container_attributes(input: &[Attribute]) -> syn::Result<SqlxContai
+             let list: Punctuated<Meta, Token![,]> =
+                 attr.parse_args_with(<Punctuated<Meta, Token![,]>>::parse_terminated)?;
  
-+      # Generate TLS certificates
-+      - run: ./gen-certs.sh
-+        working-directory: tests/certs
-+
-       - run: |
-           docker compose -f tests/docker-compose.yml run -d -p 5432:5432 --name postgres_${{ matrix.postgres }} postgres_${{ matrix.postgres }}
- 
-@@ -388,6 +392,10 @@ jobs:
- 
-       - uses: Swatinem/rust-cache@v2
- 
-+      # Generate TLS certificates
-+      - run: ./gen-certs.sh
-+        working-directory: tests/certs
-+
-       - run: |
-           docker compose -f tests/docker-compose.yml run -d -p 5432:5432 --name postgres_${{ matrix.postgres }}_client_ssl postgres_${{ matrix.postgres }}_client_ssl
- 
-@@ -408,6 +416,21 @@ jobs:
-           DATABASE_URL: postgres://postgres@localhost:5432/sqlx?sslmode=verify-ca&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
-           RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
- 
-+      # Test with `hostaddr` and `verify-full`
-+      - run: |
-+          SKIP_ARGS=()
-+          for test in $PG_ISOLATED_TESTS; do
-+            SKIP_ARGS+=(--skip "$test")
-+          done
-+          cargo test \
-+            --no-default-features \
-+            --features any,postgres,macros,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
-+            -- \
-+            "${SKIP_ARGS[@]}"
-+        env:
-+          DATABASE_URL: postgres://postgres@sqlx.test:5432/sqlx?hostaddr=127.0.0.1&sslmode=verify-full&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
-+          RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
-+
-   postgres-isolated:
-     name: Postgres Isolated
-     runs-on: ubuntu-24.04
-@@ -421,6 +444,10 @@ jobs:
- 
-       - uses: Swatinem/rust-cache@v2
- 
-+      # Generate TLS certificates
-+      - run: ./gen-certs.sh
-+        working-directory: tests/certs
-+
-       - run: |
-           docker compose -f tests/docker-compose.yml run -d -p 5432:5432 --name postgres_17 postgres_17
-           docker exec postgres_17 bash -c "until pg_isready; do sleep 1; done"
-@@ -460,6 +487,10 @@ jobs:
- 
-       - run: cargo build --features mysql,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }}
- 
-+      # Generate TLS certificates
-+      - run: ./gen-certs.sh
-+        working-directory: tests/certs
-+
-       - run: docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mysql_${{ matrix.mysql }} mysql_${{ matrix.mysql }}
-       - name: Wait for MySQL
-         run: |
-@@ -595,6 +626,10 @@ jobs:
- 
-       - uses: Swatinem/rust-cache@v2
- 
-+      # Generate TLS certificates
-+      - run: ./gen-certs.sh
-+        working-directory: tests/certs
-+
-       - run: docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mysql_8 mysql_8
-       - name: Wait for MySQL
-         run: |
-@@ -640,6 +675,10 @@ jobs:
- 
-       - run: cargo build --features mysql,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }}
- 
-+      # Generate TLS certificates
-+      - run: ./gen-certs.sh
-+        working-directory: tests/certs
-+
-       - run: docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mariadb_${{ matrix.mariadb }} mariadb_${{ matrix.mariadb }}
-       - name: Wait for MariaDB
-         run: |
-```
-
-**File**: `sqlx-core/src/net/mod.rs` (modified, +2/-1)
-```diff
-@@ -2,5 +2,6 @@ mod socket;
- pub mod tls;
- 
- pub use socket::{
--    connect_tcp, connect_uds, BufferedSocket, Socket, SocketIntoBox, WithSocket, WriteBuffer,
-+    connect_tcp, connect_uds, BufferedSocket, Socket, SocketHost, SocketIntoBox, WithSocket,
-+    WriteBuffer,
- };
-```
-
-**File**: `sqlx-core/src/net/socket/mod.rs` (modified, +37/-7)
-```diff
-@@ -1,5 +1,7 @@
-+use std::fmt::Display;
- use std::future::Future;
- use std::io;
-+use std::net::{AddrParseError, IpAddr};
- use std::path::Path;
- use std::pin::Pin;
- use std::task::{ready, Context, Poll};
-@@ -181,14 +183,45 @@ impl<S: Socket + ?Sized> Socket for Box<S> {
+-            if let Some(path) = list.iter().find_map(|f| f.require_path_only().ok()) {
+-                try_set!(repr, path.get_ident().unwrap().clone(), list);
++            for ident in list
++                .iter()
++                .filter_map(|f| f.require_path_only().ok()?.get_ident())
++            {
++                if is_integer_repr(ident) {
++                    try_set!(repr, ident.clone(), list);
++                } else if ident == "C" {
++                    repr_c = Some(ident.clone());
++                }
++                // Other reprs (`Rust`, `transparent`, `align(..)`, `packed`) only affect
++                // layout and say nothing about how the enum is encoded, so they're ignored.
+             }
+         }
      }
+ 
+     Ok(SqlxContainerAttributes {
+         transparent: transparent.unwrap_or(false),
+         repr,
++        repr_c,
+         type_name,
+         rename_all,
+         no_pg_array: no_pg_array.unwrap_or(false),
+@@ -223,6 +236,23 @@ pub fn check_transparent_attributes(
+     Ok(attributes)
  }
  
-+#[derive(Clone, Copy)]
-+pub enum SocketHost<'a> {
-+    Name(&'a str),
-+    Addr(IpAddr),
++fn is_integer_repr(ident: &Ident) -> bool {
++    matches!(
++        ident.to_string().as_str(),
++        "u8" | "u16"
++            | "u32"
++            | "u64"
++            | "u128"
++            | "usize"
++            | "i8"
++            | "i16"
++            | "i32"
++            | "i64"
++            | "i128"
++            | "isize"
++    )
 +}
 +
-+impl TryFrom<SocketHost<'_>> for IpAddr {
-+    type Error = AddrParseError;
-+
-+    fn try_from(host: SocketHost<'_>) -> Result<Self, Self::Error> {
-+        match host {
-+            // IPv6 addresses in URLs will be wrapped in brackets and the `url` crate doesn't trim those.
-+            SocketHost::Name(name) => name.trim_matches(&['[', ']'][..]).parse(),
-+            SocketHost::Addr(addr) => Ok(addr),
+ pub fn check_enum_attributes(input: &DeriveInput) -> syn::Result<SqlxContainerAttributes> {
+     let attributes = parse_container_attributes(&input.attrs)?;
+ 
+@@ -232,6 +262,16 @@ pub fn check_enum_attributes(input: &DeriveInput) -> syn::Result<SqlxContainerAt
+         input
+     );
+ 
++    if let Some(ident) = &attributes.repr_c {
++        if attributes.repr.is_none() {
++            fail!(
++                ident,
++                "#[repr(C)] is ambiguous for #[derive(sqlx::Type)]: use an explicit integer repr \
++                 like #[repr(i32)] to encode as an integer, or remove #[repr(C)] to encode as a string"
++            );
 +        }
 +    }
-+}
 +
-+impl Display for SocketHost<'_> {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        match self {
-+            SocketHost::Name(name) => name.fmt(f),
-+            SocketHost::Addr(addr) => addr.fmt(f),
-+        }
-+    }
-+}
-+
- pub async fn connect_tcp<Ws: WithSocket>(
--    host: &str,
-+    host: SocketHost<'_>,
-     port: u16,
-     with_socket: Ws,
- ) -> crate::Result<Ws::Output> {
-     #[cfg(feature = "_rt-tokio")]
-     if crate::rt::rt_tokio::available() {
--        let socket = tokio::net::TcpStream::connect((host, port)).await?;
-+        let socket = match host {
-+            SocketHost::Name(name) => tokio::net::TcpStream::connect((name, port)).await?,
-+            SocketHost::Addr(addr) => tokio::net::TcpStream::connect((addr, port)).await?,
-+        };
-+
-         socket.set_nodelay(true)?;
-         return Ok(with_socket.with_socket(socket).await);
-     }
-@@ -208,14 +241,11 @@ pub async fn connect_tcp<Ws: WithSocket>(
- ///
- /// This implements the same behavior as [`tokio::net::TcpStream::connect()`] and additionally sets the `TCP_NODELAY` flag.
- #[cfg(feature = "_rt-async-io")]
--async fn connect_tcp_async_io(host: &str, port: u16) -> crate::Result<impl Socket> {
-+async fn connect_tcp_async_io(host: SocketHost<'_>, port: u16) -> crate::Result<impl Socket> {
-     use async_io::Async;
-     use std::net::{IpAddr, TcpStream, ToSocketAddrs};
- 
--    // IPv6 addresses in URLs will be wrapped in brackets and the `url` crate doesn't trim those.
--    let host = host.trim_matches(&['[', ']'][..]);
--
--    if let Ok(addr) = host.parse::<IpAddr>() {
-+    if let Ok(addr) = IpAddr::try_from(host) {
-         let socket = Async::<TcpStream>::connect((addr, port)).await?;
-         socket.get_ref().set_nodelay(true)?;
-         return Ok(socket);
-```
-
-**File**: `sqlx-mysql/src/connection/establish.rs` (modified, +7/-4)
-```diff
-@@ -1,6 +1,3 @@
--use bytes::buf::Buf;
--use bytes::Bytes;
--
- use crate::common::StatementCache;
- use crate::connection::{tls, MySqlConnectionInner, MySqlStream, MAX_PACKET_SIZE};
- use crate::error::Error;
-@@ -10,14 +7,20 @@ use crate::protocol::connect::{
- };
- use crate::protocol::Capabilities;
- use crate::{MySqlConnectOptions, MySqlConnection, MySqlSslMode};
-+use bytes::buf::Buf;
-+use bytes::Bytes;
-+use sqlx_core::net::SocketHost;
- 
- impl MySqlConnection {
-     pub(crate) async fn establish(options: &MySqlConnectOptions) -> Result<Self, Error> {
-         let do_handshake = DoHandshake::new(options)?;
- 
-         let handshake = match &options.socket {
-             Some(path) => crate::net::connect_uds(path, do_handshake).await?,
--            None => crate::net::connect_tcp(&options.host, options.port, do_handshake).await?,
-+            None => {
-+                crate::net::connect_tcp(SocketHost::Name(&options.host), options.port, do_handshake)
-+                    .await?
-+            }
-         };
- 
-         let stream = handshake?;
-```
-
-**File**: `sqlx-postgres/src/connection/stream.rs` (modified, +16/-7)
-```diff
-@@ -2,11 +2,6 @@ use std::collections::BTreeMap;
- use std::ops::{ControlFlow, Deref, DerefMut};
- use std::str::FromStr;
- 
--use futures_channel::mpsc::UnboundedSender;
--use futures_util::SinkExt;
--use log::Level;
--use sqlx_core::bytes::Buf;
--
- use crate::connection::tls::MaybeUpgradeTls;
- use crate::error::Error;
- use crate::message::{
-@@ -15,6 +10,11 @@ use crate::message::{
- };
- use crate::net::{self, BufferedSocket, Socket};
- use crate::{PgConnectOptions, PgDatabaseError, PgSeverity};
-+use futures_channel::mpsc::UnboundedSender;
-+use futures_util::SinkExt;
-+use log::Level;
-+use sqlx_core::bytes::Buf;
-+use sqlx_core::net::SocketHost;
- 
- // the stream is a separate type from the connection to uphold the invariant where an instantiated
- // [PgConnection] is a **valid** connection to postgres
-@@ -42,9 +42,18 @@ pub struct PgStream {
- 
- impl PgStream {
-     pub(super) async fn connect(options: &PgConnectOptions) -> Result<Self, Error> {
--        let socket_result = match options.fetch_socket() {
-+        let socket_result = match options.make_socket_path() {
-             Some(ref path) => net::connect_uds(path, MaybeUpgradeTls(options)).await?,
--            None => net::connect_tcp(&options.host, options.port, MaybeUpgradeTls(options)).await?,
-+            None => {
-+                net::connect_tcp(
-+                    options
-+                        .hostaddr
-+                        .map_or_else(|| SocketHost::Name(&options.host), SocketHost::Addr),
-+                    options.port,
-+                    MaybeUpgradeTls(options),
-+                )
-+                .await?
-+            }
-         };
- 
-         let socket = socket_result?;
-```
-
-**File**: `sqlx-postgres/src/options/doc.md` (modified, +2/-2)
-```diff
-@@ -29,7 +29,7 @@ if a parameter is not passed in via URL, it is populated by reading
- | `password`         | `PGPASSWORD`         | Read from [`passfile`], if it exists.                       |
- | [`passfile`]       | `PGPASSFILE`         | `~/.pgpass` or `%APPDATA%\postgresql\pgpass.conf` (Windows) |
- | `host`             | `PGHOST`             | See [Note: Default Host](#note-default-host).               |
--| `hostaddr`         | `PGHOSTADDR`         | See [Note: Default Host](#note-default-host).               |
-+| `hostaddr`         | `PGHOSTADDR`         | Unset.               |
- | `port`             | `PGPORT`             | `5432`                                                      |
- | `dbname`           | `PGDATABASE`         | Unset; defaults to the username server-side.                |
- | `sslmode`          | `PGSSLMODE`          | `prefer`. See [`PgSslMode`] for details.                    |
-@@ -214,4 +214,4 @@ let pool = PgPool::connect_with(opts).await?;
- [`date_trunc`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-TRUNC
- [`now`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT
- [`current_time`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT
--[`AT TIME ZONE`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
-\ No newline at end of file
-+[`AT TIME ZONE`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
-```
-
-**File**: `sqlx-postgres/src/options/mod.rs` (modified, +24/-5)
-```diff
-@@ -1,6 +1,7 @@
- use std::borrow::Cow;
- use std::env::var;
- use std::fmt::{self, Display, Write};
-+use std::net::IpAddr;
- use std::path::{Path, PathBuf};
- use std::sync::{Arc, OnceLock};
- 
-@@ -19,6 +20,7 @@ mod ssl_mode;
- pub struct PgConnectOptions {
-     pub(crate) host: String,
-     pub(crate) port: u16,
-+    pub(crate) hostaddr: Option<IpAddr>,
-     pub(crate) socket: Option<PathBuf>,
-     pub(crate) username: String,
-     pub(crate) password: Option<String>,
-@@ -67,10 +69,7 @@ impl PgConnectOptions {
-             .and_then(|v| v.parse().ok())
-             .unwrap_or(5432);
- 
--        let host = var("PGHOSTADDR")
--            .ok()
--            .or_else(|| var("PGHOST").ok())
--            .unwrap_or_else(|| default_host(port));
-+        let host = var("PGHOST").ok().unwrap_or_else(|| default_host(port));
- 
-         let username = if let Ok(username) = var("PGUSER") {
-             username
-@@ -86,6 +85,9 @@ impl PgConnectOptions {
-         PgConnectOptions {
-             port,
-             host,
-+            hostaddr: var("PGHOSTADDR")
-+                .ok()
-+                .and_then(|hostaddr| hostaddr.parse().ok()),
-             socket: None,
-             username,
-             password: var("PGPASSWORD").ok(),
-@@ -161,6 +163,23 @@ impl PgConnectOptions {
-         self
-     }
- 
-+    /// Override hostname resolution with a preset IP address.
-+    ///
-+    /// [`Self::host()`] is still used for TLS server name identification (SNI) if
-+    /// [`Self::ssl_mode()`] is [`PgSslMode::VerifyFull`].
-+    ///
-+    /// This avoids DNS lookup overhead if the server IP is already known,
-+    /// allows connecting to a host through a proxy,
-+    /// or allows using SNI when connecting to a host that is not listed in DNS.
-+    ///
-+    /// Defaults to `None`.
-+    ///
-+    /// Has no effect if [`Self::socket()`] is set.
-+    pub fn hostaddr(mut self, hostaddr: impl Into<IpAddr>) -> Self {
-+        self.hostaddr = Some(hostaddr.into());
-+        self
-+    }
-+
-     /// Sets a custom path to a directory containing a unix domain socket,
-     /// switching the connection method from TCP to the corresponding socket.
-     ///
-@@ -475,7 +494,7 @@ impl PgConnectOptions {
- 
-     /// We try using a socket if hostname starts with `/` or if socket parameter
-     /// is specified.
--    pub(crate) fn fetch_socket(&self) -> Option<String> {
-+    pub(crate) fn make_socket_path(&self) -> Option<String> {
-         match self.socket {
-             Some(ref socket) => {
-                 let full_path = format!("{}/.s.PGSQL.{}", socket.display(), self.port);
-```
-
-**File**: `sqlx-postgres/src/options/parse.rs` (modified, +3/-3)
-```diff
-@@ -75,8 +75,7 @@ impl PgConnectOptions {
-                 }
- 
-                 "hostaddr" => {
--                    value.parse::<IpAddr>().map_err(Error::config)?;
--                    options = options.host(&value)
-+                    options = options.hostaddr(value.parse::<IpAddr>().map_err(Error::config)?);
-                 }
- 
-                 "port" => options = options.port(value.parse().map_err(Error::config)?),
-@@ -203,7 +202,8 @@ fn it_parses_hostaddr_correctly_from_parameter() {
-     let opts = PgConnectOptions::from_str(url).unwrap();
- 
-     assert_eq!(None, opts.socket);
--    assert_eq!("8.8.8.8", &opts.host);
-+    assert_eq!("localhost", &opts.host);
-+    assert_eq!(Some("8.8.8.8".parse().unwrap()), opts.hostaddr);
+     Ok(attributes)
  }
  
- #[test]
+@@ -305,3 +345,41 @@ pub fn check_struct_attributes(
+ 
+     Ok(attributes)
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn enum_input(attrs: TokenStream) -> DeriveInput {
++        syn::parse2(quote::quote! {
++            #attrs
++            enum Foo { A, B }
++        })
++        .unwrap()
++    }
++
++    #[test]
++    fn enum_repr_c_is_rejected() {
++        let input = enum_input(quote::quote!(#[repr(C)]));
++        let err = check_enum_attributes(&input)
++            .err()
++            .expect("repr(C) should be rejected");
++        assert!(err.to_string().contains("#[repr(i32)]"), "{err}");
++    }
++
++    #[test]
++    fn enum_repr_c_with_integer_is_accepted() {
++        let input = enum_input(quote::quote!(#[repr(C, u8)]));
++        let attrs = check_enum_attributes(&input).unwrap();
++        assert_eq!(attrs.repr.unwrap(), "u8");
++    }
++
++    #[test]
++    fn enum_layout_only_reprs_are_ignored() {
++        let input = enum_input(quote::quote!(#[repr(align(8))]));
++        assert!(check_enum_attributes(&input).unwrap().repr.is_none());
++
++        let input = enum_input(quote::quote!(#[repr(i16, align(8))]));
++        assert_eq!(check_enum_attributes(&input).unwrap().repr.unwrap(), "i16");
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4515** (closed): fix(sqlite): reset transaction depth after SQLite rolls back on its own (@yxshee)
 - **PR #4514** (2026-11-08): fix(postgres): make `hostaddr` semantics match `libpq` (@abonander)
+- **PR #4508** (2026-11-09): fix(macros): reject `#[repr(C)]` on enums in `derive(Type)` (@thelastbackspace)
 - **PR #4503** (2026-11-08): fix(mysql): decode DECIMAL columns into integer types correctly (@Map130)
 - **PR #4502** (2026-11-08): Bump the upper bound on libsqlite3-sys to allow 0.39.x (@joshtriplett)
-- **PR #4496** (2026-11-08): fix(mysql): quote charset/collation/time_zone in connect-time SET (@Nacl-HCl)
-- **PR #4493** (2026-10-31): fix(mysql): handle empty passwords during authentication switches. (@lmont19)
+- **PR #4498** (2026-11-09): fix(postgres): keep draining resolved type dependencies in fill_cache (@ducnhan123-co)
 
 ---
 
@@ -1684,49 +1344,36 @@ Co-authored-by: Nacl-HCl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql): decode DECIMAL columns into integer types correctly (#4503)
+## X. postgres): keep draining resolved type dependencies in fill_cache. (#4498)
 
 **RULE**:
-When implementing operations in `sqlx-mysql/src/types/int.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-postgres/src/connection/resolve.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae659a0c`: mysql): decode DECIMAL columns into integer types correctly (#4503). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47b9f8e7`: postgres): keep draining resolved type dependencies in fill_cache. (#4498). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-mysql/src/types/int.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/connection/resolve.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Integer part of a textual `DECIMAL`, erroring if it has a nonzero fraction.
-pub(super) fn integral_decimal_str(s: &str) -> Result<&str, BoxDynError> {
-    let (int_part, frac_part) = s.split_once('.').unwrap_or((s, ""));
-
-    if frac_part.bytes().any(|b| b != b'0') {
-        return Err(format!("DECIMAL value `{s}` has a fractional part").into());
-    }
-
-    Ok(int_part)
-}
-
-    // DECIMAL is ASCII text even over the binary protocol, so parse the digits
-    // instead of reading the bytes as a little-endian integer.
-    if matches!(
-        value.type_info.r#type,
-        ColumnType::Decimal | ColumnType::NewDecimal
-    ) {
-        return integral_decimal_str(value.as_str()?)?
-            .parse()
-            .map_err(Into::into);
-    }
-
+                        // Keep draining rows whose dependency was just resolved;
+                        // abandoning them here would leave them unresolved forever.
+                        match resolved_dependencies.pop_back() {
+                            Some(next_row) => {
+                                type_row = next_row;
+                                continue;
+                            }
+                            None => continue 'outer,
+                        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                        continue 'outer;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae659a0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47b9f8e7` are properly handled with clean fallback behavior.

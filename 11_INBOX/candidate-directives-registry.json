@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T06:41:50.196Z",
+  "last_updated": "2026-11-12T06:56:30.430Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6354,6 +6354,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-82B529-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4947B9",
+      "directive_title": "postgres): keep draining resolved type dependencies in fill_cache. (#4498)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "transact-rs-sqlx",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4947B9-postgres-keep-draining-resolved-type-dep.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5410CB",
+      "directive_title": "Forensic Learning Record (Deep Inspection): xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5410CB-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-064708",
+      "directive_title": "transport): report the QUIC endpoint state in telemetry; deprecate transport-qui",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-064708-transport-report-the-quic-endpoint-state.md",
       "staged_date": "2026-11-12"
     }
   ]
