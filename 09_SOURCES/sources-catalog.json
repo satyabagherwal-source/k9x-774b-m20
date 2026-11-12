@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "ec498292",
+    "sourceVersion": "36caf4ca",
     "license": "AGPL-3.0",
-    "contentHash": "85bb04aedc010e220647d8d0156fa00c5d79a56e3948debbb9d466a08545bfe1",
-    "lastHarvestedAt": "2026-11-09T16:18:30.458Z",
+    "contentHash": "4731c5a82193f43b7de0c9033ad3da623f61e91d5c769a823e1c7cfc3fb5c005",
+    "lastHarvestedAt": "2026-11-12T01:52:07.159Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -9313,10 +9313,10 @@
     "repository": "lxml/lxml",
     "platform": "github",
     "sourceUrl": "https://github.com/lxml/lxml",
-    "sourceVersion": "e4302f16",
+    "sourceVersion": "ba82d526",
     "license": "BSD-3-Clause",
-    "contentHash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
-    "lastHarvestedAt": "2026-11-07T03:29:38.512Z",
+    "contentHash": "47b8bac021feae427ec12f2f3ab1fd8c28097eb6e6068d7308cee11f58b4b8a4",
+    "lastHarvestedAt": "2026-11-12T01:52:01.991Z",
     "learningId": "learn-github-lxml-lxml"
   },
   "mazzzystar-queryable": {

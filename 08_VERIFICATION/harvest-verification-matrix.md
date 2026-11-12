@@ -9032,3 +9032,5 @@
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T01:23:57.637Z` | `hf-liquidai-lfm3-audio-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-66B0E6DD` [Domain D] | Yes (`72bb14f4...`) |
 | `CYCLE-20261112-GL36` | `2026-11-12T01:31:20.898Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`83484a74...`) |
 | `CYCLE-20261112-GNA2` | `2026-11-12T01:31:23.738Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dd619f03...`) |
+| `CYCLE-20261112-76PT` | `2026-11-12T01:52:01.985Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`47b8bac0...`) |
+| `CYCLE-20261112-7APF` | `2026-11-12T01:52:07.155Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4731c5a8...`) |

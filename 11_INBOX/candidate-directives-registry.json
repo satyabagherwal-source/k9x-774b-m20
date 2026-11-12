@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T01:44:30.442Z",
+  "last_updated": "2026-11-12T01:52:12.658Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5792,6 +5792,33 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-616E3C-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-CF98CC",
+      "directive_title": "Build: Use security fixed zlib 1.4.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lxml-lxml",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CF98CC-build-use-security-fixed-zlib-1-4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-123A7C",
+      "directive_title": "market(fix): refine catalog handling and api safeguards (#4436)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "beclab-olares",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-123A7C-market-fix-refine-catalog-handling-and-a.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B15E6C",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B15E6C-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -9041,3 +9041,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-66b0e6dd` | `project://hf-liquidai-lfm3-audio-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | 2026-11-12T01:23:57.637Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `d1e064e3` | Multi-dimensional audit evidence | 2026-11-12T01:31:20.902Z |
 | `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `2af81b9e` | Multi-dimensional audit evidence | 2026-11-12T01:31:23.741Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `ba82d526` | Multi-dimensional audit evidence | 2026-11-12T01:52:01.991Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `36caf4ca` | Multi-dimensional audit evidence | 2026-11-12T01:52:07.159Z |

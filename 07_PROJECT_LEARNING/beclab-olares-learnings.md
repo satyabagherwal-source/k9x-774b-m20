@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `ec498292`  
+> **Source Version**: `36caf4ca`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:18:29.045Z  
+> **Timestamp**: 2026-11-12T01:51:53.037Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:18:28.457Z  
+> **Harvest Timestamp**: 2026-11-12T01:51:53.031Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5355 stars
+- **Stars / Engagement**: 5358 stars
 
 ---
 
@@ -1137,337 +1137,334 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec498292` (2026-11-09)
-**Commit Message**: docs: add Cognee knowledge and internal MCP workflows (#4327)
+### Incident Patch 1: `36caf4ca` (2026-11-11)
+**Commit Message**: market(fix): refine catalog handling and api safeguards (#4436)
 
-* docs: add cognee bilingual use case
-
-* docs: document cognee assistant integration
-
-* docs: complete Cognee API key and official MCP setup
-
-* docs: simplify Cognee internal MCP connections
-
-* docs: distinguish Lares disconnect messages from MCP HTTP status
-
-* docs: apply Cognee review suggestions
-
-* docs: address remaining Cognee review feedback
-
-* adjust structure, refine description
-
----------
-
-Co-authored-by: Power-One-2025 <[REDACTED_EMAIL]>
-
-**File**: `docs/.vitepress/data/useCases.ts` (modified, +1/-0)
+**File**: `framework/market/.olares/config/cluster/deploy/market_deploy.yaml` (modified, +1/-1)
 ```diff
-@@ -60,6 +60,7 @@ export const useCases: UseCase[] = [
-   { title: "Open WebUI", link: "/use-cases/openwebui", category: "AI workbench", description: "Full-featured web chat for local LLMs", descriptionZh: "面向本地 LLM 的全功能 Web 聊天界面" },
-   { title: "LobeHub (LobeChat)", link: "/use-cases/lobechat", category: "AI workbench", description: "Build local custom AI assistants", descriptionZh: "构建本地自定义 AI 助手" },
-   { title: "AnythingLLM", link: "/use-cases/anythingllm", category: "AI workbench", description: "Local knowledge base with RAG over your documents", descriptionZh: "基于文档 RAG 的本地知识库" },
-+  { title: "Cognee", link: "/use-cases/cognee", category: "AI workbench", description: "Build and explore connected knowledge from documents", descriptionZh: "从文档构建并浏览相互关联的知识" },
-   { title: "Local Deep Research", link: "/use-cases/local-deep-research", category: "AI workbench", description: "Research questions with cited sources through AI Router", descriptionZh: "通过 AI Router 生成带来源引用的研究报告" },
-   { title: "Open Notebook", link: "/use-cases/open-notebook", category: "AI workbench", description: "Research notebook with AI insights and podcasts", descriptionZh: "支持 AI 洞察和播客的研究笔记本" },
-   { title: "TrustGraph", link: "/use-cases/trustgraph", category: "AI workbench", description: "Ask questions about documents and explore their connections", descriptionZh: "围绕文档提问，探索内容之间的联系" },
+@@ -155,7 +155,7 @@ spec:
+           name: check-appservice
+       containers:
+       - name: appstore-backend
+-        image: beclab/market-backend:v0.6.129
++        image: beclab/market-backend:v0.6.133
+         imagePullPolicy: IfNotPresent
+         ports:
+           - containerPort: 81
 ```
 
-**File**: `docs/.vitepress/usecase.en.ts` (modified, +4/-0)
+---
+
+### Incident Patch 2: `e7fe1c96` (2026-11-10)
+**Commit Message**: docs: document Claude Code output token requirement (#4430)
+
+* docs: document Claude Code output token limit
+
+* docs: streamline Claude Code local model setup
+
+* docs: clarify Claude Code local model setup heading
+
+**File**: `docs/use-cases/claude-code.md` (modified, +21/-8)
 ```diff
-@@ -241,6 +241,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
-                   text: "AnythingLLM",
-                   link: "/use-cases/anythingllm",
-                 },
-+                {
-+                  text: "Cognee",
-+                  link: "/use-cases/cognee",
-+                },
-                 {
-                   text: "Local Deep Research",
-                   link: "/use-cases/local-deep-research",
+@@ -8,8 +8,8 @@ head:
+     - name: keywords
+       content: Olares, Claude Code, Anthropic, AI coding, Ollama, terminal, TUI, self-hosted
+ app_version: "0.1.13"
+-doc_version: "2.1"
+-doc_updated: "2026-10-30"
++doc_version: "2.2"
++doc_updated: "2026-11-10"
+ ---
+ 
+ # Write code using Claude Code
+@@ -86,13 +86,26 @@ Use this method to run Claude Code locally. This example uses the model app Qwen
+ 
+ <!--@include: ../reusables/ai-service-connections.md#model-connection-overview-->
+ 
+-<!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-anthropic-->
++#### Configure the local model in Router
+ 
+-6. Open Olares Settings, and then go to **Applications** > **Claude Code** > **Manage environment variables**.
+-7. Specify the following environment variables:
++1. Open Router from Launchpad. On **Default models**, set Qwen3.8-27B (llama.cpp) as the default chat model.
++2. Go to **LLM**, find Qwen3.8-27B (llama.cpp), and click **View model card**.
++3. Click **Edit**. Under **Context & Rate Limits**, set **Max output tokens** to `32000`, then click **Save**.
++4. Wait until the model shows **Callable**.
++
++   :::info Max output token limit
++   Claude Code sends local model requests with `max_tokens` set to `32000`, so Router must allow at least `32000` output tokens. You can set a higher limit only when the model backend and its configured context window support it. This limit does not reserve memory or force every response to use that many tokens.
++   :::
++
++5. On the same model row, click **View connection example**. In **How to call this model**, select **Apps in Olares** and copy the **Base URL**. Remove the trailing `/v1`. For example, use `https://router.<your-olares-domain>`.
++
++#### Configure Claude Code
++
++1. Open Olares Settings, and then go to **Applications** > **Claude Code** > **Manage environment variables**.
++2. Specify the following environment variables:
+ 
+    - **ANTHROPIC_AUTH_TOKEN**: Enter `olares`.
+-   - **ANTHROPIC_BASE_URL**: Enter the **Base URL** you copied from Router. For example, `https://router.<your-olares-domain>`.
++   - **ANTHROPIC_BASE_URL**: Enter the **Base URL** you copied from Router.
+    - **ANTHROPIC_MODEL**: Enter `default-chat`.
+ 
+    <!--
+@@ -101,8 +114,8 @@ Use this method to run Claude Code locally. This example uses the model app Qwen
+    -->
+ 
+ 
+-8. Click **Apply**. Wait about 10 seconds for the container to restart.
+-9. Open the Claude Code CLI from the Launchpad, and then enter `claude` in the terminal to start your session.
++3. Click **Apply**. Wait about 10 seconds for the container to restart.
++4. Open the Claude Code CLI from the Launchpad, and then enter `claude` in the terminal to start your session.
+ 
+ ## Use Claude Code
+ 
 ```
 
-**File**: `docs/.vitepress/usecase.zh.ts` (modified, +4/-0)
+**File**: `docs/zh/use-cases/claude-code.md` (modified, +21/-8)
 ```diff
-@@ -241,6 +241,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
-                   text: "AnythingLLM",
-                   link: "/zh/use-cases/anythingllm",
-                 },
-+                {
-+                  text: "Cognee",
-+                  link: "/zh/use-cases/cognee",
-+                },
-                 {
-                   text: "Local Deep Research",
-                   link: "/zh/use-cases/local-deep-research",
+@@ -8,8 +8,8 @@ head:
+     - name: keywords
+       content: Olares, Claude Code, Anthropic, AI coding, Ollama, terminal, TUI, self-hosted
+ app_version: "0.1.13"
+-doc_version: "2.1"
+-doc_updated: "2026-10-30"
++doc_version: "2.2"
++doc_updated: "2026-11-10"
+ ---
+ 
+ :::warning
+@@ -90,13 +90,26 @@ Claude Code 是一个 AI 编码助手，帮助你使用自然语言编写、测
+ 
+ <!--@include: ../reusables/ai-service-connections.md#model-connection-overview-->
+ 
+-<!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-anthropic-->
++#### 在 Router 中配置本地模型
+ 
+-6. 打开 Olares Settings，前往 **Applications** > **Claude Code** > **Manage environment variables**。
+-7. 设置以下环境变量：
++1. 从 Launchpad 打开 Router。在 **Default models** 页面将 Qwen3.8-27B (llama.cpp) 设为默认聊天模型。
++2. 进入 **LLM** 页面，找到 Qwen3.8-27B (llama.cpp)，然后点击 **View model card**。
++3. 点击 **Edit**。在 **Context & Rate Limits** 区域将 **Max output tokens** 设为 `32000`，然后点击 **Save**。
++4. 等待模型显示 **Callable**。
++
++   :::info 最大输出 token 数
++   Claude Code 调用本地模型时会将 `max_tokens` 设为 `32000`，因此 Router 允许的最大输出 token 数至少应为 `32000`。仅当模型后端及其配置的上下文窗口支持时，才可以设置更高的上限。此上限不会预留内存，也不会强制每次响应使用这么多 token。
++   :::
++
++5. 在同一模型行中点击 **View connection example**。在 **How to call this model** 窗口中选择 **Apps in Olares**，并复制 **Base URL**。移除末尾的 `/v1`。例如，使用 `https://router.<你的 Olares 域名>`。
++
++#### 配置 Claude Code
++
++1. 打开 Olares Settings，前往 **Applications** > **Claude Code** > **Manage environment variables**。
++2. 设置以下环境变量：
+ 
+    - **ANTHROPIC_AUTH_TOKEN**: 填写 `olares`。
+-   - **ANTHROPIC_BASE_URL**: 输入从 Router 复制的 **Base URL**。例如，`https://router.<your-olares-domain>`。
++   - **ANTHROPIC_BASE_URL**: 输入从 Router 复制的 **Base URL**。
+    - **ANTHROPIC_MODEL**: 填写 `default-chat`。
+ 
+    <!--
+@@ -105,8 +118,8 @@ Claude Code 是一个 AI 编码助手，帮助你使用自然语言编写、测
+    -->
+ 
+ 
+-8. 点击 **Apply**。等待约 10 秒让容器重启。
+-9. 从 Launchpad 打开 Claude Code CLI，然后在终端中输入 `claude` 以启动你的会话。
++3. 点击 **Apply**。等待约 10 秒让容器重启。
++4. 从 Launchpad 打开 Claude Code CLI，然后在终端中输入 `claude` 以启动你的会话。
+ 
+ ## 使用 Claude Code
+ 
 ```
 
-**File**: `docs/use-cases/cognee.md` (added, +181/-0)
+---
+
+### Incident Patch 3: `25d4022e` (2026-11-10)
+**Commit Message**: docs: add Olares 1.12.8 update guide (#4413)
+
+* add update guide for 1.12.8
+
+* adjust table display
+
+* remove comment
+
+* refine intro
+
+* add note on larepass update
+
+* remove tag
+
+**File**: `docs/.vitepress/en.ts` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,181 @@
+@@ -12,6 +12,10 @@ const side = {
+           text: "Update notes",
+           collapsed: true,
+           items: [
++            {
++              text: "Olares 1.12.8",
++              link: "/manual/update-guides/1.12.8",
++            },
+             {
+               text: "Olares 1.12.7",
+               link: "/manual/update-guides/1.12.7",
+```
+
+**File**: `docs/.vitepress/zh.ts` (modified, +4/-0)
+```diff
+@@ -12,6 +12,10 @@ const side = {
+           text: "更新说明",
+           collapsed: true,
+           items: [
++            {
++              text: "Olares 1.12.8",
++              link: "/zh/manual/update-guides/1.12.8",
++            },
+             {
+               text: "Olares 1.12.7",
+               link: "/zh/manual/update-guides/1.12.7",
+```
+
+**File**: `docs/manual/update-guides/1.12.8.md` (added, +61/-0)
+```diff
+@@ -0,0 +1,61 @@
 +---
-+connectionVersion: "1.12.7"
-+connectionLatestPath: /use-cases/cognee
 +outline: [2, 3]
-+description: Build and explore document knowledge with Cognee on Olares
-+head:
-+  - - meta
-+    - name: keywords
-+      content: "Olares, Cognee, self-hosted, knowledge graph, documents, search"
-+app_version: "0.0.17"
-+doc_version: "1.0"
-+doc_updated: "2026-11-06"
++description: Prepare for Olares 1.12.8 with guidance on new device activation, restarting GPU apps in time-slicing mode, and member access to Files.
 +---
 +
-+# Turn documents into memory your AI can recall
++# Olares 1.12.8 update guide
 +
-+Cognee turns documents into connected knowledge that you and your AI agents can recall. Add documents to a dataset, ask questions and check the supporting sources, or let your AI agents recall the same knowledge through MCP. On Olares, your documents and the knowledge built from them stay on your own device. Answer generation uses the default chat model configured in Olares Router.
++Olares 1.12.8 updates the setup flow for new devices, member access to storage in Files, and GPU switching in time-slicing mode. Review the changes below and follow the steps that apply to your setup.
 +
-+## Learning objectives
-+
-+- Create a dataset and add project documents to it.
-+- Ask questions in Cognee and check the supporting sources and knowledge graph.
-+- Connect Lares or Hermes Agent to Cognee through MCP, then ask questions in a new conversation.
-+
-+## Prerequisites
-+
-+- Olares 1.12.7 or later.
-+- Olares Router with a callable model assigned to `default-chat`.
-+
-+## Install Cognee
-+
-+1. Open Market and search for "Cognee".
-+2. Click **Get**, then **Install**. When prompted, set an initial password with at least 12 characters.
-+3. When the installation finishes, open Cognee from Launchpad.
-+4. Sign in with the built-in initial account `default_user@example.com` and the password you set during installation.
-+
-+## Create a project dataset
-+
-+Create a dataset and add your project documents to it. One dataset can hold one or many documents, and a search covers every document in it, so keep related documents together. You can paste text or upload a file. This guide uses the two sample documents below.
-+
-+1. Open **Datasets** and click **Create dataset**. If you already have a dataset, click **New dataset**.
-+2. Name the dataset `project_rehearsal`. Use letters, numbers, and underscores in the name.
-+3. Select the new dataset.
-+4. Choose **Paste text** and add each document below as a separate item. Wait until the first item shows **Ready** before adding the second.
-+
-+   ::: details Meeting notes
-+
-+   ```text
-+   Project Harbor: Migration Rehearsal Meeting Notes
-+
-+   This document contains fictional test data. All people, dates, and project details are invented for a documentation walkthrough.
-+
-+   Project: Harbor document migration
-+   Meeting date: November 4, 2026
-+   Rehearsal date: November 12, 2026, at 10:00 AM, Asia/Shanghai
-+
-+   Maya Chen coordinates the migration rehearsal. She schedules the rehearsal and collects the validation results.
-+
-+   Before handoff, the team must complete the rehearsal, confirm that the source and destination file counts match, verify the SHA-256 checksums, and attach the validation report to the handoff record.
-+
-+   Omar Lee is the project owner. Handoff requires his approval after he reviews the validation report.
-+
-+   The migration runbook identifies the escalation contact for checksum mismatches.
-+   ```
-+
-+   :::
-+
-+   ::: details Migration validation runbook
-+
-+   ```text
-+   Project Harbor: Migration Validation Runbook
-+
-+   This document contains fictional test data. All people and project details are invented for a documentation walkthrough.
-+
-+   Scope: Validation for the Harbor document migration rehearsal.
-+
-+   File validation compares the source and destination file counts and SHA-256 checksums. The validation report records the results and any unresolved differences.
-+
-+   Noah Zhou is the data integrity lead and the escalation contact when migration checksums do not match. The report sent to Noah must identify the affected files and include the expected and actual checksums.
-+
-+   A checksum mismatch blocks handoff until it has been investigated, resolved, and checked again. Any remaining mismatch must be recorded as unresolved in the validation report.
-+
-+   Maya Chen coordinates the rehearsal. Omar Lee, the project owner, approves handoff after reviewing the completed validation report.
-+   ```
-+
-+   :::
-+
-+   :::info First processing job
-+   The first document may take longer to process because Cognee needs to download its embedding model. This small model runs on CPU inside Cognee. Later processing jobs reuse the saved model cache. Wait for the current import to finish before submitting the same document again.
-+   :::
-+
-+## Query a project dataset
-+
-+Ask a question about your dataset, then check the answer, evidence, and graph against the original documents.
-+
-+1. Open **Search**, select `project_rehearsal` in the dataset selector above the question input, and then ask:
-+
-+   ```text
-+   Who coordinates the rehearsal, what must be complete before handoff, and who should we contact if migration checksums do not match? Distinguish the meeting notes from the runbook in your sources.
-+   ```
-+
-+2. Verify the answer and compare the support
-```
-
-**File**: `docs/zh/use-cases/cognee.md` (added, +185/-0)
-```diff
-@@ -0,0 +1,185 @@
-+---
-+connectionVersion: "1.12.7"
-+connectionLatestPath: /zh/use-cases/cognee
-+outline: [2, 3]
-+description: 在 Olares 上使用 Cognee 构建和浏览文档知识
-+head:
-+  - - meta
-+    - name: keywords
-+      content: "Olares, Cognee, 自托管, 知识图谱, 文档, 搜索"
-+app_version: "0.0.17"
-+doc_version: "1.0"
-+doc_updated: "2026-11-06"
-+---
-+
-+:::warning
-+本文档由 AI 自动翻译，仅供参考。涉及关键操作或信息时，请以[英文原文](../../use-cases/cognee.md)为准。
++:::warning Update LarePass first
++Before you begin, update LarePass to version 1.12.35.
 +:::
 +
-+# 把文档变成 AI 助手的知识库
++## Find what applies to you
 +
-+Cognee 将文档转化为相互关联、可供你和 AI 代理回忆的知识。把文档加入数据集，提问并对照支持性来源，或者通过 MCP 让你的 AI 代理回忆同样的知识。在 Olares 上，你的文档和从中构建的知识都保留在自己的设备上。答案生成使用 Olares Router 中配置的默认对话模型。
++| <nobr>If this applies to you</nobr> | What to do |
++| --- | --- |
++| You are setting up an unactivated device with Olares 1.12.6 or 1.12.7 preinstalled. | Follow the update prompt in LarePass to update to 1.12.8 before completing activation. [View steps](#update-a-new-device-before-activation). |
++| GPU apps were already using time-slicing mode before the update. | Restart those apps after updating to activate the new HAMi switching algorithm. [View steps](#restart-gpu-apps-using-time-slicing-mode). |
++| Members use folders in External or Common through Files. | After updating, review access settings and grant each member the view or edit access they need. [View steps](#review-member-access-in-files). |
++| You created shares using a method that 1.12.8 no longer supports. | Replace invalid shares with a supported method. For member access to External or Common, use **Access settings**. [View steps](#replace-unsupported-shares). |
 +
-+## 学习目标
++## Update a new device before activation
 +
-+- 创建数据集并添加项目文档。
-+- 在 Cognee 中提问，并对照支持性来源和知识图谱检查答案。
-+- 通过 MCP 连接 Lares 或 Hermes Agent，然后在新对话中提问。
++If you are setting up an unactivated device with Olares 1.12.6 or 1.12.7, LarePass now prompts you to update to 1.12.8 after installing Olares OS and before activating the device. Follow the prompts to complete the update first, then activate your device.
 +
-+## 前提条件
++If your device is already activated, use the normal [system update process](/manual/olares/settings/update).
 +
-+- Olares 1.12.7 或更高版本。
-+- Olares Router 中为 `default-chat` 分配了状态为 **callable** 的模型。
++## Restart GPU apps using time-slicing mode
 +
-+## 安装 Cognee
++With the HAMi update, apps sharing a GPU in **Time slicing** mode now wait less for GPU access. Switching time has dropped from about 4–5 seconds to 0.1–1.5 seconds.
 +
-+1. 打开 Market，搜索 "Cognee"。
-+2. 点击 **Get**，然后点击 **Install**。提示时设置至少 12 个字符的初始密码。
-+3. 安装完成后，从 Launchpad 打开 Cognee。
-+4. 使用内置初始账号 `default_user@example.com` 和安装时设置的密码登录。
++After updating Olares, restart any apps that were already using GPU time-slicing mode. The new algorithm takes effect only after those apps restart.
 +
-+## 创建项目数据集
++1. After the system update completes, identify the apps that were using the GPU in time-slicing mode.
++2. Let active tasks finish and save any work. In **Settings** > **Applications**, open each affected app, click **Stop**, then click **Resume**.
++3. Confirm that each app is running again, then run a normal task to check that it works.
 +
-+创建一个数据集，把项目文档添加进去。一个数据集可以存放一篇或多篇文档，搜索会覆盖其中的每一篇，所以把相关文档放在同一个数据集中。你可以粘贴文本，也可以上传文件。本指南使用下面的两份示例文档。
++## Review member access in Files
 +
-+1. 打开 **Datasets**，点击 **Create dataset**。如果已有数据集，点击 **New dataset**。
-+2. 将数据集命名为 `project_rehearsal`。名称使用字母、数字和下划线。
-+3. 选中新建的数据集。
-+4. 选择 **Paste text**，把下面每份文档作为独立条目添加。等第一个条目显示 **Ready** 后再添加第二份。
++In Olares 1.12.8, **Access settings** controls how Olares members access External mounts and top-level Common folders. External mounts include SMB and NFS shares, USB drives, and local disks.
 +
-+   ::: details 会议纪要
++Members have no access by default and need an administrator to grant access. The `ai` system folder under External is an exception: it remains read-only for members and does not offer access settings.
 +
-+   ```text
-+   Project Harbor: Migration Rehearsal Meeting Notes
++After updating, review the folders your members need:
 +
-+   This document contains fictional test data. All people, dates, and project details are invented for a documentation walkthrough.
++1. Sign in as the Super Admin or an admin with management access to the folder, then open **Files**.
++2. Find the mounted directory under **External** or the top-level folder under **Common**.
++3. Right-click the folder and select **Access settings**. Assign members **Can view** or **Can edit** access, then click **Confirm**.
++4. Ask the member to refresh Files and check that they can open the folder and perform the intended actions.
 +
-+   Project: Harbor document migration
-+   Meeting date: November 4, 2026
-+   Rehearsal date: November 12, 2026, at 10:00 AM, Asia/Shanghai
++Permissions apply to the selected directory and everything inside it. These settings do not change permissions on the NAS itself. For role details and troubleshooting, see [Manage access to Common and External](/manual/olares/files/manage-common-external-access).
 +
-+   Maya Chen coordinates the migration rehearsal. She schedules the rehearsal and collects the validation results.
++### Replace unsupported shares
 +
-+   Before handoff, the team must complete the rehearsal, confirm that the source and destination file counts match, verify the SHA-256 checksums, and attach the validation report to the handoff record.
++External and Common do not support **Internal share** in 1.12.8. Existing shares that use unsupported methods become invalid after updating.
 +
-+   Omar Lee is the project owner. Handoff requires his approval after he reviews the validation report.
++- To let Olares members access External or Common folders, grant access through **Access settings**, then revoke the old invalid share.
++- To share folders in other locations, check the supported methods in [Share files](/manual/olares/files/share-files) before creating a replacement.
 +
-+   The migration runbook identifies the escalation contact for checksum mismatches.
-+   ```
++Changing permissions on an old share does not restore a sharing method that is no longer supported.
+```
+
+**File**: `docs/zh/manual/update-guides/1.12.8.md` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++---
++outline: [2, 3]
++description: 了解 Olares 1.12.8 更新前后的注意事项，包括新设备激活前更新、重启 GPU 分时共享应用，以及调整文件访问权限。
++---
 +
-+   :::
++# Olares 1.12.8 更新指南
 +
-+   ::: details 迁移校验运行手册
++Olares 1.12.8 调整了新设备的设置流程、文件管理器中的成员访问权限，以及 GPU 分时共享模式下的切换机制。请查看以下变化，并根据你的使用情况完成操作。
 +
-+   ```text
-+   Project Harbor: Migration Validation Runbook
-+
-+   This document contains fictional test data. All people and project details are invented for a documentation walkthrough.
-+
-+   Scope: Validation for the Harbor document migration rehearsal.
-+
-+   File validation compares the source and destination file counts and SHA-256 checksums. The validation report records the results and any unresolved differences.
-+
-+   Noah Zhou is the data integrity lead and the escalation contact when migration checksums do not match. The report sent to Noah must identify the affected files and include the expected and actual checksums.
-+
-+   A checksum mismatch blocks handoff until it has been investigated, resolved, and checked again. Any remaining mismatch must be recorded as unresolved in the validation report.
-+
-+   Maya Chen coordinates the rehearsal. Omar Lee, the project owner, approves handoff after reviewing the completed validation report.
-+   ```
-+
-+   :::
-+
-+   :::info 首次处理任务
-+   第一篇文档的处理时间可能更长，因为 Cognee 需要下载它的嵌入模型。这个小型模型在 Cognee 内部使用 CPU 运行。后续处理任务会复用已保存的模型缓存。等当前导入完成后再重新提交同一文档。
-+   :::
-+
-+## 查询项目数据集
-+
-+对数据集提问，然后对照原始文档检查答案、Evidence 和图谱。
-+
-+1. 打开 **Search**，在问题输入框上方的数据集选择器中选择 `project_rehearsal`，然后提问：
-+
-+   ```text
-+   Who coordinates the rehearsal, what must be complete before handoff, and who should we contact if migration checksums do not match? Distinguish the meeting notes from the runbook in your sources.
-+   ```
-+
-+2. 核对答案，并把 **Evidence** 中的支持性文本与两份原始文档对照。如果节选被截断，不要把它当作完整的来源核对。
-+
-+   在这个例子中，答案会指出 Maya Chen 是协调人，说明交接前必须完成的校验和审批，并给出校验和不匹配时的联系人 Noah Zhou。
-+
-+   :::tip 对话模型连接
-+   如果答案生成失败，请确认 **Default models** 页面已分配默认对话模型，且状态为 **callable**。参见 [Olares Router](olares-router.md)。
-+   :::
-+
-+3. 打开 **Graph**，在左上角的 **DATASET** 选择器中选择 `project_rehearsal`。图谱布局和生成的关系可能因模型而异。
-+
-+## 在 Lares 或 Hermes Agent 中查询
-+
-+把 Lares 或 Hermes Agent 连接到 Cognee 的 MCP 服务器，这样你就可以在对话中搜索数据集，不用再粘贴文档。
-+
-+### 获取 Cognee 的 MCP 地址
-+
-+从 Olares Settings 复制 MCP endpoint URL，然后在末尾加上 `/mcp`。
-+
-+1. 打开 Olares **Settings**，进入 **Applications** > **Cognee** > **Cognee MCP**，复制它的 endpoint URL。例如 `https://ba2717462.laresprime.olares.com`。
-+2. 在复制的 URL 末尾加上 `/mcp`。这就是下面助手连接要用的 MCP URL。
-+
-+:::info 默认无需密钥访问
-+默认情况下，客户端不需要 API key。MCP 服务器使用内置初始账号 `default_user@example.com`，因此助手可以访问你通过这个账号添加的知识。已连接的助手共享该账号的权限。官方工具除了检索知识，也可以添加和删除知识。批准工具请求前请先检查。
++:::warning 先更新 LarePass
++开始前，请先将 LarePass 升级到 1.12.35 版本。
 +:::
 +
-+### 连接 Lares
++## 找到适用的操作
 +
-+在 Lares 中把 Cognee 注册为 MCP 服务器，然后提出一个会使用 `recall` 工具的问题。
++| 你的情况 | 需要做什么 |
++| --- | --- |
++| 正在设置预装 Olares 1.12.6 或 1.12.7、尚未激活的设备。 | 按照 LarePass 提示，先更新到 1.12.8，再完成激活。[查看步骤](#激活新设备前更新系统)。 |
++| 更新前已有应用使用 GPU 分时共享模式。 | 更新后重启这些应用，使新的 HAMi 切换算法生效。[查看步骤](#重启使用-gpu-分时共享模式的应用)。 |
++| 成员通过文件管理器访问外部设备或公共目录中的文件夹。 | 更新后检查访问设置，为每位成员授予所需的查看或编辑权限。[查看步骤](#检查文件管理器中的成员访问权限)。 |
++| 已创建的共享使用了 1.12.8 不再支持的方式。 | 使用支持的方式替换失效的共享。成员访问外部设备或公共目录时，请通过**访问设置**授权。[查看步骤](#替换不再支持的共享)。 |
 +
-+1. 打开 Lares，打开它的设置，选择 **MCP**，然后点击 **Add server**。填写：
++## 激活新设备前更新系统
 +
-+   | 字段 | 值 |
-+   | --- | --- |
-+   | **Server name** | `cognee` |
-+   | **Transport** | **Streamable HTTP** |
-+   | **MCP URL** | 上面获取的 MCP URL，包含 `/mcp` |
-+   | **Headers** | 保持默认的空 JSON 对象 `{}`。 |
++如果设备尚未激活，且预装的是 Olares 1.12.6 或 1.12.7，LarePass 会在 Olares OS 安装完成后、设备激活前提示更新到 1.12.8。按照提示先完成更新，再激活设备。
 +
-+2. 点击 **Save**。Lares 会连接并加载官方工具，包括 `recall` 和 `remember`。
-+3. 新建对话，发送下面的提示词。提示授权时批准 `recall` 工具。
++如果设备已经激活，请按照常规[系统更新流程](/zh/manual/olares/settings/update)操作。
 +
++## 重启使用 GPU 分时共享模式的应用
++
++HAMi 更新后，使用**分时共享**模式的应用等待 GPU 的时间缩短了，切换耗时从约 4–5 秒降至 0.1–1.5 秒。
++
++更新 Olares 后，请重启更新前已使用 GPU 分时共享模式的应用。新的算法只有在这些应用重启后才会生效。
++
++1. 系统更新完成后，确认哪些应用之前使用了 GPU 分时共享模式。
++2. 等待正在运行的任务完成并保存工作。在**设置** > **应用**中，依次打开这些应用，点击**停止**，再点击**恢复**。
++3. 确认每个应用已重新运行，再执行一个日常任务，检查应用是否正常工作。
++
++## 检查文件管理器中的成员访问权限
++
++在 Olares 1.12.8 中，**访问设置**用于控制成员对外部设备挂载目录和公共目录下一级文件夹的访问。外部设备挂载目录包括 SMB 和 NFS 共享、USB 驱动器以及本地磁盘。
++
++成员默认没有访问权限，需要管理员授权。外部设备下的 `ai` 系统文件夹除外：成员仍可只读访问，且该文件夹不提供访问设置。
++
++更新后，请检查成员需要使用的文件夹：
++
++1. 使用超级管理员账号，或对目标文件夹具有管理权限的管理员账号登录，然后打开**文件管理器**。
++2. 找到**外部设备**下的挂载目录，或**公共目录**下的一级文件夹。
++3. 右键点击文件夹，选择**访问设置**。为成员分配**可查看**或**可编辑**权限，然后点击**确认**。
++4. 请成员刷新文件管理器，确认能打开文件夹并完成所需操作。
++
++权限对所选目录及其全部内容生效。这些设置不会改变 NAS 本身的权限。角色权限说明和问题排查方法请参阅[管理公共目录和外部设备的访问权限](/zh/manual/olares/files/manage-common-external-access)。
++
++### 替换不再支持的共享
++
++1.12.8 不再支持对外部设备和公共目录使用**内部共享**。已有共享如果使用了不再支持的方式，会在更新后失效。
++
++- 如果需要让 Olares 成员访问外部设备或公共目录中的文件夹，请通过**访问设置**授权，再撤销旧的失效共享。
++- 如果需要共享其他位置的文件夹，请先在[共享文件](/zh/manual/olares/files/share-files)中查看支持的共享方式，再创建新的共享。
++
++修改旧共享的权限，无法恢复已不再支持的共享方式。
 +
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4427** (2026-11-09): fix(auth, lldap): bump image versions for authelia and lldap (@eball)
-- **PR #4426** (2026-11-09): chore(system-apps): update frontend image (@qq815776412)
-- **PR #4424** (closed): docs: update device logout instructions (@Meow33)
-- **PR #4419** (2026-11-06): fix: unescape mount paths and umount smb/nfs shares on uninstall (@eball)
-- **PR #4418** (2026-11-07): docs: add YuE2 Studio music creation and Lares MCP tutorial (@harveyff)
-- **PR #4417** (2026-11-06): Revert "docs: remove terminal entry from ctrl hub " (@Power-One-2025)
+- **PR #4436** (2026-11-11): market(fix): refine catalog handling and api safeguards (@aby913)
+- **PR #4433** (2026-11-11): chore(headscale): bump Headscale to 0.29.7 and Tailscale to 1.104.4 (@0x7fffff92)
+- **PR #4431** (2026-11-11): daemon: update Go version to 1.26.0 in workflow (@eball)
+- **PR #4430** (2026-11-10): docs: document Claude Code output token requirement (@fnalways)
+- **PR #4429** (2026-11-11): chore(appservice): bump image tag to 0.7.0 (@hysyeah)
+- **PR #4428** (2026-11-10): docs: move Hermes Workspace to AI workbench (@Async98-cloud)
 
 ---
 
@@ -1487,28 +1484,28 @@ Co-authored-by: Power-One-2025 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add Cognee knowledge and internal MCP workflows (#4327)
+## X. market(fix): refine catalog handling and api safeguards (#4436)
 
 **RULE**:
-When implementing operations in `docs/.vitepress/data/useCases.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `framework/market/.olares/config/cluster/deploy/market_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec498292`: docs: add Cognee knowledge and internal MCP workflows (#4327). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36caf4ca`: market(fix): refine catalog handling and api safeguards (#4436). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/data/useCases.ts`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/market/.olares/config/cluster/deploy/market_deploy.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  { title: "Cognee", link: "/use-cases/cognee", category: "AI workbench", description: "Build and explore connected knowledge from documents", descriptionZh: "从文档构建并浏览相互关联的知识" },
+        image: beclab/market-backend:v0.6.133
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        image: beclab/market-backend:v0.6.129
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec498292` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36caf4ca` are properly handled with clean fallback behavior.

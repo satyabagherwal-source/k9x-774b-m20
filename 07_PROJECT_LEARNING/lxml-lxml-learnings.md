@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source**: github ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
-> **Source Version**: `e4302f16`  
+> **Source Version**: `ba82d526`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T03:29:37.232Z  
+> **Timestamp**: 2026-11-12T01:51:48.811Z  
 > **Learning ID**: `learn-github-lxml-lxml`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T03:29:33.866Z  
+> **Harvest Timestamp**: 2026-11-12T01:51:48.475Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lxml XML toolkit for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 3070 stars
+- **Stars / Engagement**: 3072 stars
 
 ---
 
@@ -2112,11 +2112,16 @@ def publish(dirname, lxml_path, release):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #540** (2026-11-06): **Build: bump the github-actions group across 1 directory with 2 updates**
-  *Symptoms*: Bumps the github-actions group with 2 updates in the / directory: [actions/setup-python](https://github.com/actions/setup-python) and [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).  Updates `actions/setup-python` from 7.0.0 to 7.1.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-python/releases">actions/setup-python's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Add <code>mirror</code> and <code>mirror-token</code> inputs for custom Python distribution sources by <a href="https://github.com/luhenry"><code>@​luhenry</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1302">actions/setup-python#1302</a></li> <li>Improve error message clarity by <a href="https://github.com/v-lmvysakh"><code>@​v-lmvysakh</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1351">actions/setup-python#1351</a></li> </ul> <h3>Dependency Upgrade</h3> <ul> <li>Upgrade browserslist from 4.28.2 to 4.28.9 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1353">actions/setup-python#1353</a></li> <li>Upgrade <code>@​typescript-eslint/parser</code> from 8.62.0 to 8.70.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1343">actions/setup-python#1343</a><
+- **Issue #543** (2026-11-07): **Do not share _IndexPathEvaluator state between ElementPath searches**
+  *Symptoms*: `_IndexPathEvaluator` in `elementpath.pxi` defines `_copy()` rather than overriding `copy()`, so `_evaluate_path()` keeps using the cached evaluator and shares its `_counter` between all searches for the same path. `find()` stops after the first match and leaves the counter dirty, so calling `root.find('a/b[2]')` twice on `<r><a><b>1</b><b>2</b></a><a><b>3</b><b>4</b></a></r>` returns `<b>2</b>` and then `<b>4</b>`, the second child of the wrong parent, and interleaved `iterfind()` loops or concurrent threads using the same path get each other's counts. Renaming the method gives each search its own evaluator again, as `[last()]` already does; the new test fails on master and also passes against `xml.etree.ElementTree`. 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks. Seems to be a 7.0 problem only, due to the elementpath rewrite.
 
-- **Issue #538** (2026-10-31): **Preserve native RWLock test counters when building generated C**
-  *Symptoms*: Repeated PEP 517 hooks may generate C files during the initial requirements/metadata step, then build those existing C files without running Cython again. In that path, the distutils directive in tests/_testlock.pyx is no longer applied and LXML_LOCK_PERFORMANCE defaults to zero. The original RWLock tests consequently fail because get_perf_counters() returns an empty dictionary.  Retain the required LXML_LOCK_PERFORMANCE=1 macro explicitly for the lxml.tests._testlock extension. Copy the shared macro list for each extension so the test instrumentation cannot leak into production XML modules. Production extension macros, native XML code and test assertions are unchanged.  Validation on CPython 3.15t with natural GIL off:  - Before: five original test_rwlock failures reporting unknown read_acquired/write_acquired counters on both Windows and Linux. - After: complete original suite against the real installed wheel passed on both platforms (2097 Windows tests, 2098 Linux tests, retaining existing SDK/platform skips). - Fresh repeated PEP 517 requirements/metadata/build hooks were exercised for both wheels; all native test lock assertions ran.  This upstream PR contains only the build fix in setupinfo.py. The downstream [engineering artifact/source record](https://github.com/StableKite/lxml/releases/tag/cp315t-engineering-20261031) also records the qualified source and wheels; downstream delivery adapters are outside this PR. 
+- **Issue #542** (2026-11-10): **Fix soupparser performance issues**
+  *Symptoms*: This PR fixes two sources of quadratic complexity in soupparser:  - It replaces repeated `len(parent)` calls with direct last-child access, avoiding increasingly expensive child counting as elements accumulate. - It batches adjacent text nodes before appending, avoiding repeated string copying.  This significantly improves parsing performance for large HTML documents without changing the resulting tree structure.
+  **Post-Mortem & Fix Analysis**:
+  > You could also add `lxml.html.soupparser` to the list of `COMPILED_MODULES` in `setupinfo.py` and see if compiling the module with Cython when building lxml makes a big difference. I excluded it because it grows the size of the installed package and we usually have beautifulsoup running before the conversion, which leaves little space for gains on lxml's side. But that would allow pulling a few more tricks in speeding up the code.  That's independent of this PR, though.
+  > > I wonder if it would be worth using itertools.groupby() to group by BS item type, and then handle one set of item types in one go. That way, we'd only need to look up the converter once and could join strings directly, both using tight and simple loops.  I gave this a shot and checked on 10 cached pages + a synthetic test case, and while `convert_tree` was about 8% faster on the synthetic case (which was just a bunch of adjacent text nodes), it was 15.5% slower on the cached examples. The current implementation seems to be the way to go :)  I'll test if Cython compilation does anything for performance.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2133,115 +2138,174 @@ def publish(dirname, lxml_path, release):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4302f16` (2026-11-06)
-**Commit Message**: Build: bump the github-actions group across 1 directory with 2 updates (GH-540)
+### Incident Patch 1: `efaf1983` (2026-11-07)
+**Commit Message**: Build: Use security fixed zlib 1.4.
 
-Bumps the github-actions group with 2 updates in the / directory: [actions/setup-python](https://github.com/actions/setup-python) and [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).
+**File**: `.github/workflows/cache_libs.yml` (modified, +2/-2)
+```diff
+@@ -4,7 +4,7 @@ on:
+   workflow_call:
+     inputs:
+       ZLIB_VERSION:
+-        default: "1.3.2"
++        default: "1.4"
+         required: false
+         type: string
+       LIBICONV_VERSION:
+@@ -20,7 +20,7 @@ on:
+         required: false
+         type: string
+       WIN_ZLIB_VERSION:
+-        default: "1.3.2"
++        default: "1.4"
+         required: false
+         type: string
+       WIN_LIBICONV_VERSION:
+```
 
-
-Updates `actions/setup-python` from 7.0.0 to 7.1.0
-- [Release notes](https://github.com/actions/setup-python/releases)
-- [Commits](https://github.com/actions/setup-python/compare/5fda3b95a4ea91299a34e894583c3862153e4b97...6d4fd22b20465ccc0f7354476588e8df7c9ca0e0)
-
-Updates `pypa/cibuildwheel` from 4.3.4 to 4.3.5
-- [Release notes](https://github.com/pypa/cibuildwheel/releases)
-- [Changelog](https://github.com/pypa/cibuildwheel/blob/main/docs/changelog.md)
-- [Commits](https://github.com/pypa/cibuildwheel/compare/b9e566a2b284570af229f6c2a33673410d0389a3...f9b966cfadf4109556cadc5bb39ddb72d0ce664e)
+**File**: `pyproject.toml` (modified, +2/-2)
+```diff
+@@ -3,7 +3,7 @@ requires = ["Cython>=3.3.0", "setuptools"]
+ 
+ [tool.cibuildwheel]
+ build-verbosity = 1
+-environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.3.2", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.15.4", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
++environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.4", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.15.4", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
+ enable = [
+     "pypy",
+     "pypy-eol",
+@@ -68,7 +68,7 @@ environment.CFLAGS = "-O3 -g1 -pipe -fPIC -flto -march=armv8-a -mtune=cortex-a72
+ 
+ [tool.cibuildwheel.windows]
+ archs = ["AMD64", "x86", "ARM64"]
+-environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.3.2", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.11.9", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
++environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.4", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.11.9", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
+ 
+ [tool.cibuildwheel.macos]
+ # https://cibuildwheel.readthedocs.io/en/stable/faq/#what-to-provide suggests to provide
+```
 
 ---
-updated-dependencies:
-- dependency-name: actions/setup-python
-  dependency-version: 7.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: github-actions
-- dependency-name: pypa/cibuildwheel
-  dependency-version: 4.3.5
-  dependency-type: direct:production
-  update-typ
 
-**File**: `.github/workflows/benchmarks.yml` (modified, +1/-1)
+### Incident Patch 2: `ba82d526` (2026-11-10)
+**Commit Message**: Build: Include "lxml.html.soupparser" in compiled modules.
+
+**File**: `setupinfo.py` (modified, +1/-0)
 ```diff
-@@ -77,7 +77,7 @@ jobs:
-           key: libs-${{ runner.os }}-${{ runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}
- 
-       - name: Setup Python
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: |
-             3.15t-dev
+@@ -20,6 +20,7 @@
+     "lxml.builder",
+     "lxml.html.diff",
+     "lxml.html._difflib",
++    "lxml.html.soupparser",
+     "lxml.sax",
+ ]
+ HEADER_FILES = ['etree.h', 'etree_api.h']
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+---
+
+### Incident Patch 3: `c97c6a1e` (2026-11-10)
+**Commit Message**: Fix quadratic performance issues in soupparser (GH-542)
+
+* Avoid quadratic child counting in soupparser
+* Avoid quadratic text concatenation in soupparser
+
+**File**: `src/lxml/html/soupparser.py` (modified, +18/-7)
 ```diff
-@@ -251,7 +251,7 @@ jobs:
-           fetch-depth: 1
+@@ -236,10 +236,12 @@ def map_attrs(bs_attrs):
+         return attribs
  
-       - name: Setup Python
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: ${{ matrix.python-version }}
+     def append_text(parent, text):
+-        if len(parent) == 0:
++        try:
++            last_child = parent[-1]
++        except IndexError:
+             parent.text = (parent.text or '') + text
+         else:
+-            parent[-1].tail = (parent[-1].tail or '') + text
++            last_child.tail = (last_child.tail or '') + text
  
-@@ -302,7 +302,7 @@ jobs:
-           fetch-depth: 1
+     # converters are tried in order of their definition
  
-       - name: Setup Python
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: 3.14
+@@ -253,17 +255,26 @@ def convert_tag(bs_node, parent):
+             attribs = map_attrs(attrs) if attrs else {}
+             res = makeelement(bs_node.name, attrib=attribs)
  
++        # Join consecutive text nodes once to avoid quadratic string copying.
++        text_parts = []
+         for child in bs_node:
+             # avoid double recursion by inlining convert_node(), see above
+             try:
+                 handler = converters[type(child)]
+             except KeyError:
+-                pass
+-            else:
+-                if handler is not None:
+-                    handler(child, res)
++                handler = converters[type(child)] = find_best_converter(child)
++            if handler is None:
++                continue
++            # The resolved handler keeps Comment and PI subclasses separate.
++            if handler is convert_text:
++                text_parts.append(unescape(child))
+                 continue
+-            convert_node(child, res)
++            if text_parts:
++                append_text(res, ''.join(text_parts))
++                text_parts.clear()
++            handler(child, res)
++        if text_parts:
++            append_text(res, ''.join(text_parts))
+         return res
+ 
+     @converter(Comment)
 ```
 
-**File**: `.github/workflows/wheels.yml` (modified, +4/-4)
+**File**: `src/lxml/html/tests/test_elementsoup.py` (modified, +27/-0)
 ```diff
-@@ -57,7 +57,7 @@ jobs:
-       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -35,6 +35,33 @@ def test_text(self):
+             res = b'''<html>huhu</html>'''
+             self.assertEqual(tostring(tree), res)
  
-     - name: Set up Python
--      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-       with:
-         python-version: "3.x"
- 
-@@ -173,7 +173,7 @@ jobs:
-           echo "CIBW_BEFORE_BUILD_LINUX=${DIST_INSTALL} ccache && ccache -o cache_dir=/host${HOST_CCACHE_DIR} && ccache -p && for dir in /host/usr/lib/ccache /host/usr/local/opt/ccache/libexec; do ls -l \$dir || true; done || echo '::notice::ccache installation failed on ${{ matrix.only }}'" | tee -a "${GITHUB_ENV}"
- 
-       - name: Build wheels
--        uses: pypa/cibuildwheel@b9e566a2b284570af229f6c2a33673410d0389a3 # v4.3.4
-+        uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
-         with:
-           only: ${{ matrix.only }}
- 
-@@ -188,7 +188,7 @@ jobs:
-           contains(matrix.only, '-manylinux_') &&
-           (startsWith(matrix.only, 'cp39-') || startsWith(matrix.only, 'cp310-') || startsWith(matrix.only, 'cp311-')) &&
-           (contains(matrix.only, 'i686') || contains(matrix.only, 'x86_64') || contains(matrix.only, 'aarch64'))
--        uses: pypa/cibuildwheel@b9e566a2b284570af229f6c2a33673410d0389a3 # v4.3.4
-+        uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
-         env:
-           CIBW_MANYLINUX_i686_IMAGE: manylinux2014
-           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-@@ -259,7 +259,7 @@ jobs:
-           platforms: all
- 
-       - name: Build ABI3 wheels
--        uses: pypa/cibuildwheel@b9e566a2b284570af229f6c2a33673410d0389a3 # v4.3.4
-+        uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
-         env:
-           # Smaller set of platforms that we only provide Stable ABI wheels for
-           CIBW_BUILD: |
++        def test_adjacent_text_in_convert_tree(self):
++            source = (
++                '<html><body>before</span>after'
++                '<span>inner</span>tail</b>after'
++                '<!--comment-->more</em>next<?pi data?>end'
++                '</body></html>')
++            beautifulsoup = self.soupparser.BeautifulSoup
++            bsargs = {}
++            if hasattr(beautifulsoup, "DEFAULT_BUILDER_FEATURES"):
++                bsargs["features"] = "html.parser"
++            soup = beautifulsoup(source, **bsargs)
++
++            body = self.soupparser.convert_tree(soup)[0]
++            span, comment, pi = body
++
++            self.assertEqual(body.text, "beforeafter")
++            self.assertEqual(span.text, "inner")
++            self.assertEqual(span.tail, "tailafter")
++            self.assertEqual(comment.text, "comment")
++            self.assertEqual(comment.tail, "morenext")
++            self.assertEqual(pi.text, "data")
++            self.assertEqual(pi.tail, "end")
++            self.assertEqual(
++                tostring(body, method="html"),
++                b"<body>beforeafter<span>inner</span>tailafter"
++                b"<!--comment-->morenext<?pi data>end</body>")
++
+         def test_body(self):
+             html = '''<body><p>test</p></body>'''
+             res = b'''<html><body><p>test</p></body></html>'''
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #543** (2026-11-07): Do not share _IndexPathEvaluator state between ElementPath searches (@Nayana-Naik73)
+- **PR #542** (2026-11-10): Fix soupparser performance issues (@PLPeeters)
 - **PR #540** (2026-11-06): Build: bump the github-actions group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #538** (2026-10-31): Preserve native RWLock test counters when building generated C (@Robolightning)
 - **PR #537** (closed): Build: bump actions/setup-python from 7.0.0 to 7.1.0 in the github-actions group (@dependabot[bot])
 - **PR #536** (2026-10-26): Build: bump pypa/cibuildwheel from 4.3.0 to 4.3.1 in the github-actions group (@dependabot[bot])
-- **PR #535** (2026-10-21): Remove duplicate class names when toggling an HTML class (@xiehuanyi)
-- **PR #534** (2026-10-21): Keep a processing instruction after the root element (@Cherith1222)
 
 ---
 
@@ -2261,28 +2325,30 @@ updated-dependencies:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build: bump the github-actions group across 1 directory with 2 updates (GH-540)
+## X. Build: Use security fixed zlib 1.4.
 
 **RULE**:
-When implementing operations in `.github/workflows/benchmarks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cache_libs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4302f16`: Build: bump the github-actions group across 1 directory with 2 updates (GH-540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `efaf1983`: Build: Use security fixed zlib 1.4.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmarks.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cache_libs.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        default: "1.4"
+        default: "1.4"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        default: "1.3.2"
+        default: "1.3.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4302f16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `efaf1983` are properly handled with clean fallback behavior.

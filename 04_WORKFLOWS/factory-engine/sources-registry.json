@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T01:44:30.298Z",
-    "lastVerified": "2026-11-12T01:44:30.298Z",
+    "lastChecked": "2026-11-12T01:52:12.473Z",
+    "lastVerified": "2026-11-12T01:52:12.473Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -365,9 +365,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T01:11:56.467Z",
+    "lastChecked": "2026-11-12T01:51:55.995Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T01:11:56.467Z"
+    "lastVerified": "2026-11-12T01:51:55.995Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1737,9 +1737,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-11T15:08:56.549Z",
+    "lastChecked": "2026-11-12T01:51:51.033Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-11T15:08:56.549Z"
+    "lastVerified": "2026-11-12T01:51:51.033Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -3273,14 +3273,14 @@
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T16:18:28.457Z",
-    "lastVerified": "2026-11-09T16:18:28.457Z",
+    "lastChecked": "2026-11-12T01:51:53.031Z",
+    "lastVerified": "2026-11-12T01:51:53.031Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "85bb04aedc010e220647d8d0156fa00c5d79a56e3948debbb9d466a08545bfe1",
+    "contentHash": "4731c5a82193f43b7de0c9033ad3da623f61e91d5c769a823e1c7cfc3fb5c005",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3613,9 +3613,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-09T07:00:47.759Z",
+    "lastChecked": "2026-11-12T01:51:40.918Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-09T07:00:47.759Z"
+    "lastVerified": "2026-11-12T01:51:40.918Z"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
     "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -5677,12 +5677,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sfu-db-connector-x": {
-    "name": "sfu-db/connector-x",
+    "name": "connector-x",
     "officialUrl": "https://github.com/sfu-db/connector-x",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T15:12:49.701Z",
-    "lastVerified": "2026-11-09T15:12:49.701Z",
+    "lastChecked": "2026-11-12T01:51:53.503Z",
+    "lastVerified": "2026-11-12T01:51:53.503Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sfu-db-connector-x",
@@ -5691,7 +5691,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7ad4ba05"
   },
   "nvidia-cuda-rust": {
     "name": "NVIDIA/cuda-rust",
@@ -9357,8 +9358,8 @@
     "officialUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T02:49:27.818Z",
-    "lastVerified": "2026-11-08T02:49:27.818Z",
+    "lastChecked": "2026-11-12T01:51:45.970Z",
+    "lastVerified": "2026-11-12T01:51:45.970Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mochidiffusion-mochidiffusion",
@@ -11270,14 +11271,14 @@
     "officialUrl": "https://github.com/lxml/lxml",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T03:29:33.866Z",
-    "lastVerified": "2026-11-07T03:29:33.866Z",
+    "lastChecked": "2026-11-12T01:51:48.475Z",
+    "lastVerified": "2026-11-12T01:51:48.475Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lxml-lxml",
-    "contentHash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
+    "contentHash": "47b8bac021feae427ec12f2f3ab1fd8c28097eb6e6068d7308cee11f58b4b8a4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

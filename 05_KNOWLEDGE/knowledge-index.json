@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T01:31:23.591Z",
+  "last_updated": "2026-11-12T01:52:07.039Z",
   "total_verified_learnings": 1256,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5029,8 +5029,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "ec498292",
-      "content_hash": "85bb04aedc010e220647d8d0156fa00c5d79a56e3948debbb9d466a08545bfe1",
+      "source_version": "36caf4ca",
+      "content_hash": "4731c5a82193f43b7de0c9033ad3da623f61e91d5c769a823e1c7cfc3fb5c005",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -5042,6 +5042,11 @@
         {
           "number": null,
           "title": "docs: add Cognee knowledge and internal MCP workflows (#4327)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "market(fix): refine catalog handling and api safeguards (#4436)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5145,7 +5150,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:18:30.326Z",
+      "verified_at": "2026-11-12T01:52:07.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81799,14 +81804,19 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "e4302f16",
-      "content_hash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
+      "source_version": "ba82d526",
+      "content_hash": "47b8bac021feae427ec12f2f3ab1fd8c28097eb6e6068d7308cee11f58b4b8a4",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Build: bump the github-actions group across 1 directory with 2 updates (GH-540)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Build: Use security fixed zlib 1.4.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81835,7 +81845,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:29:38.365Z",
+      "verified_at": "2026-11-12T01:52:01.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
