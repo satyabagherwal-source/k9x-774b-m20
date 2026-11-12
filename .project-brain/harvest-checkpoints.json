@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T12:50:32.107Z",
+  "last_updated": "2026-11-12T12:58:05.550Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2991,14 +2991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rollup-rollup",
-      "content_hash": "342e8014ab0b93f1f0ada0bc7e9f5d31bed19d93790f7f0b571383cad37e4c48",
-      "verified_at": "2026-11-07T20:42:14.733Z",
+      "content_hash": "5e8eb1101fba84d45ad7abef4d5bf4621606b530b8da2f48e00511487f2e9b0e",
+      "verified_at": "2026-11-12T12:58:05.549Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:42:14.733Z"
+      "last_updated": "2026-11-12T12:58:05.549Z"
     },
     "rmax/scrapy-redis": {
       "repository": "rmax/scrapy-redis",

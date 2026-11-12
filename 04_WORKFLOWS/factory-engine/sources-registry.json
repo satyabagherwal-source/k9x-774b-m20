@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T12:50:38.314Z",
-    "lastVerified": "2026-11-12T12:50:38.314Z",
+    "lastChecked": "2026-11-12T12:58:09.229Z",
+    "lastVerified": "2026-11-12T12:58:09.229Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -362,9 +362,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T11:50:56.093Z",
+    "lastChecked": "2026-11-12T12:58:03.371Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T11:50:56.093Z"
+    "lastVerified": "2026-11-12T12:58:03.371Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -653,8 +653,8 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T05:06:24.302Z",
-    "lastVerified": "2026-11-10T05:06:24.302Z",
+    "lastChecked": "2026-11-12T12:58:00.969Z",
+    "lastVerified": "2026-11-12T12:58:00.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
@@ -804,8 +804,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T05:47:41.484Z",
-    "lastVerified": "2026-11-12T05:47:41.484Z",
+    "lastChecked": "2026-11-12T12:57:58.461Z",
+    "lastVerified": "2026-11-12T12:57:58.461Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -6167,9 +6167,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-11T06:04:39.432Z",
+    "lastChecked": "2026-11-12T12:57:55.928Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-11T06:04:39.432Z"
+    "lastVerified": "2026-11-12T12:57:55.928Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -6507,9 +6507,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-11-09T21:05:42.762Z",
+    "lastChecked": "2026-11-12T12:57:48.342Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-11-09T21:05:42.762Z"
+    "lastVerified": "2026-11-12T12:57:48.342Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -10365,9 +10365,9 @@
   "touchlab-skie": {
     "name": "SKIE",
     "officialUrl": "https://github.com/touchlab/SKIE",
-    "lastChecked": "2026-11-08T11:30:24.089Z",
+    "lastChecked": "2026-11-12T12:57:53.385Z",
     "revisionIdentifier": "25bb2b91",
-    "lastVerified": "2026-11-08T11:30:24.089Z"
+    "lastVerified": "2026-11-12T12:57:53.385Z"
   },
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
@@ -12228,14 +12228,14 @@
     "officialUrl": "https://github.com/rollup/rollup",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T20:39:22.578Z",
-    "lastVerified": "2026-11-07T20:39:22.578Z",
+    "lastChecked": "2026-11-12T12:57:56.176Z",
+    "lastVerified": "2026-11-12T12:57:56.176Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rollup-rollup",
-    "contentHash": "342e8014ab0b93f1f0ada0bc7e9f5d31bed19d93790f7f0b571383cad37e4c48",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 2,
+    "contentHash": "5e8eb1101fba84d45ad7abef4d5bf4621606b530b8da2f48e00511487f2e9b0e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

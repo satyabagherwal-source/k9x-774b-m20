@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T12:51:11.188Z",
+  "updated_at": "2026-11-12T12:58:09.339Z",
   "stats": {
-    "total_discovered": 1332,
-    "approved_pending_harvest": 1210,
+    "total_discovered": 1334,
+    "approved_pending_harvest": 1212,
     "harvested_count": 0,
     "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1219,
+      "COMMUNITY_AND_EXPERT": 1221,
       "OFFICIAL_DOCUMENTATION": 59,
       "STANDARDS_AND_SPECIFICATIONS": 51,
       "ENGINEERING_BLOGS": 1,
@@ -28467,6 +28467,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-843A793E92E9": {
+      "id": "SRC-843A793E92E9",
+      "url": "https://vercel.com/",
+      "title": "https://vercel.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:58:09.333Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-44AF8A45DBF6": {
+      "id": "SRC-44AF8A45DBF6",
+      "url": "https://vercel.com/git/authorize?team=rollup-js&slug=rollup-js&teamId=team_cdFV5jImY32UB9C9rzQ0JCXL&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%223ab93aabc3b67a0a6507ec7ba757e8aad60eac2d%22%7D%2C%22id%22%3A%22QmZNG8rC7gyZ4imP4QQbyX4AeRAYwruxM5XJMhaKGTrKaG%22%2C%22org%22%3A%22rollup%22%2C%22prId%22%3A6648%2C%22repo%22%3A%22rollup%22%7D",
+      "title": "https://vercel.com/git/authorize?team=rollup-js&slug=rollup-js&teamId=team_cdFV5jImY32UB9C9rzQ0JCXL&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%223ab93aabc3b67a0a6507ec7ba757e8aad60eac2d%22%7D%2C%22id%22%3A%22QmZNG8rC7gyZ4imP4QQbyX4AeRAYwruxM5XJMhaKGTrKaG%22%2C%22org%22%3A%22rollup%22%2C%22prId%22%3A6648%2C%22repo%22%3A%22rollup%22%7D",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:58:09.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
       }
     }
   }

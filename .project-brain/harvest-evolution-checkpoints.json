@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T12:51:11.191Z",
+  "last_updated": "2026-11-12T12:58:09.429Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T11:51:15.265Z",
@@ -8,12 +8,12 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-12T10:43:12.706Z",
+      "processed_at": "2026-11-12T12:58:09.348Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-12T01:44:30.443Z",
+      "processed_at": "2026-11-12T12:58:09.378Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1121,9 +1121,14 @@
       "processed_at": "2026-11-12T12:50:51.297Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "rollup-rollup-learnings.md": {
+      "processed_at": "2026-11-12T12:58:09.320Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 300,
+  "total_dossiers_evaluated": 303,
   "total_canonical_promoted": 38,
-  "total_staged_for_review": 261
+  "total_staged_for_review": 264
 }

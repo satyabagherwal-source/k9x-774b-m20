@@ -9178,3 +9178,4 @@ Every entry in this ledger must capture:
 | `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `39b7c8a8` | Multi-dimensional audit evidence | 2026-11-12T12:50:32.086Z |
 | `learn-dom-h-ee08d822` | `project://webpack-webpack` | `39b7c8a8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md` | 2026-11-12T12:50:51.248Z |
 | `learn-dom-h-b173c8f8` | `project://dathere-qsv` | `58854051` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-12T12:51:11.112Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `41ee3267` | Multi-dimensional audit evidence | 2026-11-12T12:58:05.542Z |

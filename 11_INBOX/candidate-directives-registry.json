@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T12:50:51.295Z",
+  "last_updated": "2026-11-12T12:58:09.377Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6878,6 +6878,33 @@
       "source_repo": "touchlab-xcode-kotlin",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D65899-bump-version-to-2-2-2-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-342C15",
+      "directive_title": "invalid output for exported destructuring declarations with defaults (#6648)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rollup-rollup",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-342C15-invalid-output-for-exported-destructurin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2B0017",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2B0017-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-12C225",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-12C225-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T12:50:31.961Z",
+  "last_updated": "2026-11-12T12:58:05.428Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -84054,8 +84054,8 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "73fae6e8",
-      "content_hash": "342e8014ab0b93f1f0ada0bc7e9f5d31bed19d93790f7f0b571383cad37e4c48",
+      "source_version": "41ee3267",
+      "content_hash": "5e8eb1101fba84d45ad7abef4d5bf4621606b530b8da2f48e00511487f2e9b0e",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
@@ -84073,6 +84073,11 @@
           "number": null,
           "title": "Build-Time Isolation and Dynamic Purging of Host-Compiling Native Dependencies",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "invalid output for exported destructuring declarations with defaults (#6648)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1641,
@@ -84120,7 +84125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:42:14.586Z",
+      "verified_at": "2026-11-12T12:58:05.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
