@@ -9201,3 +9201,7 @@
 | `CYCLE-20261112-AIG5` | `2026-11-12T21:02:21.413Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f9033c9f...`) |
 | `CYCLE-20261112-AKGX` | `2026-11-12T21:02:24.033Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`570227c1...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T21:02:39.987Z` | `hf-facebook-sam-3d-body-dinov3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3DABAA62` [Domain D] | Yes (`53d78204...`) |
+| `CYCLE-20261112-L6MK` | `2026-11-12T21:10:39.308Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`becc569f...`) |
+| `CYCLE-20261112-LANJ` | `2026-11-12T21:10:44.527Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4385fdea...`) |
+| `CYCLE-20261112-LDW8` | `2026-11-12T21:10:48.728Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8f016883...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T21:11:09.945Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-34E068C1` [Domain D] | Yes (`525f60a2...`) |

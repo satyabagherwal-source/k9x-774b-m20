@@ -9210,3 +9210,7 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `3142f33a` | Multi-dimensional audit evidence | 2026-11-12T21:02:21.417Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `6181e756` | Multi-dimensional audit evidence | 2026-11-12T21:02:24.037Z |
 | `learn-dom-d-3dabaa62` | `project://hf-facebook-sam-3d-body-dinov3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | 2026-11-12T21:02:39.987Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `51f3b789` | Multi-dimensional audit evidence | 2026-11-12T21:10:39.313Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `2fed022a` | Multi-dimensional audit evidence | 2026-11-12T21:10:44.532Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `1a559e40` | Multi-dimensional audit evidence | 2026-11-12T21:10:48.732Z |
+| `learn-dom-d-34e068c1` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-12T21:11:09.945Z |

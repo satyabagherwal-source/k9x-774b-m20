@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:02:40.084Z",
+  "last_updated": "2026-11-12T21:10:54.612Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7193,6 +7193,24 @@
       "source_repo": "sigstore-cosign",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1BBB63-deps-bump-the-gomod-group-across-1-direc.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-490DD6",
+      "directive_title": "meta/redis: keep in-use inodes when gc deletes leaked inodes (#7813)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "juicedata-juicefs",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-490DD6-meta-redis-keep-in-use-inodes-when-gc-de.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D666A8",
+      "directive_title": "renovate: Hold docutils in the docs-builder requirements",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D666A8-renovate-hold-docutils-in-the-docs-build.md",
       "staged_date": "2026-11-12"
     }
   ]

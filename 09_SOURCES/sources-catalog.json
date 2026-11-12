@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "cc21315a",
+    "sourceVersion": "51f3b789",
     "license": "Apache-2.0",
-    "contentHash": "d500403ec0d1d2401c3c0645cd3f3c6c3561dd617981c574c13fb0a329b1697d",
-    "lastHarvestedAt": "2026-11-12T03:48:51.844Z",
+    "contentHash": "becc569f94f68ef55d7b1edff479fec550dc7262fa5a343558925c5fbc56cd7e",
+    "lastHarvestedAt": "2026-11-12T21:10:39.313Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "d947de73",
+    "sourceVersion": "1a559e40",
     "license": "Apache-2.0",
-    "contentHash": "2ca6ca3bde9a9fb19c249f5913529bcb849c8ca681d27d549be9d2c1a82f97b3",
-    "lastHarvestedAt": "2026-11-12T08:53:00.339Z",
+    "contentHash": "8f0168830209c6f974f10fe7559d98c21e99eaae0c7c0ef3fa600b72298c77e6",
+    "lastHarvestedAt": "2026-11-12T21:10:48.732Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "e7b31f31",
+    "sourceVersion": "2fed022a",
     "license": "Apache-2.0",
-    "contentHash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
-    "lastHarvestedAt": "2026-11-11T10:00:18.974Z",
+    "contentHash": "4385fdeace9d5c6475d6f920003e8ee597f3a9e027f563defa369df272565823",
+    "lastHarvestedAt": "2026-11-12T21:10:44.532Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {

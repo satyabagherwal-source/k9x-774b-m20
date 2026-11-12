@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T21:02:28.044Z",
-    "lastVerified": "2026-11-12T21:02:28.044Z",
+    "lastChecked": "2026-11-12T21:10:54.454Z",
+    "lastVerified": "2026-11-12T21:10:54.454Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -450,22 +450,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T15:17:27.908Z",
-    "lastVerified": "2026-11-12T15:17:27.908Z",
+    "lastChecked": "2026-11-12T21:10:38.641Z",
+    "lastVerified": "2026-11-12T21:10:38.641Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d500403ec0d1d2401c3c0645cd3f3c6c3561dd617981c574c13fb0a329b1697d",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "becc569f94f68ef55d7b1edff479fec550dc7262fa5a343558925c5fbc56cd7e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cc21315a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1834,9 +1833,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-11T07:57:02.011Z",
+    "lastChecked": "2026-11-12T21:10:32.177Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-11T07:57:02.011Z"
+    "lastVerified": "2026-11-12T21:10:32.177Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -2005,14 +2004,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T08:52:46.992Z",
-    "lastVerified": "2026-11-12T08:52:46.992Z",
+    "lastChecked": "2026-11-12T21:10:34.568Z",
+    "lastVerified": "2026-11-12T21:10:34.568Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "2ca6ca3bde9a9fb19c249f5913529bcb849c8ca681d27d549be9d2c1a82f97b3",
+    "contentHash": "8f0168830209c6f974f10fe7559d98c21e99eaae0c7c0ef3fa600b72298c77e6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7078,14 +7077,14 @@
     "officialUrl": "https://github.com/juicedata/juicefs",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T10:00:02.276Z",
-    "lastVerified": "2026-11-11T10:00:02.276Z",
+    "lastChecked": "2026-11-12T21:10:30.930Z",
+    "lastVerified": "2026-11-12T21:10:30.930Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
+    "contentHash": "4385fdeace9d5c6475d6f920003e8ee597f3a9e027f563defa369df272565823",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7232,9 +7231,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-10T00:10:04.328Z",
+    "lastChecked": "2026-11-12T21:10:19.668Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-10T00:10:04.328Z"
+    "lastVerified": "2026-11-12T21:10:19.668Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -10624,12 +10623,12 @@
     "lastVerified": "2026-11-11T13:16:59.073Z"
   },
   "shifthackz-stable-diffusion-kmp": {
-    "name": "ShiftHackZ/SDAI-KMP",
+    "name": "Stable-Diffusion-KMP",
     "officialUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T15:28:18.141Z",
-    "lastVerified": "2026-11-08T15:28:18.141Z",
+    "lastChecked": "2026-11-12T21:10:24.665Z",
+    "lastVerified": "2026-11-12T21:10:24.665Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shifthackz-sdai-kmp",
@@ -10638,7 +10637,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7431c4b6"
   },
   "crawlcove-crawlcove-sitemap-validator": {
     "name": "crawlcove-sitemap-validator",
@@ -12554,9 +12554,9 @@
   "testing-library-dom-testing-library": {
     "name": "dom-testing-library",
     "officialUrl": "https://github.com/testing-library/dom-testing-library",
-    "lastChecked": "2026-11-07T22:30:09.960Z",
+    "lastChecked": "2026-11-12T21:10:22.160Z",
     "revisionIdentifier": "6049cc0b",
-    "lastVerified": "2026-11-07T22:30:09.960Z"
+    "lastVerified": "2026-11-12T21:10:22.160Z"
   },
   "sweetpad-dev-sweetpad": {
     "name": "sweetpad-dev/sweetpad",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:02:40.182Z",
+  "last_updated": "2026-11-12T21:11:10.001Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -113,7 +113,7 @@
       "staged_for_review": 1
     },
     "juicedata-juicefs-learnings.md": {
-      "processed_at": "2026-11-11T10:00:26.526Z",
+      "processed_at": "2026-11-12T21:10:54.577Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-12T08:53:59.706Z",
+      "processed_at": "2026-11-12T21:10:54.613Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,9 +773,9 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-12T03:49:14.467Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-12T21:11:09.946Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "tableproapp-tablepro-learnings.md": {
       "processed_at": "2026-11-12T03:56:31.366Z",
@@ -1228,7 +1228,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 339,
-  "total_canonical_promoted": 42,
-  "total_staged_for_review": 296
+  "total_dossiers_evaluated": 342,
+  "total_canonical_promoted": 43,
+  "total_staged_for_review": 298
 }

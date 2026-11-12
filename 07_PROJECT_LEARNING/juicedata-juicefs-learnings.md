@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `e7b31f31`  
+> **Source Version**: `2fed022a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:00:02.282Z  
+> **Timestamp**: 2026-11-12T21:10:31.102Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:00:02.276Z  
+> **Harvest Timestamp**: 2026-11-12T21:10:30.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14723 stars
+- **Stars / Engagement**: 14730 stars
 
 ---
 
@@ -1161,11 +1161,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7829** (2026-11-12): **cmd/sync: treat deferred deletion failures as warnings when --limit**
+  *Symptoms*: fix https://github.com/juicedata/jfs/issues/6913
+
 - **Issue #7822** (2026-11-10): **cmd/mount: warn about ACLs on Linux kernels older than 4.9**
   *Symptoms*: Mounting an ACL-enabled volume on Linux kernels older than 4.9 currently gives no warning that ACL permission checking requires newer kernel support. Log a warning with the detected kernel version and continue mounting. Skip non-Linux platforms and unknown kernel versions, and update the English and Chinese ACL documentation.  Validation: - Passed `go test ./cmd -run 'TestArgsOrder|TestHandleSysMountArgs|TestParseUIDGID' -count=1` on macOS arm64. - Passed `go fmt cmd/mount_unix.go` and `git diff --check`. - `make test.cmd` could not run because the sandbox does not permit `sudo`; the full integration suite and old-kernel behavior were not exercised locally.
-
-- **Issue #7820** (2026-11-11): **utils: fix lost wakeups in Cond**
-  *Symptoms*: `Cond.Signal` uses a nonblocking send on an unbuffered channel. A signal sent after a waiter releases the lock but before it starts receiving is dropped, causing the waiter to wait unnecessarily until timeout.  Register each waiter under the lock before unlocking. Signal/Broadcast close registered waiter channels so notifications survive this gap; timed-out waiters are removed.  Regression tests force this timing window and cover single/multiple signals, broadcast, timeout cleanup, and notifications without waiters. The reproducer fails before the fix; Cond tests pass 10 runs with `-race`.  Local SDK WriteFile measurements:  | Workload | Before | After | | --- | ---: | ---: | | 4 KiB, SQLite, median of 3 runs | 1.968 ms/op, 508 IOPS | 0.254 ms/op, 3937 IOPS | | 1 MiB, Redis, mean of 8 runs | 1955 MB/s | 2141 MB/s |
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1182,303 +1182,124 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7b31f31` (2026-11-11)
-**Commit Message**: utils: fix lost wakeups in Cond (#7820)
+### Incident Patch 1: `2fed022a` (2026-11-12)
+**Commit Message**: meta/redis: keep in-use inodes when gc deletes leaked inodes (#7813)
 
-Signed-off-by: miyang <[REDACTED_EMAIL]>
-
-**File**: `pkg/utils/cond.go` (modified, +25/-15)
+**File**: `pkg/meta/base_test.go` (modified, +55/-0)
 ```diff
-@@ -17,38 +17,41 @@
- package utils
- 
- import (
-+	"container/list"
- 	"sync"
- 	"time"
- )
- 
- // Cond is similar to sync.Cond, but you can wait with a timeout.
- type Cond struct {
--	L      sync.Locker
--	signal chan struct{}
-+	L       sync.Locker
-+	waiters list.List
- }
- 
- // Signal wakes up a waiter.
- // It's required for the caller to hold L.
- func (c *Cond) Signal() {
--	select {
--	case c.signal <- struct{}{}:
--	default:
-+	if e := c.waiters.Front(); e != nil {
-+		c.waiters.Remove(e)
-+		close(e.Value.(chan struct{}))
+@@ -7367,6 +7367,61 @@ func newFuseDefaultCtx(uid, primaryGid uint32) *fuseDefaultCtx {
  	}
  }
  
- // Broadcast wake up all the waiters.
- // It's required for the caller to hold L.
- func (c *Cond) Broadcast() {
--	close(c.signal)
--	c.signal = make(chan struct{})
-+	for c.waiters.Len() > 0 {
-+		c.Signal()
++func TestRedisCleanupLeakedInodes(t *testing.T) {
++	m := newTestRedisMeta(t, 8)
++	if err := m.NewSession(true); err != nil {
++		t.Fatalf("new session: %s", err)
 +	}
- }
- 
- var timerPool = sync.Pool{}
- 
- // WaitWithTimeout wait for a signal or a period of timeout eclipsed.
- // returns true in case of timeout else false
- func (c *Cond) WaitWithTimeout(d time.Duration) bool {
--	ch := c.signal
-+	ch := make(chan struct{})
-+	waiter := c.waiters.PushBack(ch)
- 	c.L.Unlock()
- 	var t *time.Timer
- 	if e := timerPool.Get(); e == nil {
-@@ -57,22 +60,29 @@ func (c *Cond) WaitWithTimeout(d time.Duration) bool {
- 		t = e.(*time.Timer)
- 		t.Reset(d)
- 	}
--	defer func() {
--		timerPool.Put(t)
--		c.L.Lock()
--	}()
-+	timeout := false
- 	select {
- 	case <-ch:
- 		if !t.Stop() {
- 			<-t.C
- 		}
--		return false
- 	case <-t.C:
--		return true
-+		timeout = true
++	defer m.CloseSession()
++
++	ctx := Background()
++	var inode Ino
++	if st := m.Mknod(ctx, RootInode, "held", TypeFile, 0644, 022, 0, "", &inode, nil); st != 0 {
++		t.Fatalf("create file: %s", st)
 +	}
-+	timerPool.Put(t)
-+	c.L.Lock()
-+	if timeout {
-+		select {
-+		case <-ch:
-+			timeout = false // Signaled after timing out but before re-acquiring L.
-+		default:
-+			c.waiters.Remove(waiter)
++	if st := m.Open(ctx, inode, syscall.O_RDWR, &Attr{}); st != 0 {
++		t.Fatalf("open file: %s", st)
++	}
++
++	if st := m.Unlink(ctx, RootInode, "held", true); st != 0 {
++		t.Fatalf("unlink held: %s", st)
++	}
++	if held, err := m.rdb.SIsMember(ctx, m.sustained(m.sid), inode.String()).Result(); err != nil || !held {
++		t.Fatalf("sustained inode: held=%t, err=%v", held, err)
++	}
++
++	var leaked Ino
++	if st := m.Mknod(ctx, RootInode, "leaked", TypeFile, 0644, 022, 0, "", &leaked, nil); st != 0 {
++		t.Fatalf("create leaked file: %s", st)
++	}
++	if err := m.rdb.HDel(ctx, m.entryKey(RootInode), "leaked").Err(); err != nil {
++		t.Fatalf("remove leaked entry: %s", err)
++	}
++	for _, ino := range []Ino{inode, leaked} {
++		data, err := m.rdb.Get(ctx, m.inodeKey(ino)).Bytes()
++		if err != nil {
++			t.Fatalf("get inode %d: %s", ino, err)
 +		}
- 	}
-+	return timeout
- }
- 
- // NewCond creates a Cond.
- func NewCond(lock sync.Locker) *Cond {
--	return &Cond{lock, make(chan struct{})}
-+	return &Cond{L: lock}
- }
-```
-
-**File**: `pkg/utils/cond_test.go` (modified, +144/-0)
-```diff
-@@ -103,3 +103,147 @@ func TestCond(t *testing.T) {
- 		}
- 	}
- }
-+
-+// Hold waiters between releasing the lock and receiving their notification.
-+type condTestLocker struct {
-+	sync.Mutex
-+	unlocked  chan struct{}
-+	resume    chan struct{}
-+	relocking chan struct{}
-+}
-+
-+func (m *condTestLocker) Lock() {
-+	if m.relocking != nil {
-+		m.relocking <- struct{}{}
-+	}
-+	m.Mutex.Lock()
-+}
-+
-+func (m *condTestLocker) Unlock() {
-+	m.Mutex.Unlock()
-+	m.unlocked <- struct{}{}
-+	<-m.resume
-+}
-+
-+func TestCondNotificationBeforeReceive(t *testing.T) {
-+	for _, tc := range []struct {
-+		name      string
-+		waiters   int
-+		signals   int
-+		broadcast bool
-+		timeout   bool
-+	}{
-+		{name: "Signal", waiters: 1, signals: 1},
-+		{name: "MultipleSignals", waiters: 8, signals: 8},
-+		{name: "SignalOne", waiters: 8, signals: 1},
-+		{name: "Broadcast", waiters: 8, broadcast: true},
-+		{name: "SignalAfterTimeout", waiters: 1, signals: 1, timeout: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			m := &condTestLocker{
-+				unlocked: make(chan struct{}, tc.waiters),
-+				resume:   make(chan struct{}),
-+			}
-+			c := NewCond(m)
-+			if tc.timeout {
-+				close(m.resume)
-+				m.Lock()
-+				timedOut := c.WaitWithTimeout(0)
-+				m.Mutex.Unlock()
-+				if !timedOut {
-+					t.Fatal("wait without a notification should time out")
-+				}
-+				<-m.unlocked
-+				m.resume = make(chan struct{})
-+			}
-+			done := make(chan bool, tc.waiters)
-+			for i := 0; i < tc.waiters; i++ {
-+				go func() {
-+					m.Lock()
-+					timedOut := c.WaitWithTimeout(100 * time.Millisecond)
-+					m.Mutex.Unlock()
-+					done <- timedOut
-+				}()
-+			}
-+			for i := 0; i < tc.waiters; i++ {
-+				<-m.unlocked
-+			}
-+			m.Lock()
-+			for i := 0; i < tc.signals; i++ {
-+				c.Signal()
-+			}
-+			if tc.broadcast {
-+				c.Broadcast()
-+			}
-+			close(m.resume)
-+			m.Mutex.Unlock()
-+			var notified int
-+			for i := 0; i < tc.waiters; i++ {
-+				if !<-done {
-+					notified++
-+				}
-+			}
-+			want := tc.signals
-+			if tc.broadcast {
-+				want = tc.waiters
-+			}
-+			if notified != want {
-+				t.Fatalf("notified %d waiters, want %d", notified, want)
-+			}
-+		})
-+	}
-+}
-+
-+func TestCondNotificationAfterTimeoutBeforeRelock(t *testing.T) {
-+	for _, name := range []string{"Signal", "Broadcast", "Timeout"} {
-+		t.Run(name, func(t *testing.T) {
-+			m := &condTestLocker{
-+				unlocked:  make(chan struct{}),
-+				resume:    make(chan struct{}),
-+				relocking: make(chan struct{}),
-+			}
-+			c := NewCond(m)
-+			done := make(chan bool, 1)
-+			go func() {
-+				m.Mutex.Lock()
-+				timedOut := c.WaitWithTimeout(0)
-+				m.Mutex.Unlock()
-+				done <- timedOut
-+			}()
-+			<-m.unlocked
-+			m.Mutex.Lock()
-+			close(m.resume)
-+			// The waiter has selected the timeout branch but cannot re-acquire L yet.
-+			<-m.relocking
-+			switch name {
-+			case "Signal":
-+				c.Signal()
-+			case "Broadcast":
-+				c.Broadcast()
-+			}
-+			m.Mutex.Unlock()
-+			if timedOut := <-done; timedOut != (name == "Timeout") {
-+				t.Errorf("timedOut = %v, want %v", timedOut, name == "Timeout")
-+			}
-+			m.Mutex.Lock()
-+			defer m.Mutex.Unlock()
-+			if c.waiters.Len() != 0 {
-+				t.Fatalf("got %d remaining waiters, want 0", c.waiters.Len())
-+			}
-+		})
-+	}
-+}
-+
-+func TestCondNotificationWithoutWaiters(t *testing.T) {
-+	var m sync.Mutex
-+	c := NewCond(&m)
-+	m.Lock()
-+	defer m.Unlock()
-+	for _, notify := range []func(){c.Signal, c.Broadcast} {
-+		// A notification without waiters must not be saved for a future wait.
-+		notify()
-+		if !c.WaitWithTimeout(time.Millisecond) {
-+			t.Fatal("notification was delivered to a future waiter")
++		var attr Attr
++		m.parseAttr(data, &attr)
++		attr.Ctime = time.Now().Add(-2 * time.Hour).Unix()
++		if err := m.rdb.Set(ctx, m.inodeKey(ino), m.marshal(&attr), 0).Err(); err != nil {
++			t.Fatalf("set inode %d: %s", ino, err)
 +		}
 +	}
-+}
-```
-
----
-
-### Incident Patch 2: `46b443cd` (2026-11-10)
-**Commit Message**: cmd/mount: warn about ACLs on Linux kernels older than 4.9 (#7822)
-
-**File**: `cmd/mount_unix.go` (modified, +4/-0)
-```diff
-@@ -1130,6 +1130,10 @@ func mountMain(v *vfs.VFS, c *cli.Context) {
- 	conf.NegEntryTimeout = utils.Duration(c.String("negative-entry-cache"))
- 	conf.ReaddirCache = c.Bool("readdir-cache")
- 	major, minor := utils.GetKernelVersion()
-+	if runtime.GOOS == "linux" && conf.Format.EnableACL && major > 0 &&
-+		(major < 4 || (major == 4 && minor < 9)) {
-+		logger.Warnf("POSIX ACL permission checking requires Linux kernel 4.9 or higher, current version: %d.%d", major, minor)
++
++	m.cleanupLeakedInodes(true)
++	if exists, err := m.rdb.Exists(ctx, m.inodeKey(inode)).Result(); err != nil || exists != 1 {
++		t.Fatalf("sustained inode was deleted: exists=%d, err=%v", exists, err)
 +	}
- 	if conf.ReaddirCache {
- 		if conf.AttrTimeout == 0 {
- 			logger.Warnf("readdir-cache is enabled without attr-cache, it's performance may be affected")
++	if exists, err := m.rdb.Exists(ctx, m.inodeKey(leaked)).Result(); err != nil || exists != 0 {
++		t.Fatalf("leaked inode was not deleted: exists=%d, err=%v", exists, err)
++	}
++	if st := m.Close(ctx, inode); st != 0 {
++		t.Fatalf("close file: %s", st)
++	}
++}
++
+ // TestRedisStaleReadLockCleanup is a regression test for the gateway outage:
+ // a read-lock whose holder crashed (no F_UNLCK) used to survive stale-session
+ // cleanup, because F_RDLCK never added the inode to locked$<sid>, which is the
 ```
 
-**File**: `docs/en/security/posix_acl.md` (modified, +1/-1)
+**File**: `pkg/meta/redis.go` (modified, +22/-2)
 ```diff
-@@ -54,5 +54,5 @@ For detailed rules, guidelines, and implementation of POSIX ACLs, see:
+@@ -3970,7 +3970,7 @@ func (m *redisMeta) cleanupLeakedInodes(delete bool) {
+ 	cutoff := time.Now().Add(time.Hour * -1)
+ 	prefix := len(m.prefix)
  
- ## Notes
- 
--* ACL permission checks require [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) or later.
-+* ACL permission checks require [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) or later. With ACLs enabled, mounting on older kernels logs a warning and continues, but ACL permission checks may be incorrect.
- * Enabling ACLs may impact performance. However, due to memory cache optimization, most usage scenarios experience minimal performance degradation.
-```
-
-**File**: `docs/zh_cn/security/posix_acl.md` (modified, +1/-1)
-```diff
-@@ -63,5 +63,5 @@ setfacl -m u:alice:rw- /mnt/jfs/file
- 
- ## 注意事项
- 
--- ACL 权限检测需要 [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) 及以上版本；
-+- ACL 权限检测需要 [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) 及以上版本；启用 ACL 后，在旧内核上挂载会输出警告并继续挂载，但 ACL 权限检测可能不正确。
- - 启用 ACL 会有额外的性能影响。但因为有内存缓存优化，大部分使用场景性能损耗都较低，可参考[压测结果](https://juicefs.com/zh-cn/blog/release-notes/juicefs-v12-beta-1-acl#03-%E6%80%A7%E8%83%BD)。
+-	_ = m.scan(ctx, "d[0-9]*", func(keys []string) error {
++	if err := m.scan(ctx, "d[0-9]*", func(keys []string) error {
+ 		for _, key := range keys {
+ 			ino, _ := strconv.Atoi(key[prefix+1:])
+ 			var entries []*Entry
+@@ -3984,7 +3984,27 @@ func (m *redisMeta) cleanupLeakedInodes(delete bool) {
+ 			}
+ 		}
+ 		return nil
+-	})
++	}); err != nil {
++		logger.Warnf("Skip cleaning up leaked inodes: scan directories: %s", err)
++		return
++	}
++	if err := m.scan(ctx, "session[0-9]*", func(keys []string) error {
++		for _, key := range keys {
++			inodes, err := m.rdb.SMembers(ctx, key).Result()
++			if err != nil {
++				logger.Errorf("SMembers %s: %s", key, err)
++				return err
++			}
++			for _, s := range inodes {
++				ino, _ := strconv.Atoi(s)
++				foundInodes[Ino(ino)] = struct{}{}
++			}
++		}
++		return nil
++	}); err != nil {
++		logger.Warnf("Skip cleaning up leaked inodes: scan sustained inodes: %s", err)
++		return
++	}
+ 	_ = m.scan(ctx, "i*", func(keys []string) error {
+ 		values, err := m.rdb.MGet(ctx, keys...).Result()
+ 		if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7829** (2026-11-12): cmd/sync: treat deferred deletion failures as warnings when --limit (@Xuyuchao-juice)
 - **PR #7822** (2026-11-10): cmd/mount: warn about ACLs on Linux kernels older than 4.9 (@jiefenghuang)
 - **PR #7820** (2026-11-11): utils: fix lost wakeups in Cond (@myangitzh)
 - **PR #7819** (2026-11-09): docs: explain mount point naming and mount options for systemd.mount (@BornThisWay)
 - **PR #7817** (2026-11-09): sdk: expose session-timeout in the Java and Python SDKs (@pandacooming)
-- **PR #7810** (2026-11-05): meta: add --session-timeout to delay stale session cleanup (@jiefenghuang)
-- **PR #7809** (2026-11-06): deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (@JerryChaox)
+- **PR #7813** (2026-11-12): meta/redis: keep in-use inodes when gc deletes leaked inodes (@zxh326)
 
 ---
 
@@ -1498,66 +1319,64 @@ Signed-off-by: miyang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. utils: fix lost wakeups in Cond (#7820)
+## X. meta/redis: keep in-use inodes when gc deletes leaked inodes (#7813)
 
 **RULE**:
-When implementing operations in `pkg/utils/cond.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/meta/base_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7b31f31`: utils: fix lost wakeups in Cond (#7820). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2fed022a`: meta/redis: keep in-use inodes when gc deletes leaked inodes (#7813). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/utils/cond.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"container/list"
-	L       sync.Locker
-	waiters list.List
-	if e := c.waiters.Front(); e != nil {
-		c.waiters.Remove(e)
-		close(e.Value.(chan struct{}))
-	for c.waiters.Len() > 0 {
-		c.Signal()
+func TestRedisCleanupLeakedInodes(t *testing.T) {
+	m := newTestRedisMeta(t, 8)
+	if err := m.NewSession(true); err != nil {
+		t.Fatalf("new session: %s", err)
 	}
-	ch := make(chan struct{})
-	waiter := c.waiters.PushBack(ch)
-	timeout := false
-		timeout = true
+	defer m.CloseSession()
+
+	ctx := Background()
+	var inode Ino
+	if st := m.Mknod(ctx, RootInode, "held", TypeFile, 0644, 022, 0, "", &inode, nil); st != 0 {
+		t.Fatalf("create file: %s", st)
 	}
-	timerPool.Put(t)
-	c.L.Lock()
-	if timeout {
-		select {
-		case <-ch:
-			timeout = false // Signaled after timing out but before re-acquiring L.
-		default:
-			c.waiters.Remove(waiter)
+	if st := m.Open(ctx, inode, syscall.O_RDWR, &Attr{}); st != 0 {
+		t.Fatalf("open file: %s", st)
+	}
+
+	if st := m.Unlink(ctx, RootInode, "held", true); st != 0 {
+		t.Fatalf("unlink held: %s", st)
+	}
+	if held, err := m.rdb.SIsMember(ctx, m.sustained(m.sid), inode.String()).Result(); err != nil || !held {
+		t.Fatalf("sustained inode: held=%t, err=%v", held, err)
+	}
+
+	var leaked Ino
+	if st := m.Mknod(ctx, RootInode, "leaked", TypeFile, 0644, 022, 0, "", &leaked, nil); st != 0 {
+		t.Fatalf("create leaked file: %s", st)
+	}
+	if err := m.rdb.HDel(ctx, m.entryKey(RootInode), "leaked").Err(); err != nil {
+		t.Fatalf("remove leaked entry: %s", err)
+	}
+	for _, ino := range []Ino{inode, leaked} {
+		data, err := m.rdb.Get(ctx, m.inodeKey(ino)).Bytes()
+		if err != nil {
+			t.Fatalf("get inode %d: %s", ino, err)
 		}
-	return timeout
-	return &Cond{L: lock}
+		var attr Attr
+		m.parseAttr(data,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	L      sync.Locker
-	signal chan struct{}
-	select {
-	case c.signal <- struct{}{}:
-	default:
-	close(c.signal)
-	c.signal = make(chan struct{})
-	ch := c.signal
-	defer func() {
-		timerPool.Put(t)
-		c.L.Lock()
-	}()
-		return false
-		return true
-	return &Cond{lock, make(chan struct{})}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7b31f31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2fed022a` are properly handled with clean fallback behavior.

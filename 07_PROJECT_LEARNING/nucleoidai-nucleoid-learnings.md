@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `cc21315a`  
+> **Source Version**: `51f3b789`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:48:43.030Z  
+> **Timestamp**: 2026-11-12T21:10:38.650Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:48:43.027Z  
+> **Harvest Timestamp**: 2026-11-12T21:10:38.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1212,37 +1212,101 @@ export async function instances({
   return { instances: dataset[0].instances };
 }
 
-export async function synthetize({
-  puzzle_id,
-  only_puzzle_dataset,
-  train_dataset,
-}) {
-  const { dataset } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
-    messages: [
-      {
-        role: "user",
-        content: `
-          query:
-          ${JSON.stringify(train_dataset)}
-          json_format:
-          {
-            "dataset": [{
-              "input_matrix": <INPUT_MATRIX>,
-              "output_matrix": <OUTPUT_MATRIX>,
-              "instances": [{
-                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-              }]
-            }]
-          }
-        `,
-      },
-    ],
-  });
+// Each synthesis turns an extracted instance clockwise by its rotation and
+// moves it by its offset, so every extracted instance gains three instances.
+const SYNTHESES = [
+  { rotation: 90, offset: { x: 1, y: 1 } },
+  { rotation: 90, offset: { x: -1, y: 1 } },
+  { rotation: 90, offset: { x: -1, y: -1 } },
+];
 
-  return dataset.map((pair) => ({ ...pair, accuracy: 0.8 }));
+// An instance's input or output matrix as a drawing. A synthesized instance
+// records each matrix's epoch, the column and row of position (0, 0), the
+// top-left cell of its pair's canvas; an extracted instance's matrices start
+// there.
+function drawing(matrix, epoch) {
+  return epoch ? { matrix, epoch } : matrix;
+}
+
+// Draws the object of an instance matrix turned clockwise by the rotation about
+// the pivot, the bounding box the instance turns about, which keeps its top-left
+// corner, and moved by the offset, on a canvas of the matrix's size that grows
+// as needed. The gaps between the object's and the pivot's edges turn with
+// them, so the object keeps its place relative to the pivot. An object without
+// cells stays an all-zero canvas.
+function turn(matrix, pivot, rotation: number, offset) {
+  const object = Matrix.locate(matrix);
+  const rows: number = matrix.length;
+  const cols: number = matrix[0]?.length ?? 0;
+  if (object.width === 0) {
+    return Matrix.draw([], rows, cols, 0, 0);
+  }
+
+  const turned = Matrix.rotate(object.matrix, rotation);
+  const left: number = object.x - pivot.x;
+  const top: number = object.y - pivot.y;
+  const right: number = pivot.x + pivot.width - (object.x + object.width);
+  const bottom: number = pivot.y + pivot.height - (object.y + object.height);
+  const [x, y] = [
+    [left, top],
+    [bottom, left],
+    [right, bottom],
+    [top, right],
+  ][(((rotation / 90) % 4) + 4) % 4];
+
+  return Matrix.draw(
+    turned,
+    rows,
+    cols,
+    pivot.x + offset.x + x,
+    pivot.y + offset.y + y
+  );
+}
+
+// Synthesizes three instances from each extracted instance, one per synthesis:
+// its input and output objects turn together about the input object's
+// bounding box, or the output object's when the input is empty, and move by
+// the offset, so each keeps its place relative to the other. The input object
+// moves to its position plus the offset, which may be negative, and each
+// matrix keeps its canvas, growing in any direction to hold the turned object.
+export function synthesize({ instances }) {
+  const synthesized = SYNTHESES.flatMap(({ rotation, offset }) =>
+    instances.map((instance) => {
+      const input = Matrix.locate(instance.input_instance_matrix);
+      const pivot =
+        input.width > 0
+          ? input
+          : Matrix.locate(instance.output_instance_matrix);
+      const input_drawing = turn(
+        instance.input_instance_matrix,
+        pivot,
+        rotation,
+        offset
+      );
+      const output_drawing = turn(
+        instance.output_instance_matrix,
+        pivot,
+        rotation,
+        offset
+      );
+
+      return {
+        input_instance_matrix: input_drawing.matrix,
+        input_instance_epoch: input_drawing.epoch,
+        output_instance_matrix: output_drawing.matrix,
+        output_instance_epoch: output_drawing.epoch,
+        synthesis: {
+          source: instance.instance_name,
+          rotation,
+          offset: { ...offset },
+        },
+      };
+    })
+  );
+
+  milestone.training_objects_synthesized({ instances: synthesized });
+
+  return { instances: synthesized };
 }
 
 export async function value({
@@ -1254,7 +1318,9 @@ export async function value({
 }) {
   milestone.constructing_instance({ instance_name: instance.instance_name });
 
-  const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
+  const { x, y, width, height } = Matrix.locate(
+    drawing(instance.input_instance_matrix, instance.input_instance_epoch)
+  );
 
   const { orientation } = await llm.generate({
     puzzle_id,
@@ -1398,35 +1464,19 @@ export async function state(train_dataset) {
   const objects = [];
 
   for (const dataset of train_dataset.dataset) {
-    const implementations = dataset.instances.map(
-      ({ implementation }) => implementation
-    );
+    // The extracted instances share one world and each synthesis makes its
+    // own, so a rule that relates objects, such as Obj.filter(...), never
+    // mixes objects of different worlds.
+    const worlds = new Map();
+    for (const instance of dataset.instances) {
+      const { rotation, offset } = instance.synthesis ?? {};
+      const world: string = JSON.stringify({ rotation, offset });
+      worlds.set(world, [...(worlds.get(world) ?? []), instance]);
+    }
 
     const canvas_width: number = dataset.input_matrix[0].length;
     const canvas_height: number = dataset.input_matrix.length;
-    const obj_list = await nucleoid.run(
-      [
-        `canvas_width = ${canvas_width}`,
-        `canvas_height = ${canvas_height}`,
-        ...train_dataset.declarations,
-        ...implementations,
-        "Obj[:]",
-      ].join("\n\n")
-    );
-
-    objects.push(...obj_list);
-
-    [...obj_list].forEach((instance) => {
-      const found_instance = dataset.instances.find(
-        ({ instance_name }) => instance.id === instance_name
-      );
-      found_instance.output_value = instance;
-    });
-  }
-
-  milestone.state({ phase: "analysis", obj_list: objects });
-}
-
+    for (cons
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1452,7 +1502,6 @@ export async function start(
       input_matrix: input,
       output_matrix: output,
       instances: undefined,
-      accuracy: 1,
     })),
     declarations: undefined,
     output_canvas: undefined,
@@ -1471,6 +1520,8 @@ export async function start(
   milestone.analysis();
 
   let instance_index: number = 0;
+  const next_instance_name = (): string =>
+    `obj${String(instance_index++).padStart(12, "0")}`;
 
   const { declarations, output_canvas } = await analyzer.declarations({
     puzzle_id,
@@ -1482,30 +1533,27 @@ export async function start(
   train_dataset.output_canvas = output_canvas;
 
   for (const dataset of train_dataset.dataset) {
-    if (dataset.accuracy === 1) {
-      const { instances } = await analyzer.instances({
-        puzzle_id,
-        only_puzzle_dataset,
-        train_dataset: { ...train_dataset, dataset: [dataset] },
-      });
+    const { instances } = await analyzer.instances({
+      puzzle_id,
+      only_puzzle_dataset,
+      train_dataset: { ...train_dataset, dataset: [dataset] },
+    });
 
-      dataset.instances = instances;
-
-      train_dataset.dataset.push(
-        ...(await analyzer.synthetize({
-          puzzle_id,
-          only_puzzle_dataset,
-          train_dataset: { ...train_dataset, dataset: [dataset] },
-        }))
-      );
+    for (const instance of instances) {
+      instance.instance_name = next_instance_name();
     }
 
-    for (const instance of dataset.instances) {
-      instance.instance_name = `obj${String(instance_index++).padStart(
-        12,
-        "0"
-      )}`;
+    const { instances: synthesized_instances } = analyzer.synthesize({
+      instances,
+    });
 
+    for (const instance of synthesized_instances) {
+      instance.instance_name = next_instance_name();
+    }
+
+    dataset.instances = [...instances, ...synthesized_instances];
+
+    for (const instance of dataset.instances) {
       const { implementation, input_value } = await analyzer.value({
         puzzle_id,
         only_puzzle_dataset,
@@ -1530,17 +1578,18 @@ export async function start(
     test_input_matrix,
   });
 
-  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
-    Array(test_input_matrix[0].length).fill(0)
+  let result_drawing = Matrix.draw(
+    [],
+    test_input_matrix.length,
+    test_input_matrix[0].length,
+    0,
+    0
   );
 
   const input_instances = [];
 
   for (const { input_instance_matrix } of instances) {
-    const instance_name: string = `obj${String(instance_index++).padStart(
-      12,
-      "0"
-    )}`;
+    const instance_name: string = next_instance_name();
 
     const { implementation, input_value } = await visualizer.value({
       puzzle_id,
@@ -1562,20 +1611,23 @@ export async function start(
   await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
-    const { output_instance_matrix } = await visualizer.output_instance_matrix({
-      puzzle_id,
-      only_puzzle_dataset,
-      test_input_matrix,
-      train_dataset,
-      instance: input_instance,
-    });
+    const { output_instance_drawing } = await visualizer.output_instance_matrix(
+      {
+        puzzle_id,
+        only_puzzle_dataset,
+        test_input_matrix,
+        train_dataset,
+        instance: input_instance,
+      }
+    );
 
-    input_instance.output_instance_matrix = output_instance_matrix;
+    input_instance.output_instance_matrix = output_instance_drawing.matrix;
+    input_instance.output_instance_epoch = output_instance_drawing.epoch;
 
-    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
+    result_drawing = Matrix.merge(result_drawing, output_instance_drawing);
   }
 
-  result_matrix = Matrix.canvas(result_matrix, output_canvas);
+  const result_matrix = Matrix.canvas(result_drawing.matrix, output_canvas);
 
   milestone.comparison({ test_output_matrix, result_matrix });
 
@@ -1682,148 +1734,130 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc21315a` (2026-11-12)
-**Commit Message**: Draft NUC 106 Intersect and Except Reasoning Selections
+### Incident Patch 1: `7a680fc0` (2026-11-12)
+**Commit Message**: Revert "Synthesize ARC training pairs"
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so token comparison is required.
+This reverts commit e1abb14716b7a45f9c268b21c732f3bfce15e71b.
 
-Requested change: add the pipeline stages `SELECTION |> intersect(OTHER)`
-and `SELECTION |> except(OTHER)`. They keep the steps of SELECTION whose
-node OTHER also selects, or does not select, in SELECTION's order with
-every field, the walk direction and NUC 82 distances unchanged, so they
-compose with stated, derived, depth, diff, path and each other. OTHER is a
-selection written as a pipeline source or pipeline and evaluated in place.
-Both names stay ordinary identifiers and a binding shadows its stage. No
-union stage, keyword, token or error type is added. Only inputs that raised
-the parse-time TypeError("intersect is not an operation") or
-TypeError("except is not an operation") change.
-
-This allocation changes only the Draft and its two index rows.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8dK76dRFHqR3mPaGA6
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `arc/README.md` (modified, +0/-7)
 ```diff
-@@ -138,6 +138,7 @@ Created: 31-Jul-2026
- | [83](nuc-0083.md) | Hypothetical Difference Selections | Accepted |
- | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
-+| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Draft |
+@@ -2441,13 +2441,6 @@ Native snapshots use `x`, `y`, `width`, `height`, and `orientation`; `tag`
+ replaces `shape` with shortened identifiers such as `l6747`.
+ Matrices already follow the canvas axes; composition does not rotate them.
  
- ### Language compatibility
- 
-@@ -265,6 +266,7 @@ Created: 31-Jul-2026
- | [103](nuc-0103.md) | Reactive List Flattening | Standards Track | Utility enhancement | Accepted |
- | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
- | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Draft |
-+| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
- 
+-Right after a training pair's instances are extracted, `analyzer.synthetize`
+-asks the LLM for new pairs, each with its `input_matrix`, `output_matrix`, and
+-instance matrices, and appends them to the training dataset. Original pairs
+-carry `accuracy: 1` and synthesized pairs `accuracy: 0.8`. Synthesized pairs
+-keep their instance matrices and are not synthesized again; their instances
+-are constructed and evaluated like those of the original pairs.
+-
+ Angles run clockwise from north: `N = 0`, `NE = 45`, `E = 90`, `SE = 135`,
+ `S = 180`, `SW = 225`, `W = 270`, and `NW = 315`. Every instruction dataset
+ gives each input and output state the direction its own shape points, by the
 ```
 
-**File**: `docs/nuc-0106.md` (added, +113/-0)
+**File**: `arc/src/analyzer.ts` (modified, +0/-33)
 ```diff
-@@ -0,0 +1,113 @@
-+# NUC 106 -- Intersect and Except Reasoning Selections
-+
-+```
-+NUC: 106
-+Title: Intersect and Except Reasoning Selections
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 11-Nov-2026
-+Requires: 48, 82, 83, 88
-+```
-+
-+## Abstract
-+
-+- Adds two pipeline stages that compare one reasoning selection with
-+  another:
-+  - `SELECTION |> intersect(OTHER)` keeps the steps of `SELECTION` whose
-+    node `OTHER` also selects;
-+  - `SELECTION |> except(OTHER)` keeps the steps of `SELECTION` whose node
-+    `OTHER` does not select.
-+- Both keep the steps they keep in `SELECTION`'s order, with their `node`,
-+  `holds`, `rule`, `state` and `from` fields unchanged. With
-+  `subtotal = price * quantity`, `tax = subtotal * rate` and
-+  `shipping = quantity * 2`:
-+  - `tax |> why |> intersect(shipping |> why)` selects `quantity`, the one
-+    node both values rest on;
-+  - `tax |> why |> except(shipping |> why)` selects `tax`, `subtotal`,
-+    `rate` and `price`, what the tax rests on and the shipping does not;
-+  - with `total = subtotal + tax + shipping`,
-+    `price |> affects |> intersect(rate |> affects)` selects `tax` and
-+    `total`, what both inputs move.
-+- `OTHER` is one expression in parentheses that denotes a selection, as the
-+  source of a pipeline does: a reference, `model`, a prefix stage such as
-+  `why b`, or a pipeline such as `b |> why |> stated`. It is evaluated in
-+  place each time the stage applies, after the source selection and the
-+  stages before it.
-+- The kept steps keep the direction of `SELECTION`'s most recent walk and
-+  their [NUC 82](nuc-0082.md) distances. Both stages therefore compose with
-+  `stated`, `derived`, `depth`, `diff`, `path` and each other in either
-+  order, and a later `why` or `affects` walks from the kept steps as usual.
-+- A standing selection that holds either stage stays live through every
-+  value and structural observation of both `SELECTION` and `OTHER`,
-+  including the steps each one drops. It renders as
-+  `SOURCE|>intersect(OTHER)` or `SOURCE|>except(OTHER)`.
-+- Only `|>` followed by the name `intersect` or `except` and then a `(`
-+  token is a stage. Both names stay ordinary identifiers everywhere else,
-+  and a binding of either name shadows its stage, as bindings shadow
-+  [NUC 48](nuc-0048.md)'s `stated` and `derived`, `depth`, `diff` and
-+  `path`. An invalid `OTHER` keeps the diagnostics of a pipeline source,
-+  such as `TypeError("Cannot explain 1")`.
-+- No keyword, lexer token or error type is added, and no union stage is
-+  added. Every accepted program keeps its parse and behavior. Only inputs
-+  that were errors at the accepted revision change: a `|>` followed by
-+  `intersect` or `except` raised the parse-time
-+  `TypeError("intersect is not an operation")` or
-+  `TypeError("except is not an operation")`.
-+
-+## Motivation
-+
-+- Diagnosis asks what two observations have in common. When two alarms
-+  fire, the stated facts behind both are the candidate root causes, and the
-+  facts behind one but not the other tell them apart. Impact analysis asks
-+  the dual question: what do two inputs both move? Each answer is the
-+  intersection or the difference of two explanations or impact selections.
-+- The accepted stages each narrow a single selection: `stated` and
-+  `derived` by a step's state, `depth` by distance, `path` by reachability
-+  of one target and `diff` by change since a `suppose` block began. None
-+  compares a selection with another one.
-+- Accepted Nucleoid can spell the comparison only as a membership test that
-+  walks the second selection inside a lambda:
-+  `(tax |> why).filter(s -> s.node in (shipping |> why).map(t -> t.node))`
-+  is 29 lexer tokens, against 10 for
-+  `tax |> why |> intersect(shipping |> why)`. That spelling:
-+  - walks the second selection again for every step of the first, so one
-+    question costs time quadratic in the size of the explanations;
-+  - compares nodes by their names as strings rather than as graph nodes;
-+  - returns a plain list instead of a selection, so it cannot be chained:
-+    appending `|> affects` raises
-+    `TypeError("Cannot explain tax|>why.filter(function())")`.
-+- Prior art: Bazel query's `intersect` and `except` operators over target
-+  sets, as in `deps(//a) intersect deps(//b)`; SQL's `INTERSECT` and
-+  `EXCEPT`; C# LINQ's `Intersect` and `Except`; Kotlin's `intersect` and
-+  `subtract`; Python's set `&` and `-`; and JavaScript's
-+  `Set.prototype.intersection` and `Set.prototype.difference`.
-+- Draft [NUC 11](nuc-0011.md) plans the stages `why`, `why not`, `affects`,
-+  `rules`, `conflicts`, `describe`, `export` and `depth(n)` and filters over
-+  a single selection; none combines two selections.
-+  [NUC 83](nuc-0083.md)'s `diff` compares a selection with the world before
-+  a `suppose` block, not with another selection.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Spec
+@@ -67,39 +67,6 @@ export async function instances({
+   return { instances: dataset[0].instances };
+ }
+ 
+-export async function synthetize({
+-  puzzle_id,
+-  only_puzzle_dataset,
+-  train_dataset,
+-}) {
+-  const { dataset } = await llm.generate({
+-    puzzle_id,
+-    only_puzzle_dataset,
+-    messages: [
+-      {
+-        role: "user",
+-        content: `
+-          query:
+-          ${JSON.stringify(train_dataset)}
+-          json_format:
+-          {
+-            "dataset": [{
+-              "input_matrix": <INPUT_MATRIX>,
+-              "output_matrix": <OUTPUT_MATRIX>,
+-              "instances": [{
+-                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+-              }]
+-            }]
+-          }
+-        `,
+-      },
+-    ],
+-  });
+-
+-  return dataset.map((pair) => ({ ...pair, accuracy: 0.8 }));
+-}
+-
+ export async function value({
+   puzzle_id,
+   only_puzzle_dataset,
+```
+
+**File**: `arc/src/app.ts` (modified, +6/-17)
+```diff
+@@ -19,7 +19,6 @@ export async function start(
+       input_matrix: input,
+       output_matrix: output,
+       instances: undefined,
+-      accuracy: 1,
+     })),
+     declarations: undefined,
+     output_canvas: undefined,
+@@ -49,23 +48,13 @@ export async function start(
+   train_dataset.output_canvas = output_canvas;
+ 
+   for (const dataset of train_dataset.dataset) {
+-    if (dataset.accuracy === 1) {
+-      const { instances } = await analyzer.instances({
+-        puzzle_id,
+-        only_puzzle_dataset,
+-        train_dataset: { ...train_dataset, dataset: [dataset] },
+-      });
+-
+-      dataset.instances = instances;
++    const { instances } = await analyzer.instances({
++      puzzle_id,
++      only_puzzle_dataset,
++      train_dataset: { ...train_dataset, dataset: [dataset] },
++    });
+ 
+-      train_dataset.dataset.push(
+-        ...(await analyzer.synthetize({
+-          puzzle_id,
+-          only_puzzle_dataset,
+-          train_dataset: { ...train_dataset, dataset: [dataset] },
+-        }))
+-      );
+-    }
++    dataset.instances = instances;
+ 
+     for (const instance of dataset.instances) {
+       instance.instance_name = `obj${String(instance_index++).padStart(
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +6/-0)
+```diff
+@@ -236,6 +236,12 @@ export async function output_instance_matrix({
+                 output_instance_matrix: Matrix.crop(
+                   instance.output_instance_matrix
+                 ),
++                input_silhouette_matrix: Matrix.silhouette(
++                  Matrix.crop(instance.input_instance_matrix)
++                ),
++                output_silhouette_matrix: Matrix.silhouette(
++                  Matrix.crop(instance.output_instance_matrix)
++                ),
+               })),
+             })),
+           })}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1846,35 +1880,3 @@ Claude-Session: https://claude.ai/code/session_01AJtz8dK76dRFHqR3mPaGA6
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Draft NUC 106 Intersect and Except Reasoning Selections
-
-**RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `cc21315a`: Draft NUC 106 Intersect and Except Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Draft |
-| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc21315a` are properly handled with clean fallback behavior.

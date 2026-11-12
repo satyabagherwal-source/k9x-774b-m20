@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T21:02:23.929Z",
+  "last_updated": "2026-11-12T21:10:48.602Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7822,8 +7822,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "f32bb49a",
-      "content_hash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
+      "source_version": "1a559e40",
+      "content_hash": "8f0168830209c6f974f10fe7559d98c21e99eaae0c7c0ef3fa600b72298c77e6",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7895,6 +7895,11 @@
         {
           "number": null,
           "title": "deps): update module golang.org/x/crypto to v0.59.0 [security]",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "renovate: Hold docutils in the docs-builder requirements",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8143,7 +8148,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T02:33:42.358Z",
+      "verified_at": "2026-11-12T21:10:48.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38275,8 +38280,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "e7b31f31",
-      "content_hash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
+      "source_version": "2fed022a",
+      "content_hash": "4385fdeace9d5c6475d6f920003e8ee597f3a9e027f563defa369df272565823",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -38298,6 +38303,11 @@
         {
           "number": null,
           "title": "utils: fix lost wakeups in Cond (#7820)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "meta/redis: keep in-use inodes when gc deletes leaked inodes (#7813)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38371,7 +38381,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:00:18.821Z",
+      "verified_at": "2026-11-12T21:10:44.329Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48719,8 +48729,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "cc21315a",
-      "content_hash": "d500403ec0d1d2401c3c0645cd3f3c6c3561dd617981c574c13fb0a329b1697d",
+      "source_version": "51f3b789",
+      "content_hash": "becc569f94f68ef55d7b1edff479fec550dc7262fa5a343558925c5fbc56cd7e",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -49190,7 +49200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:48:51.687Z",
+      "verified_at": "2026-11-12T21:10:39.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

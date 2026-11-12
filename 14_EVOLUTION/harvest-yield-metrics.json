@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:02:24.057Z",
-  "total_cycles_completed": 9020,
-  "total_learnings_persisted": 9020,
-  "total_rules_promoted": 8860,
+  "last_updated": "2026-11-12T21:10:48.738Z",
+  "total_cycles_completed": 9023,
+  "total_learnings_persisted": 9023,
+  "total_rules_promoted": 8862,
   "history": [
-    {
-      "timestamp": "2026-11-11T16:42:55.397Z",
-      "repository": "linkwarden/linkwarden",
-      "learningId": "learn-github-linkwarden-linkwarden",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:43:02.294Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:55:57.493Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T16:56:00.340Z",
       "repository": "metalbear-co/mirrord",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T21:02:24.057Z",
       "repository": "sigstore/cosign",
       "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:10:39.322Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:10:44.559Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:10:48.738Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
