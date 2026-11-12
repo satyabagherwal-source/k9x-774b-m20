@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "d140e69f",
+    "sourceVersion": "766683fe",
     "license": "MIT",
-    "contentHash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
-    "lastHarvestedAt": "2026-11-06T22:06:25.247Z",
+    "contentHash": "cba6b2c9f69c379e19c8ec156a503ab615a27f1ca1bd623a9848c8caa3b57ea2",
+    "lastHarvestedAt": "2026-11-12T07:15:39.147Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -12135,8 +12135,8 @@
     "sourceUrl": "https://huggingface.co/NousResearch/Arete-27B",
     "sourceVersion": "hf-nousresearch-arete-27b",
     "license": "Open-Source",
-    "contentHash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
-    "lastHarvestedAt": "2026-11-07T17:40:43.287Z",
+    "contentHash": "f288ffdf6dbdeaec0c75b725893045c570d816125576bda34d04a0968ffa6305",
+    "lastHarvestedAt": "2026-11-12T07:15:23.811Z",
     "learningId": "learn-huggingface-nousresearch-arete-27b"
   },
   "hf-viggle-viggle-remake": {

@@ -9104,3 +9104,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-12T06:56:00.792Z |
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `987b8c5a` | Multi-dimensional audit evidence | 2026-11-12T06:56:13.633Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `41d49a9e` | Multi-dimensional audit evidence | 2026-11-12T06:56:24.518Z |
+| `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-12T07:15:23.811Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `766683fe` | Multi-dimensional audit evidence | 2026-11-12T07:15:39.147Z |
+| `learn-dom-d-2efb96c5` | `project://hf-nousresearch-arete-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | 2026-11-12T07:16:00.760Z |

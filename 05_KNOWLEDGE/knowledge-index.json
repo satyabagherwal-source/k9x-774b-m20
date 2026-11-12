@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T06:56:24.376Z",
+  "last_updated": "2026-11-12T07:15:38.990Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18508,14 +18508,19 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "d140e69f",
-      "content_hash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
+      "source_version": "766683fe",
+      "content_hash": "cba6b2c9f69c379e19c8ec156a503ab615a27f1ca1bd623a9848c8caa3b57ea2",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "interop: update client.rs to run in interop test harness (#2993)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "grpc/credentials: Canonicalize IPs in security level check. (#3017)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18609,7 +18614,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:06:25.143Z",
+      "verified_at": "2026-11-12T07:15:38.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190535,7 +190540,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NousResearch/Arete-27B",
       "source_version": "hf-nousresearch-arete-27b",
-      "content_hash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
+      "content_hash": "f288ffdf6dbdeaec0c75b725893045c570d816125576bda34d04a0968ffa6305",
       "dossier_path": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
       "promoted_rules": [
@@ -190560,7 +190565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:40:43.174Z",
+      "verified_at": "2026-11-12T07:15:23.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

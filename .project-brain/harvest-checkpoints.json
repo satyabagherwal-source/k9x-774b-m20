@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T06:56:24.584Z",
+  "last_updated": "2026-11-12T07:15:39.174Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
-      "verified_at": "2026-11-06T22:06:25.255Z",
+      "content_hash": "cba6b2c9f69c379e19c8ec156a503ab615a27f1ca1bd623a9848c8caa3b57ea2",
+      "verified_at": "2026-11-12T07:15:39.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:06:25.255Z"
+      "last_updated": "2026-11-12T07:15:39.173Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -18261,14 +18261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nousresearch-arete-27b",
-      "content_hash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
-      "verified_at": "2026-11-07T17:40:43.310Z",
+      "content_hash": "f288ffdf6dbdeaec0c75b725893045c570d816125576bda34d04a0968ffa6305",
+      "verified_at": "2026-11-12T07:15:23.822Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T17:40:43.310Z"
+      "last_updated": "2026-11-12T07:15:23.822Z"
     },
     "Viggle/Viggle-Remake": {
       "repository": "Viggle/Viggle-Remake",

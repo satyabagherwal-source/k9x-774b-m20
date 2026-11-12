@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T06:56:30.430Z",
+  "last_updated": "2026-11-12T07:16:00.771Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6381,6 +6381,24 @@
       "source_repo": "freenet-freenet-core",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-064708-transport-report-the-quic-endpoint-state.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-654A4C",
+      "directive_title": "grpc/credentials: Canonicalize IPs in security level check. (#3017)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "grpc-grpc-rust",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-654A4C-grpc-credentials-canonicalize-ips-in-sec.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-6D0FCE",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6D0FCE-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

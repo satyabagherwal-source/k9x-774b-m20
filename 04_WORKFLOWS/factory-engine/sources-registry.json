@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T06:56:30.255Z",
-    "lastVerified": "2026-11-12T06:56:30.255Z",
+    "lastChecked": "2026-11-12T07:15:44.853Z",
+    "lastVerified": "2026-11-12T07:15:44.853Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,8 +255,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T06:19:42.364Z",
-    "lastVerified": "2026-11-12T06:19:42.364Z",
+    "lastChecked": "2026-11-12T07:15:35.441Z",
+    "lastVerified": "2026-11-12T07:15:35.441Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1386,8 +1386,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T01:11:51.262Z",
-    "lastVerified": "2026-11-12T01:11:51.262Z",
+    "lastChecked": "2026-11-12T07:15:30.402Z",
+    "lastVerified": "2026-11-12T07:15:30.402Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -4750,9 +4750,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-10T00:10:11.833Z",
+    "lastChecked": "2026-11-12T07:15:27.916Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-10T00:10:11.833Z"
+    "lastVerified": "2026-11-12T07:15:27.916Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -5032,22 +5032,21 @@
     "lastVerified": "2026-11-11T19:53:37.494Z"
   },
   "grpc-grpc-rust": {
-    "name": "grpc-rust",
+    "name": "grpc/grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T13:34:11.660Z",
-    "lastVerified": "2026-11-09T13:34:11.660Z",
+    "lastChecked": "2026-11-12T07:15:25.825Z",
+    "lastVerified": "2026-11-12T07:15:25.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
+    "contentHash": "cba6b2c9f69c379e19c8ec156a503ab615a27f1ca1bd623a9848c8caa3b57ea2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d140e69f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openai-gpt-oss-120b": {
     "name": "openai/gpt-oss-120b",
@@ -7231,9 +7230,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-09T22:55:33.087Z",
+    "lastChecked": "2026-11-12T07:15:32.923Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-09T22:55:33.087Z"
+    "lastVerified": "2026-11-12T07:15:32.923Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -9896,9 +9895,9 @@
   "vanniktech-emoji": {
     "name": "Emoji",
     "officialUrl": "https://github.com/vanniktech/Emoji",
-    "lastChecked": "2026-11-08T05:56:57.851Z",
+    "lastChecked": "2026-11-12T07:15:25.419Z",
     "revisionIdentifier": "69e998da",
-    "lastVerified": "2026-11-08T05:56:57.851Z"
+    "lastVerified": "2026-11-12T07:15:25.419Z"
   },
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
@@ -14479,13 +14478,13 @@
     "officialUrl": "https://huggingface.co/NousResearch/Arete-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T17:40:36.459Z",
-    "lastVerified": "2026-11-07T17:40:36.459Z",
+    "lastChecked": "2026-11-12T07:15:23.232Z",
+    "lastVerified": "2026-11-12T07:15:23.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nousresearch-arete-27b",
-    "contentHash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
-    "promotedRulesCount": 3,
+    "contentHash": "f288ffdf6dbdeaec0c75b725893045c570d816125576bda34d04a0968ffa6305",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
