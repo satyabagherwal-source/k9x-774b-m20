@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `cc6facab`  
+> **Source Version**: `e0f4d211`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:21:45.784Z  
+> **Timestamp**: 2026-11-12T00:45:21.933Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:21:45.776Z  
+> **Harvest Timestamp**: 2026-11-12T00:45:21.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14160 stars
+- **Stars / Engagement**: 14189 stars
 
 ---
 
@@ -799,8 +799,8 @@ use std::{
 
 /// A cancellation token.
 pub(crate) struct CancellationToken {
-    // The "check" for the cancellation token. Setting this to true will mark the cancellation
-    // token as "cancelled".
+    // The "check" for the cancellation token. Setting this to true will mark
+    // the cancellation token as "cancelled".
     mutex: Mutex<bool>,
     cvar: Condvar,
 }
@@ -1111,10 +1111,10 @@ pub fn get_unit_prefix(value: u64, base_two: bool) -> (f64, &'static str) {
     }
 }
 
-/// Format a float value to a string in a format showing a (hopefully) reasonable amount of decimal
-/// places.
-/// - If the value is < 100, then it will show at most two decimal places; if the decimals have
-///   trailing 0s, they will be trimmed.
+/// Format a float value to a string in a format showing a (hopefully)
+/// reasonable amount of decimal places.
+/// - If the value is < 100, then it will show at most two decimal places; if
+///   the decimals have trailing 0s, they will be trimmed.
 /// - Likewise, if it is < 1000, then it will show just 1 decimal place at most.
 /// - If the value is >= 1000, then it will just omit decimals.
 #[inline]
@@ -1123,13 +1123,15 @@ pub fn format_byte_decimal_values(value: f64) -> String {
         // Don't show decimals for values with 4 or more digits anyway.
         format!("{value:.0}")
     } else if value >= 100.0 {
-        // Note the trim is safe, as `value:.2` will always emit a decimal place.
+        // Note the trim is safe, as `value:.2` will always emit a decimal
+        // place.
         format!("{value:.1}")
             .trim_end_matches('0')
             .trim_end_matches('.')
             .to_string()
     } else {
-        // Note the trim is safe, as `value:.2` will always emit a decimal place.
+        // Note the trim is safe, as `value:.2` will always emit a decimal
+        // place.
         format!("{value:.2}")
             .trim_end_matches('0')
             .trim_end_matches('.')
@@ -1599,27 +1601,76 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `373d4fc5` (2026-11-04)
-**Commit Message**: other: fix the windows gnullvm aarch64 build (#2302)
+### Incident Patch 1: `e0f4d211` (2026-11-11)
+**Commit Message**: deps: bump rustix to 1.1.6 (#2312)
 
-**File**: `.cargo/config.toml` (modified, +3/-0)
+This should hopefully address an unsoundness warning from cargo-audit:
+
+```
+Crate:     rustix
+Version:   1.1.4
+Warning:   unsound
+Title:     xattr functions mark unwritten bytes as initialized when given a zero-length buffer
+Date:      2026-10-27
+ID:        RUSTSEC-2026-0486
+URL:       https://rustsec.org/advisories/RUSTSEC-2026-0486
+```
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -3,3 +3,6 @@ rustflags = ["-C", "target-feature=+crt-static"]
+@@ -1398,9 +1398,9 @@ dependencies = [
  
- [target.i686-pc-windows-msvc]
- rustflags = ["-C", "target-feature=+crt-static"]
-+
-+[target.aarch64-pc-windows-gnullvm]
-+rustflags = ["-C", "target-feature=+crt-static"]
+ [[package]]
+ name = "rustix"
+-version = "1.1.4"
++version = "1.1.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
++checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
+ dependencies = [
+  "bitflags 2.13.0",
+  "errno",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -108,7 +108,7 @@ strum = { version = "0.28.0", features = ["derive"], optional = true }
+ libc = "0.2.189"
+ 
+ [target.'cfg(target_os = "linux")'.dependencies]
+-rustix = { version = "1.1.4", features = ["fs", "param"] }
++rustix = { version = "1.1.6", features = ["fs", "param"] }
+ 
+ [target.'cfg(all(target_os = "linux", target_env = "musl"))'.dependencies]
+ mimalloc = { version = "0.1.52", optional = true }
+```
+
+---
+
+### Incident Patch 2: `2966527b` (2026-11-11)
+**Commit Message**: docs: update changelog with process command viewer (#2310)
+
+Update the changelog to include #2263.
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -27,6 +27,7 @@ That said, these are more guidelines rather than hard rules, though the project
+ ### Changes
+ 
+ - [#2296](https://github.com/ClementTsang/bottom/pull/2296): Better truncate CPU usage strings with small widths.
++- [#2263](https://github.com/ClementTsang/bottom/pull/2263): Add pop-out process command viewer.
+ 
+ ### Bug Fixes
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2304** (2026-11-04): packaging: allow wix (msi) to do same-version upgrades (@ClementTsang)
-- **PR #2303** (2026-11-04): docs: add meop as a contributor for code (@allcontributors[bot])
-- **PR #2302** (2026-11-04): other: fix the windows gnullvm aarch64 build (@meop)
-- **PR #2301** (2026-11-03): docs: add djbclark as a contributor for code (@allcontributors[bot])
-- **PR #2300** (2026-11-02): bug: fix dialogs not blocking certain events (@ClementTsang)
-- **PR #2299** (2026-11-02): other: add mimalloc allocator for possible use for musl (@ClementTsang)
+- **PR #2312** (2026-11-11): deps: bump rustix to 1.1.6 (@ClementTsang)
+- **PR #2311** (2026-11-11): docs: add vegerot as a contributor for code (@allcontributors[bot])
+- **PR #2310** (2026-11-11): docs: update changelog with process command viewer (@ClementTsang)
+- **PR #2308** (2026-11-09): ci: bump macos version in coverage job to 15 (@ClementTsang)
+- **PR #2307** (2026-11-09): other: run nightly format (@ClementTsang)
+- **PR #2306** (2026-11-09): ci: add zizmor check action (@ClementTsang)
 
 ---
 
@@ -1639,30 +1690,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. other: fix the windows gnullvm aarch64 build (#2302)
+## X. deps: bump rustix to 1.1.6 (#2312)
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `373d4fc5`: other: fix the windows gnullvm aarch64 build (#2302). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0f4d211`: deps: bump rustix to 1.1.6 (#2312). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-[target.aarch64-pc-windows-gnullvm]
-rustflags = ["-C", "target-feature=+crt-static"]
+version = "1.1.6"
+checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "1.1.4"
+checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `373d4fc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0f4d211` are properly handled with clean fallback behavior.

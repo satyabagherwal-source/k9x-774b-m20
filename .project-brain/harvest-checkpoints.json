@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T00:23:19.051Z",
+  "last_updated": "2026-11-12T00:45:31.393Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4161,14 +4161,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-permify-permify",
-      "content_hash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
-      "verified_at": "2026-11-06T00:02:51.505Z",
+      "content_hash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
+      "verified_at": "2026-11-12T00:45:30.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T00:02:51.505Z"
+      "last_updated": "2026-11-12T00:45:30.277Z"
     },
     "rustls/rustls": {
       "repository": "rustls/rustls",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
-      "verified_at": "2026-11-05T04:21:46.620Z",
+      "content_hash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
+      "verified_at": "2026-11-12T00:45:31.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:21:46.620Z"
+      "last_updated": "2026-11-12T00:45:31.392Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",

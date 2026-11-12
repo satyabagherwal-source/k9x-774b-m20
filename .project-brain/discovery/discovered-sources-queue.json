@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T00:23:23.323Z",
+  "updated_at": "2026-11-12T00:45:36.007Z",
   "stats": {
-    "total_discovered": 324,
-    "approved_pending_harvest": 291,
+    "total_discovered": 345,
+    "approved_pending_harvest": 312,
     "harvested_count": 0,
     "rejected_count": 33,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 298,
+      "COMMUNITY_AND_EXPERT": 319,
       "OFFICIAL_DOCUMENTATION": 14,
       "STANDARDS_AND_SPECIFICATIONS": 11,
       "ENGINEERING_BLOGS": 1
@@ -6912,6 +6912,468 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
         "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-99713F800245": {
+      "id": "SRC-99713F800245",
+      "url": "https://github.com/ClementTsang/bottom",
+      "title": "https://github.com/ClementTsang/bottom",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-37AA191A3051": {
+      "id": "SRC-37AA191A3051",
+      "url": "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-devices-power_state",
+      "title": "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-devices-power_state",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-F4A3CC533EBA": {
+      "id": "SRC-F4A3CC533EBA",
+      "url": "https://bottom.pages.dev/nightly/troubleshooting",
+      "title": "https://bottom.pages.dev/nightly/troubleshooting",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-3D1E62E7F066": {
+      "id": "SRC-3D1E62E7F066",
+      "url": "https://bottom.pages.dev/nightly/support/official",
+      "title": "https://bottom.pages.dev/nightly/support/official",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-88E6FBE49FDD": {
+      "id": "SRC-88E6FBE49FDD",
+      "url": "https://github.com/ClementTsang/bottom/issues?q=is%3Aopen+is%3Aissue",
+      "title": "https://github.com/ClementTsang/bottom/issues?q=is%3Aopen+is%3Aissue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-BF79412D7FC1": {
+      "id": "SRC-BF79412D7FC1",
+      "url": "https://github.com/ClementTsang/bottom/blob/main/AI_POLICY.md",
+      "title": "https://github.com/ClementTsang/bottom/blob/main/AI_POLICY.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-4F3A804DDC7B": {
+      "id": "SRC-4F3A804DDC7B",
+      "url": "https://github.com/user-attachments/assets/8662b1e4-9ac2-4639-bb36-d36faaf8b2cc",
+      "title": "https://github.com/user-attachments/assets/8662b1e4-9ac2-4639-bb36-d36faaf8b2cc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.972Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-263B80877696": {
+      "id": "SRC-263B80877696",
+      "url": "https://rustsec.org/advisories/RUSTSEC-2026-0486",
+      "title": "https://rustsec.org/advisories/RUSTSEC-2026-0486",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-BE27478B25A3": {
+      "id": "SRC-BE27478B25A3",
+      "url": "https://github.com/ClementTsang/bottom/pull/2296",
+      "title": "https://github.com/ClementTsang/bottom/pull/2296",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-192787FD044D": {
+      "id": "SRC-192787FD044D",
+      "url": "https://github.com/ClementTsang/bottom/pull/2263",
+      "title": "https://github.com/ClementTsang/bottom/pull/2263",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-B3FD6A12FB12": {
+      "id": "SRC-B3FD6A12FB12",
+      "url": "https://github.com/Permify/permify",
+      "title": "https://github.com/Permify/permify",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-A482BAE9DACD": {
+      "id": "SRC-A482BAE9DACD",
+      "url": "https://github.com/Permify/permify/pull/3215",
+      "title": "https://github.com/Permify/permify/pull/3215",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-7B00A96418BA": {
+      "id": "SRC-7B00A96418BA",
+      "url": "https://fusionauth.io/community/forum",
+      "title": "https://fusionauth.io/community/forum",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-7A44B3E359BD": {
+      "id": "SRC-7A44B3E359BD",
+      "url": "https://fusionauth.io/security",
+      "title": "https://fusionauth.io/security",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-25A93433667C": {
+      "id": "SRC-25A93433667C",
+      "url": "https://account.fusionauth.io/account/support",
+      "title": "https://account.fusionauth.io/account/support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.995Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-781AD91D5C21": {
+      "id": "SRC-781AD91D5C21",
+      "url": "https://github.com/Permify/permify/issues",
+      "title": "https://github.com/Permify/permify/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.996Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-0DBF2DBA7FEE": {
+      "id": "SRC-0DBF2DBA7FEE",
+      "url": "https://img.shields.io/endpoint?url=https%3A%2F%2Fconsole.algora.io%2Fapi%2Fshields%2Fpermify%2Fbounties%3Fstatus%3Dopen&style=for-the-badge",
+      "title": "https://img.shields.io/endpoint?url=https%3A%2F%2Fconsole.algora.io%2Fapi%2Fshields%2Fpermify%2Fbounties%3Fstatus%3Dopen&style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:35.999Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-86E1B6A3B8AD": {
+      "id": "SRC-86E1B6A3B8AD",
+      "url": "https://console.algora.io/org/permify/bounties?status=open",
+      "title": "https://console.algora.io/org/permify/bounties?status=open",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:36.001Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-ED77B0D56125": {
+      "id": "SRC-ED77B0D56125",
+      "url": "https://discord.gg/permify",
+      "title": "https://discord.gg/permify",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:36.003Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-9F30F03CB49D": {
+      "id": "SRC-9F30F03CB49D",
+      "url": "https://github.com/permify/permify/issues",
+      "title": "https://github.com/permify/permify/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:36.005Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-0F5C78235E8D": {
+      "id": "SRC-0F5C78235E8D",
+      "url": "https://github.com/grpc-ecosystem/grpc-health-probe.git",
+      "title": "https://github.com/grpc-ecosystem/grpc-health-probe.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:45:36.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
       }
     }
   }

@@ -2683,10 +2683,10 @@
     "repository": "Permify/permify",
     "platform": "github",
     "sourceUrl": "https://github.com/Permify/permify",
-    "sourceVersion": "81819b84",
+    "sourceVersion": "f1d2b9b0",
     "license": "AGPL-3.0",
-    "contentHash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
-    "lastHarvestedAt": "2026-11-06T00:02:51.498Z",
+    "contentHash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
+    "lastHarvestedAt": "2026-11-12T00:45:30.265Z",
     "learningId": "learn-github-permify-permify"
   },
   "rustls-rustls": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "cc6facab",
+    "sourceVersion": "e0f4d211",
     "license": "MIT",
-    "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
-    "lastHarvestedAt": "2026-11-05T04:21:46.602Z",
+    "contentHash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
+    "lastHarvestedAt": "2026-11-12T00:45:31.373Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {

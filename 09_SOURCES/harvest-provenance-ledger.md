@@ -9025,3 +9025,5 @@ Every entry in this ledger must capture:
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `9457c528` | Multi-dimensional audit evidence | 2026-11-11T20:23:35.896Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `157ef222` | Multi-dimensional audit evidence | 2026-11-11T23:57:06.842Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `3cb96a01` | Multi-dimensional audit evidence | 2026-11-12T00:23:19.029Z |
+| `learn-github-permify-permify` | `https://github.com/Permify/permify` | `f1d2b9b0` | Multi-dimensional audit evidence | 2026-11-12T00:45:30.265Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `e0f4d211` | Multi-dimensional audit evidence | 2026-11-12T00:45:31.373Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T00:23:23.335Z",
+  "last_updated": "2026-11-12T00:45:36.011Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5637,6 +5637,44 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B1C7E0-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-TMOV",
+      "directive_title": "add issue reporting flow to readme",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Permify/permify",
+      "source_commit": "f1d2b9b0",
+      "date_staged": "2026-11-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-permify-permify"
+    },
+    {
+      "id": "CD-REV-2DE91A",
+      "directive_title": "deps: bump rustix to 1.1.6 (#2312)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clementtsang-bottom",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2DE91A-deps-bump-rustix-to-1-1-6-2312-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E87FC0",
+      "directive_title": "add issue reporting flow to readme",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "permify-permify",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E87FC0-add-issue-reporting-flow-to-readme.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0B0DBD",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0B0DBD-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

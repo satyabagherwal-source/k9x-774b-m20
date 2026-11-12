@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-BPSX",
-    "timestamp": "2026-11-08T21:24:36.321Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-BTJT",
-    "timestamp": "2026-11-08T21:24:41.177Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "ddb2d18d5a306ac872f6d365e76eb7a4d3f9666355a9542974531c03be6e362e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-BY38",
     "timestamp": "2026-11-08T21:24:47.060Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7460,36 @@
     "repository": "thaw-app/Thaw",
     "learningId": "learn-github-thaw-app-thaw",
     "contentHash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-TMOM",
+    "timestamp": "2026-11-12T00:45:30.262Z",
+    "repository": "Permify/permify",
+    "learningId": "learn-github-permify-permify",
+    "contentHash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-TNJE",
+    "timestamp": "2026-11-12T00:45:31.370Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

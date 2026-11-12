@@ -9016,3 +9016,5 @@
 | `CYCLE-20261111-GTEC` | `2026-11-11T20:23:35.892Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`11b5bd09...`) |
 | `CYCLE-20261111-3EDZ` | `2026-11-11T23:57:06.839Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3cf8d6eb...`) |
 | `CYCLE-20261112-13HT` | `2026-11-12T00:23:19.025Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`134a3d23...`) |
+| `CYCLE-20261112-TMOM` | `2026-11-12T00:45:30.262Z` | `Permify/permify` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/permify-permify-learnings.md` | Yes (`d794d442...`) |
+| `CYCLE-20261112-TNJE` | `2026-11-12T00:45:31.370Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7ef933bb...`) |

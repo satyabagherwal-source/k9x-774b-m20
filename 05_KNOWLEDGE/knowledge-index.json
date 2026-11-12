@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T00:23:18.847Z",
+  "last_updated": "2026-11-12T00:45:31.223Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8266,11 +8266,16 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "cc6facab",
-      "content_hash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
+      "source_version": "e0f4d211",
+      "content_hash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps: bump rustix to 1.1.6 (#2312)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1894,
           "title": "other: allow clippy lint for regex creation in loops (#2270)",
@@ -8312,7 +8317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:21:46.485Z",
+      "verified_at": "2026-11-12T00:45:31.191Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51952,8 +51957,8 @@
       "slug": "permify-permify",
       "platform": "github",
       "source_url": "https://github.com/Permify/permify",
-      "source_version": "81819b84",
-      "content_hash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
+      "source_version": "f1d2b9b0",
+      "content_hash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
       "dossier_path": "07_PROJECT_LEARNING/permify-permify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/permify-permify-learnings.md",
       "promoted_rules": [
@@ -51973,7 +51978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T00:02:51.398Z",
+      "verified_at": "2026-11-12T00:45:30.125Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

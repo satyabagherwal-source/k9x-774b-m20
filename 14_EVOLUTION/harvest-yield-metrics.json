@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T00:23:19.047Z",
-  "total_cycles_completed": 8858,
-  "total_learnings_persisted": 8858,
-  "total_rules_promoted": 8714,
+  "last_updated": "2026-11-12T00:45:31.389Z",
+  "total_cycles_completed": 8860,
+  "total_learnings_persisted": 8860,
+  "total_rules_promoted": 8715,
   "history": [
-    {
-      "timestamp": "2026-11-10T00:13:46.826Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T00:31:56.215Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T00:31:59.923Z",
       "repository": "dragonflydb/dragonfly",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T00:23:19.047Z",
       "repository": "thaw-app/Thaw",
       "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T00:45:30.273Z",
+      "repository": "Permify/permify",
+      "learningId": "learn-github-permify-permify",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T00:45:31.389Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

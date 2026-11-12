@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T00:23:23.166Z",
-    "lastVerified": "2026-11-12T00:23:23.166Z",
+    "lastChecked": "2026-11-12T00:45:35.865Z",
+    "lastVerified": "2026-11-12T00:45:35.865Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T19:53:39.976Z",
-    "lastVerified": "2026-11-11T19:53:39.976Z",
+    "lastChecked": "2026-11-12T00:45:32.911Z",
+    "lastVerified": "2026-11-12T00:45:32.911Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1189,8 +1189,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T13:28:57.977Z",
-    "lastVerified": "2026-11-11T13:28:57.977Z",
+    "lastChecked": "2026-11-12T00:45:27.918Z",
+    "lastVerified": "2026-11-12T00:45:27.918Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2834,22 +2834,21 @@
     "lastVerified": "2026-11-09T16:04:15.946Z"
   },
   "permify-permify": {
-    "name": "permify",
+    "name": "Permify/permify",
     "officialUrl": "https://github.com/Permify/permify",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T14:53:00.758Z",
-    "lastVerified": "2026-11-09T14:53:00.758Z",
+    "lastChecked": "2026-11-12T00:45:29.935Z",
+    "lastVerified": "2026-11-12T00:45:29.935Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-permify-permify",
-    "contentHash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "contentHash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "81819b84"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -3295,22 +3294,21 @@
     "lastVerified": "2026-11-11T12:41:22.731Z"
   },
   "clementtsang-bottom": {
-    "name": "bottom",
+    "name": "ClementTsang/bottom",
     "officialUrl": "https://github.com/ClementTsang/bottom",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T05:52:31.890Z",
-    "lastVerified": "2026-11-09T05:52:31.890Z",
+    "lastChecked": "2026-11-12T00:45:21.585Z",
+    "lastVerified": "2026-11-12T00:45:21.585Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
+    "contentHash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cc6facab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -5300,9 +5298,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-09T13:34:24.108Z",
+    "lastChecked": "2026-11-12T00:45:30.388Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-09T13:34:24.108Z"
+    "lastVerified": "2026-11-12T00:45:30.388Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -9171,9 +9169,9 @@
   "gao-sun-eul": {
     "name": "eul",
     "officialUrl": "https://github.com/gao-sun/eul",
-    "lastChecked": "2026-11-08T01:54:46.570Z",
+    "lastChecked": "2026-11-12T00:45:22.832Z",
     "revisionIdentifier": "b5c3bd0a",
-    "lastVerified": "2026-11-08T01:54:46.570Z"
+    "lastVerified": "2026-11-12T00:45:22.832Z"
   },
   "tw93-pake": {
     "name": "tw93/Pake",
@@ -11114,9 +11112,9 @@
   "jina-ai-reader": {
     "name": "reader",
     "officialUrl": "https://github.com/jina-ai/reader",
-    "lastChecked": "2026-11-07T02:31:51.887Z",
+    "lastChecked": "2026-11-12T00:45:20.301Z",
     "revisionIdentifier": "1574bfd3",
-    "lastVerified": "2026-11-07T02:31:51.887Z"
+    "lastVerified": "2026-11-12T00:45:20.301Z"
   },
   "rechsteiner-parchment": {
     "name": "Parchment",
