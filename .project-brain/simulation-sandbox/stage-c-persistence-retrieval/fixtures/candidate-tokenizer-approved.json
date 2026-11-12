@@ -1,0 +1,33 @@
+{
+  "fixture_type": "STAGE_B3_EVIDENCE_FIXTURE",
+  "candidate_id": "CD-HE9Q-TOKENIZER",
+  "title": "Tokenizer Special Token Normalization Boundary",
+  "content": "In Hugging Face fast tokenizers, control tokens in added_tokens_decoder (such as <s>, </s>, <pad>) must specify special: true and normalized: false. Setting normalized: true causes token normalization to strip preceding whitespace, breaking sequence boundaries.",
+  "summary": "Fast tokenizer control tokens require normalized: false in added_tokens_decoder to avoid stripping adjacent whitespace.",
+  "actionable_instruction": "When writing tokenizer_config.json, verify that control tokens have special: true and normalized: false. Only structural tokens that participate in text normalization may have normalized: true.",
+  "tags": [
+    "tokenizer",
+    "huggingface",
+    "special-tokens",
+    "normalization-boundary",
+    "added-tokens-decoder",
+    "whitespace"
+  ],
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+  "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+    "target_source_file": "tokenizer_config.json",
+    "license": "Apache-2.0"
+  },
+  "evidence": {
+    "evidence_type": "CONFIGURATION_SCHEMA_CONTRACT_AUDIT",
+    "verification_status": "CONTRACT_VERIFIED",
+    "test_log": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/tokenizer-config-execution.log",
+    "empirical_proof": "Schema validation verified special: true, normalized: false contract."
+  }
+}

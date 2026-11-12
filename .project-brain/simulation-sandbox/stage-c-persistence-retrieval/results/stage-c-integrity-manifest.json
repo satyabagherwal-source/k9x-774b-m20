@@ -1,0 +1,40 @@
+{
+  "mission_id": "UKD-STAGE-C-ISOLATED-PERSISTENCE-RETRIEVAL-01",
+  "timestamp": "2026-11-12T16:15:35.467Z",
+  "integrity_status": "VERIFIED_100_PERCENT_READ_ONLY_SANDBOX",
+  "git_state": {
+    "branch": "main",
+    "head_commit": "a4492b769fdc74b8622c935b66f33a7719c7d004",
+    "tracked_modifications": 0,
+    "working_tree_clean": true
+  },
+  "system_registries": {
+    "domain_registry_records": 72,
+    "candidate_directives_count": 684,
+    "pending_zod_records_count": 6,
+    "zod_records_intact": true,
+    "reconciliation_verified": "Cluster of 6 records in BUG-ZOD-V4-02 (1 primary DOM-H-83C24083 + 5 pending duplicates) + 1 Domain M record = 7 total Zod records"
+  },
+  "production_artifacts": {
+    "retrieval_cache_bytes": 405601926,
+    "retrieval_cache_sha256": "09e91ddf2b4c3174f8f9745e0d5b417d5fef77fec7be0a3723fab03f1d48fdd1",
+    "relationship_graph_bytes": 29982,
+    "relationship_graph_sha256": "0fc17d3251bf3a76ea8c61b66778baaeb499d718200029de8b94039ab25abf78",
+    "canonical_folders_count": 16,
+    "all_16_folders_intact": true,
+    "production_files_modified": 0
+  },
+  "sandbox_test_metrics": {
+    "test_suites_run": 4,
+    "total_tests_executed": 26,
+    "tests_passed": 26,
+    "tests_failed": 0,
+    "all_tests_passed": true,
+    "persisted_approved_records": 3,
+    "rejected_unapproved_records": 3,
+    "rejected_malformed_records": 4,
+    "readback_hash_matches": 3,
+    "retrieval_precision": 1,
+    "negative_query_false_positives": 0
+  }
+}

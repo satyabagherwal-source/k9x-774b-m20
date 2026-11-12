@@ -1,0 +1,36 @@
+{
+  "fixture_type": "STAGE_B3_EVIDENCE_FIXTURE",
+  "candidate_id": "CD-ZNND-MHUP",
+  "title": "Metric Hypersphere Unit Projection (MHUP)",
+  "content": "After temporal sequence pooling, embedding vectors must be projected onto a unit Euclidean hypersphere using L2 normalization (F.normalize(p=2, dim=1)). Unit hypersphere projection strictly enforces ||v||_2 = 1.0, making cosine similarity identical to inner dot product and removing sentence length magnitude bias.",
+  "summary": "Euclidean L2 unit projection normalizing embeddings to unit hypersphere so dot product equals cosine distance.",
+  "actionable_instruction": "Always normalize pooled embeddings with F.normalize(p=2, dim=1) prior to vector store insertion. Never index unnormalized embeddings in inner product vector databases.",
+  "tags": [
+    "embeddings",
+    "l2-normalization",
+    "hypersphere",
+    "cosine-distance",
+    "dot-product",
+    "vector-search",
+    "similarity"
+  ],
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+  "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+    "target_source_file": "sentence_transformers/models/Normalize.py",
+    "upstream_class": "Normalize",
+    "source_revision": "v2.2.2 / main",
+    "license": "Apache-2.0"
+  },
+  "evidence": {
+    "evidence_type": "EMPIRICAL_PYTORCH_TENSOR_EXECUTION",
+    "verification_status": "DIRECTLY_VERIFIED",
+    "test_log": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/cmtp-mhup-pytorch-execution.log",
+    "empirical_proof": "Normalized embeddings strictly satisfied ||v||_2 = 1.000000 and dot product equaled cosine distance (0.808290 == 0.808290)."
+  }
+}

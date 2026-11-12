@@ -1,0 +1,24 @@
+{
+  "fixture_type": "SYNTHETIC_TEST_FIXTURE",
+  "synthetic_label": "DO_NOT_TREAT_AS_REAL_WORLD_KNOWLEDGE",
+  "candidate_id": "FIXTURE-SYNTHETIC-DUPE-REF",
+  "title": "Synthetic Duplicate Reference Collision",
+  "content": "This synthetic record references CD-ZNND-CMTP as a duplicate reference to verify duplicate collision detection.",
+  "summary": "Synthetic record with duplicate reference collision.",
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [
+    "CD-ZNND-CMTP"
+  ],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+  "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://example.com/synthetic/repo",
+    "target_source_file": "src/synthetic.js"
+  },
+  "evidence": {
+    "evidence_type": "SYNTHETIC_TEST",
+    "verification_status": "CONTRACT_VERIFIED"
+  }
+}

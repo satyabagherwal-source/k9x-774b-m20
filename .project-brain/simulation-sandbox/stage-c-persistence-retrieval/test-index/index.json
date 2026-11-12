@@ -1,0 +1,1084 @@
+{
+  "index_version": "1.0.0-stage-c",
+  "created_at": "2026-11-12T16:15:25.495Z",
+  "updated_at": "2026-11-12T16:15:25.504Z",
+  "total_docs": 3,
+  "total_terms": 154,
+  "avg_doc_length": 92.66666666666667,
+  "doc_lengths": {
+    "CD-ZNND-CMTP": 99,
+    "CD-ZNND-MHUP": 91,
+    "CD-HE9Q-TOKENIZER": 88
+  },
+  "inverted_index": {
+    "clamped": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 3
+      }
+    ],
+    "masked": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "temporal": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "pooling": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 6
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "cmtp": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "when": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "transformer": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 3
+      }
+    ],
+    "token": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "embeddings": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 4
+      }
+    ],
+    "across": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "sequence": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "length": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "multiply": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "representations": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "by": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "the": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "float": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "attention": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "mask": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 3
+      }
+    ],
+    "sum": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 5
+      }
+    ],
+    "along": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "dimension": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "clamp": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 3
+      }
+    ],
+    "divisor": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "to": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 3
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 3
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "min": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "1e-9": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 3
+      }
+    ],
+    "and": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "divide": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "clamping": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "strictly": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "eliminates": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "division-by-zero": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "nan": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "vectors": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "on": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "empty": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "or": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "fully": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "padded": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "sequences": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "with": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "epsilon": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "guarantee": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "finite": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "zero": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "without": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "propagation": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "in": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 4
+      }
+    ],
+    "pytorch": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "onnx": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "functions": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "calculate": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "sum_mask": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "torch": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "input_mask_expanded": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "before": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "tensor": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "division": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "never": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "unclamped": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "attention-mask": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "nan-prevention": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "sentence-transformers": [
+      {
+        "doc_id": "CD-ZNND-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "metric": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "hypersphere": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 6
+      }
+    ],
+    "unit": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 6
+      }
+    ],
+    "projection": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 4
+      }
+    ],
+    "mhup": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "after": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "embedding": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "must": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "be": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "projected": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "onto": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "euclidean": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "using": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "l2": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "normalization": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 4
+      }
+    ],
+    "normalize": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 3
+      }
+    ],
+    "dim": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "enforces": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "_2": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "making": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "cosine": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "similarity": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "identical": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "inner": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "dot": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "product": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 3
+      }
+    ],
+    "removing": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "sentence": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "magnitude": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "bias": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "normalizing": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "so": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "equals": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "distance": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "always": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "pooled": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "prior": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "vector": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "store": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "insertion": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "index": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "unnormalized": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "databases": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "l2-normalization": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "cosine-distance": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "dot-product": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "vector-search": [
+      {
+        "doc_id": "CD-ZNND-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "tokenizer": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 4
+      }
+    ],
+    "special": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 4
+      }
+    ],
+    "boundary": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "hugging": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "face": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "fast": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "tokenizers": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "control": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "tokens": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 4
+      }
+    ],
+    "added_tokens_decoder": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "such": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "as": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "pad": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "specify": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "true": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 4
+      }
+    ],
+    "normalized": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 5
+      }
+    ],
+    "false": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "setting": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "causes": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "strip": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "preceding": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "whitespace": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "breaking": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "boundaries": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "require": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "avoid": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "stripping": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "adjacent": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "writing": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "tokenizer_config": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "json": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "verify": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "that": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "have": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "only": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "structural": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "participate": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "text": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "may": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "huggingface": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "special-tokens": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "normalization-boundary": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "added-tokens-decoder": [
+      {
+        "doc_id": "CD-HE9Q-TOKENIZER",
+        "term_frequency": 1
+      }
+    ]
+  },
+  "domain_facets": {
+    "H": [
+      "CD-ZNND-CMTP",
+      "CD-ZNND-MHUP",
+      "CD-HE9Q-TOKENIZER"
+    ]
+  },
+  "destination_facets": {
+    "05_KNOWLEDGE": [
+      "CD-ZNND-CMTP",
+      "CD-ZNND-MHUP",
+      "CD-HE9Q-TOKENIZER"
+    ]
+  },
+  "doc_metadata": {
+    "CD-ZNND-CMTP": {
+      "candidate_id": "CD-ZNND-CMTP",
+      "title": "Clamped Masked Temporal Pooling (CMTP)",
+      "domain_classification": "H",
+      "proposed_canonical_destination": "05_KNOWLEDGE",
+      "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+      "provenance": {
+        "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+        "target_source_file": "sentence_transformers/models/Pooling.py",
+        "upstream_class": "Pooling",
+        "source_revision": "v2.2.2 / main",
+        "license": "Apache-2.0"
+      },
+      "integrity_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+      "stored_at": "2026-11-12T16:15:24.788Z"
+    },
+    "CD-ZNND-MHUP": {
+      "candidate_id": "CD-ZNND-MHUP",
+      "title": "Metric Hypersphere Unit Projection (MHUP)",
+      "domain_classification": "H",
+      "proposed_canonical_destination": "05_KNOWLEDGE",
+      "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+      "provenance": {
+        "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+        "target_source_file": "sentence_transformers/models/Normalize.py",
+        "upstream_class": "Normalize",
+        "source_revision": "v2.2.2 / main",
+        "license": "Apache-2.0"
+      },
+      "integrity_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+      "stored_at": "2026-11-12T16:15:24.808Z"
+    },
+    "CD-HE9Q-TOKENIZER": {
+      "candidate_id": "CD-HE9Q-TOKENIZER",
+      "title": "Tokenizer Special Token Normalization Boundary",
+      "domain_classification": "H",
+      "proposed_canonical_destination": "05_KNOWLEDGE",
+      "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+      "provenance": {
+        "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+        "target_source_file": "tokenizer_config.json",
+        "license": "Apache-2.0"
+      },
+      "integrity_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+      "stored_at": "2026-11-12T16:15:24.829Z"
+    }
+  }
+}

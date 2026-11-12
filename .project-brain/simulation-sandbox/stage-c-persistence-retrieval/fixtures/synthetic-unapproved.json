@@ -1,0 +1,22 @@
+{
+  "fixture_type": "SYNTHETIC_TEST_FIXTURE",
+  "synthetic_label": "DO_NOT_TREAT_AS_REAL_WORLD_KNOWLEDGE",
+  "candidate_id": "FIXTURE-SYNTHETIC-UNAPPROVED",
+  "title": "Synthetic Unapproved Pattern Draft",
+  "content": "This is a synthetic draft candidate record that has not received human approval.",
+  "summary": "Synthetic unapproved candidate to test admission gate rejection.",
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "PENDING_APPROVAL",
+  "implementation_evidence_status": "STATIC_EVIDENCE_ONLY",
+  "knowledge_transferability_status": "INSUFFICIENT_EVIDENCE",
+  "provenance": {
+    "upstream_repository": "https://example.com/synthetic/repo",
+    "target_source_file": "src/synthetic.js"
+  },
+  "evidence": {
+    "evidence_type": "SYNTHETIC_TEST",
+    "verification_status": "UNVERIFIED"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixture_type": "SYNTHETIC_TEST_FIXTURE",
+  "synthetic_label": "DO_NOT_TREAT_AS_REAL_WORLD_KNOWLEDGE",
+  "candidate_id": "FIXTURE-SYNTHETIC-BAD-DEST",
+  "title": "Synthetic Record with Invalid Destination Folder",
+  "content": "This synthetic record specifies 99_NONEXISTENT_FOLDER to verify 16-canonical-folder enforcement.",
+  "summary": "Synthetic record with invalid destination.",
+  "domain_classification": "H",
+  "proposed_canonical_destination": "99_NONEXISTENT_FOLDER",
+  "duplicate_references": [],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+  "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://example.com/synthetic/repo",
+    "target_source_file": "src/synthetic.js"
+  },
+  "evidence": {
+    "evidence_type": "SYNTHETIC_TEST",
+    "verification_status": "CONTRACT_VERIFIED"
+  }
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "candidate_id": "CD-ZNND-CMTP",
+    "found_on_disk": true,
+    "integrity_valid": true,
+    "tampered": false,
+    "stored_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+    "computed_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+    "passed": true
+  },
+  {
+    "candidate_id": "CD-ZNND-MHUP",
+    "found_on_disk": true,
+    "integrity_valid": true,
+    "tampered": false,
+    "stored_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+    "computed_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+    "passed": true
+  },
+  {
+    "candidate_id": "CD-HE9Q-TOKENIZER",
+    "found_on_disk": true,
+    "integrity_valid": true,
+    "tampered": false,
+    "stored_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+    "computed_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+    "passed": true
+  }
+]

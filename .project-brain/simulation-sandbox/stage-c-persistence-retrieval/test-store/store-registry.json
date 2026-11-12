@@ -1,0 +1,38 @@
+{
+  "store_version": "1.0.0-stage-c",
+  "created_at": "2026-11-12T16:15:24.778Z",
+  "records_count": 3,
+  "records": {
+    "CD-ZNND-CMTP": {
+      "candidate_id": "CD-ZNND-CMTP",
+      "title": "Clamped Masked Temporal Pooling (CMTP)",
+      "domain": "H",
+      "destination": "05_KNOWLEDGE",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-c-persistence-retrieval\\test-store\\CD-ZNND-CMTP.json",
+      "integrity_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+      "stored_at": "2026-11-12T16:15:24.788Z",
+      "readback_verified": true
+    },
+    "CD-ZNND-MHUP": {
+      "candidate_id": "CD-ZNND-MHUP",
+      "title": "Metric Hypersphere Unit Projection (MHUP)",
+      "domain": "H",
+      "destination": "05_KNOWLEDGE",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-c-persistence-retrieval\\test-store\\CD-ZNND-MHUP.json",
+      "integrity_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+      "stored_at": "2026-11-12T16:15:24.808Z",
+      "readback_verified": true
+    },
+    "CD-HE9Q-TOKENIZER": {
+      "candidate_id": "CD-HE9Q-TOKENIZER",
+      "title": "Tokenizer Special Token Normalization Boundary",
+      "domain": "H",
+      "destination": "05_KNOWLEDGE",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-c-persistence-retrieval\\test-store\\CD-HE9Q-TOKENIZER.json",
+      "integrity_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+      "stored_at": "2026-11-12T16:15:24.829Z",
+      "readback_verified": true
+    }
+  },
+  "updated_at": "2026-11-12T16:15:25.312Z"
+}

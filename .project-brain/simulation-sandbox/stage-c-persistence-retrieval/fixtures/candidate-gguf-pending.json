@@ -1,0 +1,31 @@
+{
+  "fixture_type": "STAGE_B3_EVIDENCE_FIXTURE",
+  "candidate_id": "CD-8KGR-GGUF",
+  "title": "Binary Artifact Header and Version Compatibility",
+  "content": "Binary weight loaders must inspect the first 8 bytes of model files before memory mapping. The first 4 bytes must match magic bytes b'GGUF' and the next 4 bytes must indicate version >= 3. Held pending admission review due to absence of native C compiler.",
+  "summary": "GGUF binary format magic bytes and version contract validation before memory mapping.",
+  "actionable_instruction": "Assert header[:4] == b'GGUF' and header[4:8] >= 3 before mmap allocation.",
+  "tags": [
+    "gguf",
+    "binary-format",
+    "header-validation",
+    "llama-cpp",
+    "deserialization"
+  ],
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "PENDING_APPROVAL",
+  "implementation_evidence_status": "STATIC_EVIDENCE_ONLY",
+  "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://github.com/ggerganov/llama.cpp",
+    "target_source_file": "ggml/src/ggml.c",
+    "license": "MIT"
+  },
+  "evidence": {
+    "evidence_type": "BINARY_FORMAT_CONTRACT_CHECK",
+    "verification_status": "STATIC_ANALYSIS_ONLY",
+    "test_log": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/binary-gguf-header-execution.log"
+  }
+}

@@ -1,0 +1,352 @@
+[
+  {
+    "test_id": "RETRIEVAL-1-CMTP-QUERY",
+    "description": "Ranked retrieval for transformer pooling attention mask clamp invariant",
+    "query": "transformer pooling attention mask zero division clamp",
+    "options": {},
+    "passed": true,
+    "failures": [],
+    "search_result": {
+      "query": "transformer pooling attention mask zero division clamp",
+      "query_tokens": [
+        "transformer",
+        "pooling",
+        "attention",
+        "mask",
+        "zero",
+        "division",
+        "clamp"
+      ],
+      "total_hits": 2,
+      "returned_hits": 2,
+      "hits": [
+        {
+          "rank": 1,
+          "candidate_id": "CD-ZNND-CMTP",
+          "score": 8.6431,
+          "matched_terms": [
+            "transformer",
+            "pooling",
+            "attention",
+            "mask",
+            "zero",
+            "division",
+            "clamp"
+          ],
+          "title": "Clamped Masked Temporal Pooling (CMTP)",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+            "target_source_file": "sentence_transformers/models/Pooling.py",
+            "upstream_class": "Pooling",
+            "source_revision": "v2.2.2 / main",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        },
+        {
+          "rank": 2,
+          "candidate_id": "CD-ZNND-MHUP",
+          "score": 0.4735,
+          "matched_terms": [
+            "pooling"
+          ],
+          "title": "Metric Hypersphere Unit Projection (MHUP)",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+            "target_source_file": "sentence_transformers/models/Normalize.py",
+            "upstream_class": "Normalize",
+            "source_revision": "v2.2.2 / main",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        }
+      ],
+      "execution_time_ms": 33
+    }
+  },
+  {
+    "test_id": "RETRIEVAL-2-MHUP-QUERY",
+    "description": "Ranked retrieval for hypersphere L2 unit projection and cosine distance",
+    "query": "metric hypersphere unit projection l2 normalization dot product cosine distance",
+    "options": {},
+    "passed": true,
+    "failures": [],
+    "search_result": {
+      "query": "metric hypersphere unit projection l2 normalization dot product cosine distance",
+      "query_tokens": [
+        "metric",
+        "hypersphere",
+        "unit",
+        "projection",
+        "l2",
+        "normalization",
+        "dot",
+        "product",
+        "cosine",
+        "distance"
+      ],
+      "total_hits": 2,
+      "returned_hits": 2,
+      "hits": [
+        {
+          "rank": 1,
+          "candidate_id": "CD-ZNND-MHUP",
+          "score": 13.7004,
+          "matched_terms": [
+            "metric",
+            "hypersphere",
+            "unit",
+            "projection",
+            "l2",
+            "normalization",
+            "dot",
+            "product",
+            "cosine",
+            "distance"
+          ],
+          "title": "Metric Hypersphere Unit Projection (MHUP)",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+            "target_source_file": "sentence_transformers/models/Normalize.py",
+            "upstream_class": "Normalize",
+            "source_revision": "v2.2.2 / main",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        },
+        {
+          "rank": 2,
+          "candidate_id": "CD-HE9Q-TOKENIZER",
+          "score": 0.8024,
+          "matched_terms": [
+            "normalization"
+          ],
+          "title": "Tokenizer Special Token Normalization Boundary",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+            "target_source_file": "tokenizer_config.json",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        }
+      ],
+      "execution_time_ms": 15
+    }
+  },
+  {
+    "test_id": "RETRIEVAL-3-TOKENIZER-QUERY",
+    "description": "Ranked retrieval for tokenizer special token normalized false whitespace boundary",
+    "query": "tokenizer added tokens decoder special normalized false whitespace",
+    "options": {},
+    "passed": true,
+    "failures": [],
+    "search_result": {
+      "query": "tokenizer added tokens decoder special normalized false whitespace",
+      "query_tokens": [
+        "tokenizer",
+        "added",
+        "tokens",
+        "decoder",
+        "special",
+        "normalized",
+        "false",
+        "whitespace"
+      ],
+      "total_hits": 1,
+      "returned_hits": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "candidate_id": "CD-HE9Q-TOKENIZER",
+          "score": 9.8926,
+          "matched_terms": [
+            "tokenizer",
+            "tokens",
+            "special",
+            "normalized",
+            "false",
+            "whitespace"
+          ],
+          "title": "Tokenizer Special Token Normalization Boundary",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+            "target_source_file": "tokenizer_config.json",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        }
+      ],
+      "execution_time_ms": 9
+    }
+  },
+  {
+    "test_id": "RETRIEVAL-4-NEGATIVE-UNRELATED-QUERY",
+    "description": "Zero hits expected for completely unrelated non-engineering query",
+    "query": "quantum culinary recipe sourdough baking hydration fermentation crust",
+    "options": {},
+    "passed": true,
+    "failures": [],
+    "search_result": {
+      "query": "quantum culinary recipe sourdough baking hydration fermentation crust",
+      "query_tokens": [
+        "quantum",
+        "culinary",
+        "recipe",
+        "sourdough",
+        "baking",
+        "hydration",
+        "fermentation",
+        "crust"
+      ],
+      "total_hits": 0,
+      "returned_hits": 0,
+      "hits": [],
+      "execution_time_ms": 2
+    }
+  },
+  {
+    "test_id": "RETRIEVAL-5-DOMAIN-FILTERED-QUERY",
+    "description": "Retrieval filtered strictly by domain H",
+    "query": "pooling embeddings token",
+    "options": {
+      "domain": "H"
+    },
+    "passed": true,
+    "failures": [],
+    "search_result": {
+      "query": "pooling embeddings token",
+      "query_tokens": [
+        "pooling",
+        "embeddings",
+        "token"
+      ],
+      "total_hits": 3,
+      "returned_hits": 3,
+      "hits": [
+        {
+          "rank": 1,
+          "candidate_id": "CD-ZNND-CMTP",
+          "score": 1.9457,
+          "matched_terms": [
+            "pooling",
+            "embeddings",
+            "token"
+          ],
+          "title": "Clamped Masked Temporal Pooling (CMTP)",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+            "target_source_file": "sentence_transformers/models/Pooling.py",
+            "upstream_class": "Pooling",
+            "source_revision": "v2.2.2 / main",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        },
+        {
+          "rank": 2,
+          "candidate_id": "CD-ZNND-MHUP",
+          "score": 1.2714,
+          "matched_terms": [
+            "pooling",
+            "embeddings"
+          ],
+          "title": "Metric Hypersphere Unit Projection (MHUP)",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+            "target_source_file": "sentence_transformers/models/Normalize.py",
+            "upstream_class": "Normalize",
+            "source_revision": "v2.2.2 / main",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        },
+        {
+          "rank": 3,
+          "candidate_id": "CD-HE9Q-TOKENIZER",
+          "score": 0.7466,
+          "matched_terms": [
+            "token"
+          ],
+          "title": "Tokenizer Special Token Normalization Boundary",
+          "domain": "H",
+          "destination": "05_KNOWLEDGE",
+          "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+          "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+          "provenance": {
+            "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+            "target_source_file": "tokenizer_config.json",
+            "license": "Apache-2.0"
+          },
+          "integrity_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+          "verification_status": "VERIFIED",
+          "verification_anomalies": []
+        }
+      ],
+      "execution_time_ms": 19
+    }
+  },
+  {
+    "test_id": "RETRIEVAL-6-DOMAIN-FILTER-EXCLUSION",
+    "description": "Retrieval filtered by non-existent domain in store (Domain C)",
+    "query": "pooling embeddings token",
+    "options": {
+      "domain": "C"
+    },
+    "passed": true,
+    "failures": [],
+    "search_result": {
+      "query": "pooling embeddings token",
+      "query_tokens": [
+        "pooling",
+        "embeddings",
+        "token"
+      ],
+      "total_hits": 0,
+      "returned_hits": 0,
+      "hits": [],
+      "execution_time_ms": 3
+    }
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "mission_id": "UKD-STAGE-C-ISOLATED-PERSISTENCE-RETRIEVAL-01",
+  "timestamp": "2026-11-12T16:15:25.547Z",
+  "runtime_environment": {
+    "node_version": "v26.7.0",
+    "platform": "win32",
+    "arch": "x64",
+    "sandbox_path": ".project-brain/simulation-sandbox/stage-c-persistence-retrieval"
+  },
+  "upstream_source_revisions": [
+    {
+      "candidate_id": "CD-ZNND-CMTP",
+      "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+      "source_file": "sentence_transformers/models/Pooling.py",
+      "upstream_class": "Pooling",
+      "source_revision": "v2.2.2 / main",
+      "license": "Apache-2.0",
+      "execution_verified": true,
+      "execution_mode": "ORIGINAL_SOURCE_EXECUTED",
+      "runtime": "PyTorch 2.15.0+cpu in isolated venv"
+    },
+    {
+      "candidate_id": "CD-ZNND-MHUP",
+      "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+      "source_file": "sentence_transformers/models/Normalize.py",
+      "upstream_class": "Normalize",
+      "source_revision": "v2.2.2 / main",
+      "license": "Apache-2.0",
+      "execution_verified": true,
+      "execution_mode": "ORIGINAL_SOURCE_EXECUTED",
+      "runtime": "PyTorch 2.15.0+cpu in isolated venv"
+    },
+    {
+      "candidate_id": "CD-HE9Q-TOKENIZER",
+      "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+      "source_file": "tokenizer_config.json",
+      "source_revision": "main (Nanbeige4.3-33B)",
+      "license": "Apache-2.0",
+      "execution_verified": true,
+      "execution_mode": "CONFIGURATION_CONTRACT_TESTED",
+      "runtime": "Python 3.14.7 schema parser"
+    },
+    {
+      "candidate_id": "CD-8KGR-GGUF",
+      "upstream_repository": "https://github.com/ggerganov/llama.cpp",
+      "source_file": "ggml/src/ggml.c",
+      "source_revision": "master (GGUF v3)",
+      "license": "MIT",
+      "execution_verified": false,
+      "execution_mode": "STATIC_EVIDENCE_ONLY",
+      "runtime": "C compiler absent; blocked from execution"
+    },
+    {
+      "candidate_id": "CD-UV2I-TERNARY",
+      "upstream_repository": "https://github.com/prism-ml/Ternary-Bonsai",
+      "source_file": "kernels/ternary_gemm.cu",
+      "source_revision": "main",
+      "license": "Apache-2.0",
+      "execution_verified": false,
+      "execution_mode": "BLOCKED_BY_DEPENDENCY",
+      "runtime": "CUDA GPU/nvcc compiler absent; blocked from execution"
+    }
+  ]
+}

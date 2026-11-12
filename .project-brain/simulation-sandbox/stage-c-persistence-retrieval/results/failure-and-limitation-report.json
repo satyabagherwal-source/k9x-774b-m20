@@ -1,0 +1,93 @@
+{
+  "mission_id": "UKD-STAGE-C-ISOLATED-PERSISTENCE-RETRIEVAL-01",
+  "timestamp": "2026-11-12T16:15:25.545Z",
+  "test_rejections_catalog": [
+    {
+      "test_case": "TEST-4-REJECT-UNAPPROVED-GGUF",
+      "rejected_id": "CD-8KGR-GGUF",
+      "rejection_reason": "Record has approval_status 'PENDING_APPROVAL'. Admission gate strictly requires human approval before disk persistence.",
+      "expected_behavior": "REJECTED_AT_GATE",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "TEST-5-REJECT-UNAPPROVED-TERNARY",
+      "rejected_id": "CD-UV2I-TERNARY",
+      "rejection_reason": "Record has approval_status 'PENDING_APPROVAL'. Admission gate strictly requires human approval before disk persistence.",
+      "expected_behavior": "REJECTED_AT_GATE",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "TEST-6-REJECT-SYNTHETIC-UNAPPROVED",
+      "rejected_id": "FIXTURE-SYNTHETIC-UNAPPROVED",
+      "rejection_reason": "Record has approval_status 'PENDING_APPROVAL'.",
+      "expected_behavior": "REJECTED_AT_GATE",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "TEST-7-REJECT-MISSING-EVIDENCE",
+      "rejected_id": "FIXTURE-SYNTHETIC-NO-EVIDENCE",
+      "rejection_reason": "Record schema validation failed: Missing evidence block.",
+      "expected_behavior": "VALIDATION_FAILED",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "TEST-8-REJECT-DUPLICATE-ID",
+      "rejected_id": "CD-ZNND-CMTP",
+      "rejection_reason": "Duplicate candidate ID collision against active store registry.",
+      "expected_behavior": "DUPLICATE_ID_REJECTED",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "TEST-9-REJECT-DUPLICATE-REFERENCE",
+      "rejected_id": "FIXTURE-SYNTHETIC-DUPE-REF",
+      "rejection_reason": "Duplicate reference check detected conflict with already persisted candidate CD-ZNND-CMTP.",
+      "expected_behavior": "DUPLICATE_REFERENCE_DETECTED",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "TEST-10-REJECT-INVALID-DOMAIN",
+      "rejected_id": "FIXTURE-SYNTHETIC-BAD-DOMAIN",
+      "rejection_reason": "Domain classification 'Z' violates the 13-domain taxonomy (A through M).",
+      "expected_behavior": "VALIDATION_FAILED",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "TEST-11-REJECT-INVALID-DESTINATION",
+      "rejected_id": "FIXTURE-SYNTHETIC-BAD-DEST",
+      "rejection_reason": "Proposed canonical destination '99_NONEXISTENT_FOLDER' violates the 16 canonical folder set.",
+      "expected_behavior": "VALIDATION_FAILED",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "CORRUPTION-1-PAYLOAD-TAMPERING-DETECTED",
+      "rejected_id": "FIXTURE-SYNTHETIC-TAMPER-TARGET",
+      "rejection_reason": "Disk byte alteration resulted in cryptographic SHA-256 mismatch upon read-back.",
+      "expected_behavior": "HASH_MISMATCH_TAMPERED",
+      "status": "VERIFIED"
+    },
+    {
+      "test_case": "CORRUPTION-3-BROKEN-JSON-SYNTAX",
+      "rejected_id": "FIXTURE-SYNTHETIC-TAMPER-TARGET",
+      "rejection_reason": "Malformed JSON file caught cleanly by parser without unhandled exception.",
+      "expected_behavior": "READBACK_PARSE_FAILED",
+      "status": "VERIFIED"
+    }
+  ],
+  "known_technical_limitations": [
+    {
+      "limitation": "BM25 Keyword Matching vs Dense Vectors",
+      "impact": "The isolated test retrieval engine utilizes inverted index BM25 term frequency scoring. While highly efficient for keyword queries, it does not support semantic synonym expansion unless paired with a dense embedding model.",
+      "mitigation": "Include descriptive tags, domain facets, and actionable summaries in candidate records to maximize recall."
+    },
+    {
+      "limitation": "Upstream Naming Mismatch",
+      "impact": "The terms 'CMTP' and 'MHUP' are synthetic acronyms derived during harvesting. In upstream UKPLab/sentence-transformers, the classes are named 'Pooling' and 'Normalize'.",
+      "mitigation": "Preserve both the synthetic concept title and the exact upstream class name in provenance metadata."
+    },
+    {
+      "limitation": "Hardware & Compiler Barriers for Remaining Candidates",
+      "impact": "GGUF Binary Header (C parser) and Ternary LUT (CUDA kernel) cannot be admitted to canonical production until native C compiler and NVIDIA GPU/nvcc environments are available.",
+      "mitigation": "Strictly hold candidates in PENDING_APPROVAL status with STATIC_EVIDENCE_ONLY and BLOCKED_BY_DEPENDENCY classifications."
+    }
+  ]
+}

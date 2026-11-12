@@ -1,0 +1,18 @@
+{
+  "fixture_type": "SYNTHETIC_TEST_FIXTURE",
+  "synthetic_label": "DO_NOT_TREAT_AS_REAL_WORLD_KNOWLEDGE",
+  "candidate_id": "FIXTURE-SYNTHETIC-NO-EVIDENCE",
+  "title": "Synthetic Pattern Lacking Evidence Block",
+  "content": "This synthetic record has no evidence block to verify validation rejection.",
+  "summary": "Synthetic record lacking evidence block.",
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "UNVERIFIED",
+  "knowledge_transferability_status": "INSUFFICIENT_EVIDENCE",
+  "provenance": {
+    "upstream_repository": "https://example.com/synthetic/repo",
+    "target_source_file": "src/synthetic.js"
+  }
+}

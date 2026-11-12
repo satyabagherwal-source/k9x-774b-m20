@@ -1,0 +1,32 @@
+{
+  "fixture_type": "STAGE_B3_EVIDENCE_FIXTURE",
+  "candidate_id": "CD-UV2I-TERNARY",
+  "title": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+  "content": "Dequantization of sub-4bit ternary weights uses constant lookup tables indexed by bitfield shifts to avoid GPU branch divergence. Held pending admission review due to absence of NVIDIA GPU/nvcc toolchain.",
+  "summary": "Constant-time LUT dequantization avoids GPU warp divergence during ternary matrix operations.",
+  "actionable_instruction": "Use constant-memory LUTs for sub-4bit unpacking; avoid conditional branches in inner loops.",
+  "tags": [
+    "ternary",
+    "lut",
+    "dequantization",
+    "cuda",
+    "branch-divergence",
+    "low-bit"
+  ],
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "PENDING_APPROVAL",
+  "implementation_evidence_status": "BLOCKED_BY_DEPENDENCY",
+  "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://github.com/prism-ml/Ternary-Bonsai",
+    "target_source_file": "kernels/ternary_gemm.cu",
+    "license": "Apache-2.0"
+  },
+  "evidence": {
+    "evidence_type": "CUDA_KERNEL_STATIC_AUDIT",
+    "verification_status": "DEPENDENCY_BLOCKED",
+    "test_log": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/ternary-lut-execution.log"
+  }
+}

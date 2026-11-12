@@ -1,0 +1,271 @@
+[
+  {
+    "test_id": "TEST-1-VALID-APPROVED-CMTP",
+    "fixture": "candidate-cmtp-approved.json",
+    "expected_status": "PERSISTED_AND_READBACK_VERIFIED",
+    "actual_status": "PERSISTED_AND_READBACK_VERIFIED",
+    "passed": true,
+    "details": {
+      "success": true,
+      "status": "PERSISTED_AND_READBACK_VERIFIED",
+      "candidate_id": "CD-ZNND-CMTP",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-c-persistence-retrieval\\test-store\\CD-ZNND-CMTP.json",
+      "integrity_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+      "record": {
+        "candidate_id": "CD-ZNND-CMTP",
+        "title": "Clamped Masked Temporal Pooling (CMTP)",
+        "content": "When pooling transformer token embeddings across sequence length, multiply token representations by the float attention mask, sum along dimension 1, clamp the divisor sum to min 1e-9, and divide. Divisor clamping strictly eliminates division-by-zero NaN vectors on empty or fully padded sequences.",
+        "summary": "Transformer sequence pooling with attention mask sum clamped to epsilon (1e-9) to guarantee finite zero vectors without NaN propagation.",
+        "actionable_instruction": "In PyTorch/ONNX pooling functions, calculate sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9) before tensor division. Never divide by unclamped mask sum.",
+        "tags": [
+          "transformer",
+          "pooling",
+          "attention-mask",
+          "clamp",
+          "nan-prevention",
+          "pytorch",
+          "sentence-transformers"
+        ],
+        "domain_classification": "H",
+        "proposed_canonical_destination": "05_KNOWLEDGE",
+        "duplicate_references": [],
+        "approval_status": "APPROVED",
+        "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+        "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+        "provenance": {
+          "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+          "target_source_file": "sentence_transformers/models/Pooling.py",
+          "upstream_class": "Pooling",
+          "source_revision": "v2.2.2 / main",
+          "license": "Apache-2.0"
+        },
+        "evidence": {
+          "evidence_type": "EMPIRICAL_PYTORCH_TENSOR_EXECUTION",
+          "verification_status": "DIRECTLY_VERIFIED",
+          "test_log": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/cmtp-mhup-pytorch-execution.log",
+          "empirical_proof": "Anti-pattern without clamp produced tensor([[nan, nan]]) while clamped implementation returned tensor([[0., 0.]])."
+        },
+        "persistence_status": "PERSISTED",
+        "stored_at": "2026-11-12T16:15:24.788Z",
+        "integrity_hash": "c3fe94535091610951a2b5a14fc8b4e0e6b1ec5669ff660d57b822d46aa3903d",
+        "readback_verified": true
+      }
+    }
+  },
+  {
+    "test_id": "TEST-2-VALID-APPROVED-MHUP",
+    "fixture": "candidate-mhup-approved.json",
+    "expected_status": "PERSISTED_AND_READBACK_VERIFIED",
+    "actual_status": "PERSISTED_AND_READBACK_VERIFIED",
+    "passed": true,
+    "details": {
+      "success": true,
+      "status": "PERSISTED_AND_READBACK_VERIFIED",
+      "candidate_id": "CD-ZNND-MHUP",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-c-persistence-retrieval\\test-store\\CD-ZNND-MHUP.json",
+      "integrity_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+      "record": {
+        "candidate_id": "CD-ZNND-MHUP",
+        "title": "Metric Hypersphere Unit Projection (MHUP)",
+        "content": "After temporal sequence pooling, embedding vectors must be projected onto a unit Euclidean hypersphere using L2 normalization (F.normalize(p=2, dim=1)). Unit hypersphere projection strictly enforces ||v||_2 = 1.0, making cosine similarity identical to inner dot product and removing sentence length magnitude bias.",
+        "summary": "Euclidean L2 unit projection normalizing embeddings to unit hypersphere so dot product equals cosine distance.",
+        "actionable_instruction": "Always normalize pooled embeddings with F.normalize(p=2, dim=1) prior to vector store insertion. Never index unnormalized embeddings in inner product vector databases.",
+        "tags": [
+          "embeddings",
+          "l2-normalization",
+          "hypersphere",
+          "cosine-distance",
+          "dot-product",
+          "vector-search",
+          "similarity"
+        ],
+        "domain_classification": "H",
+        "proposed_canonical_destination": "05_KNOWLEDGE",
+        "duplicate_references": [],
+        "approval_status": "APPROVED",
+        "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+        "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+        "provenance": {
+          "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+          "target_source_file": "sentence_transformers/models/Normalize.py",
+          "upstream_class": "Normalize",
+          "source_revision": "v2.2.2 / main",
+          "license": "Apache-2.0"
+        },
+        "evidence": {
+          "evidence_type": "EMPIRICAL_PYTORCH_TENSOR_EXECUTION",
+          "verification_status": "DIRECTLY_VERIFIED",
+          "test_log": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/cmtp-mhup-pytorch-execution.log",
+          "empirical_proof": "Normalized embeddings strictly satisfied ||v||_2 = 1.000000 and dot product equaled cosine distance (0.808290 == 0.808290)."
+        },
+        "persistence_status": "PERSISTED",
+        "stored_at": "2026-11-12T16:15:24.808Z",
+        "integrity_hash": "219f038aa31eff612537f6a0073124f28487284e7c2f68232e1fd73369104c67",
+        "readback_verified": true
+      }
+    }
+  },
+  {
+    "test_id": "TEST-3-VALID-APPROVED-TOKENIZER",
+    "fixture": "candidate-tokenizer-approved.json",
+    "expected_status": "PERSISTED_AND_READBACK_VERIFIED",
+    "actual_status": "PERSISTED_AND_READBACK_VERIFIED",
+    "passed": true,
+    "details": {
+      "success": true,
+      "status": "PERSISTED_AND_READBACK_VERIFIED",
+      "candidate_id": "CD-HE9Q-TOKENIZER",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-c-persistence-retrieval\\test-store\\CD-HE9Q-TOKENIZER.json",
+      "integrity_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+      "record": {
+        "candidate_id": "CD-HE9Q-TOKENIZER",
+        "title": "Tokenizer Special Token Normalization Boundary",
+        "content": "In Hugging Face fast tokenizers, control tokens in added_tokens_decoder (such as <s>, </s>, <pad>) must specify special: true and normalized: false. Setting normalized: true causes token normalization to strip preceding whitespace, breaking sequence boundaries.",
+        "summary": "Fast tokenizer control tokens require normalized: false in added_tokens_decoder to avoid stripping adjacent whitespace.",
+        "actionable_instruction": "When writing tokenizer_config.json, verify that control tokens have special: true and normalized: false. Only structural tokens that participate in text normalization may have normalized: true.",
+        "tags": [
+          "tokenizer",
+          "huggingface",
+          "special-tokens",
+          "normalization-boundary",
+          "added-tokens-decoder",
+          "whitespace"
+        ],
+        "domain_classification": "H",
+        "proposed_canonical_destination": "05_KNOWLEDGE",
+        "duplicate_references": [],
+        "approval_status": "APPROVED",
+        "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+        "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+        "provenance": {
+          "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+          "target_source_file": "tokenizer_config.json",
+          "license": "Apache-2.0"
+        },
+        "evidence": {
+          "evidence_type": "CONFIGURATION_SCHEMA_CONTRACT_AUDIT",
+          "verification_status": "CONTRACT_VERIFIED",
+          "test_log": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/tokenizer-config-execution.log",
+          "empirical_proof": "Schema validation verified special: true, normalized: false contract."
+        },
+        "persistence_status": "PERSISTED",
+        "stored_at": "2026-11-12T16:15:24.829Z",
+        "integrity_hash": "d63ec8d039eb35c950b746d2970a30bd1f042b3971b7b244c8faaacaf9a6af5f",
+        "readback_verified": true
+      }
+    }
+  },
+  {
+    "test_id": "TEST-4-REJECT-UNAPPROVED-GGUF",
+    "fixture": "candidate-gguf-pending.json",
+    "expected_status": "UNAPPROVED_RECORD_REJECTED",
+    "actual_status": "UNAPPROVED_RECORD_REJECTED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "UNAPPROVED_RECORD_REJECTED",
+      "candidate_id": "CD-8KGR-GGUF",
+      "reason": "Record has approval_status 'PENDING_APPROVAL'. Only APPROVED candidates may be persisted."
+    }
+  },
+  {
+    "test_id": "TEST-5-REJECT-UNAPPROVED-TERNARY",
+    "fixture": "candidate-ternary-pending.json",
+    "expected_status": "UNAPPROVED_RECORD_REJECTED",
+    "actual_status": "UNAPPROVED_RECORD_REJECTED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "UNAPPROVED_RECORD_REJECTED",
+      "candidate_id": "CD-UV2I-TERNARY",
+      "reason": "Record has approval_status 'PENDING_APPROVAL'. Only APPROVED candidates may be persisted."
+    }
+  },
+  {
+    "test_id": "TEST-6-REJECT-SYNTHETIC-UNAPPROVED",
+    "fixture": "synthetic-unapproved.json",
+    "expected_status": "UNAPPROVED_RECORD_REJECTED",
+    "actual_status": "UNAPPROVED_RECORD_REJECTED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "UNAPPROVED_RECORD_REJECTED",
+      "candidate_id": "FIXTURE-SYNTHETIC-UNAPPROVED",
+      "reason": "Record has approval_status 'PENDING_APPROVAL'. Only APPROVED candidates may be persisted."
+    }
+  },
+  {
+    "test_id": "TEST-7-REJECT-MISSING-EVIDENCE",
+    "fixture": "synthetic-missing-evidence.json",
+    "expected_status": "VALIDATION_FAILED",
+    "actual_status": "VALIDATION_FAILED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "VALIDATION_FAILED",
+      "candidate_id": "FIXTURE-SYNTHETIC-NO-EVIDENCE",
+      "errors": [
+        "Missing evidence block"
+      ]
+    }
+  },
+  {
+    "test_id": "TEST-8-REJECT-DUPLICATE-ID",
+    "fixture": "candidate-cmtp-approved.json",
+    "expected_status": "DUPLICATE_ID_REJECTED",
+    "actual_status": "DUPLICATE_ID_REJECTED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "DUPLICATE_ID_REJECTED",
+      "candidate_id": "CD-ZNND-CMTP",
+      "reason": "Candidate ID 'CD-ZNND-CMTP' already exists in the test store."
+    }
+  },
+  {
+    "test_id": "TEST-9-REJECT-DUPLICATE-REFERENCE",
+    "fixture": "synthetic-duplicate-reference.json",
+    "expected_status": "DUPLICATE_REFERENCE_DETECTED",
+    "actual_status": "DUPLICATE_REFERENCE_DETECTED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "DUPLICATE_REFERENCE_DETECTED",
+      "candidate_id": "FIXTURE-SYNTHETIC-DUPE-REF",
+      "conflicting_duplicates": [
+        "CD-ZNND-CMTP"
+      ],
+      "reason": "Candidate claims duplicate references that already exist in store: CD-ZNND-CMTP"
+    }
+  },
+  {
+    "test_id": "TEST-10-REJECT-INVALID-DOMAIN",
+    "fixture": "synthetic-invalid-domain.json",
+    "expected_status": "VALIDATION_FAILED",
+    "actual_status": "VALIDATION_FAILED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "VALIDATION_FAILED",
+      "candidate_id": "FIXTURE-SYNTHETIC-BAD-DOMAIN",
+      "errors": [
+        "Invalid domain_classification: 'Z'. Must be one of: A, B, C, D, E, F, G, H, I, J, K, L, M"
+      ]
+    }
+  },
+  {
+    "test_id": "TEST-11-REJECT-INVALID-DESTINATION",
+    "fixture": "synthetic-invalid-destination.json",
+    "expected_status": "VALIDATION_FAILED",
+    "actual_status": "VALIDATION_FAILED",
+    "passed": true,
+    "details": {
+      "success": false,
+      "status": "VALIDATION_FAILED",
+      "candidate_id": "FIXTURE-SYNTHETIC-BAD-DEST",
+      "errors": [
+        "Invalid proposed_canonical_destination: '99_NONEXISTENT_FOLDER'. Must be one of: 00_START_HERE, 01_CORE, 02_AGENT_INTELLIGENCE, 03_SKILLS, 04_WORKFLOWS, 05_KNOWLEDGE, 06_PROJECT_CONTEXT, 07_PROJECT_LEARNING, 08_VERIFICATION, 09_SOURCES, 10_PROMPTS, 11_INBOX, 12_DECISIONS, 13_GOVERNANCE, 14_EVOLUTION, 15_METADATA"
+      ]
+    }
+  }
+]
