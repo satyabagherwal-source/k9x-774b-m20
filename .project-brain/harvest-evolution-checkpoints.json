@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:19:08.537Z",
+  "last_updated": "2026-11-12T11:38:01.053Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T08:19:36.877Z",
@@ -1061,9 +1061,24 @@
       "processed_at": "2026-11-12T11:19:08.452Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "google-closure-compiler-learnings.md": {
+      "processed_at": "2026-11-12T11:38:00.745Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "jellyfin-swiftfin-learnings.md": {
+      "processed_at": "2026-11-12T11:38:00.893Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "bridgecrewio-checkov-learnings.md": {
+      "processed_at": "2026-11-12T11:38:00.981Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 285,
-  "total_canonical_promoted": 35,
-  "total_staged_for_review": 250
+  "total_dossiers_evaluated": 288,
+  "total_canonical_promoted": 36,
+  "total_staged_for_review": 252
 }

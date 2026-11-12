@@ -9159,3 +9159,8 @@ Every entry in this ledger must capture:
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `41ccfbfe` | Multi-dimensional audit evidence | 2026-11-12T11:18:43.589Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `c4e4e677` | Multi-dimensional audit evidence | 2026-11-12T11:18:47.823Z |
 | `learn-dom-d-e7997468` | `project://hf-microsoft-mage-vl-cowork` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | 2026-11-12T11:19:08.436Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `0d7d62cf` | Multi-dimensional audit evidence | 2026-11-12T11:37:28.640Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `e523ba9d` | Multi-dimensional audit evidence | 2026-11-12T11:37:31.667Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `4c2e88a3` | Multi-dimensional audit evidence | 2026-11-12T11:37:36.729Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `c25aa858` | Multi-dimensional audit evidence | 2026-11-12T11:37:40.195Z |
+| `learn-dom-h-7d775901` | `project://google-closure-compiler` | `0d7d62cf` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md` | 2026-11-12T11:38:00.745Z |

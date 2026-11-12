@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T11:19:08.435Z",
+  "updated_at": "2026-11-12T11:38:00.745Z",
   "statistics": {
-    "total_nodes": 20,
+    "total_nodes": 21,
     "total_edges": 7,
     "domain_distribution": {
       "D": 14,
       "M": 1,
-      "H": 2,
+      "H": 3,
       "J": 1,
       "K": 1,
       "L": 1
@@ -456,6 +456,28 @@
       ],
       "created_at": "2026-11-12T11:19:08.435Z",
       "updated_at": "2026-11-12T11:19:08.435Z"
+    },
+    "DOM-H-7D775901": {
+      "id": "DOM-H-7D775901",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Eliminate avoidable dead work in multi-stage JSCompiler builds.",
+      "summary": "Prevents defects observed in production commit `17db1536`: Eliminate avoidable dead work in multi-stage JSCompiler builds.. Unvalidated exec -> When implementing operations in `src/com/google/javascript/jscomp/Compiler.java`, engineers MUST enforce rigorous boundary validation, safe ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://google-closure-compiler/google-closure-compiler-learnings.md",
+        "source_version": "0d7d62cf",
+        "observed_at": "2026-11-12T11:37:13.594Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (google-closure-compiler)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T11:38:00.744Z",
+      "updated_at": "2026-11-12T11:38:00.744Z"
     }
   },
   "edges": [

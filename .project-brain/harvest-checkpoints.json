@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T11:18:47.839Z",
+  "last_updated": "2026-11-12T11:37:40.210Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7791,14 +7791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bridgecrewio-checkov",
-      "content_hash": "180b8d084778eaecf307ba736696e24d3be46da33cd0dd0c1c4e1f447fd38b9f",
-      "verified_at": "2026-11-04T02:12:08.094Z",
+      "content_hash": "fafee00dc6f00f4108047b765995e220d451b88cc9c09a094257ae68f81c92b0",
+      "verified_at": "2026-11-12T11:37:36.836Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:12:08.094Z"
+      "last_updated": "2026-11-12T11:37:36.836Z"
     },
     "apache/zookeeper": {
       "repository": "apache/zookeeper",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "943f67d848fdb9df7650c9bcf04ca9d6aed2c0a574d6252ab45041fe28157a58",
-      "verified_at": "2026-11-10T02:59:42.416Z",
+      "content_hash": "db48414cfdbdbfb2fea0af6e924e4b4a664db95993bcf4de81acb803a05a89a2",
+      "verified_at": "2026-11-12T11:37:40.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:59:42.416Z"
+      "last_updated": "2026-11-12T11:37:40.209Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "33297e04a3b367c29f67e22b91b35cc80315e6e6ecd09d0ad3539a6e3db98bb9",
-      "verified_at": "2026-11-08T09:30:15.147Z",
+      "content_hash": "66d3eef4921b5ef73c39bb16073e9e5a4f169ced659e93dc1a1c54fb9f38f1ed",
+      "verified_at": "2026-11-12T11:37:31.679Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T09:30:15.147Z"
+      "last_updated": "2026-11-12T11:37:31.679Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",
@@ -14946,14 +14946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-closure-compiler",
-      "content_hash": "467cbedf5cb94913b48ff5a19fca21a4b78b1e817029ad80f3ada02be63a0978",
-      "verified_at": "2026-11-07T19:55:20.129Z",
+      "content_hash": "5c42ceff373a8868b09f7ba49fd1f2f787cb3b0cf6aa6b1031b7d2b2a90f6569",
+      "verified_at": "2026-11-12T11:37:28.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:55:20.129Z"
+      "last_updated": "2026-11-12T11:37:28.678Z"
     },
     "Shpigford/chops": {
       "repository": "Shpigford/chops",

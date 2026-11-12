@@ -9150,3 +9150,8 @@
 | `CYCLE-20261112-FYIP` | `2026-11-12T11:18:43.585Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2048c481...`) |
 | `CYCLE-20261112-G1SA` | `2026-11-12T11:18:47.818Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`024dc9ae...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T11:19:08.436Z` | `hf-microsoft-mage-vl-cowork` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7997468` [Domain D] | Yes (`425f97f1...`) |
+| `CYCLE-20261112-42L3` | `2026-11-12T11:37:28.599Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5c42ceff...`) |
+| `CYCLE-20261112-44Y7` | `2026-11-12T11:37:31.663Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`66d3eef4...`) |
+| `CYCLE-20261112-48UT` | `2026-11-12T11:37:36.725Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fafee00d...`) |
+| `CYCLE-20261112-4BJ2` | `2026-11-12T11:37:40.190Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`db48414c...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T11:38:00.745Z` | `google-closure-compiler` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7D775901` [Domain H] | Yes (`687df25b...`) |

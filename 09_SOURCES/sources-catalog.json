@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "47986461",
+    "sourceVersion": "4c2e88a3",
     "license": "Apache-2.0",
-    "contentHash": "180b8d084778eaecf307ba736696e24d3be46da33cd0dd0c1c4e1f447fd38b9f",
-    "lastHarvestedAt": "2026-11-04T02:12:08.085Z",
+    "contentHash": "fafee00dc6f00f4108047b765995e220d451b88cc9c09a094257ae68f81c92b0",
+    "lastHarvestedAt": "2026-11-12T11:37:36.729Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "8c7bfcfa",
+    "sourceVersion": "c25aa858",
     "license": "NOASSERTION",
-    "contentHash": "943f67d848fdb9df7650c9bcf04ca9d6aed2c0a574d6252ab45041fe28157a58",
-    "lastHarvestedAt": "2026-11-10T02:59:42.402Z",
+    "contentHash": "db48414cfdbdbfb2fea0af6e924e4b4a664db95993bcf4de81acb803a05a89a2",
+    "lastHarvestedAt": "2026-11-12T11:37:40.195Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "7d5b106e",
+    "sourceVersion": "e523ba9d",
     "license": "MPL-2.0",
-    "contentHash": "33297e04a3b367c29f67e22b91b35cc80315e6e6ecd09d0ad3539a6e3db98bb9",
-    "lastHarvestedAt": "2026-11-08T09:30:15.130Z",
+    "contentHash": "66d3eef4921b5ef73c39bb16073e9e5a4f169ced659e93dc1a1c54fb9f38f1ed",
+    "lastHarvestedAt": "2026-11-12T11:37:31.667Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "51d80993",
+    "sourceVersion": "0d7d62cf",
     "license": "Apache-2.0",
-    "contentHash": "467cbedf5cb94913b48ff5a19fca21a4b78b1e817029ad80f3ada02be63a0978",
-    "lastHarvestedAt": "2026-11-07T19:55:20.118Z",
+    "contentHash": "5c42ceff373a8868b09f7ba49fd1f2f787cb3b0cf6aa6b1031b7d2b2a90f6569",
+    "lastHarvestedAt": "2026-11-12T11:37:28.640Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {

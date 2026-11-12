@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:18:47.832Z",
-  "total_cycles_completed": 8976,
-  "total_learnings_persisted": 8976,
-  "total_rules_promoted": 8819,
+  "last_updated": "2026-11-12T11:37:40.204Z",
+  "total_cycles_completed": 8980,
+  "total_learnings_persisted": 8980,
+  "total_rules_promoted": 8823,
   "history": [
-    {
-      "timestamp": "2026-11-11T11:00:39.197Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T11:00:47.580Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T11:10:17.007Z",
-      "repository": "Comfy-Org/RelayVSR",
-      "learningId": "learn-huggingface-comfy-org-relayvsr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T11:10:40.959Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T11:18:57.037Z",
       "repository": "sxyazi/yazi",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T11:18:47.832Z",
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T11:37:28.673Z",
+      "repository": "google/closure-compiler",
+      "learningId": "learn-github-google-closure-compiler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T11:37:31.675Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T11:37:36.758Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T11:37:40.204Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

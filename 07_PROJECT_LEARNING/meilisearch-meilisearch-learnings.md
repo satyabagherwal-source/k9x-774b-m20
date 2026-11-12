@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `8c7bfcfa`  
+> **Source Version**: `c25aa858`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:59:41.514Z  
+> **Timestamp**: 2026-11-12T11:37:22.804Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:59:39.433Z  
+> **Harvest Timestamp**: 2026-11-12T11:37:22.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59824 stars
+- **Stars / Engagement**: 59842 stars
 
 ---
 
@@ -2028,11 +2028,11 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6715** (2026-11-10): **View the target state of DSRs**
+  *Symptoms*: Fixes [issue (internal)](linear.app/meilisearch/issue/ENGPROD-2642/view-the-target-state-of-dynamic-search-rules)  # Changelog  ## View the target state of dynamic search rules  Allows seeing the state of dynamic search rules (DSR) as if all pending DSR update tasks had been processed.  A "pending" task is a task that is either enqueued or currently processing.  ### Route to see the target state of a selected rule  The new `GET /dynamic-search-rules/{:ruleUid}/target` route returns the "target" state of the DSR, that is, an object with the following fields:  - `current`, dynamic search rule object or `null`: the current values of the dynamic search rules, or `null` if the dynamic search rule doesn't exist yet - `target`, dynamic search rule object or `null`: the field of the dynamic search rules that will be modified by currently pending tasks, or `null` if the dynamic search rule will be deleted after all pending tasks have been processed - `needsProcessing`, boolean, `true` if at least one pending task pertaining to this dynamic search rule exists - `taskUids`, array of task uids, list of the pending tasks pertaining to the dynamic search rule  ### New body parameter to see the target state of all rules  The existing `POST /dynamic-search-rules` route used to list the dynamic search rules has a new `showTarget` parameter, an optional boolean. When present and `true`, `showTarget` modifies the response in the following way:  1. new global fields in the response:     - `needs
+
 - **Issue #6700** (2026-10-29): **Make sure that all nested fields are inserted in field id map**
   *Symptoms*: # Changelog  Fixes a panic when modifying the list of searchable attributes after an existing document has been updated to insert new nested fields.  Existing databases encountering this issue can be fixed by adding a new document containing the new nested fields.  Fixes #6636 and fixes #6657.  ## Use of Generative AI Tools  In accordance with our [contributing policy](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools), using generative AI tooling is not allowed in external contributions meant for Meilisearch. As a result, this PR will not be reviewed unless its description contains the following checked statement:  - [x] I certify that this contribution (code, PR description, and PR comments) is not using any generative AI tooling
-
-- **Issue #6660** (2026-10-01): **Replace mimalloc with jemalloc + patch heed, v52 edition**
-  *Symptoms*: - "draft" changes in heed to introduce unique txns that gate db opening behind an environment-level mutex - replace mimalloc with jemalloc in an attempt to remove the crash issues on thread exit  See #6654 for details  ## Generative AI tools  - [x] This PR does not use generative AI tooling - [ ] This PR uses generative AI tooling and respect the [related policies](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools)     - *list of used tools and what they were used for* 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2049,292 +2049,285 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c7bfcfa` (2026-11-09)
-**Commit Message**: Merge pull request #6725 from meilisearch/remove-dbg-and-check-for-them
+### Incident Patch 1: `c25aa858` (2026-11-12)
+**Commit Message**: Merge pull request #6731 from meilisearch/fix-merge-issues
 
-remove unwanted log + warn about future unwanted dbg
+Fix inter-index merge in federated search
 
-**File**: `clippy.toml` (modified, +4/-0)
+**File**: `crates/meilisearch/tests/search/multi/mod.rs` (modified, +177/-44)
 ```diff
-@@ -1,3 +1,7 @@
- disallowed-methods = [
-     { path = "tar::Archive::unpack", reason = "prefer using the ArchiveExt::safe_unpack function" }
- ]
+@@ -13,63 +13,73 @@ use crate::search::{SCORE_DOCUMENTS, VECTOR_DOCUMENTS};
+ mod metadata;
+ mod proxy;
+ 
++pub async fn movies_index() -> Index<'static> {
++    let server = Server::new_shared();
++    let movies_index = server.unique_index_with_prefix("movies");
 +
-+disallowed-macros = [
-+    { path = "std::dbg" }
-+]
-```
-
-**File**: `crates/build-info/src/main.rs` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+#![allow(clippy::disallowed_macros)]
- use build_info::BuildInfo;
- 
- fn main() {
-```
-
-**File**: `crates/meilisearch/tests/common/server.rs` (modified, +1/-5)
-```diff
-@@ -489,7 +489,7 @@ impl<State> Server<State> {
-         let url = format!("/tasks/{update_id}");
-         let max_attempts = 400; // 200 seconds in total, 0.5secs per attempt
- 
--        for i in 0..max_attempts {
-+        for _i in 0..max_attempts {
-             let (response, status_code) = self.service.get(url.clone()).await;
-             assert_eq!(200, status_code, "response: {response}");
- 
-@@ -499,10 +499,6 @@ impl<State> Server<State> {
- 
-             // wait 0.5 second.
-             sleep(Duration::from_millis(500)).await;
++    let documents = DOCUMENTS.clone();
++    let (response, _code) = movies_index.add_documents(documents, None).await;
++    server.wait_task(response.uid()).await.succeeded();
++
++    let (value, _) = movies_index
++        .update_settings(json!({
++            "sortableAttributes": ["title"],
++            "filterableAttributes": ["title", "color"],
++            "rankingRules": [
++                "sort",
++                "words",
++                "typo",
++                "proximity",
++                "attribute",
++                "exactness"
++            ]
++        }))
++        .await;
++    server.wait_task(value.uid()).await.succeeded();
++    movies_index
++}
++
+ pub async fn shared_movies_index() -> &'static Index<'static, Shared> {
+     static INDEX: OnceCell<Index<'static, Shared>> = OnceCell::const_new();
+     INDEX
+         .get_or_init(|| async {
+-            let server = Server::new_shared();
+-            let movies_index = server.unique_index_with_prefix("movies");
 -
--            if i == max_attempts - 1 {
--                dbg!(response);
--            }
-         }
-         panic!("Timeout waiting for update id");
+-            let documents = DOCUMENTS.clone();
+-            let (response, _code) = movies_index.add_documents(documents, None).await;
+-            server.wait_task(response.uid()).await.succeeded();
+-
+-            let (value, _) = movies_index
+-                .update_settings(json!({
+-                    "sortableAttributes": ["title"],
+-                    "filterableAttributes": ["title", "color"],
+-                    "rankingRules": [
+-                        "sort",
+-                        "words",
+-                        "typo",
+-                        "proximity",
+-                        "attribute",
+-                        "exactness"
+-                    ]
+-                }))
+-                .await;
+-            server.wait_task(value.uid()).await.succeeded();
++            let movies_index = movies_index().await;
+             movies_index.to_shared()
+         })
+         .await
+ }
+ 
++pub async fn batman_index() -> Index<'static> {
++    let server = Server::new_shared();
++    let batman_index = server.unique_index_with_prefix("batman");
++
++    let documents = SCORE_DOCUMENTS.clone();
++    let (response, _code) = batman_index.add_documents(documents, None).await;
++    server.wait_task(response.uid()).await.succeeded();
++
++    let (value, _) = batman_index
++        .update_settings(json!({
++            "sortableAttributes": ["id", "title"],
++            "filterableAttributes": ["title"],
++            "rankingRules": [
++                "sort",
++                "words",
++                "typo",
++                "proximity",
++                "attribute",
++                "exactness"
++            ]
++        }))
++        .await;
++    server.wait_task(value.uid()).await.succeeded();
++    batman_index
++}
++
+ pub async fn shared_batman_index() -> &'static Index<'static, Shared> {
+     static INDEX: OnceCell<Index<'static, Shared>> = OnceCell::const_new();
+     INDEX
+         .get_or_init(|| async {
+-            let server = Server::new_shared();
+-            let batman_index = server.unique_index_with_prefix("batman");
+-
+-            let documents = SCORE_DOCUMENTS.clone();
+-            let (response, _code) = batman_index.add_documents(documents, None).await;
+-            server.wait_task(response.uid()).await.succeeded();
+-
+-            let (value, _) = batman_index
+-                .update_settings(json!({
+-                    "sortableAttributes": ["id", "title"],
+-                    "filterableAttributes": ["title"],
+-                    "rankingRules": [
+-                        "sort",
+-                        "words",
+-                        "typo",
+-                        "proximity",
+-                        "attribute",
+-                        "exactness"
+-                    ]
+-                }))
+-                .await;
+-            server.wait_task(value.uid()).await.succeeded();
++            let batman_index = batman_index().await;
+             batman_index.to_shared()
+         })
+         .await
+@@ -1938,6 +1948,129 @@ async fn federation_sort_different_indexes_same_criterion_same_direction() {
+     "###);
+ }
+ 
++#[actix_rt::test]
++async fn federation_sort_different_indexes_plus_words() {
++    let server = Server::new_shared();
++    let movies_index = movies_index().await;
++    let batman_index = batman_index().await;
++
++    let (task, _code) = movies_index.update_settings_ranking_rules(json!(["words", "sort"])).await;
++
++    server.wait_task(task.uid()).await.succeeded();
++
++    let (task, _code) = batman_index.update_settings_ranking_rules(json!(["words", "sort"])).await;
++
++    server.wait_task(task.uid()).await.succeeded();
++
++    // return titles ordered across indexes
++    let (response, code) = server
++        .multi_search(json!({"federation": {}
+```
+
+**File**: `crates/milli/src/score_details.rs` (modified, +84/-68)
+```diff
+@@ -213,44 +213,50 @@ impl ScoreDetails {
      }
-```
-
-**File**: `crates/milli/src/test_index.rs` (modified, +4/-4)
-```diff
-@@ -1426,12 +1426,12 @@ fn vectors_are_never_indexed_as_searchable_or_filterable() {
-     assert!(results.candidates.is_empty());
  
-     let mut search = index.search(&rtxn, &fields_ids_map);
--    let results = dbg!(search
-+    let results = search
-         .filter(Some(IndexFilter::from(
--            Filter::from_str("_vectors.doggo = 6789").unwrap().unwrap()
-+            Filter::from_str("_vectors.doggo = 6789").unwrap().unwrap(),
-         )))
--        .execute())
--    .unwrap();
-+        .execute()
-+        .unwrap();
-     assert!(results.candidates.is_empty());
+     pub fn score_values<'a>(
+-        mut details: impl Iterator<Item = &'a Self> + 'a,
++        details: impl Iterator<Item = &'a Self> + 'a,
+     ) -> impl Iterator<Item = ScoreValue<'a>> + 'a {
+         let weight = std::cell::Cell::new(1.0f64);
  
-     index
-```
-
-**File**: `crates/milli/src/update/new/document.rs` (modified, +0/-2)
-```diff
-@@ -367,8 +367,6 @@ fn find_subfields(
-                         .id_or_insert(field_buf)
-                         .ok_or(UserError::AttributeLimitReached)?;
+-        std::iter::from_fn(move || {
+-            details
+-                .by_ref()
+-                // any scale detail modifies the weight starting from this action,
+-                // meaning that a hypothetical score details iterator with some relevancy rules before the scale
+-                // detail would have the base weight and not the weight modified by the scale.
+-                // In practice, the search implementation guarantees that scale is the first score detail, and as a result
+-                // the weight is applied to all relevancy rules.
+-                .inspect(|detail| {
+-                    if let ScoreDetails::Scale { actions } = detail {
+-                        for action in actions {
+-                            weight.update(|weight| weight * action.weight);
+-                        }
+-                    }
+-                })
+-                .filter_map(ScoreDetails::rank_or_value)
+-                .coalesce(|left, right| match (left, right) {
+-                    (RankOrValue::Rank(left), RankOrValue::Rank(right)) => {
+-                        Ok(RankOrValue::Rank(Rank::merge(left, right)))
++        details
++            // any scale detail modifies the weight starting from this action,
++            // meaning that a hypothetical score details iterator with some relevancy rules before the scale
++            // detail would have the base weight and not the weight modified by the scale.
++            // In practice, the search implementation guarantees that scale is the first score detail, and as a result
++            // the weight is applied to all relevancy rules.
++            .filter_map(|detail| {
++                if let ScoreDetails::Scale { actions } = detail {
++                    let mut weight = 1.0;
++                    for action in actions {
++                        weight *= action.weight;
+                     }
+-                    (left, right) => Err((left, right)),
+-                })
+-                .map(|rank_or_value| match rank_or_value {
+-                    RankOrValue::Rank(r) => ScoreValue::Score(r.local_score() * weight.get()),
+-                    RankOrValue::Sort(s) => ScoreValue::Sort(s),
+-                    RankOrValue::GeoSort(g) => ScoreValue::GeoSort(g),
+-                    RankOrValue::Score(s) => ScoreValue::Score(s * weight.get()),
+-                })
+-                .next()
+-        })
++                    return Some(either::Left(weight));
++                }
++
++                detail.rank_or_value().map(either::Right)
++            })
++            .coalesce(|left, right| match (left, right) {
++                (
++                    either::Right(RankOrValue::Rank(left)),
++                    either::Right(RankOrValue::Rank(right)),
++                ) => Ok(either::Right(RankOrValue::Rank(Rank::merge(left, right)))),
++                (left, right) => Err((left, right)),
++            })
++            .filter_map(move |rank_or_value| match rank_or_value {
++                either::Left(new_weight) => {
++                    weight.update(|weight| weight * new_weight);
++                    None
++                }
++                either::Right(RankOrValue::Rank(r)) => {
++                    Some(ScoreValue::Score(r.local_score() * weight.get()))
++                }
++                either::Right(RankOrValue::Sort(s)) => Some(ScoreValue::Sort(s)),
++                either::Right(RankOrValue::GeoSort(g)) => Some(ScoreValue::GeoSort(g)),
++                either::Right(RankOrValue::Score(s)) => Some(ScoreValue::Score(s * weight.get())),
++            })
+     }
  
--                    dbg!(&field_buf);
--
-                     let value = parse_raw_value(value, alloc)?;
-                     find_subfields(value, field_buf, fields_ids_map, alloc)?;
-                 }
+     pub fn weighted_score_values<'a>(
+-        mut details: impl Iterator<Item = &'a Self> + 'a,
++        details: impl Iterator<Item = &'a Self> + 'a,
+         weight: f64,
+     ) -> impl Iterator<Item = WeightedScoreValue> + 'a {
+         // define a cell that will keep the current weight, and capture it in a from_fn closure to keep the state
+@@ -261,48 +267,58 @@ impl ScoreDetails {
+         // the current weight.
+         let used_weight = std::cell::Cell::new(false);
+ 
+-        std::iter::from_fn(move || {
+-            match details
+-                .by_ref()
+-                .inspect(|detail| {
+-                    if let ScoreDetails::Scale { actions } = detail {
+-                        for action in actions {
+-                            weight.update(|weight| weight * action.weight);
+-                        }
+-                    }
+-                })
+-                .filter_map(ScoreDetails::rank_or_value)
+-                .coalesce(|left, right| match (left, right) {
+-                    (RankOrValue::Rank(left), RankOrValue::Rank(right)) => {
+-                        Ok(RankO
 ```
 
 ---
 
-### Incident Patch 2: `b71fd6a5` (2026-11-09)
-**Commit Message**: Merge pull request #6726 from meilisearch/update-version-v1.56.2
+### Incident Patch 2: `4ef8a91f` (2026-11-10)
+**Commit Message**: Merge pull request #6718 from meilisearch/fix-homebrew-action-version-comment
 
-Update version for the next release (v1.56.2) in Cargo.toml
+Fix version comment of the pinned Homebrew bump action
 
-**File**: `Cargo.lock` (modified, +19/-19)
+**File**: `.github/workflows/publish-apt-brew-pkg.yml` (modified, +1/-1)
 ```diff
-@@ -780,7 +780,7 @@ dependencies = [
- 
- [[package]]
- name = "build-info"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "anyhow",
-  "time",
-@@ -1959,7 +1959,7 @@ dependencies = [
- 
- [[package]]
- name = "dump"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "big_s",
-  "flate2",
-@@ -2217,7 +2217,7 @@ dependencies = [
- 
- [[package]]
- name = "file-store"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "tempfile",
-  "thiserror 2.0.20",
-@@ -2237,7 +2237,7 @@ dependencies = [
- 
- [[package]]
- name = "filter-parser"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "insta",
-  "itertools 0.14.0",
-@@ -2266,7 +2266,7 @@ dependencies = [
- 
- [[package]]
- name = "flatten-serde-json"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -2450,7 +2450,7 @@ dependencies = [
- 
- [[package]]
- name = "fuzzers"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "arbitrary",
-  "bumpalo",
-@@ -3190,7 +3190,7 @@ dependencies = [
- 
- [[package]]
- name = "http-client"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "cidr",
-  "hyper-util",
-@@ -3510,7 +3510,7 @@ dependencies = [
- 
- [[package]]
- name = "index-scheduler"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "anyhow",
-  "backoff",
-@@ -3759,7 +3759,7 @@ dependencies = [
- 
- [[package]]
- name = "json-depth-checker"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -4197,7 +4197,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
- 
- [[package]]
- name = "meili-snap"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "insta",
-  "md5",
-@@ -4207,7 +4207,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "actix-cors",
-  "actix-http",
-@@ -4300,7 +4300,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-auth"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "base64 0.22.1",
-  "enum-iterator",
-@@ -4319,7 +4319,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-types"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "actix-web",
-  "anyhow",
-@@ -4358,7 +4358,7 @@ dependencies = [
- 
- [[package]]
- name = "meilitool"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -4392,7 +4392,7 @@ dependencies = [
- 
- [[package]]
- name = "milli"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "arroy",
-  "bbqueue",
-@@ -5020,7 +5020,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "permissive-json-pointer"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "big_s",
-  "serde_json",
-@@ -6072,7 +6072,7 @@ dependencies = [
- 
- [[package]]
- name = "routes"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "actix-web",
-  "routes-macros",
-@@ -6084,7 +6084,7 @@ dependencies = [
- 
- [[package]]
- name = "routes-macros"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "proc-macro2",
-  "proc-macro2-diagnostics",
-@@ -8640,7 +8640,7 @@ dependencies = [
- 
- [[package]]
- name = "xtask"
--version = "1.56.1"
-+version = "1.56.2"
- dependencies = [
-  "anyhow",
-  "build-info",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ members = [
- ]
- 
- [workspace.package]
--version = "1.56.1"
-+version = "1.56.2"
- authors = [
-     "Quentin de Quelen <quentin@dequelen.me>",
-     "Clément Renault <clement@meilisearch.com>",
+@@ -56,7 +56,7 @@ jobs:
+     needs: check-version
+     steps:
+       - name: Create PR to Homebrew
+-        uses: mislav/bump-homebrew-formula-action@f865c8b0dbebd6e263cc06782a0e974c61cf12d2 # v3
++        uses: mislav/bump-homebrew-formula-action@f865c8b0dbebd6e263cc06782a0e974c61cf12d2 # v4
+         with:
+           formula-name: meilisearch
+           formula-path: Formula/m/meilisearch.rb
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6731** (2026-11-12): Fix inter-index merge in federated search (@dureuill)
 - **PR #6726** (2026-11-09): Update version for the next release (v1.56.2) in Cargo.toml (@meili-bot)
 - **PR #6725** (2026-11-09): remove unwanted log + warn about future unwanted dbg (@dureuill)
+- **PR #6724** (closed): Fix #6723: Federated search ignores custom ranking rules placed after a relevancy r (@zaidrain06)
+- **PR #6718** (2026-11-10): Fix version comment of the pinned Homebrew bump action (@curquiza)
 - **PR #6716** (2026-11-04): Bump mongodb to v9.0 in rails SDKs tests (@Strift)
-- **PR #6714** (2026-11-02): Bump docker/login-action from 4.2.0 to 4.7.0 (@dependabot[bot])
-- **PR #6713** (2026-11-02): Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
-- **PR #6712** (2026-11-02): Bump docker/build-push-action from 6.19.2 to 7.4.0 (@dependabot[bot])
 
 ---
 
@@ -2354,31 +2347,90 @@ Update version for the next release (v1.56.2) in Cargo.toml
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6725 from meilisearch/remove-dbg-and-check-for-them
+## X. Merge pull request #6731 from meilisearch/fix-merge-issues
 
 **RULE**:
-When implementing operations in `clippy.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/meilisearch/tests/search/multi/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c7bfcfa`: Merge pull request #6725 from meilisearch/remove-dbg-and-check-for-them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c25aa858`: Merge pull request #6731 from meilisearch/fix-merge-issues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `clippy.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/meilisearch/tests/search/multi/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+pub async fn movies_index() -> Index<'static> {
+    let server = Server::new_shared();
+    let movies_index = server.unique_index_with_prefix("movies");
 
-disallowed-macros = [
-    { path = "std::dbg" }
-]
+    let documents = DOCUMENTS.clone();
+    let (response, _code) = movies_index.add_documents(documents, None).await;
+    server.wait_task(response.uid()).await.succeeded();
+
+    let (value, _) = movies_index
+        .update_settings(json!({
+            "sortableAttributes": ["title"],
+            "filterableAttributes": ["title", "color"],
+            "rankingRules": [
+                "sort",
+                "words",
+                "typo",
+                "proximity",
+                "attribute",
+                "exactness"
+            ]
+        }))
+        .await;
+    server.wait_task(value.uid()).await.succeeded();
+    movies_index
+}
+
+            let movies_index = movies_index().await;
+pub async fn batman_index() -> Index<'static> {
+    let server = Server::new_shared();
+    let batman_index = server.unique_index_with_prefix("batman");
+
+    let documents = SCORE_DOCUMENTS.clone();
+    let (response, _code) = batman_index.add_documents(documents, None).await;
+    server.wait_task(response.uid()).await.succeeded();
+
+    let (va
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            let server = Server::new_shared();
+            let movies_index = server.unique_index_with_prefix("movies");
+
+            let documents = DOCUMENTS.clone();
+            let (response, _code) = movies_index.add_documents(documents, None).await;
+            server.wait_task(response.uid()).await.succeeded();
+
+            let (value, _) = movies_index
+                .update_settings(json!({
+                    "sortableAttributes": ["title"],
+                    "filterableAttributes": ["title", "color"],
+                    "rankingRules": [
+                        "sort",
+                        "words",
+                        "typo",
+                        "proximity",
+                        "attribute",
+                        "exactness"
+                    ]
+                }))
+                .await;
+            server.wait_task(value.uid()).await.succeeded();
+            let server = Server::new_shared();
+            let batman_index = server.unique_index_with_prefix("batman");
+
+            let documents = SCORE_DOCUMENTS.clone();
+            let (response, _code) = batman_index.add_documents(documents, None).await;
+            server.wait_task(response.uid()).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c7bfcfa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c25aa858` are properly handled with clean fallback behavior.

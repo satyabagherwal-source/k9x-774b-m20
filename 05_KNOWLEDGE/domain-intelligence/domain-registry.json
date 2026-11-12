@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T11:19:08.433Z",
-  "total_records": 68,
+  "last_updated": "2026-11-12T11:38:00.743Z",
+  "total_records": 69,
   "domains": {
     "A": {
       "total": 1,
@@ -81,7 +81,7 @@
       ]
     },
     "H": {
-      "total": 15,
+      "total": 16,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -97,7 +97,8 @@
         "DOM-H-57AD88EF",
         "DOM-H-03EB2317",
         "DOM-H-0AA4F6ED",
-        "DOM-H-F56DBC84"
+        "DOM-H-F56DBC84",
+        "DOM-H-7D775901"
       ]
     },
     "I": {
@@ -2747,6 +2748,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T11:19:08.431Z"
+    },
+    "DOM-H-7D775901": {
+      "record_id": "DOM-H-7D775901",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Eliminate avoidable dead work in multi-stage JSCompiler builds.",
+      "content": "When implementing operations in `src/com/google/javascript/jscomp/Compiler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "687df25b7bf8c4c6ae38a0f33ae4ed92fe8c4841f9ec7e2cb04a2174d988f13b",
+      "summary": "Prevents defects observed in production commit `17db1536`: Eliminate avoidable dead work in multi-stage JSCompiler builds.. Unvalidated exec -> When implementing operations in `src/com/google/javascript/jscomp/Compiler.java`, engineers MUST enforce rigorous boundary validation, safe ",
+      "provenance": {
+        "source_uri": "project://google-closure-compiler/google-closure-compiler-learnings.md",
+        "source_version": "0d7d62cf",
+        "observed_at": "2026-11-12T11:37:13.594Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (google-closure-compiler)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of google-closure-compiler"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T11:38:00.741Z"
     }
   }
 }

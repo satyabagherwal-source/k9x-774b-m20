@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T11:19:08.534Z",
+  "updated_at": "2026-11-12T11:38:01.049Z",
   "stats": {
-    "total_discovered": 1211,
-    "approved_pending_harvest": 1098,
+    "total_discovered": 1250,
+    "approved_pending_harvest": 1133,
     "harvested_count": 0,
-    "rejected_count": 113,
+    "rejected_count": 117,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1116,
-      "OFFICIAL_DOCUMENTATION": 44,
-      "STANDARDS_AND_SPECIFICATIONS": 48,
+      "COMMUNITY_AND_EXPERT": 1146,
+      "OFFICIAL_DOCUMENTATION": 51,
+      "STANDARDS_AND_SPECIFICATIONS": 50,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
     }
@@ -25868,6 +25868,836 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
         "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-DC74C4A62606": {
+      "id": "SRC-DC74C4A62606",
+      "url": "https://github.com/google/closure-compiler",
+      "title": "https://github.com/google/closure-compiler",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-44DF68D09434": {
+      "id": "SRC-44DF68D09434",
+      "url": "http://documentcloud.github.com/underscore",
+      "title": "http://documentcloud.github.com/underscore",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T11:38:00.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-29C802E2231B": {
+      "id": "SRC-29C802E2231B",
+      "url": "http://nodejs.org/api/util.html",
+      "title": "http://nodejs.org/api/util.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "OFFICIAL_DOCUMENTATION",
+      "discovered_at": "2026-11-12T11:38:00.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-19EF27E6CA96": {
+      "id": "SRC-19EF27E6CA96",
+      "url": "https://github.com/joyent/node/blob/master/lib/util.js",
+      "title": "https://github.com/joyent/node/blob/master/lib/util.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-0669BCA31B95": {
+      "id": "SRC-0669BCA31B95",
+      "url": "http://www.w3.org/TR/service-workers",
+      "title": "http://www.w3.org/TR/service-workers",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-12T11:38:00.781Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-17C5AE282044": {
+      "id": "SRC-17C5AE282044",
+      "url": "https://w3c.github.io/ServiceWorker",
+      "title": "https://w3c.github.io/ServiceWorker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-0DD9B3543D8E": {
+      "id": "SRC-0DD9B3543D8E",
+      "url": "https://w3c.github.io/push-api",
+      "title": "https://w3c.github.io/push-api",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.795Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-48E3EDA69FF5": {
+      "id": "SRC-48E3EDA69FF5",
+      "url": "https://www.chromestatus.com/feature/5283829761703936",
+      "title": "https://www.chromestatus.com/feature/5283829761703936",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.801Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-94ED27558C29": {
+      "id": "SRC-94ED27558C29",
+      "url": "https://wicg.github.io/BackgroundSync/spec",
+      "title": "https://wicg.github.io/BackgroundSync/spec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-6AD3890732E5": {
+      "id": "SRC-6AD3890732E5",
+      "url": "http://www.w3.org/TR/push-api",
+      "title": "http://www.w3.org/TR/push-api",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-12T11:38:00.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-CAF074703821": {
+      "id": "SRC-CAF074703821",
+      "url": "https://notifications.spec.whatwg.org/",
+      "title": "https://notifications.spec.whatwg.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.836Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-9F7C1617354F": {
+      "id": "SRC-9F7C1617354F",
+      "url": "https://notif/",
+      "title": "https://notif/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.843Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-F36AA4AF853B": {
+      "id": "SRC-F36AA4AF853B",
+      "url": "https://closure-compiler.appspot.com/home",
+      "title": "https://closure-compiler.appspot.com/home",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-C64B42CDAF56": {
+      "id": "SRC-C64B42CDAF56",
+      "url": "https://github.com/google/closure-compiler/commit/9931d3f17766c4f43e72f2385614d77284383e9d",
+      "title": "https://github.com/google/closure-compiler/commit/9931d3f17766c4f43e72f2385614d77284383e9d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-6F259A56BD97": {
+      "id": "SRC-6F259A56BD97",
+      "url": "https://closure-compiler-debugger.appspot.com/",
+      "title": "https://closure-compiler-debugger.appspot.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.864Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-B81ADF2BE7E3": {
+      "id": "SRC-B81ADF2BE7E3",
+      "url": "https://github.com/domoritz/arrow/tree/dom/closure-bug",
+      "title": "https://github.com/domoritz/arrow/tree/dom/closure-bug",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-3190514C77E0": {
+      "id": "SRC-3190514C77E0",
+      "url": "https://github.com/bazel-contrib/rules_jvm_external/issues/1300",
+      "title": "https://github.com/bazel-contrib/rules_jvm_external/issues/1300",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-8249B6FFCC83": {
+      "id": "SRC-8249B6FFCC83",
+      "url": "https://github.com/google/bazel-common",
+      "title": "https://github.com/google/bazel-common",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.885Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-058D7EF01E31": {
+      "id": "SRC-058D7EF01E31",
+      "url": "https://github.com/jellyfin/Swiftfin",
+      "title": "https://github.com/jellyfin/Swiftfin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-9F2B61420372": {
+      "id": "SRC-9F2B61420372",
+      "url": "https://developer.apple.com/documentation/foundation/1508628-url_loading_system_error_codes",
+      "title": "https://developer.apple.com/documentation/foundation/1508628-url_loading_system_error_codes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.916Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-0BA76CC9F79C": {
+      "id": "SRC-0BA76CC9F79C",
+      "url": "https://github.com/user-attachments/assets/8bc44098-f313-4e30-8558-94219369b334",
+      "title": "https://github.com/user-attachments/assets/8bc44098-f313-4e30-8558-94219369b334",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-90DDE7669560": {
+      "id": "SRC-90DDE7669560",
+      "url": "https://github.com/user-attachments/assets/3f0a01b6-b8f4-44f3-800b-122d931acc59",
+      "title": "https://github.com/user-attachments/assets/3f0a01b6-b8f4-44f3-800b-122d931acc59",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-9EE922FEFE80": {
+      "id": "SRC-9EE922FEFE80",
+      "url": "https://github.com/user-attachments/assets/1c95e14f-712e-402f-ac76-31c44a4af9a2",
+      "title": "https://github.com/user-attachments/assets/1c95e14f-712e-402f-ac76-31c44a4af9a2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.935Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-53EBE8AE8A8A": {
+      "id": "SRC-53EBE8AE8A8A",
+      "url": "https://github.com/user-attachments/assets/cfe86af2-2609-4dcc-906b-8230d307a999",
+      "title": "https://github.com/user-attachments/assets/cfe86af2-2609-4dcc-906b-8230d307a999",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-6565573751CA": {
+      "id": "SRC-6565573751CA",
+      "url": "https://github.com/user-attachments/assets/6bf2736e-1e44-4635-8168-5506945467ba",
+      "title": "https://github.com/user-attachments/assets/6bf2736e-1e44-4635-8168-5506945467ba",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.948Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-7227BE5BF042": {
+      "id": "SRC-7227BE5BF042",
+      "url": "https://github.com/user-attachments/assets/763f974d-89ab-440b-b254-22d7a122bd58",
+      "title": "https://github.com/user-attachments/assets/763f974d-89ab-440b-b254-22d7a122bd58",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-7239E381074B": {
+      "id": "SRC-7239E381074B",
+      "url": "https://github.com/user-attachments/assets/07feac2c-ead3-4ca8-b4c4-cf042dd9f79a",
+      "title": "https://github.com/user-attachments/assets/07feac2c-ead3-4ca8-b4c4-cf042dd9f79a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-15E0D2824F0E": {
+      "id": "SRC-15E0D2824F0E",
+      "url": "https://github.com/user-attachments/assets/4898584e-455d-40f1-b8d4-4ac97ddd325b",
+      "title": "https://github.com/user-attachments/assets/4898584e-455d-40f1-b8d4-4ac97ddd325b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-3373F208FF6E": {
+      "id": "SRC-3373F208FF6E",
+      "url": "https://github.com/user-attachments/assets/196933d8-7961-4e00-93b1-bc71ad286933",
+      "title": "https://github.com/user-attachments/assets/196933d8-7961-4e00-93b1-bc71ad286933",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.972Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-5596122DEDDD": {
+      "id": "SRC-5596122DEDDD",
+      "url": "https://github.com/bridgecrewio/checkov",
+      "title": "https://github.com/bridgecrewio/checkov",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-D2B6C0B9F1BA": {
+      "id": "SRC-D2B6C0B9F1BA",
+      "url": "https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html",
+      "title": "https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:00.992Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-17A320EAE502": {
+      "id": "SRC-17A320EAE502",
+      "url": "https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts",
+      "title": "https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.005Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-DC73FADFB6B3": {
+      "id": "SRC-DC73FADFB6B3",
+      "url": "https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts/queueservices",
+      "title": "https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts/queueservices",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.012Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-A06452567395": {
+      "id": "SRC-A06452567395",
+      "url": "https://github.com/MicrosoftDocs/azure-docs/issues/13195",
+      "title": "https://github.com/MicrosoftDocs/azure-docs/issues/13195",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.018Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-6A6F62FD1C37": {
+      "id": "SRC-6A6F62FD1C37",
+      "url": "https://github.com/bridgecrewio/checkov/blob/main/docs/5.Policy%20Index/terraform.md",
+      "title": "https://github.com/bridgecrewio/checkov/blob/main/docs/5.Policy%20Index/terraform.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-CC4D0509BD06": {
+      "id": "SRC-CC4D0509BD06",
+      "url": "https://github.com/bridgecrewio/checkov/blob/4875adc472f409bc7039a879347b404468e88215/checkov/github_actions/schemas.py",
+      "title": "https://github.com/bridgecrewio/checkov/blob/4875adc472f409bc7039a879347b404468e88215/checkov/github_actions/schemas.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-6C531B5A10E5": {
+      "id": "SRC-6C531B5A10E5",
+      "url": "https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions",
+      "title": "https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.037Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-2C6F04FD70E6": {
+      "id": "SRC-2C6F04FD70E6",
+      "url": "https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/events-that-trigger-workflows",
+      "title": "https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/events-that-trigger-workflows",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-CB372B44A932": {
+      "id": "SRC-CB372B44A932",
+      "url": "https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/events-that-trigger-work",
+      "title": "https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/events-that-trigger-work",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:38:01.049Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
       }
     }
   }

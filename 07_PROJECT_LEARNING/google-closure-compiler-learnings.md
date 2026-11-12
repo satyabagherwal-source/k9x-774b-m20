@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source**: github ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
-> **Source Version**: `51d80993`  
+> **Source Version**: `0d7d62cf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:55:18.614Z  
+> **Timestamp**: 2026-11-12T11:37:13.594Z  
 > **Learning ID**: `learn-github-google-closure-compiler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:55:17.510Z  
+> **Harvest Timestamp**: 2026-11-12T11:37:13.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A JavaScript checker and optimizer.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7702 stars
+- **Stars / Engagement**: 7705 stars
 
 ---
 
@@ -2461,108 +2461,339 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51d80993` (2026-11-06)
-**Commit Message**: Merge pull request #4372 from rajath201:split-null-separator
+### Incident Patch 1: `17db1536` (2026-11-11)
+**Commit Message**: Eliminate avoidable dead work in multi-stage JSCompiler builds.
 
-PiperOrigin-RevId: 1015627121
+- Override `Compiler.NonClosingOutputStream#write(byte[], int, int)` to forward
+  bulk writes directly instead of falling back to `FilterOutputStream`'s
+  byte-by-byte `write(int)` during state and TypedAST serialization.
 
-**File**: `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java` (modified, +5/-3)
+- Use `chunk.getInputCount()` and `chunk.getFirst()` in
+  `Compiler#getNodeForCodeInsertion` instead of `chunk.getInputs()`, which copied
+  all chunk inputs into a new `ImmutableList` just to read the first element.
+
+- Skip `NodeUtil.countAstSize` in `PhaseOptimizer.Loop` when the size heuristic is
+  inactive to avoid unnecessary full-AST node-counting walks on every loop
+  iteration.
+
+- Avoid building the full dot graph string in `AmbiguateProperties` when debug
+  logging is disabled by passing a lambda into the logger.
+
+- In `FlowSensitiveInlineVariables`, check `t.inFunctionBlockScope()` before calling
+  `t.getScope()` to avoid building unused `Scope` objects. Also return early when
+  `candidates.isEmpty()` to skip running `MaybeReachingVariableUse#analyze` when
+  there is nothing to inline.
+
+Compiled JavaScript output is byte-for-byte equivalent.
+
+PiperOrigin-RevId: 1019403803
+
+**File**: `src/com/google/javascript/jscomp/Compiler.java` (modified, +7/-4)
 ```diff
-@@ -1410,9 +1410,11 @@ private Node tryFoldStringSplit(Node n, Node stringNode, Node arg1) {
-     int limit = stringValue.length() + 1;
+@@ -3719,10 +3719,8 @@ protected Node getNodeForCodeInsertion(@Nullable JSChunk chunk) {
+       return checkNotModule(firstInput.getAstRoot(this), "Cannot insert code into a module");
+     }
  
-     if (arg1 != null) {
--      if (arg1.isStringLit()) {
--        separator = arg1.getString();
--      } else if (!arg1.isNull()) {
-+      if (arg1.isStringLit() || arg1.isNull()) {
-+        // Only `undefined` means "no separator"; any other value is converted with ToString, so
-+        // `str.split(null)` splits on the text "null".
-+        separator = NodeUtil.getStringValue(arg1);
-+      } else {
-         return n;
-       }
+-    ImmutableList<CompilerInput> chunkInputs = chunk.getInputs();
+-    if (!chunkInputs.isEmpty()) {
+-      return checkNotModule(
+-          chunkInputs.get(0).getAstRoot(this), "Cannot insert code into a module");
++    if (chunk.getInputCount() > 0) {
++      return checkNotModule(chunk.getFirst().getAstRoot(this), "Cannot insert code into a module");
+     }
+     throw new IllegalStateException("Root chunk has no inputs");
+   }
+@@ -4718,6 +4716,11 @@ private static final class NonClosingOutputStream extends java.io.FilterOutputSt
+       super(out);
+     }
  
++    @Override
++    public void write(byte[] b, int off, int len) throws IOException {
++      out.write(b, off, len);
++    }
++
+     @Override
+     public void close() throws IOException {
+       flush();
 ```
 
-**File**: `test/com/google/javascript/jscomp/PeepholeReplaceKnownMethodsTest.java` (modified, +5/-0)
+**File**: `src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java` (modified, +4/-1)
 ```diff
-@@ -713,6 +713,11 @@ public void testFoldStringSplit() {
-     fold("x = 'a b c d e'.split(' ', 1)", "x = ['a']");
-     fold("x = 'a b c d e'.split(' ', 3)", "x = ['a','b','c']");
-     fold("x = 'a b c d e'.split(null, 1)", "x = ['a b c d e']");
-+    // A null separator is converted with ToString, so it splits on the text "null".
-+    fold("x = 'anullb'.split(null)", "x = ['a','b']");
-+    fold("x = 'null'.split(null)", "x = ['','']");
-+    fold("x = 'anullbnullc'.split(null, 2)", "x = ['a','b']");
-+    foldSame("x = 'anullb'.split(undefined)");
-     fold("x = 'aaaaa'.split('a')", "x = ['', '', '', '', '', '']");
-     fold("x = 'xyx'.split('x')", "x = ['', 'y', '']");
+@@ -165,7 +165,7 @@ public void enterScope(NodeTraversal t) {
+       return; // Don't even brother. All global variables are likely escaped.
+     }
  
+-    if (!t.getScope().isFunctionBlockScope()) {
++    if (!t.inFunctionBlockScope()) {
+       return; // Only want to do the following if its a function block scope.
+     }
+ 
+@@ -204,6 +204,9 @@ public void enterScope(NodeTraversal t) {
+     // Using the forward reaching definition search to find all the inline
+     // candidates
+     NodeTraversal.traverse(compiler, t.getScopeRoot(), new GatherCandidates());
++    if (candidates.isEmpty()) {
++      return;
++    }
+ 
+     // Compute the backward reaching use. The CFG and per-function variable info can be reused.
+     reachingUses = new MaybeReachingVariableUse(cfg, escaped, allVarsInFn);
+```
+
+**File**: `src/com/google/javascript/jscomp/PhaseOptimizer.java` (modified, +14/-3)
+```diff
+@@ -73,6 +73,7 @@ enum State {
+       ImmutableList.of(PassNames.PEEPHOLE_OPTIMIZATIONS);
+ 
+   static final int MAX_LOOPS = 100;
++  private static final int UNTRACKED_AST_SIZE = -1;
+   static final String OPTIMIZE_LOOP_ERROR =
+       "Fixed point loop exceeded the maximum number of iterations.";
+ 
+@@ -347,7 +348,8 @@ public void process(Node externs, Node root) {
+       State state = State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
+       boolean lastIterMadeChanges;
+       int count = 1;
+-      int astSize = NodeUtil.countAstSize(root);
++      boolean trackAstSize = shouldTrackAstSize();
++      int astSize = trackAstSize ? NodeUtil.countAstSize(root) : UNTRACKED_AST_SIZE;
+       int previousAstSize = astSize;
+ 
+       // The loop starts at state RUN_PASSES_NOT_RUN_IN_PREV_ITER and runs all passes.
+@@ -397,7 +399,7 @@ public void process(Node externs, Node root) {
+           }
+ 
+           previousAstSize = astSize;
+-          astSize = NodeUtil.countAstSize(root);
++          astSize = trackAstSize ? NodeUtil.countAstSize(root) : UNTRACKED_AST_SIZE;
+           if (state == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER) {
+             if (lastIterMadeChanges && isAstSufficientlyChanging(previousAstSize, astSize)) {
+               state = State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER;
+@@ -434,7 +436,12 @@ public void process(Node externs, Node root) {
+      * the loop, we should be OK.
+      */
+     private boolean isAstSufficientlyChanging(int oldAstSize, int newAstSize) {
+-      if (useSizeHeuristicToStopOptimizationLoop && this.isCodeRemovalLoop) {
++      if (shouldTrackAstSize()) {
++        checkState(
++            oldAstSize > 0 && newAstSize > 0,
++            "Expected positive AST sizes when size heuristic is active, got old=%s, new=%s",
++            oldAstSize,
++            newAstSize);
+         float percentChange = 100 * (Math.abs(newAstSize - oldAstSize) / (float) oldAstSize);
+         if (percentChange < 0.05) {
+           this.howmanyIterationsUnderThreshold++;
+@@ -450,6 +457,10 @@ boolean isPopulated() {
+       return !myPasses.isEmpty();
+     }
+ 
++    private boolean shouldTrackAstSize() {
++      return useSizeHeuristicToStopOptimizationLoop && this.isCodeRemovalLoop;
++    }
++
+     private boolean isCodeRemovalLoop() {
+       for (NamedPass pass : this.myPasses) {
+         if (CODE_REMOVING_PASSES.contains(pass.name)) {
+```
+
+**File**: `src/com/google/javascript/jscomp/disambiguate/AmbiguateProperties.java` (modified, +1/-1)
+```diff
+@@ -160,7 +160,7 @@ public void process(Node externs, Node root) {
+     graphBuilder.addAll(graphNodeFactory.getAllKnownTypes());
+     LinkedDirectedGraph<ColorGraphNode, Object> colorGraph = graphBuilder.build();
+     try (LogFile chunkGraphLog = compiler.createOrReopenLog(this.getClass(), "color_graph.dot")) {
+-      chunkGraphLog.log(DotFormatter.toDot(colorGraph));
++      chunkGraphLog.log(() -> DotFormatter.toDot(colorGraph));
+     }
+     for (ColorGraphNode node : graphNodeFactory.getAllKnownTypes()) {
+       node.getSubtypeIndices().set(node.getIndex()); // Init subtyping as reflexive.
+```
+
+**File**: `test/com/google/javascript/jscomp/PhaseOptimizerTest.java` (modified, +14/-0)
+```diff
+@@ -206,6 +206,20 @@ public void preconditionCheck_failure() {
+     assertThat(ex).hasMessageThat().isEqualTo("Precondition for pass myPass failed: message");
+   }
+ 
++  @Test
++  public void sizeHeuristicDisabled_runsCodeRemovalLoopToFixpoint() {
++    compiler.getOptions().setUseSizeHeuristicToStopOptimizationLoop(false);
++    optimizer = new PhaseOptimizer(compiler, tracker);
++    Loop loop = optimizer.addFixedPointLoop();
++    addLoopedPass(loop, PassNames.PEEPHOLE_OPTIMIZATIONS, 3);
++
++    assertPasses(
++        PassNames.PEEPHOLE_OPTIMIZATIONS,
++        PassNames.PEEPHOLE_OPTIMIZATIONS,
++        PassNames.PEEPHOLE_OPTIMIZATIONS,
++        PassNames.PEEPHOLE_OPTIMIZATIONS);
++  }
++
+   public void assertPasses(String... names) {
+     optimizer.process(null, dummyRoot);
+     assertThat(passesRun).isEqualTo(ImmutableList.copyOf(names));
 ```
 
 ---
 
-### Incident Patch 2: `b2dd5e98` (2026-11-05)
-**Commit Message**: Merge pull request #4326 from Pybsama:codex/fix-jsdoc-default-delimiters
+### Incident Patch 2: `ddfede73` (2026-11-09)
+**Commit Message**: Fixed the code printer omitting required parentheses around `??`, `??=`, arrow functions and other non-LeftHandSideExpressions in class `extends` clauses.
 
-PiperOrigin-RevId: 1014271126
+The superclass was printed at assignment precedence, with a special case
+for plain ASSIGN, so ??, ??=, ?:, await, yield, unary operators and other
+expressions that are not a LeftHandSideExpression were printed
+unparenthesized. It is now printed at CALL precedence, or NEW precedence
+for a NEW superclass, since both `new Foo()` and `new Foo` are
+LeftHandSideExpressions.
 
-**File**: `src/com/google/javascript/jscomp/parsing/JsDocInfoParser.java` (modified, +4/-1)
+PiperOrigin-RevId: 1017550184
+
+**File**: `src/com/google/javascript/jscomp/CodeGenerator.java` (modified, +16/-5)
 ```diff
-@@ -930,7 +930,10 @@ private JsDocToken parseAnnotation(JsDocToken token, List<ExtendedTypeInfo> exte
-               // system.
-               if (JsDocToken.EQUALS == token) {
-                 token = next();
--                if (JsDocToken.STRING == token) {
-+                if (token != JsDocToken.RIGHT_SQUARE
-+                    && token != JsDocToken.EOL
-+                    && token != JsDocToken.EOC
-+                    && token != JsDocToken.EOF) {
-                   token = next();
-                 }
-               }
+@@ -551,8 +551,19 @@ protected void add(Node node, Context context, boolean printComments) {
+           if (!superClass.isEmpty()) {
+             add("extends");
+ 
+-            // Parentheses are required for a comma expression or an assignment expression.
+-            addExpr(superClass, 1, Context.OTHER);
++            // ClassHeritage is `extends LeftHandSideExpression`, so parenthesize anything that
++            // binds more loosely, e.g. comma, assignment, `??`, `?:`, `await`. CALL's precedence
++            // is the lowest level at which every expression is a LeftHandSideExpression, except
++            // for arrow functions, which arrowFunctionNeedsParens handles.
++            // NEW is special-cased. NodeUtil gives it unary precedence because `new Foo` can't be
++            // followed by `()` or `.x` without changing its meaning. But in the grammar, both
++            // `new Foo()` (MemberExpression) and `new Foo` (NewExpression) are
++            // LeftHandSideExpressions, so a NEW superclass never needs parentheses.
++            int superClassPrecedence =
++                superClass.isNew()
++                    ? NodeUtil.precedence(Token.NEW)
++                    : NodeUtil.precedence(Token.CALL);
++            addExpr(superClass, superClassPrecedence, Context.OTHER);
+           }
+ 
+           Node interfaces = node.getImplements();
+@@ -1476,6 +1487,9 @@ private boolean arrowFunctionNeedsParens(Node n) {
+       // MemberFunction '(' AssignmentExpressionList ')'
+       // LeftHandSideExpression ? AssignmentExpression : AssignmentExpression
+       return expressionOrEnclosingCast.isFirstChildOf(parent);
++    } else if (parent.isClass()) {
++      // ClassHeritage : 'extends' LeftHandSideExpression
++      return expressionOrEnclosingCast.isSecondChildOf(parent);
+     } else {
+       // All other cases are either illegal (e.g. because you cannot assign a value to an
+       // ArrowFunction) or do not require parens.
+@@ -1745,9 +1759,6 @@ private boolean opRequiresParentheses(Node n, int minPrecedence, Context context
+       // precedence is not enough here since using && or || with ?? without parentheses
+       // is a syntax error as ?? expands directly to |
+       return true;
+-    } else if (n.isAssign() && n.getParent().isClass()) {
+-      // Class declarations with assignments should be wrapped in parentheses.
+-      return true;
+     } else {
+       return precedence(n) < minPrecedence;
+     }
 ```
 
-**File**: `test/com/google/javascript/jscomp/parsing/JsDocInfoParserTest.java` (modified, +30/-0)
+**File**: `test/com/google/javascript/jscomp/CodePrinterTest.java` (modified, +34/-4)
 ```diff
-@@ -5708,6 +5708,36 @@ public void testUnsupportedJsDocSyntax1() {
-     assertThat(info.getDescriptionForParameter("accessLevel")).isEqualTo("The user level");
+@@ -2441,6 +2441,37 @@ public void testClassExtendsLeftHandSideExpression() {
+         "class A {} class B extends (0, A) {}", "class A {\n}\nclass B extends(0, A) {\n}\n");
    }
  
 +  @Test
-+  public void testUnsupportedJsDocSyntaxWithDelimiterDefaultValue() {
-+    for (String defaultValue : ImmutableList.of("(", ")")) {
-+      JSDocInfo info =
-+          parse("@param {string} [accessLevel=" + defaultValue + "] The user level */", true);
-+      assertThat(info.getParameterCount()).isEqualTo(1);
-+      assertTypeEquals(
-+          registry.createOptionalType(STRING_TYPE), info.getParameterType("accessLevel"));
-+      assertThat(info.getDescriptionForParameter("accessLevel")).isEqualTo("The user level");
-+    }
++  public void testClassExtendsNew() {
++    // Both `new Foo()` (MemberExpression) and `new Foo` (NewExpression) are
++    // LeftHandSideExpressions, so neither needs parentheses.
++    assertPrintSame("class C extends new Foo{}");
++    assertPrint("class C extends new Foo() {}", "class C extends new Foo{}");
++    assertPrintSame("class C extends new Foo(1){}");
 +  }
 +
 +  @Test
-+  public void testUnsupportedJsDocSyntaxWithDelimiterDefaultValue_missingClosingBracket() {
-+    for (String defaultValue : ImmutableList.of("(", ")")) {
-+      parse(
-+          "@param {string} [accessLevel=" + defaultValue + " */",
-+          "Bad type annotation. missing closing ]" + BAD_TYPE_WIKI_LINK);
-+    }
++  public void testClassExtendsNonLeftHandSideExpression() {
++    assertPrintSame("class C extends(a=b){}");
++    assertPrintSame("class C extends(a?b:c){}");
++    assertPrintSame("class C extends(a||b){}");
++    assertPrintSame("class C extends(a??b){}");
++    assertPrintSame("class C extends(!a){}");
++    assertPrintSame("async function f(){class C extends(await a){}}");
++    assertPrintSame("function*f(){class C extends(yield a){}}");
++    assertPrintSame("class C extends(()=>{}){}");
++    assertPrintSame("class C extends(async()=>{}){}");
 +  }
 +
 +  @Test
-+  public void testUnsupportedJsDocSyntaxWithEmptyDefaultValue() {
-+    JSDocInfo info = parse("@param {string} [accessLevel=] The user level */", true);
-+    assertThat(info.getParameterCount()).isEqualTo(1);
-+    assertTypeEquals(
-+        registry.createOptionalType(STRING_TYPE), info.getParameterType("accessLevel"));
-+    assertThat(info.getDescriptionForParameter("accessLevel")).isEqualTo("The user level");
++  public void testClassExtendsLeftHandSideExpressionNoParens() {
++    assertPrintSame("class C extends a.b{}");
++    assertPrintSame("class C extends a[b]{}");
++    assertPrintSame("class C extends a(){}");
++    assertPrintSame("class C extends a?.b{}");
++    assertPrintSame("class C extends class{}{}");
 +  }
 +
+   // Same as above, but tests argList instead of Param list
    @Test
-   public void testUnsupportedJsDocSyntax2() {
-     JSDocInfo info =
+   public void testNonJSDocCommentsPrinted_trailing_inlineComments_callArgList() {
+@@ -4696,16 +4727,15 @@ public void testOrCastInNullishCoalesce() {
+ 
+   @Test
+   public void testNullishCoalesceExtends() {
+-    // TODO(b/571641705): CodeGenerator omits required parentheses around ?? in class extends clauses
+     languageMode = LanguageMode.ECMASCRIPT_NEXT;
+-    assertThat(printNode(parse("class C extends (a ?? b) {}"))).isEqualTo("class C extends a??b{}");
++    assertThat(printNode(parse("class C extends (a ?? b) {}")))
++        .isEqualTo("class C extends(a??b){}");
+   }
+ 
+   @Test
+   public void testNullishCoalesceAssignExtends() {
+-    // TODO(b/571641705): CodeGenerator omits required parentheses around ??= in class extends clauses
+     languageMode = LanguageMode.ECMASCRIPT_NEXT;
+     assertThat(printNode(parse("class C extends (a ??= b) {}")))
+-        .isEqualTo("class C extends a??=b{}");
++        .isEqualTo("class C extends(a??=b){}");
+   }
+ }
+```
+
+---
+
+### Incident Patch 3: `687888cf` (2026-11-09)
+**Commit Message**: Bump rules_jvm_external to 6.8 and drop AutoValue deploy_env workaround.
+
+Since `rules_jvm_external` 6.8 (https://github.com/bazel-contrib/rules_jvm_external/issues/1300), `java_export` automatically excludes targets tagged `maven:compile_only` and their transitive jars from the output jar.
+
+Upgrade `rules_jvm_external` from 6.6 to 6.8 and remove the explicit `deploy_env` exclusion for `@google_bazel_common//third_party/java/auto:value` on `compiler_unshaded`.
+
+PiperOrigin-RevId: 1017521905
+
+**File**: `BUILD.bazel` (modified, +0/-5)
+```diff
+@@ -96,11 +96,6 @@ version = "$(COMPILER_VERSION)" or "1.0-SNAPSHOT"
+ 
+ java_export(
+     name = "compiler_unshaded",
+-    # Compile time dependencies that are not added as @maven//: need to be excluded.
+-    # https://github.com/bazel-contrib/rules_jvm_external/issues/1300
+-    deploy_env = [
+-        "@google_bazel_common//third_party/java/auto:value",
+-    ],
+     maven_coordinates = "com.google.javascript:closure-compiler-unshaded:{0}".format(version),
+     pom_template = "maven/closure-compiler-unshaded.pom.xml.tpl",
+     tags = [
+```
+
+**File**: `MODULE.bazel` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ git_override(
+     commit = "2cab52929507935aa43d460a3976d3bedc814d3a",
+     remote = "https://github.com/google/bazel-common",
+ )
+-bazel_dep(name = "rules_jvm_external", version = "6.6")
++bazel_dep(name = "rules_jvm_external", version = "6.8")
+ 
+ ## START_MAVEN_ARTIFACTS_LIST
+ # List of external dependencies from Maven. Also update corresponding POM file below.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2571,7 +2802,7 @@ PiperOrigin-RevId: 1014271126
 - **PR #4379** (closed): Add AudioTrack and VideoTrack externs. (@avelad)
 - **PR #4378** (closed): Add requestPermission to DeviceOrientationEvent and DeviceMotionEvent externs. (@avelad)
 - **PR #4377** (closed): Add DataCue to the HTML5 externs. (@avelad)
-- **PR #4372** (2026-11-06): fold str.split(null) with a "null" separator (@rajath201)
+- **PR #4376** (2026-11-10): Add WebTransport.prototype.protocol to externs. (@avelad)
 
 ---
 
@@ -2591,34 +2822,37 @@ PiperOrigin-RevId: 1014271126
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4372 from rajath201:split-null-separator
+## X. Eliminate avoidable dead work in multi-stage JSCompiler builds.
 
 **RULE**:
-When implementing operations in `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/com/google/javascript/jscomp/Compiler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51d80993`: Merge pull request #4372 from rajath201:split-null-separator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17db1536`: Eliminate avoidable dead work in multi-stage JSCompiler builds.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/Compiler.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      if (arg1.isStringLit() || arg1.isNull()) {
-        // Only `undefined` means "no separator"; any other value is converted with ToString, so
-        // `str.split(null)` splits on the text "null".
-        separator = NodeUtil.getStringValue(arg1);
-      } else {
+    if (chunk.getInputCount() > 0) {
+      return checkNotModule(chunk.getFirst().getAstRoot(this), "Cannot insert code into a module");
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+      out.write(b, off, len);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-      if (arg1.isStringLit()) {
-        separator = arg1.getString();
-      } else if (!arg1.isNull()) {
+    ImmutableList<CompilerInput> chunkInputs = chunk.getInputs();
+    if (!chunkInputs.isEmpty()) {
+      return checkNotModule(
+          chunkInputs.get(0).getAstRoot(this), "Cannot insert code into a module");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51d80993` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17db1536` are properly handled with clean fallback behavior.
