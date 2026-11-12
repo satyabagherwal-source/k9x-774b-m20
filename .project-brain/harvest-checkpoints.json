@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T13:33:21.086Z",
+  "last_updated": "2026-11-12T13:50:57.886Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "9f975bbcd65027ce7d045b90ae0c2eaced5def6ac5bd7b5cbb00b65ff35bf3cc",
-      "verified_at": "2026-11-12T12:45:39.297Z",
+      "content_hash": "560bde33cd9597e1326a7aa59b03e7fdb8c12564992631578874686d42766f11",
+      "verified_at": "2026-11-12T13:41:09.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:45:39.297Z"
+      "last_updated": "2026-11-12T13:41:09.147Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9606,14 +9606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "95fc660679c1d6db0fd5805c5cff4ab3660e0a872c26c5a6b00cab8cf28ddb36",
-      "verified_at": "2026-11-09T22:34:14.752Z",
+      "content_hash": "69f11793433213e9a220cd1ea1cf38bb51cabbf7efcbdba365a9c2679bb11fcf",
+      "verified_at": "2026-11-12T13:50:57.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T22:34:14.752Z"
+      "last_updated": "2026-11-12T13:50:57.885Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",
@@ -15111,14 +15111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-parcel-bundler-parcel",
-      "content_hash": "e27ea886595f1ab6f4fbbf6ac4ba46af9baade865d182f0a78bf16d6fb7f3225",
-      "verified_at": "2026-11-07T21:03:20.798Z",
+      "content_hash": "9db2e988d823fa591772a64cf9c795090379ff61e8f9b0cd5ed2365138ea0bca",
+      "verified_at": "2026-11-12T13:40:56.994Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:03:20.798Z"
+      "last_updated": "2026-11-12T13:40:56.994Z"
     },
     "TanStack/query": {
       "repository": "TanStack/query",

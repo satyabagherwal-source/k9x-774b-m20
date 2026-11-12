@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T13:33:20.924Z",
+  "last_updated": "2026-11-12T13:50:57.760Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4386,8 +4386,8 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "290a9d94",
-      "content_hash": "95fc660679c1d6db0fd5805c5cff4ab3660e0a872c26c5a6b00cab8cf28ddb36",
+      "source_version": "036dde8e",
+      "content_hash": "69f11793433213e9a220cd1ea1cf38bb51cabbf7efcbdba365a9c2679bb11fcf",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
@@ -4399,6 +4399,11 @@
         {
           "number": null,
           "title": "ci(release): build macOS on macos-15 (macos-14 runners are retired)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4457,7 +4462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T22:34:14.627Z",
+      "verified_at": "2026-11-12T13:50:57.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10465,8 +10470,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "58854051",
-      "content_hash": "9f975bbcd65027ce7d045b90ae0c2eaced5def6ac5bd7b5cbb00b65ff35bf3cc",
+      "source_version": "746348d7",
+      "content_hash": "560bde33cd9597e1326a7aa59b03e7fdb8c12564992631578874686d42766f11",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10593,6 +10598,11 @@
         {
           "number": null,
           "title": "build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs: Correct jsonschema version in changelog",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10946,7 +10956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T12:45:39.094Z",
+      "verified_at": "2026-11-12T13:41:08.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84185,14 +84195,19 @@
       "slug": "parcel-bundler-parcel",
       "platform": "github",
       "source_url": "https://github.com/parcel-bundler/parcel",
-      "source_version": "20c0f2ed",
-      "content_hash": "e27ea886595f1ab6f4fbbf6ac4ba46af9baade865d182f0a78bf16d6fb7f3225",
+      "source_version": "634ef6c9",
+      "content_hash": "9db2e988d823fa591772a64cf9c795090379ff61e8f9b0cd5ed2365138ea0bca",
       "dossier_path": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Always output MDX render blocks as components",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Generate JS code at transform time in development builds",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84216,7 +84231,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:03:20.671Z",
+      "verified_at": "2026-11-12T13:40:56.810Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

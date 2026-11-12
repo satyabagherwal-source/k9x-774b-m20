@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T13:33:26.469Z",
+  "updated_at": "2026-11-12T13:51:03.268Z",
   "stats": {
-    "total_discovered": 1354,
-    "approved_pending_harvest": 1232,
+    "total_discovered": 1369,
+    "approved_pending_harvest": 1247,
     "harvested_count": 0,
     "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1240,
+      "COMMUNITY_AND_EXPERT": 1255,
       "OFFICIAL_DOCUMENTATION": 59,
       "STANDARDS_AND_SPECIFICATIONS": 52,
       "ENGINEERING_BLOGS": 1,
@@ -28951,6 +28951,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
         "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-C742AF975E93": {
+      "id": "SRC-C742AF975E93",
+      "url": "https://github.com/Ataraxy-Labs/sem",
+      "title": "https://github.com/Ataraxy-Labs/sem",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
+        "fileName": "ataraxy-labs-sem-learnings.md"
+      }
+    },
+    "SRC-BD5B3D0F9AC0": {
+      "id": "SRC-BD5B3D0F9AC0",
+      "url": "https://crates.io/crates/sem-cli",
+      "title": "https://crates.io/crates/sem-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
+        "fileName": "ataraxy-labs-sem-learnings.md"
+      }
+    },
+    "SRC-5CA29F0E76F1": {
+      "id": "SRC-5CA29F0E76F1",
+      "url": "https://github.com/Ataraxy-Labs/sem/releases",
+      "title": "https://github.com/Ataraxy-Labs/sem/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.087Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
+        "fileName": "ataraxy-labs-sem-learnings.md"
+      }
+    },
+    "SRC-1304A105F094": {
+      "id": "SRC-1304A105F094",
+      "url": "https://github.com/parcel-bundler/parcel",
+      "title": "https://github.com/parcel-bundler/parcel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.104Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-2B97C2CD910F": {
+      "id": "SRC-2B97C2CD910F",
+      "url": "https://mimesniff.spec.whatwg.org/",
+      "title": "https://mimesniff.spec.whatwg.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.113Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-F56C5552057F": {
+      "id": "SRC-F56C5552057F",
+      "url": "https://html.spec.whatwg.org/multipage/webappapis.html",
+      "title": "https://html.spec.whatwg.org/multipage/webappapis.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-60C8F6A7C19A": {
+      "id": "SRC-60C8F6A7C19A",
+      "url": "https://github.com/tc39/proposal-import-text",
+      "title": "https://github.com/tc39/proposal-import-text",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-5F41B0C3A454": {
+      "id": "SRC-5F41B0C3A454",
+      "url": "https://github.com/tc39/proposal-import-bytes",
+      "title": "https://github.com/tc39/proposal-import-bytes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-760D2540842D": {
+      "id": "SRC-760D2540842D",
+      "url": "https://github.com/swc-project/swc/pull/12725",
+      "title": "https://github.com/swc-project/swc/pull/12725",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-A09D5DA967AB": {
+      "id": "SRC-A09D5DA967AB",
+      "url": "https://github.com/parcel-bundler/parcel/issues/6981",
+      "title": "https://github.com/parcel-bundler/parcel/issues/6981",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-F046013E3C21": {
+      "id": "SRC-F046013E3C21",
+      "url": "https://github.com/nodejs/node/issues/66657",
+      "title": "https://github.com/nodejs/node/issues/66657",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-62A6576517CD": {
+      "id": "SRC-62A6576517CD",
+      "url": "https://github.com/parcel-bundler/lightningcss?branch=master",
+      "title": "https://github.com/parcel-bundler/lightningcss?branch=master",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-C4980D859D4B": {
+      "id": "SRC-C4980D859D4B",
+      "url": "https://example.com/remote.css",
+      "title": "https://example.com/remote.css",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.186Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+        "fileName": "parcel-bundler-parcel-learnings.md"
+      }
+    },
+    "SRC-A4C0C11D75F9": {
+      "id": "SRC-A4C0C11D75F9",
+      "url": "https://github.com/Stranger6667/jsonschema/issues/1829",
+      "title": "https://github.com/Stranger6667/jsonschema/issues/1829",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-047C134712BE": {
+      "id": "SRC-047C134712BE",
+      "url": "https://github.com/Stranger6667/jsonschema/issues/1825",
+      "title": "https://github.com/Stranger6667/jsonschema/issues/1825",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T13:51:03.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

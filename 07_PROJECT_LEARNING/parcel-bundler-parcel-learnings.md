@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md`  
 > **Source**: github ([https://github.com/parcel-bundler/parcel](https://github.com/parcel-bundler/parcel))  
-> **Source Version**: `20c0f2ed`  
+> **Source Version**: `634ef6c9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:03:19.244Z  
+> **Timestamp**: 2026-11-12T13:40:45.690Z  
 > **Learning ID**: `learn-github-parcel-bundler-parcel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/parcel-bundler/parcel](https://github.com/parcel-bundler/parcel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:03:18.809Z  
+> **Harvest Timestamp**: 2026-11-12T13:40:45.480Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1372,6 +1372,264 @@ pub fn bundle<'a>(
 
 ```
 
+### Core Architecture Module: `crates/core/src/chunked_text.rs`
+```
+//! Text built from pieces, so that large pieces (e.g. each module's code in a bundle) are written
+//! out without first being copied into one buffer.
+
+use std::{borrow::Cow, ops::Range, sync::Arc};
+
+use xxhash_rust::xxh3::Xxh3;
+
+use crate::{
+  Content, ContentType, Diagnostic, FileSystem, PathId, content::source_mapping_url_comment,
+  content_type,
+};
+
+/// Text made of pieces: small writes are appended to an arena, and larger text is referenced
+/// (`Arc<str>`) or moved in rather than copied.
+#[derive(Default, Debug, Clone)]
+pub struct ChunkedText {
+  pieces: Vec<Piece>,
+  /// The text of `Piece::Arena`s.
+  arena: String,
+  len: usize,
+}
+
+#[derive(Debug, Clone)]
+enum Piece {
+  Arena(Range<usize>),
+  Shared(Arc<str>, Range<usize>),
+  Owned(Box<str>),
+}
+
+/// Text shorter than this is copied into the arena, where a piece would cost more than the copy.
+const MIN_PIECE_LEN: usize = 256;
+
+impl ChunkedText {
+  pub fn new() -> Self {
+    Self::default()
+  }
+
+  pub fn len(&self) -> usize {
+    self.len
+  }
+
+  pub fn is_empty(&self) -> bool {
+    self.len == 0
+  }
+
+  /// Appends a copy of `text`.
+  pub fn push_str(&mut self, text: &str) {
+    if text.is_empty() {
+      return;
+    }
+    let start = self.arena.len();
+    self.arena.push_str(text);
+    self.len += text.len();
+    match self.pieces.last_mut() {
+      Some(Piece::Arena(range)) if range.end == start => range.end = self.arena.len(),
+      _ => self.pieces.push(Piece::Arena(start..self.arena.len())),
+    }
+  }
+
+  /// Appends `text[range]`, referencing `text` rather than copying it.
+  pub fn push_shared(&mut self, text: &Arc<str>, range: Range<usize>) {
+    if range.len() < MIN_PIECE_LEN {
+      self.push_str(&text[range]);
+      return;
+    }
+    self.len += range.len();
+    self.pieces.push(Piece::Shared(text.clone(), range));
+  }
+
+  /// Appends `text`, moving it rather than copying it.
+  pub fn push_owned(&mut self, text: String) {
+    if text.len() < MIN_PIECE_LEN {
+      self.push_str(&text);
+      return;
+    }
+    self.len += text.len();
+    self.pieces.push(Piece::Owned(text.into_boxed_str()));
+  }
+
+  /// The pieces, in order.
+  pub fn chunks(&self) -> impl Iterator<Item = &str> {
+    self.pieces.iter().map(|piece| match piece {
+      Piece::Arena(range) => &self.arena[range.clone()],
+      Piece::Shared(text, range) => &text[range.clone()],
+      Piece::Owned(text) => &**text,
+    })
+  }
+
+  pub fn to_string(&self) -> String {
+    let mut out = String::with_capacity(self.len);
+    for chunk in self.chunks() {
+      out.push_str(chunk);
+    }
+    out
+  }
+
+  /// The last `len` bytes or fewer, possibly cut in the middle of a character.
+  fn tail(&self, len: usize) -> Vec<u8> {
+    let mut chunks: Vec<&[u8]> = Vec::new();
+    let mut remaining = len;
+    for chunk in self.pieces.iter().rev().map(|piece| match piece {
+      Piece::Arena(range) => &self.arena.as_bytes()[range.clone()],
+      Piece::Shared(text, range) => &text.as_bytes()[range.clone()],
+      Piece::Owned(text) => text.as_bytes(),
+    }) {
+      if remaining == 0 {
+        break;
+      }
+      let take = chunk.len().min(remaining);
+      chunks.push(&chunk[chunk.len() - take..]);
+      remaining -= take;
+    }
+    chunks.reverse();
+    chunks.concat()
+  }
+
+  fn hash_into(&self, hasher: &mut Xxh3) {
+    for chunk in self.chunks() {
+      hasher.update(chunk.as_bytes());
+    }
+  }
+}
+
+/// Code and its source map, written without concatenating their pieces.
+#[derive(Debug)]
+pub struct ChunkedTextContent {
+  code: ChunkedText,
+  map: Option<ChunkedText>,
+}
+
+impl ChunkedTextContent {
+  pub fn new(code: ChunkedText, map: Option<ChunkedText>) -> Self {
+    ChunkedTextContent { code, map }
+  }
+}
+
+impl Content for ChunkedTextContent {
+  fn estimate_size(&self) -> Result<usize, Diagnostic> {
+    Ok(self.code.len())
+  }
+
+  fn read(&self) -> Result<Vec<u8>, Diagnostic> {
+    Ok(self.code.to_string().into_bytes())
+  }
+
+  fn read_string(&self) -> Result<Cow<'_, str>, Diagnostic> {
+    Ok(Cow::Owned(self.code.to_string()))
+  }
+
+  fn content_hash(&self) -> Result<u128, Diagnostic> {
+    // The same as `ContentWithSourceMap` with the same code and map.
+    let mut hasher = Xxh3::new();
+    match &self.map {
+      Some(map) => {
+        hasher.update(&(self.code.len() as u64).to_le_bytes());
+        self.code.hash_into(&mut hasher);
+        map.hash_into(&mut hasher);
+      }
+      None => self.code.hash_into(&mut hasher),
+    }
+    Ok(hasher.digest128())
+  }
+
+  fn write(&self, fs: &dyn FileSystem, path: PathId) -> Result<(), Diagnostic> {
+    let mut chunks: Vec<&[u8]> = self.code.chunks().map(str::as_bytes).collect();
+    let Some(map) = &self.map else {
+      return Ok(fs.write_vectored(path, &chunks)?);
+    };
+    let map_path = path.add_extension("map");
+    let comment = source_mapping_url_comment(path, map_path, &self.code.tail(4096));
+    if let Some(comment) = &comment {
+      chunks.push(comment.as_bytes());
+    }
+    fs.write_vectored(path, &chunks)?;
+    let map_chunks: Vec<&[u8]> = map.chunks().map(str::as_bytes).collect();
+    fs.write_vectored(map_path, &map_chunks)?;
+    Ok(())
+  }
+
+  fn ty(&self) -> ContentType {
+    content_type!("ChunkedTextContent")
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use crate::{BufferContent, ContentWithSourceMap, MemoryFileSystem};
+
+  fn text(parts: &[&str]) -> ChunkedText {
+    let mut text = ChunkedText::new();
+    for (index, part) in parts.iter().enumerate() {
+      match index % 3 {
+        0 => text.push_str(part),
+        1 => text.push_shared(&Arc::from(format!("--{part}--")), 2..2 + part.len()),
+        _ => text.push_owned(part.to_string()),
+      }
+    }
+    text
+  }
+
+  #[test]
+  fn pieces_concatenate_in_order() {
+    let long = "x".repeat(1000);
+    let text = text(&["a", &long, "b", "c", "d", &long, "e"]);
+    let expected = format!("a{long}bcd{long}e");
+    assert_eq!(text.to_string(), expected);
+    assert_eq!(text.len(), expected.len());
+    // Spans the last two pieces.
+    assert_eq!(text.tail(3), b"xxe");
+    assert_eq!(text.tail(1 << 20), expected.as_bytes());
+  }
+
+  #[test]
+  fn content_matches_contiguous_content() {
+    let long = "y".repeat(5000);
+    let code = text(&["var a = 1;\n", &long, "\n", "b();\n"]);
+    let map = text(&["{\"version\":3", &long, "}"]);
+    let contiguous =
+      ContentWithSourceMap::new_string(code.to_string(), map.to_string().into_bytes());
+    let content = ChunkedTextContent::new(code.clone(), Some(map.clone()));
+    assert_eq!(
+      content.content_hash().unwrap(),
+      contiguous.content_hash().unwrap()
+    );
+    assert_eq!(
+      ChunkedTextContent::new(code.clone(), None)
+        .content_hash()
+        .unwrap(),
+      BufferContent::new_string(code.to_string())
+        .content_hash()
+        .unwrap()
+    );
+
+    let fs = MemoryFileSystem::new();
+    fs.mkdir(std::path::Path::new("/dist")).unwrap();
+    let a = PathId::new(std::path::Path::new("/dist/a.js"));
+    let b = PathId::new(std::path::Path::new("/dist/b.js"));
+    content.write(&fs, a).unwrap();
+    contiguous.write(&fs, b).unwrap();
+    let written = fs.read(a).unwrap();
+    assert_eq!(
+      String::from_utf8(written).unwrap(),
+      String::from_utf8(fs.read(b).unwrap())
+        .unwrap()
+        .replace("b.js.map", "a.js.map")
+    );
+    assert_eq!(
+      fs.read(a.add_extension("map")).unwrap(),
+      map.to_string().into_bytes()
+    );
+  }
+}
+
+```
+
 ### Core Architecture Module: `crates/core/src/config.rs`
 ```
 use either::Either;
@@ -1496,6 +1754,31 @@ impl<T: ?Sized> PipelineMap<T> {
       stack: Vec::new(),
       seen: HashSet::new(),
     }
+  }
+
+  /// Like `get`, but a named pipeline that has no entry for `path` falls back to the unnamed
+  /// patterns rather than to no plugins. For optimizers: a bundle whose main asset was imported
+  /// through a named pipeline, e.g. `url:./image.png`, is optimized like any other unless the
+  /// config gives that pipeline its own optimizers.
+  pub fn get_or_unnamed<'a, P: AsRef<str>>(
+    &'a self,
+    path: Cow<'a, str>,
+    pipeline: &Option<P>,
+  ) -> Pipeline<'a, T> {
+    let pipeline = pipeline
+      .as_ref()
+      .map(|pipeline| pipeline.as_ref())
+      .filter(|pipeline| {
+        let basename = Path::new(&*path)
+          .file_name()
+          .and_then(OsStr::to_str)
+          .unwrap_or(&path);
+        self
+          .0
+          .iter()
+          .any(|(pattern, _)| is_match(pattern, &path, basename, pipeline))
+      });
+    self.get(path, &pipeline)
   }
 
   /// The pipeline to transform the file at `path` with when it is imported as `import_type`, given
@@ -1700,42 +1983,7 @@ struct RawParcelConfig {
   reporters: Option<RawPipeline>,
 }
 
-#[derive(Deserialize)]
-#[serde(untagged)]
-enum ParcelConfigExtends {
-  String(String),
-  Array(Vec<String>),
-}
-
-#[derive(Default, Deserialize)]
-#[serde(transparent)]
-struct RawPipeline(Vec<PluginWithConfig>);
-
-#[derive(Default, Deserialize)]
-#[serde(transparent)]
-struct RawPipelineMap(IndexMap<String, RawPipeline>);
-
-pub trait PluginFactory {
-  fn config(&self, specifier: &str, from: PathId) -> Result<ParcelConfig, DiagnosticList>;
-  fn resolver(
-    &self,
-    name: &str,
-    config: Option<serde_json::Value>,
-    from: PathId,
-  ) -> Result<Arc<dyn Resolver>, DiagnosticList>;
-  fn transformer(
-    &self,
-    name: &str,
-    config: Option<serde_json::Value>,
-    from: PathId,
-  ) -> Result<Arc<dyn Transformer>, DiagnosticList>;
-  fn bundler(
-    &self,
-    name: &str,
-    config: Option<serde_json::Value>,
-    from: PathId,
-  ) -> Result<Arc<dyn Bundler>, DiagnosticList>;
-  fn namer(
+#[derive(Deserialize)
 ```
 
 ### Core Architecture Module: `crates/core/src/content.rs`
@@ -2433,384 +2681,19 @@ bitflags::bitflags! {
     /// The "default" c
 ```
 
-### Core Architecture Module: `crates/core/src/diagnostic.rs`
-```
-use std::{borrow::Cow, io::Write, string::FromUtf8Error};
-
-use anstyle::{Ansi256Color, AnsiColor, Color, Style};
-use serde::{Deserialize, Serialize};
-
-use crate::{AssetType, Location, PathId, SourceLocation, SourceUrl};
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Hash, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct Diagnostic {
-  /// The message to log.
-  pub message: String,
-  /// Name of plugin or file that threw this error.
-  pub origin: Option<String>,
-  #[serde(default)]
-  pub code_frames: Vec<CodeFrame>,
-  #[serde(default)]
-  pub hints: Vec<String>,
-  #[serde(default)]
-  pub severity: DiagnosticSeverity,
-  #[serde(rename = "documentationURL")]
-  pub documentation_url: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Hash, Clone, Default)]
-#[serde(rename_all = "camelCase")]
-pub struct CodeFrame {
-  pub code: Option<String>,
-  pub url: Option<SourceUrl>,
-  pub language: Option<AssetType>,
-  pub code_highlights: Vec<CodeHighlight>,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Hash, Clone, Default)]
-pub struct CodeHighlight {
-  pub message: Option<String>,
-  #[serde(default)]
-  pub start: Location,
-  #[serde(default)]
-  pub end: Location,
-}
-
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Hash, Clone, Default)]
-#[serde(rename_all = "camelCase")]
-pub enum DiagnosticSeverity {
-  /// Fails the build with an error.
-  #[default]
-  Error,
-  /// Logs a warning, but the build does not fail.
-  Warning,
-  /// An error if this is source code in the project, or a warning if in node_modules.
-  SourceError,
-  /// An informative message.
-  Info,
-}
-
-impl CodeFrame {
-  pub fn from_loc(loc: &SourceLocation, message: Option<String>) -> CodeFrame {
-    CodeFrame {
-      code: None,
-      url: Some(loc.url.clone()),
-      language: None,
-      code_highlights: vec![CodeHighlight::from_loc(loc, message)],
-    }
-  }
-}
-
-impl CodeHighlight {
-  pub fn from_loc(loc: &SourceLocation, message: Option<String>) -> CodeHighlight {
-    CodeHighlight {
-      message,
-      start: loc.start.clone(),
-      end: Location {
-        line: loc.end.line,
-        column: loc.end.column.saturating_sub(1),
-      },
-    }
-  }
-
-  pub fn from_json(
-    start: json_sourcemap::Location,
-    end: json_sourcemap::Location,
-    message: Option<&str>,
-  ) -> Self {
-    CodeHighlight {
-      message: message.map(|m| m.to_owned()),
-      start: Location {
-        line: start.line as u32 + 1,
-        column: start.column as u32 + 1,
-      },
-      end: Location {
-        line: end.line as u32 + 1,
-        column: end.column as u32,
-      },
-    }
-  }
-}
-
-impl std::fmt::Display for Diagnostic {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.message)
-  }
-}
-
-impl std::error::Error for Diagnostic {}
-
-impl Diagnostic {
-  pub fn from_message(message: String) -> Self {
-    Diagnostic {
-      origin: None,
-      message: message,
-      code_frames: Vec::new(),
-      hints: Vec::new(),
-      severity: DiagnosticSeverity::Error,
-      documentation_url: None,
-    }
-  }
-
-  /// Points code frames that have neither a url nor code at `url`, for errors that
-  /// know where in a file they occurred but not which file.
-  pub fn with_url(mut self, url: &SourceUrl) -> Self {
-    for frame in &mut self.code_frames {
-      if frame.url.is_none() && frame.code.is_none() {
-        frame.url = Some(url.clone());
-      }
-    }
-    self
-  }
-}
-
-impl From<std::io::Error> for Diagnostic {
-  fn from(value: std::io::Error) -> Self {
-    Diagnostic {
-      origin: Some("@parcel/core".into()),
-      message: value.to_string(),
-      code_frames: Vec::new(),
-      hints: Vec::new(),
-      severity: DiagnosticSeverity::Error,
-      documentation_url: None,
-    }
-  }
-}
-
-impl From<std::fmt::Error> for Diagnostic {
-  fn from(value: std::fmt::Error) -> Self {
-    Diagnostic {
-      origin: Some("@parcel/core".into()),
-      message: value.to_string(),
-      code_frames: Vec::new(),
-      hints: Vec::new(),
-      severity: DiagnosticSeverity::Error,
-      documentation_url: None,
-    }
-  }
-}
-
-impl From<json_sourcemap::Error> for Diagnostic {
-  fn from(value: json_sourcemap::Error) -> Self {
-    Diagnostic {
-      origin: Some("@parcel/core".into()),
-      message: value.to_string(),
-      code_frames: Vec::new(),
-      hints: Vec::new(),
-      severity: DiagnosticSeverity::Error,
-      documentation_url: None,
-    }
-  }
-}
-
-impl From<std::str::Utf8Error> for Diagnostic {
-  fn from(value: std::str::Utf8Error) -> Self {
-    Diagnostic {
-      origin: Some("@parcel/core".into()),
-      message: value.to_string(),
-      code_frames: Vec::new(),
-      hints: Vec::new(),
-      severity: DiagnosticSeverity::Error,
-      documentation_url: None,
-    }
-  }
-}
-
-impl From<serde_json::Error> for Diagnostic {
-  fn from(value: serde_json::Error) -> Self {
-    Diagnostic {
-      origin: Some("@parcel/core".into()),
-      message: value.to_string(),
-      code_frames: Vec::new(),
-      hints: Vec::new(),
-      severity: DiagnosticSeverity::Error,
-      documentation_url: None,
-    }
-  }
-}
-
-impl From<json5::Error> for Diagnostic {
-  fn from(value: json5::Error) -> Self {
-    let mut message = value.to_string();
-    // The position goes in the code frame instead of the message. Errors at the end of
-    // the input have none. The error doesn't know which file it came from, so the frame
-    // has no url until `Diagnostic::with_url` gives it one.
-    let mut code_highlights = Vec::new();
-    if let Some(position) = value.position() {
-      if let Some(rest) = message.strip_suffix(&format!(" at {position}")) {
-        message.truncate(rest.len());
-      }
-      let location = Location {
-        line: position.line as u32 + 1,
-        column: position.column as u32 + 1,
-      };
-      code_highlights.push(CodeHighlight {
-        message: None,
-        start: location.clone(),
-        end: location,
-      });
-    }
-
-    Diagnostic {
-      origin: Some("@parcel/core".into()),
-      message,
-      code_frames: vec![CodeFrame {
-        code: None,
-        url: None,
-        language: Some(AssetType::Json),
-        code_highlights,
-      }],
-      hints: Vec::new(),
-      severity: DiagnosticSeverity::Error,
-      documentation_url: None,
-    }
-  }
-}
-
-impl From<FromUtf8Error> for Diagnostic {
-  fn from(value: FromUtf8Error) -> Self {
-    Diagnostic::from_message(format!("UTF8 error: {}", value.to_string()))
-  }
-}
-
-impl From<Diagnostic> for Vec<Diagnostic> {
-  fn from(value: Diagnostic) -> Self {
-    vec![value]
-  }
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-#[serde(transparent)]
-pub struct DiagnosticList(pub Vec<Diagnostic>);
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct RenderedDiagnostics {
-  pub ansi: Vec<RenderedAnsiDiagnostic>,
-  pub html: Vec<RenderedHtmlDiagnostic>,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct RenderedAnsiDiagnostic {
-  pub message: String,
-  pub codeframe: Option<String>,
-  pub stack: Option<String>,
-  pub hints: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct RenderedHtmlDiagnostic {
-  pub message: String,
-  pub stack: Option<String>,
-  pub frames: Vec<RenderedHtmlFrame>,
-  pub hints: Vec<String>,
-  pub documentation: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct RenderedHtmlFrame {
-  pub location: String,
-  pub code: String,
-}
-
-impl<T: Into<Diagnostic>> From<T> for DiagnosticList {
-  fn from(value: T) -> Self {
-    DiagnosticList(vec![value.into()])
-  }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum JsonSourceLocationType {
-  Key,
-  Value,
-  KeyAndValue,
-}
-
-/// Returns the source range for a JSON pointer.
-///
-/// Locations returned by `json_sourcemap` are zero-based with an exclusive end. They can be
-/// converted to a diagnostic highlight with [`CodeHighlight::from_json`].
-pub fn json_source_location(
-  code: &str,
-  pointer: &str,
-  location_type: JsonSourceLocationType,
-) -> Result<Option<(json_sourcemap::Location, json_sourcemap::Location)>, json_sourcemap::Error> {
-  use json_sourcemap::Prop;
-
-  let source_map = json_sourcemap::parse(code, json_sourcemap::Options::default())?;
-  let Some(location) = source_map.get_location(pointer) else {
-    return Ok(None);
-  };
-
-  let range = match location_type {
-    JsonSourceLocationType::Key => location.get(Prop::Key).zip(location.get(Prop::KeyEnd)),
-    JsonSourceLocationType::Value => location.get(Prop::Value).zip(location.get(Prop::ValueEnd)),
-    JsonSourceLocationType::KeyAndValue => location
-      .get(Prop::Key)
-      .or_else(|| location.get(Prop::Value))
-      .zip(location.get(Prop::ValueEnd)),
-  };
-
-  Ok(range)
-}
-
-// pub(crate) struct EscapeMarkdown<'a, T>(pub &'a T);
-
-// fn escape_markdown(s: &str) -> Cow<'_, str> {
-//   let mut result = Cow::Borrowed("");
-//   let mut start = 0;
-//   for (index, matched) in s.match_indices(&['*', '_', '~', '\\']) {
-//     result += &s[start..index];
-//     result += "\\";
-//     result += matched;
-//     start = index + 1;
-//   }
-
-//   result += &s[start..];
-//   result
-// }
-
-// impl<'a, T: std::fmt::Debug> std::fmt::Debug for EscapeMarkdown<'a, T> {
-//   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//     let res = format!("{:?}", self.0);
-//     escape_markdown(&res).fmt(f)
-//   }
-// }
-
-// impl<'a, T: std::fmt::Display> std::fmt::Display for EscapeMarkdown<'a, T> {
-//   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//     let res = format!("{}", self.0);
-//     escape_markdown(&res).fmt(f)
-//   }
-// }
-
-// macro_rules! format_markdown {
-//   ($s: literal, $($arg: expr),+) => {
-//     format!($s, $(crate::diagnostic::EscapeMarkdown(&$arg)),+)
-//   };
-// }
-
-// pub(crate) use format_markdown;
-
-// pub(crate) struct EscapeJSONKeyComponent<'a, T>(pub &'a T);
-
-// fn escape_json_key_component(s: &str) -> Cow<'_, str> {
-//   let mut result = Cow::Borrowed("");
-//   let mut start = 0;
-//   for (index, matched) in s.mat
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10380** (2026-11-06): **[v3] Scripts in HTML imported from server code are built for Node**
-  *Symptoms*: Importing an HTML file from a Node entry builds the HTML's `<script>`s with the importer's `node` target instead of a browser target.  Repro: https://github.com/DylanPiercey/parcel-node-env-repro (`npm run build && npm start`, or `npm run dev`)  ```js // src/server.js (package.json has engines.node) import page from "./page.html" with { type: "text" };  // src/page.html: <script type="module" src="./client.js"></script>  // src/client.js import { where } from "cond-pkg"; // exports: { node: "./node.js", browser: "./browser.js" } document.body.append(where); document.body.append(" | mode: " + process.env.NODE_ENV); ```  - **Expected** (what `parcel build src/page.html` produces): `browser build of cond-pkg | mode: production` - **`parcel build`:** `node build of cond-pkg`, then `ReferenceError: process is not defined` - **`parcel run`:** the client script and the HMR runtime `import 'path'`, giving `Failed to resolve module specifier "path"`  It's the same with `targets.default.context: "node"` instead of `engines.node`, with a `browserslist` field, and with a plain `import "./page.html"` or `bundle-text:`. `env: "worklet"` works around it.  **Possible cause:** [`create_env`](https://github.com/parcel-bundler/parcel/blob/0256839dee32fcca0a0cfd72f48e70ab757fa8ec/crates/html/src/dependencies.rs#L208-L214) clones the importer's target, so script dependencies inherit `Node`. [`Target::normalize`](https://github.com/parcel-bundler/parcel/blob/0256839dee32fcca0a0cfd72f48e70ab757fa8e
+- **Issue #10393** (2026-11-11): **Improve v3 performance**
+  *Symptoms*: Implements several performance and memory usage optimizations for v3. The main ones (see commits for details):  * Stores JS assets as generated code (strings) rather than ASTs in development. This reduces memory usage significantly because SWC's ASTs are quite large and fragmented due to boxing. It also improves build time, especially rebuilds because we don't need to re-print assets that didn't change. Production builds need ASTs for tree shaking. * Adds a ChunkedText data structure and `write_vectored` method to `FileSystem` to avoid copying each asset's content into the bundles. Instead, asset content is an `Arc<str>` that gets cheaply cloned and stored as a list of segments. * Move PNG and JPEG optimization to Optimizer plugins rather than Transformers. This avoids waiting on large images before we can build the rest of the graph. * Parallelize oxipng optimization by chunking deflate compression. * Improve SWC minifier performance for large JSON files. https://github.com/swc-project/swc/pull/12725  ### Cold build time  | Build                   | v3      | v3-perf | Change             | | ----------------------- | ------- | ------- | ------------------ | | three.js dev (20 runs)  | 141.3ms | 104.0ms | −26%               | | three.js prod (15 runs) | 178.6ms | 152.6ms | −15%               | | storybook dev (15 runs) | 408.3ms | 325.1ms | −20%               | | storybook prod (6 runs) | 4,873ms | 1,119ms | −77% (4.4× faster) |  ### CPU time  | Build          | v3    | v3-pe
 
-- **Issue #10365** (2026-10-22): **New HTML packager is broken**
-  *Symptoms*: # 🐛 bug report  The new HTML packager will just reorder tags it thinks are "invalid". This can affect templating tools like [thymeleaf](https://www.thymeleaf.org/).  It also just seems to not emit the `<head>` tag for some reason in my reproduction sample??  ## 🎛 Configuration (.babelrc, package.json, cli command)  To reproduce this, create a new parcel project with `pnpm create parcel vanilla reproduction`, then modify the `src/index.html` with the below changes.  ## 🤔 Expected Behavior  Given something like ```html <!doctype html> <html lang="en" xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">   <head>     <meta charset="utf-8">     <meta name="viewport" content="width=device-width, initial-scale=1.0">     <title>Parcel Vanilla App</title>     <link rel="stylesheet" href="style.css">     <th:block th:insert="~{templates/fragments/common-head :: commonHead(${title}, ${description}, ~{:: #extra-head})}"/>     <th:block id="extra-head"></th:block>   </head>   <body>     <h1>Parcel Vanilla App</h1>     <p>Edit <code>src/index.html</code> to get started!</p>   </body> </html> ```  The emitted html would be roughly similar  ## 😯 Current Behavior  It instead emits:  ```html <!DOCTYPE html><html lang=en xmlns:layout=https://www.ultraq.net.nz/thymeleaf/layout xmlns:th=http://www.thymeleaf.org><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>Parcel Vanilla App</title><link rel=stylesheet 
+- **Issue #10382** (2026-11-11): **Preload compiled module scripts**
+  *Symptoms*: # ↪️ Pull Request  I added preloads for module scripts compiled to deferred classic scripts so they load with higher priority while keeping deferred execution.  Fixes https://github.com/parcel-bundler/parcel/issues/6981  ## 💻 Examples  A module script in the body gets a preload in the head. Its imported stylesheets stay beside the script.  ## 🚨 Test instructions  Covered by HTML transformation and packaging tests.  ## ✔️ PR Todo  - [x] Added/updated unit tests for this change - [x] Filled out test instructions (In case there aren't any unit tests) - [x] Included links to related issues/PRs 
+  **Post-Mortem & Fix Analysis**:
+  > The original issue was for nomodule fallback scripts that v2 inserted. v3 does not insert these scripts anymore, so it uses native ESM semantics via `<script type="module">`. Therefore this feature is no longer needed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2827,133 +2710,661 @@ pub fn json_source_location(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a69a642` (2026-11-01)
-**Commit Message**: Always output MDX render blocks as components
+### Incident Patch 1: `9e92810d` (2026-11-07)
+**Commit Message**: Generate JS code at transform time in development builds
 
-**File**: `crates/js/src/runtime_modules/mdx-components.jsx` (modified, +6/-2)
-```diff
-@@ -1,14 +1,18 @@
- /* @jsxRuntime automatic */
- 
--function CodeBlock({lang, children, render}) {
-+const CLIENT_REFERENCE = Symbol.for('react.client.reference');
-+
-+// `render` is the rendered code block's default export: a component, or a value to render as is.
-+function CodeBlock({lang, children, render: Render}) {
-+  let isComponent = typeof Render === 'function' || Render?.$$typeof === CLIENT_REFERENCE;
-   return (
-     <>
-       <pre>
-         <code className={lang ? `language-${lang}` : undefined}>
-           {children}
-         </code>
-       </pre>
--      {render}
-+      {isComponent ? <Render /> : Render}
-     </>
-   );
- }
-```
+Development builds packaged each module by cloning its swc AST and
+re-generating its code and source map every time its bundle was packaged.
+JsContent now holds either the AST (production builds, which tree shake it,
+libraries, classic scripts, and modules using import.meta when hot updates
+are enabled) or code generated by the transformer, with its source map
+already composed with any input map.
 
-**File**: `crates/js/src/transformer/mdx.rs` (modified, +60/-33)
+Packaging adds what depends on the bundle as text outside of the module's
+lines: Node replacements and the async module wrapper go before the module's
+source map section, and an async module waits for its imports on an empty
+line left after its ESM prologue (found with a marker statement while
+generating the code), so the module's map applies as is. Index map sections
+borrow the maps and add the bundle's sourceRoot while serializing, instead
+of copying and re-validating every map.
+
+three.js x10 dev: peak RSS 537MB -> 203MB, build 130ms -> 120ms, rebuild
+after editing one file 64ms -> 40ms, and watch RSS no longer grows by
+~36MB per rebuild. react-spectrum storybook dev: peak RSS 1045MB -> 668MB,
+build 455ms -> 420ms. Output is unch
+
+**File**: `crates/js/src/hmr.rs` (modified, +57/-24)
 ```diff
-@@ -29,8 +29,8 @@ use swc_core::{
-     ast::{
-       ArrayLit, BindingIdent, CallExpr, Callee, Decl, ExportDecl, ExportDefaultExpr,
-       ExportSpecifier, Expr, ExprOrSpread, Ident, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
--      JSXElementName, JSXExpr, JSXExprContainer, JSXOpeningElement, Lit, Module, ModuleDecl,
--      ModuleItem, Pat, Stmt, VarDecl, VarDeclarator,
-+      JSXElement, JSXElementName, JSXExpr, JSXExprContainer, JSXOpeningElement, Lit, Module,
-+      ModuleDecl, ModuleItem, Pat, SpreadElement, Stmt, VarDecl, VarDeclarator,
-     },
-     codegen::to_code,
-     parser::{EsSyntax, Parser, StringInput, Syntax, TsSyntax, lexer::Lexer},
-@@ -347,16 +347,12 @@ fn parse_code_block(code: &Code, assets: &mut Vec<MdxAsset>) -> Option<Node> {
-         {
-           if matches!(lang.as_str(), "js" | "jsx" | "ts" | "tsx") {
-             if let AttributeContent::Property(attr) = &mut element.attributes[attr_idx] {
--              let (block_code, is_component) = transform_js_code_block(&code.value, lang);
--              // A component is rendered here, so the example module only exports the component.
--              // That lets React Refresh update it in place.
--              let import = format!("__parcelMdxImport{}", assets.len());
-+              let block_code = transform_js_code_block(&code.value, lang);
-+              // The page passes the example's default export, which the component rendering code
-+              // blocks renders, e.g. with props from controls. Exporting a component rather than
-+              // the element it renders lets React Refresh update it in place.
-               attr.value = Some(AttributeValue::Expression(AttributeValueExpression {
--                value: if is_component {
--                  format!("<{} />", import)
--                } else {
--                  import
--                },
-+                value: format!("__parcelMdxImport{}", assets.len()),
-                 stops: vec![],
-               }));
+@@ -1,4 +1,5 @@
+ use std::{
++  borrow::Cow,
+   collections::{HashMap, HashSet},
+   fmt::Write,
+ };
+@@ -21,10 +22,11 @@ use swc_core::{
+ };
  
-@@ -389,10 +385,9 @@ fn parse_code_block(code: &Code, assets: &mut Vec<MdxAsset>) -> Option<Node> {
-   None
- }
+ use crate::{
+-  JsContent,
++  JsContent, JsOutput,
+   packager::{
+-    BundleShim, Resolution, SyntheticAsset, asset_dependencies, embedded_css_modules,
+-    insert_hot_update_node_replacements,
++    BundleShim, Resolution, SectionMap, SourceMapSection, SyntheticAsset, asset_dependencies,
++    embedded_css_modules, insert_hot_update_node_replacements, source_map_index,
++    write_node_replacement_decls,
+   },
+ };
  
--/// Exports the code block's last declaration or expression if it has no default export. Returns the
--/// code, and whether its default export is now a component, which the page renders, rather than a
--/// value it renders as is.
--fn transform_js_code_block(code: &str, lang: &str) -> (String, bool) {
-+/// Exports the code block's last declaration or expression if it has no default export. A JSX
-+/// expression is wrapped in a component that forwards its props to the expression's root element.
-+fn transform_js_code_block(code: &str, lang: &str) -> String {
-   let code = code.to_owned();
-   let source_map = Lrc::new(SourceMap::default());
-   let source_file =
-@@ -417,7 +412,7 @@ fn transform_js_code_block(code: &str, lang: &str) -> (String, bool) {
- 
-   let mut parser = Parser::new_from(lexer);
-   let mut module = match parser.parse_module() {
--    Err(_) => return (code, false),
-+    Err(_) => return code,
-     Ok(module) => module,
+@@ -252,35 +254,66 @@ pub fn get_hmr_update<'a>(
+ /// stack traces and devtools.
+ fn hot_update_code(asset: &Asset, project_root: &PathId) -> String {
+   let id = asset.id(project_root);
+-  let (code, map) = match asset.content.downcast_ref::<JsContent>() {
+-    Some(content) => {
+-      let mut ast = content.ast.clone();
+-      insert_hot_update_node_replacements(&mut ast, content, asset);
+-      replace_import_meta(&mut ast);
+-      content
+-        .to_code(
+-          &ast,
+-          asset.target.source_map.is_some(),
+-          // Resolved from the origin's root, where a bundle in the dist root resolves its
+-          // `sources` to.
+-          Some("/"),
+-          false,
+-        )
+-        .unwrap()
+-    }
+-    None => (asset.content.read().unwrap(), None),
++  let source_maps = asset.target.source_map.is_some();
++  // Resolved from the origin's root, where a bundle in the dist root resolves its `sources` to.
++  let source_root = "/";
++  // Code before the module's own, outside of its source map.
++  let mut prefix = String::new();
++  let (code, map): (Cow<'_, [u8]>, Option<SectionMap<'_>>) = match asset
++    .content
++    .downcast_ref::<JsContent>()
++  {
++    Some(content) => match &content.output {
++      JsOutput::Ast { ast, .. } => {
++        let mut ast = ast.clone();
++        insert_hot_update_node_replacements(&mut ast, content, asset);
++        replace_import_meta(&mut ast);
++        let (code, map) = content
++          .to_code(&ast, source_maps, Some(source_root), false)
++          .unwrap();
++        (Cow::Owned(code), map.map(SectionMap::new))
++      }
++      // Modules that use `import.meta` keep their AST when hot updates are enabled (see
++      // `JsContent::keeps_ast`), so this only needs the Node replacements.
++      JsOutput::Code(generated) => {
++        write_node_replacement_decls(
++          &mut prefix,
++          content,
++          asset,
++          asset.target.dist_dir,
++          |value| {
++            format!(
++              "module.bundle.nodePath.resolve(module.bundle.bundleDir, module.bundle.distDir, {value})"
++            )
++          },
++        );
++        let map = generated
++          .map
++          .as_deref()
++          .filter(|_| source_maps)
++          .map(|json| SectionMap {
++            json: Cow::Borrowed(json),
++            source_root: Some(source_root),
++          });
++        (Cow::Borrowed(generated.code.as_bytes()), map)
++      }
++    },
++    None => (Cow::Owned(asset.content.read().unwrap()), None),
    };
  
-@@ -434,10 +429,10 @@ fn transform_js_code_block(code: &str, lang: &str) -> (String, bool) {
-     ));
+   // The code starts on its own line so that the map only needs a line offset, and ends on one so
+   // that a trailing line comment can't swallow the closing brace.
+   let mut output = format!("parcelHotUpdate['{id}'] = function (module, exports, require) {{\n");
++  output.push_str(&prefix);
+   output.push_str(std::str::from_utf8(&code).unwrap());
+   output.push_str("\n}");
+   if let Some(map) = map {
+-    // Like a bundle's map (see `SourceMapIndex`).
+-    let map = format!(
+-      r#"{{"version":3,"sources":[],"sections":[{{"offset":{{"line":1,"column":0}},"map":{map}}}]}}"#
+-    );
++    // Like a bundle's map.
++    let map = source_map_index(&[SourceMapSection {
++      line: 1 + prefix.matches('\n').count() as u32,
++      column: 0,
++      map,
++    }]);
+     write!(
+       &mut output,
+       "\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,{}\n//# sourceURL={}",
+```
+
+**File**: `crates/js/src/lib.rs` (modified, +217/-27)
+```diff
+@@ -2,6 +2,13 @@ use std::sync::Arc;
  
-     // Export the last declaration or expression if there are no explicit exports.
--    let mut is_component = false;
-     if !has_default_export(&module) {
-       // React Refresh requires component names to start with a capital letter.
-       let wrapper_name = Ident::new_private("Example".into(), DUMMY_SP);
-+      let props = Ident::new_private("props".into(), DUMMY_SP);
-       let mut export_name = None;
-       for item in module.body.iter_mut().rev() {
-         match item {
-@@ -454,13 +449,23 @@ fn transform_js_code_block(code: &str, lang: &str) -> (String, bool) {
-             break;
-           }
-           ModuleItem::Stmt(Stmt::Expr(expr)) => {
--            let value = expr.expr.clone();
-+            let mut value = expr.expr.clone();
-             *item = if is_jsx(&value) {
--              // Wrapped in a component so that React Refresh can update it.
--              is_component = true;
-+              // Wrapped in a component so that React Refresh can update it. Props are spread last,
-+              // so they override the element's own, e.g. with values from controls.
-+              if let Some(element) = root_jsx_element(&mut value) {
-+                element
-+                  .opening
-+                  .attrs
-+                  .push(JSXAttrOrSpread::SpreadElement(SpreadElement {
-+                    dot3_token: DUMMY_SP,
-+                    expr: Box::new(Expr::Ident(props.clone())),
-+                  }));
-+              }
-               quote!(
--                "export default function $name() { return $value; }" as ModuleItem,
-+                "export default function $name($props) { return $value; }" as ModuleItem,
-                 name = wrapper_name,
-+                props = props,
-                 value: Expr = *value,
-               )
-             } else {
-@@ -476,7 +481,6 @@ fn transform_js
+ use crate::transformer::Ast;
+ use parcel_core::*;
++use swc_core::{
++  common::{DUMMY_SP, SyntaxContext},
++  ecma::{
++    ast::{Expr, ExprStmt, Ident, MetaPropExpr, MetaPropKind, Module, ModuleItem, Stmt},
++    visit::{Visit, VisitWith},
++  },
++};
+ 
+ pub mod hmr;
+ mod library_packager;
+@@ -16,15 +23,21 @@ pub use transformer::JsTransformer;
+ /// Earlier transformers may have rewritten it without providing a source map.
+ pub fn diagnostic_source(asset: &Asset) -> Option<String> {
+   let content = asset.content.downcast_ref::<JsContent>()?;
+-  // The parser registers its input before any macro-generated source files.
+-  let files = content.ast.source_map.files();
+-  let file = files.first()?;
+-  Some(file.src.to_string())
++  match &content.output {
++    JsOutput::Ast { ast, .. } => {
++      // The parser registers its input before any macro-generated source files.
++      let files = ast.source_map.files();
++      let file = files.first()?;
++      Some(file.src.to_string())
++    }
++    // Only kept when it differs from the file, which callers read otherwise.
++    JsOutput::Code(generated) => generated.source.as_deref().map(str::to_owned),
++  }
+ }
+ 
+ struct JsContent {
+   source_size: usize,
+-  ast: Ast,
++  output: JsOutput,
+   shebang: Option<String>,
+   directives: Vec<String>,
+   rsc_runtime_dep: Option<u32>,
+@@ -33,37 +46,209 @@ struct JsContent {
+   /// See `crate::transformer::async_module::wrap_async_module`.
+   esm_prologue_len: usize,
+   react_refresh_wrapped: bool,
+-  /// The map from an earlier transformer, composed into this asset's generated map when packaging.
+-  input_source_map: Option<InputSourceMap>,
++}
++
++/// What a JS asset is packaged from.
++enum JsOutput {
++  /// The AST, for builds whose packaging transforms it: tree shaking in production builds,
++  /// libraries, and classic scripts (see `JsContent::keeps_ast`).
++  Ast {
++    ast: Ast,
++    /// The map from an earlier transformer, composed into this asset's generated map when
++    /// packaging.
++    input_source_map: Option<InputSourceMap>,
++  },
++  /// Code generated by the transformer, which development builds package as is, so they keep
++  /// neither the AST nor its source map in memory, and only generate each module's code once.
++  Code(GeneratedCode),
++}
++
++/// A module's code, generated when it was transformed.
++struct GeneratedCode {
++  code: Box<str>,
++  /// The source map of `code`, composed with the asset's input map, and without a `sourceRoot`,
++  /// which depends on the bundle (see `bundle_source_root`).
++  map: Option<Box<str>>,
++  /// The offset of an empty line in `code` after the module's ESM prologue, where the module waits
++  /// for its imports if it's async (see `wrap_async_module`). None if the prologue is empty, so
++  /// the module waits before its code.
++  prologue_end: Option<usize>,
++  /// The source text the JS transformer parsed, if an earlier transformer produced it, for
++  /// `diagnostic_source`.
++  source: Option<Box<str>>,
++}
++
++/// Marks the end of a module's ESM prologue while generating its code (see `GeneratedCode`).
++const PROLOGUE_MARKER: &str = "$parcel$prologue$end";
++
++impl GeneratedCode {
++  /// Generates code for `ast`, which the JS transformer finalized.
++  fn new(
++    mut ast: Ast,
++    input_source_map: Option<&InputSourceMap>,
++    source_maps: bool,
++    esm_prologue_len: usize,
++    react_refresh_wrapped: bool,
++    rewritten: bool,
++  ) -> Result<GeneratedCode, DiagnosticList> {
++    let source = if rewritten {
++      ast
++        .source_map
++        .files()
++        .first()
++        .map(|file| file.src.to_string().into_boxed_str())
++    } else {
++      None
++    };
++
++    let marked = (esm_prologue_len > 0 || react_refresh_wrapped)
++      && insert_prologue_marker(&mut ast, esm_prologue_len, react_refresh_wrapped);
++    let (code, map) = ast_to_code(&ast, input_source_map, source_maps, None, false)?;
++    drop(ast);
++    let mut code = String::from_utf8(code).map_err(|e| Diagnostic::from_message(e.to_string()))?;
++
++    // Remove the marker, but not its line, so the source map stays valid without it.
++    let prologue_end = if marked {
++      let statement = format!("{PROLOGUE_MARKER};");
++      let line = code.find(&statement).and_then(|at| {
++        let start = code[..at].rfind('\n').map_or(0, |newline| newline + 1);
++        let end = at + statement.len();
++        (code[start..at].trim().is_empty() && code[end..].starts_with('\n')).then_some(start..end)
++      });
++      let Some(line) = line else {
++        return Err(
++          Diagnostic::from_message("Failed to find the end of a module's prologue".into()).into(),
++        );
++      };
++      let start = line.start;
++      code.replace_range(line, "");
++      Some(start)
++    } else {
++      None
++    };
++
++    Ok(GeneratedCode {
++      code: code.into_boxed_str(),
++      map: map.map(|map| without_source_root(map).into_boxed_str()),
++      prologue_end,
++      source,
++    })
++  }
+```
+
+**File**: `crates/js/src/library_packager.rs` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ impl JsContent {
+     )?;
+ 
+     let (code, map) = if let Some(content) = asset.content.downcast_ref::<JsContent>() {
+-      let mut ast = content.ast.clone();
++      let mut ast = content.ast()?.clone();
+       if let Some(shebang) = &content.shebang {
+         ast.program.shebang = Some(shebang.as_str().into());
+       }
+```
+
+**File**: `crates/js/src/packager/mod.rs` (modified, +179/-32)
+```diff
+@@ -1,4 +1,4 @@
+-use std::{fmt::Write, sync::Arc};
++use std::{borrow::Cow, fmt::Write, sync::Arc};
+ 
+ use crate::transformer::{Ast, async_module::wrap_async_module};
+ use indexmap::{IndexMap, IndexSet};
+@@ -27,8 +27,9 @@ use synthetic::AsyncRegistration;
+ pub use synthetic::{BundleShim, SyntheticAsset};
+ pub use tree_shake::{Resolution, tree_shake};
+ 
+-use crate::JsContent;
++use crate::{GeneratedCode, JsContent, JsOutput};
+ use printer::Printer;
++pub(crate) use printer::{SectionMap, SourceMapSection, source_map_index};
+ use script::{link_script, minify_script};
+ 
+ const RUNTIME_MODULES: &str = "m";
+@@ -153,6 +154,7 @@ impl JsContent {
+         None
+       };
+ 
++    let source_root = bundle_source_root(bundle, &options.project_root);
+     let mut printer = Printer::new(should_build_source_map, should_optimize);
+     if let Some(main) = bundle.main_entry_asset {
+       let asset = &bundle_graph.asset_graph.asset(main);
+@@ -198,7 +200,7 @@ impl JsContent {
+           bundle,
+           bundle_graph.is_async_asset(asset_index),
+           dependencies,
+-          options,
++          source_root.as_deref(),
+           should_build_source_map,
+           should_optimize,
+         )
+@@ -277,7 +279,7 @@ impl JsContent {
+     }
+     if let Some((code, map)) = script {
+       printer.newline()?;
+-      printer.add_source_map(map)?;
++      printer.add_source_map(map.map(SectionMap::new));
+       printer.write_str(std::str::from_utf8(&code).unwrap())?;
+     }
+     printer.into_content()
+@@ -297,7 +299,7 @@ fn package_script(
+     .target
+     .flags
+     .contains(EnvironmentFlags::SHOULD_OPTIMIZE);
+-  let mut ast = content.ast.clone();
++  let mut ast = content.ast()?.clone();
+   insert_node_replacements(&mut ast, content, asset, bundle, should_optimize);
+   insert_node_replacement_helpers(
+     &mut ast,
+@@ -432,50 +434,86 @@ fn write_bundle_references(
+ }
+ 
+ /// A module of the bundle's module table, generated independently of the others.
+-struct RenderedModule {
++struct RenderedModule<'a> {
+   id: String,
+-  code: Vec<u8>,
+-  map: Option<Box<serde_json::value::RawValue>>,
++  /// Code written before the module's own, outside of its source map.
++  prefix: String,
++  code: Cow<'a, [u8]>,
++  /// Code written after the module's own.
++  suffix: String,
++  map: Option<SectionMap<'a>>,
+   /// The serialized dependencies written after an unoptimized module, or `None` for an optimized
+   /// JS module, which is written as an expression.
+   trailer: Option<String>,
+ }
+ 
+-impl RenderedModule {
+-  fn write(self, printer: &mut Printer) -> Result<(), DiagnosticList> {
++impl<'a> RenderedModule<'a> {
++  fn new(id: String, code: Vec<u8>, map: Option<String>, trailer: Option<String>) -> Self {
++    RenderedModule {
++      id,
++      prefix: String::new(),
++      code: Cow::Owned(code),
++      suffix: String::new(),
++      map: map.map(SectionMap::new),
++      trailer,
++    }
++  }
++
++  fn write(self, printer: &mut Printer<'a>) -> Result<(), DiagnosticList> {
+     printer.write_module_header(self.id)?;
+-    printer.add_raw_source_map(self.map);
++    printer.write_str(&self.prefix)?;
++    printer.add_source_map(self.map);
+     match self.trailer {
+       None => printer.write_expression_code(&self.code)?,
+       Some(deps) => {
+         printer.write_str(std::str::from_utf8(&self.code).unwrap())?;
++        printer.write_str(&self.suffix)?;
+         printer.write_module_trailer(deps)?;
+       }
+     }
+-    printer.end_source_map()
++    printer.end_source_map();
++    Ok(())
+   }
+ }
+ 
+-fn render_asset_module<'a>(
+-  asset: &Asset,
++fn render_asset_module<'a, 'm>(
++  asset: &'m Asset,
+   id: String,
+   bundle: &Bundle,
+   is_async: bool,
+   dependencies: IndexMap<String, Resolution<'a>>,
+-  options: &ParcelOptions,
++  source_root: Option<&'m str>,
+   should_build_source_map: bool,
+   should_optimize: bool,
+-) -> Result<RenderedModule, DiagnosticList> {
++) -> Result<RenderedModule<'m>, DiagnosticList> {
+   let Some(content) = asset.content.downcast_ref::<JsContent>() else {
+-    return Ok(RenderedModule {
++    return Ok(RenderedModule::new(
+       id,
+-      code: asset.content.read()?,
+-      map: None,
+-      trailer: Some(serde_json::to_string(&dependencies)?),
+-    });
++      asset.content.read()?,
++      None,
++      Some(serde_json::to_string(&dependencies)?),
++    ));
+   };
+ 
+-  let mut ast = content.ast.clone();
++  if let JsOutput::Code(generated) = &content.output {
++    if should_optimize {
++      // Optimized bundles tree shake and minify the AST.
++      content.ast()?;
++    }
++    return render_generated_module(
++      asset,
++      content,
++      generated,
++      id,
++      bundle,
++      is_async,
++      dependencies,
++      source_root.filter(|_| should_build_source_map),
++      should_build_source_map,
++    );
++  }
++
++  let mut ast = content.ast()?.clone();
+   if is_async {
+     // The runtime's module evaluator runs it (see `tla-runtime.js`).
+     wrap_async_module(
+@@ -528,23 +566,132 @@ fn render_asset_module<'a>(
+     );
+```
+
+**File**: `crates/js/src/packager/printer.rs` (modified, +112/-57)
+```diff
+@@ -1,25 +1,41 @@
+ use std::{
++  borrow::Cow,
+   fmt::{self, Write},
+   sync::Arc,
+ };
+ 
+ use parcel_core::*;
+-use serde::Serialize;
+-use serde_json::value::RawValue;
+ 
+ /// Accumulates the bundle output, tracking the current line/column so that each
+ /// module's source map can be recorded as a section of an index map.
+-pub(super) struct Printer {
++pub(super) struct Printer<'a> {
+   output: String,
+   line: u32,
+   column: u32,
+-  source_map_sections: Option<Vec<SourceMapSection>>,
++  source_map_sections: Option<Vec<SourceMapSection<'a>>>,
+   /// Whether the last section belongs to code that `end_source_map` hasn't ended yet.
+   section_open: bool,
+   should_optimize: bool,
+ }
+ 
+-impl Printer {
++/// A source map generated by Parcel, as JSON.
++pub(crate) struct SectionMap<'a> {
++  pub(crate) json: Cow<'a, str>,
++  /// The `sourceRoot` to add to a map generated without one (see `GeneratedCode`), or None to use
++  /// the map as is.
++  pub(crate) source_root: Option<&'a str>,
++}
++
++impl<'a> SectionMap<'a> {
++  pub(crate) fn new(json: impl Into<Cow<'a, str>>) -> Self {
++    SectionMap {
++      json: json.into(),
++      source_root: None,
++    }
++  }
++}
++
++impl<'a> Printer<'a> {
+   pub(super) fn new(source_maps: bool, should_optimize: bool) -> Self {
+     Printer {
+       output: String::new(),
+@@ -31,21 +47,14 @@ impl Printer {
+     }
+   }
+ 
+-  pub(super) fn add_source_map(&mut self, map: Option<String>) -> Result<(), DiagnosticList> {
+-    self.add_raw_source_map(map.map(RawValue::from_string).transpose()?);
+-    Ok(())
+-  }
+-
+-  /// Like `add_source_map`, with a map that was already validated (e.g. on another thread).
+-  pub(super) fn add_raw_source_map(&mut self, map: Option<Box<RawValue>>) {
++  /// Starts a section of the bundle's map with `map`, at the current position.
++  pub(super) fn add_source_map(&mut self, map: Option<SectionMap<'a>>) {
+     if let Some(source_map_sections) = &mut self.source_map_sections
+       && let Some(map) = map
+     {
+       source_map_sections.push(SourceMapSection {
+-        offset: SourceMapSectionOffset {
+-          line: self.line,
+-          column: self.column,
+-        },
++        line: self.line,
++        column: self.column,
+         map,
+       });
+       self.section_open = true;
+@@ -55,18 +64,16 @@ impl Printer {
+   /// Ends the section started by the last `add_source_map`, so that the code written after it
+   /// (e.g. the runtime) isn't mapped to the last position in the module. A section extends to
+   /// the start of the next one, so this starts an empty one.
+-  pub(super) fn end_source_map(&mut self) -> Result<(), DiagnosticList> {
++  pub(super) fn end_source_map(&mut self) {
+     if let Some(source_map_sections) = &mut self.source_map_sections
+       && std::mem::take(&mut self.section_open)
+     {
+-      source_map_sections.push(SourceMapSection::new(
+-        self.line,
+-        self.column,
+-        r#"{"version":3,"sources":[],"names":[],"mappings":""}"#.into(),
+-      )?);
++      source_map_sections.push(SourceMapSection {
++        line: self.line,
++        column: self.column,
++        map: SectionMap::new(EMPTY_SOURCE_MAP),
++      });
+     }
+-
+-    Ok(())
+   }
+ 
+   #[inline]
+@@ -124,19 +131,17 @@ impl Printer {
+     if let Some(sections) = self.source_map_sections
+       && !sections.is_empty()
+     {
+-      let map = serde_json::to_vec(&SourceMapIndex {
+-        version: 3,
+-        sources: [],
+-        sections,
+-      })?;
+-      Ok(Arc::new(ContentWithSourceMap::new_string(self.output, map)))
++      Ok(Arc::new(ContentWithSourceMap::new_string(
++        self.output,
++        source_map_index(&sections).into_bytes(),
++      )))
+     } else {
+       Ok(Arc::new(BufferContent::new_string(self.output)))
+     }
+   }
+ }
+ 
+-impl std::fmt::Write for Printer {
++impl std::fmt::Write for Printer<'_> {
+   fn write_str(&mut self, s: &str) -> fmt::Result {
+     if self.source_map_sections.is_some() {
+       update_position(s, &mut self.line, &mut self.column);
+@@ -146,7 +151,7 @@ impl std::fmt::Write for Printer {
+   }
+ }
+ 
+-impl std::io::Write for Printer {
++impl std::io::Write for Printer<'_> {
+   fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+     let s = std::str::from_utf8(buf).map_err(std::io::Error::other)?;
+     if self.source_map_sections.is_some() {
+@@ -173,41 +178,65 @@ fn update_position(s: &str, line: &mut u32, column: &mut u32) {
+   }
+ }
+ 
+-#[derive(Serialize)]
+-pub(crate) struct SourceMapIndex {
+-  pub(crate) version: u8,
+-  /// Not part of an index map, but Node ignores index maps without it (it resolves the top-level
+-  /// `sources` when loading a map), and then applies the sections. Node doesn't resolve the
+-  /// sections' `sources` though, so its stack traces show them relative to the project root.
+-  /// See https://github.com/nodejs/node/issues/66657
+-  pub(crate) sources: [String; 0],
+-  pub(crate) sections: Vec<SourceMapSection>,
+-}
++pub(crate) const EMPTY_SOURCE_MAP: &str = r#"{"version":3,"sources":[],"names":[],"mappin
+```
+
+**File**: `crates/js/src/transformer/plugin.rs` (modified, +19/-3)
+```diff
+@@ -9,7 +9,7 @@ use parcel_resolver::{AliasValue, BrowserField, Specifier};
+ use serde::{Deserialize, Deserializer, de::Error};
+ use swc_core::ecma::react_compiler::{CompilerTarget, GatingConfig, default_plugin_options};
+ 
+-use crate::JsContent;
++use crate::{GeneratedCode, JsContent, JsOutput};
+ 
+ #[derive(Default, serde::Deserialize)]
+ #[serde(rename_all = "camelCase")]
+@@ -91,6 +91,8 @@ impl Transformer for JsTransformer {
+   ) -> Result<Asset, DiagnosticList> {
+     let options = ctx.options;
+     let fs = ctx.fs;
++    // Whether an earlier transformer produced the source, rather than it being the file's.
++    let rewritten = asset.content.downcast_ref::<FileContent>().is_none();
+     let input_source_map = if asset.target.source_map.is_some() {
+       input_source_map(
+         &*asset.content,
+@@ -288,17 +290,31 @@ impl Transformer for JsTransformer {
+     asset
+       .flags
+       .set(AssetFlags::HAS_TOP_LEVEL_AWAIT, res.has_top_level_await);
++    let output = if JsContent::keeps_ast(&asset.target, options, &res.ast.program) {
++      JsOutput::Ast {
++        ast: res.ast,
++        input_source_map,
++      }
++    } else {
++      JsOutput::Code(GeneratedCode::new(
++        res.ast,
++        input_source_map.as_ref(),
++        asset.target.source_map.is_some(),
++        res.esm_prologue_len,
++        res.react_refresh_wrapped,
++        rewritten,
++      )?)
++    };
+     asset.content = Arc::new(JsContent {
+       source_size,
+-      ast: res.ast,
++      output,
+       shebang: res.shebang,
+       directives,
+       rsc_runtime_dep,
+       needs_filename: res.needs_filename,
+       needs_dirname: res.needs_dirname,
+       esm_prologue_len: res.esm_prologue_len,
+       react_refresh_wrapped: res.react_refresh_wrapped,
+-      input_source_map,
+     });
+     Ok(asset)
+   }
 ```
 
 ---
@@ -3217,12 +3628,12 @@ Reverts layer merge ordering change that caused giant stylesheets in react-spect
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10393** (2026-11-11): Improve v3 performance (@devongovett)
+- **PR #10382** (closed): Preload compiled module scripts (@adityareddy-dev)
 - **PR #10337** (closed): core: normalize codeFrame.code on thrown build errors (@Souptik96)
 - **PR #10334** (closed): feat: add options_page support for web extension manifest (@atharv-sys32)
 - **PR #10333** (closed): feat: add options_page support for web extension manifest (@atharv-sys32)
 - **PR #10328** (closed): Enable minification during JS tree-shaking and add `not_contains` test assertion (@devongovett)
-- **PR #10317** (closed): ci: declare minimum GITHUB_TOKEN permissions on canary-release (@arpitjain099)
-- **PR #10303** (closed): feat: support options_page key in web extension manifests (@SAY-5)
 
 ---
 
@@ -3242,34 +3653,76 @@ Reverts layer merge ordering change that caused giant stylesheets in react-spect
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Always output MDX render blocks as components
+## X. Generate JS code at transform time in development builds
 
 **RULE**:
-When implementing operations in `crates/js/src/runtime_modules/mdx-components.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in parcel-bundler/parcel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/js/src/hmr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in parcel-bundler/parcel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a69a642`: Always output MDX render blocks as components. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e92810d`: Generate JS code at transform time in development builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/js/src/runtime_modules/mdx-components.jsx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/js/src/hmr.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const CLIENT_REFERENCE = Symbol.for('react.client.reference');
-
-// `render` is the rendered code block's default export: a component, or a value to render as is.
-function CodeBlock({lang, children, render: Render}) {
-  let isComponent = typeof Render === 'function' || Render?.$$typeof === CLIENT_REFERENCE;
-      {isComponent ? <Render /> : Render}
+  borrow::Cow,
+  JsContent, JsOutput,
+    BundleShim, Resolution, SectionMap, SourceMapSection, SyntheticAsset, asset_dependencies,
+    embedded_css_modules, insert_hot_update_node_replacements, source_map_index,
+    write_node_replacement_decls,
+  let source_maps = asset.target.source_map.is_some();
+  // Resolved from the origin's root, where a bundle in the dist root resolves its `sources` to.
+  let source_root = "/";
+  // Code before the module's own, outside of its source map.
+  let mut prefix = String::new();
+  let (code, map): (Cow<'_, [u8]>, Option<SectionMap<'_>>) = match asset
+    .content
+    .downcast_ref::<JsContent>()
+  {
+    Some(content) => match &content.output {
+      JsOutput::Ast { ast, .. } => {
+        let mut ast = ast.clone();
+        insert_hot_update_node_replacements(&mut ast, content, asset);
+        replace_import_meta(&mut ast);
+        let (code, map) = content
+          .to_code(&ast, source_maps, Some(source_root), false)
+          .unwrap();
+        (Cow::Owned(code), map.map(SectionMap::new))
+      }
+      // Modules that use `import.meta` keep their AST when hot updates are enabled (see
+      // `JsContent::keeps_ast`), so this only needs the Node
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-function CodeBlock({lang, children, render}) {
-      {render}
+  JsContent,
+    BundleShim, Resolution, SyntheticAsset, asset_dependencies, embedded_css_modules,
+    insert_hot_update_node_replacements,
+  let (code, map) = match asset.content.downcast_ref::<JsContent>() {
+    Some(content) => {
+      let mut ast = content.ast.clone();
+      insert_hot_update_node_replacements(&mut ast, content, asset);
+      replace_import_meta(&mut ast);
+      content
+        .to_code(
+          &ast,
+          asset.target.source_map.is_some(),
+          // Resolved from the origin's root, where a bundle in the dist root resolves its
+          // `sources` to.
+          Some("/"),
+          false,
+        )
+        .unwrap()
+    }
+    None => (asset.content.read().unwrap(), None),
+    // Like a bundle's map (see `SourceMapIndex`).
+    let map = format!(
+      r#"{{"version":3,"sources":[],"sections":[{{"offset":{{"line":1,"column":0}},"map":{map}}}]}}"#
+    );
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a69a642` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e92810d` are properly handled with clean fallback behavior.

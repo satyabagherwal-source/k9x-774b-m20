@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T13:33:26.527Z",
+  "last_updated": "2026-11-12T13:51:03.195Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6950,6 +6950,33 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F6E93D-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EB6668",
+      "directive_title": "sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ataraxy-labs-sem",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EB6668-sem-starts-on-debian-12-and-ubuntu-22-04.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-837046",
+      "directive_title": "Generate JS code at transform time in development builds",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "parcel-bundler-parcel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-837046-generate-js-code-at-transform-time-in-de.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0D7050",
+      "directive_title": "docs: Correct jsonschema version in changelog",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0D7050-docs-correct-jsonschema-version-in-chang.md",
       "staged_date": "2026-11-12"
     }
   ]

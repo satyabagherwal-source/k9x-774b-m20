@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T13:33:26.549Z",
+  "last_updated": "2026-11-12T13:51:03.279Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T11:51:15.265Z",
@@ -748,9 +748,9 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-12T12:51:11.112Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-12T13:51:03.196Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "dragonflyoss-dragonfly-learnings.md": {
       "processed_at": "2026-11-12T03:30:59.262Z",
@@ -1141,9 +1141,19 @@
       "processed_at": "2026-11-12T13:33:26.305Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "ataraxy-labs-sem-learnings.md": {
+      "processed_at": "2026-11-12T13:51:03.057Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "parcel-bundler-parcel-learnings.md": {
+      "processed_at": "2026-11-12T13:51:03.099Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 309,
+  "total_dossiers_evaluated": 312,
   "total_canonical_promoted": 39,
-  "total_staged_for_review": 269
+  "total_staged_for_review": 272
 }

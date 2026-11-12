@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "58854051",
+    "sourceVersion": "746348d7",
     "license": "NOASSERTION",
-    "contentHash": "9f975bbcd65027ce7d045b90ae0c2eaced5def6ac5bd7b5cbb00b65ff35bf3cc",
-    "lastHarvestedAt": "2026-11-12T12:45:39.277Z",
+    "contentHash": "560bde33cd9597e1326a7aa59b03e7fdb8c12564992631578874686d42766f11",
+    "lastHarvestedAt": "2026-11-12T13:41:09.124Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "290a9d94",
+    "sourceVersion": "036dde8e",
     "license": "Apache-2.0",
-    "contentHash": "95fc660679c1d6db0fd5805c5cff4ab3660e0a872c26c5a6b00cab8cf28ddb36",
-    "lastHarvestedAt": "2026-11-09T22:34:14.743Z",
+    "contentHash": "69f11793433213e9a220cd1ea1cf38bb51cabbf7efcbdba365a9c2679bb11fcf",
+    "lastHarvestedAt": "2026-11-12T13:50:57.875Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {
@@ -10043,10 +10043,10 @@
     "repository": "parcel-bundler/parcel",
     "platform": "github",
     "sourceUrl": "https://github.com/parcel-bundler/parcel",
-    "sourceVersion": "20c0f2ed",
+    "sourceVersion": "634ef6c9",
     "license": "MIT",
-    "contentHash": "e27ea886595f1ab6f4fbbf6ac4ba46af9baade865d182f0a78bf16d6fb7f3225",
-    "lastHarvestedAt": "2026-11-07T21:03:20.788Z",
+    "contentHash": "9db2e988d823fa591772a64cf9c795090379ff61e8f9b0cd5ed2365138ea0bca",
+    "lastHarvestedAt": "2026-11-12T13:40:56.959Z",
     "learningId": "learn-github-parcel-bundler-parcel"
   },
   "tanstack-query": {
