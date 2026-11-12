@@ -9157,3 +9157,7 @@
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T11:38:00.745Z` | `google-closure-compiler` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7D775901` [Domain H] | Yes (`687df25b...`) |
 | `CYCLE-20261112-LF1O` | `2026-11-12T11:50:57.900Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9970d487...`) |
 | `CYCLE-20261112-LNFR` | `2026-11-12T11:51:08.775Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`22050608...`) |
+| `CYCLE-20261112-GKTA` | `2026-11-12T12:15:11.710Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`16df7d62...`) |
+| `CYCLE-20261112-GP5M` | `2026-11-12T12:15:17.338Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2ee32cd7...`) |
+| `CYCLE-20261112-MXD2` | `2026-11-12T12:20:07.910Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e5f8c54...`) |
+| `CYCLE-20261112-N2B0` | `2026-11-12T12:20:14.316Z` | `solidjs/solid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0921c861...`) |

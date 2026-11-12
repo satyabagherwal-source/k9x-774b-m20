@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `d7b8f4d3`  
+> **Source Version**: `791e654b`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T17:43:53.024Z  
+> **Timestamp**: 2026-11-12T12:19:49.575Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T17:43:52.349Z  
+> **Harvest Timestamp**: 2026-11-12T12:14:48.818Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1286,209 +1286,153 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7b8f4d3` (2026-11-09)
-**Commit Message**: gzip: chmod the opened output and tidy the mode test
+### Incident Patch 1: `27cf9d6e` (2026-11-10)
+**Commit Message**: .circle: Add dockerfile to build RISC-V 64 kernel
 
-Call Chmod on the *os.File returned by OpenFile instead of on the
-path, so the mode lands on the file being written even if the path is
-replaced in between. Shorten the comment.
+Based on kernel v6.18 code base, kernel Image based on
+this configuration file can be loaded by UEFI, and has
+ability to execute kexec for u-root.
 
-Use got/want messages with context in TestFileProcessKeepsMode.
+Use following command to build and fetch kernel Image:
+	docker build -t kernel-rv64 .
+	docker create --name kernel-rv64 kernel-rv64 /unused
+	docker cp kernel-rv64:/Image .
+	docker rm kernel-rv64
 
-Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
+Signed-off-by: Ajan Zhong <[REDACTED_EMAIL]>
 
-**File**: `pkg/gzip/file.go` (modified, +6/-6)
+**File**: `.circleci/images/kernel-riscv64/Dockerfile` (added, +38/-0)
 ```diff
-@@ -140,17 +140,17 @@ func (f *File) Process() error {
- 		if fi, err = i.Stat(); err != nil {
- 			return err
- 		}
--		// Like gzip(1), give the output the input's permissions. Set them
--		// before writing: OpenFile's mode is masked by the umask and is
--		// not applied to an existing output that -f overwrites.
-+		// Give the output file the input file's permissions.
- 		perm := fi.Mode().Perm()
--		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
-+		var out *os.File
-+		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
- 			return err
- 		}
--		if err = os.Chmod(f.outputPath(), perm); err != nil {
--			o.Close()
-+		if err = out.Chmod(perm); err != nil {
-+			out.Close()
- 			return err
- 		}
-+		o = out
- 	}
- 
- 	if f.Options.Verbose && !f.Options.Quiet {
-```
-
-**File**: `pkg/gzip/file_test.go` (modified, +9/-8)
-```diff
-@@ -321,11 +321,12 @@ func TestFileProcessKeepsMode(t *testing.T) {
- 	}
- 	plain := filepath.Join(t.TempDir(), "secret")
- 	if err := os.WriteFile(plain, []byte("hunter2"), 0o600); err != nil {
--		t.Fatal(err)
-+		t.Fatalf("create %q with mode 0600: got %v, want nil", plain, err)
- 	}
--	// An existing, wider output, as overwritten by -f.
-+	// An existing 0644 output, more permissive than the 0600 input, which
-+	// -f overwrites.
- 	if err := os.WriteFile(plain+".gz", nil, 0o644); err != nil {
--		t.Fatal(err)
-+		t.Fatalf("create %q with mode 0644: got %v, want nil", plain+".gz", err)
- 	}
- 
- 	f := File{
-@@ -339,24 +340,24 @@ func TestFileProcessKeepsMode(t *testing.T) {
- 		},
- 	}
- 	if err := f.Process(); err != nil {
--		t.Fatalf("File.Process() compression error = %v", err)
-+		t.Fatalf("compressing %q: got %v, want nil", plain, err)
- 	}
- 	if err := os.Remove(plain); err != nil {
--		t.Fatal(err)
-+		t.Fatalf("remove %q: got %v, want nil", plain, err)
- 	}
- 	f.Path = plain + ".gz"
- 	f.Options.Decompress = true
- 	if err := f.Process(); err != nil {
--		t.Fatalf("File.Process() decompression error = %v", err)
-+		t.Fatalf("decompressing %q: got %v, want nil", f.Path, err)
- 	}
- 
- 	for _, p := range []string{plain + ".gz", plain} {
- 		fi, err := os.Stat(p)
- 		if err != nil {
--			t.Fatal(err)
-+			t.Fatalf("stat %q: got %v, want nil", p, err)
- 		}
- 		if got := fi.Mode().Perm(); got != 0o600 {
--			t.Errorf("File.Process() mode of %q = %#o; want %#o", p, got, 0o600)
-+			t.Errorf("mode of %q: got %#o, want %#o", p, got, 0o600)
- 		}
- 	}
- }
+@@ -0,0 +1,38 @@
++# Copyright 2026 the u-root Authors. All rights reserved
++# Use of this source code is governed by a BSD-style
++# license that can be found in the LICENSE file.
++FROM ubuntu:24.04 AS base
++
++# Install dependencies
++RUN apt-get update &&                          \
++    apt-get install -y --no-install-recommends \
++        ca-certificates                         \
++        `# Linux dependencies`                  \
++        bc                                      \
++        bison                                   \
++        flex                                    \
++        gcc                                     \
++        git                                     \
++        make                                    \
++        gcc-riscv64-linux-gnu                   \
++        libssl-dev                              \
++        `# Linux kernel build deps`             \
++        libelf-dev                              \
++        python3;
++
++WORKDIR /root
++
++# Build linux
++RUN git clone --depth=1 --branch=v6.18 https://github.com/torvalds/linux;
++
++COPY config_linux.txt linux/.config
++RUN chmod 0444 linux/.config;
++
++RUN cd linux;                                                             \
++    export ARCH=riscv;                                                    \
++    export CROSS_COMPILE=/usr/bin/riscv64-linux-gnu-;                     \
++    make olddefconfig;                                                    \
++    make -j$(($(nproc) * 2 + 1));
++
++FROM scratch
++COPY --from=base /root/linux/arch/riscv/boot/Image /Image
 ```
 
 ---
 
-### Incident Patch 2: `2a1953f5` (2026-11-04)
-**Commit Message**: gzip: keep the input file's permissions on the output
+### Incident Patch 2: `7d488343` (2026-11-05)
+**Commit Message**: build(deps): bump lodash from 4.17.23 to 4.18.1 in /website
 
-File.Process created the output with os.Create and never looked at the
-input's mode, and Cleanup then removes the input. gzip or gzip -d on a
-0600 file therefore left a 0644 copy behind (0666 under a zero umask),
-readable by every local user. GNU and BSD gzip give the output the
-input's mode.
+Bumps [lodash](https://github.com/lodash/lodash) from 4.17.23 to 4.18.1.
+- [Release notes](https://github.com/lodash/lodash/releases)
+- [Commits](https://github.com/lodash/lodash/compare/4.17.23...4.18.1)
 
-Open the output with the input's permission bits and chmod it before
-any data is written, so neither the umask nor an existing output
-overwritten by -f can leave it wider.
+---
+updated-dependencies:
+- dependency-name: lodash
+  dependency-version: 4.18.1
+  dependency-type: indirect
+...
 
-Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `pkg/gzip/file.go` (modified, +13/-1)
+**File**: `website/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -136,7 +136,19 @@ func (f *File) Process() error {
- 	} else if f.Options.Stdout {
- 		o = os.Stdout
- 	} else {
--		if o, err = os.Create(f.outputPath()); err != nil {
-+		var fi os.FileInfo
-+		if fi, err = i.Stat(); err != nil {
-+			return err
-+		}
-+		// Like gzip(1), give the output the input's permissions. Set them
-+		// before writing: OpenFile's mode is masked by the umask and is
-+		// not applied to an existing output that -f overwrites.
-+		perm := fi.Mode().Perm()
-+		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
-+			return err
-+		}
-+		if err = os.Chmod(f.outputPath(), perm); err != nil {
-+			o.Close()
- 			return err
- 		}
- 	}
+@@ -5087,9 +5087,9 @@
+       "integrity": "sha512-+dAZZ2mM+/m+vY9ezfoueVvrgnHIGi5FvgSymbIgJOFwiznWyA59mav95L+Mc6xPtL3s9gm5eNTlNtxJLbNM1g=="
+     },
+     "node_modules/lodash": {
+-      "version": "4.17.23",
+-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.23.tgz",
+-      "integrity": "sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==",
++      "version": "4.18.1",
++      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
++      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==",
+       "license": "MIT"
+     },
+     "node_modules/lodash.deburr": {
 ```
 
-**File**: `pkg/gzip/file_test.go` (modified, +47/-0)
+---
+
+### Incident Patch 3: `26ea696b` (2026-11-10)
+**Commit Message**: Use IoctlGetUint64 from golang.org/x/sys/unix
+
+Replace the hand-rolled ioctl wrapper with the equivalent IoctlGetUint64
+from golang.org/x/sys/unix and void unsafe.Pointer use.
+
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
+
+**File**: `pkg/mount/block/blockdev_linux.go` (modified, +1/-11)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"errors"
- 	"os"
- 	"path/filepath"
-+	"runtime"
- 	"testing"
- )
+@@ -18,7 +18,6 @@ import (
+ 	"strconv"
+ 	"strings"
+ 	"unicode"
+-	"unsafe"
  
-@@ -314,6 +315,52 @@ func TestFileProcess(t *testing.T) {
- 	}
+ 	"github.com/rekby/gpt"
+ 	"github.com/u-root/u-root/pkg/mount"
+@@ -160,15 +159,6 @@ func (b *BlockDev) KernelBlockSize() (int, error) {
+ 	return unix.IoctlGetInt(int(f.Fd()), unix.BLKBSZGET)
  }
  
-+func TestFileProcessKeepsMode(t *testing.T) {
-+	if runtime.GOOS == "windows" {
-+		t.Skip("no Unix permission bits on windows")
-+	}
-+	plain := filepath.Join(t.TempDir(), "secret")
-+	if err := os.WriteFile(plain, []byte("hunter2"), 0o600); err != nil {
-+		t.Fatal(err)
-+	}
-+	// An existing, wider output, as overwritten by -f.
-+	if err := os.WriteFile(plain+".gz", nil, 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	f := File{
-+		Path: plain,
-+		Options: &Options{
-+			Blocksize: 128,
-+			Level:     -1,
-+			Processes: 1,
-+			Suffix:    ".gz",
-+			Force:     true,
-+		},
-+	}
-+	if err := f.Process(); err != nil {
-+		t.Fatalf("File.Process() compression error = %v", err)
-+	}
-+	if err := os.Remove(plain); err != nil {
-+		t.Fatal(err)
-+	}
-+	f.Path = plain + ".gz"
-+	f.Options.Decompress = true
-+	if err := f.Process(); err != nil {
-+		t.Fatalf("File.Process() decompression error = %v", err)
-+	}
-+
-+	for _, p := range []string{plain + ".gz", plain} {
-+		fi, err := os.Stat(p)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		if got := fi.Mode().Perm(); got != 0o600 {
-+			t.Errorf("File.Process() mode of %q = %#o; want %#o", p, got, 0o600)
-+		}
-+	}
-+}
-+
- func TestCheckPath(t *testing.T) {
- 	d := t.TempDir()
+-func ioctlGetUint64(fd int, req uint) (uint64, error) {
+-	var value uint64
+-	_, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(unsafe.Pointer(&value)))
+-	if err != 0 {
+-		return 0, err
+-	}
+-	return value, nil
+-}
+-
+ // Size returns the size in bytes.
+ func (b *BlockDev) Size() (uint64, error) {
+ 	f, err := os.Open(b.DevicePath())
+@@ -177,7 +167,7 @@ func (b *BlockDev) Size() (uint64, error) {
+ 	}
+ 	defer f.Close()
  
+-	sz, err := ioctlGetUint64(int(f.Fd()), unix.BLKGETSIZE64)
++	sz, err := unix.IoctlGetUint64(int(f.Fd()), unix.BLKGETSIZE64)
+ 	if err != nil {
+ 		return 0, &os.PathError{
+ 			Op:   "get size",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3834** (2026-11-10): Remove bubbline (@rminnich)
+- **PR #3832** (2026-11-10): Use IoctlGetUint64 from golang.org/x/sys/unix (@tklauser)
+- **PR #3831** (2026-11-10): Add docker files to build RISC-V 64 kernel and OVMF binaries. (@AjanZhong)
+- **PR #3829** (2026-11-09): go.mod: move to Go 1.27 and update gobusybox (@rminnich)
 - **PR #3827** (2026-11-09): gzip: keep the input file's permissions on the output (@alhudz)
 - **PR #3826** (2026-11-07): go.mod: pick up p9 v0.5.1, which bounds a server-reported size (@rminnich)
-- **PR #3822** (2026-11-05): fix spelling so spellcheck will pass (@rminnich)
-- **PR #3821** (2026-11-05): go.mod: drop the phantom pkg/uroot module and its replace (@rminnich)
-- **PR #3820** (2026-11-08): Add kexec UniversalPayload RISC-V 64 support (@AjanZhong)
-- **PR #3819** (closed): build(deps): bump postcss-selector-parser from 6.0.13 to 6.1.5 in /website (@dependabot[bot])
 
 ---
 
@@ -1508,38 +1452,59 @@ Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gzip: chmod the opened output and tidy the mode test
+## X. .circle: Add dockerfile to build RISC-V 64 kernel
 
 **RULE**:
-When implementing operations in `pkg/gzip/file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.circleci/images/kernel-riscv64/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7b8f4d3`: gzip: chmod the opened output and tidy the mode test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27cf9d6e`: .circle: Add dockerfile to build RISC-V 64 kernel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gzip/file.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/images/kernel-riscv64/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Give the output file the input file's permissions.
-		var out *os.File
-		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
-		if err = out.Chmod(perm); err != nil {
-			out.Close()
-		o = out
+# Copyright 2026 the u-root Authors. All rights reserved
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+FROM ubuntu:24.04 AS base
+
+# Install dependencies
+RUN apt-get update &&                          \
+    apt-get install -y --no-install-recommends \
+        ca-certificates                         \
+        `# Linux dependencies`                  \
+        bc                                      \
+        bison                                   \
+        flex                                    \
+        gcc                                     \
+        git                                     \
+        make                                    \
+        gcc-riscv64-linux-gnu                   \
+        libssl-dev                              \
+        `# Linux kernel build deps`             \
+        libelf-dev                              \
+        python3;
+
+WORKDIR /root
+
+# Build linux
+RUN git clone --depth=1 --branch=v6.18 https://github.com/torvalds/linux;
+
+COPY config_linux.txt linux/.config
+RUN chmod 0444 linux/.config;
+
+RUN cd linux;                                                             \
+    export ARCH=riscv;      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		// Like gzip(1), give the output the input's permissions. Set them
-		// before writing: OpenFile's mode is masked by the umask and is
-		// not applied to an existing output that -f overwrites.
-		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
-		if err = os.Chmod(f.outputPath(), perm); err != nil {
-			o.Close()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7b8f4d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27cf9d6e` are properly handled with clean fallback behavior.

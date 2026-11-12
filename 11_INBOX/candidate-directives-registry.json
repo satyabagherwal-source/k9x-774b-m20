@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:51:15.264Z",
+  "last_updated": "2026-11-12T12:20:20.442Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6824,6 +6824,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-514F52-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-157541",
+      "directive_title": ".circle: Add dockerfile to build RISC-V 64 kernel",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "u-root-u-root",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-157541--circle-add-dockerfile-to-build-risc-v-6.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E8E51A",
+      "directive_title": "solid): release disposed transition sources during pending Suspense (#4744)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "solidjs-solid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E8E51A-solid-release-disposed-transition-source.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FFFBA7",
+      "directive_title": "build(deps-ui-dev): bump rspec-rails (#14731)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gocd-gocd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FFFBA7-build-deps-ui-dev-bump-rspec-rails-14731.md",
       "staged_date": "2026-11-12"
     }
   ]

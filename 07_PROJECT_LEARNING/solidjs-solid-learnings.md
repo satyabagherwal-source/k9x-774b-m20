@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source**: github ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
-> **Source Version**: `bc50fe56`  
+> **Source Version**: `99714d4e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:39:37.385Z  
+> **Timestamp**: 2026-11-12T12:19:55.098Z  
 > **Learning ID**: `learn-github-solidjs-solid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:39:32.629Z  
+> **Harvest Timestamp**: 2026-11-12T12:14:51.036Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A declarative, efficient, and flexible JavaScript library for building user interfaces.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 36193 stars
+- **Stars / Engagement**: 36259 stars
 
 ---
 
@@ -938,6 +938,7 @@ import {
   createMemo,
   createOwner,
   Owner,
+  resolveChildren,
   runWithOwner,
   Setter,
   Signal,
@@ -1233,9 +1234,10 @@ export function Show<T>(props: {
   children: string | ((item: NonNullable<T> | Accessor<NonNullable<T>>) => string);
 }): string {
   let c: string | ((item: NonNullable<T> | Accessor<NonNullable<T>>) => string);
-  return props.when
+  const w = props.when;
+  return w
     ? typeof (c = props.children) === "function" && c.length > 0
-      ? c(props.keyed ? props.when! : () => props.when as any)
+      ? c(props.keyed ? w! : () => w as any)
       : (c as string)
     : props.fallback || "";
 }
@@ -1244,7 +1246,7 @@ export function Switch(props: {
   fallback?: string;
   children: MatchProps<unknown> | MatchProps<unknown>[];
 }) {
-  let conditions = props.children;
+  let conditions = resolveChildren(props.children) as MatchProps<unknown> | MatchProps<unknown>[];
   Array.isArray(conditions) || (conditions = [conditions]);
 
   for (let i = 0; i < conditions.length; i++) {
@@ -1278,10 +1280,7 @@ export function ErrorBoundary(props: {
     clean: any,
     sync = true;
   const ctx = sharedConfig.context!;
-  const id = sharedConfig.getContextId();
-  function displayFallback() {
-    cleanNode(clean);
-    ctx.seriali
+  const id = sharedConfig.getC
 ```
 
 ### Core Architecture Module: `packages/solid/web/src/core.ts`
@@ -1472,11 +1471,11 @@ export { withSolid, customElement };
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4033** (2026-10-14): **With serverFunctions.components on, data server functions called during hydration never reach the network (frames intercept waits forever)**
-  *Symptoms*: In an app with `serverFunctions: { components: true }`, a data server function (one that returns data, not a component) called during hydration never sends its request. The frames client's intercept parks the call waiting for a `<solid-frame>` boundary that a data function never has, and in two ways that wait never ends.  `examples/room`'s `/live` page shows it on `next` (4937f0a): - **Never connects:** there are no `/_server/live/*` or `/_server/data/summary` requests at all, and no console errors. - **UI stuck:** the status pills stay at "connecting", presence shows "0 here" and "Not in the room yet", and the summary stays at "summarizing…". - **Writes go one way:** a message posted from one tab reaches the server but never shows in another tab. - **Everywhere:** it happens in dev over HTTP/1.1, in dev over HTTPS/HTTP/2, and in the production build, while `_$HY.done === true`. - **Controls:** room's `/` page, a live server component, works on the same server. The same `/live` source served with `components: true` removed connects, with both tabs in presence and posts crossing. `examples/board` doesn't set `components: true`, which is why it connects on the same build.  This is related to #3819, which uses the same page as its motivating case, but that issue is about the connection opening *late*. Here it never opens.  ## Cause  In `packages/web/frames/src/client.ts`, the `intercept` passed to `createServerComponentHandler` (around line 1683) runs for every server-function c
+- **Issue #4587** (2026-11-02): **[2.0] A long memo chain overflows the stack in the commit/settle path**
+  *Symptoms*: ## What happens  A chain of `createMemo` nodes over an async source, read under `<Errored>` with `isPending`, overflows the call stack in the commit/settle path once the chain is long enough.  - On `next`, a warm-built chain of about **8,000+** memos surfaces `E:Maximum call stack size exceeded` as the rendered error, in place of the source's own error. - With #4582 (the settle walk also stage-marks chain nodes via `stageMark`), the walk recurses through chains too. At about **15,000** nodes it silently drops the staged `E:boomA` frame instead of erroring.  Real apps rarely build chains this deep, but the error should be the source's (`boomA`), never a stack overflow, and a frame should never be dropped without an error.  ## Repro shape  1. Make an async source that rejects with `new Error("boomA")`. 2. Build a chain of N `createMemo` nodes, each reading the previous one, after the source has a first value (warm build). 3. Read the last memo under an `Errored` boundary, together with `isPending(last)`, in a render effect that records frames. 4. Trigger the rejecting flight and flush.  With N ≈ 8,000 on `next`, the recorded error is `Maximum call stack size exceeded`. Expected: `E:boomA`.  ## Likely fix direction  Make the commit/settle walks (including `settlePendingSource` and the staged-error marking) iterative with an explicit stack, instead of recursing per node.  Found during review of #4582. It doesn't block that PR, because `next` already fails at a shallower depth.
 
-- **Issue #4032** (2026-10-14): **Live holes: a pending attribute inside a Loading boundary writes data-lha twice, and the element's later attr updates are dropped**
-  *Symptoms*: On `next` (4937f0a), an element inside a `<Loading>` whose attribute reads a pending value is rendered with two `data-lha` addresses:  ```html <template id="01"><ul data-lha="1" data-lha="0" data-l="r:0"><li>x</li></ul></template> ```  Only `lha:1` is bound. The stale `data-lha="0"` is also copied into every later attr op for that element:  ``` type:"attr", key:"1", attrs:" data-lha=\"0\" data-l=\"r:1\"" ```  ## What breaks  - **First paint is fine.** HTML parsers keep the first duplicate attribute, `data-lha="1"`, which is the bound one. - **Attr updates stop after the first.** In jsdom, the first op (key `"1"`) applies and its attr text rewrites the element to `data-lha="0"`. The next op for key `"1"` finds no element, returns `applied: false` ("pending; later flushes retry") and never lands. The attribute is stuck at its second value. - The markup is also invalid HTML (a duplicate-attribute parse error), though browsers recover.  ## Minimal repro  This uses the same imports and `collect()` helper as `packages/web/test/server/document-live-holes.spec.tsx`:  ```tsx const S = () => {   const ready = createMemo(async () => (await wait(5), "r"));   const tick = createMemo(async function* () { yield 0; await wait(20); yield 1; });   const label = createMemo(() => ready() + ":" + tick());   return <Loading fallback={<span>FB</span>}><ul data-l={label()}><li>x</li></ul></Loading>; }; const html = await collect(() => (frameTransformDirectResult(S, { id: "r/H3" }) as any)({})); ``` 
+- **Issue #4486** (2026-10-30): **A memo that catches an errored sync memo's throw and is re-run halts the system on its second re-run**
+  *Symptoms*: On `next` (ab3d2add5d41fb8cc1069ac2e01c330c04f0af1d), a memo that wraps the read of an **errored sync memo** in `try/catch` and completes with a substitute value works for its creation pass and its first re-run, then **halts the whole system on its second re-run** when nothing but an unrelated signal changed. With an `<Errored>` boundary above there is no halt, but the boundary flips to its fallback while the content memo itself still reads `"caught"`.  Found while building #4481 (the `CAUGHT_REACTIVE_READ` dev diagnostic); independent of it — reproduced on plain `next` with that branch not present.  ## Reproduction (vitest, `packages/signals`)  ```ts import { expect, it, vi } from "vitest"; import { createMemo, createRenderEffect, createRoot, createSignal, flush } from "../src/index.js";  it("a catching memo over an errored sync memo halts on its second re-run", () => {   const errors: string[] = [];   vi.spyOn(console, "error").mockImplementation((m, e) => errors.push(`${m} || ${e}`));   const [other, setOther] = createSignal(0);   const screens: string[] = [];   let catching!: () => string;   createRoot(() => {     const bad = createMemo((): string => {       throw new Error("boom");     });     catching = createMemo(() => {       other();       try {         return bad();       } catch {         return "caught";       }     });     createRenderEffect(catching, v => void screens.push(v));   });   flush();   expect(screens).toEqual(["caught"]);   setOther(1);   flush(); // 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1493,299 +1492,493 @@ export { withSolid, customElement };
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb50357c` (2026-10-29)
-**Commit Message**: fix: keep createRoot's dispose function from retaining fn (#4096)
+### Incident Patch 1: `64010be8` (2026-11-10)
+**Commit Message**: fix(solid): release disposed transition sources during pending Suspense (#4744)
 
-createRoot created the dispose function inside its own scope, which also
-holds fn, so holding the dispose function kept fn and everything it closes
-over alive. mapArray and indexArray keep each row's dispose function, and
-each row's fn closes over the list the row was created from, so a mounted
-<For>/<Index> row kept that whole list reachable, including items removed
-from it later. Build the dispose function in a separate helper that closes
-over the root only.
+* fix(solid): release disposed transition sources during pending Suspense (#4728)
 
-Fixes #4095
+* fix(solid): avoid passing forEach index into cleanNode
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* test: type For children as Element in #4728 regression
 
-**File**: `.changeset/create-root-dispose-retention.md` (added, +5/-0)
+**File**: `.changeset/fix-transition-pending-store-oom.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"solid-js": patch
 +---
 +
-+Stop a `createRoot` dispose function from retaining the root's `fn`. The dispose function shared `createRoot`'s scope, so holding it kept `fn` and everything `fn` closes over alive: every `mapArray`/`indexArray` row (and so every `<For>`/`<Index>` row) kept the list it was created from, including items later removed from it.
++Release disposed transition sources during a pending Suspense transition so keyed store reconciles cannot retain unbounded memory.
 ```
 
-**File**: `packages/solid/src/reactive/signal.ts` (modified, +8/-1)
+**File**: `packages/solid/src/reactive/signal.ts` (modified, +19/-4)
 ```diff
-@@ -169,7 +169,7 @@ export function createRoot<T>(fn: RootFunction<T>, detachedOwner?: typeof Owner)
-               throw new Error("Dispose method must be an explicit argument to createRoot function");
-             })
-         : fn
--      : () => fn(() => untrack(() => cleanNode(root)));
-+      : () => fn(createDisposer(root));
+@@ -1384,7 +1384,7 @@ export function writeSignal(node: SignalState<any> | Memo<any>, value: any, isCo
  
-   if (IS_DEV) DevHooks.afterCreateOwner && DevHooks.afterCreateOwner(root);
- 
-@@ -184,6 +184,13 @@ export function createRoot<T>(fn: RootFunction<T>, detachedOwner?: typeof Owner)
+ function updateComputation(node: Computation<any>) {
+   if (!node.fn) return;
+-  cleanNode(node);
++  cleanNode(node, true);
+   const time = ExecCount;
+   runComputation(
+     node,
+@@ -1417,11 +1417,11 @@ function runComputation(node: Computation<any>, value: any, time: number) {
+     if (node.pure) {
+       if (Transition && Transition.running) {
+         node.tState = STALE;
+-        (node as Memo<any>).tOwned && (node as Memo<any>).tOwned!.forEach(cleanNode);
++        (node as Memo<any>).tOwned && (node as Memo<any>).tOwned!.forEach(n => cleanNode(n));
+         (node as Memo<any>).tOwned = undefined;
+       } else {
+         node.state = STALE;
+-        node.owned && node.owned.forEach(cleanNode);
++        node.owned && node.owned.forEach(n => cleanNode(n));
+         node.owned = null;
+       }
+     }
+@@ -1704,7 +1704,14 @@ function markDownstream(node: Memo<any>) {
    }
  }
  
-+// Created outside createRoot so the dispose function does not share its scope,
-+// which holds `fn`: whoever keeps the dispose function would keep `fn` and
-+// everything it closes over (e.g. the list a mapArray row was created from).
-+function createDisposer(root: Owner) {
-+  return () => untrack(() => cleanNode(root));
+-function cleanNode(node: Owner) {
++function releaseTransitionSource(node: SignalState<any> | Memo<any> | Owner) {
++  if (Transition && Transition.sources.has(node as SignalState<any>)) {
++    Transition.sources.delete(node as SignalState<any>);
++    delete (node as SignalState<any>).tValue;
++  }
 +}
 +
- export type Accessor<T> = () => T;
- 
- export type Setter<in out T> = {
-```
-
-**File**: `packages/solid/test/array.spec.ts` (modified, +28/-0)
-```diff
-@@ -1,4 +1,6 @@
- import { describe, expect, test } from "vitest";
-+import { setFlagsFromString } from "v8";
-+import { runInNewContext } from "vm";
- import { mapArray, indexArray, createSignal, createMemo, createRoot } from "../src/index.js";
- 
- describe("Map operator", () => {
-@@ -26,6 +28,32 @@ describe("Map operator", () => {
-       expect(r()).toEqual([6, 8, 10]);
-     });
-   });
-+
-+  test("a surviving row does not retain removed items", async () => {
-+    setFlagsFromString("--expose-gc");
-+    const gc: () => void = runInNewContext("gc");
-+    const kept = {};
-+    let removed: WeakRef<object>, set: (v: object[]) => void;
-+    const dispose = createRoot(dispose => {
-+      const [s, setS] = createSignal(createItems()),
-+        r = createMemo(mapArray(s, v => v));
-+      set = setS;
-+      r();
-+      return dispose;
-+    });
-+    function createItems() {
-+      const item = {};
-+      removed = new WeakRef(item);
-+      return [kept, item];
-+    }
-+    // The row for `kept` was created from the original list.
-+    set!([kept]);
-+    // WeakRef targets stay alive until the current job ends.
-+    await new Promise(r => setTimeout(r, 0));
-+    gc();
-+    expect(removed!.deref()).toBeUndefined();
-+    dispose();
-+  });
- });
- 
- describe("Index operator", () => {
-```
-
----
-
-### Incident Patch 2: `63210b70` (2026-10-29)
-**Commit Message**: fix(store): preserve reconciled array length on the server (#4266)
-
-**File**: `.changeset/server-reconcile-array-length.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"solid-js": patch
-+---
-+
-+Preserve the target array length when reconciling stores on the server.
-```
-
-**File**: `packages/solid/store/src/server.ts` (modified, +1/-0)
-```diff
-@@ -153,6 +153,7 @@ export function reconcile<T extends U, U extends object>(
-     for (let i = 0, len = previousKeys.length; i < len; i++) {
-       if (value[previousKeys[i]] === undefined) setProperty(state, previousKeys[i], undefined);
++function cleanNode(node: Owner, recompute?: boolean) {
+   let i;
+   if ((node as Computation<any>).sources) {
+     while ((node as Computation<any>).sources!.length) {
+@@ -1720,6 +1727,9 @@ function cleanNode(node: Owner) {
+           source.observerSlots![index] = s;
+         }
+       }
++      // Drop unobserved transition copies so removed store leaves do not
++      // accumulate on a long-lived pending Suspense transition (#4728).
++      if (!recompute && (!obs || !obs.length) && Transition) releaseTransitionSource(source);
      }
-+    if (Array.isArray(state) && Array.isArray(value)) setProperty(state, "length", value.length);
-     return state as T;
-   };
- }
+   }
+ 
+@@ -1734,6 +1744,10 @@ function cleanNode(node: Owner) {
+     for (i = node.owned.length - 1; i >= 0; i--) cleanNode(node.owned[i]);
+     node.owned = null;
+   }
++  // Permanent disposal must drop Transition.sources entries. Recompute must not:
++  // when the transition is paused (!running), cleanNode skips the pure/reset
++  // branch above and would otherwise clear tValue before runComputation (#4728).
++  if (!recompute) releaseTransitionSource(node);
+ 
+   if (node.cleanups) {
+     for (i = node.cleanups.length - 1; i >= 0; i--) node.cleanups[i]();
+@@ -1748,6 +1762,7 @@ function reset(node: Computation<any>, top?: boolean) {
+   if (!top) {
+     node.tState = 0;
+     Transition!.disposed.add(node);
++    releaseTransitionSource(node);
+   }
+   if (node.owned) {
+     for (let i = 0; i < node.owned.length; i++) reset(node.owned[i]);
 ```
 
-**File**: `packages/solid/test/server/reconcile-array-length.spec.ts` (added, +30/-0)
+**File**: `packages/solid/web/test/transition-oom-4728.spec.tsx` (added, +103/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+import { describe, expect, test } from "vitest";
-+import { createStore, reconcile, unwrap } from "../../store/src/server.js";
+@@ -0,0 +1,103 @@
++﻿/**
++ * @jsxImportSource solid-js
++ * @vitest-environment jsdom
++ */
 +
-+describe("reconcile array length on the server", () => {
-+  const cases: [string, (number | undefined)[], (number | undefined)[]][] = [
-+    ["shortens an array", [1, 2, 3], [4]],
-+    ["clears an array", [1, 2], []],
-+    ["grows an array", [1], [1, 2, 3]],
-+    ["preserves trailing undefined entries", [1], [1, undefined]],
-+    ["preserves sparse array length", [1], new Array(3)]
-+  ];
++import { describe, expect, test, vi } from "vitest";
++import {
++  createSignal,
++  createResource,
++  createComponent,
++  enableScheduling,
++  useTransition,
++  startTransition,
++  For
++} from "../../src/index.js";
++import { getSuspenseContext, Transition } from "../../src/reactive/signal.js";
++import { createStore, reconcile } from "../../store/src/index.js";
++import { render, Suspense } from "../src/index.js";
 +
-+  test.each(cases)("%s at the root", (_, initial, next) => {
-+    const original = initial.slice();
-+    const [state, setState] = createStore(original);
-+    setState(reconcile(next));
-+    expect(state).toHaveLength(next.length);
-+    expect([...state]).toEqual([...next]);
-+    expect(unwrap(state)).toBe(original);
-+  });
++describe("#4728 pending transition store retention", () => {
++  test("Transition.sources stays bounded while suspense transition is pending", async () => {
++    enableScheduling(null as any);
++    getSuspenseContext();
 +
-+  test.each(cases)("%s on a nested path", (_, initial, next) => {
-+    const original = initial.slice();
-+    const [state, setState] = createStore({ items: original });
-+    setState("items", reconcile(next));
-+    expect(state.items).toHaveLength(next.length);
-+    expect([...state.items]).toEqual([...next]);
-+    expect(unwrap(state.items)).toBe(original);
++    const div = document.createElement("div");
++    const [key, setKey] = createSignal(0);
++    const [state, setState] = createStore({
++      data: [
++        { symbol: "A", value: 0 },
++        { symbol: "B", value: 0 }
++      ]
++    });
++    const [pending, start] = useTransition();
++    let resolveResource!: (v: string) => void;
++
++    function Child() {
++      const [resource] = createResource(key, id =>
++        id === 0
++          ? Promise.resolve("ready")
++          : new Promise<string>(resolve => {
++              resolveResource = resolve;
++            })
++      );
++      // Use createComponent so For children stay typed as JSX.Element (not accessors).
++      return [
++        resource as unknown as string,
++        createComponent(For as any, {
++          get each() {
++            resource();
++            return state.data;
++          },
++          children: (row: { symbol: string; value: number }) =>
++            createComponent(For as any, {
++              each: ["symbol", "value"],
++              children: (column: string) => (row as Record<string, string | number>)[column]
++            })
++        })
++      ];
++    }
++
++    const dispose = render(() => {
++      return (
++        <Suspense fallback="loading">
++          <Child />
++        </Suspense>
++      );
++    }, div);
++
++    await Promise.resolve();
++    await Promise.resolve();
++
++    const transition = start(() => setKey(1));
++    await vi.waitFor(() => expect(pending()).toBe(true));
++
++    for (let step = 1; step <= 300; step++) {
++      void startTransition(() =>
++        setState(
++          "data",
++          reconcile(
++            [
++              { symbol: step % 2 ? "A" : "B", value: step },
++              { symbol: step % 2 ? "C" : "D", value: step }
++            ],
++            { key: "symbol" }
++          )
++        )
++      );
++      await new Promise(r => setImmediate(r));
++    }
++
++    const sources = Transition?.sources.size ?? -1;
++    const disposed = Transition?.disposed.size ?? -1;
++    expect(pending()).toBe(true);
++    expect(sources).toBeGreaterThan(0);
++    // Live store leaves + computations only — must not grow with update count.
++    expect(sources).toBeLessThan(100);
++    expect(disposed).toBeLessThan(100);
++
++    resolveResource("done");
++    await transition;
++    dispose();
 +  });
 +});
 ```
 
 ---
 
-### Incident Patch 3: `82202158` (2026-10-29)
-**Commit Message**: fix(solid): render a resolved lazy() component synchronously on remount (#4135)
+### Incident Patch 2: `f24b303b` (2026-11-10)
+**Commit Message**: fix(store): preserve class accessor precedence in createMutable (#4703)
 
-Disposing a lazy() instance cleared the shared component cache even after
-the module had loaded, so the next mount rendered nothing or the Suspense
-fallback. Only release that cache while it still points at the in-flight
-resource.
+* fix(store): preserve class accessor precedence in createMutable
 
-Fixes #4118
+Retain the nearest descriptor while walking class prototypes so ancestor accessors cannot replace derived or own properties.
 
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+* test(store): cover mutable class descriptor overrides
 
-**File**: `.changeset/fix-lazy-remount.md` (added, +5/-0)
+Check derived accessors, instance accessors and own data properties, including reactive reads and derived setters.
+
+* chore: add changeset for mutable descriptor precedence
+
+Record the store bug fix as a patch release.
+
+**File**: `.changeset/retain-mutable-class-descriptors.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"solid-js": patch
 +---
 +
-+Fix `lazy()` rendering nothing, or the Suspense fallback, when an already-loaded component is mounted again. Disposing an instance still releases the shared resource while its import is in flight or has failed, so that load can be collected and retried, but a resolved module stays cached and the next mount renders synchronously.
++Preserve own and derived class property descriptors when wrapping instances with `createMutable`.
 ```
 
-**File**: `packages/solid/src/render/component.ts` (modified, +6/-1)
+**File**: `packages/solid/store/src/mutable.ts` (modified, +5/-3)
 ```diff
-@@ -405,7 +405,12 @@ export function lazy<T extends Component<any>>(
-     } else if (!comp) {
-       const [s] = createResource<T>(() => load().then(mod => mod.default));
-       comp = s;
--      onCleanup(() => (comp = undefined));
-+      // `load()` replaces `comp` with the resolved component. Only drop the shared
-+      // cache while it still points at this resource, so an in-flight or failed
-+      // import can be collected and retried without blanking a module that loaded.
-+      onCleanup(() => {
-+        if (comp === s) comp = undefined;
-+      });
+@@ -98,7 +98,7 @@ function wrap<T extends StoreNode>(value: T): T {
+   if (!p) {
+     Object.defineProperty(value, $PROXY, { value: (p = new Proxy(value, proxyTraps)) });
+     const keys = Object.keys(value),
+-      desc = Object.getOwnPropertyDescriptors(value);
++      desc: PropertyDescriptorMap = Object.getOwnPropertyDescriptors(value);
+ 
+     const proto = Object.getPrototypeOf(value);
+     const isClass =
+@@ -111,8 +111,10 @@ function wrap<T extends StoreNode>(value: T): T {
+       let curProto = proto;
+       while (curProto != null) {
+         const descriptors = Object.getOwnPropertyDescriptors(curProto);
+-        keys.push(...Object.keys(descriptors));
+-        Object.assign(desc, descriptors);
++        for (const prop of Object.keys(descriptors)) {
++          keys.push(prop);
++          if (!Object.prototype.hasOwnProperty.call(desc, prop)) desc[prop] = descriptors[prop];
++        }
+         curProto = Object.getPrototypeOf(curProto);
+       }
      }
-     let Comp: T | undefined;
-     return createMemo(() =>
 ```
 
-**File**: `packages/solid/web/test/lazy.spec.tsx` (modified, +67/-1)
+**File**: `packages/solid/store/test/mutable.spec.ts` (modified, +72/-0)
 ```diff
-@@ -3,7 +3,7 @@
-  * @vitest-environment jsdom
-  */
- import { describe, expect, test } from "vitest";
--import { lazy, Component, ErrorBoundary, sharedConfig } from "../../src/index.js";
-+import { createRoot, lazy, Component, ErrorBoundary, sharedConfig } from "../../src/index.js";
- import { hydrate, render, Suspense } from "../src/index.js";
- 
- describe("lazy() disposal", () => {
-@@ -59,6 +59,72 @@ describe("lazy() disposal", () => {
-     second.dispose();
+@@ -74,6 +74,78 @@ describe("State Getter/Setters", () => {
    });
+ });
  
-+  test("remounting an already-loaded lazy() component renders synchronously", async () => {
-+    const flush = () => new Promise<void>(r => setTimeout(r, 0));
-+    const read = (value: unknown) =>
-+      typeof value === "function" ? (value as () => unknown)() : value;
++describe("Class accessor precedence", () => {
++  class BaseCounter {
++    count = 1;
++    get value() {
++      return this.count;
++    }
++    set value(value: number) {
++      this.count = value;
++    }
++  }
 +
-+    const Loaded: Component = () => "loaded";
-+    const Lazy1 = lazy(() => Promise.resolve({ default: Loaded }));
-+    const first1 = createRoot(dispose => ({ dispose, value: Lazy1({}) }));
-+    await flush();
-+    expect(read(first1.value)).toBe("loaded");
-+    first1.dispose();
-+    const second1 = createRoot(dispose => ({ dispose, value: Lazy1({}) }));
-+    expect(read(second1.value)).toBe("loaded");
-+    second1.dispose();
++  class Counter extends BaseCounter {
++    get value() {
++      return this.count * 2;
++    }
++    set value(value: number) {
++      this.count = value / 2;
++    }
++  }
 +
-+    const Lazy2 = lazy(() => Promise.resolve({ default: () => "loaded" }));
-+    const view = () => (
-+      <Suspense fallback="fallback">
-+        <Lazy2 />
-+      </Suspense>
-+    );
-+    const first2 = createRoot(dispose => ({ dispose, value: view() }));
-+    await flush();
-+    expect(read(first2.value)).toBe("loaded");
-+    first2.dispose();
-+    const second2 = createRoot(dispose => ({ dispose, value: view() }));
-+    expect(read(second2.value)).toBe("loaded");
-+    second2.dispose();
-+  });
-+
-+  test("a rejected lazy() import is retried after its root is disposed", async () => {
-+    const flush = () => new Promise<void>(r => setTimeout(r, 0));
-+    let attempts = 0;
-+    let shouldFail = true;
-+    const LazyComp = lazy(async () => {
-+      attempts++;
-+      if (shouldFail) throw new Error("network error");
-+      return { default: () => "loaded" };
++  test("preserves overridden getters and setters", () => {
++    createRoot(dispose => {
++      const counter = createMutable(new Counter());
++      const value = createMemo(() => counter.value);
++      expect(value()).toBe(2);
++      counter.count = 4;
++      expect(value()).toBe(8);
++      counter.value = 6;
++      expect(counter.count).toBe(3);
++      expect(value()).toBe(6);
++      dispose();
 +    });
-+    const mount = () => {
-+      const div = document.createElement("div");
-+      const dispose = render(
-+        () => (
-+          <ErrorBoundary fallback={(err: Error) => `error:${err.message}`}>
-+            <LazyComp />
-+          </ErrorBoundary>
-+        ),
-+        div
-+      );
-+      return { div, dispose };
-+    };
-+
-+    const first = mount();
-+    await flush();
-+    expect(first.div.textContent).toBe("error:network error");
-+    expect(attempts).toBe(1);
-+    first.dispose();
-+
-+    shouldFail = false;
-+    const second = mount();
-+    await flush();
-+    expect(second.div.textContent).toBe("loaded");
-+    expect(attempts).toBe(2);
-+    second.dispose();
 +  });
 +
-   test("lazy() retries import function on subsequent load if previous promise rejected", async () => {
-     let attempts = 0;
-     let shouldFail = true;
++  test("preserves own accessors over prototype accessors", () => {
++    createRoot(dispose => {
++      const instance = new Counter();
++      Object.defineProperty(instance, "value", {
++        get() {
++          return this.count * 3;
++        },
++        set(value: number) {
++          this.count = value / 3;
++        },
++        configurable: true
++      });
++      const counter = createMutable(instance);
++      const value = createMemo(() => counter.value);
++      expect(value()).toBe(3);
++      counter.value = 6;
++      expect(counter.count).toBe(2);
++      expect(value()).toBe(6);
++      dispose();
++    });
++  });
++
++  test("preserves own data properties over prototype accessors", () => {
++    const instance = new Counter();
++    Object.defineProperty(instance, "value", {
++      value: 10,
++      writable: true,
++      enumerable: true,
++      configurable: true
++    });
++    const counter = createMutable(instance);
++    expect(counter.value).toBe(10);
++    counter.value = 20;
++    expect(counter.value).toBe(20);
++    expect(counter.count).toBe(1);
++  });
++});
++
+ describe("Simple update modes", () => {
+   test("Simple Key Value", () => {
+     const state = createMutable({ key: "" });
+```
+
+---
+
+### Incident Patch 3: `27f701fb` (2026-11-10)
+**Commit Message**: fix(solid): recover from missing observerSlots after a failed allocation (#4752)
+
+**File**: `packages/solid/src/reactive/signal.ts` (modified, +37/-4)
+```diff
+@@ -1306,6 +1306,25 @@ export function enableExternalSource(
+ }
+ 
+ // Internal
++
++// Rebuild a source's `observerSlots` from its observers' back-pointers.
++// A source can end up with observers but no (or out-of-sync) slots when an
++// array allocation fails midway through `readSignal` (see #4680); without
++// this, `cleanNode` and a later `readSignal` throw on the missing array.
++// Each observer subscribes to a source at most once, so the slot for
++// `observers[i]` is the index of the source in that observer's `sources`.
++function repairObserverSlots(source: SignalState<any> | Memo<any>) {
++  source.observerSlots = source.observers!.map((observer, slot) => {
++    const sources = observer.sources;
++    if (!sources) return -1;
++    for (let i = sources.length - 1; i >= 0; i--) {
++      if (sources[i] === source && observer.sourceSlots && observer.sourceSlots[i] === slot)
++        return i;
++    }
++    return sources.lastIndexOf(source);
++  });
++}
++
+ export function readSignal(this: SignalState<any> | Memo<any>) {
+   const runningTransition = Transition && Transition.running;
+   if (
+@@ -1326,16 +1345,28 @@ export function readSignal(this: SignalState<any> | Memo<any>) {
+     if (!observers || observers[observers.length - 1] !== Listener) {
+       const sSlot = observers ? observers.length : 0;
+       if (!Listener.sources) {
+-        Listener.sources = [this];
+-        Listener.sourceSlots = [sSlot];
++        // Build both arrays before assigning either, so an allocation
++        // failure cannot leave `sources` set while `sourceSlots` is null.
++        const sources = [this];
++        const sourceSlots = [sSlot];
++        Listener.sources = sources;
++        Listener.sourceSlots = sourceSlots;
+       } else {
+         Listener.sources.push(this);
+         Listener.sourceSlots!.push(sSlot);
+       }
+       if (!observers) {
+-        this.observers = [Listener];
+-        this.observerSlots = [Listener.sources.length - 1];
++        // Build both arrays before assigning either, so an allocation
++        // failure cannot leave `observers` set while `observerSlots` is null.
++        const newObservers = [Listener];
++        const newObserverSlots = [Listener.sources.length - 1];
++        this.observers = newObservers;
++        this.observerSlots = newObserverSlots;
+       } else {
++        // The slot array may be missing or out of sync if an earlier
++        // allocation failed; rebuild it from the back-pointers first.
++        if (!this.observerSlots || this.observerSlots.length !== observers.length)
++          repairObserverSlots(this);
+         observers.push(Listener);
+         this.observerSlots!.push(Listener.sources.length - 1);
+       }
+@@ -1719,6 +1750,8 @@ function cleanNode(node: Owner, recompute?: boolean) {
+         index = (node as Computation<any>).sourceSlots!.pop()!,
+         obs = source.observers;
+       if (obs && obs.length) {
++        if (!source.observerSlots || source.observerSlots.length !== obs.length)
++          repairObserverSlots(source);
+         const n = obs.pop()!,
+           s = source.observerSlots!.pop()!;
+         if (index < obs.length) {
+```
+
+**File**: `packages/solid/test/signals.spec.ts` (modified, +57/-0)
+```diff
+@@ -922,6 +922,63 @@ describe("runWithOwner", () => {
+   });
+ });
+ 
++describe("Missing observerSlots recovery", () => {
++  test("Disposing an observer recovers when a source has observers but null observerSlots", () => {
++    const [count, setCount] = createSignal(0);
++    let observer: any;
++    let effectRuns = 0;
++    const disposeBroken = createRoot(dispose => {
++      createComputed(() => {
++        observer = getOwner();
++        count();
++      });
++      return dispose;
++    });
++    createRoot(() => {
++      createEffect(() => {
++        count();
++        effectRuns++;
++      });
++    });
++    expect(effectRuns).toBe(1);
++    // Simulate the state left behind when readSignal's second array
++    // allocation fails: the source has observers but observerSlots is null.
++    observer.sources[0].observerSlots = null;
++    expect(() => disposeBroken()).not.toThrow();
++    // The surviving observer is still subscribed: writes still reach it.
++    setCount(1);
++    expect(effectRuns).toBe(2);
++  });
++
++  test("Reading a source with null observerSlots recovers instead of throwing", () => {
++    const [count, setCount] = createSignal(0);
++    let observer: any;
++    let runs = 0;
++    const disposeBroken = createRoot(dispose => {
++      createComputed(() => {
++        observer = getOwner();
++        count();
++      });
++      return dispose;
++    });
++    observer.sources[0].observerSlots = null;
++    // A new subscription must not throw on observerSlots.push().
++    expect(() =>
++      createRoot(() => {
++        createComputed(() => {
++          count();
++          runs++;
++        });
++      })
++    ).not.toThrow();
++    expect(runs).toBe(1);
++    expect(() => disposeBroken()).not.toThrow();
++    // The new observer is still subscribed after the broken one is disposed.
++    setCount(1);
++    expect(runs).toBe(2);
++  });
++});
++
+ describe("createReaction", () => {
+   test("Create and trigger a Reaction", () =>
+     new Promise(done => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4490** (2026-10-30): test(signals): pin #4474 at the ruled screen; D-22 ruling text (@ryansolid)
-- **PR #4487** (2026-10-30): test(signals): pin #4469's plain reader at the commit; D-23 known deviation (@ryansolid)
-- **PR #4479** (2026-10-30): fix(signals): an unread derived store's derive holds nothing (@ryansolid)
-- **PR #4477** (2026-10-30): fix(signals): a lane's held reader settling never makes the flush join the lane (#4440) (@ryansolid)
-- **PR #4472** (2026-10-30): fix(signals): a netted write read in a strict untrack is no staged read; seat rows D1''/L1''/V3'' (@ryansolid)
-- **PR #4471** (2026-10-30): fix(signals): a verdict reader born into a hold joins it at its re-pass (#4467) (@ryansolid)
+- **PR #4800** (2026-11-12): perf(web): move end nodes once and stamp the reconcile window (@ryansolid)
+- **PR #4799** (2026-11-12): fix(compiler): fold module constants whatever their order against a hoisted component (#4791) (@ryansolid)
+- **PR #4798** (2026-11-12): fix(signals): a guess derived from another hold's live guess entangles the two (#4788) (@ryansolid)
+- **PR #4797** (2026-11-12): fix(signals): a shown guess over a new question keeps the screen; warn OPTIMISTIC_WRITE_WHILE_LOADING (#4795) (@ryansolid)
+- **PR #4796** (2026-11-12): fix(signals): a projection's reader pulls the derive it reads through (#4782) (@ryansolid)
+- **PR #4794** (2026-11-12): fix(signals): a landing's re-derived memo re-runs the held runs that read it stale (@ryansolid)
 
 ---
 
@@ -1805,16 +1998,16 @@ Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep createRoot's dispose function from retaining fn (#4096)
+## X. solid): release disposed transition sources during pending Suspense (#4744)
 
 **RULE**:
-When implementing operations in `.changeset/create-root-dispose-retention.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-transition-pending-store-oom.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb50357c`: keep createRoot's dispose function from retaining fn (#4096). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64010be8`: solid): release disposed transition sources during pending Suspense (#4744). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/create-root-dispose-retention.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-transition-pending-store-oom.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
@@ -1823,7 +2016,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 "solid-js": patch
 ---
 
-Stop a `createRoot` dispose function from retaining the root's `fn`. The dispose function shared `createRoot`'s scope, so holding it kept `fn` and everything `fn` closes over alive: every `mapArray`/`indexArray` row (and so every `<For>`/`<Index>` row) kept the list it was created from, including items later removed from it.
+Release disposed transition sources during a pending Suspense transition so keyed store reconciles cannot retain unbounded memory.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1833,4 +2026,4 @@ Stop a `createRoot` dispose function from retaining the root's `fn`. The dispose
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb50357c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64010be8` are properly handled with clean fallback behavior.

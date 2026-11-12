@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T11:51:08.799Z",
+  "last_updated": "2026-11-12T12:20:14.348Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
-      "verified_at": "2026-11-10T05:21:57.353Z",
+      "content_hash": "16df7d6253ac81de19da60ec6b60facfa61f5fcd59bbb8ccc282f2919fc1e79a",
+      "verified_at": "2026-11-12T12:15:11.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T05:21:57.353Z"
+      "last_updated": "2026-11-12T12:15:11.728Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -9186,14 +9186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
-      "verified_at": "2026-11-09T17:43:54.526Z",
+      "content_hash": "7e5f8c54fc06f9049ad6e6aa461e6ad49a1f53053b245f28e045e785d98cbcd2",
+      "verified_at": "2026-11-12T12:20:07.946Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:43:54.526Z"
+      "last_updated": "2026-11-12T12:20:07.946Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",
@@ -9906,14 +9906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-run-llama-llama_index",
-      "content_hash": "41404ce11f8f936806ade39ca792045e88e5139133ffca3125545a10e71a4dba",
-      "verified_at": "2026-11-08T23:43:50.460Z",
+      "content_hash": "2ee32cd7bc534bd583978466a870409c0ec69134ca6591a8c32a1d212c3b61b4",
+      "verified_at": "2026-11-12T12:15:17.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:43:50.460Z"
+      "last_updated": "2026-11-12T12:15:17.372Z"
     },
     "vercel-labs/opensrc": {
       "repository": "vercel-labs/opensrc",
@@ -15006,14 +15006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-solidjs-solid",
-      "content_hash": "ef02bdc03299045193f7abbe1f8663bdf1e668085cb79f2fcc9b0d5ffbdd7aec",
-      "verified_at": "2026-10-30T18:39:38.114Z",
+      "content_hash": "0921c86130f3eace1f4cd4e4e9f0ea10ede8fa8ec9fa53bdea2a446f5600fe8c",
+      "verified_at": "2026-11-12T12:20:14.347Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:39:38.114Z"
+      "last_updated": "2026-11-12T12:20:14.347Z"
     },
     "zekunyan/TTGTagCollectionView": {
       "repository": "zekunyan/TTGTagCollectionView",

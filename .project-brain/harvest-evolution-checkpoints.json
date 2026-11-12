@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T11:51:15.274Z",
+  "last_updated": "2026-11-12T12:20:20.536Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T11:51:15.265Z",
@@ -1086,9 +1086,24 @@
       "processed_at": "2026-11-12T11:51:15.204Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "u-root-u-root-learnings.md": {
+      "processed_at": "2026-11-12T12:20:20.302Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "solidjs-solid-learnings.md": {
+      "processed_at": "2026-11-12T12:20:20.378Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "gocd-gocd-learnings.md": {
+      "processed_at": "2026-11-12T12:20:20.443Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 291,
+  "total_dossiers_evaluated": 294,
   "total_canonical_promoted": 36,
-  "total_staged_for_review": 255
+  "total_staged_for_review": 258
 }

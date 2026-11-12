@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "cba01064",
+    "sourceVersion": "2d3e5eda",
     "license": "Apache-2.0",
-    "contentHash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
-    "lastHarvestedAt": "2026-11-10T05:21:57.343Z",
+    "contentHash": "16df7d6253ac81de19da60ec6b60facfa61f5fcd59bbb8ccc282f2919fc1e79a",
+    "lastHarvestedAt": "2026-11-12T12:15:11.714Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "d7b8f4d3",
+    "sourceVersion": "791e654b",
     "license": "BSD-3-Clause",
-    "contentHash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
-    "lastHarvestedAt": "2026-11-09T17:43:54.507Z",
+    "contentHash": "7e5f8c54fc06f9049ad6e6aa461e6ad49a1f53053b245f28e045e785d98cbcd2",
+    "lastHarvestedAt": "2026-11-12T12:20:07.935Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {
@@ -6553,10 +6553,10 @@
     "repository": "run-llama/llama_index",
     "platform": "github",
     "sourceUrl": "https://github.com/run-llama/llama_index",
-    "sourceVersion": "fe107aab",
+    "sourceVersion": "baeabbfe",
     "license": "MIT",
-    "contentHash": "41404ce11f8f936806ade39ca792045e88e5139133ffca3125545a10e71a4dba",
-    "lastHarvestedAt": "2026-11-08T23:43:50.451Z",
+    "contentHash": "2ee32cd7bc534bd583978466a870409c0ec69134ca6591a8c32a1d212c3b61b4",
+    "lastHarvestedAt": "2026-11-12T12:15:17.343Z",
     "learningId": "learn-github-run-llama-llama_index"
   },
   "vercel-labs-opensrc": {
@@ -9973,10 +9973,10 @@
     "repository": "solidjs/solid",
     "platform": "github",
     "sourceUrl": "https://github.com/solidjs/solid",
-    "sourceVersion": "bc50fe56",
+    "sourceVersion": "99714d4e",
     "license": "MIT",
-    "contentHash": "ef02bdc03299045193f7abbe1f8663bdf1e668085cb79f2fcc9b0d5ffbdd7aec",
-    "lastHarvestedAt": "2026-10-30T18:39:38.105Z",
+    "contentHash": "0921c86130f3eace1f4cd4e4e9f0ea10ede8fa8ec9fa53bdea2a446f5600fe8c",
+    "lastHarvestedAt": "2026-11-12T12:20:14.321Z",
     "learningId": "learn-github-solidjs-solid"
   },
   "zekunyan-ttgtagcollectionview": {

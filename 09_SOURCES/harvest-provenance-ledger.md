@@ -9166,3 +9166,7 @@ Every entry in this ledger must capture:
 | `learn-dom-h-7d775901` | `project://google-closure-compiler` | `0d7d62cf` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md` | 2026-11-12T11:38:00.745Z |
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `ff7404cc` | Multi-dimensional audit evidence | 2026-11-12T11:50:57.903Z |
 | `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `53c6382b` | Multi-dimensional audit evidence | 2026-11-12T11:51:08.778Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `2d3e5eda` | Multi-dimensional audit evidence | 2026-11-12T12:15:11.714Z |
+| `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `baeabbfe` | Multi-dimensional audit evidence | 2026-11-12T12:15:17.343Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `791e654b` | Multi-dimensional audit evidence | 2026-11-12T12:20:07.935Z |
+| `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `99714d4e` | Multi-dimensional audit evidence | 2026-11-12T12:20:14.321Z |
