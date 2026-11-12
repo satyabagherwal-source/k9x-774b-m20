@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:04:44.642Z",
+  "last_updated": "2026-11-12T15:17:34.723Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7103,6 +7103,33 @@
       "source_repo": "kcl-lang-kcl",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AAFD96-update-macos-arm-yaml.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-1BC39C",
+      "directive_title": "webdriverio): wait the full timeout when the clock moves during the last check (",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "webdriverio-webdriverio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1BC39C-webdriverio-wait-the-full-timeout-when-t.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-DF405F",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DF405F-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-81C555",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-81C555-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-12"
     }
   ]

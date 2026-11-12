@@ -9199,3 +9199,4 @@ Every entry in this ledger must capture:
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `3443896f` | Multi-dimensional audit evidence | 2026-11-12T14:59:50.293Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `444dc948` | Multi-dimensional audit evidence | 2026-11-12T14:59:56.952Z |
 | `learn-github-tonhowtf-omniget` | `https://github.com/tonhowtf/omniget` | `5d91e41a` | Multi-dimensional audit evidence | 2026-11-12T15:04:38.650Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `4ef7adc3` | Multi-dimensional audit evidence | 2026-11-12T15:17:31.135Z |

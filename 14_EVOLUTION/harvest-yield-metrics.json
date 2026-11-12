@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:04:38.669Z",
-  "total_cycles_completed": 9011,
-  "total_learnings_persisted": 9011,
-  "total_rules_promoted": 8853,
+  "last_updated": "2026-11-12T15:17:31.140Z",
+  "total_cycles_completed": 9012,
+  "total_learnings_persisted": 9012,
+  "total_rules_promoted": 8854,
   "history": [
-    {
-      "timestamp": "2026-11-11T16:06:52.781Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T16:06:52.972Z",
       "repository": "flux-iac/tofu-controller",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-12T15:04:38.669Z",
       "repository": "tonhowtf/omniget",
       "learningId": "learn-github-tonhowtf-omniget",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:17:31.140Z",
+      "repository": "webdriverio/webdriverio",
+      "learningId": "learn-github-webdriverio-webdriverio",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "33a17ec7",
+    "sourceVersion": "4ef7adc3",
     "license": "MIT",
-    "contentHash": "fcb5c24056187d3e02fd7b458b9155338a50b556b2921547db4f346ba91afc10",
-    "lastHarvestedAt": "2026-11-07T21:55:47.336Z",
+    "contentHash": "f580c7726cd388db0057b256fcef8d10934726f12af68422a4a76b29ad9b51a7",
+    "lastHarvestedAt": "2026-11-12T15:17:31.135Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T15:04:38.528Z",
+  "last_updated": "2026-11-12T15:17:31.024Z",
   "total_verified_learnings": 1259,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -84666,14 +84666,19 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "33a17ec7",
-      "content_hash": "fcb5c24056187d3e02fd7b458b9155338a50b556b2921547db4f346ba91afc10",
+      "source_version": "4ef7adc3",
+      "content_hash": "f580c7726cd388db0057b256fcef8d10934726f12af68422a4a76b29ad9b51a7",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "webdriverio): keep the BiDi context when switchToWindow fails (#16385)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "webdriverio): wait the full timeout when the clock moves during the last check (",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84722,7 +84727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:55:47.220Z",
+      "verified_at": "2026-11-12T15:17:31.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

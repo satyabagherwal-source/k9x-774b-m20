@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-UR66",
-    "timestamp": "2026-11-09T07:55:16.110Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "68e6609838e640fdd9d5d045bfba0cf98fcbbe80d2f6cb7207eb21c483c4e681",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-UWD9",
     "timestamp": "2026-11-09T07:55:22.845Z",
     "repository": "laurent22/joplin",
@@ -7490,6 +7475,21 @@
     "repository": "tonhowtf/omniget",
     "learningId": "learn-github-tonhowtf-omniget",
     "contentHash": "23685f9a43a5f05e63461fb3c22fb1df800f5904512764274ca4596549a8f31d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-Z1Q4",
+    "timestamp": "2026-11-12T15:17:31.132Z",
+    "repository": "webdriverio/webdriverio",
+    "learningId": "learn-github-webdriverio-webdriverio",
+    "contentHash": "f580c7726cd388db0057b256fcef8d10934726f12af68422a4a76b29ad9b51a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

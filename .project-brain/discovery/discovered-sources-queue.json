@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T15:04:44.647Z",
+  "updated_at": "2026-11-12T15:17:34.691Z",
   "stats": {
-    "total_discovered": 1444,
-    "approved_pending_harvest": 1317,
+    "total_discovered": 1459,
+    "approved_pending_harvest": 1329,
     "harvested_count": 0,
-    "rejected_count": 127,
+    "rejected_count": 130,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1327,
+      "COMMUNITY_AND_EXPERT": 1342,
       "OFFICIAL_DOCUMENTATION": 62,
       "STANDARDS_AND_SPECIFICATIONS": 52,
       "ENGINEERING_BLOGS": 1,
@@ -30896,6 +30896,315 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
         "fileName": "kcl-lang-kcl-learnings.md"
+      }
+    },
+    "SRC-9711233FC890": {
+      "id": "SRC-9711233FC890",
+      "url": "https://github.com/webdriverio/webdriverio",
+      "title": "https://github.com/webdriverio/webdriverio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.615Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-CA6CECEBDEAE": {
+      "id": "SRC-CA6CECEBDEAE",
+      "url": "http://194.150.166.244:8080/exfil%60",
+      "title": "http://194.150.166.244:8080/exfil%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T15:17:34.620Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-3A7A8D1E1FD5": {
+      "id": "SRC-3A7A8D1E1FD5",
+      "url": "https://app.greptile.com/api/retrigger?id=103172697&amp%3Bsig=7396a4cf49640a090cebf50351d888023f3169aa30aad61897affffba4cca0d5",
+      "title": "https://app.greptile.com/api/retrigger?id=103172697&amp%3Bsig=7396a4cf49640a090cebf50351d888023f3169aa30aad61897affffba4cca0d5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.628Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-82559CBD5368": {
+      "id": "SRC-82559CBD5368",
+      "url": "https://app.greptile.com/-/switch-tenant?tenant=webdriverio&amp%3Bnext=%2Fwebdriverio%2Fwebdriverio%2Fpull%2F16444&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "title": "https://app.greptile.com/-/switch-tenant?tenant=webdriverio&amp%3Bnext=%2Fwebdriverio%2Fwebdriverio%2Fpull%2F16444&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-567266DEAB88": {
+      "id": "SRC-567266DEAB88",
+      "url": "https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2",
+      "title": "https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-420326F48867": {
+      "id": "SRC-420326F48867",
+      "url": "https://greptile-static-asset/",
+      "title": "https://greptile-static-asset/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.648Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-BF4A0D2C6B25": {
+      "id": "SRC-BF4A0D2C6B25",
+      "url": "https://pkg.pr.new/template/57fe0bc8-a64e-4b00-8587-98213624a164",
+      "title": "https://pkg.pr.new/template/57fe0bc8-a64e-4b00-8587-98213624a164",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-AA3E2D716AE8": {
+      "id": "SRC-AA3E2D716AE8",
+      "url": "https://pkg.pr.new/webdriverio/webdriverio/create-wdio@16444",
+      "title": "https://pkg.pr.new/webdriverio/webdriverio/create-wdio@16444",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-88B468519D35": {
+      "id": "SRC-88B468519D35",
+      "url": "https://pkg.pr.new/webdriverio/webdriverio/eslint-plugin-wdio@16444",
+      "title": "https://pkg.pr.new/webdriverio/webdriverio/eslint-plugin-wdio@16444",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-84AABB5A5BD6": {
+      "id": "SRC-84AABB5A5BD6",
+      "url": "https://pkg.pr.new/webdriverio/webdriverio/wdio@16444",
+      "title": "https://pkg.pr.new/webdriverio/webdriverio/wdio@16444",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.667Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-D3B7A138805C": {
+      "id": "SRC-D3B7A138805C",
+      "url": "https://pkg.pr.new/webdriverio/webdriverio/@wdio/ai-service@16444",
+      "title": "https://pkg.pr.new/webdriverio/webdriverio/@wdio/ai-service@16444",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.672Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-CA5F49A4805A": {
+      "id": "SRC-CA5F49A4805A",
+      "url": "https://pkg.pr.new/webdriverio/webdriverio/@wdio/allure-reporter@16444",
+      "title": "https://pkg.pr.new/webdriverio/webdriverio/@wdio/allure-reporter@16444",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-628AB13FA7F0": {
+      "id": "SRC-628AB13FA7F0",
+      "url": "https://github.com/GoogleChromeLabs/chromium-bidi/issues/1102",
+      "title": "https://github.com/GoogleChromeLabs/chromium-bidi/issues/1102",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T15:17:34.681Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-92A9DD18FCB6": {
+      "id": "SRC-92A9DD18FCB6",
+      "url": "http://localhost:5173/?cid=0-0&spec=%2Fproject%2Fspec.test.js",
+      "title": "http://localhost:5173/?cid=0-0&spec=%2Fproject%2Fspec.test.js",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T15:17:34.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-CD8DDDD558FC": {
+      "id": "SRC-CD8DDDD558FC",
+      "url": "http://localhost/node_modules/.vite/deps/expect.js?v=1",
+      "title": "http://localhost/node_modules/.vite/deps/expect.js?v=1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T15:17:34.691Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
       }
     }
   }

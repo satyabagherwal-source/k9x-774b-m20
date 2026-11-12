@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T15:04:38.673Z",
+  "last_updated": "2026-11-12T15:17:31.143Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3066,14 +3066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webdriverio-webdriverio",
-      "content_hash": "fcb5c24056187d3e02fd7b458b9155338a50b556b2921547db4f346ba91afc10",
-      "verified_at": "2026-11-07T21:55:47.345Z",
+      "content_hash": "f580c7726cd388db0057b256fcef8d10934726f12af68422a4a76b29ad9b51a7",
+      "verified_at": "2026-11-12T15:17:31.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:55:47.345Z"
+      "last_updated": "2026-11-12T15:17:31.142Z"
     },
     "RubenVerborgh/SPARQL.js": {
       "repository": "RubenVerborgh/SPARQL.js",
