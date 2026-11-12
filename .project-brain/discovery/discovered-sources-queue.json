@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T22:33:58.288Z",
+  "updated_at": "2026-11-12T22:41:05.544Z",
   "stats": {
-    "total_discovered": 1788,
-    "approved_pending_harvest": 1648,
+    "total_discovered": 1792,
+    "approved_pending_harvest": 1652,
     "harvested_count": 0,
     "rejected_count": 140,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1650,
+      "COMMUNITY_AND_EXPERT": 1654,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -38373,6 +38373,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
         "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-CCEABE8AA504": {
+      "id": "SRC-CCEABE8AA504",
+      "url": "https://github.com/zvec-ai/zvec-grep/blob/074dc96967480ce7353b5cb8d8961a6d8d3c66bc/rust/crates/zg-engine/src/domain/graph.rs",
+      "title": "https://github.com/zvec-ai/zvec-grep/blob/074dc96967480ce7353b5cb8d8961a6d8d3c66bc/rust/crates/zg-engine/src/domain/graph.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:41:05.517Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-5DA433717DB7": {
+      "id": "SRC-5DA433717DB7",
+      "url": "https://github.com/zvec-ai/llama-cpp-rs.git?rev=b55399ac6c2035f2301120547c4c967e741d25d3",
+      "title": "https://github.com/zvec-ai/llama-cpp-rs.git?rev=b55399ac6c2035f2301120547c4c967e741d25d3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:41:05.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-D7ABD130C352": {
+      "id": "SRC-D7ABD130C352",
+      "url": "https://github.com/zvec-ai/llama-cpp-rs.git?rev=79305567e63ee551eb1798c0537eab87d9595a23",
+      "title": "https://github.com/zvec-ai/llama-cpp-rs.git?rev=79305567e63ee551eb1798c0537eab87d9595a23",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:41:05.534Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-141AAF2A47A4": {
+      "id": "SRC-141AAF2A47A4",
+      "url": "https://github.com/zvec-ai/llama-cpp-rs.git",
+      "title": "https://github.com/zvec-ai/llama-cpp-rs.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:41:05.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
       }
     }
   }

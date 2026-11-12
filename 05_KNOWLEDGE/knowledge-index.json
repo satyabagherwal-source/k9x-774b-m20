@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T22:33:51.008Z",
+  "last_updated": "2026-11-12T22:41:00.696Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -70067,11 +70067,16 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "407a3851",
-      "content_hash": "14c13ff87ccc13e374893858fedd0f7630224fbb877c49a441f956cbd8d98fe9",
+      "source_version": "08120405",
+      "content_hash": "558ec964e6fdb9e4e32f1d0fa6139ab088ebeca56c07255281a79209049ee95d",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "engine): restore text fallback for unknown file extensions (#394)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2347,
           "title": "PID-Re-entrant Lock Identity Disambiguation",
@@ -70163,7 +70168,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:05:54.856Z",
+      "verified_at": "2026-11-12T22:41:00.674Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

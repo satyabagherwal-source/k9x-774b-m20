@@ -9239,3 +9239,4 @@
 | `CYCLE-20261112-K2E9` | `2026-11-12T22:33:46.017Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1ef504b5...`) |
 | `CYCLE-20261112-K4RN` | `2026-11-12T22:33:49.091Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`75d4ca47...`) |
 | `CYCLE-20261112-K6BI` | `2026-11-12T22:33:51.102Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bc46a91a...`) |
+| `CYCLE-20261112-TDV5` | `2026-11-12T22:41:00.785Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`558ec964...`) |

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T22:33:57.774Z",
-    "lastVerified": "2026-11-12T22:33:57.774Z",
+    "lastChecked": "2026-11-12T22:41:05.404Z",
+    "lastVerified": "2026-11-12T22:41:05.404Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -152,8 +152,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T21:56:37.524Z",
-    "lastVerified": "2026-11-12T21:56:37.524Z",
+    "lastChecked": "2026-11-12T22:41:00.609Z",
+    "lastVerified": "2026-11-12T22:41:00.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -330,8 +330,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T11:37:16.598Z",
-    "lastVerified": "2026-11-12T11:37:16.598Z",
+    "lastChecked": "2026-11-12T22:40:55.734Z",
+    "lastVerified": "2026-11-12T22:40:55.734Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -2667,9 +2667,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-11T10:26:36.323Z",
+    "lastChecked": "2026-11-12T22:40:58.120Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-11T10:26:36.323Z"
+    "lastVerified": "2026-11-12T22:40:58.120Z"
   },
   "zeronsh-zeron": {
     "name": "zeronsh/zeron",
@@ -7765,12 +7765,12 @@
     "revisionIdentifier": "e1178ba3"
   },
   "k3s-io-k3s": {
-    "name": "k3s-io/k3s",
+    "name": "k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T11:18:54.037Z",
-    "lastVerified": "2026-11-11T11:18:54.037Z",
+    "lastChecked": "2026-11-12T22:40:53.250Z",
+    "lastVerified": "2026-11-12T22:40:53.250Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
@@ -7779,7 +7779,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "51d3b704"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -7927,14 +7928,14 @@
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T02:31:37.295Z",
-    "lastVerified": "2026-11-10T02:31:37.295Z",
+    "lastChecked": "2026-11-12T22:40:50.912Z",
+    "lastVerified": "2026-11-12T22:40:50.912Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "468b09f49b88fa5420fb6246c8653568ce8ae2cf95383105da07efe04031c1a6",
+    "contentHash": "558ec964e6fdb9e4e32f1d0fa6139ab088ebeca56c07255281a79209049ee95d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10851,9 +10852,9 @@
   "realm-realm-kotlin": {
     "name": "realm-kotlin",
     "officialUrl": "https://github.com/realm/realm-kotlin",
-    "lastChecked": "2026-11-08T16:51:01.607Z",
+    "lastChecked": "2026-11-12T22:40:50.633Z",
     "revisionIdentifier": "9cdc4556",
-    "lastVerified": "2026-11-08T16:51:01.608Z"
+    "lastVerified": "2026-11-12T22:40:50.633Z"
   },
   "sundios-seo-dashboard": {
     "name": "SEO-Dashboard",
@@ -12830,12 +12831,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "scrapinghub-scrapy-poet": {
-    "name": "scrapinghub/scrapy-poet",
+    "name": "scrapy-poet",
     "officialUrl": "https://github.com/scrapinghub/scrapy-poet",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T00:15:27.227Z",
-    "lastVerified": "2026-11-08T00:15:27.227Z",
+    "lastChecked": "2026-11-12T22:40:48.144Z",
+    "lastVerified": "2026-11-12T22:40:48.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapinghub-scrapy-poet",
@@ -12844,7 +12845,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c54e48e7"
   },
   "saffsanity-sill": {
     "name": "sill",

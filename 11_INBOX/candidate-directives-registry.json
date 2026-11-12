@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:33:58.292Z",
+  "last_updated": "2026-11-12T22:41:05.570Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7418,6 +7418,33 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7A9496-add-counterclockwise-arc-training-synthe.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-6D19A8",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6D19A8-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FC4F44",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FC4F44-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2E6D57",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2E6D57-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -9248,3 +9248,4 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `1ad62cc8` | Multi-dimensional audit evidence | 2026-11-12T22:33:46.025Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `96bba17f` | Multi-dimensional audit evidence | 2026-11-12T22:33:49.095Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `66059605` | Multi-dimensional audit evidence | 2026-11-12T22:33:51.114Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `08120405` | Multi-dimensional audit evidence | 2026-11-12T22:41:00.788Z |

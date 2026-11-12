@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T22:33:51.121Z",
+  "last_updated": "2026-11-12T22:41:00.809Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "468b09f49b88fa5420fb6246c8653568ce8ae2cf95383105da07efe04031c1a6",
-      "verified_at": "2026-11-10T02:31:50.789Z",
+      "content_hash": "558ec964e6fdb9e4e32f1d0fa6139ab088ebeca56c07255281a79209049ee95d",
+      "verified_at": "2026-11-12T22:41:00.808Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:31:50.789Z"
+      "last_updated": "2026-11-12T22:41:00.808Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",
