@@ -9141,3 +9141,7 @@
 | `CYCLE-20261112-IOMM` | `2026-11-12T10:52:51.118Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4325fd9e...`) |
 | `CYCLE-20261112-IR04` | `2026-11-12T10:52:54.196Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`11e4d485...`) |
 | `CYCLE-20261112-IRMW` | `2026-11-12T10:52:55.016Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4edefa74...`) |
+| `CYCLE-20261112-T4TM` | `2026-11-12T11:00:58.666Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`59d3cf13...`) |
+| `CYCLE-20261112-TDXU` | `2026-11-12T11:01:10.482Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cfe55aa3...`) |
+| `CYCLE-20261112-TGHM` | `2026-11-12T11:01:13.786Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa703bb2...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T11:01:33.161Z` | `volcengine-openviking` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-80D1F65C` [Domain L] | Yes (`aa8e98bb...`) |

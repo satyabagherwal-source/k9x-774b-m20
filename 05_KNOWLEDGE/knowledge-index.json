@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T10:52:54.854Z",
+  "last_updated": "2026-11-12T11:01:13.656Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18291,8 +18291,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "4d495c64",
-      "content_hash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
+      "source_version": "e50f0f23",
+      "content_hash": "cfe55aa32d7a35a09fee3e61002bd4ac8d5ca049313266c6316b374f7f3af52b",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -18304,6 +18304,11 @@
         {
           "number": null,
           "title": "Pre-Release Fixes v1.8.0 (#4224)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18357,7 +18362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:35:26.976Z",
+      "verified_at": "2026-11-12T11:01:10.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67737,8 +67742,8 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "310a9e3e",
-      "content_hash": "b3f699fe649fc4b6b3dff592849d93937994da0f8c3c5b8439f3ff58f8802a5c",
+      "source_version": "37c46843",
+      "content_hash": "59d3cf139775170cb72b792e7c9b1658eeae49646df3da672b63ee2b8fc37eed",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
@@ -67755,6 +67760,11 @@
         {
           "number": null,
           "title": "resolve TOCTOU race condition in mpmc disconnect notification",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cqueue): keep selector panics from poisoning or aborting",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67778,7 +67788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:40:18.770Z",
+      "verified_at": "2026-11-12T11:00:58.509Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78650,8 +78660,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "36354fa6",
-      "content_hash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
+      "source_version": "bcdaac0c",
+      "content_hash": "aa703bb2421db91084a561af3a6c5a79efd5e46abbd52e30e0a93cb6c58220d0",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -78668,6 +78678,11 @@
         {
           "number": null,
           "title": "ui): build the file browser module and let its tree resize (#7295)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "react): improve directory guidance and file preview (#7472)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -78771,7 +78786,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:31:53.173Z",
+      "verified_at": "2026-11-12T11:01:13.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

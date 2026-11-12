@@ -9150,3 +9150,7 @@ Every entry in this ledger must capture:
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `72d4626f` | Multi-dimensional audit evidence | 2026-11-12T10:52:51.122Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `970b4474` | Multi-dimensional audit evidence | 2026-11-12T10:52:54.199Z |
 | `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/serviette` | `53c6382b` | Multi-dimensional audit evidence | 2026-11-12T10:52:55.020Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `37c46843` | Multi-dimensional audit evidence | 2026-11-12T11:00:58.670Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `e50f0f23` | Multi-dimensional audit evidence | 2026-11-12T11:01:10.486Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `bcdaac0c` | Multi-dimensional audit evidence | 2026-11-12T11:01:13.790Z |
+| `learn-dom-l-80d1f65c` | `project://volcengine-openviking` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | 2026-11-12T11:01:33.161Z |

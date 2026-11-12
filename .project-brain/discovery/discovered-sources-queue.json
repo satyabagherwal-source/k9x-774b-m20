@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T10:53:03.356Z",
+  "updated_at": "2026-11-12T11:01:33.179Z",
   "stats": {
-    "total_discovered": 1192,
-    "approved_pending_harvest": 1079,
+    "total_discovered": 1198,
+    "approved_pending_harvest": 1085,
     "harvested_count": 0,
     "rejected_count": 113,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1098,
-      "OFFICIAL_DOCUMENTATION": 43,
+      "COMMUNITY_AND_EXPERT": 1103,
+      "OFFICIAL_DOCUMENTATION": 44,
       "STANDARDS_AND_SPECIFICATIONS": 48,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
@@ -25450,6 +25450,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
         "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-81D289838E44": {
+      "id": "SRC-81D289838E44",
+      "url": "https://github.com/Xudong-Huang/may",
+      "title": "https://github.com/Xudong-Huang/may",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:01:20.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
+        "fileName": "xudong-huang-may-learnings.md"
+      }
+    },
+    "SRC-DDF8A31BFA6E": {
+      "id": "SRC-DDF8A31BFA6E",
+      "url": "https://github.com/gravitl/netmaker",
+      "title": "https://github.com/gravitl/netmaker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:01:20.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
+        "fileName": "gravitl-netmaker-learnings.md"
+      }
+    },
+    "SRC-5A102CDA5B00": {
+      "id": "SRC-5A102CDA5B00",
+      "url": "https://docs.netmaker.io/docs/server-installation/quick-install",
+      "title": "https://docs.netmaker.io/docs/server-installation/quick-install",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:01:20.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
+        "fileName": "gravitl-netmaker-learnings.md"
+      }
+    },
+    "SRC-876FE6C1EDB8": {
+      "id": "SRC-876FE6C1EDB8",
+      "url": "https://github.com/volcengine/OpenViking",
+      "title": "https://github.com/volcengine/OpenViking",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:01:33.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-2F61055C6AA7": {
+      "id": "SRC-2F61055C6AA7",
+      "url": "https://groups.inf.ed.ac.uk/ami/icsi/download",
+      "title": "https://groups.inf.ed.ac.uk/ami/icsi/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:01:33.173Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-3DC04D2FCA46": {
+      "id": "SRC-3DC04D2FCA46",
+      "url": "https://example.com/resources/a-long-path-without-spaces-to-check-message-wrapping",
+      "title": "https://example.com/resources/a-long-path-without-spaces-to-check-message-wrapping",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T11:01:33.179Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
       }
     }
   }

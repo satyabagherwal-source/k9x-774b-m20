@@ -2,16 +2,17 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T09:55:51.213Z",
+  "updated_at": "2026-11-12T11:01:33.161Z",
   "statistics": {
-    "total_nodes": 18,
+    "total_nodes": 19,
     "total_edges": 6,
     "domain_distribution": {
       "D": 13,
       "M": 1,
       "H": 2,
       "J": 1,
-      "K": 1
+      "K": 1,
+      "L": 1
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 6
@@ -410,6 +411,28 @@
       ],
       "created_at": "2026-11-12T09:55:51.213Z",
       "updated_at": "2026-11-12T09:55:51.213Z"
+    },
+    "DOM-L-80D1F65C": {
+      "id": "DOM-L-80D1F65C",
+      "domain": "L",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Allowed Azure DevOps hosts: devazurecom sshdevazurecom vs-sshvisualstudiocom",
+      "summary": "`[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]` -> `[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]`",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://volcengine-openviking/volcengine-openviking-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`azure_devops_domains`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (volcengine-openviking)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "L",
+        "Deployment & Operations Intelligence"
+      ],
+      "created_at": "2026-11-12T11:01:33.161Z",
+      "updated_at": "2026-11-12T11:01:33.161Z"
     }
   },
   "edges": [

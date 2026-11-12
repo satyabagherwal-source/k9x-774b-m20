@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `4d495c64`  
+> **Source Version**: `e50f0f23`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:35:07.568Z  
+> **Timestamp**: 2026-11-12T11:00:58.929Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:35:07.560Z  
+> **Harvest Timestamp**: 2026-11-12T11:00:58.924Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11866 stars
+- **Stars / Engagement**: 11869 stars
 
 ---
 
@@ -1017,572 +1017,599 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d495c64` (2026-11-11)
-**Commit Message**: Pre-Release Fixes v1.8.0 (#4224)
+### Incident Patch 1: `e50f0f23` (2026-11-12)
+**Commit Message**: NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)
 
-* fix(go): validate traffic public key;
+* NM-356: add username filter to nodes api
 
-* feat(go): rekey tenant idp sync hook;
+* NM-356: disconnect user devices and force Desktop logout on disable/delete
 
-* feat(go): check if membership exists before creating;
+When a user is disabled or deleted (including IdP sync), disconnect their
+nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
 
-* feat(go): parse node addr without cidr as well;
+* NM-356: rm force logout from delete user path
 
-* feat(go): only check for orphans before the cursor;
+* NM-356: keep AllowAll when both default ACL policies are open
 
-* feat(go): normalize usernames in idp synced users;
+Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
+Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
+rules. Short-circuit on open defaults only, and document the constraint.
 
-* feat(go): allow patch method;
+* fix: enrich topology and connections with location, is_gw, and egresses
 
-* feat(go): allow master user to list all tenants;
+Add location/country and is_gw on topology vertices and connection peers,
+with egresses listing egress vs internet_gateway (exit). Also classify paths
+through a peer's RelayedBy as relayed even when that relay is an exit router.
 
-* feat(go): publish server sync for non-master pods on idp sync hook rekey;
+* add update fallback ns error
 
-* feat(go): add before peer can be skipped;
+* fix: require network query on network-scoped mutations for network admins
 
-* feat(go): ignore vendor dir;
+ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
+after NM-378, so auth fell thro
 
-* fix(go): use normalized usernames when verifying auth request;
-
-* fix(go): return error on user device host sso callback if user is disabled;
-
-* fix(go): reset auto relayed peers on inet gw creation;
-
-* feat(go): reset host owner_username field;
-
-* feat(go): return user-auth host registration unsupported error;
-
-* feat(go): remove unused file;
-
-* feat(go): move auto relayed peers reset to callers;
-
-* feat(go): allow updating static port;
-
-* feat(go): set net id is passed for flow logs;
-
-* feat(go): validate egress node firewall; optimize db queries on egress validation;
-
-* fix(go): add exclusion filter to list host api
-
-**File**: `controllers/hosts.go` (modified, +2/-32)
+**File**: `controllers/user.go` (modified, +13/-1)
 ```diff
-@@ -1642,43 +1642,13 @@ func updateKeys(w http.ResponseWriter, r *http.Request) {
- // @Success     200 {string} string "sync all hosts request received"
- func syncHosts(w http.ResponseWriter, r *http.Request) {
- 	w.Header().Set("Content-Type", "application/json")
--
- 	user := r.Header.Get("user")
+@@ -1983,6 +1983,18 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
+ 			}
  
--	hosts, err := (&schema.Host{}).ListAll(r.Context())
-+	err := mq.PublishPeerUpdate(r.Context(), true)
- 	if err != nil {
--		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
--		return
--	}
--	if logic.IsAPIKeyAuth(r.Context()) {
--		filtered := hosts[:0]
--		for _, host := range hosts {
--			if logic.HostInAPIKeyScope(r.Context(), host.ID.String(), schema.APIKeyPermissionModify) {
--				filtered = append(filtered, host)
--			}
--		}
--		hosts = filtered
-+		slog.Error("failed to request hosts to sync", "user", user, "error", err)
- 	}
- 
--	ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
--	go func(ctx context.Context, hosts []schema.Host) {
--		slog.Info("requesting all hosts to sync", "user", user)
--
--		for _, host := range hosts {
--			go func(host schema.Host) {
--				hostUpdate := models.HostUpdate{
--					Action: models.RequestPull,
--					Host:   host,
--				}
--				if err := mq.HostUpdate(&hostUpdate); err != nil {
--					slog.Error("failed to request host to sync", "user", user, "host", host.ID.String(), "error", err)
--				} else {
--					slog.Info("host sync requested", "user", user, "host", host.ID.String())
--				}
--			}(host)
--			time.Sleep(time.Millisecond * 100)
--		}
--	}(ctx, hosts)
- 	logic.LogEvent(r.Context(), &models.Event{
- 		Action: schema.SyncAll,
- 		Source: models.Subject{
+ 			if !logic.UserHasNetworkGroupAccess(ctx, user, extclient.Network) {
++				if logic.IsStaticConfigExtClient(extclient) {
++					changed, err := logic.DisableExtClient(ctx, &extclient)
++					if err != nil {
++						slog.Error("failed to disable static extclient",
++							"id", extclient.ClientID, "owner", user.Username, "error", err)
++					} else if changed {
++						if err := mq.PublishDeletedClientPeerUpdate(ctx, &extclient); err != nil {
++							slog.Error("error setting ext peers: " + err.Error())
++						}
++					}
++					continue
++				}
+ 				err = logic.DeleteExtClient(r.Context(), extclient)
+ 				if err != nil {
+ 					slog.Error("failed to delete extclient",
+@@ -2160,7 +2172,7 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
+ 			if extclient.OwnerID != username {
+ 				continue
+ 			}
+-			if extclient.DeviceID == "" && extclient.RemoteAccessClientID == "" && !forceDeleteConfigs {
++			if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
+ 				// only delete wireguard configs on force
+ 				continue
+ 			}
 ```
 
-**File**: `logic/extpeers.go` (modified, +4/-4)
+**File**: `logic/extpeers.go` (modified, +54/-19)
 ```diff
-@@ -591,8 +591,8 @@ func extClientEgressAllowed(ctx context.Context, node, extNode models.Node) bool
- 	return ok
+@@ -315,9 +315,15 @@ func UpdateExtClient(old *models.ExtClient, update *models.CustomExtClient) mode
+ 	if update.DeniedACLs != nil && !reflect.DeepEqual(old.DeniedACLs, update.DeniedACLs) {
+ 		new.DeniedACLs = update.DeniedACLs
+ 	}
+-	// replace any \r\n with \n in postup and postdown from HTTP request
+-	new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
+-	new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
++	// PostUp/PostDown: omitted and explicit "" both decode to empty, so treat
++	// empty as "leave unchanged" (same idea as PublicKey). Sparse updates
++	// (toggle, rename) must not wipe existing scripts.
++	if update.PostUp != "" {
++		new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
++	}
++	if update.PostDown != "" {
++		new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
++	}
+ 	// Tags are usually managed via the tags API. Extclient edit payloads often
+ 	// omit tags (nil); overwriting would drop the client from all tags. Only
+ 	// apply when the caller explicitly sends a tags map (including {} to clear).
+@@ -388,25 +394,24 @@ func listExtClients(ctx context.Context, options ...dbtypes.Option) ([]models.Ex
  }
  
--func getExtpeerEgressRanges(ctx context.Context, node models.Node) (ranges, ranges6 []net.IPNet) {
--	extPeers, err := GetNetworkExtClients(ctx, node.Network)
-+func getExtpeerEgressRanges(ctx context.Context, g *PeerGraph, node models.Node) (ranges, ranges6 []net.IPNet) {
-+	extPeers, err := g.NetworkExtClients(ctx, node.Network)
- 	if err != nil {
- 		return
+ // ToggleExtClientConnectivity - enables or disables an ext client
++//
++// Flips Enabled in place and saves. Does not go through UpdateExtClient with a
++// sparse CustomExtClient, which would drop fields omitted from the update
++// (notably PostUp/PostDown before those were guarded).
+ func ToggleExtClientConnectivity(ctx context.Context, client *models.ExtClient, enable bool) (models.ExtClient, error) {
+-	update := models.CustomExtClient{
+-		Enabled:              enable,
+-		ClientID:             client.ClientID,
+-		PublicKey:            client.PublicKey,
+-		DNS:                  client.DNS,
+-		ExtraAllowedIPs:      client.ExtraAllowedIPs,
+-		DeniedACLs:           client.DeniedACLs,
+-		RemoteAccessClientID: client.RemoteAccessClientID,
++	if client == nil {
++		return models.ExtClient{}, errors.New("nil ext client")
  	}
-@@ -620,8 +620,8 @@ func getExtpeerEgressRanges(ctx context.Context, node models.Node) (ranges, rang
+-
+-	// update in DB (same ClientID — upsert, no delete/recreate)
+-	newClient := UpdateExtClient(client, &update)
+-	if err := SaveExtClient(ctx, &newClient); err != nil {
+-		slog.Error("failed to save updated ext client during update", "id", newClient.ClientID, "network", newClient.Network, "error", err)
+-		return newClient, err
++	if client.Enabled == enable {
++		return *client, nil
+ 	}
+-
+-	return newClient, nil
++	updated := *client
++	updated.Enabled = enable
++	if err := SaveExtClient(ctx, &updated); err != nil {
++		slog.Error("failed to save updated ext client during update", "id", updated.ClientID, "network", updated.Network, "error", err)
++		return updated, err
++	}
++	return updated, nil
+ }
+ 
+ func GetExtPeers(ctx context.Context, g *PeerGraph, node, peer *models.Node, addressIdentityMap map[string]models.PeerIdentity) ([]wgtypes.PeerConfig, []models.IDandAddr, []models.EgressNetworkRoutes, error) {
+@@ -690,6 +695,36 @@ func GetStaticNodesByNetwork(ctx context.Context, network schema.NetworkID, only
  	return
  }
  
--func getExtpeersExtraRoutes(ctx context.Context, node models.Node) (egressRoutes []models.EgressNetworkRoutes) {
--	extPeers, err := GetNetworkExtClients(ctx, node.Network)
-+func getExtpeersExtraRoutes(ctx context.Context, g *PeerGraph, node models.Node) (egressRoutes []models.EgressNetworkRoutes) {
-+	extPeers, err := g.NetworkExtClients(ctx, node.Network)
- 	if err != nil {
- 		return
- 	}
-```
-
-**File**: `logic/peer_graph.go` (modified, +41/-19)
-```diff
-@@ -20,10 +20,29 @@ type PeerGraph struct {
- 	byNetwork map[string][]models.Node
- 	nodes     map[string]*models.Node
- 
--	// ext clients by ingress gateway node ID, loaded on first successful use;
--	// nil until then.
--	extClientsMu sync.Mutex
--	extClients   map[string][]models.ExtClient
-+	extClientsMu        sync.Mutex
-+	extClients          map[string][]models.ExtClient // by ingress gateway node ID
-+	extClientsByNetwork map[string][]models.ExtClient // by network
++// IsRACExtClient reports whether the ext client was created by the remote
++// access / desktop client app (has a device or RAC id). Admin-managed static
++// WireGuard config files have neither.
++func IsRACExtClient(client models.ExtClient) bool {
++	return client.DeviceID != "" || client.RemoteAccessClientID != ""
 +}
 +
-+// loadExtClientsLocked loads the tenant's ext clients once and indexes them
-+// both ways. Callers must hold extClientsMu.
-+func (g *PeerGraph) loadExtClientsLocked(ctx context.Context) error {
-+	if g.extClients != nil {
-+		return nil
++// IsStaticConfigExtClient reports whether the ext client is an admin-managed
++// static WireGuard config file (no device / RAC id). JIT never deletes or
++// disables these. On IdP sync or group/network access loss they are disabled
++// (not deleted) so the config remains but cannot be used until re-enabled.
++func IsStaticConfigExtClient(client models.ExtClient) bool {
++	return !IsRACExtClient(client)
++}
++
++// DisableExtClient disables an ext client without deleting it. No-op if
++// already disabled. Callers should publish a deleted-client peer update when
++// changed is true so gateways drop the peer.
++func DisableExtClient(ctx context.Context, client *models.ExtClient) (changed bool, err error) {
++	if client == nil || !client.Enabled {
++		return false, nil
 +	}
-+	clients, err := GetAllExtClients(ctx)
++	updated, err := ToggleExtClientConnectivity(ctx, client, false)
 +	if err != nil {
-+		return err
++		return false, err
 +	}
-+	g.extClients = make(map[string][]models.ExtClient)
-+	g.extClientsByNetwork = make(map[string][]models.ExtClient)
-+	for i := range clients {
-+		gwID := clients[i].IngressGatewayID
-+		g.extClients[gwID] = append(g.extClients[gwID], clients[i])
-+		g.extClientsByNetwork[clients[i].Network] = append(g.extClientsByNetwork[clients[i].Network], clients[i])
-+	}
-+	return nil
- }
- 
- // LoadPeerGraph - loads all hosts and nodes of the tenant in ctx.
-@@ -86,27 +105,30 @@ func (g *PeerGraph) Node(nodeID string) (models.Node, error) {
- 	return getNodeByID(nodeID)
- }
- 
-+// NetworkNodes - returns a copy of the nodes in the network.
-+func (g *PeerGraph) NetworkNodes(network string) []models.Node {
-+	return slices.Clone(g.byNetwork[network])
++	*client = updated
++	return true, nil
 +}
 +
-+// NetworkExtClients - returns a copy of the ext clients in the network. The
-+// tenant's ext clients are loaded once per graph instead of once per host.
-+func (g *PeerGraph) NetworkExtClients(ctx context.Context, network string) ([]models.ExtClient, error) {
-+	g.extClientsMu.Lock()
-+	defer g.extClientsMu.Unlock()
-+	if err := g.loadExtClientsLocked(ctx); err != nil {
-+		return nil, err
-+	}
-+	return slices.Clone(g.extClientsByNetwork[network]), nil
-+}
-+
- // GatewayExtClients - returns a copy of the ext clients attached to the
- // gateway node. The tenant's ext clients are loaded once per graph instead of
- // once per (host, gateway peer).
- func (g *PeerGraph) GatewayExtClients(ctx context.Context, gatewayID string) ([]models.ExtClient, error) {
- 	g.extClientsMu.Lock()
- 	defer g.extClientsMu.Unlock()
--	if g.extClients == nil {
--		clients, err := GetAllExtClients(ctx)
--		if err != nil {
--			return nil, err
--		}
--		g.extClients = make(map[string][]models.ExtClient)
--		for i := range clients {
--			gwID := clients[i].IngressGatewayID
--			g.extClients[gwID] = append(g.extClients[gwID], clients[i])
--		}
-+	if err := g.loadExtClientsLocked(ctx); err != nil {
-+		return nil, err
- 	}
- 	return slices.Clone(g.extClients[gatewayID]), nil
- }
--
--// NetworkNodes - returns a copy of the nodes in the network.
--func (g *PeerGraph) NetworkNodes(network string) []models.Node {
--	return slices.Clone(g.byNetwork[network])
--}
+ // CleanupOtherExtclients cleans up other clients owned by the same use for the same device and network.
+ func CleanupOtherExtclients(ctx context.Context, extclient *models.ExtClient) error {
+ 	extclients, err := GetNetworkExtClients(ctx, extclient.Network)
 ```
 
-**File**: `logic/peers.go` (modified, +4/-2)
+**File**: `logic/extpeers_test.go` (modified, +95/-0)
 ```diff
-@@ -198,6 +198,7 @@ func (g *PeerGraph) HostPeerInfo(ctx context.Context, host *schema.Host) (models
- 					Name:       peerHost.Name,
- 					Network:    peer.Network,
- 					ListenPort: peerHost.ListenPort,
-+					UserName:   peerHost.OwnerUsername,
+@@ -173,6 +173,101 @@ func TestGetNetworkAndAllExtClients(t *testing.T) {
+ 	assert.Equal(t, "tenant-list-other", all[0].TenantID)
+ }
+ 
++func TestIsRACExtClient(t *testing.T) {
++	assert.True(t, IsRACExtClient(models.ExtClient{DeviceID: "dev-1"}))
++	assert.True(t, IsRACExtClient(models.ExtClient{RemoteAccessClientID: "rac-1"}))
++	assert.True(t, IsRACExtClient(models.ExtClient{DeviceID: "dev-1", RemoteAccessClientID: "rac-1"}))
++	assert.False(t, IsRACExtClient(models.ExtClient{}))
++	assert.True(t, IsStaticConfigExtClient(models.ExtClient{}))
++	assert.False(t, IsStaticConfigExtClient(models.ExtClient{DeviceID: "dev-1"}))
++}
++
++func TestDisableExtClient(t *testing.T) {
++	ctx := extClientTestCtx("tenant-1")
++	network := createExtClientTestNetwork(t, ctx, "extclient-disable-"+uuid.NewString()[:8])
++
++	extclient := newTestExtClient("client-disable", network.Name)
++	extclient.DeviceID = ""
++	extclient.RemoteAccessClientID = ""
++	extclient.Enabled = true
++	require.NoError(t, SaveExtClient(ctx, extclient))
++
++	changed, err := DisableExtClient(ctx, extclient)
++	require.NoError(t, err)
++	assert.True(t, changed)
++	assert.False(t, extclient.Enabled)
++
++	got, err := GetExtClient(ctx, "client-disable", network.Name)
++	require.NoError(t, err)
++	assert.False(t, got.Enabled)
++
++	changed, err = DisableExtClient(ctx, &got)
++	require.NoError(t, err)
++	assert.False(t, changed, "already disabled is a no-op")
++}
++
++func TestDisableExtClientPreservesPostUpPostDown(t *testing.T) {
++	ctx := extClientTestCtx("tenant-1")
++	network := createExtClientTestNetwork(t, ctx, "extclient-disable-post-"+uuid.NewString()[:8])
++
++	extclient := newTestExtClient("client-disable-post", network.Name)
++	extclient.DeviceID = ""
++	extclient.RemoteAccessClientID = ""
++	extclient.Enabled = true
++	extclient.PostUp = "iptables -A FORWARD -j ACCEPT"
++	extclient.PostDown = "iptables -D FORWARD -j ACCEPT"
++	require.NoError(t, SaveExtClient(ctx, extclient))
++
++	changed, err := DisableExtClient(ctx, extclient)
++	require.NoError(t, err)
++	assert.True(t, changed)
++
++	disabled, err := GetExtClient(ctx, "client-disable-post", network.Name)
++	require.NoError(t, err)
++	assert.False(t, disabled.Enabled)
++	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", disabled.PostUp)
++	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", disabled.PostDown)
++
++	reenabled, err := ToggleExtClientConnectivity(ctx, &disabled, true)
++	require.NoError(t, err)
++	assert.True(t, reenabled.Enabled)
++	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", reenabled.PostUp)
++	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", reenabled.PostDown)
++
++	got, err := GetExtClient(ctx, "client-disable-post", network.Name)
++	require.NoError(t, err)
++	assert.True(t, got.Enabled)
++	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", got.PostUp)
++	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", got.PostDown)
++}
++
++func TestUpdateExtClientPreservesPostUpPostDownWhenOmitted(t *testing.T) {
++	old := models.ExtClient{
++		ClientID: "client-1",
++		Enabled:  true,
++		PostUp:   "iptables -A FORWARD -j ACCEPT",
++		PostDown: "iptables -D FORWARD -j ACCEPT",
++		DNS:      "1.1.1.1",
++	}
++	updated := UpdateExtClient(&old, &models.CustomExtClient{
++		ClientID:  "client-1-renamed",
++		PublicKey: "pub",
++		Enabled:   false,
++	})
++	assert.Equal(t, "client-1-renamed", updated.ClientID)
++	assert.False(t, updated.Enabled)
++	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", updated.PostUp)
++	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", updated.PostDown)
++
++	withScripts := UpdateExtClient(&old, &models.CustomExtClient{
++		ClientID: "client-1",
++		PostUp:   "echo up\r\necho up2",
++		PostDown: "echo down\r\necho down2",
++	})
++	assert.Equal(t, "echo up\necho up2", withScripts.PostUp)
++	assert.Equal(t, "echo down\necho down2", withScripts.PostDown)
++}
++
+ func TestDeleteExtClient(t *testing.T) {
+ 	ctx := extClientTestCtx("tenant-1")
+ 	network := createExtClientTestNetwork(t, ctx, "extclient-delete-net")
+```
+
+**File**: `logic/network_topology.go` (modified, +19/-0)
+```diff
+@@ -601,10 +601,29 @@ func (b *networkStatusBuilder) connection(node, peer *models.Node) models.Networ
+ 	if via != "" {
+ 		conn.Via = b.nodeRef(via)
+ 	}
++	// Peers disconnected from the network keep stale metrics; force
++	// connected=false and skip metric lookups. Otherwise connected/latency
++	// come from metrics as before.
++	if !peerNetworkConnected(peer) {
++		conn.Connected = false
++		return conn
++	}
+ 	b.applyConnectionLiveness(&conn, node, peer, via)
+ 	return conn
+ }
+ 
++// peerNetworkConnected reports whether the peer is attached to the network
++// (node.Connected, or Enabled for static ExtClients).
++func peerNetworkConnected(peer *models.Node) bool {
++	if peer == nil {
++		return false
++	}
++	if peer.IsStatic {
++		return peer.StaticNode.Enabled
++	}
++	return peer.Connected
++}
++
+ // connectionPath classifies the clicked node's path to peer: direct, through a
+ // relay, or through the viewer's selected internet exit.
+ func (b *networkStatusBuilder) connectionPath(node, peer *models.Node) (models.NetworkConnectionType, string) {
+```
+
+**File**: `logic/network_topology_test.go` (modified, +57/-0)
+```diff
+@@ -403,20 +403,27 @@ func TestNodeConnectionsUsesLoadedUserPolicy(t *testing.T) {
+ func TestNodeConnectionsRelayedExitAndExtClient(t *testing.T) {
+ 	relay := newTestNode()
+ 	relay.IsRelay = true
++	relay.Connected = true
+ 	exitNode := newTestNode()
++	exitNode.Connected = true
+ 	site := newTestNode()
++	site.Connected = true
+ 	plain := newTestNode()
++	plain.Connected = true
+ 	client := newTestNode()
++	client.Connected = true
+ 	client.IsRelayed = true
+ 	client.RelayedBy = relay.ID.String()
+ 	exitClient := newTestNode()
++	exitClient.Connected = true
+ 	exitClient.IsRelayed = true
+ 	exitClient.RelayedBy = exitNode.ID.String()
+ 	exitClient.SelectedInternetEgressID = "exit"
+ 	exitClient.InternetGwID = exitNode.ID.String()
+ 	// Peer manually RelayedBy a node that is also an internet-egress router —
+ 	// path type must stay "relayed", not flip to "exit".
+ 	relayedByExit := newTestNode()
++	relayedByExit.Connected = true
+ 	relayedByExit.IsRelayed = true
+ 	relayedByExit.RelayedBy = exitNode.ID.String()
+ 
+@@ -550,12 +557,17 @@ func TestNodeConnectionsExtClientLiveness(t *testing.T) {
+ 	gw := newTestNode()
+ 	gw.IsIngressGateway = true
+ 	gw.IsRelay = true
++	gw.Connected = true
+ 	viewer := newTestNode()
++	viewer.Connected = true
+ 	relayed := newTestNode()
++	relayed.Connected = true
+ 	relayed.IsRelayed = true
+ 	relayed.RelayedBy = gw.ID.String()
+ 	partial := newTestNode()
++	partial.Connected = true
+ 	down := newTestNode()
++	down.Connected = true
+ 
+ 	ext := &models.Node{IsStatic: true}
+ 	ext.StaticNode.ClientID = "laptop"
+@@ -622,6 +634,51 @@ func TestNodeConnectionsExtClientLiveness(t *testing.T) {
+ 	}
+ }
+ 
++func TestNodeConnectionsSkipsMetricsWhenPeerDisconnected(t *testing.T) {
++	viewer := newTestNode()
++	viewer.Connected = true
++	peer := newTestNode()
++	peer.Connected = false
++
++	b := newTestStatusBuilder(nil, NetworkStatusOptions{}, viewer, peer)
++	stubMetrics(t, map[string]map[string]models.Metric{
++		viewer.ID.String(): {
++			peer.ID.String(): {Connected: true, Latency: 50, PercentUp: 99},
++		},
++	})
++
++	got, err := b.nodeConnections([]models.Node{*viewer, *peer}, viewer.ID.String())
++	if err != nil {
++		t.Fatal(err)
++	}
++	c := indexConns(t, got.Connections)[peer.ID.String()]
++	if c.Connected || c.LatencyMs != 0 || c.PercentUp != 0 {
++		t.Fatalf("disconnected peer should skip metrics = %+v", c)
++	}
++
++	disabled := &models.Node{IsStatic: true}
++	disabled.StaticNode.ClientID = "off-cfg"
++	disabled.StaticNode.Enabled = false
++	gw := newTestNode()
++	gw.IsIngressGateway = true
++	gw.Connected = true
++	b2 := newTestStatusBuilder(nil, NetworkStatusOptions{}, gw)
++	b2.names[disabled.StaticNode.ClientID] = "off-cfg"
++	stubMetrics(t, map[string]map[string]models.Metric{
++		gw.ID.String(): {
++			disabled.StaticNode.ClientID: {Connected: true, Latency: 9, PercentUp: 80},
++		},
++	})
++	fromGW, err := b2.nodeConnections([]models.Node{*gw, *disabled}, gw.ID.String())
++	if err != nil {
++		t.Fatal(err)
++	}
++	c = indexConns(t, fromGW.Connections)[disabled.StaticNode.ClientID]
++	if c.Connected || c.LatencyMs != 0 || c.PercentUp != 0 {
++		t.Fatalf("disabled config file should skip metrics = %+v", c)
++	}
++}
++
+ func indexConns(t *testing.T, conns []models.NetworkConnection) map[string]models.NetworkConnection {
+ 	t.Helper()
+ 	out := make(map[string]models.NetworkConnection, len(conns))
+```
+
+**File**: `pro/auth/sync.go` (modified, +15/-5)
+```diff
+@@ -337,7 +337,8 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
+ 			// delete the user if it has been archived.
+ 			user, ok := dbUsersMap[user.Username]
+ 			if ok {
+-				_ = deleteUser(ctx, user, true, cleanupUserRefs)
++				// Keep admin-managed static WireGuard configs; RAC clients are cleaned up.
++				_ = deleteUser(ctx, user, false, cleanupUserRefs)
+ 			}
+ 			continue
+ 		}
+@@ -459,8 +460,8 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
+ 				}
+ 
+ 				// delete the user if it has been deleted on idp
+-				// or is filtered out.
+-				err = deleteUser(ctx, user, true, cleanupUserRefs)
++				// or is filtered out. Keep admin-managed static WireGuard configs.
++				err = deleteUser(ctx, user, false, cleanupUserRefs)
+ 				if err != nil {
+ 					return err
+ 				}
+@@ -694,10 +695,19 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
+ 		extclients, err := logic.GetAllExtClients(ctx)
+ 		if err == nil {
+ 			for _, extclient := range extclients {
+-				if extclient.OwnerID == username {
+-					if err := logic.DeleteExtClient(ctx, extclient); err == nil {
++				if extclient.OwnerID != username {
++					continue
++				}
++				if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
++					// Keep the config file but disable it so it cannot be used.
++					changed, err := logic.DisableExtClient(ctx, &extclient)
++					if err == nil && changed {
+ 						_ = mq.PublishDeletedClientPeerUpdate(ctx, &extclient)
+ 					}
++					continue
++				}
++				if err := logic.DeleteExtClient(ctx, extclient); err == nil {
++					_ = mq.PublishDeletedClientPeerUpdate(ctx, &extclient)
  				}
  			}
  		}
-@@ -515,7 +516,7 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
- 			// the same routes: one full extclient scan and policy prepare each, all
- 			// but the first collapsed again by deduplicateEgressRoutes.
- 			if peer.IsIngressGateway && !addedExtpeersExtraRoutes {
--				hostPeerUpdate.EgressRoutes = append(hostPeerUpdate.EgressRoutes, getExtpeersExtraRoutes(ctx, node)...)
-+				hostPeerUpdate.EgressRoutes = append(hostPeerUpdate.EgressRoutes, getExtpeersExtraRoutes(ctx, g, node)...)
- 				addedExtpeersExtraRoutes = true
- 			}
- 			allowedToComm := PeerAllowed(ctx, node, peer, defaultDevicePolicy.Enabled)
-@@ -649,6 +650,7 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
- 					Name:                    peerHost.Name,
- 					Network:                 peer.Network,
- 					ListenPort:              peerHost.ListenPort,
-+					UserName:                peerHost.OwnerUsername,
- 					TcpProxyEndpoint:        tcpProxyEndpointForPeer(&peer, peerHost, host),
- 					TcpProxyCertFingerprint: tcpProxyCertFingerprintForPeer(&peer, peerHost),
- 				}
-@@ -682,7 +684,7 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
- 							Network6:  node.NetworkRange6,
- 							Rules:     GetFwRulesOnIngressGateway(ctx, node),
- 						}
--						ingFwUpdate.EgressRanges, ingFwUpdate.EgressRanges6 = getExtpeerEgressRanges(ctx, node)
-+						ingFwUpdate.EgressRanges, ingFwUpdate.EgressRanges6 = getExtpeerEgressRanges(ctx, g, node)
- 						hostPeerUpdate.FwUpdate.IngressInfo[node.ID.String()] = ingFwUpdate
- 					}
- 				}
 ```
 
----
-
-### Incident Patch 2: `68498f43` (2026-11-11)
-**Commit Message**: Pre-Release Fixes v1.8.0 (#4219)
-
-* fix(go): validate traffic public key;
-
-* feat(go): rekey tenant idp sync hook;
-
-* feat(go): check if membership exists before creating;
-
-* feat(go): parse node addr without cidr as well;
-
-* feat(go): only check for orphans before the cursor;
-
-* feat(go): normalize usernames in idp synced users;
-
-* feat(go): allow patch method;
-
-* feat(go): allow master user to list all tenants;
-
-* feat(go): publish server sync for non-master pods on idp sync hook rekey;
-
-* feat(go): add before peer can be skipped;
-
-* feat(go): ignore vendor dir;
-
-* fix(go): use normalized usernames when verifying auth request;
-
-* fix(go): return error on user device host sso callback if user is disabled;
-
-* fix(go): reset auto relayed peers on inet gw creation;
-
-* feat(go): reset host owner_username field;
-
-* feat(go): return user-auth host registration unsupported error;
-
-* feat(go): remove unused file;
-
-* feat(go): move auto relayed peers reset to callers;
-
-* feat(go): allow updating static port;
-
-* feat(go): set net id is passed for flow logs;
-
-* feat(go): validate egress node firewall; optimize db queries on egress validation;
-
-* fix(go): add exclusion filter to list host api
-
-**File**: `controllers/ext_client.go` (modified, +6/-0)
+**File**: `pro/logic/jit.go` (modified, +21/-15)
 ```diff
-@@ -223,7 +223,13 @@ func listNetworkExtClients(w http.ResponseWriter, r *http.Request) {
- 		extclients = append(extclients, *logic.ConvertSchemaExtclientToModelsExtClientWithContext(r.Context(), &_extclients[i], logic.SkipViolations()))
- 	}
- 	logic.AttachExtClientViolations(r.Context(), extclients)
-+
- 	for i := range extclients {
-+		staticNode := logic.AddStatusToNodes(r.Context(), []models.Node{models.ConvertToStaticNode(extclients[i])}, true)[0]
-+		extclients[i].Status = staticNode.StaticNode.Status
-+		if err := logic.SaveExtClient(r.Context(), &extclients[i]); err != nil {
-+			slog.Error("failed to persist extclient status", "id", extclients[i].ClientID, "error", err)
-+		}
- 		extclients[i].PrivateKey = ""
- 	}
+@@ -721,12 +721,12 @@ func DisconnectExtClientsFromNetwork(ctx context.Context, networkID string) erro
  
-```
-
-**File**: `controllers/hosts.go` (modified, +28/-28)
-```diff
-@@ -222,6 +222,7 @@ func getHosts(w http.ResponseWriter, r *http.Request) {
- // @Produce     json
- // @Param       os query []string false "Filter by OS" Enums(windows, linux, darwin)
- // @Param       q query string false "Search across fields"
-+// @Param       not_in_network query []string false "Exclude hosts that have a node in this network (repeatable)"
- // @Param       page query int false "Page number"
- // @Param       per_page query int false "Items per page"
- // @Success     200 {array} models.ApiHost
-@@ -233,6 +234,15 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
- 	}
+ // extClientFromClientApp reports whether the ext client was created by the desktop/RAC app.
+ func extClientFromClientApp(client models.ExtClient) bool {
+-	return client.DeviceID != "" || client.RemoteAccessClientID != ""
++	return logic.IsRACExtClient(client)
+ }
  
- 	q := r.URL.Query().Get("q")
-+	var notInNetworkIDs []string
-+	for _, name := range r.URL.Query()["not_in_network"] {
-+		network := &schema.Network{Name: name}
-+		err := network.Get(r.Context())
-+		if err != nil {
+ // DisconnectExtClientsFromNetworkForScope removes client-app ext clients for users who require
+-// a JIT grant under the given network configuration. Admin-managed config files (no device/
+-// remote_access_client id) are kept.
++// a JIT grant under the given network configuration. Admin-managed static config files (no
++// device / remote_access_client id) are left untouched — JIT does not apply to them.
+ func DisconnectExtClientsFromNetworkForScope(ctx context.Context, network *schema.Network) error {
+ 	extClients, err := logic.GetNetworkExtClients(ctx, network.Name)
+ 	if err != nil {
+@@ -805,7 +805,8 @@ func DeactivateUserGrantsOnNetwork(ctx context.Context, networkID, userID string
+ }
+ 
+ // RemoveUserJITNetworkAccess removes a user's network presence after JIT ends:
+-// ExtClients are deleted; host-backed user device nodes are disconnected.
++// RAC ExtClients are deleted (static config files are left alone); host-backed
++// user device nodes are disconnected.
+ func RemoveUserJITNetworkAccess(ctx context.Context, networkID, userID string) error {
+ 	return removeUserJITNetworkAccess(ctx, networkID, userID)
+ }
+@@ -844,17 +845,22 @@ func disconnectUserExtClients(ctx context.Context, networkID, userID string) err
+ 	for _, client := range extClients {
+ 		// Check if this ext client belongs to the user
+ 		// Ext clients have OwnerID field that should match userID
+-		if client.OwnerID == userID {
+-			clientCopy := client
+-			if err := logic.DeleteExtClient(ctx, client); err != nil {
+-				slog.Warn("failed to delete ext client after JIT ended",
+-					"client_id", client.ClientID, "error", err)
+-				continue
+-			}
+-			if err := mq.PublishDeletedClientPeerUpdate(ctx, &clientCopy); err != nil {
+-				slog.Warn("failed to publish deleted client peer update",
+-					"client_id", client.ClientID, "error", err)
+-			}
++		if client.OwnerID != userID {
 +			continue
 +		}
-+		notInNetworkIDs = append(notInNetworkIDs, network.ID)
-+	}
- 
- 	var page, pageSize int
- 	page, _ = strconv.Atoi(r.URL.Query().Get("page"))
-@@ -249,6 +259,7 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
- 		r.Context(),
- 		dbtypes.WithFilter("os", osFilters...),
- 		dbtypes.WithSearchQuery(q, "id", "name", "public_key", expr.ByteaField("endpoint_ip"), expr.ByteaField("endpoint_ipv6")),
-+		schema.ExcludeHostsInNetworks(r.Context(), notInNetworkIDs...),
- 		dbtypes.InAscOrder("name"),
- 		dbtypes.WithPagination(page, pageSize),
- 	)
-@@ -268,6 +279,7 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
- 		r.Context(),
- 		dbtypes.WithFilter("os", osFilters...),
- 		dbtypes.WithSearchQuery(q, "id", "name", "public_key", expr.ByteaField("endpoint_ip"), expr.ByteaField("endpoint_ipv6")),
-+		schema.ExcludeHostsInNetworks(r.Context(), notInNetworkIDs...),
- 	)
- 	if err != nil {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-@@ -651,44 +663,32 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 				slog.Error("failed to recalculate status on update metrics: error fetching node by id", "id", nodeID, "error", err)
- 				return
- 			}
-+
-+			nodeWithStatus := logic.AddStatusToNodes(ctx, []models.Node{node}, true)[0]
-+			if nodeWithStatus.Status != node.Status {
-+				_node := &schema.Node{ID: nodeID, Status: nodeWithStatus.Status}
-+				if err := _node.UpdateStatus(ctx); err != nil {
-+					slog.Error("failed to update node status on update metrics: error upserting node", "id", nodeID, "error", err)
-+				}
-+			}
-+
- 			extclients, err := logic.GetGatewayExtClients(ctx, nodeID)
- 			if err != nil {
- 				slog.Error("failed to recalculate status on update metrics: error fetching extclients for node", "id", nodeID, "error", err)
- 				return
- 			}
--
--			nodes := make([]models.Node, 0, len(extclients)+1)
--			nodes = append(nodes, node)
-+			extNodes := make([]models.Node, 0, len(extclients))
- 			for _, extclient := range extclients {
--				nodes = append(nodes, models.ConvertToStaticNode(extclient))
-+				extNodes = append(extNodes, models.ConvertToStaticNode(extclient))
- 			}
--
--			nodesWithStatus := logic.AddStatusToNodes(ctx, nodes, true)
--			for i, node := range nodesWithStatus {
-+			extNodesWithStatus := logic.AddStatusToNodes(ctx, extNodes, true)
-+			for i, extNode := range extNodesWithStatus {
- 				// most reports don't change the status; skip the write then
--				if node.IsStatic {
--					if node.StaticNode.Status == nodes[i].StaticNode.Status {
--						continue
--					}
--				} else if node.Status == nodes[i].Status {
-+				if extNode.StaticNode.Status == extNodes[i].StaticNode.Status {
- 					continue
- 				}
--				if node.IsStatic {
--					err = logic.SaveExtClient(ctx, &node.StaticNode)
--					if err != nil {
--						slog.Error("failed to update extclient status on update metrics: error saving extclient", "id", node.StaticNode.ClientID, "error", err)
--						continue
--					}
--				} else {
--					_node := &schema.Node{
--						ID:     node.ID.String(),
--						Status: node.Status,
--					}
--					err = _node.UpdateStatus(ctx)
--					if err != nil {
--						slog.Error("failed to update node status on update metrics: error upserting node", "id", nodeID, "error", err)
--						continue
--					}
-+				if err := logic.SaveExtClient(ctx, &extNode.StaticNode); err != nil {
-+					slog.Error("failed to update extclient status on update metrics: error saving extclient", "id", extNode.StaticNode.ClientID, "error", err)
- 				}
- 			}
- 		}(ctx, nodeID)
-```
-
-**File**: `controllers/node.go` (modified, +12/-8)
-```diff
-@@ -1332,6 +1332,17 @@ func bulkUpdateNodeStatus(w http.ResponseWriter, r *http.Request) {
- 				}
- 				go logic.SetPeerMetricsDisconnected(ctx, nodeID)
- 			}
-+
-+			var target any
-+			node, err := logic.GetNodeByID(nodeID)
-+			if err == nil {
-+				target = node
-+				err = mq.NodeUpdate(&node)
-+				if err != nil {
-+					slog.Error("failed to publish node update", "id", nodeID, "error", err)
-+				}
-+			}
-+
- 			logic.LogEvent(r.Context(), &models.Event{
- 				Action: eventAction,
- 				Source: models.Subject{
-@@ -1344,18 +1355,11 @@ func bulkUpdateNodeStatus(w http.ResponseWriter, r *http.Request) {
- 					ID:   nodeID,
- 					Name: nodeID,
- 					Type: schema.NodeSub,
-+					Info: target,
- 				},
- 				NetworkID: schema.NetworkID(network),
- 				Origin:    schema.Dashboard,
- 			})
--
--			node, err := logic.GetNodeByID(nodeID)
--			if err == nil {
--				err = mq.NodeUpdate(&node)
--				if err != nil {
--					slog.Error("failed to publish node update", "id", nodeID, "error", err)
--				}
--			}
- 		}
- 
- 		// Reassign auto-assigned clients only after every disconnected gw has been
-```
-
-**File**: `logic/acls.go` (modified, +7/-2)
-```diff
-@@ -226,6 +226,7 @@ func GetSshAuthorizedIdentitiesForNode(ctx context.Context, targetnode *models.N
- 		case models.UserPolicy:
- 			if userNodes == nil {
- 				userNodes = GetStaticUserNodesByNetwork(ctx, netID)
-+				userNodes = append(userNodes, ListUserDevicesByNetwork(ctx, netID.String())...)
- 			}
- 			allSrcUsers := false
- 			allowedUsernames := make(map[string]struct{})
-@@ -249,11 +250,15 @@ func GetSshAuthorizedIdentitiesForNode(ctx context.Context, targetnode *models.N
- 				}
- 			}
- 			for _, userNode := range userNodes {
--				if !userNode.StaticNode.Enabled {
-+				if userNode.IsStatic {
-+					if !userNode.StaticNode.Enabled {
-+						continue
-+					}
-+				} else if !userNode.Connected {
- 					continue
- 				}
- 				if !allSrcUsers {
--					if _, ok := allowedUsernames[userNode.StaticNode.OwnerID]; !ok {
-+					if _, ok := allowedUsernames[NodeOwnerUsername(&userNode)]; !ok {
- 						continue
- 					}
- 				}
-```
-
-**File**: `pro/logic/egress.go` (modified, +9/-4)
-```diff
-@@ -118,20 +118,25 @@ func ValidateEgressReq(ctx context.Context, e *schema.Egress) error {
- 		if logic.IsEgressInternetGateway(*e) {
- 			return errors.New("internet egress must use explicit routing nodes, not tags")
- 		}
--		// Tag-based egress clears e.Nodes above; resolve tag members and reject
--		// Windows + virtual NAT the same way as explicit routing nodes.
-+		// Tag-based egress clears e.Nodes above; resolve tag members and
-+		// validate them the same way as explicit routing nodes (we already
-+		// rejected internet-gateway egress with tags above, so every member
-+		// here is a direct/virtual NAT routing node, not an internet exit).
- 		for tagID := range e.Tags {
- 			for _, tagged := range GetNodesWithTag(ctx, models.TagID(tagID)) {
- 				if err := logic.ErrUserOwnedNodeInfrastructureRole(&tagged); err != nil {
- 					return err
- 				}
- 				// static (ext client) members have no host.
--				if e.Mode != schema.VirtualNAT || tagged.HostID == uuid.Nil {
-+				if tagged.HostID == uuid.Nil {
- 					continue
- 				}
- 				host := &schema.Host{ID: tagged.HostID}
- 				if err := host.Get(db.WithContext(ctx)); err != nil {
--					continue
-+					return errors.New("invalid routing node " + err.Error())
-+				}
-+				if err := logic.ValidateEgressHostFirewall(host); err != nil {
-+					return err
- 				}
- 				if err := logic.ValidateHostEgressNATMode(*e, host); err != nil {
- 					return err
-```
-
-**File**: `schema/hosts.go` (modified, +18/-0)
-```diff
-@@ -15,6 +15,7 @@ import (
- 	"github.com/gravitl/netmaker/scope"
- 	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
- 	"gorm.io/datatypes"
-+	"gorm.io/gorm"
- )
- 
- const (
-@@ -241,6 +242,23 @@ func (h *Host) ListAll(ctx context.Context, options ...dbtypes.Option) ([]Host,
- 	return hosts, err
- }
- 
-+// ExcludeHostsInNetworks returns a filter that excludes hosts that have at
-+// least one non-pending-delete node in any of the given networks. An empty
-+// networkIDs is a no-op, so callers can pass it unconditionally.
-+func ExcludeHostsInNetworks(ctx context.Context, networkIDs ...string) dbtypes.Option {
-+	return func(query *gorm.DB) *gorm.DB {
-+		if len(networkIDs) == 0 {
-+			return query
++		// Admin-managed static configs are outside JIT — never delete or disable them.
++		if !logic.IsRACExtClient(client) {
++			continue
 +		}
-+		sub := db.FromContext(ctx).Session(&gorm.Session{NewDB: true}).
-+			Model(&Node{}).
-+			Select("host_id").
-+			Where("network_id IN ?", networkIDs).
-+			Where("pending_delete = ?", false)
-+		return query.Where(fmt.Sprintf("%s.id NOT IN (?)", hostsTable), sub)
-+	}
-+}
++		clientCopy := client
++		if err := logic.DeleteExtClient(ctx, client); err != nil {
++			slog.Warn("failed to delete ext client after JIT ended",
++				"client_id", client.ClientID, "error", err)
++			continue
++		}
++		if err := mq.PublishDeletedClientPeerUpdate(ctx, &clientCopy); err != nil {
++			slog.Warn("failed to publish deleted client peer update",
++				"client_id", client.ClientID, "error", err)
+ 		}
+ 	}
+ 
+```
+
+**File**: `pro/logic/jit_extclient_cleanup_test.go` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++package logic
 +
- // ListOwnerUsernames returns the distinct usernames that have registered at
- // least one host (user devices).
- func (h *Host) ListOwnerUsernames(ctx context.Context) ([]string, error) {
++import (
++	"context"
++	"testing"
++
++	"github.com/gravitl/netmaker/db"
++	"github.com/gravitl/netmaker/logic"
++	"github.com/gravitl/netmaker/models"
++	"github.com/gravitl/netmaker/schema"
++	"github.com/gravitl/netmaker/scope"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"gorm.io/gorm"
++)
++
++func TestDisconnectUserExtClientsLeavesStaticConfigsAlone(t *testing.T) {
++	t.Chdir(t.TempDir())
++	require.NoError(t, db.InitializeDB(schema.ListModels()...))
++	t.Cleanup(db.CloseDB)
++
++	ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, "tenant-1")
++	network := &schema.Network{TenantID: "tenant-1", Name: "jit-ext-net", AddressRange: "10.10.0.0/24"}
++	require.NoError(t, network.Create(ctx))
++
++	staticCfg := &models.ExtClient{
++		ClientID: "static-cfg",
++		Network:  network.Name,
++		OwnerID:  "alice",
++		Enabled:  true,
++	}
++	require.NoError(t, logic.SaveExtClient(ctx, staticCfg))
++
++	racClient := &models.ExtClient{
++		ClientID:             "rac-client",
++		Network:              network.Name,
++		OwnerID:              "alice",
++		Enabled:              true,
++		DeviceID:             "device-1",
++		RemoteAccessClientID: "rac-1",
++	}
++	require.NoError(t, logic.SaveExtClient(ctx, racClient))
++
++	otherOwner := &models.ExtClient{
++		ClientID:             "other-rac",
++		Network:              network.Name,
++		OwnerID:              "bob",
++		Enabled:              true,
++		RemoteAccessClientID: "rac-2",
++	}
++	require.NoError(t, logic.SaveExtClient(ctx, otherOwner))
++
++	require.NoError(t, disconnectUserExtClients(ctx, network.Name, "alice"))
++
++	got, err := logic.GetExtClient(ctx, "static-cfg", network.Name)
++	require.NoError(t, err, "static config file should be kept")
++	assert.True(t, got.Enabled, "static config should stay enabled; JIT does not apply")
++
++	_, err = logic.GetExtClient(ctx, "rac-client", network.Name)
++	assert.ErrorIs(t, err, gorm.ErrRecordNotFound, "RAC client should be deleted")
++
++	_, err = logic.GetExtClient(ctx, "other-rac", network.Name)
++	require.NoError(t, err, "other owners should be untouched")
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
 - **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4223** (closed): Release v1.7.0 (@abhishek9686)
 - **PR #4222** (2026-11-11): NM-356: skip FwUpdate calc for user-owned devices, allow relayed/auto-relayed egress traffic on gateway ACL paths (@abhishek9686)
 - **PR #4219** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4217** (2026-11-05): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4216** (2026-11-03): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 
 ---
 
@@ -1602,60 +1629,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pre-Release Fixes v1.8.0 (#4224)
+## X. NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)
 
 **RULE**:
-When implementing operations in `controllers/hosts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/user.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d495c64`: Pre-Release Fixes v1.8.0 (#4224). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e50f0f23`: NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/hosts.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/user.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	err := mq.PublishPeerUpdate(r.Context(), true)
-		slog.Error("failed to request hosts to sync", "user", user, "error", err)
+				if logic.IsStaticConfigExtClient(extclient) {
+					changed, err := logic.DisableExtClient(ctx, &extclient)
+					if err != nil {
+						slog.Error("failed to disable static extclient",
+							"id", extclient.ClientID, "owner", user.Username, "error", err)
+					} else if changed {
+						if err := mq.PublishDeletedClientPeerUpdate(ctx, &extclient); err != nil {
+							slog.Error("error setting ext peers: " + err.Error())
+						}
+					}
+					continue
+				}
+			if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-
-	hosts, err := (&schema.Host{}).ListAll(r.Context())
-		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-		return
-	}
-	if logic.IsAPIKeyAuth(r.Context()) {
-		filtered := hosts[:0]
-		for _, host := range hosts {
-			if logic.HostInAPIKeyScope(r.Context(), host.ID.String(), schema.APIKeyPermissionModify) {
-				filtered = append(filtered, host)
-			}
-		}
-		hosts = filtered
-	ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
-	go func(ctx context.Context, hosts []schema.Host) {
-		slog.Info("requesting all hosts to sync", "user", user)
-
-		for _, host := range hosts {
-			go func(host schema.Host) {
-				hostUpdate := models.HostUpdate{
-					Action: models.RequestPull,
-					Host:   host,
-				}
-				if err := mq.HostUpdate(&hostUpdate); err != nil {
-					slog.Error("failed to request host to sync", "user", user, "host", host.ID.String(), "error", err)
-				} else {
-					slog.Info("host sync requested", "user", user, "host", host.ID.String())
-				}
-			}(host)
-			time.Sleep(time.Millisecond * 100)
-		}
-	}(ctx, hosts)
+			if extclient.DeviceID == "" && extclient.RemoteAccessClientID == "" && !forceDeleteConfigs {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d495c64` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e50f0f23` are properly handled with clean fallback behavior.

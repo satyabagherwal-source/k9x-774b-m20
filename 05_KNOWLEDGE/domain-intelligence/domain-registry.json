@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T09:55:51.211Z",
-  "total_records": 66,
+  "last_updated": "2026-11-12T11:01:33.160Z",
+  "total_records": 67,
   "domains": {
     "A": {
       "total": 1,
@@ -124,9 +124,10 @@
       ]
     },
     "L": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-L-1B851132"
+        "DOM-L-1B851132",
+        "DOM-L-80D1F65C"
       ]
     },
     "M": {
@@ -2669,6 +2670,40 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T09:55:51.210Z"
+    },
+    "DOM-L-80D1F65C": {
+      "record_id": "DOM-L-80D1F65C",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [],
+      "title": "Allowed Azure DevOps hosts: devazurecom sshdevazurecom vs-sshvisualstudiocom",
+      "content": "`[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]`",
+      "content_hash": "aa8e98bb599cf0ee08c2e473b1f0b6bf557616a20d31c7332521a413e4db915c",
+      "summary": "`[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]` -> `[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]`",
+      "provenance": {
+        "source_uri": "project://volcengine-openviking/volcengine-openviking-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`azure_devops_domains`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (volcengine-openviking)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of volcengine-openviking"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T11:01:33.158Z"
     }
   }
 }

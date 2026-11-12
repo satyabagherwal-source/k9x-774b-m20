@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T10:53:03.297Z",
+  "last_updated": "2026-11-12T11:01:20.419Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6734,6 +6734,33 @@
       "source_repo": "rustls-rustls",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9F6F94-test-display-for-remaining-error-variant.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-43701A",
+      "directive_title": "cqueue): keep selector panics from poisoning or aborting",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "xudong-huang-may",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-43701A-cqueue-keep-selector-panics-from-poisoni.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BC5399",
+      "directive_title": "NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gravitl-netmaker",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC5399-nm-356-keep-static-wireguard-configs-on-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-3C4886",
+      "directive_title": "react): improve directory guidance and file preview (#7472)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "volcengine-openviking",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3C4886-react-improve-directory-guidance-and-fil.md",
       "staged_date": "2026-11-12"
     }
   ]

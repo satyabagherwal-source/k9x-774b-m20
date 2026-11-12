@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T10:53:03.113Z",
-    "lastVerified": "2026-11-12T10:53:03.113Z",
+    "lastChecked": "2026-11-12T11:01:20.282Z",
+    "lastVerified": "2026-11-12T11:01:20.282Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -114,22 +114,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T03:56:09.062Z",
-    "lastVerified": "2026-11-12T03:56:09.062Z",
+    "lastChecked": "2026-11-12T11:00:58.924Z",
+    "lastVerified": "2026-11-12T11:00:58.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
+    "contentHash": "cfe55aa32d7a35a09fee3e61002bd4ac8d5ca049313266c6316b374f7f3af52b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4d495c64"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -457,8 +456,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T09:55:02.060Z",
-    "lastVerified": "2026-11-12T09:55:02.060Z",
+    "lastChecked": "2026-11-12T11:00:57.603Z",
+    "lastVerified": "2026-11-12T11:00:57.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -5669,12 +5668,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crossplane-crossplane": {
-    "name": "crossplane/crossplane",
+    "name": "crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:51:48.404Z",
-    "lastVerified": "2026-11-10T04:51:48.404Z",
+    "lastChecked": "2026-11-12T11:00:50.322Z",
+    "lastVerified": "2026-11-12T11:00:50.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -5683,7 +5682,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6899c191"
   },
   "sfu-db-connector-x": {
     "name": "connector-x",
@@ -6056,14 +6056,14 @@
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:40:17.780Z",
-    "lastVerified": "2026-11-09T16:40:17.780Z",
+    "lastChecked": "2026-11-12T11:00:49.033Z",
+    "lastVerified": "2026-11-12T11:00:49.033Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "b3f699fe649fc4b6b3dff592849d93937994da0f8c3c5b8439f3ff58f8802a5c",
+    "contentHash": "59d3cf139775170cb72b792e7c9b1658eeae49646df3da672b63ee2b8fc37eed",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 15,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8172,14 +8172,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T02:31:50.945Z",
-    "lastVerified": "2026-11-10T02:31:50.945Z",
+    "lastChecked": "2026-11-12T11:01:02.642Z",
+    "lastVerified": "2026-11-12T11:01:02.642Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
+    "contentHash": "aa703bb2421db91084a561af3a6c5a79efd5e46abbd52e30e0a93cb6c58220d0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10226,12 +10226,12 @@
     "lastVerified": "2026-11-11T06:33:08.465Z"
   },
   "swiftwebui-swiftwebui": {
-    "name": "SwiftWebUI/SwiftWebUI",
+    "name": "SwiftWebUI",
     "officialUrl": "https://github.com/SwiftWebUI/SwiftWebUI",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T08:22:15.320Z",
-    "lastVerified": "2026-11-08T08:22:15.320Z",
+    "lastChecked": "2026-11-12T11:00:47.575Z",
+    "lastVerified": "2026-11-12T11:00:47.576Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-swiftwebui-swiftwebui",
@@ -10240,7 +10240,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b0b6be06"
   },
   "logiover-website-seo-audit-crawler": {
     "name": "website-seo-audit-crawler",
@@ -12040,12 +12041,12 @@
     "lastVerified": "2026-11-09T00:53:58.103Z"
   },
   "scrapinghub-dateparser": {
-    "name": "scrapinghub/dateparser",
+    "name": "dateparser",
     "officialUrl": "https://github.com/scrapinghub/dateparser",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T19:37:15.910Z",
-    "lastVerified": "2026-11-07T19:37:15.910Z",
+    "lastChecked": "2026-11-12T11:00:45.170Z",
+    "lastVerified": "2026-11-12T11:00:45.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapinghub-dateparser",
@@ -12054,7 +12055,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "90544c0b"
   },
   "wzh4869-appports": {
     "name": "wzh4869/AppPorts",

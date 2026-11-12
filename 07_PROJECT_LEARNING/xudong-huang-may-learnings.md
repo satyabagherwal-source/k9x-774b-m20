@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `310a9e3e`  
+> **Source Version**: `37c46843`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:40:17.885Z  
+> **Timestamp**: 2026-11-12T11:00:49.223Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:40:17.780Z  
+> **Harvest Timestamp**: 2026-11-12T11:00:49.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: rust stackful coroutine library
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2442 stars
+- **Stars / Engagement**: 2443 stars
 
 ---
 
@@ -1835,6 +1835,32 @@ impl<T> Queue<T> {
 
 ### Core Architecture Module: `src/cqueue.rs`
 ```
+//! A select-style event queue for scoped coroutines.
+//!
+//! [`scope`] creates a [`Cqueue`]. Each selector added with [`Cqueue::add`]
+//! (usually through the `cqueue_add!` / `cqueue_add_oneshot!` macros) runs as
+//! a coroutine: its *top half* runs until it calls [`EventSender::send`], which
+//! queues an event and suspends the selector. [`Cqueue::poll`] later resumes
+//! that selector's *bottom half* on the polling coroutine, so bottom halves
+//! run sequentially and only on the poller.
+//!
+//! # Constraints
+//!
+//! * Only one coroutine/thread may call [`Cqueue::poll`] on a given cqueue: the
+//!   event queue has a single consumer and `to_wake` holds a single waiter.
+//! * Selectors must all be registered before polling starts, and the cqueue
+//!   has a single owner: [`Cqueue::add`] must not run concurrently with
+//!   another `add` or with `poll`. Debug builds assert this.
+//! * An [`EventSender`] must only be used from the selector coroutine it was
+//!   passed to. It is `Send` because the selector closure captures it, but
+//!   `send` yields the *current* coroutine, so using it from another coroutine
+//!   would resume the wrong one.
+//! * A panic in a selector is re-raised by a later [`Cqueue::poll`], or by
+//!   `Drop` after every selector has been cancelled and drained; only the
+//!   first selector panic is propagated. If the thread is already unwinding,
+//!   the panic is dropped instead of aborting the process.
+
+use std::any::Any;
 use std::panic;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Arc;
@@ -1850,19 +1876,19 @@ use crate::sync::Mutex;
 use crate::sync::{AtomicOption, Blocker};
 use crate::yield_now::yield_with;
 
+use generator::Error;
 use may_queue::mpsc::Queue;
 
-/// This enumeration is the list of the possible reasons that `poll`
-/// could not return Event when called.
+/// The list of possible reasons that `poll` could not return an event.
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum PollError {
-    /// This cqueue currently has no event and timeout happens
-    /// so data may become available in future
+    /// The cqueue has no ready event and the timeout expired; an event may
+    /// become available in the future.
     Timeout,
 
-    /// This cqueue associated select coroutines are all finished
-    /// so there will never be any more event received on it unless
-    /// subscribe new select coroutines by using `add`
+    /// All select coroutines associated with this cqueue have finished, so no
+    /// more events can be received unless new select coroutines are added with
+    /// [`Cqueue::add`].
     Finished,
 }
 
@@ -1870,16 +1896,19 @@ pub enum PollError {
 /// is generated
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 enum EventKind {
-    /// the select coroutine has successfully generated an event from top half
-    /// so we can continue it's bottom half after call the `poll`
+    /// the select coroutine has successfully generated an event from its top
+    /// half, so its bottom half can be continued by `poll`
     Normal,
 
-    /// indicate a select coroutine is finished
+    /// indicates a select coroutine is finished
     Done,
 }
 
-/// The event that `poll` would return, events are generated when a select coroutine
-/// has finished it's top half
+/// The event that `poll` returns. Events are generated when a select coroutine
+/// reaches [`EventSender::send`] in its top half.
+///
+/// Returned events never own the coroutine: the bottom half has already run by
+/// the time `poll` returns it.
 #[derive(Debug)]
 pub struct Event {
     /// the token associated with the select coroutine
@@ -1890,12 +1919,12 @@ pub struct Event {
     id: usize,
     /// the event type
     kind: EventKind,
-    // the async coroutine that work on an select
+    // the suspended coroutine that will run the bottom half, if any
     co: Option<CoroutineImpl>,
 }
 
 impl Event {
-    /// continue the select coroutine with it's bottom half
+    /// continue the select coroutine with its bottom half
     /// when `poll` got a Normal event, should always call it first
     fn continue_bottom(&mut self) {
         if let Some(co) = self.co.take() {
@@ -1904,22 +1933,29 @@ impl Event {
     }
 }
 
-/// a handle type for the select coroutine
-/// you can only use the `remove` method to manually delete the coroutine
+/// A handle to a select coroutine.
+///
+/// Dropping the handle does not stop the coroutine: use [`Selector::remove`]
+/// to cancel it. Cancellation is asynchronous, so events already queued may
+/// still be delivered before the coroutine finishes.
 pub struct Selector {
     co: Coroutine,
 }
 
 impl Selector {
-    /// terminate the select coroutine
-    /// this would remove the selector from the associated cqueue
+    /// Terminate the select coroutine.
+    ///
+    /// This cancels the coroutine; it is removed from the cqueue
+    /// asynchronously, once it reaches a cancellation point.
     pub fn remove(self) {
-        self.co.cancel();
+        unsafe { self.co.cancel() };
     }
 }
 
-/// each select coroutine would use this struct to communicate with
-/// the cqueue. the struct is created in `add` for each select coroutine
+/// Per-selector handle used to communicate with the cqueue.
+///
+/// Created by [`Cqueue::add`] and passed to the selector closure. It must only
+/// be used by that selector coroutine.
 pub struct EventSender<'a> {
     // index of the select coroutine
     id: usize,
@@ -1934,12 +1970,16 @@ pub struct EventSender<'a> {
 unsafe impl Send for EventSender<'_> {}
 
 impl EventSender<'_> {
-    /// get the token
+    /// Get the token.
     pub fn get_token(&self) -> usize {
         self.token
     }
 
-    /// send out the event
+    /// Publish an event and suspend until `poll` has run the bottom half.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called outside a coroutine context.
     pub fn send(&self, extra: usize) {
         let cancel = current_cancel_data();
         cancel.check_cancel();
@@ -1950,6 +1990,8 @@ impl EventSender<'_> {
 
 impl EventSource for EventSender<'_> {
     fn subscribe(&mut self, co: CoroutineImpl) {
+        // Publish before waking: the poller re-checks the queue after
+        // registering its blocker, so either order is observed.
         self.cqueue.ev_queue.push(Event {
             id: self.id,
             token: self.token,
@@ -1968,7 +2010,7 @@ impl EventSource for EventSender<'_> {
 }
 
 impl Drop for EventSender<'_> {
-    // when the select coroutine finished will trigger this drop
+    // when the select coroutine finishes this drop is triggered
     fn drop(&mut self) {
         self.cqueue.ev_queue.push(Event {
             id: self.id,
@@ -1977,37 +2019,79 @@ impl Drop for EventSender<'_> {
             kind: EventKind::Done,
             co: None,
         });
-        self.cqueue.cnt.fetch_sub(1, Ordering::Relaxed);
+        // Publish the done event before decrementing `cnt`: the polling side
+        // reads `cnt` with acquire ordering and re-checks the queue, so it
+        // cannot report `Finished` while this event is still invisible.
+        self.cqueue.cnt.fetch_sub(1, Ordering::Release);
         if let Some(w) = self.cqueue.to_wake.take() {
             w.unpark();
         }
     }
 }
 
-/// cqueue interface for general select model
+/// Debug-only guard asserting that a cqueue has a single owner: `add` and
+/// `poll` must not run concurrently.
+#[cfg(debug_assertions)]
+struct BusyGuard<'a>(&'a AtomicBool);
+
+#[cfg(debug_assertions)]
+impl<'a> BusyGuard<'a> {
+    fn acquire(flag: &'a AtomicBool, what: &str) -> Self {
+        if flag.swap(true, Ordering::SeqCst) {
+            panic!("Cqueue::{what} called concurrently with add/poll, which is not supported");
+        }
+        BusyGuard(flag)
+    }
+}
+
+#[cfg(debug_assertions)]
+impl Drop for BusyGuard<'_> {
+    fn drop(&mut self) {
+        self.0.store(false, Ordering::SeqCst);
+    }
+}
+
+/// The event queue for the select model.
+///
+/// Created by [`scope`]; a single coroutine/thread polls it while the select
+/// coroutines publish events.
 pub struct Cqueue {
-    // the mpsc queue that transfer event
+    // the mpsc queue that transfers events
     ev_queue: Queue<Event>,
     // thread/coroutine for wake up
     to_wake: AtomicOption<Arc<Blocker>>,
-    // track how many coroutines left
+    // track how many coroutines are left
     cnt: AtomicUsize,
     // store the select coroutine handles
     selectors: Mutex<Vec<Option<JoinHandle<()>>>>,
     // total created select coroutines
     total: AtomicUsize,
-    // panic status
+    // set once a selector panic has escaped through `poll`; later panics are
+    // not re-raised
     is_panicking: AtomicBool,
+    // set while `drop` cancels and drains the selectors; a selector panic is
+    // recorded in `panic_data` instead of unwinding in the middle of the drain
+    draining: AtomicBool,
+    // the first selector panic recorded during the drain
+    panic_data: AtomicOption<Box<dyn Any + Send>>,
+    // debug-only guard that `add`/`poll` are not used concurrently
+    #[cfg(debug_assertions)]
+    busy: AtomicBool,
 }
 
 impl Cqueue {
-    /// register a select coroutine with the cqueue
-    /// should use `cqueue_add` and `cqueue_add_oneshot` macros to
-    /// create select coroutines correctly
-    fn add_impl<'a, F>(&self, token: usize, f: F) -> Selector
+    /// Register a select coroutine with the cqueue.
+    ///
+    /// The `cqueue_add!` and `cqueue_add_oneshot!` macros should be used to
+    /// create select coroutines correctly. All `add` calls must be sequential
+    /// and must not overlap with [`Cqueue::poll`]: debug builds assert this.
+    pub fn add<'a, F>(&self, token: usize, f: F) -> Selector
     where
         F: FnOnce(EventSender) + Send + 'a,
     {
+        #[cfg(debug_assertions)]
+        let _busy = BusyGuard::acquire(&self.busy, "add");
+
         let sender = EventSender {
             id: self.total.load(Ordering::Relaxed),
             token,
@@ -2016,21 +2100,11 @@ impl Cqueue {
         };
         let h = unsafe { spawn_unsafe(move || f(sender)) };
         let co = h.coroutine().clone();
-        self.cnt.fetch_add(1, Ordering::Relaxed);
+        self.cnt.fetch_add(1, Ordering::Release);
 
         self.total.fetch_add(1, Ordering::Relaxed);
         self.selectors.lock().unwrap().push(Some(h));
         Selector { co }
-    }
-
-    /// register a select coroutine with the cqueue
-    /// should use `cqueue_add` and `cqueue_add_oneshot` macros to
-    /// create select coroutines correctly
-    pub fn add<'a, F>(&self, token: usize, f: F) -> Selector
-    where
-        F: FnOnce(EventSender) + Send + 'a,
-    {
-        self.add_impl(token, f)
     }
 
     // when the select coroutine is done, check the panic status
@@ -2040,127 +2114,12 @@ impl Cqueue {
             return;
         }
 
-        use generator::Error;
-        match self.selectors.lock().unwrap()[id]
-            .take()
-            .expect("join handler not set")
-            .join()
-        {
-            Ok(_) => {}
-            Err(panic) => {
-                if let Some(err) = panic.downcast_ref::<Error>() {
-                    // ignore the cancel panic
-                    if *err == Error::Cancel {
-                        return;
-                    }
-                }
-                self.is_panicking.store(true, Ordering::Relaxed);
-                panic::resume_unwind(panic);
-            }
-        }
-    }
-
-    /// poll an event that is ready to process
-    /// when the event is returned the bottom half is already run
-    /// the API is "completion" mode
-    /// if any panic in select coroutine detected during the poll
-    /// it will propagate the panic to the caller
-    pub fn poll(&self, timeout: Option<Duration>) -> Result<Event, PollError> {
-        macro_rules! run_ev {
-            ($ev:ident) => {{
-                if $ev.kind == EventKind::Done {
-                    self.check_panic($ev.id);
-                    continue;
-                }
-                $ev.continue_bottom();
-                return Ok($ev);
-            }};
-        }
-
-        let deadline = timeout.map(|dur| Instant::now() + dur);
-        loop {
-            match self.ev_queue.pop() {
-                Some(mut ev) => run_ev!(ev),
-                None => {
-                    if self.cnt.load(Ordering::Relaxed) == 0 {
-                        return Err(PollError::Finished);
-                    }
-                }
-            }
-
-            let cur = Blocker::current();
-            // register the waiter
-            self.to_wake.store(cur.clone());
-            // re-check the queue
-            match self.ev_queue.pop() {
-                None => {
-                    cur.park(timeout).ok();
-                }
-                Some(mut ev) => {
-                    self.to_wake.take();
-                    run_ev!(ev);
-                }
-            }
-
-            // check the timeout
-            match deadline {
-                Some(d) if Instant::now() >= d => return Err(PollError::Timeout),
-                _ => {}
-            }
-        }
-    }
-}
-
-impl Drop for Cqueue {
-    // this would cancel all unfinished select coroutines
-    // and wait until all of them return back
-    fn drop(&mut self) {
-        // first cancel all the select coroutines if they are running
-        self.selectors
-            .lock()
-            .unwrap()
-            .iter()
-            .map(|j| j.as_ref())
-            .fold((), |_, join| match join {
-                Some(j) if !j.is_done() => j.coroutine().cancel(),
-                _ => {}
-            });
-
-        // if self.is_panicking {
-        //     return;
-        // }
-
-        // run the rest event
-        loop {
-            match self.poll(None) {
-                Ok(_) => {}
-                Err(_e @ PollError::Finished) => break,
-                _ => unreachable!("cqueue drop unreachable"),
-            }
-        }
-        // we are sure that all the coroutines are finished
-    }
-}
-
-/// Create a new `scope`, for select coroutines.
-///
-/// Scopes, in particular, support scoped select coroutine spawning.
-///
-pub fn scope<'a, F, R>(f: F) -> R
-where
-    F: FnOnce(&Cqueue) -> R + 'a,
-{
-    let cqueue = Cqueue {
-        ev_queue: Queue::new(),
-        to_wake: AtomicOption::none(),
-        cnt: AtomicUsize::new(0),
-        selectors: Mutex::new(Vec::new()),
-        total: AtomicUsize::new(0),
-        is_panicking: AtomicBool::new(false),
-    };
-    f(&cqueue)
-}
-
+        // Take the handle and release the `selectors` lock before joining:
+        // `join` can park, and the `resume_unwind` below must not run while
+        // the lock is held, otherwise the unwind poisons the mutex and a later
+        // `lock().unwrap()` (e.g. in `Drop` while unwinding) aborts.
+        let handle = {
+            let mut selectors = se
 ```
 
 
@@ -2187,399 +2146,438 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85ee8636` (2026-11-09)
-**Commit Message**: fix: resolve TOCTOU race condition in mpmc disconnect notification
+### Incident Patch 1: `9753742c` (2026-11-11)
+**Commit Message**: fix(cqueue): keep selector panics from poisoning or aborting
 
-Fix intermittent test failure in multi_receiver_disconnect_wakeup where not
-all receivers were woken when the last sender dropped.
+A selector panic raised by `poll` was re-raised while the `selectors`
+mutex was held (the guard was a match-scrutinee temporary), so the
+unwind poisoned the mutex. `Cqueue::drop` then called `lock().unwrap()`
+while unwinding and aborted the process.
 
-The bug was a TOCTOU (time-of-check, time-of-use) race condition in drop_tx:
-a receiver could register (decrement semaphore counter) between checking
-has_waiters() and calling post(), leaving them unnotified.
+- take the join handle under the lock, and join/resume the unwind only
+  after releasing it
+- during `Drop`, record selector panics instead of unwinding, drain every
+  selector first, and never re-raise while the thread is already
+  unwinding
+- bound `poll(timeout)` waits by the remaining deadline instead of the
+  full timeout, returning immediately once it has expired
+- publish the Done event before decrementing `cnt` (release/acquire) and
+  re-check the queue before reporting `Finished`
+- clear the stale waiter on every `poll` return path
+- document the single-owner contract and assert sequential add/poll in
+  debug builds
 
-Solution:
-- Add post_and_check() to Semphore that returns true if a waiter was woken
-- Update drop_tx() to loop until post_and_check() returns false, ensuring
-  all receivers see the disconnect even if they register concurrently
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-Testing: multi_receiver_disconnect_wakeup now passes consistently; all MPMC
-tests and sync primitives tests pass without regression.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `src/sync/mpmc.rs` (modified, +9/-2)
+**File**: `src/cqueue.rs` (modified, +215/-86)
 ```diff
-@@ -127,8 +127,15 @@ impl<T> InnerQueue<T> {
-                 // so it observes the disconnect. No spare permit is left
-                 // behind: receivers that register after this wakeup observe
-                 // `tx_ports == 0` through `wait_timeout_until`.
--                while self.sem.has_waiters() {
--                    self.sem.post();
-+                //
-+                // Keep posting until no more waiters are woken. This handles
-+                // the race where a receiver can register after we check for
-+                // waiters but before we post. By repeatedly posting until
-+                // post_and_check returns false, we ensure all receivers
-+                // (including those registering concurrently) observe the
-+                // disconnect.
-+                while self.sem.post_and_check() {
-+                    // Keep posting
-                 }
-             }
-             n if n > 1 => {}
+@@ -1,3 +1,29 @@
++//! A select-style event queue for scoped coroutines.
++//!
++//! [`scope`] creates a [`Cqueue`]. Each selector added with [`Cqueue::add`]
++//! (usually through the `cqueue_add!` / `cqueue_add_oneshot!` macros) runs as
++//! a coroutine: its *top half* runs until it calls [`EventSender::send`], which
++//! queues an event and suspends the selector. [`Cqueue::poll`] later resumes
++//! that selector's *bottom half* on the polling coroutine, so bottom halves
++//! run sequentially and only on the poller.
++//!
++//! # Constraints
++//!
++//! * Only one coroutine/thread may call [`Cqueue::poll`] on a given cqueue: the
++//!   event queue has a single consumer and `to_wake` holds a single waiter.
++//! * Selectors must all be registered before polling starts, and the cqueue
++//!   has a single owner: [`Cqueue::add`] must not run concurrently with
++//!   another `add` or with `poll`. Debug builds assert this.
++//! * An [`EventSender`] must only be used from the selector coroutine it was
++//!   passed to. It is `Send` because the selector closure captures it, but
++//!   `send` yields the *current* coroutine, so using it from another coroutine
++//!   would resume the wrong one.
++//! * A panic in a selector is re-raised by a later [`Cqueue::poll`], or by
++//!   `Drop` after every selector has been cancelled and drained; only the
++//!   first selector panic is propagated. If the thread is already unwinding,
++//!   the panic is dropped instead of aborting the process.
++
++use std::any::Any;
+ use std::panic;
+ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+ use std::sync::Arc;
+@@ -13,36 +39,39 @@ use crate::sync::Mutex;
+ use crate::sync::{AtomicOption, Blocker};
+ use crate::yield_now::yield_with;
+ 
++use generator::Error;
+ use may_queue::mpsc::Queue;
+ 
+-/// This enumeration is the list of the possible reasons that `poll`
+-/// could not return Event when called.
++/// The list of possible reasons that `poll` could not return an event.
+ #[derive(PartialEq, Eq, Clone, Copy, Debug)]
+ pub enum PollError {
+-    /// This cqueue currently has no event and timeout happens
+-    /// so data may become available in future
++    /// The cqueue has no ready event and the timeout expired; an event may
++    /// become available in the future.
+     Timeout,
+ 
+-    /// This cqueue associated select coroutines are all finished
+-    /// so there will never be any more event received on it unless
+-    /// subscribe new select coroutines by using `add`
++    /// All select coroutines associated with this cqueue have finished, so no
++    /// more events can be received unless new select coroutines are added with
++    /// [`Cqueue::add`].
+     Finished,
+ }
+ 
+ /// This enumeration is the list of the possible reasons that an event
+ /// is generated
+ #[derive(PartialEq, Eq, Clone, Copy, Debug)]
+ enum EventKind {
+-    /// the select coroutine has successfully generated an event from top half
+-    /// so we can continue it's bottom half after call the `poll`
++    /// the select coroutine has successfully generated an event from its top
++    /// half, so its bottom half can be continued by `poll`
+     Normal,
+ 
+-    /// indicate a select coroutine is finished
++    /// indicates a select coroutine is finished
+     Done,
+ }
+ 
+-/// The event that `poll` would return, events are generated when a select coroutine
+-/// has finished it's top half
++/// The event that `poll` returns. Events are generated when a select coroutine
++/// reaches [`EventSender::send`] in its top half.
++///
++/// Returned events never own the coroutine: the bottom half has already run by
++/// the time `poll` returns it.
+ #[derive(Debug)]
+ pub struct Event {
+     /// the token associated with the select coroutine
+@@ -53,12 +82,12 @@ pub struct Event {
+     id: usize,
+     /// the event type
+     kind: EventKind,
+-    // the async coroutine that work on an select
++    // the suspended coroutine that will run the bottom half, if any
+     co: Option<CoroutineImpl>,
+ }
+ 
+ impl Event {
+-    /// continue the select coroutine with it's bottom half
++    /// continue the select coroutine with its bottom half
+     /// when `poll` got a Normal event, should always call it first
+     fn continue_bottom(&mut self) {
+         if let Some(co) = self.co.take() {
+@@ -67,22 +96,29 @@ impl Event {
+     }
+ }
+ 
+-/// a handle type for the select coroutine
+-/// you can only use the `remove` method to manually delete the coroutine
++/// A handle to a select coroutine.
++///
++/// Dropping the handle does not stop the coroutine: use [`Selector::remove`]
++/// to cancel it. Cancellation is asynchronous, so events already queued may
++/// still be delivered before the coroutine finishes.
+ pub struct Selector {
+     co: Coroutine,
+ }
+ 
+ impl Selector {
+-    /// terminate the select coroutine
+-    /// this would remove the selector from the associated cqueue
++    /// Terminate the select coroutine.
++    ///
++    /// This cancels the coroutine; it is removed from the cqueue
++    /// asynchronously, once
 ```
 
-**File**: `src/sync/semphore.rs` (modified, +26/-0)
+**File**: `tests/cqueue.rs` (modified, +83/-0)
 ```diff
-@@ -249,6 +249,32 @@ impl Semphore {
-         }
-     }
+@@ -234,3 +234,86 @@ fn cqueue_loop() {
  
-+    /// Increment the semaphore and wake one waiter if any exist.
-+    /// Returns `true` if a waiter was woken, `false` if there were no waiters.
-+    pub(crate) fn post_and_check(&self) -> bool {
-+        // CAS loop so the counter is not wrapped before the overflow check
-+        // can fire
-+        let prev = loop {
-+            let cur = self.cnt.load(Ordering::SeqCst);
-+            assert!(cur < isize::MAX, "semaphore permit count overflow");
-+            match self
-+                .cnt
-+                .compare_exchange_weak(cur, cur + 1, Ordering::SeqCst, Ordering::SeqCst)
-+            {
-+                Ok(_) => break cur,
-+                Err(_) => continue,
-+            }
-+        };
+     assert_eq!(result, 50);
+ }
 +
-+        // try to wakeup one waiter first
-+        if prev < 0 {
-+            self.wakeup_one();
-+            true
-+        } else {
-+            false
++// A selector panic observed by `poll` must propagate without poisoning the
++// cqueue: `Drop` still has to cancel and drain the other selectors.
++#[test]
++#[should_panic(expected = "panic in selector")]
++fn cqueue_panic_seen_by_poll() {
++    cqueue::scope(|cqueue| {
++        go!(cqueue, 0, |_es| {
++            panic!("panic in selector");
++        });
++        // stays alive while the panic above propagates through `poll`
++        cqueue_add_oneshot!(cqueue, 1, _ = coroutine::sleep(Duration::from_secs(30)) => {});
++
++        std::thread::sleep(Duration::from_millis(100));
++        let _ = cqueue.poll(None);
++    });
++}
++
++// A selector panic detected while the scope is already unwinding must be
++// dropped, not re-raised (that would abort the process).
++#[test]
++#[should_panic(expected = "panic in scope")]
++fn cqueue_selector_panic_while_unwinding() {
++    cqueue::scope(|cqueue| {
++        go!(cqueue, 0, |_es| {
++            panic!("panic in selector");
++        });
++        cqueue_add_oneshot!(cqueue, 1, _ = coroutine::sleep(Duration::from_secs(30)) => {});
++
++        // let the selector panic and queue its Done event, then unwind the
++        // scope while the other selector is still alive
++        std::thread::sleep(Duration::from_millis(100));
++        panic!("panic in scope");
++    });
++}
++
++#[test]
++fn cqueue_zero_timeout() {
++    cqueue::scope(|cqueue| {
++        cqueue_add_oneshot!(cqueue, 0, _ = coroutine::sleep(Duration::from_secs(30)) => {});
++        let start = std::time::Instant::now();
++        match cqueue.poll(Some(Duration::ZERO)) {
++            Err(Timeout) => {}
++            _ => unreachable!(),
 +        }
-+    }
++        assert!(start.elapsed() < Duration::from_secs(1));
++    });
++}
 +
-     /// Return the current semaphore value.
-     ///
-     /// Queued waiters are not reported: the value is clamped to `0` while
++// Concurrent `add` is not supported and is rejected in debug builds.
++#[test]
++#[cfg(debug_assertions)]
++fn cqueue_concurrent_add_is_rejected_in_debug() {
++    cqueue::scope(|cqueue| {
++        cqueue_add_oneshot!(cqueue, 0, _ = coroutine::sleep(Duration::from_secs(30)) => {});
++        let (tx, rx) = std::sync::mpsc::channel();
++        std::thread::scope(|s| {
++            s.spawn(|| {
++                // `poll` below owns the cqueue while it waits
++                std::thread::sleep(Duration::from_millis(50));
++                let r = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
++                    let _ = cqueue.add(1, |_es| {});
++                }));
++                let msg = r.err().map(|e| {
++                    e.downcast_ref::<String>()
++                        .cloned()
++                        .or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string()))
++                        .unwrap_or_default()
++                });
++                tx.send(msg).unwrap();
++            });
++            match cqueue.poll(Some(Duration::from_millis(200))) {
++                Err(Timeout) => {}
++                _ => unreachable!(),
++            }
++        });
++        let msg = rx.recv().unwrap();
++        assert!(
++            msg.as_deref().is_some_and(|m| m.contains("not supported")),
++            "unexpected panic: {msg:?}"
++        );
++    });
++}
 ```
 
 ---
 
-### Incident Patch 2: `247f823c` (2026-11-09)
-**Commit Message**: :pencil: fix and refine mutex logic
+### Incident Patch 2: `fb98f2ad` (2026-11-12)
+**Commit Message**: fix: publish the scheduler only after startup succeeds
 
-**File**: `src/cancel.rs` (modified, +1/-0)
-```diff
-@@ -130,6 +130,7 @@ impl<T: CancelIo> CancelImpl<T> {
-     }
- 
-     // return if the coroutine cancel is disabled
-+    #[allow(dead_code)]
-     pub fn is_disabled(&self) -> bool {
-         self.state.load(Ordering::Acquire) >= 2
-     }
-```
+`init_scheduler` stored `SCHED` before spawning the timer and worker
+threads and before `core_affinity::get_core_ids().unwrap()`. A panic in
+any of those steps left a published scheduler with missing workers:
+`collect_global` only drains its own id's queue and stealing only pulls
+local queues, so coroutines routed to a dead id's global queue never ran
+and `join()` hung. The poisoned `Once` did not help because the fast path
+in `get_scheduler` returns whenever `SCHED` is non-null.
 
-**File**: `src/sync/blocking.rs` (modified, +6/-0)
-```diff
-@@ -259,6 +259,12 @@ impl SyncBlocker {
-         self.release.store(true, Ordering::SeqCst);
-     }
- 
-+    /// read back release flag
-+    #[inline]
-+    pub fn is_released(&self) -> bool {
-+        self.release.load(Ordering::SeqCst)
-+    }
-+
-     /// Take the release flag. Returns true exactly once if it was set.
-     #[inline]
-     pub fn take_release(&self) -> bool {
-```
+Keep the scheduler owned as a `Box` until every fallible step has run,
+and have the new threads wait in `get_scheduler` (parked on the
+initializing `Once`) instead of reading `SCHED` directly. Publish with
+the final store, so a startup panic leaves `SCHED` null and later callers
+fail loudly on the poisoned `Once` rather than running half-started.
 
-**File**: `src/sync/condvar.rs` (modified, +1/-8)
-```diff
-@@ -15,8 +15,7 @@ use crate::park::ParkError;
- 
- /// restores cancel delivery on drop, so that a panic between
- /// `disable_cancel` and `enable_cancel` cannot leave the coroutine with
--/// cancel permanently disabled (the cancel data state is inflated by 2 per
--/// disable and only deflated by a matching enable)
-+/// cancel permanently disabled
- struct CancelDisableGuard(&'static Cancel);
- 
- impl CancelDisableGuard {
-@@ -83,16 +82,10 @@ impl Condvar {
-         // enqueue the blocker
-         let cur = SyncBlocker::current();
- 
--        // we can't cancel panic here!!
--        let _g = cancel.map(CancelDisableGuard::new);
--
-         self.to_wake.push(cur.clone());
- 
-         // unlock the mutex to let other continue
-         mutex::unlock_mutex(lock);
--        // re-enable cancel before parking: a pending cancel is delivered
--        // by the park itself
--        drop(_g);
- 
-         // wait until coming back
-         let ret = cur.park(dur);
-```
+Also fetch the core ids only when pinning is enabled and treat a missing
+affinity mask as running unpinned instead of panicking; previously the
+unwrap ran even with `set_worker_pin(false)`.
 
-**File**: `src/sync/mutex.rs` (modified, +42/-64)
+**File**: `src/scheduler.rs` (modified, +36/-12)
 ```diff
-@@ -14,7 +14,7 @@ use super::poison;
- use crate::cancel::trigger_cancel_panic;
- use crate::park::ParkError;
- 
--use may_queue::mpsc::Queue;
-+use crossbeam::queue::SegQueue as Queue;
- 
- /// A mutual exclusion primitive useful for protecting shared data.
- ///
-@@ -104,60 +104,50 @@ impl<T: ?Sized> Mutex<T> {
-             Err(TryLockError::Poisoned(e)) => return Err(e),
-         }
- 
-+        let wait_queue = self.to_wake.get_or_init(Queue::new);
-         let cur = SyncBlocker::current();
-         // register blocker first
--        self.to_wake.get_or_init(Queue::new).push(cur.clone());
-+        wait_queue.push(cur.clone());
-         // inc the cnt, if it's the first grab, unpark the first waiter
-         if self.cnt.fetch_add(1, Ordering::SeqCst) == 0 {
--            let w = self
--                .to_wake
--                .get_or_init(Queue::new)
--                .pop()
--                .expect("got null blocker!");
--            if self.unpark_one(&w) {
-+            let w = wait_queue.pop().expect("got null blocker!");
-+            if w.take_release() {
-                 self.unlock();
-+            } else {
-+                w.unpark();
-             }
-         }
--        loop {
--            match cur.park(None) {
--                Ok(_) => {
--                    break;
--                }
--                Err(ParkError::Timeout) => unreachable!("mutex timeout"),
--                Err(ParkError::Canceled) => {
--                    let b_ignore = if crate::coroutine_impl::is_coroutine() {
--                        let cancel = crate::coroutine_impl::current_cancel_data();
--                        cancel.is_disabled()
--                    } else {
--                        false
--                    };
--                    // check the unpark status
--                    if cur.is_unparked() {
--                        if b_ignore {
--                            break;
--                        }
-+
-+        match cur.park(None) {
-+            Ok(_) => MutexGuard::new(self),
-+            Err(ParkError::Timeout) => unreachable!("mutex timeout"),
-+            Err(ParkError::Canceled) => {
-+                // at this point, the couroutine can come alive from
-+                // two possibilities: normal unpark or cancellation
-+                // in normal unpark we don't set_release
-+                if cur.is_unparked() {
-+                    // need to wake next waiter before we panic
-+                    self.unlock();
-+                } else {
-+                    // mark as canceled in the waiter queue
-+                    // normal unlock would skip it
-+                    cur.set_release();
-+                    // check again the release status
-+                    // if it becomes false means a normal unpark
-+                    // we need to wakeup next waiter before we panic
-+                    if !cur.is_released() {
-                         self.unlock();
--                    } else if !b_ignore {
--                        // register the release action: if we get handed the
--                        // lock while unwinding, pass it on to the next waiter
--                        cur.set_release();
--                        // re-check unpark status
--                        if cur.is_unparked() && cur.take_release() {
--                            self.unlock();
--                        }
--                    }
--                    // we ignore the cancel, just to wait the actual event
--                    if b_ignore {
--                        continue;
-+                    } else {
-+                        // now just leave the waiter in the wait_queue
-+                        // and it is marked as **released**
-+                        // normal `unlock()` sould pop it out with no action
-                     }
--
--                    // now we can safely go with the cancel panic
--                    trigger_cancel_panic();
-                 }
-+
-+                // now we can safely go with the cancel panic
-+                trigger_cancel_panic();
-             }
-         }
--
--        MutexGuard::new(self)
-     }
- 
-     /// Attempts to acquire the mutex without blocking.
-@@ -179,32 +169,20 @@ impl<T: ?Sized> Mutex<T> {
-         }
-     }
- 
--    /// unpark one waiter, return true if it registered a release action:
--    /// it is unwinding (canceled) and won't take the lock, so the hand-off
--    /// must continue with the next waiter
--    fn unpark_one(&self, w: &SyncBlocker) -> bool {
--        w.unpark();
--        w.take_release()
--    }
--
-+    /// Pop one waiter from the queue and unpark it.
-+    ///
-+    /// This function is called internally when the mutex is unlocked to wake up
-+    /// one of the waiting coroutines, if any. It will continue to unpark waiters
-+    /// until it finds one that is not canceled.
-     fn unlock(&self) {
--        // pass the lock down the waiter chain iteratively: a popped waiter
--        // that registered a release action is unwinding and won't take the
--        // lock, so the hand-off contin
-```
-
-**File**: `src/sync/rwlock.rs` (modified, +38/-72)
-```diff
-@@ -1,4 +1,4 @@
--//! compatible with std::sync::rwlock except for both thread and coroutine
-+﻿//! compatible with std::sync::rwlock except for both thread and coroutine
- //! please ref the doc from std::sync::rwlock
- use std::cell::UnsafeCell;
- use std::fmt;
-@@ -11,7 +11,6 @@ use std::sync::{LockResult, OnceLock, PoisonError, TryLockError, TryLockResult};
- use std::thread;
- 
- use crate::cancel::trigger_cancel_panic;
--use crate::coroutine_impl::{current_cancel_data, is_coroutine};
- use crate::park::ParkError;
- use crossbeam::queue::SegQueue;
- 
-@@ -36,8 +35,6 @@ use super::poison;
- /// under a constant stream of readers. Apart from that, waiter hand-off is
- /// FIFO.
- pub struct RwLock<T: ?Sized> {
--    // below two variables consist a global mutex
--    // we need to deal with the cancel logic differently
-     // the waiting blocker list, allocated lazily on first contention
-     // so that `RwLock::new` can be a const fn
-     to_wake: OnceLock<SegQueue<Arc<SyncBlocker>>>,
-@@ -132,32 +129,46 @@ impl<T: ?Sized> RwLock<T> {
-             }
-         }
- 
-+        let wait_queue = self.to_wake.get_or_init(SegQueue::new);
-+
-         let cur = SyncBlocker::current();
-         // register blocker first
--        self.to_wake.get_or_init(SegQueue::new).push(cur.clone());
-+        wait_queue.push(cur.clone());
-         // inc the cnt, if it's the first grab, unpark the first waiter
-         if self.cnt.fetch_add(1, Ordering::SeqCst) == 0 {
--            self.to_wake
--                .get_or_init(SegQueue::new)
--                .pop()
--                .map(|w| self.unpark_one(&w))
--                .expect("got null blocker!");
-+            let w = wait_queue.pop().expect("got null blocker!");
-+            if w.take_release() {
-+                self.unlock();
-+            } else {
-+                w.unpark();
+@@ -60,12 +60,27 @@ fn load_scheduler() -> Option<&'static Scheduler> {
+ #[cold]
+ fn init_scheduler() {
+     let workers = config().get_workers();
+-    let b: Box<Scheduler> = Scheduler::new(workers);
+-    let sched: &'static Scheduler = Box::leak(b);
+-    SCHED.store(
+-        sched as *const Scheduler as *mut Scheduler,
+-        Ordering::Release,
+-    );
++    let pin_cores = config().get_worker_pin();
++    // Fetch the core ids only when pinning is requested, and never fail the
++    // whole startup over them: a missing affinity mask just means the workers
++    // run unpinned.
++    let core_ids = if pin_cores {
++        match core_affinity::get_core_ids() {
++            Some(ids) if !ids.is_empty() => Some(ids),
++            _ => {
++                warn!("can't get core ids, worker pinning disabled");
++                None
 +            }
-         }
-         match cur.park(None) {
-             Ok(_) => Ok(()),
-             Err(ParkError::Timeout) => unreachable!("rwlock timeout"),
-             Err(ParkError::Canceled) => {
--                // check the unpark status
-+                // at this point, the couroutine can come alive from
-+                // two possibilities: normal unpark or cancellation
-+                // in normal unpark we don't set_release
-                 if cur.is_unparked() {
-+                    // need to wake next waiter before we panic
-                     self.unlock();
-                 } else {
--                    // register
-+                    // mark as canceled in the waiter queue
-+                    // normal unlock would skip it
-                     cur.set_release();
--                    // re-check unpark status
--                    if cur.is_unparked() && cur.take_release() {
-+                    // check again the release status
-+                    // if it becomes false means a normal unpark
-+                    // we need to wakeup next waiter
-+                    if !cur.is_released() {
-                         self.unlock();
-+                    } else {
-+                        // now just leave the waiter in the wait_queue
-+                        // and it is marked as **released**
-+                        // normal `unlock()` sould pop it out with no action
-                     }
-                 }
++        }
++    } else {
++        None
++    };
 +
-                 Err(ParkError::Canceled)
-             }
-         }
-@@ -180,43 +191,21 @@ impl<T: ?Sized> RwLock<T> {
-         }
-     }
++    // Keep ownership of the scheduler until every fallible startup step below
++    // has completed. The new threads obtain it through `get_scheduler`, which
++    // blocks on the `Once` the initializing thread is currently inside, so
++    // nothing can observe the `SCHED` pointer before it is stored.
++    let sched: Box<Scheduler> = Scheduler::new(workers);
  
-+    /// Pop one waiter from the queue and unpark it
-+    /// until it finds one that is not canceled.
-     fn unlock(&self) {
--        // pass the lock down the waiter chain iteratively: a popped waiter
--        // that registered a release action timed out or was canceled and
--        // won't take the lock, so the hand-off continues with the next
--        // waiter. Recursing here would overflow the (small, 32KB default)
--        // coroutine stack when a cancel storm leaves a long chain of
--        // released waiters (see the same fix in `Mutex::unlock` and
--        // `Condvar::notify_one`).
-+        let wait_queue = self.to_wake.get_or_init(SegQueue::new);
-         let mut cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
-         while cnt > 1 {
--            let w = self
--                .to_wake
--                .get_or_init(SegQueue::new)
--                .pop()
--                .expect("got null blocker!");
+     // timer thread
+     thread::spawn(move || {
+@@ -80,22 +95,31 @@ fn init_scheduler() {
+             }
+         };
+ 
+-        let s = load_scheduler().expect("scheduler published before spawn");
++        // wait until `init_scheduler` publishes the scheduler; if it panicked
++        // this panics on the poisoned `Once` and the thread exits instead of
++        // running against a half-initialized scheduler
++        let s = get_scheduler();
+         s.timer_thread.run(&timer_event_handler);
+     });
+ 
+-    let core_ids = core_affinity::get_core_ids().unwrap();
+-    let pin_cores = config().get_worker_pin();
+     // io event loop thread
+-    for (id, core) in (0..workers).zip(core_ids.into_iter().cycle()) {
++    for id in 0..workers {
++        let core = core_ids.as_ref().map(|ids| ids[id % ids.len()]);
+         thread::spawn(move || {
+-            if pin_cores {
++            if let Some(core) = core {
+                 core_affinity::set_for_current(core);
+             }
+-            let s = load_scheduler().expect("scheduler published before spawn");
++            // see the timer thread above
++            let s = get_scheduler();
+             s.event_loop.run(id);
+         });
+     }
++
++    // Publish only after all threads have been spawned. If a step above
++    // panicked, `sched` is dropped during unwinding and `SCHED` stays null, so
++    // later callers see the poisoned `Once` instead of a scheduler with
++    // missing workers.
++    SCHED.store(Box::into_raw(sched), Ordering::Release);
+ }
+ 
+ #[inline]
+```
+
+---
+
+### Incident Patch 3: `c77bbed3` (2026-11-12)
+**Commit Message**: fix: make the work-steal scan exhaustive so no queue is stranded
+
+A worker probed the same three victims on every idle round, so a busy
+queue outside that fixed window was never found. A local enqueue does not
+wake a worker parked in `select`, so the thief slept until the next
+selector timeout while work sat in another worker's queue.
+
+Scan every other worker once instead, starting at a random offset. A
+failed probe is three acquire loads and no RMW, and a successful steal
+moves a whole block, so one hit is enough to keep the thief busy; the
+random start only varies the probe order and keeps concurrent thieves
+from herding on the same victim.
+
+Random stealing is now unconditional, so drop the `rand_work_steal`
+feature. `work_steal` pulls in `fastrand` instead, and the sweep uses the
+thread-local RNG rather than reseeding an `Rng` on every drain.
+
+**File**: `Cargo.toml` (modified, +1/-2)
+```diff
+@@ -68,8 +68,7 @@ serde_derive = "1.0"
+ default = ["io_cancel", "io_timeout", "work_steal"]
+ io_cancel = []
+ io_timeout = []
+-work_steal = []
+-rand_work_steal = ["work_steal", "dep:fastrand"]
++work_steal = ["dep:fastrand"]
+ crossbeam_queue_steal = ["work_steal"]
+ 
+ 
+```
+
+**File**: `src/scheduler.rs` (modified, +28/-14)
+```diff
+@@ -272,15 +272,13 @@ impl Scheduler {
+     #[inline]
+     #[cfg(feature = "work_steal")]
+     pub fn run_queued_tasks(&self, id: usize) {
+-        let max_steal: usize = std::cmp::min(3, self.workers - 1);
 -
--            w.unpark();
--            // when release is taken, the waiter is leaving without the lock
--            // and its slot must be released as well
-+            let w = wait_queue.pop().expect("got null blocker!");
-             if !w.take_release() {
-+                w.unpark();
-                 break;
-             }
-             cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
-         }
-     }
+-        #[cfg(feature = "rand_work_steal")]
+-        let mut rng = fastrand::Rng::new();
+-
+         // see `LOCAL_TASK_BUDGET`: bound the drain so the worker returns to
+         // `select` even when coroutines keep re-queueing themselves locally
+         let mut remaining = LOCAL_TASK_BUDGET;
  
--    /// Unpark one waiter for the first-grab path in [`lock`].
--    ///
--    /// If the waiter has already registered its release action, continue the
--    /// hand-off with the iterative [`unlock`] loop.
--    fn unpark_one(&self, w: &SyncBloc
++        // Number of other workers; a single worker has nothing to steal from.
++        let targets = self.workers - 1;
++
+         'work: loop {
+             if remaining == 0 {
+                 // Anything left in the queue is reported by
+@@ -306,15 +304,31 @@ impl Scheduler {
+                 }
+             }
+ 
+-            // The i variable is unused if rand_work_steal is enabled since it selects the steal target randomly instead.
+-            for _i in 0..max_steal {
+-                cfg_if::cfg_if! {
+-                    if #[cfg(feature = "rand_work_steal")] {
+-                        let target = rng.usize(0..self.workers);
+-                    } else {
+-                        let target = (id + _i + 1) % self.workers;
+-                    }
+-                };
++            if targets == 0 {
++                return;
++            }
++
++            // Visit every other worker once, starting at a random offset.
++            //
++            // The exhaustive sweep is what keeps the scheduler
++            // work-conserving: a bounded scan could retry the same victims
++            // forever while the only busy queue sat outside the window, and
++            // a local enqueue does not wake a worker parked in `select`.
++            // The random start only varies the probe order - it keeps
++            // concurrent thieves from herding on the same victim and spreads
++            // theft around the worker set; every victim is still visited
++            // before this worker sleeps.
++            //
++            // A failed probe is three acquire loads and no RMW, and the
++            // queues of idle workers are not written, so a sweep of empty
++            // queues is cheap. `steal_into` moves a whole block, so one
++            // successful probe is enough to keep this worker busy.
++            let start = fastrand::usize(0..targets);
++            for k in 0..targets {
++                // compacted victim index in `0..targets`, mapped to a worker
++                // id by skipping our own
++                let v = (start + k) % targets;
++                let target = if v >= id { v + 1 } else { v };
+                 let stealer = self.stealers.get(target).unwrap();
+                 let stolen = stealer.steal_into(unsafe { self.local_queue(id) });
+                 if let Some(co) = stolen {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2608,37 +2606,65 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resolve TOCTOU race condition in mpmc disconnect notification
+## X. cqueue): keep selector panics from poisoning or aborting
 
 **RULE**:
-When implementing operations in `src/sync/mpmc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cqueue.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85ee8636`: resolve TOCTOU race condition in mpmc disconnect notification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9753742c`: cqueue): keep selector panics from poisoning or aborting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/mpmc.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cqueue.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                //
-                // Keep posting until no more waiters are woken. This handles
-                // the race where a receiver can register after we check for
-                // waiters but before we post. By repeatedly posting until
-                // post_and_check returns false, we ensure all receivers
-                // (including those registering concurrently) observe the
-                // disconnect.
-                while self.sem.post_and_check() {
-                    // Keep posting
+//! A select-style event queue for scoped coroutines.
+//!
+//! [`scope`] creates a [`Cqueue`]. Each selector added with [`Cqueue::add`]
+//! (usually through the `cqueue_add!` / `cqueue_add_oneshot!` macros) runs as
+//! a coroutine: its *top half* runs until it calls [`EventSender::send`], which
+//! queues an event and suspends the selector. [`Cqueue::poll`] later resumes
+//! that selector's *bottom half* on the polling coroutine, so bottom halves
+//! run sequentially and only on the poller.
+//!
+//! # Constraints
+//!
+//! * Only one coroutine/thread may call [`Cqueue::poll`] on a given cqueue: the
+//!   event queue has a single consumer and `to_wake` holds a single waiter.
+//! * Selectors must all be registered before polling starts, and the cqueue
+//!   has a single owner: [`Cqueue::add`] must not run concurrently with
+//!   another `add` or with `poll`. Debug builds assert this.
+//! * An [`EventSender`] must only be used from the selector coroutine it was
+//!   passed to. It is `Send` because the selector closure captures it, but
+//!   `send` yields the *current* coroutine, so using it from another coroutine
+//!   would resume the wrong one.
+//! * A panic in a selector is re-raised 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                while self.sem.has_waiters() {
-                    self.sem.post();
+/// This enumeration is the list of the possible reasons that `poll`
+/// could not return Event when called.
+    /// This cqueue currently has no event and timeout happens
+    /// so data may become available in future
+    /// This cqueue associated select coroutines are all finished
+    /// so there will never be any more event received on it unless
+    /// subscribe new select coroutines by using `add`
+    /// the select coroutine has successfully generated an event from top half
+    /// so we can continue it's bottom half after call the `poll`
+    /// indicate a select coroutine is finished
+/// The event that `poll` would return, events are generated when a select coroutine
+/// has finished it's top half
+    // the async coroutine that work on an select
+    /// continue the select coroutine with it's bottom half
+/// a handle type for the select coroutine
+/// you can only use the `remove` method to manually delete the coroutine
+    /// terminate the select coroutine
+    /// this would remove the selector from the associated cqueue
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85ee8636` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9753742c` are properly handled with clean fallback behavior.

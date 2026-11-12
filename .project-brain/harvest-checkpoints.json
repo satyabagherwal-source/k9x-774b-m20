@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T10:52:55.048Z",
+  "last_updated": "2026-11-12T11:01:13.817Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
-      "verified_at": "2026-11-10T02:31:53.315Z",
+      "content_hash": "aa703bb2421db91084a561af3a6c5a79efd5e46abbd52e30e0a93cb6c58220d0",
+      "verified_at": "2026-11-12T11:01:13.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:31:53.315Z"
+      "last_updated": "2026-11-12T11:01:13.816Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
-      "verified_at": "2026-11-11T10:35:27.143Z",
+      "content_hash": "cfe55aa32d7a35a09fee3e61002bd4ac8d5ca049313266c6316b374f7f3af52b",
+      "verified_at": "2026-11-12T11:01:10.494Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:35:27.143Z"
+      "last_updated": "2026-11-12T11:01:10.494Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "b3f699fe649fc4b6b3dff592849d93937994da0f8c3c5b8439f3ff58f8802a5c",
-      "verified_at": "2026-11-09T16:40:18.868Z",
+      "content_hash": "59d3cf139775170cb72b792e7c9b1658eeae49646df3da672b63ee2b8fc37eed",
+      "verified_at": "2026-11-12T11:00:58.688Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:40:18.868Z"
+      "last_updated": "2026-11-12T11:00:58.688Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
