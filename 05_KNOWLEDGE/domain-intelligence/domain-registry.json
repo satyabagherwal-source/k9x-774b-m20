@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T08:35:03.646Z",
-  "total_records": 65,
+  "last_updated": "2026-11-12T09:55:51.211Z",
+  "total_records": 66,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 31,
+      "total": 32,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -56,7 +56,8 @@
         "DOM-D-5F13CAC2",
         "DOM-D-0C67C5DB",
         "DOM-D-2EFB96C5",
-        "DOM-D-91EB11DA"
+        "DOM-D-91EB11DA",
+        "DOM-D-78355AEC"
       ]
     },
     "E": {
@@ -2626,6 +2627,48 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T08:35:03.644Z"
+    },
+    "DOM-D-78355AEC": {
+      "record_id": "DOM-D-78355AEC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Viggle/Viggle-Remake",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Viggle/Viggle-Remake](https://huggingface.co/Viggle/Viggle-Remake))  \n> **Source Version**: `hf-viggle-vi`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "bc03315290c7ae73fb6df509234a8156ecfa016c16c1d4f6d75524ee543933c6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-viggle-viggle-remake/hf-viggle-viggle-remake-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T09:55:38.028Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-viggle-viggle-remake)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-viggle-viggle-remake"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T09:55:51.210Z"
     }
   }
 }

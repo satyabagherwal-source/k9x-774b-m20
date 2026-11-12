@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:46:27.864Z",
+  "last_updated": "2026-11-12T09:55:51.226Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6635,6 +6635,24 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0D0B0C-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-8FB668",
+      "directive_title": "cutile)!: remove unsupported load validity checking (#1772)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nvidia-cuda-rust",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8FB668-cutile-remove-unsupported-load-validity-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-6496A9",
+      "directive_title": "+ Appearance override",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "buresdv-cork",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6496A9--appearance-override.md",
       "staged_date": "2026-11-12"
     }
   ]

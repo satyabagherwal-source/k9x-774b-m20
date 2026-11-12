@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source**: github ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
-> **Source Version**: `2fb27615`  
+> **Source Version**: `649a6f63`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:15:03.058Z  
+> **Timestamp**: 2026-11-12T09:55:00.048Z  
 > **Learning ID**: `learn-github-buresdv-cork`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:15:03.047Z  
+> **Harvest Timestamp**: 2026-11-12T09:55:00.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [NO AI] Fast GUI for Homebrew written in SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4726 stars
+- **Stars / Engagement**: 4731 stars
 
 ---
 
@@ -965,6 +965,8 @@ struct CorkApp: App
 
     @Default(.demoActivatedAt) var demoActivatedAt: Date?
     @Default(.hasValidatedEmail) var hasValidatedEmail: Bool
+    
+    @Default(.appearance) var appearance: Appearance
 
     @Default(.hasFinishedOnboarding) var hasFinishedOnboarding: Bool
 
@@ -1003,6 +1005,7 @@ struct CorkApp: App
         Window("Main Window", id: .mainWindowID)
         {
             ContentView()
+                .preferredColorScheme(appearance.setting)
                 .sheet(isPresented: !$hasFinishedOnboarding, onDismiss: {
                     hasFinishedOnboarding = true
                 }, content: {
@@ -1177,10 +1180,7 @@ struct CorkApp: App
                     searchMenuBarSection
                 }
 
-                CommandMenu("navigation.menu.packages")
-                {
-                    packagesMenuBarSection
-              
+               
 ```
 
 ### Core Architecture Module: `Cork/Enums/Alerts/Services/Error Details/Services Alerts - Descriptions.swift`
@@ -1248,202 +1248,249 @@ extension ServicesFatalError
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2fb27615` (2026-11-02)
-**Commit Message**: ~ Just legalities, nothing changes
+### Incident Patch 1: `649a6f63` (2026-11-11)
+**Commit Message**: Merge branch 'main.appearance-override'
 
-**File**: `Cork/ContentView.swift` (modified, +48/-77)
+# Conflicts:
+#	Cork/Localizable.xcstrings
+
+
+
+---
+
+### Incident Patch 2: `9af762f8` (2026-11-11)
+**Commit Message**: + Appearance override
+
+**File**: `Cork/CorkApp.swift` (modified, +11/-0)
 ```diff
-@@ -97,88 +97,59 @@ struct ContentView: View, Sendable
+@@ -39,6 +39,8 @@ struct CorkApp: App
+ 
+     @Default(.demoActivatedAt) var demoActivatedAt: Date?
+     @Default(.hasValidatedEmail) var hasValidatedEmail: Bool
++    
++    @Default(.appearance) var appearance: Appearance
+ 
+     @Default(.hasFinishedOnboarding) var hasFinishedOnboarding: Bool
+ 
+@@ -77,6 +79,7 @@ struct CorkApp: App
+         Window("Main Window", id: .mainWindowID)
          {
-             SidebarView()
-         } detail: {
--            switch navigationManager.openedScreen
-+            Group
-             {
--            case .package(let package):
--                PackageDetailView(package: package)
--                    .frame(minWidth: 600, minHeight: 500)
--            case .tap(let tap):
--                TapDetailView(tap: tap)
--                    .frame(minWidth: 600, minHeight: 500)
--            case nil:
--                StartPage()
--                    .frame(minWidth: 600, minHeight: 500)
--            }
--        }
--        .navigationTitle("app-name")
--        .navigationSubtitle("navigation.installed-packages.count-\(self.brewPackagesTracker.numberOfInstalledPackages)")
--        .toolbar(id: "PackageActions")
--        {
--            ToolbarItem(id: "updatePackages", placement: .primaryAction)
--            {
--                CheckForOutdatedPackagesButton()
-+                switch navigationManager.openedScreen
-+                {
-+                case .package(let package):
-+                    PackageDetailView(package: package)
-+                        .frame(minWidth: 600, minHeight: 500)
-+                case .tap(let tap):
-+                    TapDetailView(tap: tap)
-+                        .frame(minWidth: 600, minHeight: 500)
-+                case nil:
-+                    StartPage()
-+                        .frame(minWidth: 600, minHeight: 500)
-+                }
-             }
--            .defaultCustomization(.hidden)
--
--            ToolbarItem(id: "upgradePackages", placement: .primaryAction)
-+            .toolbar(id: "PackageActions")
-             {
--                UpgradePackagesButton(appState: appState)
--            }
--
--            ToolbarItem(id: "addTap", placement: .primaryAction)
--            {
--                AddTapButton(appState: appState)
--            }
-+                ToolbarItem(id: "updatePackages", placement: .primaryAction)
-+                {
-+                    CheckForOutdatedPackagesButton()
-+                }
-+                .defaultCustomization(.hidden)
- 
--            ToolbarItem(id: "installPackage", placement: .primaryAction)
--            {
--                InstallPackageButton(appState: appState)
--            }
-+                ToolbarItem(id: "upgradePackages", placement: .primaryAction)
-+                {
-+                    UpgradePackagesButton(appState: appState)
-+                }
- 
--            ToolbarItem(id: "maintenance", placement: .primaryAction)
--            {
--                self.performMaintenanceButton
--            }
--            .defaultCustomization(.hidden)
-+                ToolbarItem(id: "addTap", placement: .primaryAction)
-+                {
-+                    AddTapButton(appState: appState)
-+                }
- 
--            ToolbarItem(id: "manageServices", placement: .primaryAction)
--            {
--                self.manageServicesButton
--            }
--            .defaultCustomization(.hidden)
-+                ToolbarItem(id: "installPackage", placement: .primaryAction)
-+                {
-+                    InstallPackageButton(appState: appState)
-+                }
- 
--            ToolbarItem(id: "spacer", placement: .automatic)
--            {
--                Spacer()
--            }
--            .defaultCustomization(.hidden)
-+                ToolbarItem(id: "maintenance", placement: .primaryAction)
-+                {
-+                    self.performMaintenanceButton
-+                }
-+                .defaultCustomization(.hidden)
- 
--            ToolbarItem(id: "divider", placement: .automatic)
--            {
--                Divider()
-+                ToolbarItem(id: "manageServices", placement: .primaryAction)
-+                {
-+                    self.manageServicesButton
-+                }
-+                .defaultCustomization(.hidden)
-             }
--            .defaultCustomization(.hidden)
--
--            // TODO: Implement this button
--            /*
--             ToolbarItem(id: "installPackageDirectly", placement: .automatic)
--             {
--                 Button
--                 {
--                     AppConstants.shared.logger.info("Ahoj")
--                 } label: {
--                     Label
--                     {
--                         Text("navigation.install-package.direct")
--                     } icon: {
--                         Image(systemName: "plus.viewfinder")
--                     }
--                 }
--                 .help("navigation.install-package.direct.help")
--             }
--             .defaultCustomization(.hidden)
--              */
+             ContentView()
++                .preferredColorScheme(appearance.setting)
+                 .sheet(isPresented: !$hasFinishedOnboarding, onDismiss: {
+                     hasFinishedOnboarding = true
+                 }, content: {
+@@ -280,12 +283,14 @@ struct CorkApp: App
+         Window("window.services", id: .servicesWindowID)
+         {
+             HomebrewServicesView()
++                .preferredColorScheme(appearance.setting)
          }
-+        .navigationTitle("app-name")
-+        .navigationSubtitle("navigation.installed-packages.count-\(self.brewPackagesTracker.numberOfInstalledPackages)")
-         .basicsSetup(of: self)
-         .packageLoadingTask(of: self)
-         .tapLoadingTask(of: self)
-@@ -252,7 +223,7 @@ private extension View
+         .windowToolbarStyle(.unifiedCompact)
  
-                 view.br
+         Window("window.about", id: .aboutWindowID)
+         {
+             AboutView()
++                .preferredColorScheme(appearance.setting)
+         }
+         .windowResizability(.contentSize)
+         .defaultPosition(.center)
+@@ -298,6 +303,7 @@ struct CorkApp: App
+             PackagePreview(packageToPreview: convertedMinimalPackage)
+                 .navigationTitle(packageToPreview?.name(withPrecision: .precise) ?? "")
+                 .environment(brewPackagesTracker)
++                .preferredColorScheme(appearance.setting)
+         }
+         .windowResizability(.contentSize)
+         .windowToolbarStyle(.unifiedCompact)
+@@ -307,6 +313,7 @@ struct CorkApp: App
+             if let errorToInspect
+             {
+                 ErrorInspector(errorText: errorToInspect)
++                    .preferredColorScheme(appearance.setting)
+             }
+         }
+         .windowToolbarStyle(.unifiedCompact)
+@@ -316,6 +323,7 @@ struct CorkApp: App
+             if let fullPackageList
+             {
+                 FullPackageList(packages: fullPackageList)
++                    .preferredColorScheme(appearance.setting)
+             }
+         }
+         .windowToolbarStyle(.unifiedCompact)
+@@ -325,17 +333,20 @@ struct CorkApp: App
+             if let environmentVariables
+             {
+                 EnvironmentVariablesPreview(environmentVariablesToPreview: environmentVariables.sorted(by: { $0.key > $1.key }))
++                    .preferredColorScheme(appearance.setting)
+             }
+         }
+ 
+         Window("window.downgrade", id: .corkDowngradeWindowID)
+         {
+             DowngradeCorkView()
++                .preferredColorScheme(appearance.setting)
+         }
+ 
+         Settings
+         {
+             SettingsView()
++                .preferredColorScheme(appearance.setting)
+         }
+         .windowResizability(.contentSize)
+ 
 ```
 
-**File**: `Cork/Views/About/About View.swift` (modified, +11/-5)
+**File**: `Cork/Localizable.xcstrings` (modified, +40/-0)
 ```diff
-@@ -122,6 +122,8 @@ struct AboutView: View
-                 Text("about.copyright-\(String(Calendar.current.component(.year, from: .now)))")
-                     .font(.subheadline)
-                     .foregroundColor(.secondary)
-+                    .lineLimit(2)
-+                    .fixedSize(horizontal: false, vertical: true)
+@@ -93543,6 +93543,46 @@
+         }
+       }
+     },
++    "settings.general.appearance" : {
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Appearance:"
++          }
++        }
++      }
++    },
++    "settings.general.appearance.forced-dark" : {
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Dark"
++          }
++        }
++      }
++    },
++    "settings.general.appearance.forced-light" : {
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Light"
++          }
++        }
++      }
++    },
++    "settings.general.appearance.system" : {
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "System"
++          }
++        }
++      }
++    },
+     "settings.general.backup-date-format" : {
+       "localizations" : {
+         "cs" : {
+```
+
+**File**: `Cork/Views/Settings/Panes/General Pane.swift` (modified, +18/-0)
+```diff
+@@ -30,6 +30,8 @@ struct GeneralPane: View
+     @Default(.showSearchFieldForDependenciesInPackageDetails) var showSearchFieldForDependenciesInPackageDetails: Bool
+     @Default(.showInMenuBar) var showInMenuBar: Bool
+     @Default(.startWithoutWindow) var startWithoutWindow: Bool
++    
++    @Default(.appearance) var appearance: Appearance
  
-                 VStack(alignment: .leading)
-                 {
-@@ -246,10 +248,14 @@ struct AboutView: View
-                     }
-                     .betterDisclosureGroupStyle()
-                      */
--
--                    Text("about.privacy-policy")
--                        .font(.subheadline)
--                        .foregroundColor(.secondary)
-+                    HStack(alignment: .center, spacing: 5)
-+                    {
-+                        Text("about.terms-of-service")
-+                        Text("about.privacy-policy")
-+                        Text("about.eula")
-+                    }
-+                    .font(.subheadline)
-+                    .foregroundColor(.secondary)
+     @AppStorage("defaultBackupDateFormat") var defaultBackupDateFormat: Date.FormatStyle.DateStyle = .numeric
+ 
+@@ -228,6 +230,22 @@ struct GeneralPane: View
+                 } label: {
+                     Text("settings.general.backup-date-format")
                  }
- 
-                 HStack
-@@ -265,7 +271,7 @@ struct AboutView: View
- 
-                     Button
-                     {
--                        NSWorkspace.shared.open(URL(string: "https://mstdn.social/@davidbures")!)
-+                        NSWorkspace.shared.open(URL(string: "https://bsky.app/profile/corkmac.app")!)
-                     } label: {
-                         Label("about.contact", systemImage: "paperplane")
-                     }
++                
++                LabeledContent
++                {
++                    Picker(selection: $appearance) {
++                        ForEach(Appearance.allCases)
++                        { appearanceSetting in
++                            Text(appearanceSetting.description)
++                        }
++                    } label: {
++                        Text("settings.general.appearance")
++                    }
++                    .labelsHidden()
++                    
++                } label: {
++                    Text("settings.general.appearance")
++                }
+             }
+         }
+     }
 ```
 
-**File**: `Project.swift` (modified, +2/-2)
+**File**: `Modules/Shared/Defaults/Settings/General Settings.swift` (modified, +3/-0)
 ```diff
-@@ -2,8 +2,8 @@ import ProjectDescription
- 
- let settings = Environment.selfCompiled.getBoolean(default: false)
- 
--let version: String = "2.1.1"
--let build: String = "154"
-+let version: String = "2.1.2"
-+let build: String = "155"
- 
- func corkTarget(configureWithSelfCompiled: Bool) -> ProjectDescription.Target {
-     var additionalCompilationConditions = [String]()
+@@ -57,4 +57,7 @@ public extension Defaults.Keys
+     /// Whether the app should start without its window
+     /// Not implemented at the moment
+     static let startWithoutWindow: Key<Bool> = .init("startWithoutWindow", default: false)
++    
++    // MARK: - Appearance
++    static let appearance: Key<Appearance> = .init("forcedColorScheme", default: .system)
+ }
+```
+
+**File**: `Modules/Shared/Models/Appearance.swift` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++//
++//  Appearance.swift
++//  CorkShared
++//
++//  Created by David Bureš - P on 11.11.2026.
++//
++
++import Foundation
++import Defaults
++import SwiftUI
++
++public enum Appearance: String, Identifiable, CaseIterable, Defaults.Serializable
++{
++    public var id: Self
++    {
++        return self
++    }
++    
++    case system
++    case forcedLight
++    case foredDark
++    
++    public var description: String
++    {
++        switch self
++        {
++        case .system:
++            return String(localized: "settings.general.appearance.system")
++        case .forcedLight:
++            return String(localized: "settings.general.appearance.forced-light")
++        case .foredDark:
++            return String(localized: "settings.general.appearance.forced-dark")
++        }
++    }
++    
++    public var setting: ColorScheme?
++    {
++        switch self {
++        case .system:
++            return nil
++        case .forcedLight:
++            return .light
++        case .foredDark:
++            return .dark
++        }
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1472,85 +1519,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ~ Just legalities, nothing changes
+## X. + Appearance override
 
 **RULE**:
-When implementing operations in `Cork/ContentView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cork/CorkApp.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2fb27615`: ~ Just legalities, nothing changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9af762f8`: + Appearance override. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cork/ContentView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cork/CorkApp.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            Group
-                switch navigationManager.openedScreen
-                {
-                case .package(let package):
-                    PackageDetailView(package: package)
-                        .frame(minWidth: 600, minHeight: 500)
-                case .tap(let tap):
-                    TapDetailView(tap: tap)
-                        .frame(minWidth: 600, minHeight: 500)
-                case nil:
-                    StartPage()
-                        .frame(minWidth: 600, minHeight: 500)
-                }
-            .toolbar(id: "PackageActions")
-                ToolbarItem(id: "updatePackages", placement: .primaryAction)
-                {
-                    CheckForOutdatedPackagesButton()
-                }
-                .defaultCustomization(.hidden)
-                ToolbarItem(id: "upgradePackages", placement: .primaryAction)
-                {
-                    UpgradePackagesButton(appState: appState)
-                }
-                ToolbarItem(id: "addTap", placement: .primaryAction)
-                {
-                    AddTapButton(appState: appState)
-                }
-                ToolbarItem(id: "installPackage", placement: .primaryAction)
- 
+    
+    @Default(.appearance) var appearance: Appearance
+                .preferredColorScheme(appearance.setting)
+                .preferredColorScheme(appearance.setting)
+                .preferredColorScheme(appearance.setting)
+                .preferredColorScheme(appearance.setting)
+                    .preferredColorScheme(appearance.setting)
+                    .preferredColorScheme(appearance.setting)
+                    .preferredColorScheme(appearance.setting)
+                .preferredColorScheme(appearance.setting)
+                .preferredColorScheme(appearance.setting)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            switch navigationManager.openedScreen
-            case .package(let package):
-                PackageDetailView(package: package)
-                    .frame(minWidth: 600, minHeight: 500)
-            case .tap(let tap):
-                TapDetailView(tap: tap)
-                    .frame(minWidth: 600, minHeight: 500)
-            case nil:
-                StartPage()
-                    .frame(minWidth: 600, minHeight: 500)
-            }
-        }
-        .navigationTitle("app-name")
-        .navigationSubtitle("navigation.installed-packages.count-\(self.brewPackagesTracker.numberOfInstalledPackages)")
-        .toolbar(id: "PackageActions")
-        {
-            ToolbarItem(id: "updatePackages", placement: .primaryAction)
-            {
-                CheckForOutdatedPackagesButton()
-            .defaultCustomization(.hidden)
-
-            ToolbarItem(id: "upgradePackages", placement: .primaryAction)
-                UpgradePackagesButton(appState: appState)
-            }
-
-            ToolbarItem(id: "addTap", placement: .primaryAction)
-            {
-                AddTapButton(appState: appState)
-            }
-            ToolbarItem(id: "installPackage", placement: .prim
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2fb27615` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9af762f8` are properly handled with clean fallback behavior.

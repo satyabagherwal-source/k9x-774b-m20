@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `8d825486`  
+> **Source Version**: `e1f6df0a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:10:55.106Z  
+> **Timestamp**: 2026-11-12T09:54:55.895Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:10:55.100Z  
+> **Harvest Timestamp**: 2026-11-12T09:54:55.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4015 stars
+- **Stars / Engagement**: 4027 stars
 
 ---
 
@@ -2255,11 +2255,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1756** (2026-11-09): **fix(mir-importer): materialize addresses for zero-sized drops**
-  *Symptoms*: Fixes #1755  ## Summary  Fix device compilation when a zero-sized local requires non-noop drop glue but has no backing alloca slot. Previously, the importer retained the destructor but failed with `cannot compute in-memory address for dropped place`.  This addresses the ZST drop-address gap documented under “Caveats” in #1361, without changing the existing no-op proof.  ## Changes  - Materialize a temporary address only for an unprojected, slot-less local whose rustc layout proves it is sized and zero-sized. - Reuse existing storage addresses whenever available and retain errors for unsupported cases. - Derive the pointer kind from the resolved drop shim’s parameter and reuse `mir.ref` lowering to preserve ABI alignment. - Extend the existing `drop_glue` example with compile-only probes for:   - a slot-less zero-sized guard;   - a zero-sized guard requiring 64-byte alignment;   - a zero-sized wrapper exercising the existing slot-backed path. - Extend the shape verifier to check retained drop calls, non-returning control flow, and the aligned allocation’s connection to the actual drop argument. - Document the coverage and compile-only boundary.  No dependencies, lockfiles, public APIs, or new example crates are added.  ## Testing  - [x] `just -f cuda-oxide/Justfile check` passes. - [x] `cuda-oxide/scripts/smoketest.sh --keep-logs -o '^drop_glue$'` passes: 1/1 PASS, 0 FAIL. - New example: not applicable; the existing example is extended.  Additional validation:  - Importer libr
+- **Issue #1779** (2026-11-11): **fix(cuda-host): coalesce DWARF debug sections and disambiguate labels in merge_ptx_bundles (NVBug 7038557)**
+  *Symptoms*: ## What This PR Does  Fixes **NVBug 7038557** so multi-crate programs built with `--device-debug` merge and JIT-load their PTX bundles cleanly (`cuda_host::merge_ptx_bundles` / `load_all_ptx_bundles_merged`):  1. **Disambiguate bundle-local labels (`$L__*`) and `.local` stack depots (`__local_depot*`) across bundles (`cuda-host`)** 2. **Coalesce `.section .debug_*` blocks once at the end of the merged PTX module and shift per-CU offsets (`cuda-host`)** 3. **Touch direct workspace member crates during `cargo oxide build` / `run` (`cargo-oxide`)**  ---  ### 1. Why Multi-Crate `--device-debug` PTX Failed `ptxas` Assembly  Each crate's `--device-debug` PTX file has code at the top (with internal labels like `$L__func_begin0` and `$L__pubNames_start0`) and DWARF `.section .debug_*` tables at the bottom. Previously, `merge_ptx_bundles` glued the second PTX file directly under the first one, leaving duplicate labels and repeated `.section` blocks in the middle of the merged file:  ```text BEFORE (glued raw PTX files -> ptxas fails with DriverError(218)):   [Crate A Code ($L__func_begin0)] + [Crate A .section .debug_*]   [Crate B Code ($L__func_begin0)] + [Crate B .section .debug_*]  <-- duplicate labels & overlapping sections!  AFTER (rename bundle-local labels + coalesce one .section per name at the end):   [Crate A Code ($L__func_begin0)]   [Crate B Code ($L__func_begin0__bundle_1)]   [.section .debug_abbrev { CU_A + CU_B }]   [.section .debug_info   { CU_A + CU_B (with .debug_abb
 
-- **Issue #1750** (2026-11-09): **fix(mir-importer): refuse device statics with a nested SharedArray or Barrier (#1727)**
-  *Symptoms*: ## What This PR Does  Rejects device statics that nest a `SharedArray` or `Barrier` inside a wrapper type (such as `static mut WRAPPED: (Barrier, u32)`) instead of emitting an undefined `addrspace(1) -> addrspace(3)` cast:  1. **Nested Shared-Memory Static Check (`crates/mir-importer/src/translator/rvalue/static_global.rs`)** 2. **Diagnostic Fixture (`examples/error_static_nested_shared`)**  ---  ### 1. Rejecting Nested `SharedArray` / `Barrier` in Device Statics  Only a `static` whose top-level type is `SharedArray<T, N>` (including `SharedArray<Barrier, N>`) or `Barrier` is placed in per-block `.shared` memory (`addrspace(3)`). When `Barrier` or `SharedArray` was nested inside a tuple, struct, enum, or raw `[T; N]` array, `mir-importer` placed the outer static in `.global` memory (`addrspace(1)`) while typing field/element pointers as `addrspace(3)`:  ```text static mut WRAPPED: (Barrier, u32) = (Barrier::UNINIT, 0);  BEFORE:   `WRAPPED` placed in `.global` (`addrspace(1)`), `&raw mut WRAPPED.0` typed as `addrspace(3)`   ──► undefined `addrspacecast (ptr addrspace(1) to ptr addrspace(3))`  AFTER (`nested_shared_type_name` in `static_global.rs`):   ──► compile-time error:       "device static `WRAPPED` cannot nest `Barrier`; declare `Barrier` or `SharedArray` as the top-level static type" ```  ---  ## Verification  * `cargo test -p mir-importer -p mir-lower --all-targets`: **PASS** * `cargo clippy -p mir-importer --all-targets -- -D warnings`: **PASS** * `scripts/check-error
+- **Issue #1767** (2026-11-09): **fix(examples): expect tilelib_relu's call_* kernels after #1367**
+  *Symptoms*: ## Summary  #1367 made `cuda-artifact-finalizer` fail any link whose output lacks an expected kernel. `tilelib_relu` passes `&["caller"]` as its expected kernels, but the generated `mock/caller.cu` defines one `call_<decl>` kernel per export (`call_relu`, `call_scale_in_place`, `call_warp_sum`). Every GPU run of the example now fails at link time:  ``` FAIL: the linked Cubin is missing expected kernel(s) ["caller"] (3 entry point(s) present) ```  CI compiles examples without running them. The failure only shows on hardware.  ## Changes  - `tilelib_relu`: derive the expected kernels from the callable exports. Each name is the `call_{decl}` the generator writes and `check_export` loads. - `cuda-oxide/.gitignore`: ignore `*.kernels`. Since #1367 every example build writes a `<name>.kernels` sidecar next to the already ignored `*.options` and `*.target`, which left 15 untracked files after a smoketest. - `error_static_nested_shared` and `sparse_mma_standard_float` lockfiles: add the new `ptx-parse` dependency of `cuda-artifact-finalizer`. #1367 refreshed the other example lockfiles, and these two landed alongside it in #1750 and #1561.  ## Testing  On an RTX 5060 Laptop GPU (sm_120), driver 615.78.08, CUDA 13.3:  - `just smoketest tilelib_relu`: PASS (descriptions written, ABI verified on sm_120). It fails on `main` with the error above. - Full `just smoketest` on `main`: 256 of 257 pass, and `tilelib_relu` is the only failure. - `just check` passes on `main`. On this branch `jus
+  **Post-Mortem & Fix Analysis**:
+  > This pull request requires additional validation before any workflows can run on NVIDIA's runners.  Pull request vetters can view their responsibilities [here](https://docs.gha-runners.nvidia.com/cpr/vetters).  Contributors can view more details about this message [here](https://docs.gha-runners.nvidia.com/cpr/contributors). 
+  > Thanks for catching this and the two `Cargo.lock` updates (`error_static_nested_shared` and `sparse_mma_standard_float`). Closing as a duplicate of #1766 (folded the two `Cargo.lock` updates into #1766).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2276,1401 +2279,928 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3aaed630` (2026-11-09)
-**Commit Message**: fix(unroll): fold branches to unreachable blocks (#1707)
+### Incident Patch 1: `dff7767e` (2026-11-10)
+**Commit Message**: fix(cutile)!: remove unsupported load validity checking (#1772)
 
-## What This PR Does
+`load_view_tko_valid_check` is unsupported by the public CUDA 13.5
+tooling. Remove the Rust API, its capability enum entry, compiler
+handling, bytecode encoding, and documentation claims. Ordinary view
+loads retain their existing encoding. Low-level IR carrying the obsolete
+attribute now receives an explicit error instead of emitting unsupported
+bytecode or silently ignoring it.
 
-Folds loop branches targeting trivial `mir.unreachable` blocks in
-`mir-transforms` before exit analysis so `match` expressions on enums
-(such as `Option::unwrap_or`) inside a loop body do not block partial
-`#[unroll(N)]`:
+Because the API was published in 0.5.0, bump the Tile workspace and its
+dependent interop example to 0.6.0; shared host crates remain at 0.5.0.
+Callers that passed `false` can use `cutile::core::load_view_raw`
+without the final boolean argument. There is no supported replacement
+for `true`.
 
-1. **Unreachable Branch Folding
-(`crates/mir-transforms/src/canonicalize.rs`, `unroll.rs`)**
-2. **Unit & End-to-End Regression Tests (`crates/mir-transforms`,
-`examples/unroll_smoke`)**
+Keep the remaining CUDA 13.5 feature, multicast, and communication
+tests. Add a regression covering rejection through both target
+validation and direct bytecode writing for all supported bytecode
+versions, with an ordinary load as the positive control.
+
+Validation:
+
+- `cutile-ir`: 319 tests passed; `cutile-compiler --lib`: 193 passed.
+- CUDA 13.5 frontend suites: 11 tests passed, including checks with the
+public v13.5.0 reference translator.
+- All three a
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel/Cargo.lock` (modified, +4/-4)
+```diff
+@@ -239,7 +239,7 @@ version = "0.5.0"
+ 
+ [[package]]
+ name = "cutile"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "anyhow",
+  "cuda-async",
+@@ -261,7 +261,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-compiler"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "anyhow",
+  "cuda-async",
+@@ -281,7 +281,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-ir"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "half",
+  "indexmap",
+@@ -291,7 +291,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-macro"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "convert_case",
+  "cutile-compiler",
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -16,8 +16,8 @@ ptx-dir = "simt"
+ resolver = "2"
+ 
+ [dependencies]
+-cutile = { path = "../../../../../cutile-rs/cutile", version = "0.5.0" }
+-cutile-compiler = { path = "../../../../../cutile-rs/cutile-compiler", version = "0.5.0" }
++cutile = { path = "../../../../../cutile-rs/cutile", version = "0.6.0" }
++cutile-compiler = { path = "../../../../../cutile-rs/cutile-compiler", version = "0.6.0" }
+ cuda-async = { path = "../../../../../cuda-async" }
+ cuda-core = { path = "../../../../../cuda-core" }
+ tokio = { version = "1", features = ["full"] }
+```
+
+**File**: `cutile-rs/CHANGELOG.md` (modified, +13/-2)
+```diff
+@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+ 
+ ## [Unreleased]
+ 
++### Removed
++
++- Remove `cutile::tileir::load_view_tko_valid_check` and
++  `cutile_ir::requirements::Feature::ValidityCheck`: validity checking is
++  unsupported by the public CUDA 13.5 tooling. Low-level IR containing the
++  `valid_check` attribute now reports an error instead of emitting unsupported
++  bytecode. Callers that passed `false` can use `cutile::core::load_view_raw`
++  with the final boolean argument removed; there is no supported replacement
++  for `true`. The Tile workspace moves to 0.6.0 for this API removal; shared host
++  crates remain at 0.5.0. Remove the corresponding documentation claims below.
++
+ ### Added
+ 
+ - Refresh `cutile-kernels` from Grout with split-K prefill/merge, persistent
+@@ -43,7 +54,7 @@ runtime, and stronger memory-safety contracts.
+   branches, loops, and wrappers; cache keys include library contents and declared
+   provider dependencies/settings. See the [tile-library guide](https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/guide/tile-libraries.md).
+ - **Unsafe communication:** unicast/multicast pointer classification, multicast
+-  load-reduce/reduce/store, atomic-view inbounds promises, and TMA validity checks
++  load-reduce/reduce/store and atomic-view inbounds promises
+   in `cutile::tileir`. System-scope signaling and alias fences support explicit
+   synchronization. The [communication reference](https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/reference/unsafe-comms.md)
+   includes a runnable unicast/multicast example.
+@@ -101,7 +112,7 @@ updated value while preserving the caller's original immutable tile.
+ 
+ Unicast/multicast target `sm_100`, `sm_103`, and `sm_107`: unicast needs NVLink;
+ multicast additionally needs NVLink SHARP-capable NVSwitch. Callers establish
+-mappings and synchronization. TMA `valid_check=true` is `sm_107` only. See the
++mappings and synchronization. See the
+ [compatibility matrix](https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/reference/compatibility.md).
+ Rust 1.89+ is required; the library builds on 1.89, and runtime validation used 1.98.0.
+ 
+```
+
+**File**: `cutile-rs/Cargo.lock` (modified, +8/-8)
+```diff
+@@ -533,15 +533,15 @@ version = "0.5.0"
+ 
+ [[package]]
+ name = "cuda-tile-rs"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "bindgen 0.71.1",
+  "cmake",
+ ]
+ 
+ [[package]]
+ name = "cutile"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "anyhow",
+  "cuda-async",
+@@ -566,7 +566,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-benchmarks"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "criterion",
+  "cuda-async",
+@@ -579,7 +579,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-compiler"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "anyhow",
+  "cuda-async",
+@@ -599,7 +599,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-examples"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "candle-core",
+  "candle-nn",
+@@ -615,7 +615,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-ir"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "half",
+  "indexmap",
+@@ -625,7 +625,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-kernels"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "cutile",
+  "cutile-compiler",
+@@ -634,7 +634,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cutile-macro"
+-version = "0.5.0"
++version = "0.6.0"
+ dependencies = [
+  "convert_case",
+  "cutile-compiler",
+```
+
+**File**: `cutile-rs/Cargo.toml` (modified, +6/-6)
+```diff
+@@ -40,7 +40,7 @@ default-members = [
+ ]
+ 
+ [workspace.package]
+-version = "0.5.0"
++version = "0.6.0"
+ edition = "2021"
+ rust-version = "1.89"
+ license = "Apache-2.0"
+@@ -87,11 +87,11 @@ cuda-async = { path = "../cuda-async", version = "=0.5.0" }
+ # crate for downstreams (candle CI, 2026-09-04: cutile 0.3.0 resolved
+ # cutile-macro 0.3.1 and failed on 0.3.1-only symbols). Exact-pin, like
+ # serde pins serde_derive.
+-cutile-compiler = { path = "cutile-compiler", version = "=0.5.0" }
+-cutile-macro = { path = "cutile-macro", version = "=0.5.0" }
+-cutile = { path = "cutile", version = "=0.5.0" }
+-cutile-ir = { path = "cutile-ir", version = "=0.5.0" }
+-cutile-kernels = { path = "cutile-kernels", version = "=0.5.0" }
++cutile-compiler = { path = "cutile-compiler", version = "=0.6.0" }
++cutile-macro = { path = "cutile-macro", version = "=0.6.0" }
++cutile = { path = "cutile", version = "=0.6.0" }
++cutile-ir = { path = "cutile-ir", version = "=0.6.0" }
++cutile-kernels = { path = "cutile-kernels", version = "=0.6.0" }
+ 
+ # Lint policy shared by every workspace crate (`[lints] workspace = true`).
+ [workspace.lints.rust]
+```
+
+**File**: `cutile-rs/README.md` (modified, +0/-1)
+```diff
+@@ -124,7 +124,6 @@ JIT error before assembly.
+ | Saturating float-to-int, `ptr_attr<none>`, load/store view `inbounds` | Tile IR 13.4 |
+ | Unicast/multicast pointers and multicast view operations | Tile IR 13.5 and `sm_100` / `sm_103` / `sm_107`; NVLink SHARP-capable fabric |
+ | Atomic view `inbounds` | Tile IR 13.5 |
+-| TMA data-validity checks | Tile IR 13.5 and `sm_107` only |
+ | Condition likelihood hints | Tile IR 13.5 |
+ | Minimum CTAs per SM | Tile IR 13.5 |
+ | `f8e5m3fnu` | Tile IR 13.4 and `sm_107+` |
+```
+
+**File**: `cutile-rs/cutile-book/reference/compatibility.md` (modified, +6/-9)
+```diff
+@@ -40,7 +40,6 @@ need the selected version to be 13.5.
+ | unicast/multicast pointer | — | — | — | Yes | `sm_100` / `sm_103` / `sm_107` |
+ | multimem view operations | — | — | — | Yes | `sm_100` / `sm_103` / `sm_107` |
+ | atomic_red_view_tko.inbounds=true | — | — | — | Yes | Any supported target |
+-| load_view_tko.valid_check | — | — | — | Yes | `sm_107` only |
+ | if/select optimization hints | — | — | — | Yes | Any supported target |
+ | min_ctas_per_sm | — | — | — | Yes | Any supported target |
+ | argument attributes | — | — | — | Yes | Any supported target |
+@@ -104,16 +103,16 @@ We do not impose a blanket driver-version-at-least-toolkit-version check.
+ 
+ The 13.5 surface includes unicast/multicast pointer classification,
+ `multimem_load_reduce_view_tko`, `multimem_reduce_view_tko`,
+-`multimem_store_view_tko`, atomic-view inbounds promises, TMA validity checking,
++`multimem_store_view_tko`, atomic-view inbounds promises,
+ minimum residency hints, and function argument attributes.
+ The named `simt` preview is separate from this stable surface. cuTile Rust
+ supports [foreign tile-library calls](../guide/tile-libraries.md) through that
+ preview; see the guide for the supported operands and current limitations.
+ 
+ The raw Rust APIs are exposed as unsafe functions in `cutile::tileir`, defined
+ in `cutile/src/_tileir.rs`: `ptr_with_attr_unicast`, `ptr_with_attr_multicast`,
+-the three `multimem_*_view_tko` operations, `atomic_red_view_tko_with_inbounds`,
+-and `load_view_tko_valid_check`. The `multimem` module provides Add, Min, Max, And,
++the three `multimem_*_view_tko` operations, and `atomic_red_view_tko_with_inbounds`.
++The `multimem` module provides Add, Min, Max, And,
+ Or, Xor, Umin, and Umax reduction markers. These unsafe APIs require live,
+ correctly classified mappings and an explicit memory-ordering protocol.
+ A Tile IR token does not synchronize independent GPUs.
+@@ -154,9 +153,8 @@ The named `simt` preview has its own feature gate and is not a versioned
+ CTK 13.5 API; 13.6 MMA overflow attributes are also outside this versioned surface.
+ 
+ Multicast operations require an NVLink SHARP-capable fabric and the supported
+-`sm_100`, `sm_103`, or `sm_107` families. `valid_check=true` specifically needs
+-`sm_107` with TMA enabled; B200 does not cover this feature. False validity
+-checks and all-false atomic inbounds arrays retain their older version floor.
++`sm_100`, `sm_103`, or `sm_107` families. All-false atomic inbounds arrays retain
++their older version floor.
+ 
+ ### Selecting the toolkit
+ 
+@@ -187,8 +185,7 @@ CUTILE_REFERENCE_TRANSLATE=/path/to/cuda-tile-translate \
+ ```
+ 
+ With the shared 13.5 environment above, assemble the feature and multicast
+-execution kernels without a GPU. The validity-check kernel targets `sm_107`;
+-the other kernels target `sm_100`:
++execution kernels targeting `sm_100` without a GPU:
+ 
+ ```bash
+ cargo test -p cutile --test tile_ir_13_5 --test tile_ir_13_5_multicast \
+```
+
+**File**: `cutile-rs/cutile-compiler/src/compiler/compile_cuda_tile_op.rs` (modified, +0/-11)
+```diff
+@@ -4180,17 +4180,6 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                 builder = builder.attr("optimization_hints", hints);
+             }
+         }
+-        if params.iter().any(|p| p == "valid_check") {
+-            let value = compile_value(module, ctx, "valid_check")?
+-                .bounds
+-                .filter(|b| b.start == b.end)
+-                .ok_or_else(|| {
+-                    self.jit_error(&call.span(), "valid_check must be a compile-time boolean")
+-                })?;
+-            if value.start != 0 {
+-                builder = builder.attr("valid_check", Attribute::Bool(true));
+-            }
+-        }
+         if params.iter().any(|p| p == "inbounds") {
+             let flags = compile_value(module, ctx, "inbounds")?
+                 .values
+```
 
 ---
 
-### 1. Folding Enum `otherwise -> mir.unreachable` Branches Before
-`LoopInfo`
+### Incident Patch 2: `f354b0c2` (2026-11-10)
+**Commit Message**: fix(cutile-rs): update cuda-tile-rs to public Tile IR 13.5 (#1769)
 
-`rustc` lowers an exhaustive `match` on an enum (such as
-`row.get(i).unwrap_or(0.0)`) to a `switchInt` whose `otherwise` arm
-targets an `unreachable` basic block. Because `bb_unreachable` has no
-back-edge to the loop header, `LoopInfo` counted it as a second loop
-exit and declined partial `#[unroll(N)]`:
+The optional `cuda-tile-rs` build was pinned to CUDA Tile IR 13.2: its
+translator rejected bytecode versions 13.3–13.5 and did not recognize
+`--preview=simt`. Update the submodule to the public [v13.5.0
+release](https://github.com/NVIDIA/cuda-tile/releases/tag/v13.5.0),
+including its LLVM pin, and link the new bytecode-analysis library.
 
-```text
-BEFORE (`#[unroll(4)] for i in 0..n { s += row.get(i).unwrap_or(0.0); }`):
-  cond_br is_some, bb_merge(val), bb_unreachable
-  ──► LoopInfo sees 2 exits (header exit + bb_unreachable)
-  ──► warns and skips partial unrolling
+Add tests against the translator built by the crate: round trips for
+versions 13.1–13.5, 13.5 pointer classifications, and SIMT preview
+declarations, implementations and calls. Extend the C-API smoke coverage
+to preview fragment types. The existing `cutile-ir` preview-call
+reference test now honors `CUTILE_REFERENCE_TRANSLATE`, allowing
+verification with a separately built translator without a toolkit; an
+explicitly configured incompatible tool fails rather than skips.
 
-AFTER (`fold_branches_to_unreachable`):
-  bb_unreachable contains only StorageLive/Stor
+Document build/install commands, preview opt-in, the upstream entry-hint
+C-API signature change, and when to use the cheaper standalone bytecode
+decoder instead of MLIR translation.
 
-**File**: `cuda-oxide/crates/cuda-macros/src/lib.rs` (modified, +2/-1)
+Validation on Linux x86_64 with Rust 1.98.0, building LLVM and CUDA Tile
+from the pinned public sources:
+
+- `cargo test --locked --rel
+
+**File**: `cutile-rs/CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -465,7 +465,8 @@ pub fn cuda_module(attr: TokenStream, item: TokenStream) -> TokenStream {
- /// Full `#[unroll]` preserves `break` paths and multiple exit targets. Partial
- /// `#[unroll(N)]` currently requires the loop condition to be the only exit. If
- /// the loop has a `break` or another extra exit, the compiler warns and skips
--/// partial unrolling for that loop.
-+/// partial unrolling for that loop. A `match` in the body, such as
-+/// `row.get(i).unwrap_or(0.0)`, is not an exit.
- ///
- /// Partial unrolling also requires a positive counter step, a `<` or `<=` test,
- /// and a limit that does not change inside the loop. One annotation may create
+@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+   refresh kernel/example discovery, workspace paths, CUDA 13.5 setup, and
+   bytecode-version negotiation instructions (#1746).
+ 
++### Fixed
++
++- Update the optional `cuda-tile-rs` bindings and `cuda-tile-translate` build
++  from CUDA Tile IR 13.2 to the public 13.5 release, including SIMT preview
++  support and translator round-trip tests.
++
+ ## [0.5.0] - 2026-11-04
+ 
+ CUDA 13.5 tile-library calls and GPU communication, a shared Tile/SIMT host
 ```
 
-**File**: `cuda-oxide/crates/mir-transforms/README.md` (modified, +3/-2)
+**File**: `cutile-rs/cuda-tile-rs/README.md` (modified, +60/-4)
 ```diff
-@@ -20,8 +20,9 @@ latch branch, which the LLVM exporter marks with `llvm.loop.unroll.disable`.
+@@ -5,22 +5,27 @@ bundled [cuda-tile](https://github.com/NVIDIA/cuda-tile) submodule. The crate
+ also ships `cuda-tile-translate` and can install it into a user-chosen
+ directory.
  
- Two more sources ship with it. `canonicalize.rs` prepares a loop for the
- unroller: it merges multiple back-edges (several `continue`s) into one
--synthetic latch and forwards header-carried values out of each loop exit so
--full unrolling can resolve uses past an early `break`.
-+synthetic latch, forwards header-carried values out of each loop exit so
-+full unrolling can resolve uses past an early `break`, and drops branches to
-+blocks that only reach `mir.unreachable` so they do not count as loop exits.
- `scalarize_borrowed_aggregate_reads.rs` rewrites bounded read-only array
- loads behind non-promotable `mir.field_addr` / `mir.array_element_addr`
- projections into value operations (`mir.extract_field` plus
-```
-
-**File**: `cuda-oxide/crates/mir-transforms/src/canonicalize.rs` (modified, +78/-0)
-```diff
-@@ -28,12 +28,17 @@
- //! first needs [`fold_checked_step`]: core steps it through `checked_add`. An
- //! `isize` step casts through `i64` and back; the importer drops that cast
- //! because both are the same dialect type, so the block matches `i64`.
-+//!
-+//! [`fold_branches_to_unreachable`] removes a branch to a block that only
-+//! reaches `mir.unreachable`, so the `otherwise` arm of a `match` in the body
-+//! does not count as a loop exit.
++The submodule is pinned to the public
++[CUDA Tile IR 13.5.0](https://github.com/NVIDIA/cuda-tile/releases/tag/v13.5.0) release. Its
++translator reads and writes bytecode versions 13.1–13.5, including the
++13.5 SIMT interoperability preview when explicitly enabled. This is a
++separately built development tool; it does not require a CUDA toolkit or GPU.
++
+ No dependency on `mlir-sys` / `melior` — bindings are generated at build time
+ from the LLVM + MLIR sources that cuda-tile's cmake downloads.
  
- use dialect_mir::attributes::MirCastKindAttr;
- use dialect_mir::ops::{
-     MirAddOp, MirCastOp, MirCheckedAddOp, MirCheckedSubOp, MirCondBranchOp, MirConstantOp,
-     MirConstructEnumOp, MirEnumPayloadOp, MirEqOp, MirFieldAddrOp, MirGetDiscriminantOp, MirGotoOp,
-     MirLoadOp, MirNeOp, MirNotOp, MirStorageDeadOp, MirStorageLiveOp, MirStoreOp, MirSubOp,
-+    MirUnreachableOp,
- };
- use dialect_mir::types::MirEnumType;
- use pliron::basic_block::BasicBlock;
-@@ -98,6 +103,79 @@ pub(crate) fn hoist_header_constants(
-     !constants.is_empty()
+ ## Build
+ 
+ `build.rs` invokes cmake on the submodule. cuda-tile's cmake uses
+-`FetchContent` to clone a pinned LLVM commit and builds it as part of its
+-configure step.
++`FetchContent` to clone a pinned LLVM commit and builds it alongside cuda-tile.
+ 
+ <a id="first-build-cost-one-time-slow"></a>
+ ### First build
+ 
+ The first build downloads and compiles LLVM from source:
+ 
+ - network access is required to clone `https://github.com/llvm/llvm-project`
+-  at a commit pinned by cuda-tile (~several hundred MB of git history),
++  at a commit pinned by cuda-tile (several GB of sources and git history),
+ - host compilation of LLVM + MLIR + the cuda-tile libs consumes several GB
+   of disk and most of your CPU cores for tens of minutes to an hour (depends
+   on the machine),
+@@ -32,9 +37,14 @@ so top-level `cargo build` / `cargo test` do **not** trigger the LLVM build.
+ Build it explicitly:
+ 
+ ```bash
++# From the cuda-rust repository root:
++git submodule update --init cutile-rs/cuda-tile-rs/cuda-tile
++cd cutile-rs
+ cargo build --release -p cuda-tile-rs
+ ```
+ 
++The remaining Cargo commands assume the `cutile-rs/` workspace directory.
++
+ ### Caching (opt-in)
+ 
+ By default, cmake builds into cargo's `$OUT_DIR`; `cargo clean` wipes it and
+@@ -94,6 +104,10 @@ unsafe {
  }
+ ```
  
-+/// Whether `block` does nothing but reach `mir.unreachable`. Storage markers
-+/// emit no instruction, so they do not count as work. A panic path is not such
-+/// a block: it calls the panic handler or traps before its `mir.unreachable`.
-+fn is_unreachable_block(ctx: &Context, block: Ptr<BasicBlock>) -> bool {
-+    let Some(term) = block.deref(ctx).get_terminator(ctx) else {
-+        return false;
-+    };
-+    Operation::get_op::<MirUnreachableOp>(term, ctx).is_some()
-+        && block.deref(ctx).iter(ctx).all(|op| {
-+            op == term
-+                || Operation::get_op::<MirStorageLiveOp>(op, ctx).is_some()
-+                || Operation::get_op::<MirStorageDeadOp>(op, ctx).is_some()
-+        })
-+}
++Raw bindings follow the pinned upstream C API. When upgrading from the 13.2
++pin, note that `mlirCudaTileOptimizationHintsAttrGetEntryOpHint` now takes
++`numWorkerWarps` between its `numCta` and `occupancy` arguments.
 +
-+/// Replace each `mir.cond_br` in `blocks` with one successor that only reaches
-+/// `mir.unreachable` by a `mir.goto` to its other successor. Returns whether
-+/// any branch changed.
-+///
-+/// rustc lowers a `match` on an enum to a `switchInt` whose `otherwise` arm is
-+/// `unreachable`, and the importer keeps that arm as a branch. In a loop, the
-+/// branch reads as a second exit, so `unwrap_or` on an `Option` in the body is
-+/// enough to make partial unrolling decline the loop. `mir.unreachable` lowers
-+/// to LLVM `unreachable`, so taking that arm is undefined behavior and the
-+/// branch always goes the other way; LLVM folds the same branch later.
-+pub(crate) fn fold_branches_to_unreachable(
-+    ctx: &mut Context,
-+    blocks: &FxHashSet<Ptr<BasicBlock>>,
-+) -> bool {
-+    let mut folds = Vec::new();
-+    for &block in blocks {
-+        let Some(term) = block.deref(ctx).get_terminator(ctx) else {
-+            continue;
-+        };
-+        if Operation::get_op::<MirCondBranchOp>(term, ctx).is_none() {
-+            continue;
-+        }
-+        let successors: Vec<_> = term.deref(ctx).successors().collect();
-+        let [first, second] = successors[..] else {
-+            continue;
-+        };
-+        // a branch whose both successors are unreachable is itself unreachable;
-+        // leave it for LLVM rather than pick an arbitrary successor
-+        let taken = match (
-+            is_unreachable_block(ctx, first),
-+            is_unreachable_block(ctx, second),
-+        ) {
-+            (false, true) => 0,
-+            (true, false) => 1,
-+            _ => continue,
-+        };
-+        let Some(operands) = successor_operands(ctx, term, taken) else {
-+            continue;
-+        };
-+        folds.push((block, term, successors[taken], operands));
-+    }
+ ## Install `cuda-tile-translate`
+ 
+ Set `CUDA_TILE_TRANSLATE_INSTALL_DIR` to an existing directory and `build.rs`
+@@ -109,5 +123,47 @@ which is the rustup default). Usage:
+ 
+ ```bash
+ cuda-tile-translate --cudatilebc-to-mlir kernel.tileirbc -o kernel.mlir
+-cuda-tile-translate --mlir-to-cudatilebc kernel.mlir -o kernel.tileirbc
++cuda-tile-translate --mlir-to-cudatilebc --bytecode-version=13.5 \
++    kernel.mlir -o kernel.tileirbc
++```
 +
-+    let changed = !folds.is_empty();
-+    for (block, term, target, operands) in folds {
-+        Operation::erase(term, ctx);
-+        let goto = Operation::new(
-+            ctx,
-+            MirGotoOp::get_concrete_op_info(),
-+            vec![],
-+            operands,
-+            vec![target],
-+            0,
-+        );
-+        goto.insert_at_back(block, ctx);
-+    }
-+    changed
-+}
++For the [tile-library SIMT preview](https://nvidia.github.io/cuda-rust/cutile/latest/guide/tile-libraries.html),
++pass `--preview=simt` in both directions:
 +
- /// Route direct outside uses of header-carried values through block arguments.
- ///
- /// Rust mem2reg can legally leave a header argument in use after an early
++```bash
++cuda-tile-translate --cudatilebc-to-mlir --preview=simt \
++    library.tileirbc -o library.mlir
++cuda-tile-translate --mlir-to-cudatilebc --preview=simt --bytecode-version=13.5 \
++    library.mlir -o library.tileirbc
+ ```
++
++Raw C-API users must likewise call `mlirCudaTileContextSetPreviewFeatures`
++with `"simt"` on the context before parsing or processing preview IR.
++
++For tests that only inspect encoded bytecode, prefer the standalone
++[`cutile_ir::decode_bytecode`](../cutile-ir/src/bytecode/decoder.rs) function:
++it avoids building LLVM/MLIR. Its output is an inspection dump, not MLIR;
++use the translator when a test needs MLIR parsing, verification, or conversion.
++
++## Test
++
++```bash
++CUDA_TILE_RS_CACHE=1 cargo test --release -p cuda-tile-rs
++```
++
++This runs the C-API smoke tests and bytecode round trips with the translator
++built by this crate, independently of `PATH`. Coverage includes versions
++13.1–13.5, 13.5 pointer classifications, and SIMT preview declarations,
++implementations and calls. These tests need no CUDA toolkit or GPU, but incur
++the same initial LLVM/MLIR build cost as the crate itself.
++
++After installing the translator as above, validate cuTile's standalone encoder
++against it, including 13.5 SIMT preview calls:
++
++```bash
++CUTILE_REFERENCE_TRANSLATE=$HOME/.cargo/bin/cuda-tile-translate \
++    cargo test -p cutile-ir --test bytecode_13_5
++```
++
++An explicitly configured translator must pass; an incompatible version is a
++test failure rather than a skipped check.
 ```
 
-**File**: `cuda-oxide/crates/mir-transforms/src/unroll.rs` (modified, +16/-3)
+**File**: `cutile-rs/cuda-tile-rs/build.rs` (modified, +6/-0)
 ```diff
-@@ -29,7 +29,9 @@
- //! Several `continue` paths are supported: the pass joins their back-edges
- //! before unrolling. Full `#[unroll]` also preserves early `break` paths and
- //! multiple exit targets. Partial `#[unroll(N)]` warns and leaves the loop not
--//! unrolled when it has an extra exit. Partial unrolling currently requires a
-+//! unrolled when it has an extra exit. A branch to a block that only reaches
-+//! `mir.unreachable`, such as the arm rustc gives a `match` on an `Option`, is
-+//! removed first and so is not an exit. Partial unrolling currently requires a
- //! positive step, a `<` or `<=` test, and a loop-invariant bound.
- //!
- //! To bound compile time and memory, one request may create at most 1,024 body
-@@ -86,8 +88,8 @@ use std::path::PathBuf;
- use crate::analyses::induction::{self, ArgKind, CmpPred};
- use crate::analyses::loop_info::LoopInfo;
- use crate::canonicalize::{
--    CanonicalizeOutcome, close_header_liveouts, hoist_header_constants, merge_backedges,
--    thread_iterator_exit_test,
-+    CanonicalizeOutcome, close_header_liveouts, fold_branches_to_unreachable,
-+    hoist_header_constants, merge_backedges, thread_iterator_exit_test,
- };
+@@ -37,6 +37,7 @@ const CLEAR_CACHE_ENV: &str = "CUDA_TILE_RS_CLEAR_CACHE";
+ const SHA_LEN: usize = 12;
  
- /// Hard safety limit on how many body copies one annotation may request.
-@@ -392,6 +394,17 @@ pub fn unroll_annotated_loops(
-                 }
-             }
- 
-+            // A `match` on an enum in the body leaves a branch to a block that
-+            // only reaches `mir.unreachable`, which reads as another exit. This
-+            // runs after the range `for` rewrite, which matches that branch,
-+            // and `continue` recomputes `LoopInfo` so the exit check below
-+            // never sees the folded branch.
-+            if fold_branches_to_unreachable(ctx, &info.loops()[loop_id].blocks) {
-+                function_changed = true;
-+                changed = true;
-+                continue;
-+            }
-+
-             // A grouped main loop plus a remainder loop needs explicit merging
-             // for every early-exit value. Keep that as a follow-up: full unroll
-             // can preserve those paths directly, partial unroll warns and skips.
+ const CUDA_TILE_STATIC_LIBS: &[&str] = &[
++    "CudaTileBytecodeAnalysis",
+     "CudaTileBytecodeCommon",
+     "CudaTileBytecodeReader",
+     "CudaTileBytecodeTranslation",
+@@ -195,6 +196,11 @@ fn main() {
+             install_prefix.display()
+         )
+     });
++    // Integration tests must exercise this build, not a translator found on PATH.
++    println!(
++        "cargo:rustc-env=CUDA_TILE_RS_TRANSLATE_BIN={}",
++        translate_bin.display()
++    );
+     if let Ok(dir) = env::var(INSTALL_DIR_ENV) {
+         let dest_dir = PathBuf::from(dir);
+         assert!(
 ```
 
-**File**: `cuda-oxide/crates/mir-transforms/tests/common/mod.rs` (modified, +160/-3)
+**File**: `cutile-rs/cuda-tile-rs/cuda-tile` (modified, +1/-1)
 ```diff
-@@ -17,15 +17,16 @@ use core::num::NonZero;
- 
- use dialect_mir::attributes::{FieldIndexAttr, MirCastKindAttr, VariantIndexAttr};
- use dialect_mir::ops::{
--    MirAddOp, MirAllocaOp, MirCastOp, MirCheckedAddOp, MirCheckedSubOp, MirCondBranchOp,
-+    MirAddOp, MirAllocaOp, MirCallOp, MirCastOp, MirCheckedAddOp, MirCheckedSubOp, MirCondBranchOp,
-     MirConstantOp, MirConstructEnumOp, MirConstructTupleOp, MirDivOp, MirEnumPayloadOp, MirEqOp,
-     MirFieldAddrOp, MirFuncOp, MirGeOp, MirGetDiscriminantOp, MirGotoOp, MirGtOp, MirLeOp,
--    MirLoadOp, MirLtOp, MirNotOp, MirReturnOp, MirStoreOp, MirSubOp, MirUnreachableOp,
-+    MirLoadOp, MirLtOp, MirNotOp, MirReturnOp, MirStorageDeadOp, MirStorageLiveOp, MirStoreOp,
-+    MirSubOp, MirUnreachableOp,
- };
- use dialect_mir::types::{EnumVariant, MirEnumType, MirPtrType, MirTupleType};
- use mir_transforms::analyses::induction::CmpPred;
- use pliron::basic_block::BasicBlock;
--use pliron::builtin::attributes::{IntegerAttr, TypeAttr};
-+use pliron::builtin::attributes::{IntegerAttr, StringAttr, TypeAttr};
- use pliron::builtin::op_interfaces::{
-     OperandSegmentInterface, SingleBlockRegionInterface, SymbolOpInterface,
- };
-@@ -1257,6 +1258,162 @@ pub fn multiple_exit_counted_loop(ctx: &mut Context, n: i64) -> MultipleExitLoop
+@@ -1 +1 @@
+-Subproject commit 0859212ad19f71133a9b940c05323286cbf28a05
++Subproject commit 25732e3308abd43c0aa9007a7b3b012598bbcf15
+```
+
+**File**: `cutile-rs/cuda-tile-rs/tests/ffi_smoke.rs` (modified, +22/-0)
+```diff
+@@ -128,6 +128,28 @@ fn parse_cuda_tile_pointer_type() {
      }
  }
  
-+/// A built [`unreachable_arm_counted_loop`] and the blocks worth asserting on.
-+pub struct UnreachableArmLoop {
-+    pub module: Ptr<Operation>,
-+    pub region: Ptr<Region>,
-+    pub header: Ptr<BasicBlock>,
-+    pub body: Ptr<BasicBlock>,
-+    pub dead: Ptr<BasicBlock>,
-+}
-+
-+/// What the `dead` block of an [`unreachable_arm_counted_loop`] does before
-+/// its `mir.unreachable`.
-+#[derive(Clone, Copy, Debug)]
-+pub enum DeadArm {
-+    /// Nothing: the `otherwise` arm rustc gives a `match` on an enum.
-+    Unreachable,
-+    /// Only storage markers, which emit no instruction.
-+    StorageMarkers,
-+    /// A call to a panic handler, so the block is a real exit.
-+    Panics,
-+}
-+
-+/// Build a counted loop whose body branches on a function argument to a block
-+/// that ends in `mir.unreachable`, the shape rustc leaves for the `otherwise`
-+/// arm of a `match` on an enum. `dead_first` makes `dead` the true successor.
-+/// The live edge carries `acc1` as a block argument, so folding the branch
-+/// must keep that edge's operands:
-+///
-+/// ```text
-+///   preheader(flag): acc0=0; i0=0;              goto header(acc0, i0)
-+///   header(acc, i):  done -> exit(acc),         otherwise -> body
-+///   body:            acc1=acc+i;                cond_br flag [latch(acc1), dead]
-+///   dead:            (see `DeadArm`)            unreachable
-+///   latch(next):     i1=i+1;                    goto header(next, i1)
-+///   exit(result):    return result
-+/// ```
-+pub fn unreachable_arm_counted_loop(
-+    ctx: &mut Context,
-+    n: i64,
-+    arm: DeadArm,
-+    dead_first: bool,
-+) -> UnreachableArmLoop {
-+    let u32 = u32t(ctx);
-+    let i1 = i1(ctx);
-+    let (module, region) = func(ctx, vec![i1.into()], vec![u32.into()]);
-+
-+    let preheader = block(ctx, region, vec![i1.into()]);
-+    let header = block(ctx, region, vec![u32.into(), u32.into()]); // (acc, i)
-+    let body = block(ctx, region, vec![]);
-+    let dead = block(ctx, region, vec![]);
-+    let latch = block(ctx, region, vec![u32.into()]);
-+    let exit = block(ctx, region, vec![u32.into()]);
-+
-+    let flag = preheader.deref(ctx).get_argument(0);
-+    let acc0 = iconst(ctx, preheader, u32, 0);
-+    let i0 = iconst(ctx, preheader, u32, 0);
-+    goto(ctx, preheader, header, vec![acc0, i0]);
-+
-+    let acc = header.deref(ctx).get_argument(0);
-+    let i = header.deref(ctx).get_argument(1);
-+    let nconst = iconst(ctx, header, u32, n);
-+    let lt_n = op2!(
-+        ctx,
-+        header,
-+        MirLtOp::get_concrete_op_info(),
-+        i1.into(),
-+        i,
-+        nconst
-+    );
-+    let done = {
-+        let op = Operation::new(
-+            ctx,
-+            MirNotOp::get_concrete_op_info(),
-+            vec![i1.into()],
-+            vec![lt_n],
-+            vec![],
-+            0,
-+        );
-+        op.insert_at_back(header, ctx);
-+        op.deref(ctx).get_result(0)
-+    };
-+    cond_br_args(ctx, header, done, exit, vec![acc], body, vec![]);
-+
-+    let acc1 = op2!(
-+        ctx,
-+        body,
-+        MirAddOp::get_concrete_op_info(),
-+        u32.into(),
-+        acc,
-+        i
-+    );
-+    if dead_first {
-+        cond_br_args(ctx, body, flag, dead, vec![], latch, vec![acc1]);
-+    } else {
-+        cond_br_args(ctx, body, flag, latch, vec![acc1], dead, vec![]);
-+    }
-+
-+    match arm {
-+        DeadArm::Unreachable => {}
-+        DeadArm::StorageMarkers => {
-+            for info in [
-+                MirStorageLiveOp::get_concrete_op_info(),
-+                MirStorageDeadOp::get_concrete_op_info(),
-+            ] {
-+                Operation::new(ctx, info, vec![], vec![], vec![], 0).insert_at_back(dead, ctx);
-+            }
-+        }
-+        DeadArm::Panics => {
-+            l
-```
-
-**File**: `cuda-oxide/crates/mir-transforms/tests/unroll.rs` (modified, +66/-2)
-```diff
-@@ -14,10 +14,10 @@
- mod common;
- 
- use common::{
--    OffsetBound, RangeBound, RangeForLoop, RangeForShape, StepForm, counted_loop,
-+    DeadArm, OffsetBound, RangeBound, RangeForLoop, RangeForShape, StepForm, counted_loop,
-     counted_loop_from_step, early_exit_counted_loop, early_exit_with_direct_liveout, i32t, mir_ctx,
-     multi_latch_counted_loop, multiple_exit_counted_loop, nested_counted_loop, offset_counted_loop,
--    range_for_loop, shared_bound_nested_loop, u32t,
-+    range_for_loop, shared_bound_nested_loop, u32t, unreachable_arm_counted_loop,
- };
- use dialect_mir::ops::{
-     MirAddOp, MirBitAndOp, MirCallOp, MirCheckedAddOp, MirCheckedSubOp, MirCondBranchOp,
-@@ -484,6 +484,70 @@ fn partial_unroll_with_extra_exits_is_skipped() {
-     assert_eq!(hint_count(&ctx, lp.region), 0, "the request was consumed");
- }
- 
-+/// A branch to a block that only reaches `mir.unreachable`, like the
-+/// `otherwise` arm of rustc's `match` on an `Option`, is not a loop exit, on
-+/// either side of the branch and with storage markers in the block. A block
-+/// that calls a panic handler first is, and still declines partial unrolling.
 +#[test]
-+fn partial_unroll_ignores_a_branch_to_unreachable() {
-+    for arm in [
-+        DeadArm::Unreachable,
-+        DeadArm::StorageMarkers,
-+        DeadArm::Panics,
-+    ] {
-+        for dead_first in [false, true] {
-+            let case = format!("{arm:?}, dead_first={dead_first}");
-+            let mut ctx = mir_ctx();
-+            let lp = unreachable_arm_counted_loop(&mut ctx, 10, arm, dead_first);
-+
-+            MirUnrollHintOp::new(&mut ctx, 4)
-+                .get_operation()
-+                .insert_at_front(lp.body, &ctx);
-+            let mut analyses = AnalysisManager::default();
-+            unroll_annotated_loops(lp.module, &mut ctx, &mut analyses).expect("unroll pass");
-+
-+            pliron::operation::verify_operation(lp.module, &ctx).expect("valid IR after the pass");
-+            assert_eq!(hint_count(&ctx, lp.region), 0, "{case}: request consumed");
-+            let blocks: Vec<_> = lp.region.deref(&ctx).iter(&ctx).collect();
-+            if matches!(arm, DeadArm::Panics) {
-+                assert_eq!(
-+                    loop_count(&ctx, lp.region),
-+                    1,
-+                    "{case}: source loop remains"
-+                );
-+                assert!(
-+                    blocks.contains(&lp.dead),
-+                    "{case}: panic path still reachable"
-+                );
-+                continue;
-+            }
-+            assert_eq!(
-+                loop_count(&ctx, lp.region),
-+                2,
-+                "{case}: a main loop and the remainder loop"
-+            );
-+            assert!(
-+                !blocks.contains(&lp.dead),
-+                "{case}: the branch to `unreachable` was folded away"
-+            );
-+            let after = loop_info(&ctx, lp.region);
-+            for id in 0..after.loops().len() {
-+                assert_eq!(
-+                    after.exit_blocks(&ctx, lp.region, id).len(),
-+                    1,
-+                    "{case}: each loop leaves only through its exit test"
-+                );
-+            }
-+            let id = after.innermost_loop(lp.header).expect("remainder loop");
-+            assert_eq!(
-+                after.exiting_blocks(&ctx, lp.region, id),
-+                vec![lp.header],
-+                "{case}"
-+            );
-+        }
++fn parse_simt_fragment_with_preview_enabled() {
++    unsafe {
++        let ctx = make_context();
++        assert!(mlirCudaTileContextSetPreviewFeatures(
++            ctx,
++            string_ref(b"simt")
++        ));
++        let ty = type_parse(
++            ctx,
++            "!cuda_tile.preview$fragment<1xf32, local, \
++             mem_layout = #cuda_tile.preview$layout<(1):(1)>, \
++             fragmap = #cuda_tile.preview$layout<(1, 32, 1):(0, 1, 0)>>",
++        )
++        .expect("SIMT fragment type should parse with preview enabled");
++        assert!(mlirCudaTileTypeIsAFragmentType(ty));
++        assert_eq!(mlirCudaTileFragmentTypeGetRank(ty), 1);
++        assert_eq!(mlirCudaTileFragmentTypeGetDimSize(ty, 0), 1);
++        mlirContextDestroy(ctx);
 +    }
 +}
 +
  #[test]
- fn full_unroll_routes_a_direct_header_liveout_through_exit_arguments() {
-     let mut ctx = mir_ctx();
+ fn parse_integer_attribute() {
+     unsafe {
 ```
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/unroll_smoke/src/main.rs` (modified, +48/-3)
+**File**: `cutile-rs/cuda-tile-rs/tests/translate.rs` (added, +116/-0)
 ```diff
-@@ -20,18 +20,23 @@
- //! `const_generic_bound` is the same nest with every bound written `LANES / 16`
- //! for a const generic `LANES`.
- //! `isize_range_for` covers `a..b`, `(a..b).rev()`, and `#[unroll(4)]` on an
--//! `isize` counter.
-+//! `isize` counter. `partial_row_view` is `#[unroll(4)]` on
-+//! `for i in 0..n { s += row.get(i).unwrap_or(0.0); }` over a `RowView32`,
-+//! whose body matches an `Option`.
- //! All are semantics-preserving; the host checks the sums.
- //!
- //! `verify-code-shape.sh` asserts that `nested_lane_range`,
- //! `const_generic_bound`, and `isize_range_for` have no local memory in the
--//! generated PTX. GPU-less CI runs it through
--//! `scripts/smoketest.sh --compile-only`.
-+//! generated PTX, and that the unroller, not LLVM, split `partial_row_view`
-+//! into a main and a remainder loop. Given the build log, it also asserts that
-+//! the build printed no "not unrolled" warning for `partial_row_view`.
-+//! GPU-less CI runs it through `scripts/smoketest.sh --compile-only`.
- //!
- //! Run: cargo oxide run unroll_smoke
- 
- use cuda_core::LaunchConfig;
- use cuda_core::{CudaContext, DeviceBuffer};
-+use cuda_device::view::MatrixView32;
- use cuda_device::{DisjointSlice, kernel, thread};
- use cuda_host::cuda_module;
- 
-@@ -684,6 +689,27 @@ mod kernels {
-         *folded = weighted.wrapping_add(base);
-         *partial = sum;
-     }
+@@ -0,0 +1,116 @@
++/*
++ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ * SPDX-License-Identifier: Apache-2.0
++ */
 +
-+    /// `#[unroll(4)]` on a runtime-bounded range loop over a row view, the
-+    /// loop from issue #1690. rustc lowers `unwrap_or`'s `match` with an
-+    /// `otherwise` arm that is `unreachable`, which the unroller must not count
-+    /// as another loop exit. The result is the sum of the first `min(n, cols)`
-+    /// elements of `x`, since reads at `cols..n` are 0, or 0 when `x` is too
-+    /// short for a row of `cols`.
-+    #[kernel]
-+    pub fn partial_row_view(x: &[f32], mut out: DisjointSlice<f32>, cols: u32, n: u32) {
-+        let Some(out_elem) = out.get_mut(thread::index_1d()) else {
-+            return;
-+        };
-+        let mut s = 0.0f32;
-+        if let Some(row) = MatrixView32::new(x, cols).row(0, cols) {
-+            #[unroll(4)]
-+            for i in 0..n {
-+                s += row.get(i).unwrap_or(0.0);
-+            }
-+        }
-+        *out_elem = s;
-+    }
- }
- 
- fn main() {
-@@ -894,6 +920,25 @@ fn main() {
- 
-         let signed_input: Vec<u32> = (0..64u32).map(|i| i * 7 + 1).collect();
-         let d_signed_input = DeviceBuffer::from_host(&stream, &signed_input).unwrap();
-+        // whole numbers keep every partial f32 sum exact, so unrolling cannot
-+        // change the result through rounding
-+        let row: Vec<f32> = (0..64u16).map(|i| f32::from(i * 3 + 1)).collect();
-+        let d_row = DeviceBuffer::from_host(&stream, &row).unwrap();
-+        let cols = 48u32;
-+        // `range_trip = 16` reads past `cols`, so the `None` arm runs too
-+        let row_trip = range_trip * 5;
-+        let mut d_row_sum = DeviceBuffer::<f32>::zeroed(&stream, N).unwrap();
-+        // SAFETY: each thread writes its own element; the row view bounds the reads.
-+        unsafe {
-+            module.partial_row_view(stream.as_ref(), cfg, &d_row, &mut d_row_sum, cols, row_trip)
-+        }
-+        .expect("launch partial_row_view");
-+        let want_row_sum: f32 = row.iter().take(row_trip.min(cols) as usize).sum();
-+        assert_eq!(
-+            d_row_sum.to_host_vec(&stream).unwrap(),
-+            vec![want_row_sum; N],
-+            "partial `0..{row_trip}` over `row.get(i).unwrap_or(0.0)`"
-+        );
-         let mut d_signed = DeviceBuffer::<u32>::zeroed(&stream, N).unwrap();
-         let mut d_signed_part = DeviceBuffer::<u32>::zeroed(&stream, N).unwrap();
-         // SAFETY: each thread writes its own element of the buffer; the kernel
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/unroll_smoke/verify-code-shape.sh` (modified, +53/-5)
-```diff
-@@ -5,17 +5,24 @@ set -euo pipefail
- 
- root="$(cd "$(dirname "$0")" && pwd)"
- ptx="${1:-$root/unroll_smoke.ptx}"
-+# Output of the `cargo oxide build` that produced the PTX. The warning check
-+# needs it; `scripts/smoketest.sh` passes its log as `CUDA_OXIDE_BUILD_LOG`.
-+build_log="${2:-${CUDA_OXIDE_BUILD_LOG:-}}"
- 
- if [[ ! -f "$ptx" ]]; then
-   echo "PTX file not found: $ptx" >&2
-   exit 1
- fi
-+if [[ -n "$build_log" && ! -f "$build_log" ]]; then
-+  echo "build log not found: $build_log" >&2
-+  exit 1
-+fi
- 
--python3 - "$ptx" <<'PY'
-+python3 - "$ptx" "$root/src/main.rs" "$build_log" <<'PY'
- import re
- import sys
- 
--ptx_path = sys.argv[1]
-+ptx_path, src_path, log_path = sys.argv[1:4]
- ptx = open(ptx_path, encoding="utf-8").read()
- # Strip comments so a mention in a comment cannot satisfy or hide a check.
- ptx = re.sub(r"/\*.*?\*/|//[^\n]*", "", ptx, flags=re.S)
-@@ -25,7 +32,9 @@ ptx = re.sub(r"/\*.*?\*/|//[^\n]*", "", ptx, flags=re.S)
- # carries a `_TID_<hash>` suffix.
- names = ("nested_lane_range", "isize_range_for", "const_generic_bound")
- local_memory = re.compile(r"(?m)(?:^|\s)\.local\b|ld\.local|st\.local")
--for name in names:
++//! Exercise the translator built by this crate, without CUDA or a GPU.
 +
++use std::io::Write;
++use std::process::{Command, Output, Stdio};
 +
-+def entry_body(name):
-     header = re.search(r"\.entry\s+" + re.escape(name) + r"(?:_TID_\w+)?\s*\(", ptx)
-     if header is None:
-         sys.exit(f"error: missing PTX entry {name} in {ptx_path}")
-@@ -39,9 +48,48 @@ for name in names:
-         end += 1
-     if depth:
-         sys.exit(f"error: unterminated PTX entry {name}")
--    body = ptx[brace + 1 : end - 1]
--    if local_memory.search(body):
-+    return ptx[brace + 1 : end - 1]
-+
-+
-+for name in names:
-+    if local_memory.search(entry_body(name)):
-         sys.exit(f"error: {name} uses local memory in {ptx_path}")
-     print(f"{name}: no local memory PASS")
-+
-+# A partial `#[unroll(N)]` marks both its main and its remainder loop
-+# `nounroll`. LLVM runtime-unrolls this loop by itself when the request is
-+# declined, and then marks only its own remainder loop.
-+name = "partial_row_view"
-+pragmas = entry_body(name).count('.pragma "nounroll";')
-+if pragmas != 2:
-+    sys.exit(f"error: {name} has {pragmas} nounroll loops, expected the unroller's 2")
-+print(f"{name}: main and remainder loop PASS")
-+
-+# The unroller prints each declined request as a `warning:` line, then a
-+# `-->` line at the annotation. None may point into `partial_row_view`.
-+if log_path:
-+    log = open(log_path, encoding="utf-8", errors="replace").read()
-+    warned = re.findall(
-+        r"warning: #\[unroll(?:\(\d+\))?\] requested but the loop was not unrolled:"
-+        r"[^\n]*\n\s*--> ([^\n]*?):(\d+):\d+",
-+        log,
-+    )
-+    # the example declines some loops on purpose, so a log without any of
-+    # their warnings is not the output of a device build of this example
-+    if not warned:
-+        sys.exit(f"error: no unroll warnings in {log_path}; is it this build's output?")
-+    src = open(src_path, encoding="utf-8").read().splitlines()
-+    start = next(
-+        (i for i, line in enumerate(src, 1) if f"fn {name}(" in line), None
-+    )
-+    if start is None:
-+        sys.exit(f"error: missing kernel {name} in {src_path}")
-+    end = next(i for i, line in enumerate(src[start:], start + 1) if line == "    }")
-+    for path, line in warned:
-+        if path.endswith("main.rs") and start <= int(line) <= end:
-+            sys.exit(f"error: the build warned that {name}'s loop was not unrolled ({path}:{line})")
-+    print(f"{name}: no not-unrolled warning PASS")
-+else:
-+    print(f"{name}: no build log given, warning check skipped")
- print("unroll_smoke PTX shape: PASS")
- PY
-```
-
----
-
-### Incident Patch 2: `406040d5` (2026-11-09)
-**Commit Message**: feat(unroll): partially unroll runtime-step loops (#1718)
-
-## What This PR Does
-
-Extends partial loop unrolling (`#[unroll(N)]`) in `mir-transforms` to
-support loops whose counter start or step is a loop-invariant runtime
-value (such as `i += thread::blockDim_x()` in a block-stride loop):
-
-1. **Runtime Induction Variable Analysis
-(`crates/mir-transforms/src/analyses/induction.rs`)**
-2. **Runtime-Step Partial Unrolling
-(`crates/mir-transforms/src/unroll.rs`)**
-3. **Unit & GPU Regressions (`crates/mir-transforms/tests/unroll.rs`,
-`examples/unroll_smoke`)**
-
----
-
-### 1. Partially Unrolling Block-Stride Loops (`#[unroll(N)]`)
-
-Previously, `induction::analyze` required both the counter's initial
-value and step to be compile-time constants (`ArgKind::BasicIv`),
-rejecting standard GPU block-stride loops (`let mut i = threadIdx_x();
-while i < n { ...; i += blockDim_x(); }`):
-
-```text
-BEFORE (`let mut i = threadIdx_x() as usize; #[unroll(4)] while i < n as usize { ...; i += blockDim_x() as usize; }`):
-  induction.rs: start and step are runtime values -> `ArgKind::Reduction`
-  ──► warning: "no recognized induction variable (loop counter)" (loop left rolled)
-
-AFTER (`ArgKind::RuntimeIv` + `lo
-
-**File**: `cuda-oxide/crates/cuda-device/src/thread.rs` (modified, +4/-3)
-```diff
-@@ -1381,9 +1381,10 @@ pub fn __unchecked_indexing_config<const ENABLED: bool>() {
- ///
- /// Loops with several `continue` paths are supported. Full `#[unroll]` also
- /// preserves `break` paths and multiple exit targets. Partial `#[unroll(N)]`
--/// requires a positive counter step, a `<` or `<=` test, an unchanging limit,
--/// and no exit besides the normal header test. Unsupported requests warn and
--/// are not unrolled.
-+/// requires a `<` or `<=` test, an unchanging limit, a step that is a positive
-+/// constant or a loop-invariant runtime value (such as `blockDim_x()` in a
-+/// block-stride loop), and no exit besides the normal header test.
-+/// Unsupported requests warn and are not unrolled.
- ///
- /// One annotation may create at most 1,024 body copies, 8,192 cloned basic
- /// blocks, and 65,536 cloned operations. A partial factor above 1,024 is
-```
-
-**File**: `cuda-oxide/crates/cuda-macros/src/lib.rs` (modified, +7/-4)
-```diff
-@@ -468,8 +468,10 @@ pub fn cuda_module(attr: TokenStream, item: TokenStream) -> TokenStream {
- /// partial unrolling for that loop. A `match` in the body, such as
- /// `row.get(i).unwrap_or(0.0)`, is not an exit.
- ///
--/// Partial unrolling also requires a positive counter step, a `<` or `<=` test,
--/// and a limit that does not change inside the loop. One annotation may create
-+/// Partial unrolling also requires a `<` or `<=` test, a limit that does not
-+/// change inside the loop, and a counter that advances by the same positive
-+/// constant or loop-invariant runtime value on every iteration, such as
-+/// `blockDim_x()` in a block-stride loop. One annotation may create
- /// at most 1,024 body copies, 8,192 cloned basic blocks, and 65,536 cloned
- /// operations. Factors above 1,024 are rejected; unsupported loop shapes warn
- /// and are not unrolled.
-@@ -881,8 +883,9 @@ pub fn cooperative_launch(attr: TokenStream, item: TokenStream) -> TokenStream {
- /// `isize`); other iterator loops are not yet recognized. Partial
- /// factors must be `N >= 2`. Multiple `continue` paths are supported; full
- /// unrolling preserves `break` and multiple exit targets. Partial unrolling
--/// requires a positive counter step, a `<` or `<=` test, an unchanging limit,
--/// and no exit besides the normal header test.
-+/// requires a `<` or `<=` test, an unchanging limit, a step that is a positive
-+/// constant or a loop-invariant runtime value, and no exit besides the normal
-+/// header test.
- ///
- /// One annotation may create at most 1,024 body copies, 8,192 cloned basic
- /// blocks, and 65,536 cloned operations. Factors above 1,024 are rejected;
-```
-
-**File**: `cuda-oxide/crates/mir-transforms/src/analyses/induction.rs` (modified, +166/-4)
-```diff
-@@ -31,6 +31,14 @@
- //!     i.e. `arg` and `init` leave the same remainder when divided by `step`) is
- //!     what the unroller exploits when it folds `& mask` operations to
- //!     constants.
-+//!   * **Runtime induction variable.** The latch feeds back `arg + step`, but
-+//!     the starting value or the step is only known at runtime, as in the
-+//!     block-stride loop `i = threadIdx.x; while i < n { i += blockDim.x }`.
-+//!     The step must have the same value on every iteration: it is either
-+//!     computed before the loop, or computed in the loop from such values and
-+//!     from special registers that are fixed for the whole launch
-+//!     ([`loop_invariant`]). There is no trip count, but partial unrolling can
-+//!     still step the counter itself.
- //!   * **Reduction** (a loop-carried accumulator). A value carried across
- //!     iterations and updated by something other than a constant step, e.g.
- //!     `acc = acc + (i & 3)`. It is not a counter, so we cannot replace it with
-@@ -51,7 +59,9 @@
- //! anything that does not match the simple counted-loop shape it recognises is
- //! reported as `Unknown` / `None` rather than guessed at.
- 
--use dialect_mir::ops::arithmetic::{MirAddOp, MirNotOp, MirSubOp};
-+use dialect_mir::attributes::MirCastKindAttr;
-+use dialect_mir::ops::arithmetic::{MirAddOp, MirMulOp, MirNotOp, MirSubOp};
-+use dialect_mir::ops::cast::MirCastOp;
- use dialect_mir::ops::comparison::{MirGeOp, MirGtOp, MirLeOp, MirLtOp};
- use dialect_mir::ops::constants::MirConstantOp;
- use dialect_mir::ops::control_flow::MirCondBranchOp;
-@@ -110,6 +120,10 @@ pub enum ArgKind {
-     /// A counter: its value is `init + step * iteration`, so it forms the
-     /// sequence `init, init+step, init+2*step, ...`.
-     BasicIv { init: i128, step: i128 },
-+    /// A counter that also advances by the same `step` on every iteration,
-+    /// but whose starting value or step is only known at runtime, so it has
-+    /// no numeric formula and no trip count.
-+    RuntimeIv { step: RuntimeStep },
-     /// A value carried across iterations and updated by something other than a
-     /// fixed step, e.g. an accumulator `acc = acc + (i & 3)`.
-     Reduction,
-@@ -119,6 +133,17 @@ pub enum ArgKind {
-     Unknown,
- }
- 
-+/// The step of an [`ArgKind::RuntimeIv`] counter.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum RuntimeStep {
-+    /// A compile-time constant, for a counter with a runtime start.
-+    Const(i128),
-+    /// A value added to the counter on every back-edge (`arg + step`), the same
-+    /// on every iteration. It may be computed inside the loop; see
-+    /// [`loop_invariant`] for which values qualify.
-+    Value(Value),
++fn translate(args: &[&str], input: &[u8]) -> Output {
++    let mut child = Command::new(env!("CUDA_TILE_RS_TRANSLATE_BIN"))
++        .args(args)
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("start the translator built by cuda-tile-rs");
++    child.stdin.take().unwrap().write_all(input).unwrap();
++    child.wait_with_output().unwrap()
 +}
 +
- /// Everything this analysis learned about one loop.
- #[derive(Debug, Clone)]
- pub struct LoopRecurrences {
-@@ -268,6 +293,7 @@ pub fn analyze(
-         let recurrence_values = recurrence_values(ctx, l, header, arg, i);
-         args.push(classify_arg(
-             ctx,
-+            l,
-             arg,
-             i,
-             pre_ops.as_deref(),
-@@ -403,6 +429,7 @@ fn expand_block_argument(
- 
- fn classify_arg(
-     ctx: &Context,
-+    lp: &Loop,
-     arg: Value,
-     i: usize,
-     pre_ops: Option<&[Value]>,
-@@ -431,13 +458,145 @@ fn classify_arg(
-             return ArgKind::BasicIv { init, step };
-         }
-         // Steps like a counter, but its starting value isn't a constant, so we
--        // can't give it a numeric formula; treat it as a carried value instead.
--        return ArgKind::Reduction;
-+        // can't give it a numeric formula.
-+        return ArgKind::RuntimeIv {
-+            step: RuntimeStep::Const(step),
-+        };
-+    }
-+
-+    // Every back-edge may instead add the same runtime value, such as
-+    // `blockDim.x`. Requiring one SSA value on every path, rather than equal
-+    // expressions, keeps the check simple; a step recomputed separately on two
-+    // `continue` paths is not recognized.
-+    let mut runtime_steps = values.iter().map(|&value| runtime_offset(ctx, value, arg));
-+    if let Some(step) = runtime_steps.next().flatten()
-+        && runtime_steps.all(|candidate| candidate == Some(step))
-+        && loop_invariant(ctx, &lp.blocks, step)
-+    {
-+        return ArgKind::RuntimeIv {
-+            step: RuntimeStep::Value(step),
-+        };
-     }
-     // Changes each iteration but not by a fixed step: an accumulator.
-     ArgKind::Reduction
- }
- 
-+/// If `v` is `arg + s` or `s + arg` for a value `s` that is not a constant,
-+/// return `s`. Subtraction is not matched: a runtime `arg - s` would need the
-+/// negated step materialized, which nothing needs yet.
-+fn runtime_offset(ctx: &Context, v: Value, arg: Value) -> Option<Value> {
-+    let def = v.defining_op()?;
-+    Operation::get_op::<MirAddOp>(def, ctx)?;
-+    let a = def.deref(ctx).get_operand(0);
-+    let b = def.deref(ctx).get_operand(1);
-+    let step = if a == arg {
-+        b
-+    } else if b == arg {
-+        a
-+    } else {
-+        return None;
-+    };
-+    (step
-```
-
-**File**: `cuda-oxide/crates/mir-transforms/src/unroll.rs` (modified, +310/-123)
-```diff
-@@ -32,7 +32,13 @@
- //! unrolled when it has an extra exit. A branch to a block that only reaches
- //! `mir.unreachable`, such as the arm rustc gives a `match` on an `Option`, is
- //! removed first and so is not an exit. Partial unrolling currently requires a
--//! positive step, a `<` or `<=` test, and a loop-invariant bound.
-+//! `<` or `<=` test and a loop-invariant bound; the bound may be recomputed in
-+//! the loop from fixed values, as `while i < n as usize` casts `n` on every
-+//! iteration. Its counter may start at a
-+//! runtime value, and its step may be a positive constant or a loop-invariant
-+//! runtime value such as `blockDim_x()` in a block-stride loop. With a runtime
-+//! step the main loop's guard replays the source test on every counter in the
-+//! group, so a group runs only when the source loop would run all of it.
- //!
- //! To bound compile time and memory, one request may create at most 1,024 body
- //! copies, 8,192 cloned blocks, and 65,536 cloned operations. Larger requests
-@@ -63,7 +69,7 @@ use pliron::graph::ControlFlowGraph;
- use pliron::graph::dominance::DomInfo;
- use pliron::irbuild::{
-     IRStatus,
--    cloning::{IrMapping, clone_blocks_into},
-+    cloning::{IrMapping, clone_blocks_into, clone_operation},
-     listener::DummyListener,
-     rewriter::IRRewriter,
- };
-@@ -85,7 +91,7 @@ use std::fmt;
- use std::num::NonZero;
- use std::path::PathBuf;
- 
--use crate::analyses::induction::{self, ArgKind, CmpPred};
-+use crate::analyses::induction::{self, ArgKind, CmpPred, RuntimeStep};
- use crate::analyses::loop_info::LoopInfo;
- use crate::canonicalize::{
-     CanonicalizeOutcome, close_header_liveouts, fold_branches_to_unreachable,
-@@ -576,8 +582,7 @@ struct LoopShape {
-     /// header -> normal_exit operands (the normal-completion live-out values).
-     normal_exit_ops: Vec<Value>,
-     iv_idx: usize,
--    iv_init: i128,
--    iv_step: i128,
-+    counter: Counter,
-     iv_type: TypeHandle,
-     /// The boolean type of the header's exit test (for any new comparison).
-     i1_type: TypeHandle,
-@@ -588,6 +593,16 @@ struct LoopShape {
-     loop_blocks: FxHashSet<Ptr<BasicBlock>>,
- }
- 
-+/// How the loop counter advances on every back-edge.
-+#[derive(Clone, Copy)]
-+enum Counter {
-+    /// `init + k*step`, both known at compile time.
-+    Constant { init: i128, step: i128 },
-+    /// The same `step` every iteration, but the start or the step is only
-+    /// known at runtime, so the counter has no compile-time formula.
-+    Runtime(RuntimeStep),
-+}
-+
- /// True if `v` is the result of an operation located in one of `set`'s blocks
- /// (a block argument, having no defining op, is not "defined in" the set this
- /// way). Used to tell loop-variant values from loop-invariant ones.
-@@ -661,17 +676,20 @@ fn analyze_shape(
- 
-     let iv_idx = match rec.primary_iv {
-         Some(iv_idx) => iv_idx,
--        None if rec
--            .args
--            .iter()
--            .any(|arg| matches!(arg, ArgKind::BasicIv { .. })) =>
-+        None if rec.args.iter().any(|arg| {
-+            matches!(arg, ArgKind::BasicIv { .. } | ArgKind::RuntimeIv { .. })
-+        }) =>
-         {
-             return Err("the loop has a counter, but its exit test is not of the form `counter <op> bound` (or `counter + const <op> bound`)".into());
-         }
--        None => return Err("no recognized induction variable (loop counter)".into()),
-+        None => return Err("no recognized induction variable (loop counter); the counter must advance by the same constant or loop-invariant value on every iteration".into()),
-     };
--    let (iv_init, iv_step) = match &rec.args[iv_idx] {
--        ArgKind::BasicIv { init, step } => (*init, *step),
-+    let counter = match &rec.args[iv_idx] {
-+        ArgKind::BasicIv { init, step } => Counter::Constant {
-+            init: *init,
-+            step: *step,
-+        },
-+        ArgKind::RuntimeIv { step } => Counter::Runtime(*step),
-         _ => return Err("the loop counter is not a simple induction variable".into()),
-     };
- 
-@@ -819,8 +837,7 @@ fn analyze_shape(
-         entry_ops,
-         normal_exit_ops,
-         iv_idx,
--        iv_init,
--        iv_step,
-+        counter,
-         iv_type,
-         i1_type,
-         preheader_term,
-@@ -985,17 +1002,22 @@ fn integer_value_bounds(ctx: &Context, ty: TypeHandle) -> Option<(i128, i128)> {
- /// Full unrolling uses a mathematical recurrence. Prove that the fixed-width IV
- /// reaches the same final value without wrapping; otherwise the original loop
- /// may continue after the trip count this analysis computed.
--fn full_iv_stays_in_range(ctx: &Context, shape: &LoopShape, trip: i128) -> bool {
-+fn full_iv_stays_in_range(
-+    ctx: &Context,
-+    shape: &LoopShape,
-+    (init, step): (i128, i128),
-+    trip: i128,
-+) -> bool {
-     let Some((min, max)) = integer_value_bounds(ctx, shape.iv_type) else {
-         return false;
-     };
--    let Some(delta) = trip.checked_mul(shape.iv_step) else {
-+    let Some(delta) = trip.checked_mul(step) els
-```
-
-**File**: `cuda-oxide/crates/mir-transforms/tests/common/mod.rs` (modified, +180/-0)
-```diff
-@@ -510,6 +510,186 @@ fn offset_loop(
-     }
- }
- 
-+/// Where a [`runtime_step_loop`] gets the amount it adds to its counter.
-+#[derive(Debug, Clone, Copy)]
-+pub enum LoopStep {
-+    /// The `step` argument, defined before the loop.
-+    Param,
-+    /// An integer cast of the `step` argument, computed again on every
-+    /// iteration, as `i += blockDim_x() as usize` reads its register again.
-+    /// The argument has the counter's width and the other signedness.
-+    CastInLoop,
-+    /// A constant, so only the starting value is unknown.
-+    Const(i128),
-+    /// An integer cast of the loop-carried accumulator, so the step changes
-+    /// between iterations and the loop must stay rolled.
-+    CastOfCarried,
-+}
-+
-+/// Where a [`runtime_step_loop`] gets the limit its exit test compares with.
-+#[derive(Debug, Clone, Copy)]
-+pub enum LoopBound {
-+    /// The `n` argument, defined before the loop.
-+    Param,
-+    /// An integer cast of the `n` argument, computed again in the header on
-+    /// every iteration, as `while i < n as usize` does. The argument has the
-+    /// counter's width and the other signedness.
-+    CastInLoop,
-+    /// An integer cast of the loop-carried accumulator, so the limit changes
-+    /// between iterations and the loop must stay rolled.
-+    CastOfCarried,
-+}
-+
-+/// Build `fn(start, n, step) { acc = 0; i = start; while i + off <pred> n {
-+/// acc += i; i += step } acc }`, a counter whose start and step are only known
-+/// at runtime, in the shape mem2reg leaves it. With `off == 0` the test
-+/// compares `i` itself:
-+///
-+/// ```text
-+///   preheader(start, n, step): acc0=0;               goto header(acc0, start)
-+///   header(acc, i):            t = not(i+off <pred> n); cond_br t [exit(acc), latch]
-+///   latch:                     acc1=acc+i; i1=i+s;    goto header(acc1, i1)
-+///   exit(result):              return result
-+/// ```
-+///
-+/// `s` comes from `step_source` and `n` from `bound_source`. All values have
-+/// type `ty`, except a `step` or `n` argument that the loop casts.
-+pub fn runtime_step_loop(
-+    ctx: &mut Context,
-+    ty: TypedHandle<IntegerType>,
-+    pred: CmpPred,
-+    step_source: LoopStep,
-+    bound_source: LoopBound,
-+    off: i128,
-+) -> CountedLoop {
-+    let i1 = i1(ctx);
-+    let width = ty.deref(ctx).width();
-+    let other_signedness = if ty.deref(ctx).signedness() == Signedness::Signed {
-+        Signedness::Unsigned
-+    } else {
-+        Signedness::Signed
-+    };
-+    let cast_ty = IntegerType::get(ctx, width, other_signedness);
-+    let step_ty = match step_source {
-+        LoopStep::CastInLoop => cast_ty,
-+        LoopStep::Param | LoopStep::Const(_) | LoopStep::CastOfCarried => ty,
-+    };
-+    let bound_ty = match bound_source {
-+        LoopBound::CastInLoop => cast_ty,
-+        LoopBound::Param | LoopBound::CastOfCarried => ty,
-+    };
-+    let inputs: Vec<TypeHandle> = vec![ty.into(), bound_ty.into(), step_ty.into()];
-+    let (module, region) = func(ctx, inputs.clone(), vec![ty.into()]);
-+
-+    let preheader = block(ctx, region, inputs);
-+    let header = block(ctx, region, vec![ty.into(), ty.into()]); // (acc, i)
-+    let latch = block(ctx, region, vec![]);
-+    let exit = block(ctx, region, vec![ty.into()]);
-+
-+    let start = preheader.deref(ctx).get_argument(0);
-+    let n_arg = preheader.deref(ctx).get_argument(1);
-+    let step_arg = preheader.deref(ctx).get_argument(2);
-+    let acc0 = iconst_i128(ctx, preheader, ty, 0);
-+    goto(ctx, preheader, header, vec![acc0, start]);
-+
-+    let acc = header.deref(ctx).get_argument(0);
-+    let i = header.deref(ctx).get_argument(1);
-+    let n = match bound_source {
-+        LoopBound::Param => n_arg,
-+        LoopBound::CastInLoop => int_cast(ctx, header, ty, n_arg),
-+        LoopBound::CastOfCarried => int_cast(ctx, header, ty, acc),
-+    };
-+    let info = match pred {
-+        CmpPred::Lt => MirLtOp::get_concrete_op_info(),
-+        CmpPred::Le => MirLeOp::get_concrete_op_info(),
-+        CmpPred::Gt => MirGtOp::get_concrete_op_info(),
-+        CmpPred::Ge => MirGeOp::get_concrete_op_info(),
-+    };
-+    let tested = if off == 0 {
-+        i
-+    } else {
-+        let off_value = iconst_i128(ctx, header, ty, off);
-+        op2!(
-+            ctx,
-+            header,
-+            MirAddOp::get_concrete_op_info(),
-+            ty.into(),
-+            i,
-+            off_value
-+        )
-+    };
-+    let keep_going = op2!(ctx, header, info, i1.into(), tested, n);
-+    let done = {
-+        let op = Operation::new(
-+            ctx,
-+            MirNotOp::get_concrete_op_info(),
-+            vec![i1.into()],
-+            vec![keep_going],
-+            vec![],
-+            0,
-+        );
-+        op.insert_at_back(header, ctx);
-+        op.deref(ctx).get_result(0)
-+    };
-+    cond_br_args(ctx, header, done, exit, vec![acc], latch, vec![]);
-+
-+    let acc1 = op2!(
-+        ctx,
-+        latch,
-+        MirAddOp::get_concrete_op_info(),
-+        ty.into(),
-+        acc,
-+        i
++fn successful(output: Output) -> Vec<u8> {
++    assert!(
++        output.status.success(),
++        "translator failed: {}",
++        String::from_utf8_lossy(&output.stderr)
 +    );
-+  
++    output.stdout
++}
++
++fn roundtrip(source: &str, version: u8, preview: bool) -> String {
++    let version_flag = format!("--bytecode-version=13.{version}");
++    let mut encode_args = vec!["--mlir-to-cudatilebc", &version_flag];
++    let mut decode_args = vec!["--cudatilebc-to-mlir"];
++    if preview {
++        encode_args.push("--preview=simt");
++        decode_args.push("--preview=simt");
++    }
++    let bytes = successful(translate(&encode_args, source.as_bytes()));
++    assert_eq!(&bytes[..8], b"\x7fTileIR\0");
++    assert_eq!(&bytes[8..12], &[13, version, u8::from(preview), 0]);
++    let mlir = successful(translate(&decode_args, &bytes));
++    // Check that decoding preserves an encodable module and stabilizes after
++    // printing, rather than merely accepting the bytecode header.
++    let reencoded = successful(translate(&encode_args, &mlir));
++    assert_eq!(successful(translate(&decode_args, &reencoded)), mlir);
++    String::from_utf8(mlir).unwrap()
++}
++
++#[test]
++fn ordinary_bytecode_versions_roundtrip() {
++    let source = "cuda_tile.module @kernels { entry @plain() { return } }";
++    for version in 1..=5 {
++        let mlir = roundtrip(source, version, false);
++        assert!(mlir.contains("entry @plain"), "{mlir}");
++    }
++}
++
++#[test]
++fn pointer_classifications_roundtrip_in_13_5() {
++    let source = r#"
++        cuda_tile.module @kernels {
++          entry @classified(
++              %uc: tile<ptr<i32, #cuda_tile.ptr_attr<unicast>>>,
++              %mc: tile<ptr<f32, #cuda_tile.ptr_attr<multicast>>>) {
++            return
++          }
++        }
++    "#;
++    let mlir = roundtrip(source, 5, false);
++    assert!(mlir.contains("ptr<i32, <unicast>>"), "{mlir}");
++    assert!(mlir.contains("ptr<f32, <multicast>>"), "{mlir}");
++}
++
++#[test]
++fn tile_library_interface_and_implementation_roundtrip() {
++    // Reuse the bundled upstream fixture, including generic declarations,
++    // access annotations, fragment layouts and synchronization.
++    let mlir = roundtrip(
++        include_str!("../cuda-tile/test/Bytecode/preview_ops.mlir"),
++        5,
++        true,
++    );
++    assert!(mlir.contains("preview$func extern @foreign"), "{mlir}");
++    assert!(mlir.contains("preview$extern_impl @foreign_sm90"), "{mlir}");
++    assert!(mlir.contains("preview$fragment"), "{mlir}");
++}
++
++#[test]
++fn tile_library_call_roundtrips_with_simt_preview() {
++    let source = r#"
++        cuda_tile.module @kernels {
++          preview$func extern @add_one(
++              %x: tile<32xf32>
++                {cuda_tile.preview$access = #cuda_tile.preview$access<inout>})
++              -> tile<32xf32>
++          entry @caller() {
++            %x = constant <f32: 1.0> : tile<32xf32>
++            %result = preview$call @add_one(%x)
++                : (!cuda_tile.tile<32xf32>) -> !cuda_tile.tile<32xf32>
++            return
++          }
++        }
++    "#;
++    let mlir = roundtrip(source, 5, true);
++    assert!(mlir.contains("preview$call @add_one"), "{mlir}");
++    let rejected = translate(
++        &["--mlir-to-cudatilebc", "--bytecode-version=13.5"],
++        source.as_bytes(),
++    );
++    assert!(
++        !rejected.status.success(),
++        "SIMT preview must be explicitly enabled"
++    );
++}
 ```
 
-**File**: `cuda-oxide/crates/mir-transforms/tests/unroll.rs` (modified, +161/-5)
+**File**: `cutile-rs/cutile-ir/tests/bytecode_13_5.rs` (modified, +9/-5)
 ```diff
-@@ -14,13 +14,14 @@
- mod common;
+@@ -7,9 +7,9 @@
+ //! the public-preview `preview$call` (foreign tile-library calls) and the
+ //! preview header bit.
+ //!
+-//! The toolkit checks run when the selected `tileiras` has a
+-//! `cuda-tile-translate` next to it that accepts 13.5. They never need a
+-//! GPU.
++//! The translator checks use `CUTILE_REFERENCE_TRANSLATE` when configured,
++//! otherwise a `cuda-tile-translate` next to the selected 13.5 `tileiras`.
++//! They never need a GPU.
  
- use common::{
--    DeadArm, OffsetBound, RangeBound, RangeForLoop, RangeForShape, StepForm, counted_loop,
--    counted_loop_from_step, early_exit_counted_loop, early_exit_with_direct_liveout, i32t, mir_ctx,
--    multi_latch_counted_loop, multiple_exit_counted_loop, nested_counted_loop, offset_counted_loop,
--    range_for_loop, shared_bound_nested_loop, u32t, unreachable_arm_counted_loop,
-+    DeadArm, LoopBound, LoopStep, OffsetBound, RangeBound, RangeForLoop, RangeForShape, StepForm,
-+    counted_loop, counted_loop_from_step, early_exit_counted_loop, early_exit_with_direct_liveout,
-+    i32t, mir_ctx, multi_latch_counted_loop, multiple_exit_counted_loop, nested_counted_loop,
-+    offset_counted_loop, range_for_loop, runtime_step_loop, shared_bound_nested_loop, u32t,
-+    unreachable_arm_counted_loop,
- };
- use dialect_mir::ops::{
--    MirAddOp, MirBitAndOp, MirCallOp, MirCheckedAddOp, MirCheckedSubOp, MirCondBranchOp,
-+    MirAddOp, MirBitAndOp, MirCallOp, MirCastOp, MirCheckedAddOp, MirCheckedSubOp, MirCondBranchOp,
-     MirConstantOp, MirGeOp, MirGetDiscriminantOp, MirGtOp, MirLeOp, MirLtOp, MirNotOp, MirReturnOp,
-     MirSubOp, MirUnrollHintOp,
- };
-@@ -852,6 +853,9 @@ fn evaluate_integer(ctx: &Context, value: Value, inputs: &HashMap<Value, i128>)
-         let lhs = evaluate_integer(ctx, op.deref(ctx).get_operand(0), inputs);
-         if Operation::get_op::<MirNotOp>(op, ctx).is_some() {
-             !lhs
-+        } else if Operation::get_op::<MirCastOp>(op, ctx).is_some() {
-+            // an integer cast keeps the value; the result type wraps it below
-+            lhs
-         } else {
-             let rhs = evaluate_integer(ctx, op.deref(ctx).get_operand(1), inputs);
-             if Operation::get_op::<MirAddOp>(op, ctx).is_some() {
-@@ -1011,6 +1015,158 @@ fn run_function(ctx: &Context, region: Ptr<Region>, args: &[i128]) -> i128 {
-     panic!("the function did not return within 10,000 blocks");
+ use std::path::{Path, PathBuf};
+ use std::process::Command;
+@@ -594,9 +594,13 @@ fn preview_call_operands_must_be_tiles_or_tokens() {
+     assert!(message.contains("tiles or tokens"), "{message}");
  }
  
-+/// The block-stride loop `i = start; while i < n { acc += i; i += step }`,
-+/// with the start and the step only known at runtime, partially unrolls and
-+/// returns what the source loop returns. Every 8-bit start, bound, and step
-+/// below runs, including steps that wrap the counter or are negative, as a
-+/// signed counter's `i += step` can be. The bound is either an argument or,
-+/// as in `while i < n as usize`, a cast the loop recomputes every iteration,
-+/// and the test may compare `i + off` instead of `i`.
-+#[test]
-+fn partial_unroll_of_a_runtime_step_loop_matches_the_source_loop() {
-+    for (signedness, _, max, bounds) in eight_bit_cases() {
-+        // a cast argument has the other signedness and the loop uses its bits
-+        let as_other = |value: i128| {
-+            let bits = value.rem_euclid(256);
-+            if signedness == Signedness::Unsigned && bits >= 128 {
-+                bits - 256
-+            } else {
-+                bits
-+            }
-+        };
-+        for step_source in [LoopStep::Param, LoopStep::CastInLoop, LoopStep::Const(3)] {
-+            for (bound_source, off) in [
-+                (LoopBound::Param, 0),
-+                (LoopBound::CastInLoop, 0),
-+                (LoopBound::Param, 1),
-+                (LoopBound::Param, -2),
-+            ] {
-+                for pred in [CmpPred::Lt, CmpPred::Le] {
-+                    for factor in [2, 4] {
-+                        let mut ctx = mir_ctx();
-+                        let ty = IntegerType::get(&ctx, 8, signedness);
-+                        // an unsigned constant holds the offset's bits
-+                        let off = if signedness == Signedness::Unsigned {
-+                            i128::rem_euclid(off, 256)
-+                        } else {
-+                            off
-+                        };
-+                        let lp =
-+                            runtime_step_loop(&mut ctx, ty, pred, step_source, bound_source, off);
-+                        MirUnrollHintOp::new(&mut ctx, factor)
-+                            .get_operation()
-+                            .insert_at_front(lp.latch, &ctx);
-+                        let mut analyses = AnalysisManager::default();
-+                        unroll_annotated_loops(lp.module, &mut ctx, &mut analyses)
-+                            .expect("unroll pass succeeds");
-+                        pliron::operation::verify_operation(lp.module, &ctx)
-+                            .expect("valid IR after the pass");
-+                        let case = format!(
-+                            "{signedness:?}, {step_source:?}, {bound_source:?}, off={off}, {pred:?}, factor={factor}"
-+                        );
-+                        assert_eq!(loop_count(&ctx, lp.region), 2, "{case}");
-+
-+                        let wrap = |value: i128| {
-+                            let bits = value.rem_euclid(256);
-+                            if signedness == Signedness::Signed && bits > max {
-+                                bits - 256
-+       
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/unroll_smoke/src/main.rs` (modified, +61/-7)
-```diff
-@@ -20,17 +20,19 @@
- //! `const_generic_bound` is the same nest with every bound written `LANES / 16`
- //! for a const generic `LANES`.
- //! `isize_range_for` covers `a..b`, `(a..b).rev()`, and `#[unroll(4)]` on an
--//! `isize` counter. `partial_row_view` is `#[unroll(4)]` on
--//! `for i in 0..n { s += row.get(i).unwrap_or(0.0); }` over a `RowView32`,
--//! whose body matches an `Option`.
-+//! `isize` counter. `partial_block_stride` is `#[unroll(4)]` on a loop that
-+//! starts at the thread index and steps by the block size. `partial_row_view`
-+//! is `#[unroll(4)]` on `for i in 0..n { s += row.get(i).unwrap_or(0.0); }`
-+//! over a `RowView32`, whose body matches an `Option`.
- //! All are semantics-preserving; the host checks the sums.
- //!
- //! `verify-code-shape.sh` asserts that `nested_lane_range`,
- //! `const_generic_bound`, and `isize_range_for` have no local memory in the
--//! generated PTX, and that the unroller, not LLVM, split `partial_row_view`
--//! into a main and a remainder loop. Given the build log, it also asserts that
--//! the build printed no "not unrolled" warning for `partial_row_view`.
--//! GPU-less CI runs it through `scripts/smoketest.sh --compile-only`.
-+//! generated PTX, and that the unroller, not LLVM, split
-+//! `partial_block_stride` and `partial_row_view` into a main and a remainder
-+//! loop. Given the build log, it also asserts that the build printed no "not
-+//! unrolled" warning for `partial_row_view`. GPU-less CI runs it through
-+//! `scripts/smoketest.sh --compile-only`.
- //!
- //! Run: cargo oxide run unroll_smoke
- 
-@@ -690,6 +692,25 @@ mod kernels {
-         *partial = sum;
-     }
- 
-+    /// `#[unroll(4)]` on a block-stride loop: the counter starts at the thread
-+    /// index and steps by the block size, both only known at runtime. The
-+    /// `usize` counter reads and casts `blockDim.x` again on every iteration.
-+    /// `out[tid]` sums `input[tid]`, `input[tid + blockDim]`, ... below `n`.
-+    #[kernel]
-+    pub fn partial_block_stride(input: &[u32], mut out: DisjointSlice<u32>, n: u32) {
-+        let Some(out_elem) = out.get_mut(thread::index_1d()) else {
-+            return;
-+        };
-+        let mut sum = 0u32;
-+        let mut i = thread::threadIdx_x() as usize;
-+        #[unroll(4)]
-+        while i < n as usize {
-+            sum = sum.wrapping_add(input[i]);
-+            i += thread::blockDim_x() as usize;
-+        }
-+        *out_elem = sum;
+-/// `cuda-tile-translate` next to the selected `tileiras`, when it accepts
+-/// 13.5 preview bytecode.
++/// Prefer an explicitly configured translator, including one built by
++/// cuda-tile-rs without a toolkit. Explicitly selected tools must pass the test;
++/// a missing or incompatible executable is an error rather than a skip.
+ fn translator() -> Option<PathBuf> {
++    if let Some(path) = std::env::var_os("CUTILE_REFERENCE_TRANSLATE") {
++        return Some(path.into());
 +    }
-+
-     /// `#[unroll(4)]` on a runtime-bounded range loop over a row view, the
-     /// loop from issue #1690. rustc lowers `unwrap_or`'s `match` with an
-     /// `otherwise` arm that is `unreachable`, which the unroller must not count
-@@ -918,6 +939,39 @@ fn main() {
-             "`0..=4` and `(0..10).step_by(3)`"
-         );
- 
-+        // 9 full strides plus `range_trip` elements: every thread runs two
-+        // 4-iteration groups, and the first `range_trip` threads run one more
-+        // remainder iteration than the rest
-+        let stride_input: Vec<u32> = (0..BLOCK * 10).map(|i| i * 7 + 1).collect();
-+        let d_stride_input = DeviceBuffer::from_host(&stream, &stride_input).unwrap();
-+        let stride_n = BLOCK * 9 + range_trip;
-+        let mut d_stride = DeviceBuffer::<u32>::zeroed(&stream, N).unwrap();
-+        // SAFETY: each thread writes its own element; reads stay below `stride_n`.
-+        unsafe {
-+            module.partial_block_stride(
-+                stream.as_ref(),
-+                cfg,
-+                &d_stride_input,
-+                &mut d_stride,
-+                stride_n,
-+            )
-+        }
-+        .expect("launch partial_block_stride");
-+        let want_stride: Vec<u32> = (0..N)
-+            .map(|tid| {
-+                stride_input[..stride_n as usize]
-+                    .iter()
-+                    .skip(tid)
-+                    .step_by(BLOCK as usize)
-+                    .fold(0u32, |sum, &x| sum.wrapping_add(x))
-+            })
-+            .collect();
-+        assert_eq!(
-+            d_stride.to_host_vec(&stream).unwrap(),
-+            want_stride,
-+            "block-stride `{stride_n}` elements"
-+        );
-+
-         let signed_input: Vec<u32> = (0..64u32).map(|i| i * 7 + 1).collect();
-         let d_signed_input = DeviceBuffer::from_host(&stream, &signed_input).unwrap();
-         // whole numbers keep every partial f32 sum exact, so unrolling cannot
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/unroll_smoke/verify-code-shape.sh` (modified, +7/-7)
-```diff
-@@ -57,14 +57,14 @@ for name in names:
-     print(f"{name}: no local memory PASS")
- 
- # A partial `#[unroll(N)]` marks both its main and its remainder loop
--# `nounroll`. LLVM runtime-unrolls this loop by itself when the request is
--# declined, and then marks only its own remainder loop.
--name = "partial_row_view"
--pragmas = entry_body(name).count('.pragma "nounroll";')
--if pragmas != 2:
--    sys.exit(f"error: {name} has {pragmas} nounroll loops, expected the unroller's 2")
--print(f"{name}: main and remainder loop PASS")
-+# `nounroll`.
-+for name in ("partial_block_stride", "partial_row_view"):
-+    pragmas = entry_body(name).count('.pragma "nounroll";')
-+    if pragmas != 2:
-+        sys.exit(f"error: {name} has {pragmas} nounroll loops, expected the unroller's 2")
-+    print(f"{name}: main and remainder loop PASS")
- 
-+name = "partial_row_view"
- # The unroller prints each declined request as a `warning:` line, then a
- # `-->` line at the annotation. None may point into `partial_row_view`.
- if log_path:
+     let tileiras = cutile_ir::toolchain::tileiras_from_env();
+     let tileiras = if tileiras.components().count() == 1 {
+         which(&tileiras)?
 ```
 
 ---
 
-### Incident Patch 3: `906da071` (2026-11-09)
-**Commit Message**: fix(cute-layout): accept one-axis blocked and raked products (#1713)
+### Incident Patch 3: `52be6953` (2026-11-11)
+**Commit Message**: fix(cuda-host): coalesce DWARF debug sections and disambiguate labels in merge_ptx_bundles (NVBug 7038557) (#1779)
 
 ## What This PR Does
 
-Fixes `zipped_product` in `cute-layout` so 1D (`rank == 1`)
-`blocked_product`, `raked_product`, and `make_layout_tv` accept inputs
-whose complement repetition has multiple modes
-(`cute-rs-preview/cute-layout`).
+When two crates are merged into a single PTX module under
+`--device-debug`, each crate brings its own internal debug labels
+(`$L__func_begin0`, `$L__pubNames_start0`) and `.section .debug_*`
+blocks at the bottom of its PTX file.
 
----
-
-### 1. Pairing 1D Multi-Mode Repetitions in `zipped_product`
-
-For a 1D block that leaves gaps (such as `3:2`), `complement(3:2, 12)`
-has two flat modes `(2,2):(1,6)`. Calling `reps.modes()` when `n == 1`
-treated those two flat modes as two separate axes and failed with
-`unexpected mode structure`:
+Previously, we just glued the second PTX file under the first one, which
+left duplicate labels and repeated `.section` blocks in the middle of
+the merged PTX and caused `ptxas` to fail (`DriverError(218)` / **NVBug
+7038557**):
 
 ```text
-BEFORE (n == 1):
-  lp = logical_product(3:2, 4:1) = (3, (2,2)):(2, (1,6))
-  reps.modes() -> len 2 != 1 ──► Err(AlgebraError("product: unexpected mode structure"))
+BEFORE (glued raw PTX files -> ptxas fails with duplicate labels / overlapping sections):
+  [Crate A Code (L0)] + [Crate A Debug Sections] + [Crate B Code (L0)] + [Crate B Debug Sections]
 
-AFTER (n == 1):
-  pair whole `block` with whole `reps`:
-    blocked_product(3:2, 4:1) ──► Ok((3,2,2):(2,1,6))
-    raked_product(3:2, 4:1)   ──► Ok((2,2,3):(1,6,2))
+AFTER (rename bundle-local labels + combine debug sections once at the end):
+  [Crate A Code (L0)] + [Crate B Code (L0__bundle_1)] + [Combined Debug Sections (A + B)]
 ```
 
-* Single-mode 1D inputs and multi-axis (`n > 1`) inputs produce
-identical results to before.
-
----
+Also updates `cargo-oxide`'s `touch_main_rs` so nested workspace member
+crates (like `merged-symbols-lib`) always re-emit fresh device PTX when
+switching between `--lineinfo` and `--device-debug`.
 
 ## Verification
 
-* **Tests & CI Gates**:
-* `cargo test --manifest-path cute-rs-preview/cute-layout/Cargo.toml`:
-**PASS** (63 unit + 2 integration + 1 d
+- [x] `cargo oxide r
 
-**File**: `cuda-oxide/cute-rs-preview/cute-layout/src/algebra/tests/tiling.rs` (modified, +28/-0)
+**File**: `cuda-oxide/crates/cargo-oxide/src/commands/artifacts.rs` (modified, +13/-2)
 ```diff
-@@ -86,3 +86,31 @@ fn sm100_smem_layout_and_crd2idx_match_tile_to_shape() {
-         }
+@@ -12,11 +12,22 @@ pub(super) fn touch_main_rs(example_dir: &Path) {
+     // Force a rebuild so the codegen backend re-runs and emits a fresh
+     // .ptx alongside the example. Touch every source file that might
+     // host `#[kernel]` items so multi-bin layouts (kernels in `lib.rs`,
+-    // tests in `main.rs`, perf bench in `bin/<name>.rs`, etc.) all
+-    // re-codegen on every `cargo oxide run/build` invocation.
++    // tests in `main.rs`, perf bench in `bin/<name>.rs`, etc.) and nested
++    // workspace member crates all re-codegen on every `cargo oxide run/build`
++    // invocation.
+     for rel in ["src/main.rs", "src/lib.rs"] {
+         touch_source_file(&example_dir.join(rel));
      }
- }
-+
-+/// One-axis products whose block leaves gaps get a repetition with several
-+/// modes (`complement(3:2, 12)` is `(2,2):(1,6)`). Both products must still
-+/// pair that whole repetition with the block instead of reporting an error,
-+/// and every cell must be the block offset plus the repeated copy's offset.
-+#[test]
-+fn one_axis_products_accept_a_multi_mode_repetition() {
-+    let a = l("3:2");
-+    let b = l("4:1");
-+    let comp = complement(&a, a.size() * b.cosize()).unwrap();
-+    assert_eq!(comp.to_string(), "(2,2):(1,6)");
-+    let blocked = blocked_product(&a, &b).unwrap();
-+    let raked = raked_product(&a, &b).unwrap();
-+    assert_eq!(blocked.to_string(), "(3,2,2):(2,1,6)");
-+    assert_eq!(raked.to_string(), "(2,2,3):(1,6,2)");
-+    for k in 0..12 {
-+        let (i, j) = (k % 3, k / 3);
-+        let expect = a.call(&IntTuple::Leaf(i)) + comp.call(&IntTuple::Leaf(j));
-+        assert_eq!(blocked.call(&IntTuple::Leaf(k)), expect, "blocked at {k}");
-+        let (j, i) = (k % 4, k / 4);
-+        let expect = a.call(&IntTuple::Leaf(i)) + comp.call(&IntTuple::Leaf(j));
-+        assert_eq!(raked.call(&IntTuple::Leaf(k)), expect, "raked at {k}");
++    if let Ok(entries) = std::fs::read_dir(example_dir) {
++        for entry in entries.flatten() {
++            let path = entry.path();
++            if path.is_dir() && path.join("Cargo.toml").is_file() {
++                for rel in ["src/main.rs", "src/lib.rs"] {
++                    touch_source_file(&path.join(rel));
++                }
++            }
++        }
 +    }
-+    // The twelve cells cover offsets 0..12 exactly once.
-+    let mut seen: Vec<i64> = (0..12).map(|k| blocked.call(&IntTuple::Leaf(k))).collect();
-+    seen.sort_unstable();
-+    assert_eq!(seen, (0..12).collect::<Vec<_>>());
-+}
+ }
+ 
+ pub(super) fn touch_source_file(path: &Path) {
 ```
 
-**File**: `cuda-oxide/cute-rs-preview/cute-layout/src/algebra/tiling.rs` (modified, +7/-2)
+**File**: `cuda-oxide/crates/cuda-host/src/embedded.rs` (modified, +390/-16)
 ```diff
-@@ -200,8 +200,13 @@ fn zipped_product(a: &Layout, b: &Layout, block_first: bool) -> Result<Layout> {
-     let lp = logical_product(&ap, &bp)?;
-     let parts = lp.modes();
-     let (block, reps) = (&parts[0], &parts[1]);
--    let block_modes = block.modes();
--    let rep_modes = reps.modes();
-+    // With one axis, each part is that axis's whole mode. Splitting it would
-+    // treat a multi-mode repetition such as `(2,2):(1,6)` as two axes.
-+    let (block_modes, rep_modes) = if n == 1 {
-+        (vec![block.clone()], vec![reps.clone()])
-+    } else {
-+        (block.modes(), reps.modes())
-+    };
-     if block_modes.len() != n || rep_modes.len() != n {
-         return Err(AlgebraError("product: unexpected mode structure".into()));
+@@ -163,10 +163,15 @@ pub fn merge_ptx_bundles<'a>(
+     let mut merged = String::new();
+     let mut found_any = false;
+ 
+-    // Keep each bundle's debug file indices and helper `.func` names distinct
+-    // in the merged module.
++    // Keep each bundle's debug file indices, helper `.func` names, bundle-local
++    // labels, and coalesced DWARF `.section` blocks distinct in the merged module.
+     let mut file_index_offset = 0;
+     let mut seen_functions = std::collections::HashSet::new();
++    let mut section_order: Vec<String> = Vec::new();
++    let mut section_bodies: std::collections::HashMap<String, String> =
++        std::collections::HashMap::new();
++    let mut abbrev_byte_offset = 0u64;
++    let mut info_byte_offset = 0u64;
+ 
+     for (bundle_index, bundle) in bundles.into_iter().enumerate() {
+         if let Some(ptx_bytes) = bundle.payload(ArtifactPayloadKind::Ptx) {
+@@ -177,10 +182,11 @@ pub fn merge_ptx_bundles<'a>(
+                 .trim_end_matches('\0');
+ 
+             let strip_headers = found_any;
+-            let (body, max_file_index) = prepare_bundle_body_with_functions(
++            let bundle_file_offset = file_index_offset;
++            let (body, max_file_index, sections) = prepare_bundle_body_with_functions(
+                 ptx_str,
+                 strip_headers,
+-                file_index_offset,
++                bundle_file_offset,
+                 bundle_index,
+                 &mut seen_functions,
+             )
+@@ -193,13 +199,58 @@ pub fn merge_ptx_bundles<'a>(
+             if !body.ends_with('\n') {
+                 merged.push('\n');
+             }
++
++            let this_abbrev_bytes = sections
++                .iter()
++                .find(|(name, _)| name == ".debug_abbrev")
++                .map(|(_, sec_body)| debug_section_byte_size(sec_body))
++                .unwrap_or(0);
++            let this_info_bytes = sections
++                .iter()
++                .find(|(name, _)| name == ".debug_info")
++                .map(|(_, sec_body)| debug_section_byte_size(sec_body))
++                .unwrap_or(0);
++
++            for (sec_name, sec_body) in sections {
++                let adjusted = adjust_debug_section_body(
++                    &sec_name,
++                    &sec_body,
++                    abbrev_byte_offset,
++                    info_byte_offset,
++                    bundle_file_offset,
++                );
++                if !section_bodies.contains_key(&sec_name) {
++                    section_order.push(sec_name.clone());
++                }
++                let entry = section_bodies.entry(sec_name).or_default();
++                if !adjusted.trim().is_empty() {
++                    if !entry.is_empty() && !entry.ends_with('\n') {
++                        entry.push('\n');
++                    }
++                    entry.push_str(adjusted.trim_matches('\n'));
++                    entry.push('\n');
++                }
++            }
++
++            abbrev_byte_offset = abbrev_byte_offset.saturating_add(this_abbrev_bytes);
++            info_byte_offset = info_byte_offset.saturating_add(this_info_bytes);
+             found_any = true;
+         }
      }
+ 
+     if !found_any {
+         return Err(EmbeddedModuleError::NoModules);
+     }
++
++    for sec_name in section_order {
++        let body = section_bodies.remove(&sec_name).unwrap_or_default();
++        if body.trim().is_empty() {
++            merged.push_str(&format!("\t.section\t{sec_name}\t{{\t}}\n"));
++        } else {
++            merged.push_str(&format!("\t.section\t{sec_name}\n\t{{\n{body}\t}}\n"));
++        }
++    }
++
+     Ok(merged)
+ }
+ 
+@@ -212,46 +263,100 @@ fn prepare_bundle_body(
+     file_index_offset: u64,
+ ) -> Result<(String, u64), String> {
+     let mut seen_functions = std::collections::HashSet::new();
+-    prepare_bundle_body_with_functions(
++    let (body, max_file_index, sections) = prepare_bundle_body_with_functions(
+         ptx,
+         strip_headers,
+         file_index_offset,
+         0,
+         &mut seen_functions,
+-    )
++    )?;
++    let mut full = body;
++    for (sec_name, sec_body) in sections {
++        if !full.is_empty() && !full.ends_with('\n') {
++            full.push('\n');
++        }
++        if sec_body.trim().is_empty() {
++            full.push_str(&format!("\t.section\t{sec_name}\t{{\t}}\n"));
++        } else {
++            let trimmed = sec_body.trim_matches('\n');
++            full.push_str(&format!("\t.section\t{sec_name}\n\t{{\n{trimmed}\n\t}}\n"));
++        }
++    }
++    Ok((full, max_file_index))
+ }
+ 
+-/// Strip repeated headers, disambiguate colliding helper `.func` symbols, and
+-/// shift debug indices past the previous bundles. Returns the rewritten text
+-/// and its highest debug file index.
++/// Strip repeated headers, disambiguate colliding helper `.func` symbols and
++/// per-bundle labels/local depots, extract `.section` blocks for module-level
++/// coalescing, and shift debug indices past the previous bundles.
++#[allow(clippy::type_complexity)
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/cross_crate_merged_symbols/src/main.rs` (modified, +22/-0)
+```diff
+@@ -158,6 +158,28 @@ fn assert_merged_namespace(label: &str, ptx: &str) {
+         "{label}: expected the shared pool helper's symbols to stay distinct \
+          across crates, got {pool_symbols:?}"
+     );
++
++    // When full device debug sections are present, each DWARF section must be
++    // coalesced into a single `.section` block and no label may be defined
++    // twice across the merged module.
++    let mut seen_sections = std::collections::BTreeSet::new();
++    let mut seen_labels = std::collections::BTreeSet::new();
++    for line in ptx.lines().map(str::trim) {
++        if let Some(rest) = line.strip_prefix(".section") {
++            let name = rest.split_whitespace().next().unwrap_or("");
++            assert!(
++                seen_sections.insert(name.to_string()),
++                "{label}: duplicate DWARF section {name} in merged PTX"
++            );
++        } else if line.starts_with('$')
++            && let Some(label_name) = line.strip_suffix(':')
++        {
++            assert!(
++                seen_labels.insert(label_name.to_string()),
++                "{label}: duplicate PTX label {label_name} in merged PTX"
++            );
++        }
++    }
+ }
+ 
+ /// Launch a single-thread-block kernel writing one `$ty` and return it.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1756** (closed): fix(mir-importer): materialize addresses for zero-sized drops (@YunusMutlu)
-- **PR #1753** (closed): fix(cuda-oxide): lower core::intrinsics::write_bytes to llvm.memset (@vignesh-chaturvedi)
-- **PR #1751** (2026-11-06): refactor(cute-rs-preview): rename ctm-rs to cutlass-primitives (@nihalpasham)
-- **PR #1750** (2026-11-09): fix(mir-importer): refuse device statics with a nested SharedArray or Barrier (#1727) (@arpanpathak)
-- **PR #1748** (closed): fix(mir-importer): reject statics that wrap shared storage (@arpanpathak)
-- **PR #1746** (2026-11-07): feat(cutile-kernels): fix v0.5.0 docs, refresh Grout kernels, share MoE, and add fused QKV (@elibol)
+- **PR #1781** (2026-11-11): feat(mir-importer): emit cycle-safe composite pointee debug types for pointers and slices (NVBug 7039124) (@nihalpasham)
+- **PR #1780** (2026-11-11): feat(mir-importer): preserve deeply nested composite and pattern debug types (NVBug 7039104) (@nihalpasham)
+- **PR #1779** (2026-11-11): fix(cuda-host): coalesce DWARF debug sections and disambiguate labels in merge_ptx_bundles (NVBug 7038557) (@nihalpasham)
+- **PR #1776** (2026-11-11): release(cuda-oxide): v0.4.0 and Tile-to-SIMT linkage provider support (@nihalpasham)
+- **PR #1774** (2026-11-12): feat(cutile): pipeline CPU compilation during autotuning (@elibol)
+- **PR #1772** (2026-11-10): fix(cutile)!: remove unsupported load validity checking (@elibol)
 
 ---
 
@@ -3690,29 +3220,34 @@ identical results to before.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. unroll): fold branches to unreachable blocks (#1707)
+## X. cutile)!: remove unsupported load validity checking (#1772)
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/cuda-macros/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3aaed630`: unroll): fold branches to unreachable blocks (#1707). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dff7767e`: cutile)!: remove unsupported load validity checking (#1772). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-macros/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// partial unrolling for that loop. A `match` in the body, such as
-/// `row.get(i).unwrap_or(0.0)`, is not an exit.
+version = "0.6.0"
+version = "0.6.0"
+version = "0.6.0"
+version = "0.6.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// partial unrolling for that loop.
+version = "0.5.0"
+version = "0.5.0"
+version = "0.5.0"
+version = "0.5.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3aaed630` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dff7767e` are properly handled with clean fallback behavior.

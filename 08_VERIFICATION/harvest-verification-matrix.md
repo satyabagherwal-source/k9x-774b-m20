@@ -9128,3 +9128,10 @@
 | `CYCLE-20261112-ERB7` | `2026-11-12T09:25:49.123Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ae8e3e7f...`) |
 | `CYCLE-20261112-53V8` | `2026-11-12T09:46:18.452Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`05b7cec8...`) |
 | `CYCLE-20261112-55DW` | `2026-11-12T09:46:20.420Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d4a54505...`) |
+| `CYCLE-20261112-G3T1` | `2026-11-12T09:54:51.589Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`9a90003a...`) |
+| `CYCLE-20261112-GG7W` | `2026-11-12T09:55:07.676Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a36ddf30...`) |
+| `CYCLE-20261112-GNXY` | `2026-11-12T09:55:17.686Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a12df921...`) |
+| `CYCLE-20261112-GRFD` | `2026-11-12T09:55:22.201Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dbf43136...`) |
+| `CYCLE-20261112-GS0E` | `2026-11-12T09:55:22.958Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`95512514...`) |
+| `CYCLE-20261112-GWJD` | `2026-11-12T09:55:28.825Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fca586e8...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T09:55:51.213Z` | `hf-viggle-viggle-remake` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-78355AEC` [Domain D] | Yes (`bc033152...`) |

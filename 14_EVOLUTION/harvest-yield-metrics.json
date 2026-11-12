@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:46:20.441Z",
-  "total_cycles_completed": 8957,
-  "total_learnings_persisted": 8957,
-  "total_rules_promoted": 8802,
+  "last_updated": "2026-11-12T09:55:29.005Z",
+  "total_cycles_completed": 8963,
+  "total_learnings_persisted": 8963,
+  "total_rules_promoted": 8807,
   "history": [
-    {
-      "timestamp": "2026-11-11T10:09:30.312Z",
-      "repository": "LiconStudio/Minimax-H3-VBVR",
-      "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:17:11.241Z",
-      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:17:30.884Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:17:41.227Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:17:43.513Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:26:49.059Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T10:26:52.265Z",
       "repository": "rustls/rustls",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-12T09:46:20.441Z",
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:54:51.598Z",
+      "repository": "Viggle/Viggle-Remake",
+      "learningId": "learn-huggingface-viggle-viggle-remake",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:55:07.689Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:55:17.729Z",
+      "repository": "buresdv/Cork",
+      "learningId": "learn-github-buresdv-cork",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:55:22.214Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:55:23.022Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T09:55:29.005Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

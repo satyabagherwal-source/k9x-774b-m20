@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T09:46:20.445Z",
+  "last_updated": "2026-11-12T09:55:29.131Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
-      "verified_at": "2026-11-11T10:00:21.216Z",
+      "content_hash": "9551251464208ecda3150bdd50117abd223313e62cf22361a096e8b2ea0ac2a0",
+      "verified_at": "2026-11-12T09:55:23.027Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:00:21.216Z"
+      "last_updated": "2026-11-12T09:55:23.027Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
-      "verified_at": "2026-11-08T03:43:22.798Z",
+      "content_hash": "dbf431369fb03ddc394db25b2eb7a0b4ce4d735cec41524b6c004577caa6eb09",
+      "verified_at": "2026-11-12T09:55:22.218Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:43:22.798Z"
+      "last_updated": "2026-11-12T09:55:22.218Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
-      "verified_at": "2026-11-09T16:10:56.075Z",
+      "content_hash": "a36ddf30b7a12fdfeae45501cad65413bf096d6ba0de02f7945887a6c9571ddf",
+      "verified_at": "2026-11-12T09:55:07.694Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:10:56.075Z"
+      "last_updated": "2026-11-12T09:55:07.694Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
-      "verified_at": "2026-11-11T06:33:49.371Z",
+      "content_hash": "fca586e8119109f6d6af9a4127f0eb896be38bbdbdb9cecea7da90b47c8c3070",
+      "verified_at": "2026-11-12T09:55:29.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T06:33:49.371Z"
+      "last_updated": "2026-11-12T09:55:29.130Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -12411,14 +12411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-buresdv-cork",
-      "content_hash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
-      "verified_at": "2026-11-05T06:15:03.899Z",
+      "content_hash": "a12df921033e3399b063613336a3440d4b5dcc6a1531daeb7a661409f51a589c",
+      "verified_at": "2026-11-12T09:55:17.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:15:03.899Z"
+      "last_updated": "2026-11-12T09:55:17.734Z"
     },
     "productdevbook/port-killer": {
       "repository": "productdevbook/port-killer",
@@ -18276,14 +18276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-viggle-remake",
-      "content_hash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
-      "verified_at": "2026-11-07T19:16:47.937Z",
+      "content_hash": "9a90003a80949cbeeb1890223456f11b54a48a7cd5d2005227f8c5b6f7c893cc",
+      "verified_at": "2026-11-12T09:54:51.601Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:16:47.937Z"
+      "last_updated": "2026-11-12T09:54:51.601Z"
     },
     "alchaincyf/nuwa-skill": {
       "repository": "alchaincyf/nuwa-skill",

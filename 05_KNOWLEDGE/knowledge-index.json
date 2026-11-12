@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T09:46:20.294Z",
+  "last_updated": "2026-11-12T09:55:28.641Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6389,11 +6389,16 @@
       "slug": "buresdv-cork",
       "platform": "github",
       "source_url": "https://github.com/buresdv/Cork",
-      "source_version": "2fb27615",
-      "content_hash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
+      "source_version": "649a6f63",
+      "content_hash": "a12df921033e3399b063613336a3440d4b5dcc6a1531daeb7a661409f51a589c",
       "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "+ Appearance override",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2650,
           "title": "~ Test workflow updates for newer macOS version",
@@ -6425,7 +6430,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:15:03.766Z",
+      "verified_at": "2026-11-12T09:55:17.353Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49132,8 +49137,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "8d825486",
-      "content_hash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
+      "source_version": "e1f6df0a",
+      "content_hash": "a36ddf30b7a12fdfeae45501cad65413bf096d6ba0de02f7945887a6c9571ddf",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -49150,6 +49155,11 @@
         {
           "number": null,
           "title": "unroll): fold branches to unreachable blocks (#1707)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cutile)!: remove unsupported load validity checking (#1772)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49238,7 +49248,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:10:55.978Z",
+      "verified_at": "2026-11-12T09:55:07.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56861,8 +56871,8 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "944a95d5",
-      "content_hash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
+      "source_version": "390d168f",
+      "content_hash": "dbf431369fb03ddc394db25b2eb7a0b4ce4d735cec41524b6c004577caa6eb09",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
@@ -56874,6 +56884,11 @@
         {
           "number": null,
           "title": "Bugfix 67214 minion swarm (#67783)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Move etcd support to etcd3gw and fix etcd contract bugs (#70660)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56927,7 +56942,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:43:22.654Z",
+      "verified_at": "2026-11-12T09:55:21.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61776,8 +61791,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "7b2c32b9",
-      "content_hash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
+      "source_version": "e3ecbb98",
+      "content_hash": "9551251464208ecda3150bdd50117abd223313e62cf22361a096e8b2ea0ac2a0",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -61824,6 +61839,11 @@
         {
           "number": null,
           "title": "ipn, feature/guivisibility: send incremental gui visibility updates (#22067)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tstime: fold fractional ParseDuration cases into TestParseDuration",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62022,7 +62042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:00:21.005Z",
+      "verified_at": "2026-11-12T09:55:22.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64504,13 +64524,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "9833b0f7",
-      "content_hash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "719fcc41",
+      "content_hash": "fca586e8119109f6d6af9a4127f0eb896be38bbdbdb9cecea7da90b47c8c3070",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -64540,6 +64560,11 @@
         {
           "number": null,
           "title": "core/vdbe: make built-in scalar functions a function of their arguments",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge 'postgres: Add row-level security policies' from Pekka Enberg",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64693,7 +64718,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:33:49.068Z",
+      "verified_at": "2026-11-12T09:55:28.609Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190713,7 +190738,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Viggle-Remake",
       "source_version": "hf-viggle-viggle-remake",
-      "content_hash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
+      "content_hash": "9a90003a80949cbeeb1890223456f11b54a48a7cd5d2005227f8c5b6f7c893cc",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md",
       "promoted_rules": [
@@ -190733,7 +190758,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:16:47.721Z",
+      "verified_at": "2026-11-12T09:54:51.449Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

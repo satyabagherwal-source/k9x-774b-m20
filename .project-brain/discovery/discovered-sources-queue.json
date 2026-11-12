@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T09:46:27.808Z",
+  "updated_at": "2026-11-12T09:55:51.236Z",
   "stats": {
-    "total_discovered": 1128,
-    "approved_pending_harvest": 1015,
+    "total_discovered": 1143,
+    "approved_pending_harvest": 1030,
     "harvested_count": 0,
     "rejected_count": 113,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1047,
-      "OFFICIAL_DOCUMENTATION": 30,
+      "COMMUNITY_AND_EXPERT": 1060,
+      "OFFICIAL_DOCUMENTATION": 32,
       "STANDARDS_AND_SPECIFICATIONS": 48,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
@@ -24042,6 +24042,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
         "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-F359FEEB6612": {
+      "id": "SRC-F359FEEB6612",
+      "url": "https://github.com/NVIDIA/cuda-rust",
+      "title": "https://github.com/NVIDIA/cuda-rust",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:37.959Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-1553599D4BF4": {
+      "id": "SRC-1553599D4BF4",
+      "url": "https://github.com/chelsea0x3b/cudarc",
+      "title": "https://github.com/chelsea0x3b/cudarc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:37.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-B7DB8C97CDBE": {
+      "id": "SRC-B7DB8C97CDBE",
+      "url": "https://docs.gha-runners.nvidia.com/cpr/vetters",
+      "title": "https://docs.gha-runners.nvidia.com/cpr/vetters",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:37.972Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-C5CAAC5FB275": {
+      "id": "SRC-C5CAAC5FB275",
+      "url": "https://docs.gha-runners.nvidia.com/cpr/contributors",
+      "title": "https://docs.gha-runners.nvidia.com/cpr/contributors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:37.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-0D609346646C": {
+      "id": "SRC-0D609346646C",
+      "url": "https://semver.org/",
+      "title": "https://semver.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:37.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-E0658BA06CA0": {
+      "id": "SRC-E0658BA06CA0",
+      "url": "https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/guide/tile-libraries.md",
+      "title": "https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/guide/tile-libraries.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:37.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-38C509293585": {
+      "id": "SRC-38C509293585",
+      "url": "https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/reference/unsafe-comms.md",
+      "title": "https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/reference/unsafe-comms.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:37.996Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-E0EDD66A6C88": {
+      "id": "SRC-E0EDD66A6C88",
+      "url": "https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/reference/compatibility.md",
+      "title": "https://github.com/NVIDIA/cuda-rust/blob/9dc26c50a8c90026bcd0dfa7dc4b36f189126946/cutile-rs/cutile-book/reference/compatibility.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:38.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-135C3F6BE409": {
+      "id": "SRC-135C3F6BE409",
+      "url": "https://github.com/NVIDIA/cuda-tile/releases/tag/v13.5.0",
+      "title": "https://github.com/NVIDIA/cuda-tile/releases/tag/v13.5.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:38.008Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-654ACB5C1FEA": {
+      "id": "SRC-654ACB5C1FEA",
+      "url": "https://github.com/NVIDIA/cuda-tile",
+      "title": "https://github.com/NVIDIA/cuda-tile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:38.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-44359173DA23": {
+      "id": "SRC-44359173DA23",
+      "url": "https://github.com/llvm/llvm-project%60",
+      "title": "https://github.com/llvm/llvm-project%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:38.019Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-3DE839F0CCBA": {
+      "id": "SRC-3DE839F0CCBA",
+      "url": "https://nvidia.github.io/cuda-rust/cutile/latest/guide/tile-libraries.html",
+      "title": "https://nvidia.github.io/cuda-rust/cutile/latest/guide/tile-libraries.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:38.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-147278017064": {
+      "id": "SRC-147278017064",
+      "url": "https://huggingface.co/Viggle/Viggle-Remake",
+      "title": "https://huggingface.co/Viggle/Viggle-Remake",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:51.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md",
+        "fileName": "hf-viggle-viggle-remake-learnings.md"
+      }
+    },
+    "SRC-65331C09F217": {
+      "id": "SRC-65331C09F217",
+      "url": "https://github.com/buresdv/Cork",
+      "title": "https://github.com/buresdv/Cork",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:51.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/buresdv-cork-learnings.md",
+        "fileName": "buresdv-cork-learnings.md"
+      }
+    },
+    "SRC-07B4FE0EB6BA": {
+      "id": "SRC-07B4FE0EB6BA",
+      "url": "https://github.com/buresdv/Cork/issues/688",
+      "title": "https://github.com/buresdv/Cork/issues/688",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T09:55:51.236Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/buresdv-cork-learnings.md",
+        "fileName": "buresdv-cork-learnings.md"
       }
     }
   }

@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "7b2c32b9",
+    "sourceVersion": "e3ecbb98",
     "license": "BSD-3-Clause",
-    "contentHash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
-    "lastHarvestedAt": "2026-11-11T10:00:21.192Z",
+    "contentHash": "9551251464208ecda3150bdd50117abd223313e62cf22361a096e8b2ea0ac2a0",
+    "lastHarvestedAt": "2026-11-12T09:55:22.984Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "944a95d5",
+    "sourceVersion": "390d168f",
     "license": "Apache-2.0",
-    "contentHash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
-    "lastHarvestedAt": "2026-11-08T03:43:22.778Z",
+    "contentHash": "dbf431369fb03ddc394db25b2eb7a0b4ce4d735cec41524b6c004577caa6eb09",
+    "lastHarvestedAt": "2026-11-12T09:55:22.206Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "8d825486",
+    "sourceVersion": "e1f6df0a",
     "license": "Apache-2.0",
-    "contentHash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
-    "lastHarvestedAt": "2026-11-09T16:10:56.061Z",
+    "contentHash": "a36ddf30b7a12fdfeae45501cad65413bf096d6ba0de02f7945887a6c9571ddf",
+    "lastHarvestedAt": "2026-11-12T09:55:07.681Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "a7ce4ee0",
+    "sourceVersion": "719fcc41",
     "license": "MIT",
-    "contentHash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
-    "lastHarvestedAt": "2026-11-10T01:41:40.042Z",
+    "contentHash": "fca586e8119109f6d6af9a4127f0eb896be38bbdbdb9cecea7da90b47c8c3070",
+    "lastHarvestedAt": "2026-11-12T09:55:28.885Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -8253,10 +8253,10 @@
     "repository": "buresdv/Cork",
     "platform": "github",
     "sourceUrl": "https://github.com/buresdv/Cork",
-    "sourceVersion": "2fb27615",
+    "sourceVersion": "649a6f63",
     "license": "NOASSERTION",
-    "contentHash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
-    "lastHarvestedAt": "2026-11-05T06:15:03.882Z",
+    "contentHash": "a12df921033e3399b063613336a3440d4b5dcc6a1531daeb7a661409f51a589c",
+    "lastHarvestedAt": "2026-11-12T09:55:17.691Z",
     "learningId": "learn-github-buresdv-cork"
   },
   "productdevbook-port-killer": {
@@ -12145,8 +12145,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Viggle-Remake",
     "sourceVersion": "hf-viggle-viggle-remake",
     "license": "Open-Source",
-    "contentHash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
-    "lastHarvestedAt": "2026-11-07T19:16:47.924Z",
+    "contentHash": "9a90003a80949cbeeb1890223456f11b54a48a7cd5d2005227f8c5b6f7c893cc",
+    "lastHarvestedAt": "2026-11-12T09:54:51.593Z",
     "learningId": "learn-huggingface-viggle-viggle-remake"
   },
   "alchaincyf-nuwa-skill": {

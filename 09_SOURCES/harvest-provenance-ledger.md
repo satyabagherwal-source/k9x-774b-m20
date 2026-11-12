@@ -9137,3 +9137,10 @@ Every entry in this ledger must capture:
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `482bbeb9` | Multi-dimensional audit evidence | 2026-11-12T09:25:49.127Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `03441954` | Multi-dimensional audit evidence | 2026-11-12T09:46:18.456Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e449c978` | Multi-dimensional audit evidence | 2026-11-12T09:46:20.424Z |
+| `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-12T09:54:51.593Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `e1f6df0a` | Multi-dimensional audit evidence | 2026-11-12T09:55:07.681Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `649a6f63` | Multi-dimensional audit evidence | 2026-11-12T09:55:17.691Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `390d168f` | Multi-dimensional audit evidence | 2026-11-12T09:55:22.206Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e3ecbb98` | Multi-dimensional audit evidence | 2026-11-12T09:55:22.984Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `719fcc41` | Multi-dimensional audit evidence | 2026-11-12T09:55:28.885Z |
+| `learn-dom-d-78355aec` | `project://hf-viggle-viggle-remake` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | 2026-11-12T09:55:51.213Z |

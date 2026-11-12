@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:46:27.899Z",
+  "last_updated": "2026-11-12T09:55:51.239Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T08:19:36.877Z",
@@ -1001,9 +1001,24 @@
       "processed_at": "2026-11-12T09:46:27.563Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "nvidia-cuda-rust-learnings.md": {
+      "processed_at": "2026-11-12T09:55:37.951Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-viggle-viggle-remake-learnings.md": {
+      "processed_at": "2026-11-12T09:55:51.213Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "buresdv-cork-learnings.md": {
+      "processed_at": "2026-11-12T09:55:51.227Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 267,
-  "total_canonical_promoted": 32,
-  "total_staged_for_review": 234
+  "total_dossiers_evaluated": 270,
+  "total_canonical_promoted": 33,
+  "total_staged_for_review": 236
 }
