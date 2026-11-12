@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T03:24:10.670Z",
-    "lastVerified": "2026-11-12T03:24:10.670Z",
+    "lastChecked": "2026-11-12T03:30:59.184Z",
+    "lastVerified": "2026-11-12T03:30:59.184Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -364,9 +364,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T02:48:41.351Z",
+    "lastChecked": "2026-11-12T03:30:43.368Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T02:48:41.351Z"
+    "lastVerified": "2026-11-12T03:30:43.368Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2463,8 +2463,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T17:46:07.214Z",
-    "lastVerified": "2026-11-11T17:46:07.214Z",
+    "lastChecked": "2026-11-12T03:30:38.463Z",
+    "lastVerified": "2026-11-12T03:30:38.463Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -3781,22 +3781,21 @@
     "revisionIdentifier": "3a9b151d"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonfly",
+    "name": "dragonflyoss/dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:56:49.639Z",
-    "lastVerified": "2026-11-09T17:56:49.639Z",
+    "lastChecked": "2026-11-12T03:30:40.550Z",
+    "lastVerified": "2026-11-12T03:30:40.550Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
+    "contentHash": "fae37663eee5110a7bf3f64de9d04d32fce15e9fdd235bfdad670d8602273b13",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "afb8bc2e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -4103,9 +4102,9 @@
   "fujiapple852-trippy": {
     "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-11-09T08:37:45.232Z",
+    "lastChecked": "2026-11-12T03:30:28.422Z",
     "revisionIdentifier": "54c8f399",
-    "lastVerified": "2026-11-09T08:37:45.232Z"
+    "lastVerified": "2026-11-12T03:30:28.422Z"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -6263,14 +6262,14 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T16:40:32.529Z",
-    "lastVerified": "2026-11-09T16:40:32.529Z",
+    "lastChecked": "2026-11-12T03:30:46.368Z",
+    "lastVerified": "2026-11-12T03:30:46.368Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "a0d2067540c08d269d1ca3d9b241c4a41aab6cd239e769d81d3d67de08e15938",
+    "contentHash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9599,9 +9598,9 @@
   "siteline-swiftui-introspect": {
     "name": "swiftui-introspect",
     "officialUrl": "https://github.com/siteline/swiftui-introspect",
-    "lastChecked": "2026-11-08T03:54:13.820Z",
+    "lastChecked": "2026-11-12T03:30:33.387Z",
     "revisionIdentifier": "7f32b29d",
-    "lastVerified": "2026-11-08T03:54:13.820Z"
+    "lastVerified": "2026-11-12T03:30:33.387Z"
   },
   "melnixdev-seo-crawl-audit": {
     "name": "seo-crawl-audit",
@@ -11471,9 +11470,9 @@
   "rehypejs-rehype": {
     "name": "rehype",
     "officialUrl": "https://github.com/rehypejs/rehype",
-    "lastChecked": "2026-11-07T04:36:53.108Z",
+    "lastChecked": "2026-11-12T03:30:30.840Z",
     "revisionIdentifier": "cae74c7f",
-    "lastVerified": "2026-11-07T04:36:53.108Z"
+    "lastVerified": "2026-11-12T03:30:30.840Z"
   },
   "hmlongco-factory": {
     "name": "hmlongco/Factory",

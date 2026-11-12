@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:24:03.369Z",
-  "total_cycles_completed": 8897,
-  "total_learnings_persisted": 8897,
-  "total_rules_promoted": 8746,
+  "last_updated": "2026-11-12T03:30:53.975Z",
+  "total_cycles_completed": 8899,
+  "total_learnings_persisted": 8899,
+  "total_rules_promoted": 8748,
   "history": [
-    {
-      "timestamp": "2026-11-10T04:51:48.792Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T04:51:50.321Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T04:51:56.950Z",
       "repository": "milvus-io/milvus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T03:24:03.369Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:30:47.946Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:30:53.975Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

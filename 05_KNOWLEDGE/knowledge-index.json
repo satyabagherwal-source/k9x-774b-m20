@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T03:24:03.206Z",
+  "last_updated": "2026-11-12T03:30:53.863Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12460,14 +12460,19 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "afb8bc2e",
-      "content_hash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
+      "source_version": "d73d3cc5",
+      "content_hash": "fae37663eee5110a7bf3f64de9d04d32fce15e9fdd235bfdad670d8602273b13",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "e2e): bump proxy download test file size to 100MiB (#5099)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Enhance multi-platform image preheat and deduplication process (#5112)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12501,7 +12506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:05:50.884Z",
+      "verified_at": "2026-11-12T03:30:47.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63966,8 +63971,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "93d16081",
-      "content_hash": "a0d2067540c08d269d1ca3d9b241c4a41aab6cd239e769d81d3d67de08e15938",
+      "source_version": "d1c0035f",
+      "content_hash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -63984,6 +63989,11 @@
         {
           "number": null,
           "title": "race in testLeafAdmissionRotatesAcrossTasks",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "short decimal cast overflow when increasing scale",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64062,7 +64072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:40:33.885Z",
+      "verified_at": "2026-11-12T03:30:53.848Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

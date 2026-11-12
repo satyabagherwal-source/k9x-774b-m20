@@ -9069,3 +9069,5 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `037d6597` | Multi-dimensional audit evidence | 2026-11-12T03:23:54.786Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `75fd3e94` | Multi-dimensional audit evidence | 2026-11-12T03:24:02.387Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `fcc9870c` | Multi-dimensional audit evidence | 2026-11-12T03:24:03.363Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `d73d3cc5` | Multi-dimensional audit evidence | 2026-11-12T03:30:47.942Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `d1c0035f` | Multi-dimensional audit evidence | 2026-11-12T03:30:53.960Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:24:10.863Z",
+  "last_updated": "2026-11-12T03:30:59.335Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5992,6 +5992,33 @@
       "source_repo": "dathere-qsv",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0847EF-luau-date-lua-clobbering-filter-after-er.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-297AAE",
+      "directive_title": "Enhance multi-platform image preheat and deduplication process (#5112)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dragonflyoss-dragonfly",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-297AAE-enhance-multi-platform-image-preheat-and.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-AA5E72",
+      "directive_title": "short decimal cast overflow when increasing scale",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trinodb-trino",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AA5E72-short-decimal-cast-overflow-when-increas.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E95373",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E95373-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

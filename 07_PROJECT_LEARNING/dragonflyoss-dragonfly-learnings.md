@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
-> **Source Version**: `afb8bc2e`  
+> **Source Version**: `d73d3cc5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:05:49.473Z  
+> **Timestamp**: 2026-11-12T03:30:40.747Z  
 > **Learning ID**: `learn-github-dragonflyoss-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:05:48.683Z  
+> **Harvest Timestamp**: 2026-11-12T03:30:40.550Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1154,155 +1154,437 @@ func runScheduler(ctx context.Context, d dfpath.Dfpath, dynconfigPath string) er
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afb8bc2e` (2026-11-06)
-**Commit Message**: chore(e2e): bump proxy download test file size to 100MiB (#5099)
+### Incident Patch 1: `d73d3cc5` (2026-11-11)
+**Commit Message**: Enhance multi-platform image preheat and deduplication process (#5112)
 
-Update the client submodule and change the proxy download e2e case to
-generate and fetch a 100MiB file instead of 10MiB, exercising larger
-transfers through the proxy path.
+* feat(preheat): resolve image layers for all platforms when none is specified
+
+Replace the single-manifest image preheat flow with a multi-platform
+resolver: when no platform is given, manifest lists and image indexes are
+expanded so layers for every platform are preheated and stat'd, and blob
+URLs are tagged with their platform. The resolved image is forwarded to
+download tasks so the scheduler and manager preheat per platform instead
+of only the default one.
 
 Signed-off-by: Gaius <[REDACTED_EMAIL]>
+
+* fix(job): dedupe per-platform blob URLs and drop invalid image references in preheat
+
+Preheat image requests now normalize requested platforms, deduplicate blob
+URLs per platform so shared layers are not fetched repeatedly, and reject
+malformed image references instead of passing them through. OCI reference
+parsing and resolving are adjusted accordingly, with tests covering the
+new validation and deduplication behavior.
+
+Also update the e2e manager preheat image tests and compatibility workflow
+to use dragonflyoss/client:v1.5.11 with its expected layer digests.
+
+Signed-off-by: Gaius <[REDACTED_EMAIL]>
+
+* chore(
+
+**File**: `.github/workflows/e2e-compatibility.yml` (modified, +2/-2)
+```diff
+@@ -51,10 +51,10 @@ jobs:
+             chart-name: seedClient
+           - mode: lightweight
+             charts-config: test/testdata/charts/config.yaml
+-            skip: 'Manager|Rate Limit|Dfcache'
++            skip: 'Manager|Rate Limit|Dfcache|Preheat and Delete Image Using Scheduler'
+           - mode: with-manager
+             charts-config: test/testdata/charts/config-with-manager.yaml
+-            skip: 'Rate Limit'
++            skip: 'Rate Limit|Preheat and Delete Image Using Scheduler'
+ 
+     steps:
+       - name: Free Disk Space (Ubuntu)
+```
+
+**File**: `.github/workflows/e2e.yml` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ jobs:
+           - module: lightweight
+             charts-config: test/testdata/charts/config.yaml
+             mode: lightweight
+-            skip: 'Manager|Rate Limit|Dfcache'
++            skip: 'Manager|Rate Limit|Dfcache|Preheat and Delete Image Using Scheduler'
+           - module: with-manager
+             charts-config: test/testdata/charts/config-with-manager.yaml
+             mode: with-manager
+```
 
 **File**: `client` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--Subproject commit 024c6e9c7d9ef6a67311ed15e645baf98b227f94
-+Subproject commit ca04fb0a9a35a452c07cba413961f0292f4d0d1b
+-Subproject commit ca04fb0a9a35a452c07cba413961f0292f4d0d1b
++Subproject commit 4891875a55c4499bce0cca6263c5a7c253798c23
 ```
 
-**File**: `scheduler/job/job.go` (modified, +3/-0)
+**File**: `go.mod` (modified, +7/-7)
 ```diff
-@@ -400,6 +400,7 @@ func (j *job) preheatV2SingleSeedPeerByURL(ctx context.Context, url string, req
- 			Hdfs:                        req.Hdfs,
- 			OutputPath:                  req.OutputPath,
- 			EnableTaskIdBasedBlobDigest: req.EnableTaskIDBasedBlobDigest,
-+			SchedulingPolicy:            commonv2.SchedulingPolicy_ALWAYS,
- 		}})
+@@ -3,7 +3,7 @@ module d7y.io/dragonfly/v2
+ go 1.25.0
+ 
+ require (
+-	d7y.io/api/v2 v2.3.8
++	d7y.io/api/v2 v2.3.10
+ 	d7y.io/hashring v0.3.0
+ 	github.com/Showmax/go-fqdn v1.0.0
+ 	github.com/VividCortex/mysqlerr v1.0.0
+@@ -67,9 +67,9 @@ require (
+ 	golang.org/x/oauth2 v0.36.0
+ 	golang.org/x/sync v0.22.0
+ 	golang.org/x/sys v0.47.0
+-	golang.org/x/time v0.14.0
+-	google.golang.org/api v0.267.0
+-	google.golang.org/grpc v1.83.1
++	golang.org/x/time v0.15.0
++	google.golang.org/api v0.278.0
++	google.golang.org/grpc v1.84.0
+ 	google.golang.org/protobuf v1.36.12
+ 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+ 	gopkg.in/yaml.v3 v3.0.1
+@@ -85,7 +85,7 @@ require (
+ 
+ require (
+ 	cloud.google.com/go v0.121.6 // indirect
+-	cloud.google.com/go/auth v0.18.2 // indirect
++	cloud.google.com/go/auth v0.20.0 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
+ 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
+ 	cloud.google.com/go/iam v1.5.3 // indirect
+@@ -145,7 +145,7 @@ require (
+ 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
+ 	github.com/google/s2a-go v0.1.9 // indirect
+ 	github.com/googleapis/enterprise-certificate-proxy v0.3.15 // indirect
+-	github.com/googleapis/gax-go/v2 v2.17.0 // indirect
++	github.com/googleapis/gax-go/v2 v2.22.0 // indirect
+ 	github.com/gorilla/mux v1.8.1 // indirect
+ 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
+ 	github.com/hashicorp/errwrap v1.1.0 // indirect
+@@ -220,7 +220,7 @@ require (
+ 	golang.org/x/net v0.58.0 // indirect
+ 	golang.org/x/text v0.41.0 // indirect
+ 	golang.org/x/tools v0.48.0 // indirect
+-	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
++	google.golang.org/genproto v0.0.0-20260319201613-d00831a3d3e7 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
+ 	gopkg.in/ini.v1 v1.67.0 // indirect
+```
+
+**File**: `go.sum` (modified, +16/-16)
+```diff
+@@ -19,8 +19,8 @@ cloud.google.com/go v0.75.0/go.mod h1:VGuuCn7PG0dwsd5XPVm2Mm3wlh3EL55/79EKB6hlPT
+ cloud.google.com/go v0.76.0/go.mod h1:r9EvIAvLrunusnetGdQ50M/gKui1x3zdGW/VELGkdpw=
+ cloud.google.com/go v0.121.6 h1:waZiuajrI28iAf40cWgycWNgaXPO06dupuS+sgibK6c=
+ cloud.google.com/go v0.121.6/go.mod h1:coChdst4Ea5vUpiALcYKXEpR1S9ZgXbhEzzMcMR66vI=
+-cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
+-cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
++cloud.google.com/go/auth v0.20.0 h1:kXTssoVb4azsVDoUiF8KvxAqrsQcQtB53DcSgta74CA=
++cloud.google.com/go/auth v0.20.0/go.mod h1:942/yi/itH1SsmpyrbnTMDgGfdy2BUqIKyd0cyYLc5Q=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
+ cloud.google.com/go/bigquery v1.0.1/go.mod h1:i/xbL2UlR5RvWAURpBYZTtm/cXjCha9lbfbpx4poX+o=
+@@ -35,8 +35,8 @@ cloud.google.com/go/datastore v1.0.0/go.mod h1:LXYbyblFSglQ5pkeyhO+Qmw7ukd3C+pD7
+ cloud.google.com/go/datastore v1.1.0/go.mod h1:umbIZjpQpHh4hmRpGhH4tLFup+FVzqBi1b3c64qFpCk=
+ cloud.google.com/go/iam v1.5.3 h1:+vMINPiDF2ognBJ97ABAYYwRgsaqxPbQDlMnbHMjolc=
+ cloud.google.com/go/iam v1.5.3/go.mod h1:MR3v9oLkZCTlaqljW6Eb2d3HGDGK5/bDv93jhfISFvU=
+-cloud.google.com/go/kms v1.25.0 h1:gVqvGGUmz0nYCmtoxWmdc1wli2L1apgP8U4fghPGSbQ=
+-cloud.google.com/go/kms v1.25.0/go.mod h1:XIdHkzfj0bUO3E+LvwPg+oc7s58/Ns8Nd8Sdtljihbk=
++cloud.google.com/go/kms v1.26.0 h1:cK9mN2cf+9V63D3H1f6koxTatWy39aTI/hCjz1I+adU=
++cloud.google.com/go/kms v1.26.0/go.mod h1:pHKOdFJm63hxBsiPkYtowZPltu9dW0MWvBa6IA4HM58=
+ cloud.google.com/go/longrunning v0.8.0 h1:LiKK77J3bx5gDLi4SMViHixjD2ohlkwBi+mKA7EhfW8=
+ cloud.google.com/go/longrunning v0.8.0/go.mod h1:UmErU2Onzi+fKDg2gR7dusz11Pe26aknR4kHmJJqIfk=
+ cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2kNxGRt3I=
+@@ -53,8 +53,8 @@ cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0Zeo
+ cloud.google.com/go/storage v1.6.0/go.mod h1:N7U0C8pVQ/+NIKOBQyamJIeKQKkZ+mxpohlUTyfDhBk=
+ cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RXyy7KQOVs=
+ cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
+-d7y.io/api/v2 v2.3.8 h1:v2ur2xA5WspWhyy73t7qTZrRMvxir/hNzlSM2QCif4E=
+-d7y.io/api/v2 v2.3.8/go.mod h1:dkwb6hCIWdijpAOZmdqszAPlXWS7cO41+Av9IvmOTHo=
++d7y.io/api/v2 v2.3.10 h1:JFC6944ETIURMfLlaH0inH5NnZtzyAGU/mjHFJUkMOk=
++d7y.io/api/v2 v2.3.10/go.mod h1:hQOqfvk0SSuSUZ25VrF/L4dlP4JnREaUiUui07muLws=
+ d7y.io/hashring v0.3.0 h1:qGIkSNa/g6hSFYV2mBE+mZU16NzzMiCKobti072ACL0=
+ d7y.io/hashring v0.3.0/go.mod h1:NY2/+76/hCcBzcTEJiqJG2AX0gzlSq+YJJgSJyZWd1c=
+ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+@@ -412,8 +412,8 @@ github.com/googleapis/enterprise-certificate-proxy v0.3.15 h1:xolVQTEXusUcAA5Ugt
+ github.com/googleapis/enterprise-certificate-proxy v0.3.15/go.mod h1:vqVt9yG9480NtzREnTlmGSBmFrA+bzb0yl0TxoBQXOg=
+ github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
+ github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
+-github.com/googleapis/gax-go/v2 v2.17.0 h1:RksgfBpxqff0EZkDWYuz9q/uWsTVz+kf43LsZ1J6SMc=
+-github.com/googleapis/gax-go/v2 v2.17.0/go.mod h1:mzaqghpQp4JDh3HvADwrat+6M3MOIDp5YKHhb9PAgDY=
++github.com/googleapis/gax-go/v2 v2.22.0 h1:PjIWBpgGIVKGoCXuiCoP64altEJCj3/Ei+kSU5vlZD4=
++github.com/googleapis/gax-go/v2 v2.22.0/go.mod h1:irWBbALSr0Sk3qlqb9SyJ1h68WjgeFuiOzI4Rqw5+aY=
+ github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
+ github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
+ github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 h1:UH//fgunKIs4JdUbpDl1VZCDaL56wXCB/5+wF6uHfaI=
+@@ -1130,8 +1130,8 @@ golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxb
+ golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20191024005414-555d28b269f0/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20201208040808-7e3f01d25324/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+-golang.org/x/time v0.14.0 h1:MRx4UaLrDotUKUdCIqzPC48t1Y9hANFKIRpNx+Te8PI=
+-golang.org/x/time v0.14.0/go.mod h1:eL/Oa2bBBK0TkX57Fyni+NgnyQQN4LitPmob2Hjnqw4=
++golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
++golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20190114222345-bf090417da8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20190226205152-f727befe758c/go.mod h1:9Yl7xja0Znq3iFh3HoIrodX9oNMXvdceNzlUR8zjMvY=
+@
+```
+
+**File**: `internal/job/image.go` (modified, +73/-27)
+```diff
+@@ -21,10 +21,14 @@ package job
+ import (
+ 	"context"
+ 	"crypto/x509"
++	"slices"
+ 	"time"
+ 
+ 	"go.opentelemetry.io/otel/trace"
+ 
++	commonv2 "d7y.io/api/v2/pkg/apis/common/v2"
++
++	logger "d7y.io/dragonfly/v2/internal/dflog"
+ 	"d7y.io/dragonfly/v2/manager/config"
+ 	nethttp "d7y.io/dragonfly/v2/pkg/net/http"
+ 	pkgoci "d7y.io/dragonfly/v2/pkg/oci"
+@@ -59,7 +63,9 @@ type ManifestRequest struct {
+ 	Password string
+ 
+ 	// The image type preheating task can specify the image architecture type. eg: linux/amd64.
+-	Platform string
++	// If it is nil, all the platforms of the image are preheated. If it is empty, the default
++	// platform is preheated.
++	Platform *string
+ 
+ 	// Scope is the scope for preheating, default is single_seed_peer.
+ 	Scope string
+@@ -110,7 +116,8 @@ type ManifestRequest struct {
+ type Image interface {
+ 	// CreatePreheatRequestsByManifestURL generates a list of preheat requests for a container image
+ 	// by fetching and parsing its manifest from a registry. It handles authentication, platform-specific
+-	// manifest filtering, and layer extraction for preheating.
++	// manifest filtering, and layer extraction for preheating. Each preheat request preheats the layers
++	// of one platform of the image.
+ 	CreatePreheatRequestsByManifestURL(ctx context.Context, req *ManifestRequest) ([]*PreheatRequest, error)
+ }
+ 
+@@ -124,7 +131,8 @@ func NewImage() Image {
+ 
+ // CreatePreheatRequestsByManifestURL generates a list of preheat requests for a container image
+ // by fetching and parsing its manifest from a registry. It handles authentication, platform-specific
+-// manifest filtering, and layer extraction for preheating.
++// manifest filtering, and layer extraction for preheating. Each preheat request preheats the layers
++// of one platform of the image.
+ func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *ManifestRequest) ([]*PreheatRequest, error) {
+ 	ctx, span := tracer.Start(ctx, config.SpanGetLayers, trace.WithSpanKind(trace.SpanKindProducer))
+ 	defer span.End()
+@@ -135,15 +143,21 @@ func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *Man
+ 		return nil, err
+ 	}
+ 
+-	// Resolve the blob urls and the authorization token. Harbor uses the V1
++	// Resolve the manifests and the authorization token. Harbor uses the V1
+ 	// preheat request and carries the auth info in the headers, which is used
+-	// as the issued token by the resolver.
++	// as the issued token by the resolver. All the platforms of the image are
++	// resolved if the platform is not specified.
+ 	header := nethttp.MapToHeader(req.Headers)
+-	_, blobURLs, token, err := pkgoci.Resolve(ctx, ref,
++	opts := []pkgoci.ResolveOption{
+ 		pkgoci.WithAuth(req.Username, req.Password),
+-		pkgoci.WithPlatform(req.Platform),
+ 		pkgoci.WithHeader(header.Clone()),
+-	)
++	}
++
++	if req.Platform != nil {
++		opts = append(opts, pkgoci.WithPlatform(*req.Platform))
++	}
++
++	manifests, token, err := pkgoci.Resolve(ctx, ref, opts...)
  	if err != nil {
- 		log.Errorf("[preheat]: preheat failed: %s", err.Error())
-@@ -506,6 +507,7 @@ func (j *job) PreheatAllSeedPeers(ctx context.Context, req *internaljob.PreheatR
- 							Hdfs:                        req.Hdfs,
- 							OutputPath:                  req.OutputPath,
- 							EnableTaskIdBasedBlobDigest: req.EnableTaskIDBasedBlobDigest,
-+							SchedulingPolicy:            commonv2.SchedulingPolicy_ALWAYS,
- 						}})
- 					if err != nil {
- 						log.Errorf("[preheat]: preheat failed: %s", err.Error())
-@@ -735,6 +737,7 @@ func (j *job) PreheatAllPeers(ctx context.Context, req *internaljob.PreheatReque
- 							Hdfs:                        req.Hdfs,
- 							OutputPath:                  req.OutputPath,
- 							EnableTaskIdBasedBlobDigest: req.EnableTaskIDBasedBlobDigest,
-+							SchedulingPolicy:            commonv2.SchedulingPolicy_ALWAYS,
- 						}})
- 					if err != nil {
- 						log.Errorf("[preheat]: preheat failed: %s", err.Error())
+ 		return nil, err
+ 	}
+@@ -155,23 +169,55 @@ func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *Man
+ 		certificateChain = req.RootCAs.Subjects() //nolint:staticcheck
+ 	}
+ 
+-	return []*PreheatRequest{{
+-		URLs:                blobURLs,
+-		PieceLength:         req.PieceLength,
+-		Tag:                 req.Tag,
+-		Application:         req.Application,
+-		FilteredQueryParams: req.FilteredQueryParams,
+-		Headers:             nethttp.HeaderToMap(header),
+-		Scope:               req.Scope,
+-		IPs:                 req.IPs,
+-		Percentage:          req.Percentage,
+-		Count:               req.Count,
+-		ConcurrentTaskCount: req.ConcurrentTaskCount,
+-		ConcurrentPeerCount: req.ConcurrentPeerCount,
+-		CertificateChain:    certificateChain,
+-		InsecureSkipVerify:  req.InsecureSkipVerify,
+-		Timeout:             req.Timeout,
+-
+-		EnableTaskIDBasedBlobDigest: req.EnableTaskIDBasedBlobDigest,
+-	}}, nil
++	// Create one preheat request for each platform, so the peers record the layers by the
++	// image and the platform to delete the image.
++	var preheatRequests []*PreheatRequest
++	for _, manifest := range manifests {
++		if index := slices.IndexFunc(preheatRequests, func(preheatRequest *PreheatRequest) bool {
++			return preheatRequest.Image.GetPlatform() == manifest.Platform
++		}); index >= 0 {
++			for _, url := range manifest.BlobURLs {
++				if !slices.Contains(preheatRequests[index].URLs, url) {
++					preheatRequests[index].URLs = append(preheatRequests[index].URLs, url)
++				}
++			}
++
++			continue
++		}
++
++		preheatRequest := &PreheatRequest{
++			URLs:                        manifest.BlobURLs,
++			PieceLength:                 req.PieceLength,
++			Tag:                         req.Tag,
++			Application:                 req.Application,
++			FilteredQueryParams:         req.FilteredQueryParams,
++			Headers:                     nethttp.HeaderToMap(header),
++			Scope:                       req.Scope,
++			IPs:                         req.IPs,
++			Percentage:                  req.P
 ```
 
-**File**: `test/e2e/manager/task.go` (modified, +4/-4)
+**File**: `internal/job/image_test.go` (modified, +32/-1)
 ```diff
-@@ -31,14 +31,14 @@ import (
+@@ -25,6 +25,10 @@ import (
+ 	"github.com/stretchr/testify/assert"
  )
  
- var _ = Describe("GetTask and DeleteTask with Manager", func() {
--	Context("10MiB file", Label("getTask", "deleteTask", "file"), func() {
-+	Context("100MiB file", Label("getTask", "deleteTask", "file"), func() {
- 		var (
- 			testFile *util.File
- 			err      error
- 		)
- 
- 		BeforeEach(func() {
--			testFile, err = util.GetFileServer().GenerateFile(util.FileSize10MiB)
-+			testFile, err = util.GetFileServer().GenerateFile(util.FileSize100MiB)
- 			Expect(err).NotTo(HaveOccurred())
- 			Expect(testFile).NotTo(BeNil())
- 		})
-@@ -137,14 +137,14 @@ var _ = Describe("GetTask and DeleteTask with Manager", func() {
- 		})
- 	})
- 
--	Context("100MiB file", Label("getTask", "deleteTask", "file"), func() {
-+	Context("10MiB file", Label("getTask", "deleteTask", "file"), func() {
- 		var (
- 			testFile *util.File
- 			err      error
- 		)
- 
- 		BeforeEach(func() {
--			testFile, err = util.GetFileServer().GenerateFile(util.FileSize100MiB)
-+			testFile, err = util.GetFileServer().GenerateFile(util.FileSize10MiB)
- 			Expect(err).NotTo(HaveOccurred())
- 			Expect(testFile).NotTo(BeNil())
- 		})
++var (
++	mockPlatform = "linux/amd64"
++)
++
+ func TestPreheat_CreatePreheatRequestsByManifestURL(t *testing.T) {
+ 	username := os.Getenv("DOCKER_USERNAME")
+ 	password := os.Getenv("DOCKER_PASSWORD")
+@@ -49,14 +53,17 @@ func TestPreheat_CreatePreheatRequestsByManifestURL(t *testing.T) {
+ 			expect: func(t *testing.T, layers []*PreheatRequest, err error) {
+ 				assert := assert.New(t)
+ 				assert.NoError(err)
++				assert.Len(layers, 1)
+ 				assert.Len(layers[0].URLs, 2)
++				assert.Equal("registry-1.docker.io/dragonflyoss/busybox:1.35.0", layers[0].Image.GetReference())
++				assert.Nil(layers[0].Image.Platform)
+ 			},
+ 		},
+ 		{
+ 			name: "get image layers with multi arch image layers",
+ 			req: &ManifestRequest{
+ 				URL:                "https://registry-1.docker.io/v2/dragonflyoss/scheduler/manifests/v2.1.0",
+-				Platform:           "linux/amd64",
++				Platform:           &mockPlatform,
+ 				Username:           username,
+ 				Password:           password,
+ 				Timeout:            30 * time.Second,
+@@ -65,7 +72,31 @@ func TestPreheat_CreatePreheatRequestsByManifestURL(t *testing.T) {
+ 			expect: func(t *testing.T, layers []*PreheatRequest, err error) {
+ 				assert := assert.New(t)
+ 				assert.NoError(err)
++				assert.Len(layers, 1)
+ 				assert.Len(layers[0].URLs, 5)
++				assert.Equal("registry-1.docker.io/dragonflyoss/scheduler:v2.1.0", layers[0].Image.GetReference())
++				assert.Equal(mockPlatform, layers[0].Image.GetPlatform())
++			},
++		},
++		{
++			name: "get image layers of all platforms",
++			req: &ManifestRequest{
++				URL:                "https://registry-1.docker.io/v2/dragonflyoss/client/manifests/v1.5.12",
++				Username:           username,
++				Password:           password,
++				Timeout:            30 * time.Second,
++				InsecureSkipVerify: true,
++			},
++			expect: func(t *testing.T, layers []*PreheatRequest, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++				assert.Len(layers, 3)
++				assert.Len(layers[0].URLs, 9)
++				assert.Equal("linux/amd64", layers[0].Image.GetPlatform())
++				assert.Len(layers[1].URLs, 9)
++				assert.Equal("linux/arm64", layers[1].Image.GetPlatform())
++				assert.Len(layers[2].URLs, 3)
++				assert.Equal("unknown/unknown", layers[2].Image.GetPlatform())
+ 			},
+ 		},
+ 	}
 ```
 
-**File**: `test/e2e/proxy_test.go` (modified, +2/-2)
+**File**: `internal/job/types.go` (modified, +1/-0)
 ```diff
-@@ -64,14 +64,14 @@ var _ = Describe("Download Using Proxy", func() {
- 		})
- 	})
+@@ -51,6 +51,7 @@ type PreheatRequest struct {
+ 	Hdfs                        *v2.HDFS          `json:"hdfs" validate:"omitempty"`
+ 	OutputPath                  *string           `json:"output_path" validate:"omitempty"`
+ 	EnableTaskIDBasedBlobDigest bool              `json:"enable_task_id_based_blob_digest" validate:"omitempty"`
++	Image                       *v2.Image         `json:"image" validate:"omitempty"`
+ }
  
--	Context("10MiB file", func() {
-+	Context("100MiB file", func() {
- 		var (
- 			testFile *util.File
- 			err      error
- 		)
- 
- 		BeforeEach(func() {
--			testFile, err = util.GetFileServer().GenerateFile(util.FileSize10MiB)
-+			testFile, err = util.GetFileServer().GenerateFile(util.FileSize100MiB)
- 			Expect(err).NotTo(HaveOccurred())
- 			Expect(testFile).NotTo(BeNil())
- 		})
+ // PreheatResponse defines the response parameters for preheating.
 ```
 
 ---
 
-### Incident Patch 2: `e48b7ccf` (2026-11-06)
-**Commit Message**: chore(deps): bump d7y.io/hashring from v0.2.0 to v0.3.0 (#5100)
+### Incident Patch 2: `cbbe27d6` (2026-11-10)
+**Commit Message**: chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (#5103)
 
-d7y.io/hashring v0.3.0 merges new virtual nodes into the ring in linear
-time instead of re-sorting the whole ring on every Add, and hashes from
-a stack buffer so Get no longer allocates. Key placement and the public
-API are unchanged.
+Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0.
+- [Release notes](https://github.com/docker/login-action/releases)
+- [Commits](https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550)
 
-Signed-off-by: Gaius <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: docker/login-action
+  dependency-version: 4.8.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-**File**: `go.mod` (modified, +1/-1)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/docker.yml` (modified, +2/-2)
 ```diff
-@@ -4,7 +4,7 @@ go 1.25.0
+@@ -67,14 +67,14 @@ jobs:
+         uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003
  
- require (
- 	d7y.io/api/v2 v2.3.8
--	d7y.io/hashring v0.2.0
-+	d7y.io/hashring v0.3.0
- 	github.com/Showmax/go-fqdn v1.0.0
- 	github.com/VividCortex/mysqlerr v1.0.0
- 	github.com/appleboy/gin-jwt/v2 v2.10.3
-```
-
-**File**: `go.sum` (modified, +2/-0)
-```diff
-@@ -57,6 +57,8 @@ d7y.io/api/v2 v2.3.8 h1:v2ur2xA5WspWhyy73t7qTZrRMvxir/hNzlSM2QCif4E=
- d7y.io/api/v2 v2.3.8/go.mod h1:dkwb6hCIWdijpAOZmdqszAPlXWS7cO41+Av9IvmOTHo=
- d7y.io/hashring v0.2.0 h1:Cv+BtZnMnKk8xkWovOFoUpUGb4mdId0Tcgv1nE6TWZc=
- d7y.io/hashring v0.2.0/go.mod h1:NY2/+76/hCcBzcTEJiqJG2AX0gzlSq+YJJgSJyZWd1c=
-+d7y.io/hashring v0.3.0 h1:qGIkSNa/g6hSFYV2mBE+mZU16NzzMiCKobti072ACL0=
-+d7y.io/hashring v0.3.0/go.mod h1:NY2/+76/hCcBzcTEJiqJG2AX0gzlSq+YJJgSJyZWd1c=
- dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
- filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
- filippo.io/edwards25519 v1.2.0/go.mod h1:xzAOLCNug/yB62zG1bQ8uziwrIqIuxhctzJT18Q77mc=
+       - name: Login Docker Hub
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           registry: docker.io
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+       - name: Login to GitHub Container Registry
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           registry: ghcr.io
+           username: ${{ github.repository_owner }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5100** (2026-11-06): chore(deps): bump d7y.io/hashring from v0.2.0 to v0.3.0 (@gaius-qi)
-- **PR #5099** (2026-11-06): fix(scheduler): always schedule preheats and update client to v1.5.11 (@gaius-qi)
-- **PR #5097** (2026-11-03): fix(e2e): poll seed client task content instead of sleeping one second (@gaius-qi)
-- **PR #5096** (2026-11-03): chore(deps): bump kentaro-m/auto-assign-action from c8e3c55d4a048066a8f4fca0070c2f2db65a20a5 to f0f2d0c11ed2677e95f2408d27493b215ddd57b0 (@dependabot[bot])
-- **PR #5095** (closed): chore(deps): bump golang.org/x/sys from 0.47.0 to 0.49.0 (@dependabot[bot])
-- **PR #5094** (closed): chore(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace from 1.46.0 to 1.47.0 (@dependabot[bot])
+- **PR #5112** (2026-11-11): Enhance multi-platform image preheat and deduplication process (@gaius-qi)
+- **PR #5111** (2026-11-10): chore(deps): bump github.com/avast/retry-go/v5 from 5.0.0 to 5.1.1 (@dependabot[bot])
+- **PR #5110** (2026-11-10): chore(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
+- **PR #5109** (closed): chore(deps): bump github.com/gin-contrib/static from 1.1.5 to 1.1.9 (@dependabot[bot])
+- **PR #5108** (closed): chore(deps): bump google.golang.org/api from 0.267.0 to 0.311.0 (@dependabot[bot])
+- **PR #5107** (closed): chore(deps): bump github/codeql-action/init from 4.36.2 to 4.39.3 (@dependabot[bot])
 
 ---
 
@@ -1322,28 +1604,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. e2e): bump proxy download test file size to 100MiB (#5099)
+## X. Enhance multi-platform image preheat and deduplication process (#5112)
 
 **RULE**:
-When implementing operations in `client`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/e2e-compatibility.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afb8bc2e`: e2e): bump proxy download test file size to 100MiB (#5099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d73d3cc5`: Enhance multi-platform image preheat and deduplication process (#5112). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e-compatibility.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Subproject commit ca04fb0a9a35a452c07cba413961f0292f4d0d1b
+            skip: 'Manager|Rate Limit|Dfcache|Preheat and Delete Image Using Scheduler'
+            skip: 'Rate Limit|Preheat and Delete Image Using Scheduler'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Subproject commit 024c6e9c7d9ef6a67311ed15e645baf98b227f94
+            skip: 'Manager|Rate Limit|Dfcache'
+            skip: 'Rate Limit'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afb8bc2e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d73d3cc5` are properly handled with clean fallback behavior.

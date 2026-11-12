@@ -9060,3 +9060,5 @@
 | `CYCLE-20261112-HCF2` | `2026-11-12T03:23:54.782Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1403f6b6...`) |
 | `CYCLE-20261112-HIA7` | `2026-11-12T03:24:02.383Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a969464f...`) |
 | `CYCLE-20261112-HJ1A` | `2026-11-12T03:24:03.358Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`97bf868b...`) |
+| `CYCLE-20261112-Q77N` | `2026-11-12T03:30:47.939Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fae37663...`) |
+| `CYCLE-20261112-QBUT` | `2026-11-12T03:30:53.957Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9f910c02...`) |

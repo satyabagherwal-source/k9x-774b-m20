@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `93d16081`  
+> **Source Version**: `d1c0035f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:40:32.636Z  
+> **Timestamp**: 2026-11-12T03:30:46.373Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:40:32.529Z  
+> **Harvest Timestamp**: 2026-11-12T03:30:46.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13490 stars
+- **Stars / Engagement**: 13504 stars
 
 ---
 
@@ -1862,176 +1862,386 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93d16081` (2026-11-09)
-**Commit Message**: Fix race in testLeafAdmissionRotatesAcrossTasks
+### Incident Patch 1: `336c2e0c` (2026-11-11)
+**Commit Message**: Fix short decimal cast overflow when increasing scale
 
-The test submits three held intermediate splits and two held leaf
-splits to a scheduler with four slots, without waiting for the
-intermediate splits to start. If the first one's thread is the last
-to ask for a slot, it never runs: releasing it does not block it, the
-blocked split count stays 0, and the wait for it times out. Wait for
-all intermediate splits to start before submitting the leaf splits.
+Casting a short decimal to a short decimal with a larger scale
+multiplied the value in a plain long. When the product wrapped, it
+could land within the target precision and pass the overflow check,
+returning a wrong value instead of failing.
 
-**File**: `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java` (modified, +1/-0)
+**File**: `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java` (modified, +15/-0)
 ```diff
-@@ -990,6 +990,7 @@ public void testLeafAdmissionRotatesAcrossTasks()
-                     new AdmissionSplit(BlockedReason.OUTPUT, true),
-                     new AdmissionSplit(BlockedReason.OUTPUT, true));
-             executor.enqueueSplits(firstTask, true, busySplits);
-+            assertEventually(new Duration(10, SECONDS), () -> assertThat(busySplits).allMatch(AdmissionSplit::isStarted));
-             List<AdmissionSplit> firstTaskSplits = ImmutableList.of(
-                     new AdmissionSplit(BlockedReason.SOURCE, true),
-                     new AdmissionSplit(BlockedReason.SOURCE, true),
-```
-
----
-
-### Incident Patch 2: `eb83618c` (2026-11-09)
-**Commit Message**: Retry Bun download in mvnd-build CI job
-
-The mvnd-build job does not restore the Bun cache, so every run downloads
-Bun from GitHub releases. frontend-maven-plugin fails the build on any
-non-200 response without retrying, so a transient 504 failed the job.
-
-Install Bun in a separate retried step. The build's install-bun execution
-then finds it already installed and skips the download.
-
-**File**: `.github/workflows/ci.yml` (modified, +5/-0)
-```diff
-@@ -193,6 +193,11 @@ jobs:
-           cleanup-node: false
-       - name: Install Maven Daemon
-         run: .github/bin/retry brew install mvndaemon/mvnd/mvnd
-+      - name: Install Bun
-+        # This job does not restore the Bun cache, so Bun is downloaded on every run, and
-+        # frontend-maven-plugin does not retry failed downloads. The build then finds it installed.
-+        run: |
-+          .github/bin/retry mvnd ${MAVEN_ARGS} -B -pl :trino-web-ui frontend:install-bun@"install bun"
-       - name: Build with Maven Daemon
-         # Start from an empty local repository, as artifacts already present there bypass repository filtering.
-         # trino-docs is excluded because its build runs Sphinx in Docker, which macOS runners do not provide.
-```
-
----
-
-### Incident Patch 3: `e47c07c2` (2026-10-30)
-**Commit Message**: Fix physical input size for partition-only scans
-
-Iceberg and Delta Lake skip opening data files when a scan only needs
-partition values, so these scans must not count toward physical input
-bytes or the physical scan limit.
-
-**File**: `plugin/trino-delta-lake/src/main/java/io/trino/plugin/deltalake/DeltaLakePageSourceProvider.java` (modified, +9/-1)
-```diff
-@@ -460,7 +460,15 @@ protected Page computeNext()
-                         return page;
-                     }
-                 },
--                0);
-+                0)
-+        {
-+            // Pages are generated without reading the file, so no input bytes are consumed
-+            @Override
-+            public long getCompletedBytes()
-+            {
-+                return 0;
-+            }
-+        };
+@@ -129,6 +129,21 @@ public void testShortDecimalToShortDecimalCasts()
+                 .binding("a", "DECIMAL '-12345.6'").evaluate())
+                 .hasMessage("Cannot cast DECIMAL(6, 1) '-12345.6' to DECIMAL(4, 2)")
+                 .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
++
++        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
++                .binding("a", "DECIMAL '175'").evaluate())
++                .hasMessage("Cannot cast DECIMAL(3, 0) '175' to DECIMAL(18, 17)")
++                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
++
++        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
++                .binding("a", "DECIMAL '-175'").evaluate())
++                .hasMessage("Cannot cast DECIMAL(3, 0) '-175' to DECIMAL(18, 17)")
++                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
++
++        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 2))")
++                .binding("a", "DECIMAL '184467440737095516'").evaluate())
++                .hasMessage("Cannot cast DECIMAL(18, 0) '184467440737095516' to DECIMAL(18, 2)")
++                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
      }
  
-     private static Block createRowNumberBlock(long baseIndex, int size)
-```
-
-**File**: `plugin/trino-delta-lake/src/test/java/io/trino/plugin/deltalake/TestDeltaLakeConnectorTest.java` (modified, +24/-0)
-```diff
-@@ -698,6 +698,30 @@ private void testTimestampPredicatePushdown(String value)
-                 _ -> {});
-     }
- 
-+    @Test
-+    public void testPartitionOnlyDeletePhysicalInputDataSize()
-+    {
-+        try (TestTable table = newTrinoTable(
-+                "test_partition_only_delete_input",
-+                "WITH (partitioned_by = ARRAY['part']) AS SELECT x, x % 3 part FROM UNNEST(sequence(1, 100)) t(x)")) {
-+            // Deleting by partition columns only generates row ids without reading data files
-+            assertQueryStats(
-+                    getSession(),
-+                    "DELETE FROM " + table.getName() + " WHERE part % 3 = 0",
-+                    queryStats -> {
-+                        assertThat(queryStats.getPhysicalInputPositions()).isPositive();
-+                        assertThat(queryStats.getPhysicalInputDataSize().toBytes()).isZero();
-+                    },
-+                    result -> assertThat(result.getOnlyValue()).isEqualTo(33L));
-+
-+            assertQueryStats(
-+                    getSession(),
-+                    "DELETE FROM " + table.getName() + " WHERE x % 2 = 0",
-+                    queryStats -> assertThat(queryStats.getPhysicalInputDataSize().toBytes()).isPositive(),
-+                    _ -> {});
-+        }
-+    }
-+
      @Test
-     public void testTimestampPartition()
-     {
 ```
 
-**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergPageSourceProvider.java` (modified, +9/-1)
+**File**: `core/trino-spi/src/main/java/io/trino/spi/type/DecimalConversions.java` (modified, +7/-1)
 ```diff
-@@ -771,7 +771,15 @@ protected Page computeNext()
-                     }
-                 },
-                 maxPage.getRetainedSizeInBytes(),
--                memoryContext);
-+                memoryContext)
-+        {
-+            // Pages are generated from partition values without reading the file, so no input bytes are consumed
-+            @Override
-+            public long getCompletedBytes()
-+            {
-+                return 0;
+@@ -31,6 +31,7 @@
+ import static java.lang.Math.abs;
+ import static java.lang.Math.fma;
+ import static java.lang.Math.min;
++import static java.lang.Math.multiplyExact;
+ import static java.lang.Math.nextDown;
+ import static java.lang.Math.nextUp;
+ import static java.lang.Math.rint;
+@@ -360,7 +361,12 @@ public static long shortToShortCast(
+     {
+         long returnValue;
+         if (resultScale >= sourceScale) {
+-            returnValue = value * scalingFactor;
++            try {
++                returnValue = multiplyExact(value, scalingFactor);
 +            }
-+        };
++            catch (ArithmeticException _) {
++                throw throwCastException(value, sourcePrecision, sourceScale, resultPrecision, resultScale);
++            }
+         }
+         else {
+             returnValue = value / scalingFactor;
+```
+
+---
+
+### Incident Patch 2: `f0dcb88c` (2026-11-11)
+**Commit Message**: Bump the web-ui-dependencies group
+
+Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 44 updates:
+
+| Package | From | To |
+| --- | --- | --- |
+| [@mui/x-charts](https://github.com/mui/mui-x/tree/HEAD/packages/x-charts) | `9.15.0` | `9.16.0` |
+| [@xyflow/react](https://github.com/xyflow/xyflow/tree/HEAD/packages/react) | `12.12.0` | `12.12.1` |
+| [sass](https://github.com/sass/dart-sass) | `1.105.2` | `1.106.0` |
+| [@typescript-eslint/eslint-plugin](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/eslint-plugin) | `8.71.2` | `8.72.0` |
+| [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/parser) | `8.71.2` | `8.72.0` |
+| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) | `8.71.2` | `8.72.0` |
+| [@babel/generator](https://github.com/babel/babel/tree/HEAD/packages/babel-generator) | `7.29.8` | `7.29.13` |
+| [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse) | `7.29.10` | `7.29.13` |
+| [@base-ui/utils](https://github.com/mui/base-ui/tree/HEAD/packages/utils) | `0.4.0` | `0.5.0`
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +59/-51)
+```diff
+@@ -12,16 +12,16 @@
+         "@monaco-editor/react": "^4.7.0",
+         "@mui/icons-material": "^9.5.0",
+         "@mui/material": "^9.5.0",
+-        "@mui/x-charts": "^9.15.0",
+-        "@xyflow/react": "^12.12.0",
++        "@mui/x-charts": "^9.16.0",
++        "@xyflow/react": "^12.12.1",
+         "axios": "^1.20.0",
+         "lodash": "^4.18.1",
+         "monaco-editor": "^0.57.0",
+         "react": "^19.3.1",
+         "react-calendar-timeline": "^0.30.0-beta.4",
+         "react-dom": "^19.3.1",
+         "react-router-dom": "^7.18.5",
+-        "sass": "^1.105.2",
++        "sass": "^1.106.0",
+         "zustand": "^5.0.16",
+       },
+       "devDependencies": {
+@@ -30,8 +30,8 @@
+         "@types/lodash.merge": "^4.6.9",
+         "@types/react": "^19.3.0",
+         "@types/react-dom": "^19.3.0",
+-        "@typescript-eslint/eslint-plugin": "^8.71.2",
+-        "@typescript-eslint/parser": "^8.71.2",
++        "@typescript-eslint/eslint-plugin": "^8.72.0",
++        "@typescript-eslint/parser": "^8.72.0",
+         "@vitejs/plugin-react": "^5.2.0",
+         "eslint": "^9.39.5",
+         "eslint-plugin-react": "^7.37.5",
+@@ -40,7 +40,7 @@
+         "globals": "^16.5.0",
+         "prettier": "^3.9.10",
+         "typescript": "^6.0.3",
+-        "typescript-eslint": "^8.71.2",
++        "typescript-eslint": "^8.72.0",
+         "vite": "npm:rolldown-vite@^7.3.1",
+       },
+     },
+@@ -55,7 +55,7 @@
+ 
+     "@babel/core": ["@babel/core@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.7", "@babel/helper-compilation-targets": "^7.29.7", "@babel/helper-module-transforms": "^7.29.7", "@babel/helpers": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/template": "^7.29.7", "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7", "@jridgewell/remapping": "^2.3.5", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, "sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA=="],
+ 
+-    "@babel/generator": ["@babel/generator@7.29.8", "", { "dependencies": { "@babel/parser": "^7.29.8", "@babel/types": "^7.29.8", "@jridgewell/gen-mapping": "^0.3.12", "@jridgewell/trace-mapping": "^0.3.28", "jsesc": "^3.0.2" } }, "sha512-gZbepsdh3WDtgZKWL+vTPh71LSBrm/Y4/QDZBVCcYfmeTEEuoOYwlSy+G1StfJg+/Zy550u/3TATbm7qDbbMtg=="],
++    "@babel/generator": ["@babel/generator@7.29.13", "", { "dependencies": { "@babel/parser": "^7.29.13", "@babel/types": "^7.29.11", "@jridgewell/gen-mapping": "^0.3.12", "@jridgewell/trace-mapping": "^0.3.28", "jsesc": "^3.0.2" } }, "sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw=="],
+ 
+     "@babel/helper-compilation-targets": ["@babel/helper-compilation-targets@7.29.7", "", { "dependencies": { "@babel/compat-data": "^7.29.7", "@babel/helper-validator-option": "^7.29.7", "browserslist": "^4.24.0", "lru-cache": "^5.1.1", "semver": "^6.3.1" } }, "sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g=="],
+ 
+@@ -85,11 +85,11 @@
+ 
+     "@babel/template": ["@babel/template@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/types": "^7.29.7" } }, "sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg=="],
+ 
+-    "@babel/traverse": ["@babel/traverse@7.29.10", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.8", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.9", "@babel/template": "^7.29.7", "@babel/types": "^7.29.8", "debug": "^4.3.1" } }, "sha512-B3lYAs2nkKskbgQ1nfy8Ma9ao9Q1rntTAQHrzzyDuj+TSO+X3le6PfWwqDvodsb+OumE10eMFfuMCTQSQ5iuIQ=="],
++    "@babel/traverse": ["@babel/traverse@7.29.13", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.13", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.13", "@babel/template": "^7.29.7", "@babel/types": "^7.29.11", "debug": "^4.3.1" } }, "sha512-0ve0xMlFA73dgY1oyJRY6RoW+/bncdcOQqg6jjYcVfXBK90OdLXjm9R6lmRetdZVrPjXkKIoMVBqYFPjcAlZ4Q=="],
+ 
+     "@babel/types": ["@babel/types@7.29.11", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.11", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ=="],
+ 
+-    "@base-ui/utils": ["@base-ui/utils@0.4.0", "", { "dependencies": { "@babel/runtime": "^7.29.7", "@floating-ui/utils": "^0.2.12", "reselect": "^5.2.0", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-bO9fz25kKtPf+aZVyfQrC0PDmJdmVni31W2hCS5/Owb+inwdIL3XU26pCPRPlt4LSxZrBgLwubXQXQlKaFEZzw=="],
++    "@base-ui/utils": ["@base-ui/utils@0.5.0", "", { "dependencies": { "@babel/runtime": "^7.29.7 || ^8.0.0", "@floating-ui/utils": "^0.2.1
+```
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +6/-6)
+```diff
+@@ -24,16 +24,16 @@
+     "@monaco-editor/react": "^4.7.0",
+     "@mui/icons-material": "^9.5.0",
+     "@mui/material": "^9.5.0",
+-    "@mui/x-charts": "^9.15.0",
+-    "@xyflow/react": "^12.12.0",
++    "@mui/x-charts": "^9.16.0",
++    "@xyflow/react": "^12.12.1",
+     "axios": "^1.20.0",
+     "lodash": "^4.18.1",
+     "monaco-editor": "^0.57.0",
+     "react": "^19.3.1",
+     "react-calendar-timeline": "^0.30.0-beta.4",
+     "react-dom": "^19.3.1",
+     "react-router-dom": "^7.18.5",
+-    "sass": "^1.105.2",
++    "sass": "^1.106.0",
+     "zustand": "^5.0.16"
+   },
+   "devDependencies": {
+@@ -42,8 +42,8 @@
+     "@types/lodash.merge": "^4.6.9",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+-    "@typescript-eslint/eslint-plugin": "^8.71.2",
+-    "@typescript-eslint/parser": "^8.71.2",
++    "@typescript-eslint/eslint-plugin": "^8.72.0",
++    "@typescript-eslint/parser": "^8.72.0",
+     "@vitejs/plugin-react": "^5.2.0",
+     "eslint": "^9.39.5",
+     "eslint-plugin-react": "^7.37.5",
+@@ -52,7 +52,7 @@
+     "globals": "^16.5.0",
+     "prettier": "^3.9.10",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.71.2",
++    "typescript-eslint": "^8.72.0",
+     "vite": "npm:rolldown-vite@^7.3.1"
+   },
+   "overrides": {
+```
+
+---
+
+### Incident Patch 3: `d1c0035f` (2026-11-10)
+**Commit Message**: Fix path caching in Iceberg position delete reader
+
+A block returns a new `Slice` per position, so a cache keyed on it
+missed.
+
+Results of BenchmarkPositionDeleteReader, which reads a Parquet position
+delete file with 1000 deletes for each of 1000 data files, in ms/op:
+
+```
+                          before            after
+readPositionDeletes        6.426 ± 0.379     1.908 ± 0.040
+readAllPositionDeletes    47.670 ± 0.733    11.754 ± 0.085
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/delete/PositionDeleteReader.java` (modified, +17/-41)
+```diff
+@@ -47,7 +47,6 @@
+ import static io.trino.plugin.iceberg.IcebergUtil.getColumnHandle;
+ import static io.trino.spi.type.BigintType.BIGINT;
+ import static io.trino.spi.type.VarcharType.VARCHAR;
+-import static java.util.Objects.requireNonNull;
+ import static org.apache.iceberg.MetadataColumns.DELETE_FILE_PATH;
+ import static org.apache.iceberg.MetadataColumns.DELETE_FILE_POS;
+ 
+@@ -144,7 +143,6 @@ private static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
+         // Use a linear search since we expect most deletion files to only contain
+         // entries for a single path. The comparison cost is minimal if the
+         // path values are dictionary encoded, since we only do the comparison once.
+-        CachingVarcharComparator comparator = new CachingVarcharComparator(targetPath);
+         while (!pageSource.isFinished()) {
+             getFutureValue(pageSource.isBlocked());
+             SourcePage page = pageSource.getNextSourcePage();
+@@ -156,8 +154,17 @@ private static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
+             Block block = page.getBlock(1);
+ 
+             // TODO: add specialized code for RLE and dictionary blocks
++            int lastPathPosition = -1;
++            int result = 0;
+             for (int position = 0; position < page.getPositionCount(); position++) {
+-                int result = comparator.compare(pathBlock, position);
++                // The expected case is a dictionary block with many entries for the
++                // same path. Only perform a comparison if the path has changed.
++                int pathPosition = pathBlock.getUnderlyingValuePosition(position);
++                if (lastPathPosition != pathPosition) {
++                    checkArgument(!pathBlock.isNull(position), "position is null");
++                    lastPathPosition = pathPosition;
++                    result = VARCHAR.getSlice(pathBlock, position).compareTo(targetPath);
++                }
+                 if (result > 0) {
+                     // deletion files are sorted by path, so we're done
+                     return;
+@@ -181,50 +188,19 @@ public static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
+             Block pathBlock = page.getBlock(0);
+             Block posBlock = page.getBlock(1);
+ 
+-            Slice lastPath = null;
++            int lastPathPosition = -1;
+             String pathString = null;
+             for (int position = 0; position < page.getPositionCount(); position++) {
+-                Slice path = VARCHAR.getSlice(pathBlock, position);
+-                // We expect that paths are dictionary or RLE encoded, and thus getSlice()
+-                // will return the same object for each delete position for a data file,
++                // We expect that paths are dictionary or RLE encoded, and thus the delete
++                // positions for a data file share the same underlying value position,
+                 // so this caches the conversion to string.
+-                if (lastPath != path) {
+-                    lastPath = path;
+-                    pathString = path.toStringUtf8();
++                int pathPosition = pathBlock.getUnderlyingValuePosition(position);
++                if (lastPathPosition != pathPosition) {
++                    lastPathPosition = pathPosition;
++                    pathString = VARCHAR.getSlice(pathBlock, position).toStringUtf8();
+                 }
+                 filePositionConsumer.accept(pathString, BIGINT.getLong(posBlock, position));
+             }
+         }
+     }
+-
+-    private static final class CachingVarcharComparator
+-    {
+-        private final Slice reference;
+-        private int result;
+-        private Slice value;
+-
+-        public CachingVarcharComparator(Slice reference)
+-        {
+-            this.reference = requireNonNull(reference, "reference is null");
+-        }
+-
+-        @SuppressWarnings({"ObjectEquality", "ReferenceEquality"})
+-        public int compare(Block block, int position)
+-        {
+-            checkArgument(!block.isNull(position), "position is null");
+-            Slice next = VARCHAR.getSlice(block, position);
+-            return compare(next);
+-        }
+-
+-        public int compare(Slice next)
+-        {
+-            // The expected case is a dictionary block with many entries for the
+-            // same path. Only perform a comparison if the object has changed.
+-            if (value != next) {
+-                value = next;
+-                result = value.compareTo(reference);
+-            }
+-            return result;
+-        }
+-    }
+ }
+```
+
+**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/delete/TestDeleteManager.java` (modified, +47/-0)
+```diff
+@@ -25,6 +25,7 @@
+ import io.trino.spi.Page;
+ import io.trino.spi.TrinoException;
+ import io.trino.spi.block.BlockBuilder;
++import io.trino.spi.block.DictionaryBlock;
+ import io.trino.spi.block.LongArrayBlock;
+ import io.trino.spi.connector.ConnectorPageSource;
+ import io.trino.spi.connector.FixedPageSource;
+@@ -44,6 +45,7 @@
+ 
+ import java.io.IOException;
+ import java.io.UncheckedIOException;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+@@ -1042,6 +1044,51 @@ private static List<Page> positionDeletePages(long... deletedPositions)
+         return ImmutableList.of(new Page(pathBuilder.build(), positionBuilder.build()));
      }
  
-     private static ReaderPageSourceWithRowPositions createOrcPageSource(
-```
-
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/BaseIcebergConnectorTest.java` (modified, +16/-0)
-```diff
-@@ -6037,6 +6037,22 @@ public void testSplitPruningFromDataFileStatistics()
- 
-     protected abstract boolean supportsRowGroupStatistics(String typeName);
- 
 +    @Test
-+    public void testPartitionOnlyScanPhysicalInputDataSize()
++    void testReadPositionDeletesAcrossDictionaries()
 +    {
-+        try (TestTable table = newTrinoTable(
-+                "test_partition_only_scan_input",
-+                "WITH (partitioning = ARRAY['part']) AS SELECT x, x % 3 part FROM UNNEST(sequence(1, 10000)) t(x)")) {
-+            // Reading only partition columns does not read data files
-+            OperatorStats partitionOnlyStats = getOperatorStats(executeWithQueryId("SELECT DISTINCT part FROM " + table.getName()));
-+            assertThat(partitionOnlyStats.getPhysicalInputPositions()).isEqualTo(10000);
-+            assertThat(partitionOnlyStats.getPhysicalInputDataSize().toBytes()).isZero();
-+
-+            OperatorStats dataColumnStats = getOperatorStats(executeWithQueryId("SELECT DISTINCT x FROM " + table.getName()));
-+            assertThat(dataColumnStats.getPhysicalInputDataSize().toBytes()).isPositive();
-+        }
++        List<Page> pages = ImmutableList.of(
++                positionDeletePage(ImmutableList.of("a", "b"), new int[] {0, 1, 1}, 10, 11, 12),
++                positionDeletePage(ImmutableList.of("b", "c"), new int[] {1, 1}, 13, 14));
++        DeletionVector deletionVector = getFutureValue(PositionDeleteReader.readPositionDeletes(
++                "b",
++                ImmutableList.of(positionDeleteFile("delete-1", 1L)),
++                OptionalLong.empty(),
++                OptionalLong.empty(),
++                (_, _, _) -> new FixedPageSource(pages, NO_LIMIT),
++                TESTING_TYPE_MANAGER,
++                directExecutor(),
++                directExecutor(),
++                NO_LIMIT)).orElseThrow();
++        List<Long> deletedRows = new ArrayList<>();
++        deletionVector.forEachDeletedRow(deletedRows::add);
++        assertThat(deletedRows).containsExactly(11L, 12L);
 +    }
 +
-     private void verifySplitCount(String query, int expectedSplitCount)
++    @Test
++    void testReadMultiFilePositionDeletesAcrossDictionaries()
++    {
++        List<Page> pages = ImmutableList.of(
++                positionDeletePage(ImmutableList.of("a", "b"), new int[] {0, 1}, 1, 2),
++                positionDeletePage(ImmutableList.of("c", "d"), new int[] {1, 1}, 3, 4));
++        List<String> deletes = new ArrayList<>();
++        PositionDeleteReader.readMultiFilePositionDeletes(
++                new FixedPageSource(pages, NO_LIMIT),
++                (path, position) -> deletes.add(path + ":" + position));
++        assertThat(deletes).containsExactly("a:1", "b:2", "d:3", "d:4");
++    }
++
++    private static Page positionDeletePage(List<String> dictionary, int[] ids, long... positions)
++    {
++        BlockBuilder dictionaryBuilder = VARCHAR.createBlockBuilder(null, dictionary.size());
++        for (String path : dictionary) {
++            VARCHAR.writeSlice(dictionaryBuilder, utf8Slice(path));
++        }
++        return new Page(
++                DictionaryBlock.create(ids.length, dictionaryBuilder.build(), ids),
++                new LongArrayBlock(positions.length, Optional.empty(), positions));
++    }
++
+     private static int filterRowPositions(PageFilter pageFilter, long... rowPositions)
      {
-         MaterializedResultWithPlan selectAllPartitionsResult = getDistributedQueryRunner().executeWithPlan(getSession(), query);
+         BlockBuilder positionBuilder = BIGINT.createBlockBuilder(null, rowPositions.length);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32042** (2026-11-09): Retry Bun download in mvnd-build CI job (@findepi)
-- **PR #32039** (2026-11-09): Fix race in testLeafAdmissionRotatesAcrossTasks (@findepi)
-- **PR #32038** (closed): Bump dep.airlift.version from 456 to 457 (@dependabot[bot])
-- **PR #32037** (2026-11-09): Bump the airlift group with 2 updates (@dependabot[bot])
-- **PR #32030** (closed): Allow statistics commits for S3 Tables in Iceberg (@FrancescoCastaldi)
-- **PR #32024** (2026-11-09): Modernize modernizer rules (@findepi)
+- **PR #32093** (2026-11-12): Fix short decimal cast overflow when increasing scale (@findepi)
+- **PR #32090** (closed): Reuse decompressors in Parquet reader (@wendigo)
+- **PR #32088** (2026-11-11): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 44 updates (@dependabot[bot])
+- **PR #32087** (2026-11-11): Bump net.minidev:json-smart from 2.6.0 to 2.6.1 (@dependabot[bot])
+- **PR #32086** (2026-11-11): Bump actions/setup-java from 6.1.0 to 6.2.0 in /.github/actions/setup (@dependabot[bot])
+- **PR #32085** (2026-11-11): Bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 (@dependabot[bot])
 
 ---
 
@@ -2051,21 +2261,35 @@ bytes or the physical scan limit.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. race in testLeafAdmissionRotatesAcrossTasks
+## X. short decimal cast overflow when increasing scale
 
 **RULE**:
-When implementing operations in `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93d16081`: race in testLeafAdmissionRotatesAcrossTasks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `336c2e0c`: short decimal cast overflow when increasing scale. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            assertEventually(new Duration(10, SECONDS), () -> assertThat(busySplits).allMatch(AdmissionSplit::isStarted));
+
+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
+                .binding("a", "DECIMAL '175'").evaluate())
+                .hasMessage("Cannot cast DECIMAL(3, 0) '175' to DECIMAL(18, 17)")
+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
+
+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
+                .binding("a", "DECIMAL '-175'").evaluate())
+                .hasMessage("Cannot cast DECIMAL(3, 0) '-175' to DECIMAL(18, 17)")
+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
+
+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 2))")
+                .binding("a", "DECIMAL '184467440737095516'").evaluate())
+                .hasMessage("Cannot cast DECIMAL(18, 0) '184467440737095516' to DECIMAL(18, 2)")
+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2075,4 +2299,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93d16081` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `336c2e0c` are properly handled with clean fallback behavior.

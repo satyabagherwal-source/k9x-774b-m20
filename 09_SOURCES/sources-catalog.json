@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "afb8bc2e",
+    "sourceVersion": "d73d3cc5",
     "license": "Apache-2.0",
-    "contentHash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
-    "lastHarvestedAt": "2026-11-06T15:05:51.000Z",
+    "contentHash": "fae37663eee5110a7bf3f64de9d04d32fce15e9fdd235bfdad670d8602273b13",
+    "lastHarvestedAt": "2026-11-12T03:30:47.942Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "93d16081",
+    "sourceVersion": "d1c0035f",
     "license": "Apache-2.0",
-    "contentHash": "a0d2067540c08d269d1ca3d9b241c4a41aab6cd239e769d81d3d67de08e15938",
-    "lastHarvestedAt": "2026-11-09T16:40:33.992Z",
+    "contentHash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
+    "lastHarvestedAt": "2026-11-12T03:30:53.960Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {

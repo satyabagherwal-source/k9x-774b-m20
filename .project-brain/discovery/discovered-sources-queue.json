@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T03:24:10.978Z",
+  "updated_at": "2026-11-12T03:30:59.333Z",
   "stats": {
-    "total_discovered": 647,
-    "approved_pending_harvest": 591,
+    "total_discovered": 670,
+    "approved_pending_harvest": 613,
     "harvested_count": 0,
-    "rejected_count": 56,
+    "rejected_count": 57,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 606,
+      "COMMUNITY_AND_EXPERT": 629,
       "OFFICIAL_DOCUMENTATION": 21,
       "STANDARDS_AND_SPECIFICATIONS": 18,
       "ENGINEERING_BLOGS": 1,
@@ -13859,6 +13859,505 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-1DBF93C165CE": {
+      "id": "SRC-1DBF93C165CE",
+      "url": "https://github.com/dragonflyoss/dragonfly",
+      "title": "https://github.com/dragonflyoss/dragonfly",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.269Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-5511E4683469": {
+      "id": "SRC-5511E4683469",
+      "url": "http://%s/debug/statsview",
+      "title": "http://%s/debug/statsview",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:30:59.276Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-C3BEFC790183": {
+      "id": "SRC-C3BEFC790183",
+      "url": "https://d7y.io/",
+      "title": "https://d7y.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-D37F3D015C1C": {
+      "id": "SRC-D37F3D015C1C",
+      "url": "https://github.com/dragonflyoss/dragonfly/issues/5015",
+      "title": "https://github.com/dragonflyoss/dragonfly/issues/5015",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-C60C925FA953": {
+      "id": "SRC-C60C925FA953",
+      "url": "https://registry-1.docker.io/v2/dragonflyoss/scheduler/manifests/v2.1.0",
+      "title": "https://registry-1.docker.io/v2/dragonflyoss/scheduler/manifests/v2.1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-55EAFB2260E3": {
+      "id": "SRC-55EAFB2260E3",
+      "url": "https://registry-1.docker.io/v2/dragonflyoss/client/manifests/v1.5.12",
+      "title": "https://registry-1.docker.io/v2/dragonflyoss/client/manifests/v1.5.12",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.286Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-9031953D78C3": {
+      "id": "SRC-9031953D78C3",
+      "url": "https://github.com/docker/login-action/releases",
+      "title": "https://github.com/docker/login-action/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-CCFB65F666F5": {
+      "id": "SRC-CCFB65F666F5",
+      "url": "https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550",
+      "title": "https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-EF7C0B11A1EF": {
+      "id": "SRC-EF7C0B11A1EF",
+      "url": "https://github.com/trinodb/trino",
+      "title": "https://github.com/trinodb/trino",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-BE7DC32D8D2B": {
+      "id": "SRC-BE7DC32D8D2B",
+      "url": "https://trino.io/",
+      "title": "https://trino.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.301Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-0804F151B7E6": {
+      "id": "SRC-0804F151B7E6",
+      "url": "https://github.com/trinodb/trino/actions/runs/19572217039/job/56048341054?pr=27388",
+      "title": "https://github.com/trinodb/trino/actions/runs/19572217039/job/56048341054?pr=27388",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-6A2B0A0F8423": {
+      "id": "SRC-6A2B0A0F8423",
+      "url": "https://github.com/trinodb/trino/issues/27400",
+      "title": "https://github.com/trinodb/trino/issues/27400",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.306Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-6E08088868F1": {
+      "id": "SRC-6E08088868F1",
+      "url": "https://github.com/trinodb/trino/pull/27388",
+      "title": "https://github.com/trinodb/trino/pull/27388",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-07885E177505": {
+      "id": "SRC-07885E177505",
+      "url": "https://github.com/aws/aws-sdk-java-v2/issues/6580",
+      "title": "https://github.com/aws/aws-sdk-java-v2/issues/6580",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-E9034C1CE761": {
+      "id": "SRC-E9034C1CE761",
+      "url": "https://github.com/mui/mui-x/tree/HEAD/packages/x-charts",
+      "title": "https://github.com/mui/mui-x/tree/HEAD/packages/x-charts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-EA65D14A7A48": {
+      "id": "SRC-EA65D14A7A48",
+      "url": "https://github.com/xyflow/xyflow/tree/HEAD/packages/react",
+      "title": "https://github.com/xyflow/xyflow/tree/HEAD/packages/react",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-F6B578C4070F": {
+      "id": "SRC-F6B578C4070F",
+      "url": "https://github.com/sass/dart-sass",
+      "title": "https://github.com/sass/dart-sass",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-8BB8FF9620A6": {
+      "id": "SRC-8BB8FF9620A6",
+      "url": "https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/eslint-plugin",
+      "title": "https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/eslint-plugin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-C8B6803DC0E0": {
+      "id": "SRC-C8B6803DC0E0",
+      "url": "https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/parser",
+      "title": "https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/parser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-E6F89318C4EB": {
+      "id": "SRC-E6F89318C4EB",
+      "url": "https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint",
+      "title": "https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.324Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-158FA7448B24": {
+      "id": "SRC-158FA7448B24",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-generator",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-generator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-AFF3176A498D": {
+      "id": "SRC-AFF3176A498D",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-traverse",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-traverse",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-5E5C3B24A345": {
+      "id": "SRC-5E5C3B24A345",
+      "url": "https://github.com/mui/base-ui/tree/HEAD/packages/utils",
+      "title": "https://github.com/mui/base-ui/tree/HEAD/packages/utils",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:30:59.332Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
       }
     }
   }
