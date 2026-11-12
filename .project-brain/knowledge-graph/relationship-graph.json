@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T05:27:35.956Z",
+  "updated_at": "2026-11-12T05:47:56.936Z",
   "statistics": {
-    "total_nodes": 11,
+    "total_nodes": 12,
     "total_edges": 3,
     "domain_distribution": {
-      "D": 9,
+      "D": 10,
       "M": 1,
       "H": 1
     },
@@ -251,6 +251,28 @@
       ],
       "created_at": "2026-11-12T05:27:35.956Z",
       "updated_at": "2026-11-12T05:27:35.956Z"
+    },
+    "DOM-D-0C67C5DB": {
+      "id": "DOM-D-0C67C5DB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  \n> **Source**: huggingfac",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-abenzerps-qwen-image-2.1-turbo-quantized/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T05:47:46.594Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-abenzerps-qwen-image-2.1-turbo-quantized)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T05:47:56.936Z",
+      "updated_at": "2026-11-12T05:47:56.936Z"
     }
   },
   "edges": [

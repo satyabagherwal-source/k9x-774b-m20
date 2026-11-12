@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-8H2Y",
-    "timestamp": "2026-11-09T01:06:01.978Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "da5159e3e1b7cb35df2a5df76df11732f6756f00ba58416c233a524a11afcefa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-GW0R",
     "timestamp": "2026-11-09T01:12:34.587Z",
     "repository": "max-sixty/worktrunk",
@@ -7492,6 +7477,21 @@
     "contentHash": "9afea8a9017f1173ace93ee5a2dfd9d855c0f7627c2a6d880b8d30140550b0d1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M3O9",
+    "timestamp": "2026-11-12T05:47:34.809Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+    "contentHash": "08974c3bd711aa2d89357c8af8edac40a97a280c59a786bc8d5c46204e47cd63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

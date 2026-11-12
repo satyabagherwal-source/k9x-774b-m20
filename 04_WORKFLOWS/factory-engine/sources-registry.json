@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T05:35:19.661Z",
-    "lastVerified": "2026-11-12T05:35:19.661Z",
+    "lastChecked": "2026-11-12T05:47:46.479Z",
+    "lastVerified": "2026-11-12T05:47:46.479Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -458,8 +458,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T04:50:24.675Z",
-    "lastVerified": "2026-11-12T04:50:24.675Z",
+    "lastChecked": "2026-11-12T05:47:46.466Z",
+    "lastVerified": "2026-11-12T05:47:46.466Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -809,8 +809,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T19:53:35.074Z",
-    "lastVerified": "2026-11-11T19:53:35.074Z",
+    "lastChecked": "2026-11-12T05:47:41.484Z",
+    "lastVerified": "2026-11-12T05:47:41.484Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -4324,8 +4324,8 @@
     "officialUrl": "https://github.com/argoproj/argo-events",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T22:48:20.700Z",
-    "lastVerified": "2026-11-09T22:48:20.700Z",
+    "lastChecked": "2026-11-12T05:47:39.005Z",
+    "lastVerified": "2026-11-12T05:47:39.005Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-events",
@@ -4642,9 +4642,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-09T12:12:52.715Z",
+    "lastChecked": "2026-11-12T05:47:31.507Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-09T12:12:52.715Z"
+    "lastVerified": "2026-11-12T05:47:31.507Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -6825,9 +6825,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-09T21:55:40.134Z",
+    "lastChecked": "2026-11-12T05:47:43.930Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-09T21:55:40.134Z"
+    "lastVerified": "2026-11-12T05:47:43.930Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -9764,9 +9764,9 @@
   "lottie-react-native-lottie-react-native": {
     "name": "lottie-react-native",
     "officialUrl": "https://github.com/lottie-react-native/lottie-react-native",
-    "lastChecked": "2026-11-08T05:11:25.099Z",
+    "lastChecked": "2026-11-12T05:47:36.546Z",
     "revisionIdentifier": "7ac5e96c",
-    "lastVerified": "2026-11-08T05:11:25.099Z"
+    "lastVerified": "2026-11-12T05:47:36.546Z"
   },
   "serpapi-google-search-results-ruby": {
     "name": "google-search-results-ruby",
@@ -13957,12 +13957,12 @@
     "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T05:58:05.854Z",
-    "lastVerified": "2026-11-07T05:58:05.854Z",
+    "lastChecked": "2026-11-12T05:47:34.201Z",
+    "lastVerified": "2026-11-12T05:47:34.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-    "contentHash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
+    "contentHash": "08974c3bd711aa2d89357c8af8edac40a97a280c59a786bc8d5c46204e47cd63",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

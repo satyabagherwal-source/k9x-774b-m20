@@ -9082,3 +9082,5 @@
 | `CYCLE-20261112-VZNJ` | `2026-11-12T05:27:16.543Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`66775b30...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T05:27:35.956Z` | `wasm-bindgen-wasm-pack` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0AA4F6ED` [Domain H] | Yes (`a7342d58...`) |
 | `CYCLE-20261112-69J5` | `2026-11-12T05:35:15.905Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9afea8a9...`) |
+| `CYCLE-20261112-M3O9` | `2026-11-12T05:47:34.809Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | Yes (`08974c3b...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T05:47:56.937Z` | `hf-abenzerps-qwen-image-2.1-turbo-quantized` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0C67C5DB` [Domain D] | Yes (`f87d27bb...`) |

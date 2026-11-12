@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T05:35:19.775Z",
+  "updated_at": "2026-11-12T05:47:56.941Z",
   "stats": {
-    "total_discovered": 847,
-    "approved_pending_harvest": 769,
+    "total_discovered": 848,
+    "approved_pending_harvest": 770,
     "harvested_count": 0,
     "rejected_count": 78,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 795,
+      "COMMUNITY_AND_EXPERT": 796,
       "OFFICIAL_DOCUMENTATION": 22,
       "STANDARDS_AND_SPECIFICATIONS": 28,
       "ENGINEERING_BLOGS": 1,
@@ -18105,6 +18105,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
         "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-17573406D78C": {
+      "id": "SRC-17573406D78C",
+      "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "title": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:47:56.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+        "fileName": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md"
       }
     }
   }

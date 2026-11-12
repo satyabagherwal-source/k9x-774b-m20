@@ -11835,8 +11835,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
     "license": "Open-Source",
-    "contentHash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
-    "lastHarvestedAt": "2026-11-07T05:58:07.118Z",
+    "contentHash": "08974c3bd711aa2d89357c8af8edac40a97a280c59a786bc8d5c46204e47cd63",
+    "lastHarvestedAt": "2026-11-12T05:47:34.813Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized"
   },
   "agentlas-ai-agentlas-os": {

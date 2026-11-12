@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:35:19.793Z",
+  "last_updated": "2026-11-12T05:47:56.963Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6228,6 +6228,24 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CB82EF-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-39B167",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39B167-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-8EBE75",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8EBE75-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]
