@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T22:41:00.809Z",
+  "last_updated": "2026-11-12T22:48:49.977Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3456,14 +3456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openziti-zrok",
-      "content_hash": "ecbf70b59f40eac765b00020c6be542ede46fbef4b4a1b69ab15d108665f789d",
-      "verified_at": "2026-10-30T21:30:07.295Z",
+      "content_hash": "9eaa04862416bc63c1279cb7f1aeb5902ba52f4e81a45fafb52f5187afa51ec6",
+      "verified_at": "2026-11-12T22:48:47.535Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:30:07.295Z"
+      "last_updated": "2026-11-12T22:48:47.535Z"
     },
     "crate/crate": {
       "repository": "crate/crate",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
-      "verified_at": "2026-11-11T10:35:27.939Z",
+      "content_hash": "00d9c6304f1d0fef825fc7e525f5decbd3893b1249dfa67fd9b58b0ab283b028",
+      "verified_at": "2026-11-12T22:48:49.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:35:27.939Z"
+      "last_updated": "2026-11-12T22:48:49.976Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",
@@ -13296,14 +13296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-multiplatform-markdown-renderer",
-      "content_hash": "97e30a4570059ae3ef3e87b9de2016fad65bb3f037e4a00bf5c6b05966cd1f52",
-      "verified_at": "2026-11-08T16:58:44.291Z",
+      "content_hash": "2fb5ac5e864d9a9aa7a009e772e4df05fdb66aa9e2723bc384c72edc16410052",
+      "verified_at": "2026-11-12T22:48:37.414Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:58:44.291Z"
+      "last_updated": "2026-11-12T22:48:37.414Z"
     },
     "kamgurgul/cpu-info": {
       "repository": "kamgurgul/cpu-info",
@@ -17931,14 +17931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matthart1983-netwatch",
-      "content_hash": "d4303cf46cd38d25a3d0259dc2a6125e1a5a0fd568aee688d7a940a610822f06",
-      "verified_at": "2026-11-08T19:07:05.242Z",
+      "content_hash": "afc65f8a161932f4efc1efc8734981cd668a8622fc7c0e790103c5d464096d93",
+      "verified_at": "2026-11-12T22:48:20.800Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:07:05.242Z"
+      "last_updated": "2026-11-12T22:48:20.800Z"
     },
     "PrunaAI/P-H3-Image-Comfy": {
       "repository": "PrunaAI/P-H3-Image-Comfy",

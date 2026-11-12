@@ -2213,10 +2213,10 @@
     "repository": "openziti/zrok",
     "platform": "github",
     "sourceUrl": "https://github.com/openziti/zrok",
-    "sourceVersion": "fea58ae4",
+    "sourceVersion": "f2c7dcf6",
     "license": "Apache-2.0",
-    "contentHash": "ecbf70b59f40eac765b00020c6be542ede46fbef4b4a1b69ab15d108665f789d",
-    "lastHarvestedAt": "2026-10-30T21:30:07.287Z",
+    "contentHash": "9eaa04862416bc63c1279cb7f1aeb5902ba52f4e81a45fafb52f5187afa51ec6",
+    "lastHarvestedAt": "2026-11-12T22:48:47.524Z",
     "learningId": "learn-github-openziti-zrok"
   },
   "crate-crate": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "a8583bc5",
+    "sourceVersion": "e02e0d7e",
     "license": "Apache-2.0",
-    "contentHash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
-    "lastHarvestedAt": "2026-11-11T10:35:27.912Z",
+    "contentHash": "00d9c6304f1d0fef825fc7e525f5decbd3893b1249dfa67fd9b58b0ab283b028",
+    "lastHarvestedAt": "2026-11-12T22:48:49.947Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -8833,10 +8833,10 @@
     "repository": "mikepenz/multiplatform-markdown-renderer",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "sourceVersion": "28528661",
+    "sourceVersion": "0993c86f",
     "license": "Apache-2.0",
-    "contentHash": "97e30a4570059ae3ef3e87b9de2016fad65bb3f037e4a00bf5c6b05966cd1f52",
-    "lastHarvestedAt": "2026-11-08T16:58:44.275Z",
+    "contentHash": "2fb5ac5e864d9a9aa7a009e772e4df05fdb66aa9e2723bc384c72edc16410052",
+    "lastHarvestedAt": "2026-11-12T22:48:37.399Z",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
   },
   "kamgurgul-cpu-info": {
@@ -11913,10 +11913,10 @@
     "repository": "matthart1983/netwatch",
     "platform": "github",
     "sourceUrl": "https://github.com/matthart1983/netwatch",
-    "sourceVersion": "81275065",
+    "sourceVersion": "fbcac803",
     "license": "MIT",
-    "contentHash": "d4303cf46cd38d25a3d0259dc2a6125e1a5a0fd568aee688d7a940a610822f06",
-    "lastHarvestedAt": "2026-11-08T19:07:05.229Z",
+    "contentHash": "afc65f8a161932f4efc1efc8734981cd668a8622fc7c0e790103c5d464096d93",
+    "lastHarvestedAt": "2026-11-12T22:48:20.784Z",
     "learningId": "learn-github-matthart1983-netwatch"
   },
   "hf-prunaai-p-h3-image-comfy": {

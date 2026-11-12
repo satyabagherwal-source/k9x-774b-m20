@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T22:41:05.544Z",
+  "updated_at": "2026-11-12T22:48:56.496Z",
   "stats": {
-    "total_discovered": 1792,
-    "approved_pending_harvest": 1652,
+    "total_discovered": 1818,
+    "approved_pending_harvest": 1676,
     "harvested_count": 0,
-    "rejected_count": 140,
+    "rejected_count": 142,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1654,
+      "COMMUNITY_AND_EXPERT": 1680,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -38461,6 +38461,564 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
         "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-A4022535DAF0": {
+      "id": "SRC-A4022535DAF0",
+      "url": "https://github.com/matthart1983/netwatch",
+      "title": "https://github.com/matthart1983/netwatch",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.181Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-F14A956065B6": {
+      "id": "SRC-F14A956065B6",
+      "url": "http://login.invalid/private?token=secret%5Cr%5CnContent-Length",
+      "title": "http://login.invalid/private?token=secret%5Cr%5CnContent-Length",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T22:48:56.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-16F712467DBF": {
+      "id": "SRC-16F712467DBF",
+      "url": "http://{h/",
+      "title": "http://{h/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T22:48:56.203Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-870CA646FEBC": {
+      "id": "SRC-870CA646FEBC",
+      "url": "https://github.com/user-attachments/assets/55c14ab6-bb6f-47cc-9dbc-81f3271bf6cd",
+      "title": "https://github.com/user-attachments/assets/55c14ab6-bb6f-47cc-9dbc-81f3271bf6cd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.214Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-A517AA4D680E": {
+      "id": "SRC-A517AA4D680E",
+      "url": "https://www.debian.org/",
+      "title": "https://www.debian.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.225Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-B74F8FA5ACBA": {
+      "id": "SRC-B74F8FA5ACBA",
+      "url": "https://www.debian.org/support",
+      "title": "https://www.debian.org/support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-B58FE65F0446": {
+      "id": "SRC-B58FE65F0446",
+      "url": "https://bugs.debian.org/",
+      "title": "https://bugs.debian.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-E3FE61B83A4E": {
+      "id": "SRC-E3FE61B83A4E",
+      "url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+      "title": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-FF4A916401CA": {
+      "id": "SRC-FF4A916401CA",
+      "url": "https://redirect.github.com/mikepenz/action-junit-report",
+      "title": "https://redirect.github.com/mikepenz/action-junit-report",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-D667957C87E5": {
+      "id": "SRC-D667957C87E5",
+      "url": "https://api.securityscorecards.dev/projects/github.com/mikepenz/action-junit-report/badge",
+      "title": "https://api.securityscorecards.dev/projects/github.com/mikepenz/action-junit-report/badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-E3176F69A315": {
+      "id": "SRC-E3176F69A315",
+      "url": "https://securityscorecards.dev/viewer/?uri=github.com%2Fmikepenz%2Faction-junit-report",
+      "title": "https://securityscorecards.dev/viewer/?uri=github.com%2Fmikepenz%2Faction-junit-report",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-E76148FC44DB": {
+      "id": "SRC-E76148FC44DB",
+      "url": "https://redirect.github.com/mikepenz/action-junit-report/releases/tag/v6.7.0",
+      "title": "https://redirect.github.com/mikepenz/action-junit-report/releases/tag/v6.7.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-819E83AF2C01": {
+      "id": "SRC-819E83AF2C01",
+      "url": "https://redirect.github.com/mikepenz/action-junit-report/compare/v6.6.2...v6.7.0",
+      "title": "https://redirect.github.com/mikepenz/action-junit-report/compare/v6.6.2...v6.7.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-0A5F56C1C9A6": {
+      "id": "SRC-0A5F56C1C9A6",
+      "url": "https://redirect.github.com/mikepenz/action-junit-report/issues/1629",
+      "title": "https://redirect.github.com/mikepenz/action-junit-report/issues/1629",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-FF734593DED3": {
+      "id": "SRC-FF734593DED3",
+      "url": "https://redirect.github.com/mikepenz/action-junit-report/issues/1630",
+      "title": "https://redirect.github.com/mikepenz/action-junit-report/issues/1630",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-F0FA92E05A1A": {
+      "id": "SRC-F0FA92E05A1A",
+      "url": "https://redirect.github.com/mikepenz/action-junit-report/issues/1642",
+      "title": "https://redirect.github.com/mikepenz/action-junit-report/issues/1642",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.369Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-0F970891D18F": {
+      "id": "SRC-0F970891D18F",
+      "url": "https://redirect.github.com/mikepenz/action-junit-report/issues/1643",
+      "title": "https://redirect.github.com/mikepenz/action-junit-report/issues/1643",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.380Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-0C2C96619864": {
+      "id": "SRC-0C2C96619864",
+      "url": "https://redirect.github.com/ktorio/ktor",
+      "title": "https://redirect.github.com/ktorio/ktor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.393Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-093377944775": {
+      "id": "SRC-093377944775",
+      "url": "https://api.securityscorecards.dev/projects/github.com/ktorio/ktor/badge",
+      "title": "https://api.securityscorecards.dev/projects/github.com/ktorio/ktor/badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.405Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-D646B71BBF10": {
+      "id": "SRC-D646B71BBF10",
+      "url": "https://securityscorecards.dev/viewer/?uri=github.com%2Fktorio%2Fktor",
+      "title": "https://securityscorecards.dev/viewer/?uri=github.com%2Fktorio%2Fktor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-BCBA3535E33A": {
+      "id": "SRC-BCBA3535E33A",
+      "url": "https://redirect.github.com/ktorio/ktor/releases/tag/3.6.1",
+      "title": "https://redirect.github.com/ktorio/ktor/releases/tag/3.6.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-C946514B881A": {
+      "id": "SRC-C946514B881A",
+      "url": "https://redirect.github.com/ktorio/ktor/compare/3.6.0...3.6.1",
+      "title": "https://redirect.github.com/ktorio/ktor/compare/3.6.0...3.6.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-288A5EEC798F": {
+      "id": "SRC-288A5EEC798F",
+      "url": "https://github.com/openziti/zrok",
+      "title": "https://github.com/openziti/zrok",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.459Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
+      }
+    },
+    "SRC-2C69B7954166": {
+      "id": "SRC-2C69B7954166",
+      "url": "https://vercel.com/git/authorize?team=OpenZiti&slug=openziti&teamId=team_bT6ULN5oFw8uRka0uFkKt7vN&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%2279e33657b53573fdafce881e8624a3b74f967025%22%7D%2C%22id%22%3A%22QmXF27UEqcytzSxxiEWa7UaGnie2cpNw9Gi8YrkWXh7Kz6%22%2C%22org%22%3A%22openziti%22%2C%22prId%22%3A1287%2C%22repo%22%3A%22zrok%22%7D",
+      "title": "https://vercel.com/git/authorize?team=OpenZiti&slug=openziti&teamId=team_bT6ULN5oFw8uRka0uFkKt7vN&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%2279e33657b53573fdafce881e8624a3b74f967025%22%7D%2C%22id%22%3A%22QmXF27UEqcytzSxxiEWa7UaGnie2cpNw9Gi8YrkWXh7Kz6%22%2C%22org%22%3A%22openziti%22%2C%22prId%22%3A1287%2C%22repo%22%3A%22zrok%22%7D",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
+      }
+    },
+    "SRC-AF6BFE9DFE15": {
+      "id": "SRC-AF6BFE9DFE15",
+      "url": "https://vercel.link/github-learn-more",
+      "title": "https://vercel.link/github-learn-more",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.485Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
+      }
+    },
+    "SRC-ED8C29DA6F35": {
+      "id": "SRC-ED8C29DA6F35",
+      "url": "https://vercel.com/openziti/zrok",
+      "title": "https://vercel.com/openziti/zrok",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:48:56.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
       }
     }
   }

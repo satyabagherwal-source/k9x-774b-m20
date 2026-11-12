@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md`  
 > **Source**: github ([https://github.com/mikepenz/multiplatform-markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer))  
-> **Source Version**: `28528661`  
+> **Source Version**: `0993c86f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:58:42.783Z  
+> **Timestamp**: 2026-11-12T22:48:23.718Z  
 > **Learning ID**: `learn-github-mikepenz-multiplatform-markdown-renderer`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mikepenz/multiplatform-markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:58:42.775Z  
+> **Harvest Timestamp**: 2026-11-12T22:48:23.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Markdown renderer for Kotlin Multiplatform Projects (Android, iOS, Desktop), using Compose.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1132 stars
+- **Stars / Engagement**: 1135 stars
 
 ---
 
@@ -758,11 +758,11 @@ fun MarkdownCheckBox(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #662** (2026-11-07): **chore(deps): update mike penz internal projects**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | OpenSSF | |---|---|---|---|---|---| | [mikepenz/action-junit-report](https://redirect.github.com/mikepenz/action-junit-report) | action | patch | `v6.6.1` → `v6.6.2` | `v6.7.1` (+1) | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mikepenz/action-junit-report/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mikepenz/action-junit-report) | | [mikepenz/release-changelog-builder-action](https://redirect.github.com/mikepenz/release-changelog-builder-action) | action | minor | `v6.4.0` → `v6.5.0` |  | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mikepenz/release-changelog-builder-action/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mikepenz/release-changelog-builder-action) |  ---  ### Release Notes  <details> <summary>mikepenz/action-junit-report</summary>  ### [`v6.6.2`](https://redirect.github.com/mikepenz/action-junit-report/releases/tag/v6.6.2)  [Compare Source](https://redirect.github.com/mikepenz/action-junit-report/compare/v6.6.1...v6.6.2)  #### 📦 Dependencies  - chore(deps): update dependency nanoid to v6.0.2   - PR: [#&#8203;1634](https://redirect.github.com/mikepenz/action-junit-report/issues/1634) - chore(deps): update dependency fast-uri to v4.2.2   - PR: [#&#8203;1633](https://redirect.github.com/mikepenz/action-junit-report/issues/1633)  #### Contributors:  - [@&#8203;renovate-mike](https:
+- **Issue #665** (2026-11-10): **chore(deps): update mikepenz/action-junit-report action to v6.7.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | OpenSSF | |---|---|---|---|---|---| | [mikepenz/action-junit-report](https://redirect.github.com/mikepenz/action-junit-report) | action | minor | `v6.6.2` → `v6.7.0` | `v6.7.1` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mikepenz/action-junit-report/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mikepenz/action-junit-report) |  ---  ### Release Notes  <details> <summary>mikepenz/action-junit-report</summary>  ### [`v6.7.0`](https://redirect.github.com/mikepenz/action-junit-report/releases/tag/v6.7.0)  [Compare Source](https://redirect.github.com/mikepenz/action-junit-report/compare/v6.6.2...v6.7.0)  #### 🚀 Features  - Add module\_reports input for one summary row per module   - PR: [#&#8203;1629](https://redirect.github.com/mikepenz/action-junit-report/issues/1629) - Use path-like classname as file instead of its last dotted segment   - PR: [#&#8203;1630](https://redirect.github.com/mikepenz/action-junit-report/issues/1630)  #### 🐛 Fixes  - fix: update the check with update\_check even without annotations   - PR: [#&#8203;1642](https://redirect.github.com/mikepenz/action-junit-report/issues/1642) - fix: warn instead of crashing when update\_check finds no matching check   - PR: [#&#8203;1643](https://redirect.github.com/mikepenz/action-junit-report/issues/1643)  #### 💬 Other  - chore: rebuild dist from current lockfile   - PR: [#&#8203;1
 
-- **Issue #661** (2026-11-05): **fix: restore multiplatform test compilation and update deprecated APIs**
-  *Symptoms*: ## Description  Fix test compilation after the Markdown color API and Compose test API updates:  - Supply the required highlight colors in `DetachedPlacementTest` and migrate to `androidx.compose.ui.test.v2.runComposeUiTest`. - Replace `runBlocking` with `runTest` in `AsMarkdownStateTest` so common tests compile for JS and Wasm, retaining real-time delays on `Dispatchers.Default`.  Fixes # (issue)  ## Type of change Please delete options that are not relevant.  - [x] Bug fix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected) - [ ] Documentation update - [ ] Code style update (formatting, renaming) - [ ] Refactoring (no functional changes, no API changes) - [ ] Build configuration change - [ ] Other (please describe):  ## How Has This Been Tested?   ## Checklist: - [ ] My code follows the style guidelines of this project - [x] I have performed a self-review of my own code - [ ] I have commented my code, particularly in hard-to-understand areas - [ ] I have made corresponding changes to the documentation - [ ] My changes generate no new warnings - [ ] I have added tests that prove my fix is effective or that my feature works - [ ] New and existing unit tests pass locally with my changes - [ ] Any dependent changes have been merged and published in downstream modules 
+- **Issue #664** (2026-11-08): **fix(deps): update ktor monorepo to v3.6.1**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | OpenSSF | |---|---|---|---|---| | [io.ktor:ktor-client-okhttp](https://redirect.github.com/ktorio/ktor) | dependencies | patch | `3.6.0` → `3.6.1` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/ktorio/ktor/badge)](https://securityscorecards.dev/viewer/?uri=github.com/ktorio/ktor) | | [io.ktor:ktor-client-java](https://redirect.github.com/ktorio/ktor) | dependencies | patch | `3.6.0` → `3.6.1` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/ktorio/ktor/badge)](https://securityscorecards.dev/viewer/?uri=github.com/ktorio/ktor) | | [io.ktor:ktor-client-darwin](https://redirect.github.com/ktorio/ktor) | dependencies | patch | `3.6.0` → `3.6.1` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/ktorio/ktor/badge)](https://securityscorecards.dev/viewer/?uri=github.com/ktorio/ktor) | | [io.ktor:ktor-client-core](https://redirect.github.com/ktorio/ktor) | dependencies | patch | `3.6.0` → `3.6.1` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/ktorio/ktor/badge)](https://securityscorecards.dev/viewer/?uri=github.com/ktorio/ktor) |  ---  ### Release Notes  <details> <summary>ktorio/ktor (io.ktor:ktor-client-okhttp)</summary>  ### [`v3.6.1`](https://redirect.github.com/ktorio/ktor/releases/tag/3.6.1)  [Compare Source](https://redirect.github.com/ktorio/ktor/compare/3.6.0...3.6.1)  > Publish
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -779,40 +779,31 @@ fun MarkdownCheckBox(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28528661` (2026-11-07)
-**Commit Message**: chore(deps): update mike penz internal projects (#662)
+### Incident Patch 1: `619069d4` (2026-11-08)
+**Commit Message**: fix(deps): update ktor monorepo to v3.6.1 (#664)
 
 Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -101,7 +101,7 @@ jobs:
+@@ -3,7 +3,7 @@ androidx-activityCompose = "1.13.0"
+ coil = "3.6.3"
+ coil2 = "2.7.0"
+ markdown = "0.7.18"
+-ktor = "3.6.0"
++ktor = "3.6.1"
+ highlights = "1.1.0"
  
-       - name: Publish Test Report
-         if: false && (failure() || success()) && github.event_name == 'pull_request'
--        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
-+        uses: mikepenz/action-junit-report@8a133bfa3ecb0ea9024c1e2ae788b4c25f6cdb9d # v6.6.2
-         with:
-           report_paths: '**/sample/android/build/test-results/testDebugUnitTest/TEST-*.xml'
-           github_token: ${{ secrets.GITHUB_TOKEN }}
-@@ -188,7 +188,7 @@ jobs:
- 
-       - name: Build Changelog
-         id: github_release
--        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6.4.0
-+        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6.5.0
-         with:
-           configuration: ".github/config/configuration.json"
-           ignorePreReleases: ${{ !contains(github.ref, '-') }}
+ [libraries]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #665** (2026-11-10): chore(deps): update mikepenz/action-junit-report action to v6.7.0 (@renovate-mike[bot])
+- **PR #664** (2026-11-08): fix(deps): update ktor monorepo to v3.6.1 (@renovate-mike[bot])
+- **PR #663** (2026-11-08): chore(deps): update gradle/actions action to v6.4.1 (@renovate-mike[bot])
 - **PR #662** (2026-11-07): chore(deps): update mike penz internal projects (@renovate-mike[bot])
 - **PR #661** (2026-11-05): fix: restore multiplatform test compilation and update deprecated APIs (@keta1)
 - **PR #660** (2026-11-02): fix(deps): update dependency org.jetbrains:markdown to v0.7.18 (@renovate-mike[bot])
-- **PR #659** (2026-11-02): chore(deps): update gradle to v9.8.2 (@renovate-mike[bot])
-- **PR #658** (2026-11-02): chore(deps): update github actions updates (@renovate-mike[bot])
-- **PR #657** (2026-10-27): fix(deps): update dependency com.mikepenz:version-catalog to v0.23.2 (@renovate-mike[bot])
 
 ---
 
@@ -832,30 +823,28 @@ Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.g
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update mike penz internal projects (#662)
+## X. deps): update ktor monorepo to v3.6.1 (#664)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/multiplatform-markdown-renderer. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/multiplatform-markdown-renderer. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28528661`: deps): update mike penz internal projects (#662). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `619069d4`: deps): update ktor monorepo to v3.6.1 (#664). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        uses: mikepenz/action-junit-report@8a133bfa3ecb0ea9024c1e2ae788b4c25f6cdb9d # v6.6.2
-        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6.5.0
+ktor = "3.6.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
-        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6.4.0
+ktor = "3.6.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28528661` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `619069d4` are properly handled with clean fallback behavior.

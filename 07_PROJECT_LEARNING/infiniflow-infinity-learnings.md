@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `a8583bc5`  
+> **Source Version**: `e02e0d7e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:35:08.842Z  
+> **Timestamp**: 2026-11-12T22:48:33.142Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:35:08.832Z  
+> **Harvest Timestamp**: 2026-11-12T22:48:33.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1349,614 +1349,645 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8583bc5` (2026-11-11)
-**Commit Message**: Port secondary index and plaid to rust (#3547)
+### Incident Patch 1: `6ea59ff9` (2026-11-12)
+**Commit Message**: fix(optimize): use block-relative offset as row-id label base when merging HNSW/BMP chunks (#3548)
 
-**File**: `rust_engine/Cargo.lock` (modified, +28/-0)
-```diff
-@@ -920,6 +920,12 @@ dependencies = [
-  "either",
- ]
- 
-+[[package]]
-+name = "itoa"
-+version = "1.0.19"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
-+
- [[package]]
- name = "jobserver"
- version = "0.1.35"
-@@ -1363,6 +1369,7 @@ dependencies = [
-  "common",
-  "expression",
-  "parser",
-+ "roaring",
- ]
- 
- [[package]]
-@@ -1678,6 +1685,19 @@ dependencies = [
-  "syn 3.0.3",
- ]
- 
-+[[package]]
-+name = "serde_json"
-+version = "1.0.154"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
-+dependencies = [
-+ "itoa",
-+ "memchr",
-+ "serde",
-+ "serde_core",
-+ "zmij",
-+]
-+
- [[package]]
- name = "server"
- version = "0.1.0"
-@@ -1790,6 +1810,8 @@ dependencies = [
-  "rocksdb",
-  "rustls",
-  "rustls-native-certs",
-+ "serde",
-+ "serde_json",
-  "sha2",
-  "tempfile",
- ]
-@@ -2297,6 +2319,12 @@ version = "1.8.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0"
- 
-+[[package]]
-+name = "zmij"
-+version = "1.0.23"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
-+
- [[package]]
- name = "zstd"
- version = "0.13.4"
-```
+As discussed in #3542.
 
-**File**: `rust_engine/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -58,3 +58,5 @@ memmap2 = "0.9"
- thiserror = "1"
- tempfile = "3"
- roaring = "0.11"
-+serde = "1"
-+serde_json = "1"
-```
+**Problem:** in `NewTxn::OptimizeVecIndex`, the HNSW and BMP branches
+passed `base_rowid.segment_offset_` (always 0 for a merge starting at
+the segment base) as the row-id label base for every block, so every
+block after the first was relabeled 0..8191. Merged chunks silently lost
+row 8192+ from search results (normal file size, no log output).
 
-**File**: `rust_engine/crates/catalog/src/layout.rs` (modified, +26/-5)
+**File**: `src/storage/new_txn/new_txn_index_impl.cpp` (modified, +9/-2)
 ```diff
-@@ -589,14 +589,22 @@ pub(crate) fn index_def_for(im: &IndexMeta, table: &TableLayout) -> Option<Index
-             &im.column,
-             &opt_word("ANALYZER", "standard"),
-         )),
-+        // A functional index names an expression, not a column: the record
-+        // carries the expression, its base column and the return type
-+        // (`IndexSecondaryFunctional::Serialize`).
-+        "SECONDARYFUNCTIONAL" => functional_index_def(im, table),
-         // An index with no `USING` kind is the C++ default, a secondary index.
-         "SECONDARY" | "" => match col {
-             Some(col) => {
-                 let is_json = value_format::data_type_code(&col.column_type)
-                     == Some(value_format::logical::JSON);
--                let low = opt("CARDINALITY")
--                    .map(|v| v.eq_ignore_ascii_case("low"))
--                    .unwrap_or(false);
-+                // `IndexSecondary` forces `kLowCardinality` for a JSON column
-+                // (`index_secondary.cppm:56`), so the record says `low` whether
-+                // or not the statement asked for it.
-+                let low = is_json
-+                    || opt("CARDINALITY")
-+                        .map(|v| v.eq_ignore_ascii_case("low"))
-+                        .unwrap_or(false);
-                 Some(IndexDefValue::secondary(
-                     &im.name,
-                     &table.table_name,
-@@ -693,7 +701,10 @@ pub(crate) fn index_def_for(im: &IndexMeta, table: &TableLayout) -> Option<Index
-             &table.table_name,
-             &im.column,
-             opt_num("NBITS", 4),
--            opt_num("N_CENTROIDS", 0),
-+            // `centroids` is the option the statement spells
-+            // (`CREATE INDEX … WITH (centroids = 4096)`); the record's field is
-+            // `n_centroids`, which a record read back from disk carries instead.
-+            opt_num("CENTROIDS", 0).max(opt_num("N_CENTROIDS", 0)),
-             opt("COLBERTSAR_MODE")
-                 .map(|v| v.eq_ignore_ascii_case("true"))
-                 .unwrap_or(false),
-@@ -751,12 +762,22 @@ fn functional_index_def(im: &IndexMeta, table: &TableLayout) -> Option<IndexDefV
-         .find(|(k, _)| k.eq_ignore_ascii_case("CARDINALITY"))
-         .map(|(_, v)| v.eq_ignore_ascii_case("low"))
-         .unwrap_or(false);
-+    // `func_return_type` is the function's own type, not the argument's: the
-+    // engine records it when the index is created (`FUNC_RETURN`).
-+    let returns = im
-+        .options
-+        .iter()
-+        .find(|(k, _)| k.eq_ignore_ascii_case("FUNC_RETURN"))
-+        .map(|(_, v)| v.clone())
-+        .filter(|v| !v.trim().is_empty())
-+        .and_then(|v| data_type_of_text(&v))
-+        .unwrap_or_else(|| col.column_type.clone());
-     Some(IndexDefValue::secondary_functional(
-         &im.name,
-         &table.table_name,
-         base,
-         expr,
--        col.column_type.clone(),
-+        returns,
-         expression::json::Json::Obj(vec![(
-             "name".to_string(),
-             expression::json::Json::Str(func.to_string()),
-```
-
-**File**: `rust_engine/crates/common/src/error.rs` (modified, +15/-0)
-```diff
-@@ -135,6 +135,10 @@ impl Error {
-             // 3009 INVALID_INDEX_DEFINITION (index kind vs column type).
-             Error::Invalid(m) if m.starts_with("SECONDARY index requires") => 3009,
-             Error::Invalid(m) if m.contains("index requires a") => 3009,
-+            // `IndexSecondary::ValidateColumnDataType` refuses the column type
-+            // with `InvalidIndexDefinition`, so a secondary index on a column
-+            // that cannot carry one is 3009, not a generic invalid parameter.
-+            Error::Invalid(m) if m.starts_with("Cannot build secondary index on data type") => 3009,
-             // 3077 ANALYZER_NOT_FOUND (unknown name, or a C++ family the Rust
-             // port does not vendor; both carry an explanatory suffix).
-             Error::Invalid(m) if m.starts_with("analyzer ") && m.contains("not found") => 3077,
-@@ -270,4 +274,15 @@ mod tests {
-         assert_eq!(error.status_code(), 8007);
-         assert_eq!(error.to_string(), "Attempt to write on non-writable node");
-     }
-+
-+    /// `IndexSecondary::ValidateColumnDataType` rejects a column type that
-+    /// cannot carry the index with `Status::InvalidIndexDefinition` (3009), the
-+    /// code the SDK's `test_sparse_knn_with_invalid_index_type` asserts.
-+    #[test]
-+    fn a_secondary_index_on_an_unsupported_column_type_maps_to_3009() {
-+        let error = Error::Invalid(
-+            "Cannot build secondary index on data type: SPARSE(FLOAT,1000)".to_string(),
-+        );
-+        assert_eq!(error.status_code(), 3009);
-+    }
- }
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/chunk.rs` (modified, +13/-1)
-```diff
-@@ -15,8 +15,13 @@ pub(crate) fn decode_secondary_key(
-         KeyKind::U64 => Key::U64(u64::from_le_bytes(bytes.try_into().ok()?)),
-         KeyKind::I64 => Key::I64(i64::from_le_bytes(bytes.try_into().ok()?)),
-         KeyKind::I32 => Key::I32(i32::from_le_bytes(bytes.try_into().ok()?)),
-+        KeyKind::I16 => Key::I16(i16::from_le_bytes(bytes.try_into().ok()?)),
-+        KeyKind::I8 => Key::I8(*bytes.first()? as i8),
-+        KeyKind::Bool => Key::Bool(*bytes.first()? != 0),
-         KeyKind::F32 => Key::F32(f32::from_le_bytes(bytes.try_into().ok()?)),
-         KeyKind::F64 => Key::F64(f64::from_le_bytes(bytes.try_into().ok()?)),
-+        // A JSON chunk is low-cardinality and has no ordered key array.
-+        KeyKind::Bytes => return None,
-     })
- }
- 
-@@ -45,6 +50,10 @@ pub(crate) fn publish_secondary_chunks(
-     let width = kind.key_width();
-     let stride = width + 4;
-     let mut by_block: std::collections::BTreeMap<u64, Vec<_>> = Default::default();
-+    // A merged spill file holds the whole segment (`merge_secondary_chunks`),
-+    // which is the reference's layout after `OptimizeIndex`: one chunk per
-+    // segment rather than one per block.
-+    let mut merged = false;
-     let Ok(entries) = std::fs::read_dir(dir) else {
-         return Vec::new();
-     };
-@@ -70,6 +79,9 @@ pub(crate) fn publish_secondary_chunks(
-         if run_segment.parse::<u32>() != Ok(segment) {
-             continue;
-         };
-+        if rest.contains("_merged") {
-+            merged = true;
-+        }
-         let (Ok(bytes), Ok(reader)) = (
-             std::fs::read(&path),
-             SecondarySegmentReader::open_with_kind(&path, kind),
-@@ -96,7 +108,7 @@ pub(crate) fn publish_secondary_chunks(
-     // one in-memory index and dumps **once**, so an imported segment has a
-     // single chunk covering all of its blocks (`InsertBlockData` is called per
-     // block, `Dump` once after the loop).
--    if single_chunk {
-+    if single_chunk || merged {
-         let mut entries: Vec<_> = by_block.into_values().flatten().collect();
-         if entries.is_empty() || std::fs::create_dir_all(seg_dir).is_err() {
-             return Vec::new();
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +37/-9)
-```diff
-@@ -4447,6 +4447,14 @@ impl Engine {
-                     if let Err(error) = self.optimize_all_fulltext_indexes() {
-                         eprintln!("optimize: merging the full-text chunks failed: {error}");
-                     }
-+                    // The secondary half of `OptimizeIndexInner`
-+                    // (`new_txn_index_impl.cpp:336-340`): a segment with more than
-+                    // one chunk folds them into one. Like the full-text rewrite its
-+                    // catalog records are derived from the files, so it also runs
-+                    // after the vector commit.
-+                    if let Err(error) = self.optimize_all_secondary_indexes() {
-+                        eprintln!("optimize: merging the secondary chunks failed: {error}");
-+                    }
-                     Ok(())
-                 }
-                 // A concurrent merge (or a drop that took the index away) is a
-@@ -5825,7 +5833,12 @@ impl Engine {
-                 if let Ok(v) = value.parse() {
-                     options.nbits = v;
-                 }
--            } else if key.eq_ignore_ascii_case("n_centroids") {
-+            } else if key.eq_ignore_ascii_case("n_centroids")
-+                || key.eq_ignore_ascii_case("centroids")
-+            {
-+                // `centroids` is the SQL spelling (`CREATE INDEX … WITH
-+                // (centroids = 4096)`); `n_centroids` is the catalog field the
-+                // record carries. Both name the same option.
-                 if let Ok(v) = value.parse() {
-                     options.n_centroids = v;
-                 }
-@@ -5961,14 +5974,29 @@ impl Engine {
-             .nbits;
-         let mut chunks = Vec::new();
-         for (id, path) in self.live_chunk_files(table, index_name, 0, &mirror.dir) {
--            let bytes = std::fs::read(&path).map_err(|e| Error::Io {
--                path: path.clone(),
--                source: e,
--            })?;
--            let (index, _) =
--                PlaidIndex::from_bytes(0, mirror.dims, nbits, &bytes).map_err(|e| {
--                    Error::Invalid(format!("bad PLAID chunk '{}': {e}", path.display()))
--                })?;
-+            // Map the chunk and keep its packed residual codes file-backed (the
-+            // reference's buffer-manager chunk): reading them into a `Vec` doubled
-+            // the resident size of a large index. A zero-length or unopenable file
-+            // falls back to a plain read.
-+            let bad = |e: &dyn std::fmt::Display| {
-+                Error::Invalid(format!("bad PLAID chunk '{}': {e}", path.display()))
-+            };
-+            let index = match storage::buffer::mapped::MappedFile::open(&path) {
-+                Ok(mapped) if !mapped.is_empty() => {
-+                    let backing: std::sync::Arc<dyn AsRef<[u8]> + Send + Sync> =
-+                        std::sync::Arc::new(mapped);
-+                    PlaidIndex::from_shared(backing, mirror.dims, nbits).map_err(|e| bad(&e))?
-+                }
-+                _ => {
-+                    let bytes = std::fs::read(&path).map_err(|e| Error::Io {
-+                        path: path.clone(),
-+                        source: e,
-+                    })?;
-+                    PlaidIndex::from_bytes(0, mirror.dims, nbits, &bytes)
-+                        .map_err(|e| bad(&e))?
-+                        .0
-+                }
-+            };
-             chunks.push(PlaidChunkFile { id, index });
-         }
-         Ok(chunks)
-```
-
-**File**: `rust_engine/crates/executor/src/engine/admin.rs` (modified, +1/-0)
-```diff
-@@ -225,6 +225,7 @@ impl Engine {
-                 // block-level indexes, the in-memory secondary tails, the full-text
-                 // inverted index, the sparse documents and the vector buffers.
-                 entry.secondary.indexes.clear();
-+                entry.secondary.declared_types.clear();
-                 entry.secondary.disk.clear();
-                 entry.text.clear();
-                 entry.sparse.clear();
-```
-
-**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +132/-47)
-```diff
-@@ -99,6 +99,7 @@ impl Engine {
+@@ -2300,7 +2300,12 @@ Status NewTxn::OptimizeVecIndex(std::shared_ptr<IndexBase> index_base,
+                 return status;
              }
+             u32 offset = 0;
+-            memory_hnsw_index->InsertVecs(base_rowid.segment_offset_, col, offset, row_cnt);
++            // Row-id labels must use the block's absolute offset within the segment (the pattern
++            // used by the SMVE branch below). base_rowid.segment_offset_ is always 0 when the
++            // merge range starts from the segment base, which would relabel every block after
++            // the first one as 0..8191 and silently drop those rows from search results.
++            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
++            memory_hnsw_index->InsertVecs(block_offset, col, offset, row_cnt);
          }
-         let mut readers = Vec::new();
-+        let mut meta: Vec<(u64, usize)> = Vec::new();
-         for (segment, entries) in by_segment {
-             let mut by_block: std::collections::BTreeMap<u64, Vec<_>> = Default::default();
-             for entry in entries {
-@@ -121,20 +122,20 @@ impl Engine {
-                     storage::secondary_segment::SecondarySegmentReader::open_with_kind(&path, kind)
-                 {
-                     // The chunk's offsets are already segment-relative, so the
--                    // base is the segment alone.
-+                    // base is the segment alone; its `ChunkIndexMetaInfo` covers
-+                    // the rows the block held.
-+                    meta.push((segment << 32, entries.len()));
-                     readers.push((segment << 32, Arc::new(reader)));
-                 }
+ 
+         memory_hnsw_index->Dump(buffer_obj);
+@@ -2323,7 +2328,9 @@ Status NewTxn::OptimizeVecIndex(std::shared_ptr<IndexBase> index_base,
+                 return status;
              }
+             u32 offset = 0;
+-            memory_bmp_index->AddDocs(base_rowid.segment_offset_, col, offset, row_cnt);
++            // Same as the HNSW branch above: label rows with the block's absolute offset.
++            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
++            memory_bmp_index->AddDocs(block_offset, col, offset, row_cnt);
          }
-         let tkey = self.table_key(table);
--        self.tables
--            .lock()
--            .unwrap()
--            .entry(tkey)
--            .or_default()
--            .secondary
--            .disk
--            .insert(column.to_string(), readers);
-+        let mut tables = self.tables.lock().unwrap();
-+        let entry = tables.entry(tkey).or_default();
-+        entry.secondary.disk.insert(column.to_string(), readers);
-+        // A rebuild replaces the whole chunk set, so its meta replaces the list
-+        // a previous dump appended to.
-+        entry.secondary.chunk_meta.insert(column.to_string(), meta);
-     }
- 
-     /// Appends a committed batch to the decoded-row cache, if the table has one.
-@@ -746,8 +747,12 @@ impl Engine {
-                 // thread (the reference's `MemIndexAppender` is a single
-                 // thread, which is the one structural deviation here).
-                 let schema = engine.table_schema(&index_table).unwrap_or_default();
--                for (seq, texts) in &index_rows {
--                    engine.update_indexes_on_insert_text(&index_table, *seq, texts, &schema)?;
-+                for (k, (seq, _)) in index_rows.iter().enumerate() {
-+                    // `index_rows` is `bottom_rows` rendered, so the literals are
-+                    // the same rows: the secondary hook needs them to tell a NULL
-+                    // from an empty cell.
-+                    let values = bottom_rows.get(k).map(Vec::as_slice).unwrap_or(&[]);
-+                    engine.update_indexes_on_insert(&index_table, *seq, values, &schema)?;
-                 }
-                 // One batch: the full-text terms of the whole append are
-                 // tokenised without the column lock and inserted under it once.
-@@ -1109,8 +1114,34 @@ impl Engine {
-         values: &[Literal],
-         schema: &[String],
-     ) -> Result<()> {
--        let texts: Vec<String> = values.iter().map(|v| v.to_slt_string()).collect();
--        self.update_indexes_on_insert_text(table, seq, &texts, schema)
-+        // The evaluated row is only built when a functional index needs it: a
-+        // plain index reads its cell's text and pays nothing.
-+        let mut row_values: Option<Vec<Value>> = None;
-+        for target in self.secondary_targets(table, schema) {
-+            let Some(value) = values.get(target.pos) else {
-+                continue;
-+            };
-+            // `SecondaryIndexInMemT::InsertInner` skips a row whose null bit is
-+            // set: a NULL is not a key.
-+            if matches!(value, Literal::Null) {
-+                continue;
-+            }
-+            let keys = match &target.func {
-+                None => text_to_tail_keys(&target.declared, &value.to_slt_string()),
-+                Some(func) => {
-+                    let row = row_values
-+                        .get_or_insert_with(|| values.iter().map(Value::from_literal).collect());
-+                    match functional_value(func, target.pos, row) {
-+                        Some(value) => value_to_key(&target.declared, &value),
-+                        None => Vec::new(),
-+                    }
-+                }
-+            };
-+            for key in keys {
-+                target.index.insert(&key, seq as u64);
-+            }
-+        }
-+        Ok(())
-     }
- 
-     /// Feeds a whole batch of rows into every secondary index of `table`.
-@@ -1119,6 +1150,12 @@ impl Engine {
-     /// string) and took the registry lock for every row, and looked the indexed
-     /// column up in the schema once per index per row. A bulk statement paid
-     /// that per row; this pays it once for the batch.
-+    ///
-+    /// Each key is the column's **order-preserving encoding**
-+    /// (`Key::ordered_bytes`) - the same domain a sealed chunk uses - so the
-+    /// memory tail is ordered like the column (a range scan slices it instead
-+    /// of decoding every key) and a dump can write its keys out directly. The
-+    /// tails are cloned out under the table lock and appended to outside it.
-     pub(crate) fn update_seco
+         memory_bmp_index->Dump(buffer_obj);
+     } else if (index_base->index_type_ == IndexType::kSMVE) {
 ```
 
 ---
 
-### Incident Patch 2: `e714e483` (2026-11-10)
-**Commit Message**: Port merge and skiplist to rust version of fulltext index (#3545)
+### Incident Patch 2: `2aa4f942` (2026-11-12)
+**Commit Message**: fix(restart-test): disable periodic checkpoint/cleanup so explicit flush/cleanup is not skipped (#3555)
 
-**File**: `rust_engine/crates/analyzer/src/ngram.rs` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ impl NGramAnalyzer {
-                 word_offset: offset,
-                 char_offset: start_byte as u32,
-                 end_offset: end_byte as u32,
-+                payload: 0,
-             });
-             offset += 1;
-             i += 1;
-```
+### Summary
 
-**File**: `rust_engine/crates/analyzer/src/rank_features.rs` (modified, +8/-0)
+Disable periodic checkpoint/cleanup in restart test so explicit
+flush/cleanup is not skipped
+
+**File**: `test/data/config/restart_test/test_alter/1.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,14 @@
- use super::*;
+@@ -16,6 +16,6 @@ persistence_dir = ""
  
- /// C++: `SmallFloat::Float122ToUInt16` (`smallfloat.cppm`).
-+/// C++ `SmallFloat::UInt16ToFloat122`: the inverse of [`float122_to_uint16`],
-+/// used by `RankFeatureDocIterator` to turn a posting's doc-payload back into
-+/// the feature weight.
-+pub fn uint16_to_float122(i: u16) -> f32 {
-+    let bits = ((i as i32 + ((127 - 2) << 12)) << (23 - 12)) as u32;
-+    f32::from_bits(bits)
-+}
+ [buffer]
+ [wal]
+-checkpoint_interval = "1s"
++checkpoint_interval = "0s"
+ 
+ [resource]
+```
+
+**File**: `test/data/config/restart_test/test_alter/3.toml` (modified, +5/-2)
+```diff
+@@ -10,12 +10,15 @@ log_level = "trace"
+ [storage]
+ data_dir = "/var/infinity/data"
+ optimize_interval = "0s"
+-cleanup_interval = "1s"
++cleanup_interval = "0s"
+ compact_interval = "0s"
+ persistence_dir = ""
+ 
+ [buffer]
+ [wal]
+-checkpoint_interval = "1s"
++# The periodic checkpoint must stay disabled: an explicit FLUSH DATA that lands
++# while a periodic checkpoint txn is in flight is skipped (query_context_impl.cpp),
++# and test_alter_cleanup_simple asserts on the .col files the flush produces.
++checkpoint_interval = "0s"
+ 
+ [resource]
+```
+
+**File**: `test/data/config/restart_test/test_cleanup/2.toml` (modified, +2/-2)
+```diff
+@@ -11,11 +11,11 @@ log_level = "trace"
+ persistence_dir = ""
+ data_dir = "/var/infinity/data"
+ optimize_interval = "0s"
+-cleanup_interval = "1s"
++cleanup_interval = "0s"
+ compact_interval = "1s"
+ 
+ [buffer]
+ [wal]
+-checkpoint_interval = "1s"
++checkpoint_interval = "0s"
+ 
+ [resource]
+```
+
+**File**: `test/data/config/restart_test/test_fulltext/1.toml` (modified, +2/-1)
+```diff
+@@ -9,10 +9,11 @@ log_to_stdout = true
+ 
+ [storage]
+ persistence_dir = ""
++cleanup_interval = "0s"
+ mem_index_capacity = 1048576
+ 
+ [buffer]
+ [wal]
+-checkpoint_interval = "30s"
++checkpoint_interval = "0s"
+ 
+ [resource]
+```
+
+---
+
+### Incident Patch 3: `b53d40ce` (2026-11-12)
+**Commit Message**: Fix reentrantcy issue of opencc  (#3554)
+
+#3552
+
+**File**: `src/common/analyzer/analyzer_pool.cppm` (modified, +8/-0)
+```diff
+@@ -48,6 +48,14 @@ public:
+     static constexpr std::string_view SPARSEGRAM = "sparsegram";
+ 
+ private:
++    // Guards cache_. GetAnalyzer() is called from every fulltext indexing worker
++    // and from concurrent queries: without the lock two threads could both load
++    // a prototype and the second store would destroy the first one, leaving the
++    // analyzers already handed out with dangling borrowed members (trie_,
++    // pos_table_, wordnet_lemma_, opencc_). Entries are never erased, so the
++    // borrowed members stay valid for the lifetime of the process.
++    std::mutex cache_mtx_;
 +
- pub(crate) fn float122_to_uint16(f: f32) -> u16 {
-     let bits = f.to_bits() as i32;
-     let smallfloat = bits >> (23 - 12);
+     CacheType cache_{};
+ };
+ 
 ```
 
-**File**: `rust_engine/crates/analyzer/src/sparsegram.rs` (modified, +1/-0)
+**File**: `src/common/analyzer/analyzer_pool_impl.cpp` (modified, +3/-0)
 ```diff
-@@ -26,6 +26,7 @@ impl SparseGramAnalyzer {
-                 word_offset: offset,
-                 char_offset: 0,
-                 end_offset: offset + 1,
-+                payload: 0,
-             });
-             offset += 1;
-         });
+@@ -71,6 +71,9 @@ constexpr std::string_view SWEDISH = "-swedish";
+ constexpr std::string_view TURKISH = "-turkish";
+ 
+ std::tuple<std::unique_ptr<Analyzer>, Status> AnalyzerPool::GetAnalyzer(const std::string_view &name) {
++    // The prototype cache is filled lazily and shared by all caller threads.
++    std::unique_lock<std::mutex> lock(cache_mtx_);
++
+     switch (Str2Int(name.data())) {
+         case Str2Int(CHINESE.data()): {
+             // chinese-{coarse|fine}
 ```
 
-**File**: `rust_engine/crates/analyzer/src/standard.rs` (modified, +1/-0)
+**File**: `src/common/analyzer/rag_analyzer_impl.cpp` (modified, +15/-2)
 ```diff
-@@ -104,6 +104,7 @@ impl StandardAnalyzer {
-                     word_offset,
-                     char_offset: offset,
-                     end_offset,
-+                    payload: 0,
-                 })
-             };
-             let emit = &mut emit;
-```
-
-**File**: `rust_engine/crates/analyzer/src/tokenizer.rs` (modified, +3/-0)
-```diff
-@@ -140,6 +140,9 @@ pub struct TermView<'a> {
-     pub word_offset: u32,
-     pub char_offset: u32,
-     pub end_offset: u32,
-+    /// C++ `Term::payload_`; zero for every streaming analyzer (only
-+    /// `rankfeatures` produces a value, and it goes through `analyze`).
-+    pub payload: u16,
+@@ -672,6 +672,12 @@ RAGAnalyzer::RAGAnalyzer(const std::string &path)
+ RAGAnalyzer::RAGAnalyzer(const RAGAnalyzer &other)
+     : own_dict_(false), trie_(other.trie_), pos_table_(other.pos_table_), wordnet_lemma_(other.wordnet_lemma_), stemmer_(std::make_unique<Stemmer>()),
+       opencc_(other.opencc_), lowercase_string_buffer_(term_string_buffer_limit_), fine_grained_(other.fine_grained_) {
++    // The dictionary, POS table, lemmatizer and OpenCC converter are borrowed from
++    // the prototype held by AnalyzerPool and are read-only after loading, so the
++    // copies share them instead of reloading. OpenCC conversion itself is
++    // re-entrant (its scratch and error state are per call / per thread), which is
++    // what makes it safe for several indexing workers to convert through the same
++    // converter. Only per-instance state (stemmer, buffers, flags) is duplicated.
+     InitStemmer(STEM_LANG_ENGLISH);
  }
  
- /// C++: `Term`.
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/chunk.rs` (modified, +4/-4)
-```diff
-@@ -404,10 +404,10 @@ pub fn encode_fulltext_chunk(
-     lengths: &[u32],
- ) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
-     const OPTION_FLAG_ALL: u8 = 1 | 2 | 4 | 8 | 16 | 32;
--    let flags = storage::invertedindex::format::TermMetaFlags {
--        has_term_frequency: true,
--        has_term_payload: true,
--    };
-+    // The `.dic` half records `total_tf` and the term payload, and the doc list
-+    // below is built with `OPTION_FLAG_ALL`, so the flags have to describe the
-+    // same option word (`index_full_text.cppm:73`).
-+    let flags = storage::invertedindex::format::OPTION_FLAG_ALL;
-     let doc_option =
-         storage::invertedindex::format::doc_list::DocListFormatOption::new(OPTION_FLAG_ALL);
-     let mut pos = Vec::new();
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +17/-13)
-```diff
-@@ -2206,20 +2206,14 @@ impl Engine {
-             .unwrap_or(false)
-     }
+@@ -1831,7 +1837,11 @@ std::string RAGAnalyzer::Tokenize(const std::string &line) {
+     std::string processed_line = PCRE2GlobalReplace(*input, R"#(\W+)#", " ");
+     std::string str1 = StrQ2B(processed_line);
+     std::string strline;
+-    opencc_->convert(str1, strline);
++    if (opencc_ == nullptr || opencc_->convert(str1, strline) < 0) {
++        // Never tokenize an empty string because of a failed conversion: it would
++        // silently drop the whole field from the index. Use the unconverted text.
++        strline = str1;
++    }
  
--    /// Whether the delete journal holds `seq`. Reads the loaded journal in
--    /// place, and only pays for loading it when this is the first look.
-+    /// Whether the delete journal holds `seq`.
-+    ///
-+    /// One hash lookup into the journal's set. The journal itself is a `Vec`
-+    /// and used to be scanned here, which a bulk `DELETE`/`UPDATE` pays once
-+    /// per row (`row_is_present`) and made the statement quadratic in the
-+    /// journal's length.
-     pub(crate) fn is_deleted(&self, table: &str, seq: usize) -> bool {
--        let key = self.table_key(table);
--        {
--            let tables = self.tables.lock().unwrap();
--            if let Some(ids) = tables
--                .get(&key)
--                .and_then(|entry| entry.deleted_ids.as_ref())
--            {
--                return ids.contains(&(seq as u64));
+     std::vector<std::string> res;
+ 
+@@ -1915,7 +1925,10 @@ std::pair<std::vector<std::string>, std::vector<std::pair<unsigned, unsigned>>>
+ 
+     std::string str1 = StrQ2B(processed_line);
+     std::string strline;
+-    opencc_->convert(str1, strline);
++    if (opencc_ == nullptr || opencc_->convert(str1, strline) < 0) {
++        // See Tokenize(): a failed conversion must not erase the field.
++        strline = str1;
++    }
+     std::vector<std::string> tokens;
+     std::vector<std::pair<unsigned, unsigned>> positions;
+ 
+```
+
+**File**: `src/common/analyzer/traditional_chinese_analyzer_impl.cpp` (modified, +5/-1)
+```diff
+@@ -61,7 +61,11 @@ Status TraditionalChineseAnalyzer::Load() {
+ 
+ void TraditionalChineseAnalyzer::Parse(const std::string &input) {
+     std::string out;
+-    opencc_->convert(input, out);
++    // The converter may be shared with other analyzer copies, so a failed
++    // conversion is possible; fall back to the input instead of indexing nothing.
++    if (opencc_ == nullptr || opencc_->convert(input, out) < 0) {
++        out = input;
++    }
+     ChineseAnalyzer::Parse(out);
+ }
+ 
+```
+
+**File**: `src/unit_test/third_party/opencc_thread_safety_ut.cpp` (added, +168/-0)
+```diff
+@@ -0,0 +1,168 @@
++// Copyright(C) 2024 InfiniFlow, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++module;
++
++#include "unit_test/gtest_expand.h"
++
++#include "opencc.h"
++
++#include <errno.h>
++#include <pthread.h>
++#include <stdlib.h>
++#include <string.h>
++
++module infinity_core:ut.opencc_thread_safety;
++
++import :ut.base_test;
++
++using namespace infinity;
++
++namespace fs = std::filesystem;
++
++// One ::OpenCC is shared by every copy of a RAGAnalyzer, i.e. by every fulltext
++// indexing worker that tokenizes a column value, and several workers convert at
++// the same time. The conversion used to keep its shortest-path segmentation
++// scratch inside the converter and its lookup key inside the dictionary, so
++// concurrent conversions overwrote each other's min_len/parent/path arrays.
++// Reported symptom: SIGSEGV in sp_seg() (converter.c, path reconstruction) from
++// a MemoryIndexer::AsyncInsertBottom worker.
++//
++// The dictionaries below are plain TEXT dictionaries on purpose: unlike the
++// shipped .ocd ones they answer multi-character phrases from
++// dictionary_group_match_longest(), which is what makes sp_seg() run with
++// length > 1 and touch that scratch at all.
++class OpenCCThreadSafetyTest : public BaseTest {
++public:
++    void SetUp() override {
++        BaseTest::SetUp();
++        dict_dir_ = fs::temp_directory_path() / ("infinity_ut_opencc_reentrancy_" + std::to_string(getpid()));
++        std::error_code ec;
++        fs::remove_all(dict_dir_, ec);
++        ASSERT_TRUE(fs::create_directories(dict_dir_, ec)) << dict_dir_ << ": " << ec.message();
++    }
++
++    void TearDown() override {
++        std::error_code ec;
++        fs::remove_all(dict_dir_, ec);
++        BaseTest::TearDown();
++    }
++
++    static bool WriteTextFile(const fs::path &path, const char *content) {
++        FILE *fp = fopen(path.string().c_str(), "wb");
++        if (fp == nullptr) {
++            return false;
++        }
++        const bool ok = fputs(content, fp) >= 0;
++        fclose(fp);
++        return ok;
++    }
++
++    static std::string MakeRepeated(const char *unit, size_t repeat) {
++        std::string text;
++        text.reserve(strlen(unit) * repeat);
++        for (size_t i = 0; i < repeat; ++i) {
++            text += unit;
++        }
++        return text;
++    }
++
++    // Returns the conversion result, or nullptr when the conversion failed.
++    static char *Convert(opencc_t od, const char *input) {
++        char *out = opencc_convert_utf8(od, input, (size_t)-1);
++        return out == (char *)-1 ? nullptr : out;
++    }
++
++    struct WorkerArgs {
++        opencc_t od;
++        const char *input;
++        const char *expected;
++        size_t iterations;
++        size_t mismatches;
++    };
++
++    static void *ConvertLoop(void *arg) {
++        auto *args = static_cast<WorkerArgs *>(arg);
++        for (size_t i = 0; i < args->iterations; ++i) {
++            char *out = Convert(args->od, args->input);
++            if (out == nullptr || strcmp(out, args->expected) != 0) {
++                ++args->mismatches;
++            }
++            free(out);
++        }
++        return nullptr;
++    }
++
++protected:
++    fs::path dict_dir_;
++
++    // Every phrase is longer than one character, so the segmentation has to run
++    // the shortest-path pass over spans of several code points.
++    static constexpr const char *PHRASES = "中華人民共和國\t中华人民共和国\n"
++                                           "這個時候\t这个时候\n"
++                                           "我們發現\t我们发现\n"
++                                           "另外一個問題\t另外一个问题\n"
++                                           "臺灣的經濟發展\t台湾的经济发展\n"
++                                           "後來怎麼樣了呢\t后来怎么样了呢\n";
++
++    static constexpr const char *CONFIG = "title = reentrancy\n"
++                                          "dict0 = TEXT phrases.txt\n";
++
++    static constexpr const char *UNIT = "中華人民共和國這個時候我們發現另外一個問題臺灣的經濟發展後來怎麼樣了呢";
++
++    static constexpr size_t THREAD_COUNT = 8;
++    static constexpr size_t ITERATIONS = 200;
++};
++
++TEST_F(OpenCCThreadSafetyTest, shared_converter_is_reentrant) {
++    const fs::path config_path = dict_dir_ / "zht2zhs.ini";
++    ASSERT_TRUE(WriteTextFile(config_path, CONFIG));
++    ASSERT_TRUE(WriteTextFile(dict_dir_ / "phrases.txt", PHRASES));
++
++    opencc_t od = opencc_open(config_path.string().c_str(), dict_dir_.string().c_str());
++    ASSERT_NE(od, (opencc_t)-1) << "cannot open " << config_path;
++
++    // Differe
+```
+
+**File**: `third_party/opencc/config_reader.c` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ struct _config_desc {
+ };
+ typedef struct _config_desc config_desc;
+ 
+-static config_error errnum = CONFIG_ERROR_VOID;
++static OPENCC_THREAD_LOCAL config_error errnum = CONFIG_ERROR_VOID;
+ 
+ static int qsort_dictionary_buffer_cmp(const void *a, const void *b) {
+     if (((dictionary_buffer *)a)->index < ((dictionary_buffer *)b)->index)
+```
+
+**File**: `third_party/opencc/converter.c` (modified, +209/-172)
+```diff
+@@ -28,185 +28,111 @@
+ 
+ #if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
+ 
+-#define OPENCC_SP_SEG_DEFAULT_BUFFER_SIZE 1024
++/* Number of UCS-4 units served by the on-stack scratch block of sp_seg(). A
++   span is one ambiguous run of a single text, so keeping the common case
++   allocation-free is worth a few KB of stack. Longer spans fall back to one
++   heap block that is freed before sp_seg() returns. */
++#define OPENCC_SP_SEG_STACK_LENGTH 128
+ 
++/* Scratch arrays of a single sp_seg() call.
++ *
++ * They are deliberately NOT cached in converter_desc. One opencc_t is shared by
++ * all worker threads of a fulltext indexer (RAGAnalyzer clones share the same
++ * ::OpenCC), and caching the scratch made concurrent conversions reset and
++ * reallocate each other's min_len/parent/path. The visible symptom was a wild
++ * write in the path reconstruction below, where j starts at min_len[length] and
++ * a buffer reset by another thread left it at INFINITY_INT. */
+ typedef struct {
+-    int initialized;
+-    size_t buffer_size;
+     size_t *match_length;
+     size_t *min_len;
+     size_t *parent;
+     size_t *path;
++    size_t *heap_block;
+ } spseg_buffer_desc;
+ 
+ #endif
+ 
+ typedef struct {
+-#if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
+-    spseg_buffer_desc spseg_buffer;
+-#endif
+     dictionary_set_t dictionary_set;
+-    dictionary_group_t current_dictionary_group;
+     opencc_conversion_mode conversion_mode;
+ } converter_desc;
+-static converter_error errnum = CONVERTER_ERROR_VOID;
+-
+-#if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
+-static void sp_seg_buffer_free(spseg_buffer_desc *ossb) {
+-    free(ossb->match_length);
+-    free(ossb->min_len);
+-    free(ossb->parent);
+-    free(ossb->path);
+-}
+-
+-static void sp_seg_set_buffer_size(spseg_buffer_desc *ossb, size_t buffer_size) {
+-    if (ossb->initialized == TRUE)
+-        sp_seg_buffer_free(ossb);
+ 
+-    ossb->buffer_size = buffer_size;
+-    ossb->match_length = (size_t *)malloc((buffer_size + 1) * sizeof(size_t));
+-    ossb->min_len = (size_t *)malloc(buffer_size * sizeof(size_t));
+-    ossb->parent = (size_t *)malloc(buffer_size * sizeof(size_t));
+-    ossb->path = (size_t *)malloc(buffer_size * sizeof(size_t));
++/* Everything mutable during a conversion now lives on the stack or in a per-call
++ * heap block, and the dictionary set is only read after open, so one opencc_t
++ * may be converted from several threads at once without external locking.
++ * The error code is per thread to keep it meaningful under that sharing. */
++static OPENCC_THREAD_LOCAL converter_error errnum = CONVERTER_ERROR_VOID;
+ 
+-    ossb->initialized = TRUE;
+-}
+-
+-static size_t sp_seg(converter_desc *converter, ucs4_t **inbuf, size_t *inbuf_left, ucs4_t **outbuf, size_t *outbuf_left, size_t length) {
++#if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
++/* Shortest-path segmentation over one ambiguous span. Takes the scratch
++ * explicitly so that no per-converter state is touched (see the note above). */
++static size_t sp_seg_convert(converter_desc *converter,
++                             dictionary_group_t group,
++                             spseg_buffer_desc *ossb,
++                             ucs4_t **inbuf,
++                             size_t *inbuf_left,
++                             ucs4_t **outbuf,
++                             size_t *outbuf_left,
++                             size_t length) {
+     /* 最短路徑分詞 */
+-
+-    /* 對長度爲1時特殊優化 */
+-    if (length == 1) {
+-        const ucs4_t *const *match_rs = dictionary_group_match_longest(converter->current_dictionary_group, *inbuf, 1, NULL);
+-
+-        size_t match_len = 1;
+-        if (converter->conversion_mode == OPENCC_CONVERSION_FAST) {
+-            if (match_rs == NULL) {
+-                **outbuf = **inbuf;
+-                (*outbuf)++, (*outbuf_left)--;
+-                (*inbuf)++, (*inbuf_left)--;
+-            } else {
+-                const ucs4_t *result = match_rs[0];
+-
+-                /* 輸出緩衝區剩餘空間小於分詞長度 */
+-                if (ucs4len(result) > *outbuf_left) {
+-                    errnum = CONVERTER_ERROR_OUTBUF;
+-                    return (size_t)-1;
+-                }
+-
+-                for (; *result; result++) {
+-                    **outbuf = *result;
+-                    (*outbuf)++, (*outbuf_left)--;
+-                }
+-
+-                *inbuf += match_len;
+-                *inbuf_left -= match_len;
 -            }
--        }
--        self.deleted_ids(table).contains(&(seq as u64))
-+        self.deleted_set(table).contains(&(seq as u64))
-     }
- 
-     /// The blocks a reader may see: the table's block index minus every segment
-@@ -4443,6 +4437,16 @@ impl Engine {
-                     // part of the index; reconcile the in-memory set now instead
-                     // of at the next checkpoint.
-                     self.reload_vector_indexes();
-+                    // The full-text half of `OptimizeIndexInner`
-+                    // (`new_txn_index_impl.cpp:349-353` → `OptimizeFtIndex`).
-+                    // A full-text chunk is only its three files — the chunk list
-+                    // *is* the directory — so this rewrite carries no catalog
-+                    // entry and therefore runs after the vector commit: a failed
-+                    // merge leaves the source chunks readable instead of rolling
-+                    // back the vector work.
-+                    if let Err(error) = self.optimize_all_fulltext_indexes() {
-+                        eprintln!("optimize: merging the full-text chunks failed: {error}");
-+                    }
-                     Ok(())
-                 }
-                 // A concurrent merge (or a drop that took the index away) is a
+-        } else if (converter->conversion_mode == OPENCC_CONVERSION_LIST_CANDIDATES) {
+-            if (match_rs == NULL) {
+-                **outbuf = **inbuf;
+-                (*outbuf)++, (*outbuf_left)--;
+-                (*inbuf)++, (*inbuf_left)--;
+-            } else {
+-                size_t i;
+-                for (i = 0; match_rs[i] != NULL; i++) {
+-                    const ucs4_t *result = match_rs[i];
+-                    int show_delimiter = match_rs[i + 1] != NULL ? 1 : 0;
+-
+-                    /* 輸出緩衝區剩餘空間小於分詞長度 */
+-                    if (ucs4len(result) + show_delimiter > *outbuf_left) {
+-               
 ```
 
-**File**: `rust_engine/crates/executor/src/diagnostics.rs` (modified, +35/-0)
+**File**: `third_party/opencc/dictionary/text.c` (modified, +46/-13)
 ```diff
-@@ -70,6 +70,41 @@ pub struct MemoryIndexRow {
-     pub mem_used: usize,
- }
+@@ -27,10 +27,34 @@ struct _text_dictionary {
+     size_t entry_count;
+     size_t max_length;
+     entry *lexicon;
+-    ucs4_t *word_buff;
+ };
+ typedef struct _text_dictionary text_dictionary_desc;
  
-+/// Health of one full-text index: where a slow query's cost comes from.
-+///
-+/// A query walks **every** sealed chunk for its terms, then the memory tail, so
-+/// the numbers that matter are how many chunks there are and how much of the
-+/// column is still unsealed - the two things `optimize` and the seal trigger
-+/// move. `overridden_rows` is the price of the append-only delete story: those
-+/// rows are held in a set and filtered out of every scan.
-+///
-+/// Reported by [`crate::Engine::fulltext_stats`]. It is deliberately **not** part
-+/// of the `SHOW MEMINDEX` wire shape (that one is the reference's
-+/// `MemIndexTracerInfo`); exposing these fields to clients is a schema decision
-+/// left to the caller.
-+#[derive(Clone, Debug, Default, PartialEq, Eq)]
-+pub struct FulltextStats {
-+    pub table: String,
-+    pub index: String,
-+    /// Sealed chunks. Every query probes all of them.
-+    pub chunks: usize,
-+    /// Rows held by the sealed chunks.
-+    pub chunk_rows: usize,
-+    /// Rows still in the memory tail (not sealed yet).
-+    pub tail_rows: usize,
-+    /// Sorted runs the tail spilled into; `> 0` means the next seal merges them
-+    /// instead of writing the tail straight out.
-+    pub spill_runs: usize,
-+    /// Rows a seal is writing right now (they keep answering from memory).
-+    pub inflight_rows: usize,
-+    /// Rows whose sealed copy is stale: deleted, or re-indexed in place.
-+    pub overridden_rows: usize,
-+    /// Bytes the unsealed tail estimates it occupies.
-+    pub tail_bytes: usize,
-+    /// Duration of the last seal's file write, in microseconds.
-+    pub last_seal_us: u64,
++/* Lookup keys are built in a per-call buffer: the dictionary is shared by every
++ * thread converting with the same opencc_t, and a cached key buffer made
++ * concurrent lookups overwrite each other's ucs4ncpy()/bsearch() input. */
++#define TEXT_DICTIONARY_KEY_STACK_SIZE 64
++
++/* Returns the buffer holding `len` code points of `word`, NUL terminated, or
++ * NULL when the heap fallback cannot be allocated. `stack` must hold at least
++ * TEXT_DICTIONARY_KEY_STACK_SIZE code points; *heap_block is set when the
++ * caller has to free the result with free(). */
++static ucs4_t *text_dictionary_make_key(ucs4_t *stack, ucs4_t **heap_block, size_t key_size, const ucs4_t *word, size_t len) {
++    ucs4_t *key = stack;
++    *heap_block = NULL;
++
++    if (key_size > TEXT_DICTIONARY_KEY_STACK_SIZE) {
++        *heap_block = (ucs4_t *)malloc(sizeof(ucs4_t) * key_size);
++        if (*heap_block == NULL)
++            return NULL;
++        key = *heap_block;
++    }
++
++    ucs4ncpy(key, word, len);
++    key[len] = L'\0';
++    return key;
 +}
 +
- /// A query that is executing right now.
- #[derive(Clone, Debug)]
- pub struct RunningQuery {
+ int qsort_entry_cmp(const void *a, const void *b) { return ucs4cmp(((entry *)a)->key, ((entry *)b)->key); }
+ 
+ int parse_entry(const char *buff, entry *entry_i) {
+@@ -93,9 +117,9 @@ dictionary_t dictionary_text_open(const char *filename) {
+     text_dictionary->entry_count = INITIAL_DICTIONARY_SIZE;
+     text_dictionary->max_length = 0;
+     text_dictionary->lexicon = (entry *)malloc(sizeof(entry) * text_dictionary->entry_count);
+-    text_dictionary->word_buff = NULL;
+ 
+-    static char buff[ENTRY_BUFF_SIZE];
++    /* Per-call line buffer: two dictionaries may be opened concurrently. */
++    char buff[ENTRY_BUFF_SIZE];
+ 
+     FILE *fp = fopen(filename, "rb");
+     if (fp == NULL) {
+@@ -127,7 +151,6 @@ dictionary_t dictionary_text_open(const char *filename) {
+ 
+     text_dictionary->entry_count = i;
+     text_dictionary->lexicon = (entry *)realloc(text_dictionary->lexicon, sizeof(entry) * text_dictionary->entry_count);
+-    text_dictionary->word_buff = (ucs4_t *)malloc(sizeof(ucs4_t) * (text_dictionary->max_length + 1));
+ 
+     qsort(text_dictionary->lexicon, text_dictionary->entry_count, sizeof(text_dictionary->lexicon[0]), qsort_entry_cmp);
+ 
+@@ -149,7 +172,6 @@ void dictionary_text_close(dictionary_t t_dictionary) {
+     }
+ 
+     free(text_dictionary->lexicon);
+-    free(text_dictionary->word_buff);
+     free(text_dictionary);
+ }
+ 
+@@ -165,24 +187,31 @@ const ucs4_t *const *dictionary_text_match_longest(dictionary_t t_dictionary, co
+     if (maxlen < len)
+         len = maxlen;
+ 
+-    ucs4ncpy(text_dictionary->word_buff, word, len);
+-    text_dictionary->word_buff[len] = L'\0';
++    ucs4_t stack_key[TEXT_DICTIONARY_KEY_STACK_SIZE];
++    ucs4_t *heap_key;
++    ucs4_t *key = text_dictionary_make_key(stack_key, &heap_key, text_dictionary->max_length + 1, word, len);
++    if (key == NULL)
++        goto not_found;
+ 
+     entry buff;
+-    buff.key = text_dictionary->word_buff;
++    buff.key = key;
+ 
+     for (; len > 0; len--) {
+-        text_dictionary->word_buff[len] = L'\0';
++        key[len] = L'\0';
+         entry *brs =
+             (entry *)bsearch(&buff, text_dictionary->lexicon, text_dictionary->entry_count, sizeof(text_dictionary->lexicon[0]), qsort_entry_cmp);
+ 
+         if (brs != NULL) {
+             if (match_length != NULL)
+                 *match_length = len;
++            free(heap_key);
+             return (const ucs4_t *const *)brs->value;
+         }
+     }
+ 
++    free(heap_key);
++
++not_found:
+     if (match_length != NULL)
+         *match_length = 0;
+     return NULL;
+@@ -201,21 +230,25 @@ size_t dictionary_text_get_all_match_lengths(dictionary_t t_dictionary, const uc
+     if (length < len)
+         len = length;
+ 
+-    ucs4ncpy(text_dictionary->word_buff, word, len);
+-    text_dictionary->word_buff[len] = L'\0';
++    ucs4_t stack_key[TEXT_DICTIONARY_KEY_STACK_SIZE];
++    ucs4_t *heap_key;
++    ucs4_t *key = text_dictionary_make_key(stack_key, &heap_key, text_dictionary->max_length + 1, word, len);
++    if (key == NULL)
++        return rscnt;
+ 
+     entry buff;
+-    buff.key = text_dictionary->word_buff;
++    buff.key = key;
+ 
+     for (; len > 0; len--) {
+-        text_dictionary->word_buff[len] = L'\0';
++        key[len] = L'\0';
+         entry *brs =
+             (entry *)bsearch(&buff, text_dictionary->lexicon, text_dictionary->entry_count, sizeof(text_dictionary->lexicon[0]), qsort_entry_cmp);
+ 
+         if (brs != NULL)
+             match_length[rscnt++] = len;
+     }
+ 
++    free(heap_key);
+     return rscnt;
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3555** (2026-11-12): fix(restart-test): disable periodic checkpoint/cleanup so explicit flush/cleanup is not skipped (@qinling0210)
+- **PR #3554** (2026-11-12): Fix reentrancy issue of opencc  (@yingfeng)
+- **PR #3553** (2026-11-12): Port hnsw to rust  (@yingfeng)
+- **PR #3548** (2026-11-12): fix(optimize): use block-relative offset as row-id label base when merging HNSW/BMP chunks (@rain222)
 - **PR #3547** (2026-11-11): Port secondary index and plaid to rust (@yingfeng)
-- **PR #3545** (2026-11-10): Port merge and skiplist to rust version of fulltext index (@yingfeng)
-- **PR #3541** (2026-11-08): Rust rewrite: the rust_engine port of the engine (@yuzhichang)
-- **PR #3540** (2026-11-05): fix(txn): report concurrent checkpoint/cleanup as skipped instead of failing (@qinling0210)
-- **PR #3539** (2026-11-04): fix(cleanup): remove only the dirs of dropped entities (@qinling0210)
-- **PR #3538** (2026-11-02): CI: Fix no tar file in artifacts (@myf-bee)
+- **PR #3546** (2026-11-12): Port the Rust engine to an async, parallel server (@yuzhichang)
 
 ---
 
@@ -1976,55 +2007,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Port secondary index and plaid to rust (#3547)
+## X. optimize): use block-relative offset as row-id label base when merging HNSW/BMP 
 
 **RULE**:
-When implementing operations in `rust_engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/storage/new_txn/new_txn_index_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8583bc5`: Port secondary index and plaid to rust (#3547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ea59ff9`: optimize): use block-relative offset as row-id label base when merging HNSW/BMP chunks (#3548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/Cargo.lock`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/new_txn/new_txn_index_impl.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-[[package]]
-name = "itoa"
-version = "1.0.19"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
-
- "roaring",
-[[package]]
-name = "serde_json"
-version = "1.0.154"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
-dependencies = [
- "itoa",
- "memchr",
- "serde",
- "serde_core",
- "zmij",
-]
-
- "serde",
- "serde_json",
-[[package]]
-name = "zmij"
-version = "1.0.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
-
+            // Row-id labels must use the block's absolute offset within the segment (the pattern
+            // used by the SMVE branch below). base_rowid.segment_offset_ is always 0 when the
+            // merge range starts from the segment base, which would relabel every block after
+            // the first one as 0..8191 and silently drop those rows from search results.
+            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
+            memory_hnsw_index->InsertVecs(block_offset, col, offset, row_cnt);
+            // Same as the HNSW branch above: label rows with the block's absolute offset.
+            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
+            memory_bmp_index->AddDocs(block_offset, col, offset, row_cnt);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            memory_hnsw_index->InsertVecs(base_rowid.segment_offset_, col, offset, row_cnt);
+            memory_bmp_index->AddDocs(base_rowid.segment_offset_, col, offset, row_cnt);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8583bc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ea59ff9` are properly handled with clean fallback behavior.

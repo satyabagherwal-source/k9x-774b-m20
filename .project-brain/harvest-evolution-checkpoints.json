@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:41:05.620Z",
+  "last_updated": "2026-11-12T22:48:56.501Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -1301,9 +1301,24 @@
       "processed_at": "2026-11-12T22:33:58.186Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "matthart1983-netwatch-learnings.md": {
+      "processed_at": "2026-11-12T22:48:56.171Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "mikepenz-multiplatform-markdown-renderer-learnings.md": {
+      "processed_at": "2026-11-12T22:48:56.259Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "openziti-zrok-learnings.md": {
+      "processed_at": "2026-11-12T22:48:56.454Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 369,
+  "total_dossiers_evaluated": 372,
   "total_canonical_promoted": 44,
-  "total_staged_for_review": 324
+  "total_staged_for_review": 327
 }

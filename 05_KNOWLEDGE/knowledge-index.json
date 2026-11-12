@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T22:41:00.696Z",
+  "last_updated": "2026-11-12T22:48:49.798Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36722,8 +36722,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "a8583bc5",
-      "content_hash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
+      "source_version": "e02e0d7e",
+      "content_hash": "00d9c6304f1d0fef825fc7e525f5decbd3893b1249dfa67fd9b58b0ab283b028",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -36735,6 +36735,11 @@
         {
           "number": null,
           "title": "Port secondary index and plaid to rust (#3547)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "optimize): use block-relative offset as row-id label base when merging HNSW/BMP",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -36768,7 +36773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:35:27.727Z",
+      "verified_at": "2026-11-12T22:48:49.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45340,14 +45345,19 @@
       "slug": "mikepenz-multiplatform-markdown-renderer",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-      "source_version": "28528661",
-      "content_hash": "97e30a4570059ae3ef3e87b9de2016fad65bb3f037e4a00bf5c6b05966cd1f52",
+      "source_version": "0993c86f",
+      "content_hash": "2fb5ac5e864d9a9aa7a009e772e4df05fdb66aa9e2723bc384c72edc16410052",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): update mike penz internal projects (#662)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update ktor monorepo to v3.6.1 (#664)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45376,7 +45386,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:58:44.135Z",
+      "verified_at": "2026-11-12T22:48:37.124Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51134,11 +51144,16 @@
       "slug": "openziti-zrok",
       "platform": "github",
       "source_url": "https://github.com/openziti/zrok",
-      "source_version": "fea58ae4",
-      "content_hash": "ecbf70b59f40eac765b00020c6be542ede46fbef4b4a1b69ab15d108665f789d",
+      "source_version": "f2c7dcf6",
+      "content_hash": "9eaa04862416bc63c1279cb7f1aeb5902ba52f4e81a45fafb52f5187afa51ec6",
       "dossier_path": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #1287 from aaeekaayyyyyy/basic-auth-from-stdin",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 5886,
           "title": "add isolated macos agent smoke workflow; verify named share shutdown and replay;",
@@ -51150,7 +51165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:30:07.203Z",
+      "verified_at": "2026-11-12T22:48:47.355Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -185657,8 +185672,8 @@
       "slug": "matthart1983-netwatch",
       "platform": "github",
       "source_url": "https://github.com/matthart1983/netwatch",
-      "source_version": "81275065",
-      "content_hash": "d4303cf46cd38d25a3d0259dc2a6125e1a5a0fd568aee688d7a940a610822f06",
+      "source_version": "fbcac803",
+      "content_hash": "afc65f8a161932f4efc1efc8734981cd668a8622fc7c0e790103c5d464096d93",
       "dossier_path": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "promoted_rules": [
@@ -185673,7 +185688,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T19:07:05.088Z",
+      "verified_at": "2026-11-12T22:48:20.634Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
