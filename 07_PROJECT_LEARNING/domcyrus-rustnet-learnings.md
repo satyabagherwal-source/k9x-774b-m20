@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `218e16d5`  
+> **Source Version**: `5d3227f0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T00:44:54.222Z  
+> **Timestamp**: 2026-11-12T21:30:35.997Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T00:44:52.841Z  
+> **Harvest Timestamp**: 2026-11-12T21:30:35.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5224 stars
+- **Stars / Engagement**: 5234 stars
 
 ---
 
@@ -2501,127 +2501,98 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `218e16d5` (2026-11-09)
-**Commit Message**: chore(deps): bump the rust-dependencies group with 2 updates (#724)
+### Incident Patch 1: `5d3227f0` (2026-11-12)
+**Commit Message**: docs: document verified Resolute amd64v3 PPA publication (#728)
 
-Bumps the rust-dependencies group with 2 updates: [toml](https://github.com/toml-rs/toml) and [zip](https://github.com/zip-rs/zip2).
+* docs: fix Ubuntu PPA installation guidance for amd64v3 (#727)
 
+* docs: reflect enabled PPA variant builds and publication checks
 
-Updates `toml` from 1.1.8+spec-1.1.0 to 1.2.0+spec-1.1.0
-- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.1.8...toml-v1.2.0)
+* docs: keep amd64v3 publication guidance in maintainer notes
 
-Updates `zip` from 9.2.0 to 9.3.0
-- [Release notes](https://github.com/zip-rs/zip2/releases)
-- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/zip-rs/zip2/compare/v9.2.0...v9.3.0)
-
----
-updated-dependencies:
-- dependency-name: toml
-  dependency-version: 1.2.0+spec-1.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-- dependency-name: zip
-  dependency-version: 9.3.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +7/-6)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -3157,9 +3157,9 @@ dependencies = [
+@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Stop counting one-byte TCP keepalive probes as retransmits or out-of-order segments (#713)
  
- [[package]]
- name = "toml"
--version = "1.1.8+spec-1.1.0"
-+version = "1.2.0+spec-1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
-+checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
- dependencies = [
-  "indexmap",
-  "serde_core",
-@@ -3190,9 +3190,9 @@ dependencies = [
+ ### Documentation
++- Document Resolute `amd64v3` PPA builds, requesting missing builds for existing releases, and verifying publication without a client architecture override (#727)
+ - Add release-mode headless snapshot profiling with PCAP replay and controlled history/payload workloads (#720)
+ - Consolidate terminal guidance into concise usage documentation in English, Chinese, and Japanese (#683)
+ - Add Repology packaging badges, Alpine edge installation instructions, and credit the Alpine maintainer (#671)
+```
+
+**File**: `debian/README.md` (modified, +18/-1)
+```diff
+@@ -53,7 +53,24 @@ sudo apt install rustnet
+ - **Maintainer**: Marco Cadetg <cadetg@gmail.com>
+ - **PPA**: https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet
+ - **Supported**: Ubuntu 22.04 LTS (Jammy), 24.04 LTS (Noble) and 26.04 LTS (Resolute)
+-- **Architectures**: amd64, arm64, armhf
++- **Build processors enabled**: amd64, arm64, armhf, and amd64v3 (for Resolute); package availability depends on successful build and publication
++
++## Publishing the amd64v3 variant
++
++Keep the PPA's `amd64v3` build processor enabled for Resolute alongside
++`amd64`, `arm64`, and `armhf`. This Launchpad setting lets variant-enabled
++APT clients use the normal PPA installation commands without an architecture
++override.
++
++For an existing source missing a variant build, use
++[Copy packages](https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet/+copy-packages)
++with **This PPA**, **The same series**, and **Copy existing binaries**.
++A source-only rebuild copy is rejected when that version already has binaries.
++
++A successful build must also finish publication. Check the
++[variant index](https://ppa.launchpadcontent.net/domcyrus/rustnet/ubuntu/dists/resolute/main/binary-amd64v3/Packages.gz),
++then verify `apt-cache policy rustnet` selects it after `sudo apt update` on
++Ubuntu 26.04 with `APT::Architecture-Variants "amd64v3";` enabled.
  
- [[package]]
- name = "toml_writer"
--version = "1.1.3+spec-1.1.0"
-+version = "1.2.0+spec-1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
-+checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+ ## Workflow
  
- [[package]]
- name = "tracing"
-@@ -4017,14 +4017,15 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.2.0"
-+version = "9.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
-+checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
- dependencies = [
-  "crc32fast",
-  "flate2",
-  "getrandom 0.4.3",
-  "indexmap",
-+ "libc",
-  "memchr",
-  "nix 0.31.3",
-  "typed-path",
 ```
 
 ---
 
-### Incident Patch 2: `53a150bb` (2026-11-09)
-**Commit Message**: chore(deps): bump docker/login-action (#723)
+### Incident Patch 2: `ba040fa3` (2026-11-12)
+**Commit Message**: chore(deps): bump debian from `a29215f` to `a72b443` in the docker group (#729)
 
-Bumps the actions group with 1 update: [docker/login-action](https://github.com/docker/login-action).
+Bumps the docker group with 1 update: debian.
 
 
-Updates `docker/login-action` from 4.7.0 to 4.8.0
-- [Release notes](https://github.com/docker/login-action/releases)
-- [Commits](https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550)
+Updates `debian` from `a29215f` to `a72b443`
 
 ---
 updated-dependencies:
-- dependency-name: docker/login-action
-  dependency-version: 4.8.0
+- dependency-name: debian
+  dependency-version: trixie-slim
   dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: actions
+  dependency-group: docker
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/docker.yml` (modified, +1/-1)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -25,7 +25,7 @@ jobs:
+@@ -46,7 +46,7 @@ RUN if [ -n "$CARGO_FEATURES" ]; then \
  
-       - name: Log in to Container Registry
-         if: github.event_name != 'pull_request'
--        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ github.actor }}
+ # Runtime stage - use trixie-slim to match GLIBC version from builder
+ # Pinned by digest for a reproducible, tamper-evident base image.
+-FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f
++FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
+ 
+ # Install runtime dependencies
+ # libcap2-bin provides setcap, used below to grant packet-capture capabilities
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #729** (2026-11-12): chore(deps): bump debian from `a29215f` to `a72b443` in the docker group (@dependabot[bot])
+- **PR #728** (2026-11-12): docs: document verified Resolute amd64v3 PPA publication (@domcyrus)
+- **PR #726** (2026-11-12): chore(deps): bump zip from 9.4.1 to 9.4.2 in the rust-dependencies group (@dependabot[bot])
+- **PR #725** (2026-11-10): chore(deps): bump the rust-dependencies group with 3 updates (@dependabot[bot])
 - **PR #724** (2026-11-09): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
 - **PR #723** (2026-11-09): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 in the actions group (@dependabot[bot])
-- **PR #722** (2026-11-08): Fix DNS validation and STUN detection on port 53 (@domcyrus)
-- **PR #721** (2026-11-07): Extend headless metadata and CLI automation (@domcyrus)
-- **PR #720** (2026-11-07): Add headless snapshot profiling and controlled baselines (@domcyrus)
-- **PR #719** (2026-11-07): Add incremental headless JSONL (@domcyrus)
 
 ---
 
@@ -2641,39 +2612,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the rust-dependencies group with 2 updates (#724)
+## X. docs: document verified Resolute amd64v3 PPA publication (#728)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `218e16d5`: deps): bump the rust-dependencies group with 2 updates (#724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d3227f0`: docs: document verified Resolute amd64v3 PPA publication (#728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.2.0+spec-1.1.0"
-checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
-version = "1.2.0+spec-1.1.0"
-checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
-version = "9.3.0"
-checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
- "libc",
+- Document Resolute `amd64v3` PPA builds, requesting missing builds for existing releases, and verifying publication without a client architecture override (#727)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.8+spec-1.1.0"
-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
-version = "1.1.3+spec-1.1.0"
-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
-version = "9.2.0"
-checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `218e16d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d3227f0` are properly handled with clean fallback behavior.

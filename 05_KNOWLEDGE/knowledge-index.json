@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T21:19:46.463Z",
+  "last_updated": "2026-11-12T21:31:14.693Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10490,8 +10490,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "a90bee6a",
-      "content_hash": "8875915d9dc62963da9990b2e926047b7cea90ba32fa0e732a7e8a87fb89d8af",
+      "source_version": "b20fce7c",
+      "content_hash": "3e8b982f011d5e5c04908daa9862539f628938603069f901c3b3ac793f59417d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10628,6 +10628,11 @@
         {
           "number": null,
           "title": "deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvd",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10981,7 +10986,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T15:34:11.858Z",
+      "verified_at": "2026-11-12T21:31:14.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12050,8 +12055,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "218e16d5",
-      "content_hash": "0739449e85ad2fe5e8ca7bcf9381ab66eeaff603928fde1d57fcfe638da5a7b8",
+      "source_version": "5d3227f0",
+      "content_hash": "a6ebf9a28d4663240a1b5c671c4c590d974b9cbc5dc2d6a91cacb2b127dfd90b",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -12078,6 +12083,11 @@
         {
           "number": null,
           "title": "deps): bump the rust-dependencies group with 2 updates (#724)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs: document verified Resolute amd64v3 PPA publication (#728)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12136,7 +12146,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:44:55.137Z",
+      "verified_at": "2026-11-12T21:30:51.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40938,8 +40948,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "b7839b71",
-      "content_hash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
+      "source_version": "db4dee82",
+      "content_hash": "03ba868832fef014f146c8fa140d6b5753cc1a1cb76fdcb4a52aafbbf227321b",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -40957,6 +40967,11 @@
           "number": null,
           "title": "Multi-Threaded Lazy Resolution and In-Flight Request Deduplication",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "mcp): preserve native images and embedded text resources (#6250)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2430,
@@ -41029,7 +41044,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:15:56.652Z",
+      "verified_at": "2026-11-12T21:31:14.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64479,8 +64494,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "03441954",
-      "content_hash": "05b7cec8c60762388b494b56a431f3f0f9256ad534b9711b13b08a1aa87205a3",
+      "source_version": "3bd2b588",
+      "content_hash": "9c7d56d15cd9264fcdf63ed47a10ef0c70a473db35792cbeacbd9f675db83777",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -64502,6 +64517,11 @@
         {
           "number": null,
           "title": "Update module pault.ag/go/debian to v0.21.3 (#5546)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GitHub GraphQL comment scan retries and paging (#5548)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64610,7 +64630,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T09:46:18.291Z",
+      "verified_at": "2026-11-12T21:31:10.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84947,11 +84967,16 @@
       "slug": "jestjs-jest",
       "platform": "github",
       "source_url": "https://github.com/jestjs/jest",
-      "source_version": "72614448",
-      "content_hash": "466b6ac349128a0cbb92fd063eb55e2a184bbc5c4936222370cbd9a29c77482b",
+      "source_version": "aa88f7cf",
+      "content_hash": "1271782d4bacf61b24edaf0a4142517378fa3ace1c5941642619fccec8e3ee5f",
       "dossier_path": "07_PROJECT_LEARNING/jestjs-jest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jestjs-jest-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "jest-circus): disable the test execution context on teardown (#16553)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3027,
           "title": "deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399)",
@@ -84968,7 +84993,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:25:52.758Z",
+      "verified_at": "2026-11-12T21:30:56.857Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

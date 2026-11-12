@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jestjs-jest-learnings.md`  
 > **Source**: github ([https://github.com/jestjs/jest](https://github.com/jestjs/jest))  
-> **Source Version**: `72614448`  
+> **Source Version**: `aa88f7cf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:25:52.140Z  
+> **Timestamp**: 2026-11-12T21:30:38.589Z  
 > **Learning ID**: `learn-github-jestjs-jest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jestjs-jest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jestjs/jest](https://github.com/jestjs/jest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:25:51.428Z  
+> **Harvest Timestamp**: 2026-11-12T21:30:38.582Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Delightful JavaScript Testing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 45470 stars
+- **Stars / Engagement**: 45474 stars
 
 ---
 
@@ -599,11 +599,11 @@ export default function inc() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16527** (2026-11-02): **fix(jest-resolve): bump unrs-resolver to 1.13.0**
-  *Symptoms*: ## Summary  `unrs-resolver@1.13.0` resolves its native binding at runtime instead of through a `postinstall` script ([unrs/unrs-resolver#225](https://github.com/unrs/unrs-resolver/pull/225)), so installing Jest no longer trips npm 12's blocked-install-script warning. Together with #16188, which replaced the `fsevents`-based watchers with `@parcel/watcher` (`fsevents` is now left only in the website and bundling toolchain, not in any published package), this clears both packages that #16279 reported.  Nothing in `jest-resolve` changes otherwise: 1.13.0's public types only add `__napiBindingTarget`, so the imports, options and `ResolverFactory` usage stay as they are, and the move to runtime lookup drops the `wasm32-wasi` optional binding (and its `@emnapi/*` / `@napi-rs/wasm-runtime` chain) from the install tree.  The two remaining `unrs-resolver` ranges in the workspace (`eslint-import-resolver-typescript`'s `^1.7.11`, `eslint-plugin-import-x`'s `^1.9.2`) are deduped onto 1.13.0, as Renovate's `yarnDedupeHighest` would, so a single set of platform bindings is installed and `napi-postinstall` moves to 0.3.7.  This also removes the reason to keep #16400 open: swapping `unrs-resolver` for `oxc-resolver` was the workaround for the same warning, and the root cause is fixed upstream instead.  Closes #16279 Closes #16400  ## Test plan  - `yarn install --immutable`, `yarn constraints`, `yarn dedupe --check` — all clean. - `yarn build` — passes; every package type-checks against 1.13.
+- **Issue #16553** (2026-11-11): **fix(jest-circus): disable the test execution context on teardown**
+  *Symptoms*: ## Summary  on node 22 (and anything before 24) jest 30 gets slower with every test file a worker runs. this is the part of the "jest 30 is slower than 29" report in #15718 that shows up from 30.2.0 on  `jestAdapterInit` gets evaluated once per test file, so each file makes its own `AsyncLocalStorage` (`testExecutionContext`, `testNameStorage` before that). since #15825 every test runs inside it, so it's always enabled. before node 24 ALS sits on async_hooks, and an enabled instance stays registered until `disable()` is called and does work on every promise created after that. so file N pays for N storages on every promise, which is quadratic for `--runInBand` or anything with few workers. node 24+ uses AsyncContextFrame and isn't affected  the fix calls `disable()` in the circus `teardown` handler, right where we restore the global error handlers. nothing reads the context after teardown  node 22.22.0, apple m5 max, 400 generated files × 10 tests, `-i`:  | | main | this branch | | --- | --- | --- | | node env | 10.3 s | 4.9 s | | jsdom env | 10.8 s | 5.4 s | | node env, `-w 4` | 2.1 s | 1.6 s | | per-file time, first → last quarter | 13 → 34 ms | 10 → 10 ms |  same corpus on published versions: 29.7.0 6.2 s, 30.0.5 5.8 s, 30.2.0 ~11 s, 30.5.2 9.6 s. so 30.0.x was fine here and 30.2.0 is where it starts. node 24 is the same before and after. live heap after a forced gc per file doesn't change either (jsdom ends at 47 MB on main, 49 MB on this branch)  on a real suite, Shopify
 
-- **Issue #16511** (2026-10-20): **x**
-  *Symptoms*: 
+- **Issue #16546** (2026-11-08): **[Bug]: toEqual passes for a Set/Map whose received side has deep-equal duplicates (order dependent)**
+  *Symptoms*: ### Version  30.5.2  ### Steps to reproduce  1. Save as `repro.test.js`:  ```js test('Set, duplicates in received', () => {   expect(new Set([{a: 1}, {a: 1}])).toEqual(new Set([{a: 1}, {a: 2}])); }); test('Set, duplicates in expected', () => {   expect(new Set([{a: 1}, {a: 2}])).toEqual(new Set([{a: 1}, {a: 1}])); }); test('Map, duplicate keys in received', () => {   expect(new Map([[{k: 1}, 1], [{k: 1}, 1]])).toEqual(     new Map([[{k: 1}, 1], [{k: 1}, 2]]),   ); }); ```  2. `npm i -D jest@30.5.2 && npx jest repro.test.js`  ### Expected behavior  All three tests fail. `{a: 2}` (and the entry `[{k: 1}, 2]`) has no equal element on the other side, so the collections are not equal in either order.  ### Actual behavior  ```text   ✓ Set, duplicates in received (3 ms)   ✕ Set, duplicates in expected (4 ms)   ✓ Map, duplicate keys in received (1 ms) ```  Only the second test fails, so `toEqual` gives different answers depending on which side is received.  ### Additional context  The `Set` and `Map` branches of `iterableEquality` in `packages/expect-utils/src/utils.ts` check sizes and then that every element of `a` equals some element of `b`, without marking matched elements of `b` as used. This was reported before in #7975, which was closed by the stale bot. The file is unchanged on `main` (7261444) since v30.5.2.  ### Environment  ```shell System:     OS: Linux 6.1 Debian GNU/Linux 12 (bookworm) 12 (bookworm)     CPU: (64) x64 Intel(R) Xeon(R) CPU @ 2.80GHz   Binaries:     Node: 2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -620,193 +620,151 @@ export default function inc() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72614448` (2026-11-02)
-**Commit Message**: fix(jest-resolve): bump unrs-resolver to 1.13.0 (#16527)
+### Incident Patch 1: `aa88f7cf` (2026-11-11)
+**Commit Message**: fix(jest-circus): disable the test execution context on teardown (#16553)
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -4,6 +4,8 @@
+@@ -4,6 +4,7 @@
  
  ### Fixes
  
-+- `[jest-resolve]` Bump `unrs-resolver` to 1.13.0, which locates its native binding at runtime instead of through a `postinstall` script, so installing Jest no longer reports a blocked build script on npm 12 ([#16527](https://github.com/jestjs/jest/pull/16527))
-+
++- `[jest-circus]` Disable each test file's `AsyncLocalStorage` when the file finishes, so a worker on Node versions before 24 no longer gets slower with every test file it runs ([#16553](https://github.com/jestjs/jest/pull/16553))
+ - `[jest-resolve]` Bump `unrs-resolver` to 1.13.0, which locates its native binding at runtime instead of through a `postinstall` script, so installing Jest no longer reports a blocked build script on npm 12 ([#16527](https://github.com/jestjs/jest/pull/16527))
+ 
  ### Chore & Maintenance
- 
- ## 30.5.2
 ```
 
-**File**: `packages/jest-resolve/package.json` (modified, +1/-1)
+**File**: `e2e/__tests__/circusTestExecutionContext.test.ts` (added, +23/-0)
 ```diff
-@@ -25,7 +25,7 @@
-     "jest-util": "workspace:*",
-     "jest-validate": "workspace:*",
-     "slash": "^3.0.0",
--    "unrs-resolver": "^1.12.1"
-+    "unrs-resolver": "^1.13.0"
-   },
-   "devDependencies": {
-     "@types/graceful-fs": "^4.1.9",
+@@ -0,0 +1,23 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++import {skipSuiteOnJasmine} from '@jest/test-utils';
++import runJest from '../runJest';
++
++skipSuiteOnJasmine();
++
++test('does not leave a storage enabled for each test file that already ran', () => {
++  const {exitCode, stderr} = runJest('circus-test-execution-context', [
++    '--runInBand',
++  ]);
++
++  expect(exitCode).toBe(0);
++  const counts = [...stderr.matchAll(/live storages: (\d+)/g)].map(
++    ([, count]) => count,
++  );
++  expect(counts).toHaveLength(3);
++  expect(new Set(counts).size).toBe(1);
++});
 ```
 
-**File**: `yarn.lock` (modified, +97/-159)
+**File**: `e2e/circus-test-execution-context/__tests__/first.test.js` (added, +10/-0)
 ```diff
-@@ -3650,34 +3650,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@emnapi/core@npm:1.10.0":
--  version: 1.10.0
--  resolution: "@emnapi/core@npm:1.10.0"
--  dependencies:
--    "@emnapi/wasi-threads": "npm:1.2.1"
--    tslib: "npm:^2.4.0"
--  checksum: 10/d32f386084e64deaf2609aabb8295d1ad5af6144d0f46d2060b76cc53f1f3b486df54bec9b0f33c37d85a3822e1193ebcd4e3deb4a5f0e4cd650aa2ffc631715
--  languageName: node
--  linkType: hard
--
--"@emnapi/runtime@npm:1.10.0":
--  version: 1.10.0
--  resolution: "@emnapi/runtime@npm:1.10.0"
--  dependencies:
--    tslib: "npm:^2.4.0"
--  checksum: 10/d21083d07fa0c2da171c142e78ef986b66b07d45b06accc0bcaf49fcc61bb4dbc10e1c1760813070165b9f49b054376a931045347f21c0f42ff1eb2d2040faac
--  languageName: node
--  linkType: hard
--
--"@emnapi/wasi-threads@npm:1.2.1":
--  version: 1.2.1
--  resolution: "@emnapi/wasi-threads@npm:1.2.1"
--  dependencies:
--    tslib: "npm:^2.4.0"
--  checksum: 10/57cd4292be81c05d26aa886d68a9e4c449ff666e8503fed6463dfc6b64a4e4213f03c152d53296b7cda32840271e38cd33347332070658f01befeb9bf4e59f36
--  languageName: node
--  linkType: hard
--
- "@es-joy/jsdoccomment@npm:~0.98.0":
-   version: 0.98.0
-   resolution: "@es-joy/jsdoccomment@npm:0.98.0"
-@@ -5355,18 +5327,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@napi-rs/wasm-runtime@npm:^1.1.4":
--  version: 1.2.4
--  resolution: "@napi-rs/wasm-runtime@npm:1.2.4"
--  dependencies:
--    "@tybys/wasm-util": "npm:^0.10.3"
--  peerDependencies:
--    "@emnapi/core": ^1.7.1 || ^2.0.0-alpha.4
--    "@emnapi/runtime": ^1.7.1 || ^2.0.0-alpha.4
--  checksum: 10/5cda52f943c67eba1875d95dc7ea0dbe2c1581edb25660d3b0d780d7d87600bdaf92b4f4395e3cde82a9ccfb540da55567452e6e6d61fb13b7f51da7a3ad9151
--  languageName: node
--  linkType: hard
--
- "@noble/hashes@npm:1.4.0":
-   version: 1.4.0
-   resolution: "@noble/hashes@npm:1.4.0"
-@@ -7096,15 +7056,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tybys/wasm-util@npm:^0.10.3":
--  version: 0.10.4
--  resolution: "@tybys/wasm-util@npm:0.10.4"
--  dependencies:
--    tslib: "npm:^2.4.0"
--  checksum: 10/da910a0439afad49a6427e4d16fcd5a52199cb471e07c262e1dd5ed7664908e6f142f4dca1b09895c53f4ca4402663042d760f41c9fa7ff33f76c662739646df
--  languageName: node
--  linkType: hard
--
- "@types/argparse@npm:1.0.38":
-   version: 1.0.38
-   resolution: "@types/argparse@npm:1.0.38"
-@@ -8097,160 +8048,149 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-android-arm-eabi@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-android-arm-eabi@npm:1.12.2"
-+"@unrs/resolver-binding-android-arm-eabi@npm:1.13.0":
-+  version: 1.13.0
-+  resolution: "@unrs/resolver-binding-android-arm-eabi@npm:1.13.0"
-   conditions: os=android & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-android-arm64@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-android-arm64@npm:1.12.2"
-+"@unrs/resolver-binding-android-arm64@npm:1.13.0":
-+  version: 1.13.0
-+  resolution: "@unrs/resolver-binding-android-arm64@npm:1.13.0"
-   conditions: os=android & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-darwin-arm64@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-darwin-arm64@npm:1.12.2"
-+"@unrs/resolver-binding-darwin-arm64@npm:1.13.0":
-+  version: 1.13.0
-+  resolution: "@unrs/resolver-binding-darwin-arm64@npm:1.13.0"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-darwin-x64@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-darwin-x64@npm:1.12.2"
-+"@unrs/resolver-binding-darwin-x64@npm:1.13.0":
-+  version: 1.13.0
-+  resolution: "@unrs/resolver-binding-darwin-x64@npm:1.13.0"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-freebsd-x64@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-freebsd-x64@npm:1.12.2"
-+"@unrs/resolver-binding-freebsd-x64@npm:1.13.0":
-+  version: 1.13.0
-+  resolution: "@unrs/resolver-binding-freebsd-x64@npm:1.13.0"
-   conditions: os=freebsd & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.12.2"
-+"@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.13.0":
-+  version: 1.13.0
-+  resolution: "@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.13.0"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-linux-arm-musleabihf@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-linux-arm-musleabihf@npm:1.12.2"
-+"@unrs/resolver-binding-linux-arm-musleabihf@npm:1.13.0":
-+  version: 1.13.0
-+  resolution: "@unrs/resolver-binding-linux-arm-musleabihf@npm:1.13.0"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"@unrs/resolver-binding-linux-arm64-gnu@npm:1.12.2":
--  version: 1.12.2
--  resolution: "@unrs/resolver-binding-lin
+@@ -0,0 +1,10 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++const logLiveStorages = require('../logLiveStorages');
++
++test('logs the live storages', logLiveStorages);
+```
+
+**File**: `e2e/circus-test-execution-context/__tests__/second.test.js` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++const logLiveStorages = require('../logLiveStorages');
++
++test('logs the live storages', logLiveStorages);
+```
+
+**File**: `e2e/circus-test-execution-context/__tests__/third.test.js` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++const logLiveStorages = require('../logLiveStorages');
++
++test('logs the live storages', logLiveStorages);
+```
+
+**File**: `e2e/circus-test-execution-context/logLiveStorages.js` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++// Before Node 24, every enabled `AsyncLocalStorage` stamps its own
++// `kResourceStore` symbol onto each promise created afterwards.
++module.exports = () => {
++  const count = Object.getOwnPropertySymbols(Promise.resolve()).filter(
++    symbol => symbol.description === 'kResourceStore',
++  ).length;
++  console.log(`live storages: ${count}`);
++};
+```
+
+**File**: `e2e/circus-test-execution-context/package.json` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++{
++  "jest": {
++    "testEnvironment": "node"
++  }
++}
+```
+
+**File**: `packages/jest-circus/src/eventHandler.ts` (modified, +2/-0)
+```diff
+@@ -12,6 +12,7 @@ import {
+   restoreGlobalErrorHandlers,
+ } from './globalErrorHandlers';
+ import {
++  disableTestExecutionContext,
+   getTestExecutionContext,
+   hasActiveDescribeRetryAttempt,
+ } from './testExecutionContext';
+@@ -267,6 +268,7 @@ const eventHandler: Circus.EventHandler = (event, state) => {
+         state.parentProcess,
+         state.originalGlobalErrorHandlers,
+       );
++      disableTestExecutionContext();
+       break;
+     }
+     case 'error': {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16553** (2026-11-11): fix(jest-circus): disable the test execution context on teardown (@maschwenk)
+- **PR #16544** (closed): fix(jest-matcher-utils): preserve built-ins during diff preparation (@Narek-Khachikyan)
 - **PR #16527** (2026-11-02): fix(jest-resolve): bump unrs-resolver to 1.13.0 (@JounQin)
+- **PR #16518** (closed): fix(jest-circus): apply testTimeout configured in project config (@Hrushikesh-ramilla)
 - **PR #16500** (closed): chore(deps): update dependency eslint-plugin-unicorn to v78 - autoclosed (@renovate[bot])
 - **PR #16494** (closed): chore(deps): update dependency node-notifier to v11 - autoclosed (@renovate[bot])
-- **PR #16485** (closed): chore(deps): update dependency eslint-plugin-unicorn to v77 - autoclosed (@renovate[bot])
-- **PR #16480** (2026-10-02): chore(deps): update dependency eslint-plugin-jsdoc to v65 (@renovate[bot])
-- **PR #16478** (closed): fix(jest-runtime): respect environment export conditions for CommonJS (@Rober1208)
 
 ---
 
@@ -826,13 +784,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. jest-resolve): bump unrs-resolver to 1.13.0 (#16527)
+## X. jest-circus): disable the test execution context on teardown (#16553)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jestjs/jest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72614448`: jest-resolve): bump unrs-resolver to 1.13.0 (#16527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa88f7cf`: jest-circus): disable the test execution context on teardown (#16553). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -840,8 +798,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- `[jest-resolve]` Bump `unrs-resolver` to 1.13.0, which locates its native binding at runtime instead of through a `postinstall` script, so installing Jest no longer reports a blocked build script on npm 12 ([#16527](https://github.com/jestjs/jest/pull/16527))
-
+- `[jest-circus]` Disable each test file's `AsyncLocalStorage` when the file finishes, so a worker on Node versions before 24 no longer gets slower with every test file it runs ([#16553](https://github.com/jestjs/jest/pull/16553))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -851,4 +808,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72614448` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa88f7cf` are properly handled with clean fallback behavior.

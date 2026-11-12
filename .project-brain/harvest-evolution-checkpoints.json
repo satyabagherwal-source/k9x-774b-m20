@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:20:02.647Z",
+  "last_updated": "2026-11-12T21:31:23.146Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -103,7 +103,7 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-12T09:46:27.816Z",
+      "processed_at": "2026-11-12T21:31:23.023Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1236,9 +1236,19 @@
       "processed_at": "2026-11-12T21:20:02.582Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "domcyrus-rustnet-learnings.md": {
+      "processed_at": "2026-11-12T21:31:22.811Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "jestjs-jest-learnings.md": {
+      "processed_at": "2026-11-12T21:31:22.990Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 345,
+  "total_dossiers_evaluated": 348,
   "total_canonical_promoted": 44,
-  "total_staged_for_review": 300
+  "total_staged_for_review": 303
 }

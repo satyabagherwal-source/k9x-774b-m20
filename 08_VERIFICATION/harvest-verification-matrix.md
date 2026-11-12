@@ -9210,3 +9210,8 @@
 | `CYCLE-20261112-WSWM` | `2026-11-12T21:19:41.398Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a7293b29...`) |
 | `CYCLE-20261112-WWW2` | `2026-11-12T21:19:46.562Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`17e1b96c...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T21:20:02.566Z` | `hf-qwen-qwen3-embedding-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B36C340C` [Domain D] | Yes (`055b4d48...`) |
+| `CYCLE-20261112-B64L` | `2026-11-12T21:30:51.717Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a6ebf9a2...`) |
+| `CYCLE-20261112-BAB1` | `2026-11-12T21:30:57.133Z` | `jestjs/jest` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1271782d...`) |
+| `CYCLE-20261112-BL2P` | `2026-11-12T21:31:11.089Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9c7d56d1...`) |
+| `CYCLE-20261112-BNQB` | `2026-11-12T21:31:14.531Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`03ba8688...`) |
+| `CYCLE-20261112-BNZ3` | `2026-11-12T21:31:14.847Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3e8b982f...`) |

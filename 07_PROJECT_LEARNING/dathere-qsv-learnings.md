@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `a90bee6a`  
+> **Source Version**: `b20fce7c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:33:54.597Z  
+> **Timestamp**: 2026-11-12T21:30:50.865Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:33:54.583Z  
+> **Harvest Timestamp**: 2026-11-12T21:30:50.847Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3838 stars
+- **Stars / Engagement**: 3842 stars
 
 ---
 
@@ -2201,327 +2201,261 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a90bee6a` (2026-11-12)
-**Commit Message**: deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038)
+### Incident Patch 1: `07f21b3b` (2026-11-12)
+**Commit Message**: build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (#5039)
 
-* deps(viz): driver.js 1.12.1 for the Data Schematic Tour; Enter advances from step 1
+* build: make 8 deps optional so qsvlite/qsvdp skip crates they don't use
 
-Bump the vendored driver.js tour engine and hints widget from 1.10.2 to
-1.12.1: the four bundles in src/cmd/assets, DRIVERJS_CDN_VERSION and the
-four SRI digests. hints.css now carries a subset of driver.css's popover
-rules (it lacks the tour-only action-step/nudge/waiting rules), so the
-comment claiming a byte-identical duplicate is reworded; loading both is
-still order-independent.
+Rust 1.100's cargo unused_dependencies lint (silent under `--bin`, so it
+never shows in our builds) flagged these for the lite/dp binaries:
+- const_format, minijinja-contrib: only the full qsv/qsvmcp code uses them
+  (minijinja-contrib also by `profile`, which qsvdp has)
+- semver: only the #[cfg(feature = "self_update")] code in util/update.rs
+- dunce, ext-sort, grex, hostname-validator, jaq-json: commands qsvlite
+  shares with qsv, absent from qsvdp
 
-What the Tour gets from the bump, checked against 1.10.2 in Chrome:
-- popovers focus Next instead of the close button, so Enter advances
-  instead of ending the tour;
-- Escape in a text field inside the spotlight (the data viewer's search
-  box) goes to the field instead of ending the tour.
+Each is now optional and enabled by feature_capable / lite / profile /
+self_update. Cargo.lock is unchanged; all four flavors check clean with no
+unused-dependency warnings.
 
-The Tour's first-popover hook no longer moves focus off Next onto the
-popover wrapper; it only focuses the wrapper when focus didn't land in
-the popover. Enter now advances on step 1 too (it did nothing before).
-The gallery-iframe reveal is unchanged.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Each Tour page embeds ~10.6 KB more (gzip+base64). All gallery Data
-Schematics are regenerated (gen_gallery.py + r
+* build: raise MSRV to Rust 1.100
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+Bumps rust-version and the README badge. CI's stable jobs get 1.100 (released
+today) and the pinned nightly-2026-09-01 is 1.100.0-nightly, which cargo
+accepts. Homebrew still ships 1.99.1, so per the README's MSRV policy the next
+qsv release waits until Homebrew has 1.100.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTE
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **docs: the `profile --locate census` USAGE gives the state-column threshold** ([#5025](https://github.com/dathere/qsv/pull/5025)): a state column lists states only when at least 90% of its values are US states.
  
  ### Changed
-+- **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now [1.12.1](https://github.com/nilbuild/driver.js/releases/tag/1.12.1)** (was 1.10.2; [#5038](https://github.com/dathere/qsv/pull/5038)):
-+  - **Enter moves to the next step on every step.** Each popover focuses Next instead of the close button, and the Tour no longer moves focus off Next on the first step. Before, Enter did nothing on the first step and ended the tour on every later one.
-+  - Escape pressed in a text field inside the spotlighted element, such as the data viewer's search box, goes to that field, and the drawer stays open. Before, it ended the tour. While a tour runs, the dictionary and data drawers leave Escape to the tour, so Escape anywhere else ends the tour and closes the open drawer, as before.
-+  - Elements inside the spotlighted area keep their own `pointer-events: none`; before, driver.js forced every one of them to `auto`.
-+  - The bundle is larger: each Tour page embeds about 11 KB more (gzip + base64). The embedded payloads, the `QSV_VIZ_CDN` jsDelivr URLs and their SRI digests are updated together, and every gallery Data Schematic is regenerated with them.
- - **deps: the `webdriver-downloader` fork patch is gone** ([#5027](https://github.com/dathere/qsv/pull/5027)). [ik1ne/webdriver-downloader#67](https://github.com/ik1ne/webdriver-downloader/pull/67) (zip 9) was merged and released as 0.18.0. qsv's `plotly` pin moves to `dathere/plotly` rev [`d43be37`](https://github.com/dathere/plotly/commit/d43be3786c32ab2790a6c0e927ee39d2bb99704c), whose `plotly_static` build dependency requires 0.18, so `webdriver-downloader` now comes from crates.io. The fork was added in [#4828](https://github.com/dathere/qsv/pull/4828) because every zip 8.x was yanked.
- - **`luau`: Luau bumped to [0.745](https://github.com/luau-lang/luau/releases/tag/0.745)** (from 0.740, [#5026](https://github.com/dathere/qsv/pull/5026)). `luau0-src` 0.23.0+luau745 needs an unreleased mlua-sys, so `mlua` is patched to upstream rev [`a0ad453`](https://github.com/mlua-rs/mlua/commit/a0ad4535fc72ba89967a931c5be57b162b5f0f3f) until an mlua release includes it. The crate versions are unchanged (mlua 0.12.2, mlua-sys 0.13.0). The yank that reverted the 0.744 bump (#4923) is resolved: 0.23.0 replaces the yanked 0.22.1+luau744.
-   - **Native code (`luau-jit`) fixes** ([0.744](https://github.com/luau-lang/luau/releases/tag/0.744)): an Arm64 crash in functions with more than 256 constants, a dead-store-elimination bug, a `FORGLOOP` register reservation bug, and `bit32`/integer correctness fixes (`lrotate`, `extract`, `replace`).
++- **MSRV is now Rust 1.100** (was 1.99; [#5039](https://github.com/dathere/qsv/pull/5039)).
++- **build: qsvlite and qsvdp no longer compile crates they don't use.** Rust 1.100's new `unused_dependencies` Cargo lint found eight dependencies that only the full `qsv` binary needs. They are now optional and turned on by the features that use them: `const_format` and `minijinja-contrib` (`feature_capable`, and `profile` for `minijinja-contrib`), `semver` (`self_update`), and `dunce`, `ext-sort`, `grex`, `hostname-validator` and `jaq-json` (`feature_capable` and `lite`). Every binary is built from the same code as before, so the lite and dp builds just compile a little faster ([#5039](https://github.com/dathere/qsv/pull/5039)).
+ - **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now [1.12.1](https://github.com/nilbuild/driver.js/releases/tag/1.12.1)** (was 1.10.2; [#5038](https://github.com/dathere/qsv/pull/5038)):
+   - **Enter moves to the next step on every step.** Each popover focuses Next instead of the close button, and the Tour no longer moves focus off Next on the first step. Before, Enter did nothing on the first step and ended the tour on every later one.
+   - Escape pressed in a text field inside the spotlighted element, such as the data viewer's search box, goes to that field, and the drawer stays open. Before, it ended the tour. While a tour runs, the dictionary and data drawers leave Escape to the tour, so Escape anywhere else ends the tour and closes the open drawer, as before.
 ```
 
-**File**: `THIRD_PARTY_NOTICES.md` (modified, +2/-2)
+**File**: `Cargo.toml` (modified, +27/-12)
 ```diff
-@@ -22,7 +22,7 @@ run `cargo tree` or a tool such as `cargo-about` for that inventory.
- | [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) | as bundled in plotly.js 3.7.0 | BSD-3-Clause | bundled *inside* plotly.js; ships wherever plotly.js does |
- | [plotly.rs](https://github.com/plotly/plotly.rs) | git rev `00fe051` | MIT | Cargo dependency, compiled into the `qsv` binary |
- | [DataTables](https://datatables.net/) + Buttons, ColumnControl, DateTime, SearchBuilder | `dt-3.1.5/b-4.1.3/cc-2.1.3/date-2.1.3/sb-2.1.1` | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML |
--| [driver.js](https://driverjs.com/) | 1.10.2 | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML (the guided tour) |
-+| [driver.js](https://driverjs.com/) | 1.12.1 | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML (the guided tour) |
- | [LuaDate](https://github.com/Tieske/date) | 2.2.1 | MIT | vendored in `resources/luau/vendor/luadate/`, compiled into the binary |
- | [DCAT-US v3 schemas](https://github.com/GSA/dcat-us) | commit `1ca074b` | CC0-1.0 | vendored in `resources/dcat-us-v3/`, compiled into the binary |
- | [DCAT-AP v3 SHACL](https://github.com/SEMICeu/DCAT-AP) | release 3.0.0 | CC-BY-4.0 | vendored in `resources/dcat-ap-v3/`, compiled into the binary |
-@@ -350,7 +350,7 @@ SOFTWARE.
- ## driver.js
+@@ -11,7 +11,7 @@ categories    = ["command-line-utilities", "parser-implementations"]
+ license       = "MIT"
+ autotests     = false
+ edition       = "2024"
+-rust-version  = "1.99"
++rust-version  = "1.100"
+ resolver      = "3"
+ autobins      = false
  
- Upstream: <https://github.com/nilbuild/driver.js> (formerly `kamranahmedse/driver.js`,
--which now redirects there) — version **1.10.2**.
-+which now redirects there) — version **1.12.1**.
- 
- Vendored unmodified at [`src/cmd/assets/driverjs.min.js`](src/cmd/assets/driverjs.min.js)
- (the `dist/driver.js.iife.js` build) and
+@@ -185,7 +185,7 @@ censor = { version = "0.3", optional = true }
+ chrono = { version = "0.4", default-features = false }
+ chrono-tz = "0.10"
+ console = { version = "0.16", optional = true }
+-const_format = "0.2"
++const_format = { version = "0.2", optional = true }
+ cpc = { version = "5", optional = true }
+ crc32fast = { version = "1.4", optional = true }
+ crossbeam-channel = "0.5"
+@@ -205,7 +205,7 @@ csvs_convert = { version = "0.13", default-features = false, features = [
+ dns-lookup = { version = "4", optional = true }
+ directories = "6.0"
+ dotenvy = "0.15"
+-dunce = "1"
++dunce = { version = "1", optional = true }
+ dynfmt2 = { version = "0.4", default-features = false, features = ["curly"] }
+ # only used to validate --default-encoding labels up front (fetch/fetchpost).
+ # reqwest's charset feature does the actual decoding, but Encoding::for_label()
+@@ -215,7 +215,7 @@ dynfmt2 = { version = "0.4", default-features = false, features = ["curly"] }
+ # simd-accel (+ std, which multiversions more x86 code paths) for the whole dep tree.
+ encoding_rs = "0.8"
+ eudex = { version = "0.1", optional = true }
+-ext-sort = { version = "0.1", default-features = false, features = ["memory-limit"] }
++ext-sort = { version = "0.1", default-features = false, features = ["memory-limit"], optional = true }
+ fake = { version = "5", features = [
+     "derive",
+     "chrono",
+@@ -250,9 +250,9 @@ geozero = { version = "0.15", features = [
+     "with-shp",
+ ], optional = true }
+ governor = { version = "0.10", optional = true }
+-grex = { version = "1.4", default-features = false }
++grex = { version = "1.4", default-features = false, optional = true }
+ gzp = { version = "2", default-features = false, features = ["snappy_default"] }
+-hostname-validator = "1.1"
++hostname-validator = { version = "1.1", optional = true }
+ human-panic = "2"
+ iana-time-zone = "0.1"
+ indexmap = { version = "2.14", features = ["serde"] }
+@@ -263,7 +263,7 @@ iso_currency = "0.7"
+ itertools = "0.15"
+ itoa = "1"
+ jaq-core = "3"
+-jaq-json = { version = "2", features = ["serde"] }
++jaq-json = { version = "2", features = ["serde"], optional = true }
+ jaq-std = "3"
+ # not used directly: compiles in jiff's bundled tzdb so minijinja-contrib's datetime filters
+ # can fall back to it for zone names missing from the OS database (minijinja#1008)
+@@ -298,7 +298,7 @@ minijinja-contrib = { version = "3.0", features = [
+     "unicode_wordwrap",
+     "wordcount",
+     "wordwrap",
+-] }
++], optional = true }
+ mlua = { version = "0.12", features = [
+     "luau",
+     "luau-jit",
+@@ -476,7 +476,7 @@ self_update = { version = "1.2", features = [
+     "rustls",
+     "signatures",
+ ], default-features = false, optional = true }
+-semver = "1"
++semver = { version = "1", optional = true }
+ serde = { version = "1", features = ["derive"] }
+ serde_json = { version = "1", features = ["preserve_order"] }
+ serde_urlencoded = { version = "0.7", optional = true }
+@@ -761,7 +761,7 @@ python = ["pyo3"]
+ # evaluation; polars (SQL context) backs the SQL-requiring helpers
+ # (temporal_resolution, guess_accrual_periodicity). yaml_serde parses the
+ # scheming spec YAML. See `qsv profile --help`.
+-profile = ["dep:sha2", "polars", "yaml_serde"]
++profile = ["dep:sha2", "minijinja-contrib", "polars", "yaml_serde"]
+ # geoconnex: bundled SHACL-validated linked-data profile for hydrologic
+ # features (https://docs.geoconnex.us/). Embeds the Geoconnex SHACL
+ # shapes (~10KB Turtle bundle) so `qsv profile --profile geoconnex
+@@ -807,7 +807,8 @@ viz = [
+ # `qsvmcp` uses plain `viz`: publish.yml builds qsvmcp on Windows with --features=qsvmcp.
+ viz_static = ["viz", "plotly/static_export_default"]
+ lens = ["csvlens"]
+-lite = []
++# deps used by commands that qsvlite shares with qsv (extsort/json/schema/split) but qsvdp lacks
++lite = ["dunce", "ext-sort", "grex", "hostname-validator", "jaq-json"]
+ datapusher_plus = [
+     "base64-simd",
+     "geocode",
+@@ -819,12 +820,26 @@ datapusher_plus = [
+ ]
+ ui = ["clipboard", "color", "prompt", "lens"]
+ jemallocator = ["tikv-jemallocator", "tikv-jemalloc-ctl"]
++self_update = ["dep:self_update", "semver"]
+ # feature_capable backs the always-compiled commands that consume lookup tables
+ # (validate/template/describegpt). Pull flate2 + zstd so their remote lookups
+ # auto-decompress .gz/.zlib/.zst (alongside the always-available .zip/.sz). #1417.
+ # base64-simd backs describegpt's multimodal --context-file (base64-encoding image/PDF
+ # attachments for the LLM); it's always available wherever describegpt is (non-lite).
+-feature_capable = ["base64-simd", "flate2", "zstd"]
++# The remaining deps back code only the full `qsv`/qsvmcp binaries compile; the lite/dp
++# binaries gate them via `lite`/`profile`/`self_update` (cargo's unused_de
 ```
 
-**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +37/-17)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Basemap tiles (c) OpenStreetMap contributors (ODbL 1.0), (c) CARTO
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
-@@ -77,7 +77,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -942,7 +942,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
- <div class="qsv-dict-downloads">
- <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcGFydGljdWxhcmx5IGZvciBzcGF5ZWQgZmVtYWxlcyBhbmQgbmV1dGVyZWQgbWFsZXMuXG4qICoqRGF0YSBRdWFsaXR5OioqIFRoZSBkYXRhc2V0IGlzIGhpZ2hseSBjb21wbGV0ZSB3aXRoIHZlcnkgbG93IG51bGwgY291bnRzIGFjcm9zcyBhbGwgZmllbGRzOyBob3dldmVyLCB0aGUgYEJyZWVkYCBhbmQgYENvbG9yYCBmaWVsZHMgY29udGFpbiBtaW5vciBzcGFyc2l0eS5cbiogKipUZW1wb3JhbCBSYW5nZToqKiBUaGUgYFZhbGlkRGF0ZWAgZmllbGQgc2hvd3MgYSB0ZW1wb3JhbCBzcGFuIG9mIGFwcHJveGltYXRlbHkgMjMgeWVhcnMsIGZyb20gMjAwMyB0byAyMDI2LlxuXG5HZW5lcmF0ZWQgYnkgcXN2IHYyMS4xLjAgZGVzY3JpYmVncHRcbkNvbW1hbmQgbGluZTogdGFyZ2V0L2RlYnVnL3FzdiBkZXNjcmliZWdwdCAtLWRpY3Rpb25hcnkgLS1kZXNjcmlwdGlvbiBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ19saWNlbnNlcy5jc3YgLS1mb3JtYXQganNvbnNjaGVtYSAtbyBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ3NfZGljdC5zY2hlbWEuanNvbiAtLWZyZXNoIC0tdHdvLXBhc3MgLS1pbmZlci1jb250ZW50LXR5cGUgLS1pbmZlci1udWxsLXZhbHVlc1xuUHJvbXB0IGZpbGU6IERlZmF1bHQgdjcuMi4wXG5Nb2RlbDogZ29vZ2xlL2dlbW1hLTQtMjZiLWE0YlxuTExNIEFQSSBVUkw6IGh0dHA6Ly9sb2NhbGhvc3Q6MTIzNC92MVxuTGFuZ3VhZ2U6IFxuVGltZXN0YW1wOiAyMDI2LTA3LTE3VDEzOjQyOjE0LjE2ODUyNSswMDowMFxuXG5XQVJOSU5HOiBEZXNjcmlwdGlvbiBnZW5lcmF0ZWQgYnkgYW4gTExNIGFuZCBtYXkgY29udGFpbiBpbmFjY3VyYWNpZXMuIFZlcmlmeSBiZWZvcmUgdXNpbmchXG4iLAogICJ0eXBlIjogIm9iamVjdCIsCiAgInByb3BlcnRpZXMiOiB7CiAgICAiX2lkIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAiaW50ZWdlciIKICAgICAgXSwKICAgICAgInRpdGxlIjogIlJlY29yZCBJRCIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJBIHVuaXF1ZSBpbnRlZ2VyIGlkZW50aWZpZXIgZm9yIGVhY2ggcmVjb3JkIGluIHRoZSBkYXRhc2V0LiIsCiAgICAgICJtaW5pbXVtIjogMjk1ODUyMjcsCiAgICAgICJtYXhpbXVtIjogMjk2MzUyMzksCiAgICAgICJ4LXFzdiI6IHsKICAgICAgICAicXN2X3R5cGUiOiAiSW50ZWdlciIsCiAgICAgICAgImNhcmRpbmFsaXR5IjogNTAwMTMsCiAgICAgICAgIm51bGxfY291bnQiOiAwLAogICAgICAgICJjb250ZW50X3R5cGUiOiAidW5pcXVlX2lkIiwKICAgICAgICAicm9sZSI6ICJpZGVudGlmaWVyIiwKICAgICAgICAiY29uY2VwdCI6ICJpZC5zdXJyb2dhdGVfa2V5IiwKICAgICAgICAiZXhhbXBsZV9jb3VudHMiOiAiPEFMTF9VTklRVUU+IgogICAgICB9CiAgICB9LAogICAgIkxpY2Vuc2VUeXBlIjogewogICAgICAidHlwZSI6IFs
+@@ -6,7 +6,7 @@
+ [![Security audit](https://github.com/dathere/qsv/actions/workflows/security-audit.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/security-audit.yml)
+ [![Codacy Badge](https://app.codacy.com/project/badge/Grade/29e587760af64abcb115ba23efe1b365)](https://app.codacy.com/gh/dathere/qsv/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+ [![Discussions](https://img.shields.io/github/discussions/dathere/qsv)](https://github.com/dathere/qsv/discussions)
+-[![Minimum supported Rust version](https://img.shields.io/badge/Rust-1.99-red?logo=rust)](#minimum-supported-rust-version)
++[![Minimum supported Rust version](https://img.shields.io/badge/Rust-1.100-red?logo=rust)](#minimum-supported-rust-version)
+ [![Crates.io](https://img.shields.io/badge/Rust-crates.io-yellow?logo=rust)](https://crates.io/crates/qsv)
+ [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjqnatividad%2Fqsv.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjqnatividad%2Fqsv?ref=badge_shield) [![DOI](https://zenodo.org/badge/320463703.svg)](https://doi.org/10.5281/zenodo.17851335)
+ [![Wiki](https://img.shields.io/badge/Wiki-Available-blue)](https://github.com/dathere/qsv/wiki)
 ```
 
-**File**: `examples/viz/smart_cms_medicare.html` (modified, +32/-14)
+**File**: `src/cmd/denull.rs` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1854,6 +1854,9 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1863,10 +1866,10 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+@@ -371,7 +371,7 @@ fn trim_ascii(cell: &[u8]) -> &[u8] {
+ /// A leading `0` followed by another digit marks a padded code (`007`, `05.10`).
+ /// A bare `0`, or `0.5`, is a real number.
+ fn is_zero_padded(sample: &[u8]) -> bool {
+-    let body = sample.strip_prefix(b"-").unwrap_or(sample);
++    let body = sample.trim_prefix(b"-");
+     matches!(body, [b'0', second, ..] if second.is_ascii_digit())
+ }
  
- 
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"a2a26f17","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This short tour walks through cms_medicare_providers.csv — Data Schematic: what each part does, and why each chart was chosen for this data. Use the arrow keys or the buttons below; Esc leaves the tour at any time."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenDat
 ```
 
-**File**: `examples/viz/smart_cpdb.html` (modified, +32/-14)
+**File**: `src/cmd/describegpt/session.rs` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1894,6 +1894,9 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1903,10 +1906,10 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
- 
- 
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"6c154079","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This short tour walks through nyc_capital_projects.csv — Data Schematic: what each part does, and why each chart was chosen for this data. Use the arrow keys or the buttons below; Esc leaves the tour at any time."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenData","clos
+@@ -184,7 +184,7 @@ pub(super) fn load_session(session_path: &Path) -> CliResult<SessionState> {
+             while i < lines.len() && !lines[i].trim().starts_with("##") {
+                 let line = lines[i].trim();
+                 if line.starts_with("- ") {
+-                    let error = line.strip_prefix("- ").unwrap_or(line).to_string();
++                    let error = line.trim_prefix("- ").to_string();
+                     state.sql_errors.push(error);
+                 }
+                 i += 1;
 ```
 
-**File**: `examples/viz/smart_dict_sunburst.html` (modified, +32/-14)
+**File**: `src/cmd/get.rs` (modified, +3/-3)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1902,6 +1902,9 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1911,10 +1914,10 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- 
- 
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"b84fe6ef","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This dataset contains sales information for various products across different regions, including pricing and customer satisfaction levels."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer thead tr:nt
+@@ -213,7 +213,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     if args.cmd_cache_fetch {
+         let name = args.arg_name.as_deref().unwrap_or_default();
+         // convenience: accept (and ignore) a leading `dc:` prefix
+-        let name = name.strip_prefix("dc:").unwrap_or(name);
++        let name = name.trim_prefix("dc:");
+         diskcache::write_output(&cache_dir, name, args.flag_output.as_deref())?;
+         // stderr confirmation only when writing to a real file (never pollute stdout data)
+         if !args.flag_quiet
+@@ -242,7 +242,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     if args.cmd_cache_set_ttl {
+         let name = args.arg_name.as_deref().unwrap_or_default();
+         // convenience: accept (and ignore) a leading `dc:` prefix, like cache-fetch
+-        let name = name.strip_prefix("dc:").unwrap_or(name);
++        let name = name.trim_prefix("dc:");
+         diskcache::set_ttl(&cache_dir, name, args.flag_ttl)?;
+         if !args.flag_quiet {
+             eprintln!("Set TTL of '{name}' to {} seconds.", args.flag_ttl);
+@@ -253,7 +253,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         let policy = diskcache::RefreshPolicy::parse(&args.flag_refresh)?;
+         let name = args.arg_name.as_deref().unwrap_or_default();
+         // convenience: accept (and ignore) a leading `dc:` prefix, like cache-fetch
+-        let name = name.strip_prefix("dc:").unwrap_or(name);
++        let name = name.trim_prefix("dc:");
+         diskcache::set_policy(&cache_dir, name, policy)?;
+         if !args.flag_quiet {
+             eprintln!("Set refresh policy of '{name}' to {}.", args.flag_refresh);
 ```
 
-**File**: `examples/viz/smart_dict_treemap.html` (modified, +32/-14)
+**File**: `src/cmd/validate.rs` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1838,6 +1838,9 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1847,10 +1850,10 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- 
- 
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"c870e5cd","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This dataset shows information about customers, including their subscription plans, regions, monthly spending, and how long they have been members. It is great for seeing how different groups of people spend money."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenData","close":"qsvCloseData",
+@@ -2539,7 +2539,7 @@ Try running `qsv validate schema {}` to check the JSON Schema file.", json_schem
+ /// `~1` must be decoded before `~0`, or a literal `~1` in a name (escaped `~01`) becomes `/`.
+ fn instance_field(location: &Location) -> String {
+     let pointer = location.as_str();
+-    let field = pointer.strip_prefix('/').unwrap_or(pointer);
++    let field = pointer.trim_prefix('/');
+     if field.contains('~') {
+         field.replace("~1", "/").replace("~0", "~")
+     } else {
 ```
 
-**File**: `examples/viz/smart_geo_outliers.html` (modified, +32/-14)
+**File**: `src/cmd/viz.rs` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Basemap tiles (c) OpenStreetMap contributors (ODbL 1.0), (c) CARTO
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
-@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1791,6 +1791,9 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -2290,10 +2293,10 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
- </script>
- 
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"98598047","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This short tour walks through delivery_stops.csv — Data Schematic: what each part does, and why each chart was chosen for this data. Use the arrow keys or the buttons below; Esc leaves the tour at any time."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},
+@@ -44432,7 +44432,7 @@ fn smart_grid_top(row_units: f64, has_subtitles: bool) -> f64 {
+ /// `dc:` prefix of a `qsv get` disk-cache handle, which means nothing to a reader of the page.
+ fn dataset_display_name(input: Option<&str>) -> &str {
+     let input = input.unwrap_or("data");
+-    let input = input.strip_prefix("dc:").unwrap_or(input);
++    let input = input.trim_prefix("dc:");
+     std::path::Path::new(input)
+         .file_name()
+         .and_then(|s| s.to_str())
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5040** (2026-11-12): chore: clear qsvlite/qsvdp dead-code warnings (@jqnatividad)
+- **PR #5039** (2026-11-12): build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (@jqnatividad)
 - **PR #5038** (2026-11-12): deps(viz): driver.js 1.12.1 for the Data Schematic Tour (@jqnatividad)
 - **PR #5037** (2026-11-12): build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (@dependabot[bot])
 - **PR #5036** (2026-11-12): fix(luau): date.lua clobbering, filter-after-error, insertrecord width & more (@jqnatividad)
 - **PR #5035** (2026-11-11): docs(viz): warn that plotly.js 4.x re-blanks sandboxed maps (@jqnatividad)
-- **PR #5034** (2026-11-10): deps: bump Polars to upstream main ff1b37d (@jqnatividad)
-- **PR #5033** (2026-11-10): fix(viz): load map panels in sandboxed frames without allow-same-origin (@jqnatividad)
 
 ---
 
@@ -2541,13 +2475,13 @@ Schematics are regenerated (gen_gallery.py + r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038)
+## X. build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvd
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a90bee6a`: deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07f21b3b`: build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (#5039). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2555,11 +2489,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now [1.12.1](https://github.com/nilbuild/driver.js/releases/tag/1.12.1)** (was 1.10.2; [#5038](https://github.com/dathere/qsv/pull/5038)):
-  - **Enter moves to the next step on every step.** Each popover focuses Next instead of the close button, and the Tour no longer moves focus off Next on the first step. Before, Enter did nothing on the first step and ended the tour on every later one.
-  - Escape pressed in a text field inside the spotlighted element, such as the data viewer's search box, goes to that field, and the drawer stays open. Before, it ended the tour. While a tour runs, the dictionary and data drawers leave Escape to the tour, so Escape anywhere else ends the tour and closes the open drawer, as before.
-  - Elements inside the spotlighted area keep their own `pointer-events: none`; before, driver.js forced every one of them to `auto`.
-  - The bundle is larger: each Tour page embeds about 11 KB more (gzip + base64). The embedded payloads, the `QSV_VIZ_CDN` jsDelivr URLs and their SRI digests are updated together, and every gallery Data Schematic is regenerated with them.
+- **MSRV is now Rust 1.100** (was 1.99; [#5039](https://github.com/dathere/qsv/pull/5039)).
+- **build: qsvlite and qsvdp no longer compile crates they don't use.** Rust 1.100's new `unused_dependencies` Cargo lint found eight dependencies that only the full `qsv` binary needs. They are now optional and turned on by the features that use them: `const_format` and `minijinja-contrib` (`feature_capable`, and `profile` for `minijinja-contrib`), `semver` (`self_update`), and `dunce`, `ext-sort`, `grex`, `hostname-validator` and `jaq-json` (`feature_capable` and `lite`). Every binary is built from the same code as before, so the lite and dp builds just compile a little faster ([#5039](https://github.com/dathere/qsv/pull/5039)).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2569,4 +2500,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a90bee6a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07f21b3b` are properly handled with clean fallback behavior.

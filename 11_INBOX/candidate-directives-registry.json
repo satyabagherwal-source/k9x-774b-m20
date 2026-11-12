@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:20:02.613Z",
+  "last_updated": "2026-11-12T21:31:23.022Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7229,6 +7229,33 @@
       "source_repo": "rook-rook",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EA66FB-merge-pull-request-18780-from-sarankumar.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F1086E",
+      "directive_title": "docs: document verified Resolute amd64v3 PPA publication (#728)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "domcyrus-rustnet",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F1086E-docs-document-verified-resolute-amd64v3-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-07EA23",
+      "directive_title": "jest-circus): disable the test execution context on teardown (#16553)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jestjs-jest",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-07EA23-jest-circus-disable-the-test-execution-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-17AA1F",
+      "directive_title": "GitHub GraphQL comment scan retries and paging (#5548)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trufflesecurity-trufflehog",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-17AA1F-github-graphql-comment-scan-retries-and-.md",
       "staged_date": "2026-11-12"
     }
   ]

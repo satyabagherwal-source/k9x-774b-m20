@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T21:19:46.585Z",
+  "last_updated": "2026-11-12T21:31:14.886Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "8875915d9dc62963da9990b2e926047b7cea90ba32fa0e732a7e8a87fb89d8af",
-      "verified_at": "2026-11-12T15:34:12.049Z",
+      "content_hash": "3e8b982f011d5e5c04908daa9862539f628938603069f901c3b3ac793f59417d",
+      "verified_at": "2026-11-12T21:31:14.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T15:34:12.049Z"
+      "last_updated": "2026-11-12T21:31:14.884Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "05b7cec8c60762388b494b56a431f3f0f9256ad534b9711b13b08a1aa87205a3",
-      "verified_at": "2026-11-12T09:46:18.478Z",
+      "content_hash": "9c7d56d15cd9264fcdf63ed47a10ef0c70a473db35792cbeacbd9f675db83777",
+      "verified_at": "2026-11-12T21:31:11.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T09:46:18.478Z"
+      "last_updated": "2026-11-12T21:31:11.106Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "0739449e85ad2fe5e8ca7bcf9381ab66eeaff603928fde1d57fcfe638da5a7b8",
-      "verified_at": "2026-11-10T00:44:55.262Z",
+      "content_hash": "a6ebf9a28d4663240a1b5c671c4c590d974b9cbc5dc2d6a91cacb2b127dfd90b",
+      "verified_at": "2026-11-12T21:30:51.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T00:44:55.262Z"
+      "last_updated": "2026-11-12T21:30:51.801Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
-      "verified_at": "2026-11-11T09:15:56.841Z",
+      "content_hash": "03ba868832fef014f146c8fa140d6b5753cc1a1cb76fdcb4a52aafbbf227321b",
+      "verified_at": "2026-11-12T21:31:14.552Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:15:56.841Z"
+      "last_updated": "2026-11-12T21:31:14.552Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -15351,14 +15351,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jestjs-jest",
-      "content_hash": "466b6ac349128a0cbb92fd063eb55e2a184bbc5c4936222370cbd9a29c77482b",
-      "verified_at": "2026-11-04T07:25:52.873Z",
+      "content_hash": "1271782d4bacf61b24edaf0a4142517378fa3ace1c5941642619fccec8e3ee5f",
+      "verified_at": "2026-11-12T21:30:57.155Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:25:52.873Z"
+      "last_updated": "2026-11-12T21:30:57.155Z"
     },
     "avajs/ava": {
       "repository": "avajs/ava",

@@ -9219,3 +9219,8 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `719f345e` | Multi-dimensional audit evidence | 2026-11-12T21:19:41.401Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0e83a2b1` | Multi-dimensional audit evidence | 2026-11-12T21:19:46.565Z |
 | `learn-dom-d-b36c340c` | `project://hf-qwen-qwen3-embedding-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | 2026-11-12T21:20:02.566Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `5d3227f0` | Multi-dimensional audit evidence | 2026-11-12T21:30:51.729Z |
+| `learn-github-jestjs-jest` | `https://github.com/jestjs/jest` | `aa88f7cf` | Multi-dimensional audit evidence | 2026-11-12T21:30:57.139Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `3bd2b588` | Multi-dimensional audit evidence | 2026-11-12T21:31:11.094Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `db4dee82` | Multi-dimensional audit evidence | 2026-11-12T21:31:14.537Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b20fce7c` | Multi-dimensional audit evidence | 2026-11-12T21:31:14.853Z |

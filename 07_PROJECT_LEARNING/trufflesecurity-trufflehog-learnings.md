@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `03441954`  
+> **Source Version**: `3bd2b588`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:46:07.087Z  
+> **Timestamp**: 2026-11-12T21:30:47.013Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:45:53.679Z  
+> **Harvest Timestamp**: 2026-11-12T21:30:47.001Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29235 stars
+- **Stars / Engagement**: 29255 stars
 
 ---
 
@@ -1140,103 +1140,800 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03441954` (2026-11-12)
-**Commit Message**: Update module pault.ag/go/debian to v0.21.3 (#5546)
+### Incident Patch 1: `ef3c2c5f` (2026-11-12)
+**Commit Message**: Fix GitHub GraphQL comment scan retries and paging (#5548)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+* Fix GitHub GraphQL comment scan retries and paging
 
-**File**: `go.mod` (modified, +3/-4)
+Only rate limit errors are retried now, other errors fail right away.
+Fix paging for big threads, busy PRs and PRs with over 100 review
+threads. Add doc comments and tests.
+
+* Fix lint and add --use-graphql flag
+
+* Document --use-graphql in GitHub source README
+
+**File**: `docs/man/trufflehog.1` (modified, +3/-0)
 ```diff
-@@ -118,7 +118,7 @@ require (
- 	gopkg.in/h2non/gock.v1 v1.1.2
- 	gopkg.in/yaml.v2 v2.4.0
- 	gopkg.in/yaml.v3 v3.0.1
--	pault.ag/go/debian v0.18.0
-+	pault.ag/go/debian v0.21.3
- 	pgregory.net/rapid v1.2.0
- 	sigs.k8s.io/yaml v1.4.0
- )
-@@ -141,7 +141,7 @@ require (
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.53.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
--	github.com/ProtonMail/go-crypto v1.1.6 // indirect
-+	github.com/ProtonMail/go-crypto v1.5.2 // indirect
- 	github.com/STARRY-S/zip v0.2.1 // indirect
- 	github.com/alecthomas/chroma/v2 v2.14.0 // indirect
- 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
-@@ -171,7 +171,7 @@ require (
- 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
- 	github.com/charmbracelet/x/exp/slice v0.0.0-20250327172914-2fdc97757edf // indirect
- 	github.com/charmbracelet/x/term v0.2.1 // indirect
--	github.com/cloudflare/circl v1.6.3 // indirect
-+	github.com/cloudflare/circl v1.6.5 // indirect
- 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
- 	github.com/containerd/errdefs v1.0.0 // indirect
- 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
-@@ -312,7 +312,6 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
--	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
- 	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/sys v0.50.0 // indirect
- 	golang.org/x/term v0.48.0 // indirect
+@@ -225,6 +225,9 @@ Include gist comments in scan.
+ \fB--comments-timeframe=COMMENTS-TIMEFRAME\fR
+ Number of days in the past to review when scanning issue, PR, and gist comments.
+ .TP
++\fB--use-graphql\fR
++Use the GitHub GraphQL API to scan issue and PR comments. Faster on large repositories. Needs a token and --issue-comments or --pr-comments.
++.TP
+ \fB--auth-in-url\fR
+ Embed authentication credentials in repository URLs instead of using secure HTTP headers
+ .TP
 ```
 
-**File**: `go.sum` (modified, +6/-8)
+**File**: `main.go` (modified, +11/-1)
 ```diff
-@@ -61,8 +61,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapp
- github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
- github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
- github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
--github.com/ProtonMail/go-crypto v1.1.6 h1:ZcV+Ropw6Qn0AX9brlQLAUXfqLBc7Bl+f/DmNxpLfdw=
--github.com/ProtonMail/go-crypto v1.1.6/go.mod h1:rA3QumHc/FZ8pAHreoekgiAbzpNsfQAosU5td4SnOrE=
-+github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
-+github.com/ProtonMail/go-crypto v1.5.2/go.mod h1:/RaSu30DaKO4RY+XdV/ACcCcZkGr7AhUIduq5sjzzCo=
- github.com/STARRY-S/zip v0.2.1 h1:pWBd4tuSGm3wtpoqRZZ2EAwOmcHK6XFf7bU9qcJXyFg=
- github.com/STARRY-S/zip v0.2.1/go.mod h1:xNvshLODWtC4EJ702g7cTYn13G53o1+X9BWnPFpcWV4=
- github.com/TheZeroSlave/zapsentry v1.23.0 h1:TKyzfEL7LRlRr+7AvkukVLZ+jZPC++ebCUv7ZJHl1AU=
-@@ -186,8 +186,8 @@ github.com/chzyer/logex v1.2.1/go.mod h1:JLbx6lG2kDbNRFnfkgvh4eRJRPX1QCoOIWomwys
- github.com/chzyer/readline v1.5.1/go.mod h1:Eh+b79XXUwfKfcPLepksvw2tcLE/Ct21YObkaSkeBlk=
- github.com/chzyer/test v1.0.0/go.mod h1:2JlltgoNkt4TW/z9V/IzDdFaMTM2JPIi26O1pF38GC8=
- github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
--github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
--github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
-+github.com/cloudflare/circl v1.6.5 h1:O64F26HEqNhznd/hrC5KZXVKYuKM2rx4deZDTc4ihQA=
-+github.com/cloudflare/circl v1.6.5/go.mod h1:h5LNyxAc5nTue9DS5jT+48en2PSDYt3zdGnz5OstK6c=
- github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
- github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 h1:aBangftG7EVZoUb69Os8IaYg++6uMOdKK83QtkkvJik=
- github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2/go.mod h1:qwXFYgsP6T7XnJtbKlf1HP8AjxZZyzxMmc+Lq5GjlU4=
-@@ -791,8 +791,6 @@ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5y
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
- golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
- golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
--golang.org/x/crypto/openpgp v0.1.0-deprecated h1:T+duersHJVuH6qLtQk22qtGKH5vZhxGSlL5SMFHclaQ=
--golang.org/x/crypto/openpgp v0.1.0-deprecated/go.mod h1:KQF17hRm+yCzhnZa+aRLbinf2TRZa+7G3TeEnHj6OoY=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
-@@ -949,8 +947,8 @@ gotest.tools/v3 v3.5.2 h1:7koQfIKdy+I8UTetycgUqXWSDwpgv193Ka+qRsmBY8Q=
- gotest.tools/v3 v3.5.2/go.mod h1:LtdLGcnqToBH83WByAAi/wiwSFCArdFIUV/xxN4pcjA=
- honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
- honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
--pault.ag/go/debian v0.18.0 h1:nr0iiyOU5QlG1VPnhZLNhnCcHx58kukvBJp+dvaM6CQ=
--pault.ag/go/debian v0.18.0/go.mod h1:JFl0XWRCv9hWBrB5MDDZjA5GSEs1X3zcFK/9kCNIUmE=
-+pault.ag/go/debian v0.21.3 h1:UeUSjK8WuhDqpgigEs7wLwFjt1tXuWdrfI9y+zigJF0=
-+pault.ag/go/debian v0.21.3/go.mod h1:Yz4ZaBXxm+pPnt4etjDAUqB9fMG66TK1SroPCFIyjsU=
- pault.ag/go/topsort v0.1.1 h1:L0QnhUly6LmTv0e3DEzbN2q6/FGgAcQvaEw65S53Bg4=
- pault.ag/go/topsort v0.1.1/go.mod h1:r1kc/L0/FZ3HhjezBIPaNVhkqv8L0UJ9bxRuHRVZ0q4=
- pgregory.net/rapid v1.2.0 h1:keKAYRcjm+e1F0oAuU5F5+YPAWcyxNNRK2wud503Gnk=
+@@ -134,6 +134,7 @@ var (
+ 	githubScanPRComments        = githubScan.Flag("pr-comments", "Include pull request descriptions and comments in scan.").Bool()
+ 	githubScanGistComments      = githubScan.Flag("gist-comments", "Include gist comments in scan.").Bool()
+ 	githubCommentsTimeframeDays = githubScan.Flag("comments-timeframe", "Number of days in the past to review when scanning issue, PR, and gist comments.").Uint32()
++	githubUseGraphQL            = githubScan.Flag("use-graphql", "Use the GitHub GraphQL API to scan issue and PR comments. Faster on large repositories. Needs a token and --issue-comments or --pr-comments.").Bool()
+ 	githubAuthInUrl             = githubScan.Flag("auth-in-url", "Embed authentication credentials in repository URLs instead of using secure HTTP headers").Bool()
+ 	githubClonePath             = githubScan.Flag("clone-path", "Custom path where the repository should be cloned (default: temp dir).").String()
+ 	githubNoCleanup             = githubScan.Flag("no-cleanup", "Do not delete cloned repositories after scanning (can only be used with --clone-path). Each clone is kept in its own directory, so ensure sufficient disk space: usage grows with every repository scanned and every run.").Bool()
+@@ -560,7 +561,7 @@ func run(state overseer.State, logSync func() error) {
+ 	feature.UseSimplifiedGitlabEnumeration.Store(true)
+ 	feature.GitlabProjectsPerPage.Store(100)
+ 
+-	// OSS Default using github graphql api for issues, pr's and comments
++	// OSS Default GitHub GraphQL API off, turn on with --use-graphql
+ 	feature.UseGithubGraphQLAPI.Store(false)
+ 
+ 	// OSS Default Use HTML Decoder on
+@@ -963,6 +964,15 @@ func runSingleScan(ctx context.Context, cmd string, cfg engine.Config) (metrics,
+ 			return scanMetrics, err
+ 		}
+ 
++		if *githubUseGraphQL {
++			// GitHub's GraphQL API rejects unauthenticated requests
++			if *githubScanToken == "" {
++				ctx.Logger().Info("--use-graphql needs a token, scanning comments with the REST API")
++			} else {
++				feature.UseGithubGraphQLAPI.Store(true)
++			}
++		}
++
+ 		cfg := sources.GithubConfig{
+ 			Endpoint:                   *githubScanEndpoint,
+ 			Token:                      *githubScanToken,
+```
+
+**File**: `pkg/sources/github/README.md` (modified, +1/-0)
+```diff
+@@ -279,6 +279,7 @@ With `--clone-path` set, each repository still gets its own fresh subdirectory c
+ - The comments timeframe is applied by GitHub. Issue and pull request bodies are scanned regardless of the timeframe.
+ - Each listing is independent. If one fails, the others still run, everything read before the failure is still scanned, and the failure is reported as a scan error for that repository naming the listing, how many items it read, and where it stopped.
+ - Gist comments can't be filtered or sorted by GitHub, so the timeframe is applied as they are read, and a gist whose comments GitHub stops paging through is reported as a scan error.
++- `--use-graphql` fetches issue and pull request comments through the GitHub GraphQL API instead of the REST listings above, which needs far fewer requests on large repositories. It needs a token; without one the scan logs a message and uses REST. With GraphQL the timeframe is applied as comments are read, a failed request stops the comment scan for that repository, and review comments left on deleted pull requests are not found.
+ 
+ ### What Gets Scanned
+ 
+```
+
+**File**: `pkg/sources/github/github_integration_test.go` (modified, +11/-4)
+```diff
+@@ -1051,15 +1051,22 @@ func TestSource_Validate(t *testing.T) {
+ 
+ func TestSource_ScanCommentsWithGraphql(t *testing.T) {
+ 	feature.UseGithubGraphQLAPI.Store(true)
++	t.Cleanup(func() { feature.UseGithubGraphQLAPI.Store(false) })
+ 
+-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
++	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+ 	defer cancel()
+ 
++	secret, err := common.GetTestSecret(ctx)
++	if err != nil {
++		t.Fatal(fmt.Errorf("failed to access secret: %v", err))
++	}
++
++	// GitHub's GraphQL API does not allow unauthenticated requests
+ 	source := &sourcespb.GitHub{
+ 		Repositories:               []string{"https://github.com/trufflesecurity/driftwood.git"},
+ 		IncludeIssueComments:       true,
+ 		IncludePullRequestComments: true,
+-		Credential:                 &sourcespb.GitHub_Unauthenticated{},
++		Credential:                 &sourcespb.GitHub_Token{Token: secret.MustGetField("GITHUB_TOKEN")},
+ 	}
+ 
+ 	wantChunk := sources.Chunk{
+@@ -1103,8 +1110,8 @@ func TestSource_ScanCommentsWithGraphql(t *testing.T) {
+ 		githubCommentCheckFunc(gotChunk, &wantChunk, i, t, "test-source")
+ 	}
+ 
+-	// Confirm all comments were processed.
+-	assert.Equal(t, i, 5)
++	// 7 issues, 12 issue comments, 8 pull requests, 6 pull request comments
++	assert.Equal(t, 33, i)
+ }
+ 
+ type countChunkReporter struct {
+```
+
+**File**: `pkg/sources/github/graphql.go` (modified, +158/-72)
+```diff
+@@ -1,7 +1,6 @@
+ package github
+ 
+ import (
+-	"cmp"
+ 	"fmt"
+ 	"math/rand/v2"
+ 	"strings"
+@@ -15,7 +14,19 @@ import (
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+ )
+ 
+-// processIssuesWithComments process github repo issues with comments using graphql API
++// This file scans issues, pull requests, and their comments through the GitHub
++// GraphQL API. It is used instead of the REST listings when
++// feature.UseGithubGraphQLAPI is on. GraphQL lets one request return a page of
++// issues or PRs together with their first page of comments, so it needs far
++// fewer requests than REST on busy repositories.
++//
++// Every listing follows the same pattern: send the query, let
++// handleGraphQLRateLimit decide whether to retry it, fail on any other error,
++// emit chunks, then follow pageInfo.endCursor until hasNextPage is false.
++
++// processIssuesWithComments scans every issue in the repository: its title and
++// body, and all of its comments. Issues come 100 per page with their first 100
++// comments. An issue with more comments gets extra requests for the rest.
+ func (s *Source) processIssuesWithComments(
+ 	ctx context.Context, graphqlClient *githubv4.Client, repoInfo repoInfo,
+ 	reporter sources.ChunkReporter, cutoffTime *time.Time,
+@@ -110,7 +121,9 @@ func (s *Source) processIssuesWithComments(
+ 	return nil
+ }
+ 
+-// processPRWithComments process github repo pull requests with inline comments
++// processPRWithComments scans every pull request in the repository: its title
++// and body, and all of its conversation comments. Review comments on code
++// lines are not part of this query, processReviewThreads handles them.
+ func (s *Source) processPRWithComments(ctx context.Context, graphqlClient *githubv4.Client, repoInfo repoInfo, reporter sources.ChunkReporter, cutoffTime *time.Time) error {
+ 	vars := map[string]any{
+ 		owner:                 githubv4.String(repoInfo.owner),
+@@ -161,7 +174,7 @@ func (s *Source) processPRWithComments(ctx context.Context, graphqlClient *githu
+ 				singlePRVars := map[string]any{
+ 					owner:              githubv4.String(repoInfo.owner),
+ 					repository:         githubv4.String(repoInfo.name),
+-					pullRequestNumber:  pr.Number,
++					pullRequestNumber:  githubv4.Int(pr.Number),
+ 					commentsPerPage:    githubv4.Int(defaultPagination),
+ 					commentsPagination: pr.Comments.PageInfo.EndCursor,
+ 				}
+@@ -201,7 +214,10 @@ func (s *Source) processPRWithComments(ctx context.Context, graphqlClient *githu
+ 	return nil
+ }
+ 
+-// processReviewThreads process github repo pull request review threads
++// processReviewThreads scans review comments, the comments left on code lines
++// of a pull request. It works in two steps to stay under GitHub's node limit:
++// first it walks all PRs and collects their review thread IDs, then it fetches
++// the comments of those threads by ID, 100 threads per request.
+ func (s *Source) processReviewThreads(ctx context.Context, graphqlClient *githubv4.Client, repoInfo repoInfo, reporter sources.ChunkReporter, cutoffTime *time.Time) error {
+ 	vars := map[string]any{
+ 		owner:                 githubv4.String(repoInfo.owner),
+@@ -228,8 +244,16 @@ func (s *Source) processReviewThreads(ctx context.Context, graphqlClient *github
+ 
+ 		// collect thread ids
+ 		for _, pr := range query.GetMinimalPullRequests() {
+-			prThreadIDs := pr.ReviewThreads.GetThreadIDs()
+-			threadIDs = append(threadIDs, prThreadIDs...)
++			threadIDs = append(threadIDs, pr.ReviewThreads.GetThreadIDs()...)
++
++			// the query above only returns the first 100 threads of each PR
++			if pr.ReviewThreads.PageInfo.HasNextPage {
++				moreIDs, err := s.fetchMoreThreadIDs(ctx, graphqlClient, repoInfo, pr.Number, pr.ReviewThreads.PageInfo, reporter)
++				if err != nil {
++					return err
++				}
++				threadIDs = append(threadIDs, moreIDs...)
++			}
+ 		}
+ 
+ 		if !query.Repository.PullRequests.PageInfo.HasNextPage {
+@@ -258,18 +282,64 @@ func (s *Source) processReviewThreads(ctx context.Context, graphqlClient *github
+ 	return nil
+ }
+ 
+-// fetchThreadComments process github repo pull request threads and their comments
++// fetchMoreThreadIDs returns the review thread IDs of one pull request that
++// come after pageInfo, for PRs with more threads than fit in the first page.
++func (s *Source) fetchMoreThreadIDs(ctx context.Context, graphqlClient *githubv4.Client, repoInfo repoInfo, prNumber int, pageInfo pageInfo, reporter sources.ChunkReporter) ([]string, error) {
++	vars := map[string]any{
++		owner:             githubv4.String(repoInfo.owner),
++		repository:        githubv4.String(repoInfo.name),
++		pullRequestNumber: githubv4.Int(prNumber),
++		threadPerPage:     githubv4.Int(defaultPagination),
++	}
++
++	var threadIDs []string
++	for pageInfo.HasNextPage {
++		vars[threadPagination] = pageInfo.EndCursor
++
++		var query singlePRReviewThreadIDs
++		err := graphqlClient.Query(ctx, &query, vars)
++		if s.handleGraphqlRateLimitWithChunkReporter(ctx, reporter, &query.RateLimit, err) {
++			continue
++		}
++
++		if er
+```
+
+**File**: `pkg/sources/github/graphql_test.go` (added, +264/-0)
+```diff
+@@ -0,0 +1,264 @@
++package github
++
++import (
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/shurcooL/githubv4"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	regexp "github.com/wasilibs/go-re2"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++)
++
++// fakeGraphQL is a /graphql endpoint for repo o/r. answer picks the response
++// from the query text and variables. It records every query so tests can check
++// how many requests were sent and what they looked like.
++type fakeGraphQL struct {
++	t      *testing.T
++	answer func(query string, vars map[string]any) (status int, body any)
++
++	mu      sync.Mutex
++	queries []string
++}
++
++func newFakeGraphQL(t *testing.T, answer func(query string, vars map[string]any) (int, any)) (*fakeGraphQL, *githubv4.Client) {
++	t.Helper()
++	f := &fakeGraphQL{t: t, answer: answer}
++	srv := httptest.NewServer(f)
++	t.Cleanup(srv.Close)
++	return f, githubv4.NewEnterpriseClient(srv.URL, srv.Client())
++}
++
++func (f *fakeGraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
++	var req struct {
++		Query     string         `json:"query"`
++		Variables map[string]any `json:"variables"`
++	}
++	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
++		f.t.Errorf("bad request body: %v", err)
++		w.WriteHeader(http.StatusBadRequest)
++		return
++	}
++
++	f.mu.Lock()
++	f.queries = append(f.queries, req.Query)
++	tooMany := len(f.queries) > 100
++	f.mu.Unlock()
++	if tooMany {
++		// the scan is looping, stop it instead of hanging the test
++		f.t.Errorf("too many requests, last query: %s", req.Query)
++		w.WriteHeader(http.StatusInternalServerError)
++		return
++	}
++
++	status, body := f.answer(req.Query, req.Variables)
++	w.Header().Set("Content-Type", "application/json")
++	w.WriteHeader(status)
++	_ = json.NewEncoder(w).Encode(body)
++}
++
++func (f *fakeGraphQL) sent() []string {
++	f.mu.Lock()
++	defer f.mu.Unlock()
++	return append([]string(nil), f.queries...)
++}
++
++// resetRateLimitResumeTime clears the shared resume time after a test, so a
++// wait set by one test does not slow down the next.
++func resetRateLimitResumeTime(t *testing.T) {
++	t.Helper()
++	reset := func() {
++		rateLimitMu.Lock()
++		rateLimitResumeTime = time.Time{}
++		rateLimitMu.Unlock()
++	}
++	reset()
++	t.Cleanup(reset)
++}
++
++func gqlData(data map[string]any) map[string]any {
++	data["rateLimit"] = map[string]any{"remaining": 5000, "resetAt": "2030-01-01T00:00:00Z"}
++	return map[string]any{"data": data}
++}
++
++// gqlConn is a GraphQL connection: a page of nodes plus its pageInfo. An empty
++// next means this is the last page.
++func gqlConn(next string, nodes ...any) map[string]any {
++	if nodes == nil {
++		nodes = []any{}
++	}
++	return map[string]any{
++		"nodes":    nodes,
++		"pageInfo": map[string]any{"hasNextPage": next != "", "endCursor": next},
++	}
++}
++
++func gqlComment(link string) map[string]any {
++	return map[string]any{
++		"body":      "comment " + link,
++		"url":       link,
++		"author":    map[string]any{"login": "octocat"},
++		"createdAt": "2024-01-01T00:00:00Z",
++		"updatedAt": "2024-01-01T00:00:00Z",
++	}
++}
++
++func gqlItem(number int, link string, comments map[string]any) map[string]any {
++	item := map[string]any{
++		"number":    number,
++		"title":     "title",
++		"body":      "body",
++		"url":       link,
++		"author":    map[string]any{"login": "octocat"},
++		"createdAt": "2024-01-01T00:00:00Z",
++	}
++	if comments != nil {
++		item["comments"] = comments
++	}
++	return item
++}
++
++const (
++	issueLink = "https://github.com/o/r/issues/"
++	prLinkGQL = "https://github.com/o/r/pull/"
++)
++
++// pagedRepoAnswer serves a repo where every listing has a second page: two
++// pages of issues, issue 1 with a second page of comments, two pages of PRs,
++// PR 10 with a second page of comments and of review threads, and thread t2
++// with two more pages of comments.
++func pagedRepoAnswer(t *testing.T) func(string, map[string]any) (int, any) {
++	return func(q string, v map[string]any) (int, any) {
++		after := func(key string) string { s, _ := v[key].(string); return s }
++		switch {
++		case strings.Contains(q, "nodes(ids:"):
++			assert.ElementsMatch(t, []any{"t1", "t2", "t3"}, v["ids"])
++			return 200, gqlData(map[string]any{"nodes": []any{
++				map[string]any{"id": "t1", "comments": gqlConn("", gqlComment(prLinkGQL+"10#t1-c1"))},
++				map[string]any{"id": "t2", "comments": gqlConn("rc1", gqlComment(prLinkGQL+"10#t2-c1"))},
++				map[string]any{"id": "t3", "comments": gqlConn("", gqlComment(prLinkGQL+"11#t3-c1"))},
++			}})
++
++		case strings.Contains(q, "node(id:"):
++			assert.Equal(t, "t2", v["threadID"])
++			switch after("commentsAfter") {
++			case "rc1":
++				return 200, gqlData(map[string]any{"node": map[string]any{"comments": gqlConn("rc2", gqlComment(prLinkGQL+"10#t2-c2"))}})
++			case "rc2":
++				return 200, gqlData(map[string]any{"node": map[string]any{"comments": gqlConn("", gqlComment(prLinkGQL+"10#t2-c3"))}})
++			}
++
++		case strings.C
+```
+
+**File**: `pkg/sources/github/queries.go` (modified, +54/-13)
+```diff
+@@ -6,6 +6,15 @@ import (
+ 	"github.com/shurcooL/githubv4"
+ )
+ 
++// This file holds the GraphQL query types used when UseGithubGraphQLAPI is on.
++// The githubv4 library builds each query from the struct shape and tags, and
++// fills the struct from the response. Variables like $first or $commentsAfter
++// are passed as a map keyed by the constants below. The library takes each
++// variable's GraphQL type from the Go type of its value, so numbers must be
++// githubv4.Int (a plain int becomes the invalid type "int!") and cursors
++// githubv4.String or *githubv4.String (nil pointer means "first page").
++// Every query also asks for rateLimit so we can slow down before hitting it.
++
+ const (
+ 	// query variable keys
+ 	owner      = "owner"
+@@ -29,7 +38,9 @@ const (
+ 
+ // === Pull Requests with Comments ===
+ 
+-// pullRequestWithComments represent a repository pull request nodes
++// pullRequestWithComments fetches one page of a repository's pull requests,
++// each with the first page of its conversation comments. Review comments
++// (comments on code lines) live in review threads and are fetched separately.
+ type pullRequestWithComments struct {
+ 	Repository struct {
+ 		PullRequests pullRequestNodes `graphql:"pullRequests(first: $first, after: $after, orderBy: {field: UPDATED_AT, direction: DESC})"`
+@@ -69,7 +80,8 @@ type comment struct {
+ 	URL       string
+ }
+ 
+-// singlePRComments represents a single PR comments
++// singlePRComments fetches the next page of conversation comments for one
++// pull request. Used when a PR has more comments than fit in the first page.
+ type singlePRComments struct {
+ 	Repository struct {
+ 		PullRequest struct {
+@@ -96,7 +108,10 @@ func (p singlePRComments) GetPRComments() []comment {
+ 
+ // === Pull Request Review Threads IDs ===
+ 
+-// prWithReviewThreadIDs represents repository pull requests with review threads IDs
++// prWithReviewThreadIDs fetches one page of pull requests with only the IDs
++// of their review threads. Thread comments are fetched later by ID, in
++// batches, because nesting PRs > threads > comments in one query would hit
++// GitHub's node limit fast.
+ type prWithReviewThreadIDs struct {
+ 	Repository struct {
+ 		PullRequests minimalPullRequestNodes `graphql:"pullRequests(first: $first, after: $after, orderBy: {field: UPDATED_AT, direction: DESC})"`
+@@ -110,7 +125,8 @@ type minimalPullRequestNodes struct {
+ 	PageInfo pageInfo
+ }
+ 
+-// minimalPullRequest represents a pull request with no and review threads
++// minimalPullRequest is a pull request number with the first page of its
++// review thread IDs.
+ type minimalPullRequest struct {
+ 	Number        int
+ 	ReviewThreads reviewThreadIDNodes `graphql:"reviewThreads(first: $threadsFirst, after: $threadsAfter)"`
+@@ -131,6 +147,17 @@ func (p prWithReviewThreadIDs) GetMinimalPullRequests() []minimalPullRequest {
+ 	return p.Repository.PullRequests.Nodes
+ }
+ 
++// singlePRReviewThreadIDs fetches the next page of review thread IDs for one
++// pull request. Used when a PR has more threads than fit in the first page.
++type singlePRReviewThreadIDs struct {
++	Repository struct {
++		PullRequest struct {
++			ReviewThreads reviewThreadIDNodes `graphql:"reviewThreads(first: $threadsFirst, after: $threadsAfter)"`
++		} `graphql:"pullRequest(number: $number)"`
++	} `graphql:"repository(owner: $owner, name: $repo)"`
++	RateLimit rateLimit `graphql:"rateLimit"`
++}
++
+ func (r reviewThreadIDNodes) GetThreadIDs() []string {
+ 	var ids = make([]string, 0)
+ 
+@@ -157,16 +184,21 @@ type reviewThreadComments struct {
+ 	Comments commentNodes `graphql:"comments(first: $commentsFirst, after: $commentsAfter)"`
+ }
+ 
+-// singleReviewThreadComments fetches one review thread with comment pagination
++// singleReviewThreadComments fetches the next page of comments for one review
++// thread. node(id:) returns the generic Node interface, so the comments field
++// has to be read through an inline fragment on PullRequestReviewThread.
+ type singleReviewThreadComments struct {
+ 	Node struct {
+-		ID       string
+-		Comments commentNodes `graphql:"... on PullRequestReviewThread"`
+-	} `graphql:"node(id: $id)"`
++		PullRequestReviewThread struct {
++			Comments commentNodes `graphql:"comments(first: $commentsFirst, after: $commentsAfter)"`
++		} `graphql:"... on PullRequestReviewThread"`
++	} `graphql:"node(id: $threadID)"`
+ 	RateLimit rateLimit `graphql:"rateLimit"`
+ }
+ 
+-// GetThreads returns all review thread nodes
++// GetThreads returns the threads in the batch. Nodes that are not review
++// threads (for example an ID that no longer exists) come back empty and are
++// dropped.
+ func (r multiReviewThreadComments) GetThreads() []reviewThreadComments {
+ 	threads := make([]reviewThreadComments, 0)
+ 	for _, n := range r.Nodes {
+@@ -184,7 +216,8 @@ func (r reviewThreadComments) GetThreadComments() []comment {
+ 
+ // === Issues with comments ===
+ 
+-// issuesWithComments represents a repository issues with comments
++// issuesWithComments fetches one page of a repository's issue
+```
+
+---
+
+### Incident Patch 2: `f8ad7532` (2026-11-12)
+**Commit Message**: Clean up Syslog source logging for per-source debug (#5538)
+
+Log init, the listener and each connection, move message and parse lines to
+the right levels, and log errors as errors. Also stop TCP scans on cancel,
+stop spinning on dead connections, and scan only the bytes read.
+
+**File**: `pkg/sources/syslog/README.md` (modified, +11/-0)
+```diff
+@@ -123,6 +123,17 @@ trufflehog syslog --protocol tcp --address 0.0.0.0:514 --format rfc5424
+ trufflehog syslog --protocol tcp --address 0.0.0.0:6514 --format rfc5424 --cert /path/to/server.crt --key /path/to/server.key
+ ```
+ 
++## Debug Logs
++
++With debug on for this source, the scan logs:
++
++- `V(1)`: `Syslog source initialized` with the protocol, listen address, format and whether TLS is on (never the TLS cert or key), and `Listening for syslog messages` once the listener is up.
++- `V(2)`: `Accepted connection` and `Connection closed` for each TCP client.
++- `V(3)`: `Received syslog message` for each message, with its size. The message itself is never logged.
++- `V(4)`: `Could not parse syslog metadata, scanning without it` with the configured format, for a message that does not match it. The message is still scanned.
++
++Lines carry `remote` where it applies. A failure to accept a connection, read from one, or set a read deadline is logged as an error at the default level.
++
+ ## Troubleshooting
+ 
+ ### Common Issues
+```
+
+**File**: `pkg/sources/syslog/syslog.go` (modified, +86/-23)
+```diff
+@@ -123,7 +123,7 @@ func (s *Source) InjectConnection(conn *sourcespb.Syslog) {
+ }
+ 
+ // Init returns an initialized Syslog source.
+-func (s *Source) Init(_ context.Context, name string, jobId sources.JobID, sourceId sources.SourceID, verify bool, connection *anypb.Any, concurrency int) error {
++func (s *Source) Init(ctx context.Context, name string, jobId sources.JobID, sourceId sources.SourceID, verify bool, connection *anypb.Any, concurrency int) error {
+ 
+ 	s.name = name
+ 	s.sourceId = sourceId
+@@ -158,11 +158,23 @@ func (s *Source) Init(_ context.Context, name string, jobId sources.JobID, sourc
+ 				},
+ 			}
+ 		})
++
++	// The TLS cert and key are config values, only whether TLS is on is logged.
++	ctx.Logger().V(1).Info("Syslog source initialized",
++		"protocol", s.conn.Protocol,
++		"listen_address", s.conn.ListenAddress,
++		"format", s.conn.Format,
++		"tls", s.tlsEnabled(),
++	)
+ 	return nil
+ }
+ 
++func (s *Source) tlsEnabled() bool {
++	return s.conn.TlsCert != nilString || s.conn.TlsKey != nilString
++}
++
+ func (s *Source) verifyConnectionConfig() error {
+-	tlsEnabled := s.conn.TlsCert != nilString || s.conn.TlsKey != nilString
++	tlsEnabled := s.tlsEnabled()
+ 	if s.conn.Protocol == nilString {
+ 		if tlsEnabled {
+ 			s.conn.Protocol = "tcp"
+@@ -187,8 +199,15 @@ func (s *Source) verifyConnectionConfig() error {
+ 
+ // Chunks emits chunks of bytes over a channel.
+ func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ ...sources.ChunkingTarget) error {
++	listening := func() {
++		ctx.Logger().V(1).Info("Listening for syslog messages",
++			"protocol", s.conn.Protocol,
++			"listen_address", s.conn.ListenAddress,
++			"tls", s.tlsEnabled(),
++		)
++	}
+ 	switch {
+-	case s.conn.TlsCert != nilString || s.conn.TlsKey != nilString:
++	case s.tlsEnabled():
+ 		cert, err := tls.X509KeyPair([]byte(s.conn.TlsCert), []byte(s.conn.TlsKey))
+ 		if err != nil {
+ 			return errors.WrapPrefix(err, "could not load key pair", 0)
+@@ -199,6 +218,7 @@ func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ .
+ 			return errors.WrapPrefix(err, "error creating TLS listener", 0)
+ 		}
+ 		defer func() { _ = lis.Close() }()
++		listening()
+ 
+ 		return s.acceptTCPConnections(ctx, lis, chunksChan)
+ 	case s.conn.Protocol == "tcp":
+@@ -207,6 +227,7 @@ func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ .
+ 			return errors.WrapPrefix(err, "error creating TCP listener", 0)
+ 		}
+ 		defer func() { _ = lis.Close() }()
++		listening()
+ 
+ 		return s.acceptTCPConnections(ctx, lis, chunksChan)
+ 	case s.conn.Protocol == "udp":
+@@ -219,6 +240,7 @@ func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ .
+ 			return errors.WrapPrefix(err, "could not set UDP deadline", 0)
+ 		}
+ 		defer func() { _ = lis.Close() }()
++		listening()
+ 
+ 		return s.acceptUDPConnections(ctx, lis, chunksChan)
+ 	default:
+@@ -248,54 +270,86 @@ func (s *Source) parseSyslogMetadata(input []byte, remote string) (*source_metad
+ 	return metadata, nil
+ }
+ 
++// logParseFailure notes a message whose metadata could not be parsed. The message
++// is still scanned. The parse error is not logged, it can repeat part of the
++// message.
++func (s *Source) logParseFailure(ctx context.Context) {
++	ctx.Logger().V(4).Info("Could not parse syslog metadata, scanning without it", "format", s.conn.Format)
++}
++
++// isTimeout reports whether err is a read deadline passing, which happens every
++// second while a connection is idle.
++func isTimeout(err error) bool {
++	var netErr net.Error
++	return errors.As(err, &netErr) && netErr.Timeout()
++}
++
+ func (s *Source) monitorConnection(ctx context.Context, conn net.Conn, chunksChan chan *sources.Chunk) {
+ 	defer common.RecoverWithExit(ctx)
++	defer func() { _ = conn.Close() }()
++	remote := conn.RemoteAddr().String()
++	ctx = context.WithValues(ctx, "remote", remote)
++	ctx.Logger().V(2).Info("Accepted connection")
++	defer ctx.Logger().V(2).Info("Connection closed")
+ 	for {
+ 		if common.IsDone(ctx) {
+ 			return
+ 		}
+ 		err := conn.SetDeadline(time.Now().Add(time.Second))
+ 		if err != nil {
+-			ctx.Logger().V(2).Info("could not set connection deadline", "error", err)
++			ctx.Logger().Error(err, "Could not set connection deadline")
+ 		}
+ 		input := make([]byte, 8096)
+-		remote := conn.RemoteAddr()
+ 		n, err := conn.Read(input)
+ 		if err != nil {
+-			if errors.Is(err, io.EOF) {
+-				return
++			if isTimeout(err) {
++				continue
+ 			}
+-			continue
++			// Any other error, like a reset, would fail on every read and spin the
++			// loop, so stop reading this connection.
++			if !errors.Is(err, io.EOF) {
++				ctx.Logger().Error(err, "Failed to read from connection")
++			}
++			return
+ 		}
++		input = input[:n]
+ 		// Don't log the message itself, it is the data we scan for secrets.
+-		ctx.Logger().V(5).Info("received syslog message", "remote", remote.String(), "bytes", n)
+-		metadata, err := s.parseSyslogMetadata(input, remote.String())
++		ctx.Logger().V(3).Info("Received syslog message", "byte
+```
+
+**File**: `pkg/sources/syslog/syslog_test.go` (modified, +61/-33)
+```diff
+@@ -1,14 +1,14 @@
+ package syslog
+ 
+ import (
+-	"fmt"
+ 	"net"
+ 	"reflect"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"go.uber.org/zap/zaptest/observer"
+ 	"google.golang.org/protobuf/types/known/anypb"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
+@@ -132,37 +132,65 @@ func TestSource_parseSyslogMetadata(t *testing.T) {
+ 	}
+ }
+ 
+-func TestSource_monitorConnection_DebugLogsHideMessage(t *testing.T) {
+-	ctx, logs := logtest.DebugContext()
+-	ctx, cancel := context.WithCancel(ctx)
+-	defer cancel()
+-
+-	s := &Source{}
+-	conn, err := anypb.New(&sourcespb.Syslog{Format: "rfc5424"})
+-	require.NoError(t, err)
+-	require.NoError(t, s.Init(ctx, "test", 0, 0, false, conn, 1))
+-
+-	// Send one message over an in-memory connection and wait for its chunk.
+-	server, client := net.Pipe()
+-	defer func() { _ = client.Close() }()
+-	chunksChan := make(chan *sources.Chunk, 1)
+-	done := make(chan struct{})
+-	go func() {
+-		defer close(done)
+-		s.monitorConnection(ctx, server, chunksChan)
+-	}()
+-
+-	message := "<165>1 2003-10-11T22:14:15.003Z host app - ID47 - password=hunter2"
+-	_, err = client.Write([]byte(message))
+-	require.NoError(t, err)
+-	<-chunksChan
+-	cancel()
+-	<-done
+-
+-	// The debug line is written, but the message itself never shows up in the logs.
+-	assert.Equal(t, 1, logs.FilterMessage("received syslog message").Len())
+-	for _, entry := range logs.All() {
+-		assert.NotContains(t, entry.Message, "hunter2")
+-		assert.NotContains(t, fmt.Sprint(entry.ContextMap()), "hunter2")
++func TestSource_DebugLogging(t *testing.T) {
++	const testSecret = "syslogdebuglogtestsecret"
++	message := "<165>1 2003-10-11T22:14:15.003Z host app - ID47 - password=" + testSecret
++
++	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
++		t.Helper()
++		ctx, logs := logtest.SourceContext(debug)
++		ctx, cancel := context.WithCancel(ctx)
++		defer cancel()
++
++		// Find a free port for the listener.
++		l, err := net.Listen("tcp", "127.0.0.1:0")
++		require.NoError(t, err)
++		addr := l.Addr().String()
++		require.NoError(t, l.Close())
++
++		s := &Source{}
++		conn, err := anypb.New(&sourcespb.Syslog{Protocol: "tcp", ListenAddress: addr, Format: "rfc5424"})
++		require.NoError(t, err)
++		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
++		if debug {
++			logtest.CheckInitLine(t, logs.All())
++		}
++
++		chunksChan := make(chan *sources.Chunk, 2)
++		done := make(chan error, 1)
++		go func() { done <- s.Chunks(ctx, chunksChan) }()
++
++		var client net.Conn
++		require.Eventually(t, func() bool {
++			client, err = net.Dial("tcp", addr)
++			return err == nil
++		}, 5*time.Second, 10*time.Millisecond)
++
++		// One good message, then one that does not parse, which is still scanned.
++		for _, msg := range []string{message, "not a syslog message"} {
++			_, err = client.Write([]byte(msg))
++			require.NoError(t, err)
++			chunk := <-chunksChan
++			assert.Equal(t, msg, string(chunk.Data), "chunk holds only the bytes read")
++		}
++		require.NoError(t, client.Close())
++
++		// Cancel stops the scan even though Accept is waiting for a client.
++		cancel()
++		select {
++		case err := <-done:
++			require.NoError(t, err)
++		case <-time.After(5 * time.Second):
++			t.Fatal("Chunks did not return after cancel")
++		}
++		return logs.All()
+ 	}
++
++	t.Run("debug on", func(t *testing.T) {
++		logtest.CheckSourceLines(t, runSource(t, true), testSecret)
++	})
++
++	t.Run("debug off", func(t *testing.T) {
++		logtest.CheckNoDebugLines(t, runSource(t, false))
++	})
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5553** (2026-11-12): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
+- **PR #5552** (closed): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
+- **PR #5548** (2026-11-12): Fix GitHub GraphQL comment scan retries and paging (@kashifkhan0771)
 - **PR #5546** (2026-11-12): Update module pault.ag/go/debian to v0.21.3 (@renovate[bot])
 - **PR #5544** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 [SECURITY] (@renovate[bot])
-- **PR #5533** (2026-11-09): Update github-actions (@renovate[bot])
-- **PR #5528** (2026-11-10): feat(detectors): add Serval API key detector (@serval-frenchie)
-- **PR #5527** (2026-11-05): fix(sqlserver): use driver's default port in pre-dial check (@jordanTunstill)
-- **PR #5526** (2026-11-05): Time detector_execution_duration per detector run (@unsmith)
+- **PR #5539** (2026-11-12): Report Datadog resources as unbounded instead of permission-less bindings (@unsmith)
 
 ---
 
@@ -1256,33 +1953,30 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module pault.ag/go/debian to v0.21.3 (#5546)
+## X. GitHub GraphQL comment scan retries and paging (#5548)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/man/trufflehog.1`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03441954`: Update module pault.ag/go/debian to v0.21.3 (#5546). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef3c2c5f`: GitHub GraphQL comment scan retries and paging (#5548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/man/trufflehog.1`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	pault.ag/go/debian v0.21.3
-	github.com/ProtonMail/go-crypto v1.5.2 // indirect
-	github.com/cloudflare/circl v1.6.5 // indirect
+\fB--use-graphql\fR
+Use the GitHub GraphQL API to scan issue and PR comments. Faster on large repositories. Needs a token and --issue-comments or --pr-comments.
+.TP
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	pault.ag/go/debian v0.18.0
-	github.com/ProtonMail/go-crypto v1.1.6 // indirect
-	github.com/cloudflare/circl v1.6.3 // indirect
-	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03441954` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef3c2c5f` are properly handled with clean fallback behavior.

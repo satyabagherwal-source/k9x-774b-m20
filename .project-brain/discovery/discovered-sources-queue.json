@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T21:20:02.644Z",
+  "updated_at": "2026-11-12T21:31:23.141Z",
   "stats": {
-    "total_discovered": 1562,
-    "approved_pending_harvest": 1431,
+    "total_discovered": 1585,
+    "approved_pending_harvest": 1454,
     "harvested_count": 0,
     "rejected_count": 131,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1442,
+      "COMMUNITY_AND_EXPERT": 1452,
       "OFFICIAL_DOCUMENTATION": 64,
-      "STANDARDS_AND_SPECIFICATIONS": 53,
+      "STANDARDS_AND_SPECIFICATIONS": 66,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
     }
@@ -33464,6 +33464,512 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
         "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-2B6EDB6FBBD6": {
+      "id": "SRC-2B6EDB6FBBD6",
+      "url": "https://github.com/domcyrus/rustnet",
+      "title": "https://github.com/domcyrus/rustnet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.820Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-9A73F2EC4761": {
+      "id": "SRC-9A73F2EC4761",
+      "url": "https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet",
+      "title": "https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-9D8B855D1437": {
+      "id": "SRC-9D8B855D1437",
+      "url": "https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet/+copy-packages",
+      "title": "https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet/+copy-packages",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.845Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-08744D054A9F": {
+      "id": "SRC-08744D054A9F",
+      "url": "https://ppa.launchpadcontent.net/domcyrus/rustnet/ubuntu/dists/resolute/main/binary-amd64v3/Packages.gz",
+      "title": "https://ppa.launchpadcontent.net/domcyrus/rustnet/ubuntu/dists/resolute/main/binary-amd64v3/Packages.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.854Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-AE527D6C3099": {
+      "id": "SRC-AE527D6C3099",
+      "url": "https://www.rfc-editor.org/rfc/rfc6598",
+      "title": "IETF RFC 6598",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.868Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-9D1E87968A36": {
+      "id": "SRC-9D1E87968A36",
+      "url": "https://www.rfc-editor.org/rfc/rfc2544",
+      "title": "IETF RFC 2544",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-1ECCC790865F": {
+      "id": "SRC-1ECCC790865F",
+      "url": "https://www.rfc-editor.org/rfc/rfc6666",
+      "title": "IETF RFC 6666",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.886Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-221EC34B296A": {
+      "id": "SRC-221EC34B296A",
+      "url": "https://www.rfc-editor.org/rfc/rfc8446",
+      "title": "IETF RFC 8446",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-488FFC1994A9": {
+      "id": "SRC-488FFC1994A9",
+      "url": "https://www.rfc-editor.org/rfc/rfc5289",
+      "title": "IETF RFC 5289",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.905Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-4564CC0B5C0D": {
+      "id": "SRC-4564CC0B5C0D",
+      "url": "https://www.rfc-editor.org/rfc/rfc7905",
+      "title": "IETF RFC 7905",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.914Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-027A498DB69E": {
+      "id": "SRC-027A498DB69E",
+      "url": "https://www.rfc-editor.org/rfc/rfc4279",
+      "title": "IETF RFC 4279",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.924Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-47C700FC8C43": {
+      "id": "SRC-47C700FC8C43",
+      "url": "https://www.rfc-editor.org/rfc/rfc5487",
+      "title": "IETF RFC 5487",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-75ED30A7D86D": {
+      "id": "SRC-75ED30A7D86D",
+      "url": "https://www.rfc-editor.org/rfc/rfc6209",
+      "title": "IETF RFC 6209",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.942Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-2FC2F000CF63": {
+      "id": "SRC-2FC2F000CF63",
+      "url": "https://www.rfc-editor.org/rfc/rfc6367",
+      "title": "IETF RFC 6367",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-02F140940B21": {
+      "id": "SRC-02F140940B21",
+      "url": "https://www.rfc-editor.org/rfc/rfc2131",
+      "title": "IETF RFC 2131",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-3C6C3ABD0CCD": {
+      "id": "SRC-3C6C3ABD0CCD",
+      "url": "https://www.rfc-editor.org/rfc/rfc2308",
+      "title": "IETF RFC 2308",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-E36CBF2093AF": {
+      "id": "SRC-E36CBF2093AF",
+      "url": "https://github.com/jestjs/jest",
+      "title": "https://github.com/jestjs/jest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:22.995Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jestjs-jest-learnings.md",
+        "fileName": "jestjs-jest-learnings.md"
+      }
+    },
+    "SRC-5847A07D27FB": {
+      "id": "SRC-5847A07D27FB",
+      "url": "https://github.com/jestjs/jest/pull/16553",
+      "title": "https://github.com/jestjs/jest/pull/16553",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:23.004Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jestjs-jest-learnings.md",
+        "fileName": "jestjs-jest-learnings.md"
+      }
+    },
+    "SRC-8069187184E0": {
+      "id": "SRC-8069187184E0",
+      "url": "https://github.com/jestjs/jest/pull/16527",
+      "title": "https://github.com/jestjs/jest/pull/16527",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:23.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jestjs-jest-learnings.md",
+        "fileName": "jestjs-jest-learnings.md"
+      }
+    },
+    "SRC-EDE182D54449": {
+      "id": "SRC-EDE182D54449",
+      "url": "https://github.com/trufflesecurity/driftwood.git",
+      "title": "https://github.com/trufflesecurity/driftwood.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:23.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-A1C014564828": {
+      "id": "SRC-A1C014564828",
+      "url": "https://github.com/o/r/issues",
+      "title": "https://github.com/o/r/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:23.118Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-F102A6D04A88": {
+      "id": "SRC-F102A6D04A88",
+      "url": "https://github.com/o/r/pull",
+      "title": "https://github.com/o/r/pull",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:23.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-7A5BED2FB848": {
+      "id": "SRC-7A5BED2FB848",
+      "url": "https://www.rfc-editor.org/rfc/rfc5424",
+      "title": "IETF RFC 5424",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:31:23.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
       }
     }
   }
