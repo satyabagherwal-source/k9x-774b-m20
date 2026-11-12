@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T06:28:52.129Z",
+  "last_updated": "2026-11-12T06:41:45.382Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46276,11 +46276,16 @@
       "slug": "mohamedrejeb-calf",
       "platform": "github",
       "source_url": "https://github.com/MohamedRejeb/Calf",
-      "source_version": "af388bd3",
-      "content_hash": "419d3d442472aad117a32529c76f708541d6cb66c5424dfe7e39679022a365f0",
+      "source_version": "6b13fad1",
+      "content_hash": "7f05058b84d7480e2dbb6b50f1ca75c32e092919ee089c351592f87b95f16958",
       "dossier_path": "07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "file-picker): follow-ups from reviewing the review fixes",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2617,
           "title": "ui): add AdaptiveDateRangePicker",
@@ -46292,7 +46297,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:02:06.976Z",
+      "verified_at": "2026-11-12T06:41:45.350Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

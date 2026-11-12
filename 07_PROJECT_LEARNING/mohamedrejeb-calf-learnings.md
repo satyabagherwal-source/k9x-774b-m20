@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md`  
 > **Source**: github ([https://github.com/MohamedRejeb/Calf](https://github.com/MohamedRejeb/Calf))  
-> **Source Version**: `af388bd3`  
+> **Source Version**: `6b13fad1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:02:06.763Z  
+> **Timestamp**: 2026-11-12T06:41:35.859Z  
 > **Learning ID**: `learn-github-mohamedrejeb-calf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MohamedRejeb/Calf](https://github.com/MohamedRejeb/Calf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:02:06.370Z  
+> **Harvest Timestamp**: 2026-11-12T06:41:30.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Calf is a library that allows you to easily create adaptive UIs and access platform specific APIs with Compose Multiplatform (Adaptive UI, File Picker, WebView, Permissions...).
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1743 stars
+- **Stars / Engagement**: 1759 stars
 
 ---
 
@@ -378,1679 +378,661 @@ internal object Wildcard {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d31147d` (2026-09-12)
-**Commit Message**: feat(ui): add AdaptiveDateRangePicker
+### Incident Patch 1: `e083b8ba` (2026-11-06)
+**Commit Message**: fix(file-picker): follow-ups from reviewing the review fixes
 
-A range picker with its own AdaptiveDateRangePickerState: one common
-class wrapping Material3's DateRangePickerState on every platform, with
-the same selectable-dates rule as the single-date pickers. The Material3
-state is wrapped so it reports the caller's rule object, which keeps the
-Material3 picker in sync when the rule changes.
+- iOS: a picked document moved into staging reports the staged file as
+  its origin, so toUriString and createBookmark no longer point at the
+  deleted Inbox copy.
+- iOS: a security-scoped start that failed is retried by the next file
+  reopened from the same location.
+- Web: every download, in Safari and Firefox or when Chrome refuses its
+  save dialog, ends with onResult and the downloaded file, so the
+  one-onResult-per-save rule has no exception.
+- Desktop: launch() waits for the first dialog creation instead of
+  reporting a failure when it runs before the dialog exists.
+- Android: getSize asks a documents provider for size and type in one
+  query; the saver's mode fallback has a single catch; the docs say an
+  overwrite that fails while writing can leave the file partly written.
 
-- Material: the Material3 DateRangePicker. It scrolls its months and
-  cannot take an unbounded height, so inside a scrolling column it falls
-  back to DateRangePickerFallbackHeight instead of crashing
-- iOS 16+: a native UICalendarView with multi-date selection driven by a
-  pure DateRangeSelection reducer (first tap sets the start, a tap on or
-  after it sets the end, a tap before it moves the start, any tap on a
-  complete range starts over); every day of the range is highlighted and
-  rejected days are greyed out. Below iOS 16 the Material3 picker is shown
-- iOS: the UICalendarView setup, including the refresh of visible days
-  after rule changes, moves into a CalendarViewHost shared by the
-  single-date and range calendars
-- Tests: DateRangeSelectionTest (commonTest) and
-  AdaptiveDateRangePickerStateTest (de
-
-**File**: `calf-ui/src/commonMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveDateRangePicker.kt` (added, +109/-0)
+**File**: `calf-file-picker/src/androidMain/kotlin/com/mohamedrejeb/calf/picker/FileSaverLauncher.android.kt` (modified, +8/-7)
 ```diff
-@@ -0,0 +1,109 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.foundation.layout.BoxWithConstraints
-+import androidx.compose.foundation.layout.PaddingValues
-+import androidx.compose.foundation.layout.height
-+import androidx.compose.material3.DatePickerColors
-+import androidx.compose.material3.DatePickerDefaults
-+import androidx.compose.material3.DatePickerFormatter
-+import androidx.compose.material3.DateRangePicker
-+import androidx.compose.material3.DateRangePickerState
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.remember
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.unit.Dp
-+import androidx.compose.ui.unit.dp
-+
-+/**
-+ * A date range picker that adapts to the platform it is running on.
-+ *
-+ * On Material platforms it is the Material3 `DateRangePicker`. On iOS 16+ it is a native
-+ * `UICalendarView`: the first tap picks the start, a tap on or after it picks the end, a tap
-+ * before it moves the start, and any tap on a completed range starts a new one. Below iOS 16
-+ * the Material3 picker is shown.
-+ *
-+ * @param state the state that holds the selected range and the selectable dates.
-+ * @param modifier the modifier applied to the picker.
-+ * @param dateFormatter formats dates on Material platforms.
-+ * @param title the title slot on Material platforms; hidden when `null`.
-+ * @param headline the headline slot on Material platforms; hidden when `null`.
-+ * @param showModeToggle whether Material platforms offer the text input mode.
-+ * @param colors colors of the picker; the selected day color tints the native iOS calendar.
-+ *
-+ * On Material platforms the picker scrolls through months, so it needs a bounded height. When
-+ * the parent gives none, for example inside a vertically scrolling column, it falls back to
-+ * [DateRangePickerFallbackHeight]; pass a `height` modifier to choose your own.
-+ */
-+@OptIn(ExperimentalMaterial3Api::class)
-+@Composable
-+expect fun AdaptiveDateRangePicker(
-+    state: AdaptiveDateRangePickerState,
-+    modifier: Modifier = Modifier,
-+    dateFormatter: DatePickerFormatter = remember { DatePickerDefaults.dateFormatter() },
-+    title: (@Composable () -> Unit)? = null,
-+    headline: (@Composable () -> Unit)? = null,
-+    showModeToggle: Boolean = true,
-+    colors: DatePickerColors = DatePickerDefaults.colors(),
-+)
-+
-+/** Height of the Material range picker when its parent gives no vertical bound. */
-+val DateRangePickerFallbackHeight: Dp = 568.dp
-+
-+/** Paddings of the Material3 range picker defaults, which Material3 keeps private. */
-+internal val DateRangePickerTitlePadding = PaddingValues(start = 64.dp, end = 12.dp)
-+internal val DateRangePickerHeadlinePadding = PaddingValues(start = 64.dp, end = 12.dp, bottom = 12.dp)
-+
-+/** The Material3 range picker bound to [state]; shared by Material platforms and the iOS fallback. */
-+@OptIn(ExperimentalMaterial3Api::class)
-+@Composable
-+internal fun MaterialDateRangePicker(
-+    state: AdaptiveDateRangePickerState,
-+    modifier: Modifier,
-+    dateFormatter: DatePickerFormatter,
-+    title: (@Composable () -> Unit)?,
-+    headline: (@Composable () -> Unit)?,
-+    showModeToggle: Boolean,
-+    colors: DatePickerColors,
-+) {
-+    BoundedMaterial3DateRangePicker(
-+        state = state.dateRangePickerState,
-+        modifier = modifier,
-+        dateFormatter = dateFormatter,
-+        title = title,
-+        headline = headline,
-+        showModeToggle = showModeToggle,
-+        colors = colors,
-+    )
-+}
-+
-+/** A Material3 range picker that falls back to [DateRangePickerFallbackHeight] under an unbounded height. */
-+@OptIn(ExperimentalMaterial3Api::class)
-+@Composable
-+internal fun BoundedMaterial3DateRangePicker(
-+    state: DateRangePickerState,
-+    modifier: Modifier,
-+    dateFormatter: DatePickerFormatter,
-+    title: (@Composable () -> Unit)?,
-+    headline: (@Composable () -> Unit)?,
-+    showModeToggle: Boolean,
-+    colors: DatePickerColors,
-+) {
-+    // Material3's DateRangePicker scrolls its months and throws under an unbounded height.
-+    BoxWithConstraints(modifier = modifier) {
-+        val boundedHeight = if (maxHeight == Dp.Infinity) {
-+            Modifier.height(DateRangePickerFallbackHeight)
-+        } else {
-+            Modifier
-+        }
-+        DateRangePicker(
-+            state = state,
-+            modifier = boundedHeight,
-+            dateFormatter = dateFormatter,
-+            colors = colors,
-+            title = title,
-+            headline = headline,
-+            showModeToggle = showModeToggle,
-+        )
-+    }
-+}
-```
-
-**File**: `calf-ui/src/commonMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveDateRangePickerState.kt` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.material3.DatePickerDefaults
-+import androidx.compose.material3.DateRangePickerState
-+import androidx.compose.material3.DisplayMode
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.material3.SelectableDates
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.Stable
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
-+import androidx.compose.runtime.saveable.Saver
-+import androidx.compose.runtime.saveable.listSaver
-+import androidx.compose.runtime.saveable.rememberSaveable
-+import androidx.compose.runtime.setValue
-+
-+/**
-+ * Creates and remembers an [AdaptiveDateRangePickerState].
-+ *
-+ * @param initialSelectedStartDateMillis timestamp in _UTC_ milliseconds from the epoch of the
-+ * initial start date, or `null` for no selection.
-+ * @param initialSelectedEndDateMillis timestamp in _UTC_ milliseconds from the epoch of the
-+ * initial end date, or `null` for no end date. Requires a start date.
-+ * @param initialDisplayedMonthMillis timestamp in _UTC_ milliseconds from the epoch of the month
-+ * to display first; the current month when `null`.
-+ * @param yearRange the years the picker is limited to.
-+ * @param initialMaterialDisplayMode the initial [DisplayMode] on Material platforms.
-+ * @param selectableDates the rule deciding which days can be picked, see
-+ * [AdaptiveDateRangePickerState.selectableDates]. Use [DateBounds] for a minimum and maximum
-+ * day and [and] to combine rules. Pass a stable instance.
-+ */
-+@Composable
-+@ExperimentalMaterial3Api
-+fun rememberAdaptiveDateRangePickerState(
-+    initialSelectedStartDateMillis: Long? = null,
-+    initialSelectedEndDateMillis: Long? = null,
-+    initialDisplayedMonthMillis: Long? = initialSelectedStartDateMillis,
-+    yearRange: IntRange = DatePickerDefaults.YearRange,
-+    initialMaterialDisplayMode: DisplayMode = DisplayMode.Picker,
-+    selectableDates: SelectableDates = DatePickerDefaults.AllDates,
-+): AdaptiveDateRangePickerState =
-+    rememberSaveable(
-+        saver = AdaptiveDateRangePickerState.Saver(selectableDates),
-+    ) {
-+        AdaptiveDateRangePickerState(
-+            initialSelectedStartDateMillis = initialSelectedStartDateMillis,
-+            initialSelectedEndDateMillis = initialSelectedEndDateMillis,
-+            initialDisplayedMonthMillis = initialDisplayedMonthMillis,
-+            yearRange = yearRange,
-+            initialMaterialDisplayMode = initialMaterialDisplayMode,
-+            selectableDates = selectableDates,
-+        )
-+    }.apply {
-+        // Keep the rule in sync when the caller passes a new one on recomposition.
-+        this.selectableDates = selectableDates
-+    }
-+
-+/**
-+ * State of an [AdaptiveDateRangePicker]: the selected start and end days plus the selectable
-+ * range. It wraps a Material3 [DateRangePickerState] on every platform.
-+ *
-+ * Unlike [AdaptiveDatePickerState], a range is not adjusted automatically when the rule
-+ * changes; it is validated when set, see [setSelection].
-+ *
-+ * @param initialSelectedStartDateMillis see [rememberAdaptiveDateRangePickerState].
-+ * @param initialSelectedEndDateMillis see [rememberAdaptiveDateRangePickerState].
-+ * @param initialDisplayedMonthMillis see [rememberAdaptiveDateRangePickerState].
-+ * @param yearRange the years the picker is limited to.
-+ * @param initialMaterialDisplayMode the initial [DisplayMode] on Material platforms.
-+ * @param selectableDates initial value of [selectableDates].
-+ * Initial dates are validated like [setSelection]: a missing or out-of-range start leaves the
-+ * selection empty, and an end before the start does too.
-+ */
-+@OptIn(ExperimentalMaterial3Api::class)
-+@Stable
-+class AdaptiveDateRangePickerState(
-+    initialSelectedStartDateMillis: Long?,
-+    initialSelectedEndDateMillis: Long?,
-+    initialDisplayedMonthMillis: Long?,
-+    val yearRange: IntRange,
-+    initialMaterialDisplayMode: DisplayMode,
-+    selectableDates: SelectableDates = DatePickerDefaults.AllDates,
-+) {
-+    /**
-+     * The [SelectableDates] rule deciding which days can be picked. Use [DateBounds] for a
-+     * minimum and maximum day, and [and] to combine rules. Honoured by the Material picker and
-+     * by the iOS 16+ calendar, where rejected days are greyed out; bounds coming from a
-+     * [DateBounds] are also applied natively. [SelectableDates.isSelectableYear] only affects
-+     * Material. Observable.
-+     */
-+    var selectableDates: SelectableDates by mutableStateOf(selectableDates)
-+
-+    /** The bounds the rule enforces natively; open on both sides for rules without bounds. */
-+    internal val dateBounds: DateBounds
-+        get() = selectableDates.dateBoundsOrNull() ?: DateBounds()
-+
-+    private val materialState: DateRangePickerState =
-+        DateRangePickerState(
-+            locale = getCalendarLocalDefault(),
-+            initialSelectedStartDateMillis
-```
-
-**File**: `calf-ui/src/commonMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/DateRangeSelection.kt` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+/**
-+ * The start and end of a date range as UTC start-of-day timestamps, and how taps on a
-+ * calendar change it: the first tap sets the start, a tap on or after the start sets the end,
-+ * a tap before the start moves the start, and any tap on a completed range starts over.
-+ */
-+internal data class DateRangeSelection(
-+    val start: Long?,
-+    val end: Long?,
-+) {
-+    fun afterTap(utcTimeMillis: Long): DateRangeSelection {
-+        val currentStart = start
-+        return when {
-+            currentStart == null || end != null -> DateRangeSelection(start = utcTimeMillis, end = null)
-+            utcTimeMillis < currentStart -> DateRangeSelection(start = utcTimeMillis, end = null)
-+            else -> DateRangeSelection(start = currentStart, end = utcTimeMillis)
-+        }
-+    }
-+
-+    /** Every day of the range as UTC start-of-day timestamps; only the start while the end is unset. */
-+    fun days(): List<Long> {
-+        val firstDay = start?.floorDiv(MILLIS_PER_DAY) ?: return emptyList()
-+        val lastDay = end?.floorDiv(MILLIS_PER_DAY) ?: firstDay
-+        return (firstDay..lastDay).map { day -> day * MILLIS_PER_DAY }
-+    }
-+}
-```
-
-**File**: `calf-ui/src/commonMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/RuleTrackingDateRangePickerState.kt` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.material3.DateRangePickerState
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.material3.SelectableDates
-+
-+/**
-+ * A [DateRangePickerState] that reports the rule returned by [currentRule] instead of the one
-+ * it was created with, for the same reason as [RuleTrackingDatePickerState].
-+ */
-+@OptIn(ExperimentalMaterial3Api::class)
-+internal class RuleTrackingDateRangePickerState(
-+    delegate: DateRangePickerState,
-+    private val currentRule: () -> SelectableDates,
-+) : DateRangePickerState by delegate {
-+    override val selectableDates: SelectableDates
-+        get() = currentRule()
-+}
-```
-
-**File**: `calf-ui/src/commonTest/kotlin/com/mohamedrejeb/calf/ui/datepicker/DateRangeSelectionTest.kt` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+
-+class DateRangeSelectionTest {
-+
-+    @Test
-+    fun `first tap starts a new range`() {
-+        assertEquals(
-+            DateRangeSelection(start = MAR_14_2026, end = null),
-+            DateRangeSelection(start = null, end = null).afterTap(MAR_14_2026),
-+        )
-+    }
-+
-+    @Test
-+    fun `tapping after the start completes the range`() {
-+        assertEquals(
-+            DateRangeSelection(start = MAR_14_2026, end = MAR_16_2026),
-+            DateRangeSelection(start = MAR_14_2026, end = null).afterTap(MAR_16_2026),
-+        )
-+    }
-+
-+    @Test
-+    fun `tapping the start day again makes a single-day range`() {
-+        assertEquals(
-+            DateRangeSelection(start = MAR_14_2026, end = MAR_14_2026),
-+            DateRangeSelection(start = MAR_14_2026, end = null).afterTap(MAR_14_2026),
-+        )
-+    }
-+
-+    @Test
-+    fun `tapping before the start moves the start`() {
-+        assertEquals(
-+            DateRangeSelection(start = MAR_13_2026, end = null),
-+            DateRangeSelection(start = MAR_14_2026, end = null).afterTap(MAR_13_2026),
-+        )
-+    }
-+
-+    @Test
-+    fun `tapping while a range is complete starts over`() {
-+        assertEquals(
-+            DateRangeSelection(start = MAR_1_2026, end = null),
-+            DateRangeSelection(start = MAR_14_2026, end = MAR_16_2026).afterTap(MAR_1_2026),
-+        )
-+    }
-+
-+    @Test
-+    fun `days in range lists every day start from start to end inclusive`() {
-+        assertEquals(
-+            listOf(MAR_13_2026, MAR_14_2026, MAR_15_2026, MAR_16_2026),
-+            DateRangeSelection(start = MAR_13_2026, end = MAR_16_2026).days(),
-+        )
-+        assertEquals(listOf(MAR_14_2026), DateRangeSelection(start = MAR_14_2026, end = null).days())
-+        assertEquals(emptyList(), DateRangeSelection(start = null, end = null).days())
-+    }
-+}
-```
-
-**File**: `calf-ui/src/desktopTest/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveDateRangePickerStateTest.kt` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.foundation.layout.Column
-+import androidx.compose.foundation.rememberScrollState
-+import androidx.compose.foundation.verticalScroll
-+import androidx.compose.material3.DatePickerDefaults
-+import androidx.compose.material3.DisplayMode
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.material3.SelectableDates
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
-+import androidx.compose.runtime.saveable.SaverScope
-+import androidx.compose.runtime.setValue
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.test.ExperimentalTestApi
-+import androidx.compose.ui.test.assertIsEnabled
-+import androidx.compose.ui.test.assertIsNotEnabled
-+import androidx.compose.ui.test.hasContentDescription
-+import androidx.compose.ui.test.hasText
-+import androidx.compose.ui.test.v2.runComposeUiTest
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+import kotlin.test.assertNull
-+import kotlin.test.assertTrue
-+
-+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
-+class AdaptiveDateRangePickerStateTest {
-+
-+    private val march = DateBounds(minDateMillis = MAR_1_2026, maxDateMillis = MAR_31_2026)
-+
-+    private fun state(
-+        selectableDates: SelectableDates = DatePickerDefaults.AllDates,
-+    ) = AdaptiveDateRangePickerState(
-+        initialSelectedStartDateMillis = null,
-+        initialSelectedEndDateMillis = null,
-+        initialDisplayedMonthMillis = null,
-+        yearRange = DatePickerDefaults.YearRange,
-+        initialMaterialDisplayMode = DisplayMode.Picker,
-+        selectableDates = selectableDates,
-+    )
-+
-+    @Test
-+    fun `selection exposes start and end`() {
-+        val state = state()
-+
-+        state.setSelection(MAR_13_2026, MAR_16_2026)
-+
-+        assertEquals(MAR_13_2026, state.selectedStartDateMillis)
-+        assertEquals(MAR_16_2026, state.selectedEndDateMillis)
-+    }
-+
-+    @Test
-+    fun `an end before the start clears the selection`() {
-+        val state = state()
-+        state.setSelection(MAR_13_2026, MAR_16_2026)
-+
-+        state.setSelection(MAR_16_2026, MAR_13_2026)
-+
-+        assertNull(state.selectedStartDateMillis)
-+        assertNull(state.selectedEndDateMillis)
-+    }
-+
-+    @Test
-+    fun `selectable dates follow the bounds and the rule`() {
-+        val selectable = state(selectableDates = march and WeekdaysOnly).dateRangePickerState.selectableDates
-+
-+        assertFalse(selectable.isSelectableDate(FEB_28_2026))
-+        assertTrue(selectable.isSelectableDate(MAR_13_2026))
-+        assertFalse(selectable.isSelectableDate(MAR_14_2026))
-+        assertFalse(selectable.isSelectableDate(APR_1_2026))
-+        assertFalse(selectable.isSelectableYear(2025))
-+        assertTrue(selectable.isSelectableYear(2026))
-+    }
-+
-+    @Test
-+    fun `the material state exposes the current rule as a new object after a change`() {
-+        val state = state()
-+        val before = state.dateRangePickerState.selectableDates
-+        assertTrue(before.isSelectableDate(FEB_28_2026))
-+
-+        state.selectableDates = DateBounds(minDateMillis = MAR_1_2026)
-+
-+        val after = state.dateRangePickerState.selectableDates
-+        assertFalse(after.isSelectableDate(FEB_28_2026))
-+        assertTrue(before !== after)
-+    }
-+
-+    @Test
-+    fun `changing the rule disables the rejected days in the range calendar`() = runComposeUiTest {
-+        var rule: SelectableDates by mutableStateOf(DatePickerDefaults.AllDates)
-+        setContent {
-+            val state = rememberAdaptiveDateRangePickerState(
-+                initialSelectedStartDateMillis = MAR_15_2026,
-+                selectableDates = rule,
-+            )
-+            AdaptiveDateRangePicker(state = state)
-+        }
-+        waitForIdle()
-+        dayCell(MAR_14_2026).assertIsEnabled()
-+
-+        rule = WeekdaysOnly
-+        waitForIdle()
-+
-+        dayCell(MAR_14_2026).assertIsNotEnabled()
-+    }
-+
-+    @Test
-+    fun `saver round-trips the selection and re-attaches the rule`() {
-+        val saver = AdaptiveDateRangePickerState.Saver(march)
-+        val original = state(selectableDates = march)
-+        original.setSelection(MAR_13_2026, MAR_16_2026)
-+
-+        val saved = requireNotNull(with(saver) { SaverScope { true }.save(original) })
-+        val restored = requireNotNull(saver.restore(saved))
-+
-+        assertEquals(MAR_13_2026, restored.selectedStartDateMillis)
-+        assertEquals(MAR_16_2026, restored.selectedEndDateMillis)
-+        assertEquals(march, restored.selectableDates)
-+        assertNull(state().selectedStartDateMillis)
-+    }
-+
-+    @Test
-+    fun `a rule can reject a year inside the bounds`() {
-+        val noYear2026 = object : SelectableDates {
-+            override fun isSelectableYear(year: Int): Boolean = year != 2026
-+        }
-+        val selectable = state(selectableDates = noYear202
-```
-
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveDateRangePicker.ios.kt` (added, +115/-0)
-```diff
-@@ -0,0 +1,115 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.foundation.background
-+import androidx.compose.foundation.layout.Box
-+import androidx.compose.foundation.layout.aspectRatio
-+import androidx.compose.foundation.layout.fillMaxWidth
-+import androidx.compose.material3.DatePickerColors
-+import androidx.compose.material3.DatePickerFormatter
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.material3.LocalAbsoluteTonalElevation
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.LaunchedEffect
-+import androidx.compose.runtime.key
-+import androidx.compose.runtime.remember
-+import androidx.compose.ui.ExperimentalComposeUiApi
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.platform.LocalLayoutDirection
-+import androidx.compose.ui.viewinterop.UIKitInteropInteractionMode
-+import androidx.compose.ui.viewinterop.UIKitInteropProperties
-+import androidx.compose.ui.viewinterop.UIKitView
-+import com.mohamedrejeb.calf.ui.utils.applyLayoutDirection
-+import com.mohamedrejeb.calf.ui.utils.isIOSVersionAtLeast
-+import com.mohamedrejeb.calf.ui.utils.surfaceColorAtElevation
-+
-+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-+@Composable
-+actual fun AdaptiveDateRangePicker(
-+    state: AdaptiveDateRangePickerState,
-+    modifier: Modifier,
-+    dateFormatter: DatePickerFormatter,
-+    title: (@Composable () -> Unit)?,
-+    headline: (@Composable () -> Unit)?,
-+    showModeToggle: Boolean,
-+    colors: DatePickerColors,
-+) {
-+    if (!isIOSVersionAtLeast(FIRST_IOS_WITH_CALENDAR_VIEW)) {
-+        MaterialDateRangePicker(
-+            state = state,
-+            modifier = modifier,
-+            dateFormatter = dateFormatter,
-+            title = title,
-+            headline = headline,
-+            showModeToggle = showModeToggle,
-+            colors = colors,
-+        )
-+        return
-+    }
-+
-+    // Recreated if a different state is passed, so taps never reach a stale state.
-+    val backend = remember(state) {
-+        CalendarRangePickerBackend(
-+            initialSelection = DateRangeSelection(
-+                start = state.selectedStartDateMillis,
-+                end = state.selectedEndDateMillis,
-+            ),
-+            onSelectionChanged = { selection ->
-+                state.setSelection(selection.start, selection.end)
-+            },
-+            isDaySelectable = { dateMillis ->
-+                state.isDaySelectable(dateMillis)
-+            },
-+        )
-+    }
-+    val aspectRatio = remember(backend) {
-+        backend.aspectRatio.takeIf { it > 0f } ?: inlineDatePickerAspectRatio()
-+    }
-+
-+    val layoutDirection = LocalLayoutDirection.current
-+    val absoluteElevation = LocalAbsoluteTonalElevation.current
-+    val containerColorAtElevation = surfaceColorAtElevation(
-+        color = colors.containerColor,
-+        elevation = absoluteElevation,
-+    )
-+
-+    LaunchedEffect(layoutDirection) {
-+        backend.view.applyLayoutDirection(layoutDirection)
-+    }
-+
-+    LaunchedEffect(state.selectableDates) {
-+        val bounds = state.dateBounds
-+        backend.applyDateBounds(bounds.minDateMillis, bounds.maxDateMillis)
-+    }
-+
-+    LaunchedEffect(state.selectedStartDateMillis, state.selectedEndDateMillis) {
-+        backend.setSelectedRange(
-+            DateRangeSelection(
-+                start = state.selectedStartDateMillis,
-+                end = state.selectedEndDateMillis,
-+            ),
-+        )
-+    }
-+
-+    LaunchedEffect(colors, containerColorAtElevation) {
-+        backend.applyColors(
-+            containerColor = containerColorAtElevation,
-+            dayContentColor = colors.dayContentColor,
-+            selectedDayContainerColor = colors.selectedDayContainerColor,
-+        )
-+    }
-+
-+    Box(modifier = modifier) {
-+        key(backend) {
-+            UIKitView(
-+                factory = { backend.view },
-+                properties = UIKitInteropProperties(
-+                    interactionMode = UIKitInteropInteractionMode.NonCooperative,
-+                ),
-+                modifier = Modifier
-+                    .background(colors.containerColor)
-+                    .fillMaxWidth()
-+                    .aspectRatio(aspectRatio),
-+            )
-+        }
-+    }
-+}
-```
-
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/CalendarDatePickerBackend.kt` (modified, +11/-81)
-```diff
-@@ -4,31 +4,13 @@ package com.mohamedrejeb.calf.ui.datepicker
- 
- import kotlinx.cinterop.ExperimentalForeignApi
- import kotlinx.cinterop.ObjCSignatureOverride
--import kotlinx.datetime.DateTimeUnit
--import kotlinx.datetime.LocalDate
--import kotlinx.datetime.minus
--import kotlinx.datetime.number
--import kotlinx.datetime.plus
--import platform.Foundation.NSCalendar
--import platform.Foundation.NSDate
- import platform.Foundation.NSDateComponents
--import platform.Foundation.NSDateInterval
--import platform.Foundation.NSTimeZone
--import platform.Foundation.distantFuture
--import platform.Foundation.distantPast
--import platform.Foundation.localTimeZone
- import platform.UIKit.UICalendarSelectionSingleDate
- import platform.UIKit.UICalendarSelectionSingleDateDelegateProtocol
--import platform.UIKit.UICalendarView
--import platform.UIKit.UICalendarViewDecoration
--import platform.UIKit.UICalendarViewDelegateProtocol
- import platform.UIKit.UIColor
- import platform.UIKit.UIView
- import platform.darwin.NSObject
- 
--private const val MAX_SUPPORTED_YEAR = 9999L
--private const val MAX_MONTH = 12L
--
- /**
-  * Inline calendar backed by `UICalendarView` (iOS 16+). Days rejected by [isDaySelectable]
-  * are greyed out and cannot be tapped, matching the Material picker.
-@@ -39,7 +21,7 @@ internal class CalendarDatePickerBackend(
-     private val isDaySelectable: (utcTimeMillis: Long) -> Boolean,
- ) : IosDatePickerBackend {
- 
--    private val calendarView = UICalendarView()
-+    private val host = CalendarViewHost()
- 
-     private val selectionDelegate = object : NSObject(), UICalendarSelectionSingleDateDelegateProtocol {
-         @ObjCSignatureOverride
-@@ -62,93 +44,41 @@ internal class CalendarDatePickerBackend(
- 
-     private val selection = UICalendarSelectionSingleDate(delegate = selectionDelegate)
- 
--    /** Draws no decorations, but lets [refresh] ask the calendar to rebuild its day cells. */
--    private val decorationDelegate = object : NSObject(), UICalendarViewDelegateProtocol {
--        @ObjCSignatureOverride
--        override fun calendarView(
--            calendarView: UICalendarView,
--            decorationForDateComponents: NSDateComponents,
--        ): UICalendarViewDecoration? = null
--    }
--
-     override val view: UIView
--        get() = calendarView
-+        get() = host.calendarView
- 
-     init {
--        calendarView.calendar = NSCalendar.currentCalendar
--        calendarView.locale = getCalendarLocalDefault()
--        calendarView.timeZone = NSTimeZone.localTimeZone
--        calendarView.delegate = decorationDelegate
--        calendarView.selectionBehavior = selection
-+        host.calendarView.selectionBehavior = selection
-         initialSelectedDateMillis?.let { millis ->
-             selection.setSelectedDate(utcDayToDateComponents(millis), animated = false)
--            calendarView.setVisibleDateComponents(utcDayToDateComponents(millis), animated = false)
-+            host.showMonth(millis, animated = false)
-         }
--        calendarView.sizeToFit()
-+        host.calendarView.sizeToFit()
-     }
- 
-     override fun setSelectedDate(utcTimeMillis: Long?) {
-         val current = selection.selectedDate?.toUtcDayMillis()
-         if (current == utcTimeMillis) return
- 
-         selection.setSelectedDate(utcTimeMillis?.let(::utcDayToDateComponents), animated = true)
--        utcTimeMillis?.let { millis ->
--            calendarView.setVisibleDateComponents(utcDayToDateComponents(millis), animated = true)
--        }
-+        utcTimeMillis?.let { millis -> host.showMonth(millis, animated = true) }
-     }
- 
-     override fun applyDateBounds(minDateMillis: Long?, maxDateMillis: Long?) {
--        val start = minDateMillis?.let(::localStartOfDay) ?: NSDate.distantPast
--        val end = maxDateMillis?.let(::localEndOfDay) ?: NSDate.distantFuture
--        calendarView.availableDateRange = NSDateInterval(startDate = start, endDate = end)
-+        host.applyDateBounds(minDateMillis, maxDateMillis)
-     }
- 
-     override fun updateSelectableDates() {
-         selection.updateSelectableDates()
--        refresh()
-+        host.refresh()
-     }
- 
-     override fun setEnabled(enabled: Boolean) {
--        calendarView.userInteractionEnabled = enabled
--    }
--
--    /**
--     * Rebuilds the days around the visible month, so bounds and rule changes show right away
--     * instead of on the next scroll or tap.
--     */
--    private fun refresh() {
--        val days = daysAroundVisibleMonth()
--        if (days.isNotEmpty()) {
--            calendarView.reloadDecorationsForDateComponents(days, animated = false)
--        }
--        calendarView.setNeedsLayout()
--        calendarView.layoutIfNeeded()
--    }
--
--    /** Every day of the visible month and its two neighbours, which may be partly on screen. */
--    private fun daysAroundVisibleMonth(): List<NSDateComponents> {
--        val visible = calendarView.visibleDateComponents
--        val year = visible.year
--        val month = visible.month
--        if (year !in 1..MAX_SUPPORTED_YEA
-```
-
----
-
-### Incident Patch 2: `befc4557` (2026-09-10)
-**Commit Message**: fix(file-picker): reuse identical cached native library instead of replacing it
-
-Closes #534.
-
-Two apps bundling the same picker extracted the native library to one fixed path, and on Windows the second app failed because the first had the DLL loaded and locked. The cached copy is now named with a content hash, an existing identical file is reused untouched, and if the target still cannot be replaced the loader falls back to a unique temp file instead of failing.
-
-**File**: `calf-file-picker/src/desktopMain/kotlin/com/mohamedrejeb/calf/picker/platform/NativeLibCache.kt` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+package com.mohamedrejeb.calf.picker.platform
-+
-+import java.io.File
-+import java.nio.file.Files
-+import java.nio.file.Path
-+import java.nio.file.StandardCopyOption
-+import java.security.MessageDigest
-+
-+private const val HASH_ALGORITHM = "SHA-256"
-+private const val HASH_LENGTH = 16
-+private const val TEMP_PREFIX = "calf-native-"
-+private const val TEMP_SUFFIX = ".tmp"
-+
-+/**
-+ * Short, stable fingerprint of a native library's bytes.
-+ *
-+ * Used to name the cached copy so that different builds of the library
-+ * never share a file on disk.
-+ */
-+internal fun nativeLibraryContentHash(bytes: ByteArray): String =
-+    MessageDigest.getInstance(HASH_ALGORITHM)
-+        .digest(bytes)
-+        .joinToString("") { "%02x".format(it) }
-+        .take(HASH_LENGTH)
-+
-+/**
-+ * Inserts [contentHash] before the extension of [libFileName],
-+ * e.g. `calf_filepicker_native.dll` -> `calf_filepicker_native-<hash>.dll`.
-+ */
-+internal fun nativeLibraryCacheFileName(libFileName: String, contentHash: String): String {
-+    val extension = libFileName.substringAfterLast('.', missingDelimiterValue = "")
-+    val baseName = libFileName.substringBeforeLast('.')
-+    return if (extension.isEmpty()) "$baseName-$contentHash" else "$baseName-$contentHash.$extension"
-+}
-+
-+/**
-+ * Makes [bytes] available as a file inside [cacheDir] and returns the file to load.
-+ *
-+ * - An existing target with identical content is reused untouched, so a library
-+ *   that another process has already loaded (and locked, on Windows) is never
-+ *   replaced.
-+ * - Otherwise the bytes are written to a temp file and moved over the target.
-+ * - If the move fails for any reason, the unique temp file itself is returned
-+ *   and scheduled for deletion on exit, so loading still succeeds.
-+ */
-+internal fun extractNativeLibrary(bytes: ByteArray, cacheDir: File, fileName: String): File {
-+    cacheDir.mkdirs()
-+    val target = File(cacheDir, fileName)
-+    if (hasIdenticalContent(target, bytes)) return target
-+
-+    val tempFile = Files.createTempFile(cacheDir.toPath(), TEMP_PREFIX, TEMP_SUFFIX)
-+    Files.write(tempFile, bytes)
-+
-+    return runCatching { moveReplacing(tempFile, target.toPath()) }
-+        .map { target }
-+        .getOrElse { tempFile.toFile().also { it.deleteOnExit() } }
-+}
-+
-+private fun hasIdenticalContent(file: File, bytes: ByteArray): Boolean =
-+    file.isFile &&
-+        file.length() == bytes.size.toLong() &&
-+        nativeLibraryContentHash(file.readBytes()) == nativeLibraryContentHash(bytes)
-+
-+private fun moveReplacing(source: Path, target: Path) {
-+    try {
-+        Files.move(source, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
-+    } catch (_: Exception) {
-+        // ATOMIC_MOVE is not supported on every filesystem; retry with a plain replace.
-+        Files.move(source, target, StandardCopyOption.REPLACE_EXISTING)
-+    }
-+}
-```
-
-**File**: `calf-file-picker/src/desktopMain/kotlin/com/mohamedrejeb/calf/picker/platform/NativeLibLoader.kt` (modified, +40/-54)
-```diff
-@@ -1,84 +1,70 @@
- package com.mohamedrejeb.calf.picker.platform
- 
- import java.io.File
--import java.io.InputStream
--import java.nio.file.Files
--import java.nio.file.StandardCopyOption
- 
- private const val LIB_NAME = "calf_filepicker_native"
-+private const val CACHE_DIR = ".cache/calf-filepicker"
- 
- /**
-- * Loads the native file picker library from JAR resources.
-+ * Loads the native file picker library.
+@@ -95,8 +95,10 @@ actual fun rememberFileSaverLauncher(
+  * Writes [source] into [destination], the document the save sheet returned: a new, empty document,
+  * or an existing one the user chose to overwrite.
   *
-- * The library is expected at: native/<os>-<arch>/<libFileName>
-- * It is extracted to a user-scoped cache directory and loaded via [System.load].
-+ * The system library path is tried first (packagers like Conveyor extract natives
-+ * out of the jar). Otherwise the library is read from JAR resources at
-+ * `native/<os>-<arch>/<libFileName>`, cached under a content-hashed name in a
-+ * user-scoped directory, and loaded via [System.load].
-  *
-- * Called once from [NativeFilePickerBridge]'s object init block
-+ * Called once from [NativeFilePickerBridge]'s object init block.
+- * @return `null` if the source was written; otherwise why not. An empty document is then deleted,
+- * and a document with content is left as it was.
++ * @return `null` if the source was written; otherwise why not. An empty document is then deleted.
++ * A document with content is untouched when the failure comes before writing starts (the source
++ * is lost or unreadable, or the provider refuses to open it); a failure while writing can leave
++ * it partly written, as any in-place overwrite can.
   */
- internal fun loadNativeLibrary() {
--    // Try the system path first (packagers like Conveyor extract natives
--    // out of the jar), then fall back to the bundled resource.
-     try {
-         System.loadLibrary(LIB_NAME)
-         return
-     } catch (_: UnsatisfiedLinkError) {
-     }
- 
--    val osName = System.getProperty("os.name")?.lowercase().orEmpty()
--    val osArch = System.getProperty("os.arch")?.lowercase().orEmpty()
-+    val (resourcePath, libFileName) = bundledLibraryLocation()
-+    val bytes = NativeFilePickerBridge::class.java.classLoader
-+        ?.getResourceAsStream(resourcePath)
-+        ?.use { it.readBytes() }
-+        ?: error(
-+            "Native library not found in JAR resources at '$resourcePath'. " +
-+                "Ensure the native library is built for this platform."
-+        )
- 
--    val (osPart, libFileName) = when {
--        "mac" in osName || "darwin" in osName ->
--            "macos" to "lib$LIB_NAME.dylib"
-+    val cacheFileName = nativeLibraryCacheFileName(libFileName, nativeLibraryContentHash(bytes))
-+    val libraryFile = try {
-+        extractNativeLibrary(bytes, userCacheDir(), cacheFileName)
+ private suspend fun Context.writeSaveSource(source: SaveSource?, destination: Uri): FilePickerException? =
+     withContext(Dispatchers.IO) {
+@@ -138,11 +140,10 @@ private fun ContentResolver.openSource(source: SaveSource): InputStream = when (
+ private fun ContentResolver.openDestination(destination: Uri, isEmpty: Boolean): OutputStream {
+     val output = try {
+         openOutputStream(destination, TRUNCATE_WRITE_MODE)
+-    } catch (e: IllegalArgumentException) {
+-        if (!isEmpty) throw e
+-        openOutputStream(destination, WRITE_MODE)
+-    } catch (e: FileNotFoundException) {
+-        if (!isEmpty) throw e
 +    } catch (e: Exception) {
-+        error("Failed to extract native file picker library '$cacheFileName': ${e.message}")
-+    }
++        // A provider refusing the mode throws one of these; anything else is a real failure.
++        val refusedMode = e is IllegalArgumentException || e is FileNotFoundException
++        if (!isEmpty || !refusedMode) throw e
+         openOutputStream(destination, WRITE_MODE)
+     }
+     return output ?: throw FileNotFoundException("The provider gave no output stream for $destination")
+```
+
+**File**: `calf-file-picker/src/commonMain/kotlin/com.mohamedrejeb.calf/picker/FileSaverLauncher.kt` (modified, +4/-4)
+```diff
+@@ -8,10 +8,10 @@ import com.mohamedrejeb.calf.io.KmpFile
+ /**
+  * Remembers a [FileSaverLauncher] that can save a file to a user-chosen location.
+  *
+- * Every save ends with exactly one [onResult] call, except a web download in a browser without a
+- * save dialog, which reports nothing. Failures are reported through [onError] first: no app on the
+- * device can save files, the source could not be read, or the chosen file could not be written.
+- * [onResult] then receives `null`.
++ * Every save ends with exactly one [onResult] call. Failures are reported through [onError] first:
++ * no app on the device can save files, the source could not be read, or the chosen file could not
++ * be written. [onResult] then receives `null`. On the web, a browser without a save dialog
++ * downloads the file instead, and [onResult] receives the downloaded file.
+  *
+  * @param settings Dialog settings (title, initial directory, etc.).
+  * @param onError Called before [onResult] when saving fails. Cancelling the dialog is not a failure.
+```
+
+**File**: `calf-file-picker/src/desktopMain/kotlin/com/mohamedrejeb/calf/picker/FilePickerLauncher.desktop.kt` (modified, +7/-1)
+```diff
+@@ -15,6 +15,7 @@ import androidx.compose.ui.window.FrameWindowScope
+ import com.mohamedrejeb.calf.io.KmpFile
+ import com.mohamedrejeb.calf.picker.platform.PlatformFilePicker
+ import kotlinx.coroutines.CancellationException
++import kotlinx.coroutines.CompletableDeferred
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.sync.Mutex
+@@ -125,6 +126,9 @@ private fun rememberFilePickerLauncherInternal(
+     // Settings update acquires the lock to safely destroy/recreate the handle.
+     // launch() acquires the lock to show the dialog with a valid handle.
+     val dialogMutex = remember { Mutex() }
++    // Completed once the first creation attempt is over, so an early launch() waits for it instead
++    // of taking a dialog that does not exist yet for a failed one.
++    val firstDialogCreated = remember { CompletableDeferred<Unit>() }
  
--        "win" in osName ->
--            "windows" to "$LIB_NAME.dll"
-+    @Suppress("UnsafeDynamicallyLoadedCode")
-+    System.load(libraryFile.absolutePath)
-+}
- 
--        "nux" in osName || "nix" in osName ->
--            "linux" to "lib$LIB_NAME.so"
-+/** Resource path inside the JAR and the platform file name of the bundled library. */
-+private fun bundledLibraryLocation(): Pair<String, String> {
-+    val osName = System.getProperty("os.name")?.lowercase().orEmpty()
-+    val osArch = System.getProperty("os.arch")?.lowercase().orEmpty()
- 
-+    val (osPart, libFileName) = when {
-+        "mac" in osName || "darwin" in osName -> "macos" to "lib$LIB_NAME.dylib"
-+        "win" in osName -> "windows" to "$LIB_NAME.dll"
-+        "nux" in osName || "nix" in osName -> "linux" to "lib$LIB_NAME.so"
-         else -> error("Unsupported OS: $osName")
+     // Create the native dialog handle off the main thread
+     LaunchedEffect(
+@@ -162,6 +166,7 @@ private fun rememberFilePickerLauncherInternal(
+                 }
+             }
+             dialogHandle.longValue = handle
++            firstDialogCreated.complete(Unit)
+         }
      }
  
--    val archPart = when {
--        osArch == "aarch64" || osArch == "arm64" -> "arm64"
--        osArch == "amd64" || osArch == "x86_64" -> "x64"
-+    val archPart = when (osArch) {
-+        "aarch64", "arm64" -> "arm64"
-+        "amd64", "x86_64" -> "x64"
-         else -> error("Unsupported architecture: $osArch")
-     }
- 
--    val resourcePath = "native/$osPart-$archPart/$libFileName"
--
--    val inputStream: InputStream = NativeFilePickerBridge::class.java.classLoader
--        ?.getResourceAsStream(resourcePath)
--        ?: error(
--            "Native library not found in JAR resources at '$resourcePath'. " +
--                "Ensure the native library is built for $osPart-$archPart."
--        )
-+    return "native/$osPart-$archPart/$libFileName" to libFileName
-+}
- 
--    // Use a user-scoped cache directory to avoid shared /tmp security risks
-+/** User-scoped cache directory, avoiding the security risks of a shared /tmp. */
-+private fun userCacheDir(): File {
-     val userHome = System.getProperty("user.home") ?: System.getProperty("java.io.tmpdir")
--    val cacheDir = File(userHome, ".cache/calf-filepicker")
--    cacheDir.mkdirs()
--
--    val targetFile = File(cacheDir, libFileName)
--
--    inputStream.use { input ->
--        val bytes = input.readBytes()
--        val tempFile = Files.createTempFile(cacheDir.toPath(), "calf-native-", ".tmp")
--        try {
--            Files.write(tempFile, bytes)
--            try {
--                Files.move(tempFile, targetFile.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
--            } catch (_: Exception) {
--                // ATOMIC_MOVE not supported on this filesystem, fallback to regular move
--                Files.move(tempFile, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
--            }
--        } catch (e: Exception) {
--           
+@@ -181,10 +186,11 @@ private fun rememberFilePickerLauncherInternal(
+             selectionMode = selectionMode,
+             onLaunch = {
+                 scope.launch {
++                    firstDialogCreated.await()
+                     dialogMutex.withLock {
+                         val handle = dialogHandle.longValue
+                         if (handle == 0L) {
+-                            // No handle also covers a native call that returned none without throwing.
++                            // Creation was attempted and failed, by throwing or by returning no handle.
+                             failPick(
+                                 FilePickerException("Could not create the file dialog", dialogFailure.value),
+                                 currentOnError,
 ```
 
-**File**: `calf-file-picker/src/desktopTest/kotlin/com/mohamedrejeb/calf/picker/platform/NativeLibCacheTest.kt` (added, +103/-0)
+**File**: `calf-file-picker/src/iosMain/kotlin/com.mohamedrejeb.calf.picker/Staging.kt` (modified, +8/-2)
 ```diff
-@@ -0,0 +1,103 @@
-+package com.mohamedrejeb.calf.picker.platform
-+
-+import java.io.File
-+import kotlin.io.path.createTempDirectory
-+import kotlin.test.AfterTest
-+import kotlin.test.BeforeTest
-+import kotlin.test.Test
-+import kotlin.test.assertContentEquals
-+import kotlin.test.assertEquals
-+import kotlin.test.assertNotEquals
-+import kotlin.test.assertTrue
-+
-+class NativeLibCacheTest {
-+
-+    private lateinit var cacheDir: File
-+
-+    @BeforeTest
-+    fun setUp() {
-+        cacheDir = createTempDirectory("calf-native-cache-test").toFile()
-+    }
-+
-+    @AfterTest
-+    fun tearDown() {
-+        cacheDir.deleteRecursively()
-+    }
-+
-+    @Test
-+    fun `cache file name inserts the hash before the extension`() {
-+        assertEquals(
-+            "calf_filepicker_native-0123456789abcdef.dll",
-+            nativeLibraryCacheFileName("calf_filepicker_native.dll", "0123456789abcdef"),
-+        )
-+        assertEquals(
-+            "libcalf_filepicker_native-0123456789abcdef.dylib",
-+            nativeLibraryCacheFileName("libcalf_filepicker_native.dylib", "0123456789abcdef"),
-+        )
-+        assertEquals(
-+            "libcalf_filepicker_native-0123456789abcdef.so",
-+            nativeLibraryCacheFileName("libcalf_filepicker_native.so", "0123456789abcdef"),
-+        )
-+    }
-+
-+    @Test
-+    fun `content hash is deterministic, differs per content and is 16 hex chars`() {
-+        val first = nativeLibraryContentHash(byteArrayOf(1, 2, 3))
-+        val same = nativeLibraryContentHash(byteArrayOf(1, 2, 3))
-+        val other = nativeLibraryContentHash(byteArrayOf(1, 2, 4))
-+
-+        assertEquals(first, same)
-+        assertNotEquals(first, other)
-+        assertTrue(Regex("[0-9a-f]{16}").matches(first), "unexpected hash format: $first")
-+    }
-+
-+    @Test
-+    fun `extract writes the file with the exact bytes when it is missing`() {
-+        val bytes = byteArrayOf(10, 20, 30, 40)
-+
-+        val loaded = extractNativeLibrary(bytes, cacheDir, "lib-aaaa.so")
-+
-+        assertEquals(File(cacheDir, "lib-aaaa.so"), loaded)
-+        assertContentEquals(bytes, loaded.readBytes())
-+    }
-+
-+    @Test
-+    fun `extract reuses an existing identical file without rewriting it`() {
-+        val bytes = byteArrayOf(7, 8, 9)
-+        val target = File(cacheDir, "lib-bbbb.so").apply { writeBytes(bytes) }
-+        val pastMillis = 1_000_000_000_000L
-+        assertTrue(target.setLastModified(pastMillis))
-+
-+        val loaded = extractNativeLibrary(bytes, cacheDir, "lib-bbbb.so")
-+
-+        assertEquals(target, loaded)
-+        assertEquals(pastMillis, loaded.lastModified())
-+        assertContentEquals(bytes, loaded.readBytes())
-+    }
-+
-+    @Test
-+    fun `extract replaces an existing file whose bytes differ`() {
-+        val target = File(cacheDir, "lib-cccc.so").apply { writeBytes(byteArrayOf(1, 1, 1)) }
-+        val bytes = byteArrayOf(2, 2, 2, 2)
-+
-+        val loaded = extractNativeLibrary(bytes, cacheDir, "lib-cccc.so")
-+
-+        assertEquals(target, loaded)
-+        assertContentEquals(bytes, loaded.readBytes())
-+    }
-+
-+    @Test
-+    fun `extract falls back to a unique file in the cache dir when the target cannot be replaced`() {
-+        val blockedTarget = File(cacheDir, "lib-dddd.so")
-+        assertTrue(blockedTarget.mkdir())
-+        assertTrue(File(blockedTarget, "occupied").createNewFile())
-+        val bytes = byteArrayOf(5, 5, 5)
-+
-+        val loaded = extractNativeLibrary(bytes, cacheDir, "lib-dddd.so")
-+
-+        assertNotEquals(blockedTarget, loaded)
-+        assertEquals(cacheDir, loaded.parentFile)
-+        assertTrue(loaded.isFile)
-+        assertContentEquals(bytes, loaded.readBytes())
-+    }
-+}
-```
-
-**File**: `docs/filepicker.md` (modified, +6/-0)
-```diff
-@@ -156,6 +156,12 @@ Passing `null` (the default) allows unlimited selection. `FilePickerSelectionMod
+@@ -52,10 +52,16 @@ internal fun stagePickedUrls(urls: List<NSURL>, isAppsOwnCopy: Boolean = false):
+     return StagedPick(files, partialPickFailure(failed = urls.size - files.size, picked = urls.size))
+ }
  
- ## Desktop Setup
- 
-+#### Native library cache
-+
-+The desktop file picker relies on a small native library bundled inside the JAR. On first use it is extracted to `~/.cache/calf-filepicker/`. The cached file name includes a hash of the library's content, so several applications, product flavors, or Calf versions running on the same machine never overwrite each other's copy, and an identical library that is already present is reused as is.
-+
-+Packagers that place the library on the system library path (for example Conveyor) skip the extraction entirely, since the loader tries `System.loadLibrary` first.
-+
- #### macOS Dark Theme
- 
- The file dialog follows the application's theme. To enable dark mode support on macOS, add this JVM argument to your Gradle configuration:
-```
-
----
-
-### Incident Patch 3: `15183749` (2026-09-12)
-**Commit Message**: feat(ui): add AdaptiveCompactDatePicker
-
-A field showing the selected date that opens the calendar on tap,
-sharing AdaptiveDatePickerState with the inline picker so the
-selectable-dates rule applies unchanged.
-
-- Material: an outlined button opens a DatePickerDialog that edits a
-  scratch state, so the shared state only changes on confirm; dismiss or
-  tapping outside discards the pick
-- iOS: the system compact UIDatePicker, which pops its calendar over the
-  content. Bounds coming from a DateBounds apply natively; the control
-  cannot grey out days any other rule rejects, so such a pick snaps to
-  the nearest selectable day
-- iOS: DatePickerManager gains presentations (inline, wheels, compact),
-  an enabled flag and an intrinsic size that is measured again after
-  each selection because the compact label resizes
-- iOS: the state-to-native sync composable is shared by the inline and
-  compact pickers, and native pickers are keyed on their state so taps
-  never reach a stale instance
-- Tests: AdaptiveCompactDatePickerMaterialTest (desktopTest, Compose UI,
-  incl. picking a day in the dialog)
-- Docs: compact picker section; sample gains a compact section
-
-**File**: `calf-ui/src/commonMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveCompactDatePicker.kt` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.material3.DatePickerColors
-+import androidx.compose.material3.DatePickerDefaults
-+import androidx.compose.material3.DatePickerFormatter
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.remember
-+import androidx.compose.ui.Modifier
-+
+-/** A [KmpFile] that reads from a staged copy of this picked URL and reports the URL as its origin. */
 +/**
-+ * A compact date picker that shows the selected date and opens the full picker on tap.
-+ *
-+ * On iOS this is the system compact `UIDatePicker`, which pops its calendar over the content.
-+ * It applies bounds coming from a [DateBounds] natively, but cannot grey out days any other rule
-+ * rejects: such a pick snaps to the nearest selectable day. On Material platforms it is an
-+ * outlined button showing the formatted date that opens a `DatePickerDialog` holding a Material3
-+ * `DatePicker`. Both share [state], including its selectable-dates rule.
-+ *
-+ * @param state the state that holds the selection and the selectable range.
-+ * @param modifier the modifier applied to the field.
-+ * @param enabled whether the user can open the picker.
-+ * @param dateFormatter formats the date shown in the field and the dialog on Material platforms.
-+ * @param colors colors of the picker; the selected day color tints the native iOS control.
-+ * @param materialPlaceholder text shown in the field on Material platforms while nothing is
-+ * selected; the iOS control always shows a date.
-+ * @param materialConfirmText label of the dialog button that keeps the selection on Material platforms.
-+ * @param materialDismissText label of the dialog button that discards the day picked in the
-+ * dialog on Material platforms. Dismissing the dialog by tapping outside behaves the same way.
-+ * The shared [state] only changes when the dialog is confirmed.
-+ * @param materialTitle the dialog title slot on Material platforms. Unlike [AdaptiveDatePicker],
-+ * `null` shows the Material3 default rather than hiding it, because a dialog needs a header.
-+ * @param materialHeadline the dialog headline slot on Material platforms; `null` shows the
-+ * Material3 default, which displays the day picked so far.
++ * A [KmpFile] that reads from a staged copy of this picked URL and reports the URL as its origin.
++ * A moved copy no longer exists at this URL, and was itself only the picker's copy, so the staged
++ * file is its origin.
 + */
-+@OptIn(ExperimentalMaterial3Api::class)
-+@Composable
-+expect fun AdaptiveCompactDatePicker(
-+    state: AdaptiveDatePickerState,
-+    modifier: Modifier = Modifier,
-+    enabled: Boolean = true,
-+    dateFormatter: DatePickerFormatter = remember { DatePickerDefaults.dateFormatter() },
-+    colors: DatePickerColors = DatePickerDefaults.colors(),
-+    materialPlaceholder: String = "Select date",
-+    materialConfirmText: String = "OK",
-+    materialDismissText: String = "Cancel",
-+    materialTitle: (@Composable () -> Unit)? = null,
-+    materialHeadline: (@Composable () -> Unit)? = null,
-+)
-```
-
-**File**: `calf-ui/src/desktopTest/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveCompactDatePickerMaterialTest.kt` (added, +123/-0)
-```diff
-@@ -0,0 +1,123 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.material3.DatePickerDefaults
-+import androidx.compose.material3.DisplayMode
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.ui.test.ExperimentalTestApi
-+import androidx.compose.ui.test.assertCountEquals
-+import androidx.compose.ui.test.assertIsDisplayed
-+import androidx.compose.ui.test.assertIsNotEnabled
-+import androidx.compose.ui.test.onAllNodesWithText
-+import androidx.compose.ui.test.onNodeWithText
-+import androidx.compose.ui.test.performClick
-+import androidx.compose.ui.test.v2.runComposeUiTest
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+
-+private const val PLACEHOLDER = "Pick a date"
-+private const val CONFIRM = "Done"
-+private const val DISMISS = "Back"
-+
-+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
-+class AdaptiveCompactDatePickerMaterialTest {
-+
-+    private val formatter = DatePickerDefaults.dateFormatter()
-+
-+    private fun state(selectedDateMillis: Long? = null) = AdaptiveDatePickerState(
-+        initialSelectedDateMillis = selectedDateMillis,
-+        initialDisplayedMonthMillis = selectedDateMillis,
-+        yearRange = DatePickerDefaults.YearRange,
-+        initialMaterialDisplayMode = DisplayMode.Picker,
-+        initialUIKitDisplayMode = UIKitDisplayMode.Picker,
-+    )
-+
-+    private fun fieldLabel(utcTimeMillis: Long): String =
-+        requireNotNull(formatter.formatDate(utcTimeMillis, getCalendarLocalDefault()))
-+
-+    @Test
-+    fun `shows the placeholder while nothing is selected`() = runComposeUiTest {
-+        setContent {
-+            AdaptiveCompactDatePicker(state = state(), materialPlaceholder = PLACEHOLDER)
-+        }
-+
-+        onNodeWithText(PLACEHOLDER).assertIsDisplayed()
+ @OptIn(InternalCalfApi::class)
+ internal fun NSURL.toStagedKmpFile(isAppsOwnCopy: Boolean = false): KmpFile? =
+-    stagePickedFile(this, isAppsOwnCopy)?.let { staged -> KmpFile(url = staged, originalUrl = this) }
++    stagePickedFile(this, isAppsOwnCopy)?.let { staged ->
++        KmpFile(url = staged, originalUrl = if (isAppsOwnCopy) staged else this)
 +    }
-+
-+    @Test
-+    fun `shows the formatted selected date`() = runComposeUiTest {
-+        setContent {
-+            AdaptiveCompactDatePicker(state = state(MAR_15_2026), materialPlaceholder = PLACEHOLDER)
-+        }
-+
-+        onNodeWithText(fieldLabel(MAR_15_2026)).assertIsDisplayed()
-+    }
-+
-+    @Test
-+    fun `tapping the field opens a dialog with confirm and dismiss buttons`() = runComposeUiTest {
-+        setContent {
-+            AdaptiveCompactDatePicker(
-+                state = state(),
-+                materialPlaceholder = PLACEHOLDER,
-+                materialConfirmText = CONFIRM,
-+                materialDismissText = DISMISS,
-+            )
-+        }
-+
-+        onNodeWithText(PLACEHOLDER).performClick()
-+
-+        onNodeWithText(CONFIRM).assertIsDisplayed()
-+        onNodeWithText(DISMISS).assertIsDisplayed()
-+    }
-+
-+    @Test
-+    fun `a day picked in the dialog does not reach the state until confirmed`() = runComposeUiTest {
-+        val state = state(MAR_15_2026)
-+        setContent {
-+            AdaptiveCompactDatePicker(state = state, materialConfirmText = CONFIRM, materialDismissText = DISMISS)
-+        }
-+
-+        onNodeWithText(fieldLabel(MAR_15_2026)).performClick()
-+        dayCell(MAR_16_2026).performClick()
-+
-+        assertEquals(MAR_15_2026, state.selectedDateMillis)
-+    }
-+
-+    @Test
-+    fun `confirming applies the day picked in the dialog`() = runComposeUiTest {
-+        val state = state(MAR_15_2026)
-+        setContent {
-+            AdaptiveCompactDatePicker(state = state, materialConfirmText = CONFIRM, materialDismissText = DISMISS)
-+        }
-+
-+        onNodeWithText(fieldLabel(MAR_15_2026)).performClick()
-+        dayCell(MAR_16_2026).performClick()
-+        onNodeWithText(CONFIRM).performClick()
-+
-+        assertEquals(MAR_16_2026, state.selectedDateMillis)
-+        onAllNodesWithText(CONFIRM).assertCountEquals(0)
-+    }
-+
-+    @Test
-+    fun `dismissing discards the day picked in the dialog`() = runComposeUiTest {
-+        val state = state(MAR_15_2026)
-+        setContent {
-+            AdaptiveCompactDatePicker(state = state, materialConfirmText = CONFIRM, materialDismissText = DISMISS)
-+        }
-+
-+        onNodeWithText(fieldLabel(MAR_15_2026)).performClick()
-+        dayCell(MAR_16_2026).performClick()
-+        onNodeWithText(DISMISS).performClick()
-+
-+        assertEquals(MAR_15_2026, state.selectedDateMillis)
-+        onAllNodesWithText(DISMISS).assertCountEquals(0)
-+    }
-+
-+    @Test
-+    fun `a disabled field cannot be opened`() = runComposeUiTest {
-+        setContent {
-+            AdaptiveCompactDatePicker(state = state(), enabled = false, materialPlaceholder = PLACEHOLDER)
-+        }
-+
-+        onNodeWithText(PLACEHOLDER).assertIsNotEnabled()
-+    }
-+}
-```
-
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveCompactDatePicker.ios.kt` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+package com.mohamedrejeb.calf.ui.datepicker
-+
-+import androidx.compose.foundation.layout.size
-+import androidx.compose.material3.DatePickerColors
-+import androidx.compose.material3.DatePickerFormatter
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.key
-+import androidx.compose.ui.ExperimentalComposeUiApi
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.viewinterop.UIKitInteropInteractionMode
-+import androidx.compose.ui.viewinterop.UIKitInteropProperties
-+import androidx.compose.ui.viewinterop.UIKitView
-+import com.mohamedrejeb.calf.core.InternalCalfApi
-+
-+@OptIn(ExperimentalMaterial3Api::class, InternalCalfApi::class, ExperimentalComposeUiApi::class)
-+@Composable
-+actual fun AdaptiveCompactDatePicker(
-+    state: AdaptiveDatePickerState,
-+    modifier: Modifier,
-+    enabled: Boolean,
-+    dateFormatter: DatePickerFormatter,
-+    colors: DatePickerColors,
-+    materialPlaceholder: String,
-+    materialConfirmText: String,
-+    materialDismissText: String,
-+    materialTitle: (@Composable () -> Unit)?,
-+    materialHeadline: (@Composable () -> Unit)?,
-+) {
-+    val datePickerManager = rememberDatePickerManager(
-+        state = state,
-+        presentation = IosDatePickerPresentation.Compact,
-+    )
-+
-+    SyncNativeDatePicker(
-+        state = state,
-+        manager = datePickerManager,
-+        colors = colors,
-+        enabled = enabled,
-+    )
-+
-+    key(datePickerManager) {
-+        UIKitView(
-+            factory = {
-+                datePickerManager.view
-+            },
-+            properties = UIKitInteropProperties(
-+                interactionMode = UIKitInteropInteractionMode.NonCooperative,
-+            ),
-+            modifier = modifier.size(datePickerManager.viewSize),
-+        )
-+    }
-+}
-```
-
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveDatePicker.ios.kt` (modified, +88/-62)
-```diff
-@@ -10,20 +10,22 @@ import androidx.compose.material3.ExperimentalMaterial3Api
- import androidx.compose.material3.LocalAbsoluteTonalElevation
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.LaunchedEffect
-+import androidx.compose.runtime.key
- import androidx.compose.runtime.remember
- import androidx.compose.ui.ExperimentalComposeUiApi
- import androidx.compose.ui.Modifier
-+import androidx.compose.ui.platform.LocalLayoutDirection
- import androidx.compose.ui.viewinterop.UIKitInteropInteractionMode
- import androidx.compose.ui.viewinterop.UIKitInteropProperties
- import androidx.compose.ui.viewinterop.UIKitView
--import androidx.compose.ui.platform.LocalLayoutDirection
- import com.mohamedrejeb.calf.core.InternalCalfApi
- import com.mohamedrejeb.calf.ui.utils.applyLayoutDirection
- import com.mohamedrejeb.calf.ui.utils.surfaceColorAtElevation
- import kotlinx.cinterop.ExperimentalForeignApi
- 
--@OptIn(ExperimentalForeignApi::class, ExperimentalMaterial3Api::class, InternalCalfApi::class,
--    ExperimentalComposeUiApi::class
-+@OptIn(
-+    ExperimentalForeignApi::class, ExperimentalMaterial3Api::class, InternalCalfApi::class,
-+    ExperimentalComposeUiApi::class,
- )
- @Composable
- actual fun AdaptiveDatePicker(
-@@ -35,87 +37,111 @@ actual fun AdaptiveDatePicker(
-     showModeToggle: Boolean,
-     colors: DatePickerColors
- ) {
--    val datePickerManager = remember {
--        DatePickerManager(
--            initialSelectedDateMillis = state.selectedDateMillis,
--            displayMode = state.initialUIKitDisplayMode,
--            onSelectionChanged = { dateMillis ->
--                state.selectedDateMillis = dateMillis
--            },
--            isDaySelectable = { dateMillis ->
--                state.isDaySelectable(dateMillis)
--            },
--            resolveSelection = { pickedMillis ->
--                if (state.isDaySelectable(pickedMillis)) {
--                    pickedMillis
--                } else {
--                    val bounds = state.dateBounds
--                    nearestSelectableDay(
--                        utcTimeMillis = pickedMillis,
--                        minDateMillis = bounds.minDateMillis,
--                        maxDateMillis = bounds.maxDateMillis,
--                        selectableDates = state.selectableDates,
--                    ) ?: pickedMillis
--                }
--            },
--        )
-+    val datePickerManager = rememberDatePickerManager(
-+        state = state,
-+        presentation = when (state.initialUIKitDisplayMode) {
-+            UIKitDisplayMode.Picker -> IosDatePickerPresentation.Inline
-+            else -> IosDatePickerPresentation.Wheels
-+        },
-+    )
-+
-+    SyncNativeDatePicker(
-+        state = state,
-+        manager = datePickerManager,
-+        colors = colors,
-+        enabled = true,
-+    )
-+
-+    Box(
-+        modifier = modifier
-+    ) {
-+        key(datePickerManager) {
-+            UIKitView(
-+                factory = {
-+                    datePickerManager.view
-+                },
-+                properties = UIKitInteropProperties(
-+                    interactionMode = UIKitInteropInteractionMode.NonCooperative,
-+                ),
-+                modifier = Modifier
-+                    .background(colors.containerColor)
-+                    .fillMaxWidth()
-+                    .then(
-+                        if (datePickerManager.aspectRatio.isFinite() && datePickerManager.aspectRatio > 0f)
-+                            Modifier
-+                                .aspectRatio(datePickerManager.aspectRatio)
-+                        else
-+                            Modifier
-+                    )
-+            )
-+        }
-     }
-+}
- 
--    val layoutDirection = LocalLayoutDirection.current
-+/** Creates the native picker for [state] and recreates it if a different state is passed. */
-+@OptIn(ExperimentalMaterial3Api::class, InternalCalfApi::class)
-+@Composable
-+internal fun rememberDatePickerManager(
-+    state: AdaptiveDatePickerState,
-+    presentation: IosDatePickerPresentation,
-+): DatePickerManager = remember(state) {
-+    DatePickerManager(
-+        initialSelectedDateMillis = state.selectedDateMillis,
-+        presentation = presentation,
-+        onSelectionChanged = { dateMillis ->
-+            state.selectedDateMillis = dateMillis
-+        },
-+        isDaySelectable = { dateMillis ->
-+            state.isDaySelectable(dateMillis)
-+        },
-+        resolveSelection = { pickedMillis ->
-+            resolvePickedDay(pickedMillis, state.dateBounds, state.selectableDates)
-+        },
-+    )
-+}
- 
-+/** Pushes [state], colors, layout direction and the enabled flag into the native picker. */
-+@OptIn(ExperimentalMaterial3Api::class, InternalCalfApi::class)
-+@Composable
-+internal fun SyncNativeDatePicker(
-+    state: AdaptiveDatePickerState,
-+    manager: DatePickerManager,
-+    colors: DatePickerColors,
-+    enabled: Boolean,
-+) {
-+    val layoutDirection = LocalLayoutDirection.current
-     val absoluteElevation =
-```
-
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/CalendarDatePickerBackend.kt` (modified, +4/-0)
-```diff
-@@ -108,6 +108,10 @@ internal class CalendarDatePickerBackend(
-         refresh()
-     }
- 
-+    override fun setEnabled(enabled: Boolean) {
-+        calendarView.userInteractionEnabled = enabled
-+    }
-+
-     /**
-      * Rebuilds the days around the visible month, so bounds and rule changes show right away
-      * instead of on the next scroll or tap.
-```
-
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/DatePickerManager.kt` (modified, +63/-18)
-```diff
-@@ -4,10 +4,12 @@ package com.mohamedrejeb.calf.ui.datepicker
- 
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableFloatStateOf
-+import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.setValue
- import androidx.compose.ui.graphics.Color
-+import androidx.compose.ui.unit.DpSize
-+import androidx.compose.ui.unit.dp
- import com.mohamedrejeb.calf.core.InternalCalfApi
--import com.mohamedrejeb.calf.ui.utils.applyTheme
- import com.mohamedrejeb.calf.ui.utils.isDark
- import com.mohamedrejeb.calf.ui.utils.isIOSVersionAtLeast
- import com.mohamedrejeb.calf.ui.utils.toUIColor
-@@ -18,38 +20,53 @@ import platform.UIKit.UIDatePickerMode
- import platform.UIKit.UIDatePickerStyle
- import platform.UIKit.UIView
- 
--private const val FIRST_IOS_WITH_CALENDAR_VIEW = 16
-+internal const val FIRST_IOS_WITH_CALENDAR_VIEW = 16
-+
-+/** How the native date picker is presented. */
-+internal enum class IosDatePickerPresentation {
-+    /** A full calendar; `UICalendarView` on iOS 16+, an inline `UIDatePicker` before that. */
-+    Inline,
-+
-+    /** Spinning wheels. */
-+    Wheels,
-+
-+    /** A small button showing the date that pops the calendar over the content. */
-+    Compact,
-+}
  
  /**
-- * Owns the native date picker view and keeps it in sync with [AdaptiveDatePickerState].
-+ * Owns the native date picker view and keeps it in sync with the selection it is given.
-  *
-- * The inline style uses `UICalendarView` on iOS 16+, which can grey out days the
-- * [isDaySelectable] rule rejects. The wheels style, and the inline style on older systems,
-- * use `UIDatePicker` and resolve rejected picks through [resolveSelection].
-+ * The inline presentation uses `UICalendarView` on iOS 16+, which greys out days the
-+ * [isDaySelectable] rule rejects. Every other presentation, including the system compact
-+ * control, uses `UIDatePicker`, which only enforces bounds, and resolves rejected picks
-+ * through [resolveSelection].
-  */
- @InternalCalfApi
- class DatePickerManager internal constructor(
-     initialSelectedDateMillis: Long?,
--    displayMode: UIKitDisplayMode,
-+    private val presentation: IosDatePickerPresentation,
-     onSelectionChanged: (utcTimeMillis: Long?) -> Unit,
-     isDaySelectable: (utcTimeMillis: Long) -> Boolean,
-     resolveSelection: (pickedUtcTimeMillis: Long) -> Long,
- ) {
-+    private val onNativeSelectionChanged: (Long?) -> Unit = { utcTimeMillis ->
-+        remeasureCompactView()
-+        onSelectionChanged(utcTimeMillis)
+  * Writes [data] to a fresh export staging directory as [fileName]. The export picker shows, and
+```
+
+**File**: `calf-file-picker/src/iosTest/kotlin/com/mohamedrejeb/calf/picker/StagePickedUrlsTest.kt` (modified, +16/-0)
+```diff
+@@ -1,5 +1,7 @@
+ package com.mohamedrejeb.calf.picker
+ 
++import com.mohamedrejeb.calf.io.getName
++import com.mohamedrejeb.calf.io.toUriString
+ import platform.Foundation.NSData
+ import platform.Foundation.NSTemporaryDirectory
+ import platform.Foundation.NSURL
+@@ -22,6 +24,20 @@ class StagePickedUrlsTest {
+         removeStaging(source)
+     }
+ 
++    /** A moved copy no longer exists where the picker put it, so the staged file is the origin. */
++    @Test
++    fun aMovedCopyReportsTheStagedFileAsItsOrigin() {
++        val pickersCopy = assertNotNull(stageExportData(NSData(), "a.pdf"))
++
++        val staged = stagePickedUrls(listOf(pickersCopy), isAppsOwnCopy = true).files.single()
++
++        assertEquals(staged.url.path, staged.originalUrl.path)
++        assertEquals("a.pdf", staged.getName())
++        assertEquals(staged.url.absoluteString, staged.toUriString())
++        removeStaging(staged.url)
++        removeStaging(pickersCopy)
 +    }
 +
-     private val backend: IosDatePickerBackend =
--        if (displayMode == UIKitDisplayMode.Picker && isIOSVersionAtLeast(FIRST_IOS_WITH_CALENDAR_VIEW)) {
-+        if (presentation == IosDatePickerPresentation.Inline && isIOSVersionAtLeast(FIRST_IOS_WITH_CALENDAR_VIEW)) {
-             CalendarDatePickerBackend(
-                 initialSelectedDateMillis = initialSelectedDateMillis,
--                onSelectionChanged = onSelectionChanged,
-+                onSelectionChanged = onNativeSelectionChanged,
-                 isDaySelectable = isDaySelectable,
+     @Test
+     fun anUnreadableFileIsReportedAndTheOthersAreKept() {
+         val source = assertNotNull(stageExportData(NSData(), "a.pdf"))
+```
+
+**File**: `calf-file-picker/src/jsMain/kotlin/com.mohamedrejeb.calf.picker/WebBlob.js.kt` (modified, +5/-0)
+```diff
+@@ -4,6 +4,8 @@ import org.khronos.webgl.Int8Array
+ import org.khronos.webgl.Uint8Array
+ import org.w3c.files.Blob
+ import org.w3c.files.BlobPropertyBag
++import org.w3c.files.File
++import org.w3c.files.FilePropertyBag
+ 
+ internal actual fun createBlob(bytes: ByteArray, mimeType: String): Blob {
+     val jsArray = Int8Array(bytes.size)
+@@ -16,3 +18,6 @@ internal actual fun createBlob(bytes: ByteArray, mimeType: String): Blob {
+         options = BlobPropertyBag(type = mimeType),
+     )
+ }
++
++internal actual fun createFile(blob: Blob, fileName: String, mimeType: String): File =
++    File(fileBits = arrayOf(blob), fileName = fileName, options = FilePropertyBag(type = mimeType))
+```
+
+**File**: `calf-file-picker/src/wasmJsMain/kotlin/com.mohamedrejeb.calf/picker/WebBlob.wasmJs.kt` (modified, +9/-0)
+```diff
+@@ -5,6 +5,8 @@ package com.mohamedrejeb.calf.picker
+ import org.khronos.webgl.toUint8Array
+ import org.w3c.files.Blob
+ import org.w3c.files.BlobPropertyBag
++import org.w3c.files.File
++import org.w3c.files.FilePropertyBag
+ 
+ internal actual fun createBlob(bytes: ByteArray, mimeType: String): Blob {
+     val uint8 = bytes.toUByteArray().toUint8Array()
+@@ -13,3 +15,10 @@ internal actual fun createBlob(bytes: ByteArray, mimeType: String): Blob {
+         options = BlobPropertyBag(type = mimeType),
+     )
+ }
++
++internal actual fun createFile(blob: Blob, fileName: String, mimeType: String): File =
++    File(
++        fileBits = arrayOf<JsAny?>(blob).toJsArray(),
++        fileName = fileName,
++        options = FilePropertyBag(type = mimeType),
++    )
+```
+
+**File**: `calf-file-picker/src/webMain/kotlin/com.mohamedrejeb.calf/picker/FileSaverLauncher.web.kt` (modified, +15/-5)
+```diff
+@@ -18,6 +18,9 @@ import org.w3c.files.Blob
+  */
+ internal expect fun createBlob(bytes: ByteArray, mimeType: String): Blob
+ 
++/** Platform-specific: wraps [blob] in a [File] named [fileName]. */
++internal expect fun createFile(blob: Blob, fileName: String, mimeType: String): File
++
+ /**
+  * Whether the browser has the File System Access save dialog (`window.showSaveFilePicker`).
+  * Chromium browsers have it; Safari and Firefox do not.
+@@ -51,8 +54,9 @@ internal const val OBJECT_URL_REVOKE_DELAY_MS = 40_000
+ 
+ /**
+  * Saves through the browser's save dialog where there is one, so the user picks the location and
+- * `onResult` receives the saved file, or `null` when they cancel. Elsewhere the file is downloaded:
+- * the browser decides where it goes and `onResult` is not called.
++ * `onResult` receives the saved file, or `null` when they cancel. Elsewhere, or when the browser
++ * refuses to show the dialog, the file is downloaded: the browser decides where it goes, and
++ * `onResult` receives the downloaded file once the download is handed to the browser.
+  */
+ @ExperimentalCalfApi
+ @Composable
+@@ -66,21 +70,27 @@ actual fun rememberFileSaverLauncher(
+ 
+     val save: (Blob, String, String) -> Unit = { blob, baseName, extension ->
+         val fileName = "$baseName.$extension"
++        val mimeType = extensionToMimeType(extension)
++        // Like every save, a download ends with onResult: the file handed to the browser.
++        val download = {
++            triggerDownload(blob, fileName)
++            currentOnResult(KmpFile(createFile(blob, fileName, mimeType)))
++        }
+         if (isSaveFilePickerSupported()) {
+             showSaveFilePicker(
+                 blob = blob,
+                 suggestedName = fileName,
+-                mimeType = extensionToMimeType(extension),
++                mimeType = mimeType,
+                 extension = extension,
+                 onSaved = { file -> currentOnResult(KmpFile(file)) },
+                 onCancelled = { currentOnResult(null) },
+-                onPickerFailed = { triggerDownload(blob, fileName) },
++                onPickerFailed = download,
+                 onWriteFailed = {
+                     failSave(FilePickerException("Could not write the saved file"), currentOnError, currentOnResult)
+                 },
              )
          } else {
--            WheelsDatePickerBackend(
-+            UIDatePickerBackend(
-                 initialSelectedDateMillis = initialSelectedDateMillis,
--                style = when (displayMode) {
--                    UIKitDisplayMode.Picker -> UIDatePickerStyle.UIDatePickerStyleInline
--                    else -> UIDatePickerStyle.UIDatePickerStyleWheels
--                },
--                onSelectionChanged = onSelectionChanged,
-+                style = presentation.toUIDatePickerStyle(),
-+                onSelectionChanged = onNativeSelectionChanged,
-                 resolveSelection = resolveSelection,
-             )
+-            triggerDownload(blob, fileName)
++            download()
          }
-@@ -62,6 +79,13 @@ class DatePickerManager internal constructor(
-     internal var aspectRatio by mutableFloatStateOf(0f)
-         private set
- 
-+    /**
-+     * Intrinsic size of the native view in points, which equal dp on iOS. The compact picker
-+     * resizes with its date label, so it is measured again after every selection change.
-+     */
-+    internal var viewSize: DpSize by mutableStateOf(backend.view.currentSize())
-+        private set
-+
-     init {
-         aspectRatio = backend.view.aspectRatioOrZero()
-             .takeIf { it > 0f }
-@@ -81,7 +105,7 @@ class DatePickerManager internal constructor(
      }
  
-     internal fun applyTheme(isDark: Boolean) {
--        backend.view.applyTheme(isDark)
-+        backend.applyTheme(isDark)
-     }
- 
-     internal fun applyDateBounds(minDateMillis: Long?, maxDateMillis: Long?) {
-@@ -95,16 +119,37 @@ class DatePickerManager internal constructor(
- 
-     internal fun setSelectedDate(utcTimeMillis: Long?) {
-         backend.setSelectedDate(utcTimeMillis)
-+        remeasureCompactView()
-+    }
-+
-+    private fun remeasureCompactView() {
-+        if (presentation != IosDatePickerPresentation.Compact) return
-+        backend.view.sizeToFit()
-+        viewSize = backend.view.currentSize()
-+    }
-+
-+ 
 ```
 
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/IosDatePickerBackend.kt` (modified, +7/-0)
+---
+
+### Incident Patch 2: `d3120041` (2026-11-06)
+**Commit Message**: fix(io): iOS bookmarks share one access per location
+
+fromBookmark started security-scoped access on every call, and only
+releaseBookmark stopped it, so an app that reopened a bookmark without
+releasing it kept adding unbalanced accesses until iOS refused more.
+Files reopened from the same location now share one access, started by
+the first and stopped when the last is released.
+
+getSize, exists and isDirectory also read inside the URL's access, like
+readByteArray, so they work on security-scoped URLs such as the saver's
+result.
+
+**File**: `calf-io/src/iosMain/kotlin/com.mohamedrejeb.calf/io/KmpFile.ios.kt` (modified, +15/-6)
 ```diff
-@@ -1,5 +1,6 @@
- package com.mohamedrejeb.calf.ui.datepicker
+@@ -43,8 +43,10 @@ actual class KmpFile @InternalCalfApi constructor(
+     actual companion object
+ }
  
-+import com.mohamedrejeb.calf.ui.utils.applyTheme
- import platform.UIKit.UIColor
- import platform.UIKit.UIView
++@OptIn(InternalCalfApi::class)
+ actual fun KmpFile.exists(context: PlatformContext): Boolean {
+-    return NSFileManager.defaultManager.fileExistsAtPath(url.path ?: return false)
++    val path = url.path ?: return false
++    return url.withSecurityScopedAccess { NSFileManager.defaultManager.fileExistsAtPath(path) }
+ }
  
-@@ -19,5 +20,11 @@ internal interface IosDatePickerBackend {
-     /** Re-evaluates which days can be picked after the rule or the bounds changed. */
-     fun updateSelectableDates()
+ @OptIn(ExperimentalForeignApi::class, InternalCalfApi::class)
+@@ -81,11 +83,16 @@ actual fun KmpFile.Companion.fromUriString(uriString: String): KmpFile? {
+     return url?.takeIf { it.isFileURL() }?.let(::KmpFile)
+ }
  
-+    fun setEnabled(enabled: Boolean)
-+
-     fun applyColors(containerColor: UIColor, selectedDayContainerColor: UIColor)
-+
-+    fun applyTheme(isDark: Boolean) {
-+        view.applyTheme(isDark)
+-/** The size of the readable file; a directory has none. */
+-@OptIn(ExperimentalForeignApi::class)
++/**
++ * The size of the readable file; a directory has none. Read with the URL's security-scoped access,
++ * like the content, so it also works on a security-scoped URL such as the saver's result.
++ */
++@OptIn(ExperimentalForeignApi::class, InternalCalfApi::class)
+ actual fun KmpFile.getSize(context: PlatformContext): Long? {
+     val path = url.path ?: return null
+-    val attributes = NSFileManager.defaultManager.attributesOfItemAtPath(path, error = null) ?: return null
++    val attributes = url.withSecurityScopedAccess {
++        NSFileManager.defaultManager.attributesOfItemAtPath(path, error = null)
++    } ?: return null
+     if (attributes[NSFileType] != NSFileTypeRegular) return null
+     return (attributes[NSFileSize] as? NSNumber)?.longLongValue
+ }
+@@ -100,9 +107,11 @@ actual fun KmpFile.getMimeType(context: PlatformContext): String? {
+ private const val FILE_URL_PREFIX = "file:"
+ private const val PATH_SEPARATOR = "/"
+ 
+-@OptIn(ExperimentalForeignApi::class)
++@OptIn(ExperimentalForeignApi::class, InternalCalfApi::class)
+ actual fun KmpFile.isDirectory(context: PlatformContext): Boolean {
+-    val result = originalUrl.resourceValuesForKeys(listOf(NSURLIsDirectoryKey), error = null)
++    val result = originalUrl.withSecurityScopedAccess {
++        originalUrl.resourceValuesForKeys(listOf(NSURLIsDirectoryKey), error = null)
 +    }
+     return result?.get(NSURLIsDirectoryKey) == true
+ }
+ 
+```
+
+**File**: `calf-io/src/iosMain/kotlin/com.mohamedrejeb.calf/io/KmpFileBookmark.ios.kt` (modified, +72/-8)
+```diff
+@@ -4,7 +4,9 @@ import com.mohamedrejeb.calf.core.InternalCalfApi
+ import com.mohamedrejeb.calf.core.PlatformContext
+ import kotlinx.cinterop.ExperimentalForeignApi
+ import platform.Foundation.NSData
++import platform.Foundation.NSLock
+ import platform.Foundation.NSURL
++import platform.Foundation.URLByStandardizingPath
+ import platform.Foundation.base64EncodedStringWithOptions
+ import platform.Foundation.create
+ import kotlin.concurrent.AtomicInt
+@@ -27,9 +29,10 @@ actual fun KmpFile.createBookmark(context: PlatformContext): String? {
+ }
+ 
+ /**
+- * The reopened file starts its security-scoped access at once and holds it until
+- * [releaseBookmark]. Starting access per operation on paths rebuilt from the URL is not enough
+- * after a device restart, while access held on the resolved URL covers the files inside a folder.
++ * The reopened file holds security-scoped access to its location until [releaseBookmark].
++ * Starting access per operation on paths rebuilt from the URL is not enough after a device
++ * restart, while access held on the resolved URL covers the files inside a folder. Files reopened
++ * from the same location share one access, which stops when the last of them is released.
+  */
+ @OptIn(ExperimentalForeignApi::class)
+ actual fun KmpFile.Companion.fromBookmark(bookmark: String, context: PlatformContext): KmpFile? {
+@@ -42,18 +45,79 @@ actual fun KmpFile.Companion.fromBookmark(bookmark: String, context: PlatformCon
+         bookmarkDataIsStale = null,
+         error = null,
+     ) ?: return null
+-    return KmpFile(url, SecurityScopedAccess(url))
++    return KmpFile(url, SecurityScopedAccessRegistry.Shared.acquire(url))
+ }
+ 
+ actual fun KmpFile.releaseBookmark(context: PlatformContext) {
+     bookmarkAccess?.release()
+ }
+ 
+-/** Security-scoped access started once on [url] and stopped at most once. */
+-internal class SecurityScopedAccess(private val url: NSURL) {
+-    private val held = AtomicInt(if (url.startAccessingSecurityScopedResource()) 1 else 0)
++/**
++ * One file's claim on the access to its location, given up at most once.
++ */
++internal class SecurityScopedAccess(private val onRelease: () -> Unit) {
++    private val held = AtomicInt(1)
+ 
+     fun release() {
+-        if (held.compareAndSet(1, 0)) url.stopAccessingSecurityScopedResource()
++        if (held.compareAndSet(1, 0)) onRelease()
++    }
++}
++
++/**
++ * Counts the files holding access to each location, so access starts once per location and stops
++ * when the last file is released. Every start must be balanced by a stop, or the app leaks kernel
++ * resources and eventually cannot open more security-scoped locations until it is relaunched.
++ */
++internal class SecurityScopedAccessRegistry(
++    private val start: (NSURL) -> Boolean,
++    private val stop: (NSURL) -> Unit,
++) {
++    private class Location(val url: NSURL, val isAccessing: Boolean, val holders: Int)
++
++    private val lock = NSLock()
++    private var locations: Map<String, Location> = emptyMap()
++
++    fun acquire(url: NSURL): SecurityScopedAccess {
++        val key = url.locationKey()
++        locked {
++            val location = locations[key]
++            locations = locations + (key to when (location) {
++                null -> Location(url, isAccessing = start(url), holders = 1)
++                else -> Location(location.url, location.isAccessing, location.holders + 1)
++            })
++        }
++        return SecurityScopedAccess { release(key) }
++    }
++
++    private fun release(key: String) {
++        val stopped = locked {
++            val location = locations[key] ?: return@locked null
++            if (location.holders > 1) {
++                locations = locations + (key to Location(location.url, location.isAccessing, location.holders - 1))
++                null
++            } else {
++                locations = locations - key
++                location.takeIf { it.isAccessing }
++            }
++        }
++        stopped?.let { stop(it.url) }
++    }
++
++    private inline fun <T> locked(block: () -> T): T {
++        lock.lock()
++        try {
++            return block()
++        } finally {
++            lock.unlock()
++        }
++    }
++
++    private fun NSURL.locationKey(): String = (URLByStandardizingPath ?: this).absoluteString ?: toString()
++
++    companion object {
++        val Shared = SecurityScopedAccessRegistry(
++            start = { it.startAccessingSecurityScopedResource() },
++            stop = { it.stopAccessingSecurityScopedResource() },
++        )
+     }
  }
 ```
 
-**File**: `calf-ui/src/iosMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/UIDatePickerBackend.kt` (renamed, +8/-3)
+**File**: `calf-io/src/iosTest/kotlin/com/mohamedrejeb/calf/io/SecurityScopedAccessRegistryTest.kt` (added, +79/-0)
 ```diff
-@@ -18,11 +18,11 @@ import platform.darwin.NSObject
- import platform.objc.sel_registerName
- 
- /**
-- * Picker backed by `UIDatePicker`, used for the wheels style and as the inline fallback below
-+ * Picker backed by `UIDatePicker`: the wheels and compact styles, and the inline fallback below
-  * iOS 16. `UIDatePicker` can only enforce a minimum and a maximum date, so a picked day the
-- * rule rejects is replaced by [resolveSelection] and the wheels move to that day.
-+ * rule rejects is replaced by [resolveSelection] and the control moves to that day.
-  */
--internal class WheelsDatePickerBackend(
-+internal class UIDatePickerBackend(
-     initialSelectedDateMillis: Long?,
-     style: UIDatePickerStyle,
-     private val onSelectionChanged: (utcTimeMillis: Long?) -> Unit,
-@@ -53,6 +53,7 @@ internal class WheelsDatePickerBackend(
-         datePicker.timeZone = TimeZone.currentSystemDefault().toNSTimeZone()
-         datePicker.datePickerMode = UIDatePickerMode.UIDatePickerModeDate
-         datePicker.preferredDatePickerStyle = style
-+        datePicker.sizeToFit()
-         datePicker.addTarget(
-             target = valueChangedTarget,
-             action = sel_registerName("onDateChanged:"),
-@@ -76,6 +77,10 @@ internal class WheelsDatePickerBackend(
-         // UIDatePicker cannot grey out individual days; rejected picks are resolved on change.
-     }
- 
-+    override fun setEnabled(enabled: Boolean) {
-+        datePicker.enabled = enabled
+@@ -0,0 +1,79 @@
++package com.mohamedrejeb.calf.io
++
++import platform.Foundation.NSURL
++import kotlin.test.Test
++import kotlin.test.assertEquals
++
++/**
++ * Every file reopened from a bookmark of the same location shares one security-scoped access, so
++ * reopening a bookmark over and over, without releasing, does not pile up access. The simulator
++ * never hands out real security-scoped URLs, so start and stop are counted instead.
++ */
++class SecurityScopedAccessRegistryTest {
++    private var started = 0
++    private var stopped = 0
++    private val registry = SecurityScopedAccessRegistry(
++        start = { started++; true },
++        stop = { stopped++ },
++    )
++    private val folder = NSURL.fileURLWithPath("/private/var/mobile/Calf Exports", isDirectory = true)
++
++    @Test
++    fun reopeningALocationHoldsOneAccess() {
++        repeat(3) { registry.acquire(folder) }
++
++        assertEquals(1, started)
++        assertEquals(0, stopped)
 +    }
 +
-     override fun applyColors(containerColor: UIColor, selectedDayContainerColor: UIColor) {
-         datePicker.tintColor = selectedDayContainerColor
-         datePicker.backgroundColor = containerColor
++    @Test
++    fun accessStopsWhenTheLastFileIsReleased() {
++        val first = registry.acquire(folder)
++        val second = registry.acquire(folder)
++
++        first.release()
++        assertEquals(0, stopped)
++        second.release()
++        assertEquals(1, stopped)
++    }
++
++    @Test
++    fun releasingTheSameFileTwiceCountsOnce() {
++        val first = registry.acquire(folder)
++        val second = registry.acquire(folder)
++
++        first.release()
++        first.release()
++        assertEquals(0, stopped, "the second file still holds the access")
++        second.release()
++        assertEquals(1, stopped)
++    }
++
++    @Test
++    fun aLocationOpenedAgainAfterItsLastReleaseStartsAgain() {
++        registry.acquire(folder).release()
++        registry.acquire(folder)
++
++        assertEquals(2, started)
++    }
++
++    @Test
++    fun eachLocationHasItsOwnAccess() {
++        val other = NSURL.fileURLWithPath("/private/var/mobile/Other", isDirectory = true)
++
++        registry.acquire(folder)
++        registry.acquire(other).release()
++
++        assertEquals(2, started)
++        assertEquals(1, stopped)
++    }
++
++    @Test
++    fun aUrlThatIsNotSecurityScopedIsNeverStopped() {
++        val unscoped = SecurityScopedAccessRegistry(start = { started++; false }, stop = { stopped++ })
++
++        unscoped.acquire(folder).release()
++
++        assertEquals(0, stopped)
++    }
++}
+```
+
+**File**: `docs/filepicker.md` (modified, +1/-1)
+```diff
+@@ -347,7 +347,7 @@ folder?.releaseBookmark()
+ | Platform | What a bookmark keeps |
+ |---|---|
+ | Android | A persisted permission for the picked `content:` URI. Items picked with the document or folder picker support it; `createBookmark` returns `null` for a URI whose grant is not persistable. Android limits how many persisted permissions an app holds, so release the ones you no longer need. |
+-| iOS | A bookmark of the picked location. The reopened file holds its security-scoped access until `releaseBookmark`, so a folder and the files inside it can be used through its `url` or path. Picked files are copies the app owns, so bookmarks matter mostly for folders. |
++| iOS | A bookmark of the picked location. The reopened file holds its security-scoped access until `releaseBookmark`, so a folder and the files inside it can be used through its `url` or path. Files reopened from the same location share one access, which ends when the last of them is released, so reopening a bookmark again does not add up. Picked files are copies the app owns, so bookmarks matter mostly for folders. |
+ | Desktop | The path. Sandboxed macOS apps would need security-scoped bookmarks, which Calf does not create. |
+ | Web | Not supported, `createBookmark` returns `null`. |
+ 
+```
+
+---
+
+### Incident Patch 3: `b82e19d9` (2026-10-15)
+**Commit Message**: fix(io): KmpFile.getPath on iOS is the path of the readable copy
+
+The original picked location is security scoped, so a path to it could not be
+opened after the picker callback. getPath now returns the path of KmpFile.url,
+the app's copy, which keeps the picked file's name. getName and toUriString
+still describe the original.
+
+**File**: `calf-io/src/commonMain/kotlin/com.mohamedrejeb.calf/io/KmpFile.kt` (modified, +4/-5)
+```diff
+@@ -34,13 +34,12 @@ expect fun KmpFile.getName(context: PlatformContext): String?
+ /**
+  * Reads the file system path of the KmpFile.
+  *
+- * The result is a decoded path, usable with kotlinx-io's `Path` or `java.io.File`, or `null` when
+- * the file has no file system path:
++ * The result is a decoded path that can be opened directly, for example with kotlinx-io's `Path`
++ * or `java.io.File`, or `null` when the file has no file system path:
+  * - **Android**: the path of a `file:` URI; `null` for `content:` URIs, which is what the system
+  *   pickers return. Read those with [readByteArray] or `source()`, or use [toUriString].
+- * - **iOS**: the path of the original `file:` URL; `null` for any other URL. For a picked file
+- *   that location is security scoped, so read the content with [readByteArray] or `source()`,
+- *   which use the app's own copy.
++ * - **iOS**: the path of the file the app can read. For a picked file that is the app's copy,
++ *   which keeps the picked file's name; the original location is security scoped.
+  * - **Desktop**: the path of the file.
+  * - **JS** and **Wasm**: always `null`, browsers do not expose file paths.
+  *
+```
+
+**File**: `calf-io/src/iosMain/kotlin/com.mohamedrejeb.calf/io/KmpFile.ios.kt` (modified, +9/-3)
+```diff
+@@ -16,8 +16,9 @@ import platform.posix.memcpy
+  * A wrapper class for a file in the platform-specific implementation.
+  *
+  * @property url A persistent copy of the file that remains accessible after the picker callback.
++ * It keeps the picked file's name, and [getPath] returns its path.
+  * @property originalUrl The original URL returned by the file picker. May become inaccessible
+- * due to iOS security scoping — use for metadata only (file name, path).
++ * due to iOS security scoping — use for metadata only ([getName], [toUriString]).
+  */
+ actual class KmpFile @InternalCalfApi constructor(
+     val url: NSURL,
+@@ -45,10 +46,15 @@ actual suspend fun KmpFile.readByteArray(context: PlatformContext): ByteArray {
+ actual fun KmpFile.getName(context: PlatformContext): String? =
+     originalUrl.lastPathComponent
+ 
+-/** Only a `file:` URL has a file system path; [NSURL.path] is already percent-decoded. */
++/**
++ * The path of [KmpFile.url], the copy the app can read, so the path can be opened directly; a
++ * picked file's copy keeps the picked file's name. Only a `file:` URL has a path, and
++ * [NSURL.path] is already percent-decoded.
++ */
+ actual fun KmpFile.getPath(context: PlatformContext): String? =
+-    originalUrl.takeIf { it.isFileURL() }?.path
++    url.takeIf { it.isFileURL() }?.path
+ 
++/** The URL of the original file, for example to reopen a picked folder later. */
+ actual fun KmpFile.toUriString(): String? = originalUrl.absoluteString
+ 
+ @OptIn(ExperimentalForeignApi::class)
+```
+
+**File**: `calf-io/src/iosTest/kotlin/com/mohamedrejeb/calf/io/KmpFilePathTest.kt` (modified, +22/-0)
+```diff
+@@ -1,5 +1,6 @@
+ package com.mohamedrejeb.calf.io
+ 
++import com.mohamedrejeb.calf.core.InternalCalfApi
+ import com.mohamedrejeb.calf.core.PlatformContext
+ import platform.Foundation.NSURL
+ import kotlin.test.Test
+@@ -19,6 +20,27 @@ class KmpFilePathTest {
+         assertEquals("/private/var/mobile/Report Final.pdf", file.getPath(context))
+     }
+ 
++    @OptIn(InternalCalfApi::class)
++    @Test
++    fun getPathOfAPickedFileIsTheReadableCopy() {
++        val file = KmpFile(
++            url = NSURL.fileURLWithPath("/tmp/calf-file-picker/1234/Report Final.pdf"),
++            originalUrl = NSURL.fileURLWithPath("/private/var/mobile/Inbox/Report Final.pdf"),
++        )
++        assertEquals("/tmp/calf-file-picker/1234/Report Final.pdf", file.getPath(context))
++    }
++
++    @OptIn(InternalCalfApi::class)
++    @Test
++    fun getNameAndToUriStringDescribeTheOriginal() {
++        val file = KmpFile(
++            url = NSURL.fileURLWithPath("/tmp/calf-file-picker/1234/copy.pdf"),
++            originalUrl = NSURL.fileURLWithPath("/private/var/mobile/Inbox/Report.pdf"),
++        )
++        assertEquals("Report.pdf", file.getName(context))
++        assertEquals("file:///private/var/mobile/Inbox/Report.pdf", file.toUriString())
++    }
++
+     @Test
+     fun getPathOfANonFileUrlIsNull() {
+         val file = KmpFile(NSURL(string = "https://example.com/Report.pdf"))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #551** (2026-11-11): Fix file picker export and getPath; add onError, bookmarks and web save dialog (@MohamedRejeb)
 - **PR #550** (2026-09-19): Enabled parallel sync for Gradle 9.4+ (@kevinguitar)
 - **PR #549** (2026-09-20): Support full combinedClickable capability in adaptiveClickable modifier (@kevinguitar)
 - **PR #547** (closed): Update version to 0.14.0 (@github-actions[bot])
 - **PR #546** (2026-09-13): Prepare 0.14.0: Kotlin 2.4.20, Compose 1.12.0, AGP 9.4, compileSdk 37 (@MohamedRejeb)
 - **PR #545** (2026-09-12): feat(io): add KmpFile.source() for streaming reads with kotlinx-io (@MohamedRejeb)
-- **PR #544** (2026-09-12): feat(ui): add AdaptiveDateRangePicker (@MohamedRejeb)
 
 ---
 
@@ -2070,54 +1052,41 @@ selectable-dates rule applies unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): add AdaptiveDateRangePicker
+## X. file-picker): follow-ups from reviewing the review fixes
 
 **RULE**:
-When implementing operations in `calf-ui/src/commonMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveDateRangePicker.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MohamedRejeb/Calf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `calf-file-picker/src/androidMain/kotlin/com/mohamedrejeb/calf/picker/FileSaverLauncher.android.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MohamedRejeb/Calf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d31147d`: ui): add AdaptiveDateRangePicker. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e083b8ba`: file-picker): follow-ups from reviewing the review fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `calf-ui/src/commonMain/kotlin/com/mohamedrejeb/calf/ui/datepicker/AdaptiveDateRangePicker.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `calf-file-picker/src/androidMain/kotlin/com/mohamedrejeb/calf/picker/FileSaverLauncher.android.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-package com.mohamedrejeb.calf.ui.datepicker
-
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.DatePickerColors
-import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerFormatter
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DateRangePickerState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-
-/**
- * A date range picker that adapts to the platform it is running on.
- *
- * On Material platforms it is the Material3 `DateRangePicker`. On iOS 16+ it is a native
- * `UICalendarView`: the first tap picks the start, a tap on or after it picks the end, a tap
- * before it moves the start, and any tap on a completed range starts a new one. Below iOS 16
- * the Material3 picker is shown.
- *
- * @param state the state that holds the selected range and the selectable dates.
- * 
+ * @return `null` if the source was written; otherwise why not. An empty document is then deleted.
+ * A document with content is untouched when the failure comes before writing starts (the source
+ * is lost or unreadable, or the provider refuses to open it); a failure while writing can leave
+ * it partly written, as any in-place overwrite can.
+    } catch (e: Exception) {
+        // A provider refusing the mode throws one of these; anything else is a real failure.
+        val refusedMode = e is IllegalArgumentException || e is FileNotFoundException
+        if (!isEmpty || !refusedMode) throw e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ * @return `null` if the source was written; otherwise why not. An empty document is then deleted,
+ * and a document with content is left as it was.
+    } catch (e: IllegalArgumentException) {
+        if (!isEmpty) throw e
+        openOutputStream(destination, WRITE_MODE)
+    } catch (e: FileNotFoundException) {
+        if (!isEmpty) throw e
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d31147d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e083b8ba` are properly handled with clean fallback behavior.

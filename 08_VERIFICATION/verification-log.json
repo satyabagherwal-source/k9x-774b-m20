@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-E6J1",
-    "timestamp": "2026-11-09T01:38:27.853Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-EH3B",
     "timestamp": "2026-11-09T01:38:41.543Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7475,21 @@
     "repository": "aio-libs/aiohttp",
     "learningId": "learn-github-aio-libs-aiohttp",
     "contentHash": "6734bdbf4a043028bdf93e08583b0772107500aadf90f18cda1e63b2a60b9890",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JRY5",
+    "timestamp": "2026-11-12T06:41:45.533Z",
+    "repository": "MohamedRejeb/Calf",
+    "learningId": "learn-github-mohamedrejeb-calf",
+    "contentHash": "7f05058b84d7480e2dbb6b50f1ca75c32e092919ee089c351592f87b95f16958",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

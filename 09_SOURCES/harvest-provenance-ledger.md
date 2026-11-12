@@ -9100,3 +9100,4 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `64d040b5` | Multi-dimensional audit evidence | 2026-11-12T06:27:13.767Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `5613284a` | Multi-dimensional audit evidence | 2026-11-12T06:27:16.974Z |
 | `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `09f2de88` | Multi-dimensional audit evidence | 2026-11-12T06:28:52.248Z |
+| `learn-github-mohamedrejeb-calf` | `https://github.com/MohamedRejeb/Calf` | `6b13fad1` | Multi-dimensional audit evidence | 2026-11-12T06:41:45.537Z |

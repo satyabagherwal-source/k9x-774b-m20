@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T06:28:57.322Z",
-    "lastVerified": "2026-11-12T06:28:57.322Z",
+    "lastChecked": "2026-11-12T06:41:50.053Z",
+    "lastVerified": "2026-11-12T06:41:50.053Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -458,8 +458,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T05:47:46.466Z",
-    "lastVerified": "2026-11-12T05:47:46.466Z",
+    "lastChecked": "2026-11-12T06:41:36.786Z",
+    "lastVerified": "2026-11-12T06:41:36.786Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1190,8 +1190,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T00:45:27.918Z",
-    "lastVerified": "2026-11-12T00:45:27.918Z",
+    "lastChecked": "2026-11-12T06:41:31.804Z",
+    "lastVerified": "2026-11-12T06:41:31.804Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -4628,9 +4628,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-09T23:35:36.174Z",
+    "lastChecked": "2026-11-12T06:41:29.285Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-09T23:35:36.174Z"
+    "lastVerified": "2026-11-12T06:41:29.285Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -4904,9 +4904,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-09T13:09:52.105Z",
+    "lastChecked": "2026-11-12T06:41:21.810Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-09T13:09:52.105Z"
+    "lastVerified": "2026-11-12T06:41:21.810Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7100,9 +7100,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-11-09T22:41:03.405Z",
+    "lastChecked": "2026-11-12T06:41:34.280Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-11-09T22:41:03.405Z"
+    "lastVerified": "2026-11-12T06:41:34.280Z"
   },
   "dalance-procs": {
     "name": "dalance/procs",
@@ -9839,11 +9839,21 @@
     "lastVerified": "2026-11-10T00:59:34.183Z"
   },
   "mohamedrejeb-calf": {
-    "name": "Calf",
+    "name": "MohamedRejeb/Calf",
     "officialUrl": "https://github.com/MohamedRejeb/Calf",
-    "lastChecked": "2026-11-08T05:40:40.432Z",
-    "revisionIdentifier": "af388bd3",
-    "lastVerified": "2026-11-08T05:40:40.432Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-12T06:41:30.661Z",
+    "lastVerified": "2026-11-12T06:41:30.661Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mohamedrejeb-calf",
+    "contentHash": "7f05058b84d7480e2dbb6b50f1ca75c32e092919ee089c351592f87b95f16958",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "anonymousaak-seo-skills": {
     "name": "seo-skills",
@@ -11754,9 +11764,9 @@
   "digitalbazaar-jsonld.js": {
     "name": "jsonld.js",
     "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
-    "lastChecked": "2026-11-07T17:22:23.286Z",
+    "lastChecked": "2026-11-12T06:41:24.294Z",
     "revisionIdentifier": "7a93609e",
-    "lastVerified": "2026-11-07T17:22:23.286Z"
+    "lastVerified": "2026-11-12T06:41:24.294Z"
   },
   "jasonjmcghee-rem": {
     "name": "rem",

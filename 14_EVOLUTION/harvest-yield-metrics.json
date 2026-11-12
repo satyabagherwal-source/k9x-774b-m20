@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T06:28:52.262Z",
-  "total_cycles_completed": 8925,
-  "total_learnings_persisted": 8925,
-  "total_rules_promoted": 8771,
+  "last_updated": "2026-11-12T06:41:45.553Z",
+  "total_cycles_completed": 8926,
+  "total_learnings_persisted": 8926,
+  "total_rules_promoted": 8772,
   "history": [
-    {
-      "timestamp": "2026-11-11T07:08:07.281Z",
-      "repository": "ConwayResearch/Underdog-Woof",
-      "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T07:27:49.609Z",
       "repository": "Checkmarx/kics",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-12T06:28:52.262Z",
       "repository": "aio-libs/aiohttp",
       "learningId": "learn-github-aio-libs-aiohttp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T06:41:45.553Z",
+      "repository": "MohamedRejeb/Calf",
+      "learningId": "learn-github-mohamedrejeb-calf",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

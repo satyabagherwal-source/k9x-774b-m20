@@ -8133,10 +8133,10 @@
     "repository": "MohamedRejeb/Calf",
     "platform": "github",
     "sourceUrl": "https://github.com/MohamedRejeb/Calf",
-    "sourceVersion": "af388bd3",
+    "sourceVersion": "6b13fad1",
     "license": "Apache-2.0",
-    "contentHash": "419d3d442472aad117a32529c76f708541d6cb66c5424dfe7e39679022a365f0",
-    "lastHarvestedAt": "2026-10-19T14:02:07.035Z",
+    "contentHash": "7f05058b84d7480e2dbb6b50f1ca75c32e092919ee089c351592f87b95f16958",
+    "lastHarvestedAt": "2026-11-12T06:41:45.537Z",
     "learningId": "learn-github-mohamedrejeb-calf"
   },
   "gitliveapp-firebase-kotlin-sdk": {

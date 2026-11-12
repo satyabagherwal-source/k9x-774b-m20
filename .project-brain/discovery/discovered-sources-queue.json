@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T06:28:57.596Z",
+  "updated_at": "2026-11-12T06:41:50.181Z",
   "stats": {
-    "total_discovered": 930,
-    "approved_pending_harvest": 845,
+    "total_discovered": 934,
+    "approved_pending_harvest": 848,
     "harvested_count": 0,
-    "rejected_count": 85,
+    "rejected_count": 86,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 858,
+      "COMMUNITY_AND_EXPERT": 862,
       "OFFICIAL_DOCUMENTATION": 26,
       "STANDARDS_AND_SPECIFICATIONS": 43,
       "ENGINEERING_BLOGS": 1,
@@ -19882,6 +19882,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
         "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-ED12F4DE6D55": {
+      "id": "SRC-ED12F4DE6D55",
+      "url": "https://github.com/MohamedRejeb/Calf",
+      "title": "https://github.com/MohamedRejeb/Calf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:41:50.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
+        "fileName": "mohamedrejeb-calf-learnings.md"
+      }
+    },
+    "SRC-1B95B6319540": {
+      "id": "SRC-1B95B6319540",
+      "url": "http://jodd.org/",
+      "title": "http://jodd.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T06:41:50.171Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
+        "fileName": "mohamedrejeb-calf-learnings.md"
+      }
+    },
+    "SRC-895843E26B20": {
+      "id": "SRC-895843E26B20",
+      "url": "https://mohamedrejeb.github.io/Calf/filepicker",
+      "title": "https://mohamedrejeb.github.io/Calf/filepicker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:41:50.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
+        "fileName": "mohamedrejeb-calf-learnings.md"
+      }
+    },
+    "SRC-D8E2B9D9E692": {
+      "id": "SRC-D8E2B9D9E692",
+      "url": "https://example.com/Report.pdf",
+      "title": "https://example.com/Report.pdf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:41:50.180Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
+        "fileName": "mohamedrejeb-calf-learnings.md"
       }
     }
   }
