@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:31:14.862Z",
-  "total_cycles_completed": 9032,
-  "total_learnings_persisted": 9032,
-  "total_rules_promoted": 8870,
+  "last_updated": "2026-11-12T21:42:01.760Z",
+  "total_cycles_completed": 9038,
+  "total_learnings_persisted": 9038,
+  "total_rules_promoted": 8876,
   "history": [
-    {
-      "timestamp": "2026-11-11T18:12:01.981Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:16:58.948Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:23:49.002Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:28:49.925Z",
-      "repository": "msasikanth/twine",
-      "learningId": "learn-github-msasikanth-twine",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:35:36.796Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:35:49.776Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T18:35:55.495Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-12T21:31:14.862Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:41:38.111Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:41:50.479Z",
+      "repository": "prof18/feed-flow",
+      "learningId": "learn-github-prof18-feed-flow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:41:55.211Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:41:56.939Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:42:00.847Z",
+      "repository": "zilliztech/claude-context",
+      "learningId": "learn-github-zilliztech-claude-context",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:42:01.760Z",
+      "repository": "SynaLinks/synalinks-skills",
+      "learningId": "learn-github-synalinks-synalinks-skills",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-FRBK",
-    "timestamp": "2026-11-09T10:59:33.776Z",
-    "repository": "krishhgg/Insomnia",
-    "learningId": "learn-github-krishhgg-insomnia",
-    "contentHash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-FT13",
-    "timestamp": "2026-11-09T10:59:35.991Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-FXNS",
-    "timestamp": "2026-11-09T10:59:41.992Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "97bddb16a5647a464aacaab17dc75629f70f360ca51b2b2b898e9630d898d356",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-LII7",
-    "timestamp": "2026-11-09T11:04:02.287Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "7260c45ebe8bdcf9ac2e385b4af9603a66bbfaeb85f2a280b3665a20eff49deb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-1B2D",
-    "timestamp": "2026-11-09T11:16:19.141Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "8acab0b29b8568a29f837e151b64fef067e5f6c2041af2cbfcb918628a781d2a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-1J9B",
-    "timestamp": "2026-11-09T11:16:29.759Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "6639fe599bb6189d65cd9a98c35ad6f88fffc9cc548f59a1d4a47fa26d4cc72d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-1KQ0",
     "timestamp": "2026-11-09T11:16:31.656Z",
     "repository": "MaterializeInc/materialize",
@@ -7490,6 +7400,96 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "3e8b982f011d5e5c04908daa9862539f628938603069f901c3b3ac793f59417d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-P0UZ",
+    "timestamp": "2026-11-12T21:41:38.075Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "451ad5b05e5704584492e895a5bf9e5368ef8e45704270758403b1293a2b359f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-PAE2",
+    "timestamp": "2026-11-12T21:41:50.426Z",
+    "repository": "prof18/feed-flow",
+    "learningId": "learn-github-prof18-feed-flow",
+    "contentHash": "bb61a02372ee6b5277dd8318320102f25a3e5159564eeb9fa1bbcb18d3e0406e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-PE1I",
+    "timestamp": "2026-11-12T21:41:55.158Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "09b2b64e6fd68d991097b72e702e376c8137a29e679ad0bdcd12d09fcad7492b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-PFDX",
+    "timestamp": "2026-11-12T21:41:56.901Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "84248f5792c652bbab7844c7177bf2da83d1e789e633e6d9be37cef723086c7f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-PIF6",
+    "timestamp": "2026-11-12T21:42:00.834Z",
+    "repository": "zilliztech/claude-context",
+    "learningId": "learn-github-zilliztech-claude-context",
+    "contentHash": "86dd3d53128b760e038f78dc6ca592c61b619f6fa6cbd942df0272a20ee74962",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-PJ4L",
+    "timestamp": "2026-11-12T21:42:01.749Z",
+    "repository": "SynaLinks/synalinks-skills",
+    "learningId": "learn-github-synalinks-synalinks-skills",
+    "contentHash": "e720feffecbb62d8bdd5a4db0adb44cbb863d7dc6f61722e588f15a55d9c8477",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

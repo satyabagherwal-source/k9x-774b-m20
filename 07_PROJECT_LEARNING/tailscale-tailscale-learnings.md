@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `e3ecbb98`  
+> **Source Version**: `11c82084`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:55:04.640Z  
+> **Timestamp**: 2026-11-12T21:41:37.948Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:55:04.633Z  
+> **Harvest Timestamp**: 2026-11-12T21:41:37.942Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38975 stars
+- **Stars / Engagement**: 39011 stars
 
 ---
 
@@ -821,115 +821,49 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3ecbb98` (2026-10-23)
-**Commit Message**: tstime: fold fractional ParseDuration cases into TestParseDuration
+### Incident Patch 1: `e982a66c` (2026-11-12)
+**Commit Message**: ipn/ipnstate,tailcfg: fix comment
 
-Updates #21552
+The comment should refer to dbx.Node.IsRouter, not
+dbx.Node.IsSubnetRouter.
 
-Signed-off-by: Aniket <[REDACTED_EMAIL]>
+Updates #cleanup
 
-**File**: `tstime/tstime_test.go` (modified, +3/-7)
+Signed-off-by: Fran Bull <[REDACTED_EMAIL]>
+
+**File**: `ipn/ipnstate/ipnstate.go` (modified, +1/-1)
 ```diff
-@@ -30,24 +30,20 @@ func TestParseDuration(t *testing.T) {
- 		{"1w1d1h", 8*24*time.Hour + time.Hour},
- 		{"1y", 0},
- 		{"", 0},
-+		{"1.5h", 90 * time.Minute},
+@@ -370,7 +370,7 @@ func (ps *PeerStatus) HasCap(cap nodecap.Cap) bool {
+ // Examples: an exit node, a subnet router, an app connector, etc.
+ // It is the analogue of [tailcfg.Node.IsRouter].
+ func (ps *PeerStatus) IsRouter() bool {
+-	// TODO(sfllaw): Keep this aligned with dbx.Node.IsSubnetRouter.
++	// TODO(sfllaw): Keep this aligned with dbx.Node.IsRouter.
+ 	if ps.AllowedIPs == nil {
+ 		return false
  	}
- 	for _, tt := range tests {
- 		if got, _ := ParseDuration(tt.in); got != tt.want {
- 			t.Errorf("ParseDuration(%q) = %d; want %d", tt.in, got, tt.want)
- 		}
- 	}
--}
- 
--func TestParseDurationFractionalDaysAndWeeks(t *testing.T) {
--	for _, in := range []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"} {
-+	errTests := []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"}
-+	for _, in := range errTests {
- 		if d, err := ParseDuration(in); err == nil {
- 			t.Errorf("ParseDuration(%q) = %v, want error", in, d)
- 		}
- 	}
--	// Fractional standard units are still fine.
--	if got, _ := ParseDuration("1.5h"); got != 90*time.Minute {
--		t.Errorf("ParseDuration(%q) = %v, want %v", "1.5h", got, 90*time.Minute)
--	}
- }
- 
- func TestGoDuration(t *testing.T) {
 ```
 
----
-
-### Incident Patch 2: `5e444c9f` (2026-09-30)
-**Commit Message**: tstime: reject fractional day and week values in ParseDuration
-
-ParseDuration rewrites the digits before a d or w unit as hours, but only
-looked at the digits after the decimal point, so 0.5d quietly returned
-7m12s. Return an error for fractional day and week values instead.
-
-Fixes #21552
-
-Signed-off-by: Aniket <[REDACTED_EMAIL]>
-
-**File**: `tstime/tstime.go` (modified, +7/-2)
+**File**: `tailcfg/tailcfg.go` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,7 @@ package tstime
- import (
- 	"context"
- 	"encoding"
-+	"fmt"
- 	"strconv"
- 	"strings"
- 	"time"
-@@ -34,8 +35,12 @@ func ParseDuration(s string) (time.Duration, error) {
- 		if end < 0 {
- 			break
- 		}
--		start := end - (len(s[:end]) - len(strings.TrimRight(s[:end], "0123456789")))
--		n, err := strconv.Atoi(s[start:end])
-+		start := end - (len(s[:end]) - len(strings.TrimRight(s[:end], "0123456789.")))
-+		num := s[start:end]
-+		if strings.Contains(num, ".") {
-+			return 0, fmt.Errorf("tstime: fractional %q value %q is not supported", string(s[end]), num)
-+		}
-+		n, err := strconv.Atoi(num)
- 		if err != nil {
- 			return 0, err
- 		}
-```
-
-**File**: `tstime/tstime_test.go` (modified, +12/-0)
-```diff
-@@ -38,6 +38,18 @@ func TestParseDuration(t *testing.T) {
- 	}
- }
- 
-+func TestParseDurationFractionalDaysAndWeeks(t *testing.T) {
-+	for _, in := range []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"} {
-+		if d, err := ParseDuration(in); err == nil {
-+			t.Errorf("ParseDuration(%q) = %v, want error", in, d)
-+		}
-+	}
-+	// Fractional standard units are still fine.
-+	if got, _ := ParseDuration("1.5h"); got != 90*time.Minute {
-+		t.Errorf("ParseDuration(%q) = %v, want %v", "1.5h", got, 90*time.Minute)
-+	}
-+}
-+
- func TestGoDuration(t *testing.T) {
- 	wantDur := GoDuration{time.Hour + time.Minute + time.Second + time.Millisecond + time.Microsecond + time.Nanosecond}
- 	gotJSON := string(must.Get(json.Marshal(wantDur)))
+@@ -624,7 +624,7 @@ func (n *Node) DisplayNames(forOwner bool) (name, hostIfDifferent string) {
+ // IsRouter reports whether n is a router: it routes addresses besides its own.
+ // Examples: an exit node, a subnet router, an app connector, etc.
+ func (n *Node) IsRouter() bool {
+-	// TODO(sfllaw): Keep this aligned with dbx.Node.IsSubnetRouter.
++	// TODO(sfllaw): Keep this aligned with dbx.Node.IsRouter.
+ 	for _, r := range n.AllowedIPs {
+ 		if !slices.Contains(n.Addresses, r) {
+ 			return true
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22333** (2026-11-11): go.mod,wgengine/wgcfg: bump wg-go & configure staged global limit on iOS (@jwhited)
-- **PR #22332** (2026-11-11): go.toolchain.rev: bump Go toolchain (Go 1.27.4) (@tailscale-code-updater[bot])
-- **PR #22331** (2026-11-11): net,ipn,cmd: migrate dialer hooks to ControlContext (@raggi)
-- **PR #22323** (closed): feature/acme: distinguish invalid cached certs from expired ones (@pcbeingused333)
-- **PR #22322** (2026-11-11): util/eventbus/eventbuscheck: add whole-program `T` vs `*T` event check (@bradfitz)
-- **PR #22320** (2026-11-11): net/netns: compose caller ControlContext with namespace setup (@raggi)
+- **PR #22372** (2026-11-12): ipn/ipnstate,tailcfg: fix comment (@franbull)
+- **PR #22370** (2026-11-12): tstest/natlab/vnet: check PCP nonces in renewals and deletes (@fmarier)
+- **PR #22364** (2026-11-12): k8s-operator/api-proxy: only use the remote address for WhoIs (@ChaosInTheCRD)
+- **PR #22361** (2026-11-12): go.toolchain.rev: bump to Go 1.27.4 [release-branch] (@bradfitz)
+- **PR #22345** (closed): wgengine/magicsock: untrust silent best addr after peer network change (@Marouane-elfadli)
+- **PR #22344** (2026-11-12): k8s-operator/api-proxy: only use the remote address for WhoIs (@ChaosInTheCRD)
 
 ---
 
@@ -949,36 +883,28 @@ Signed-off-by: Aniket <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tstime: fold fractional ParseDuration cases into TestParseDuration
+## X. ipn/ipnstate,tailcfg: fix comment
 
 **RULE**:
-When implementing operations in `tstime/tstime_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/ipnstate/ipnstate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3ecbb98`: tstime: fold fractional ParseDuration cases into TestParseDuration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e982a66c`: ipn/ipnstate,tailcfg: fix comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstime/tstime_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnstate/ipnstate.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		{"1.5h", 90 * time.Minute},
-	errTests := []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"}
-	for _, in := range errTests {
+	// TODO(sfllaw): Keep this aligned with dbx.Node.IsRouter.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-}
-func TestParseDurationFractionalDaysAndWeeks(t *testing.T) {
-	for _, in := range []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"} {
-	// Fractional standard units are still fine.
-	if got, _ := ParseDuration("1.5h"); got != 90*time.Minute {
-		t.Errorf("ParseDuration(%q) = %v, want %v", "1.5h", got, 90*time.Minute)
-	}
+	// TODO(sfllaw): Keep this aligned with dbx.Node.IsSubnetRouter.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3ecbb98` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e982a66c` are properly handled with clean fallback behavior.

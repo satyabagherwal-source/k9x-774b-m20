@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T21:31:23.141Z",
+  "updated_at": "2026-11-12T21:42:07.927Z",
   "stats": {
-    "total_discovered": 1585,
-    "approved_pending_harvest": 1454,
+    "total_discovered": 1614,
+    "approved_pending_harvest": 1482,
     "harvested_count": 0,
-    "rejected_count": 131,
+    "rejected_count": 132,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1452,
+      "COMMUNITY_AND_EXPERT": 1480,
       "OFFICIAL_DOCUMENTATION": 64,
       "STANDARDS_AND_SPECIFICATIONS": 66,
       "ENGINEERING_BLOGS": 1,
-      "SECURITY_ADVISORIES": 2
+      "SECURITY_ADVISORIES": 3
     }
   },
   "sources": {
@@ -33970,6 +33970,637 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
         "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-9346FE064C3B": {
+      "id": "SRC-9346FE064C3B",
+      "url": "https://github.com/topgrade-rs/topgrade",
+      "title": "https://github.com/topgrade-rs/topgrade",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-B77664BB4B74": {
+      "id": "SRC-B77664BB4B74",
+      "url": "https://github.com/topgrade-rs/topgrade/releases/tag/v%7Bversion",
+      "title": "https://github.com/topgrade-rs/topgrade/releases/tag/v%7Bversion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.742Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-9E5B139B5282": {
+      "id": "SRC-9E5B139B5282",
+      "url": "https://github.com/topgrade-rs/topgrade/issues/859",
+      "title": "https://github.com/topgrade-rs/topgrade/issues/859",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-07D8114E09B8": {
+      "id": "SRC-07D8114E09B8",
+      "url": "https://github.com/prof18/feed-flow",
+      "title": "https://github.com/prof18/feed-flow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-711C1D8F65AF": {
+      "id": "SRC-711C1D8F65AF",
+      "url": "https://github.com/user-attachments/assets/bdae8832-0965-4d9b-89dd-428d5803b161",
+      "title": "https://github.com/user-attachments/assets/bdae8832-0965-4d9b-89dd-428d5803b161",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-B84B63C678E3": {
+      "id": "SRC-B84B63C678E3",
+      "url": "https://skribeworks.com/ottie-pancakes-cursed-location/feed/atom",
+      "title": "https://skribeworks.com/ottie-pancakes-cursed-location/feed/atom",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-482DB77ABFAF": {
+      "id": "SRC-482DB77ABFAF",
+      "url": "https://skribeworks.com/ottie-pancakes-cursed-location",
+      "title": "https://skribeworks.com/ottie-pancakes-cursed-location",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-92236C4E4C11": {
+      "id": "SRC-92236C4E4C11",
+      "url": "https://example.com/feed",
+      "title": "https://example.com/feed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-157A72A2D301": {
+      "id": "SRC-157A72A2D301",
+      "url": "https://example.com/rss",
+      "title": "https://example.com/rss",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-E39F21C0AB8F": {
+      "id": "SRC-E39F21C0AB8F",
+      "url": "https://example.com/rss?a=1&b=2",
+      "title": "https://example.com/rss?a=1&b=2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-0717AF932260": {
+      "id": "SRC-0717AF932260",
+      "url": "https://exa%zzmple.com/feed",
+      "title": "https://exa%zzmple.com/feed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-7A775DB75C1D": {
+      "id": "SRC-7A775DB75C1D",
+      "url": "https://example.com/feed.xml",
+      "title": "https://example.com/feed.xml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.811Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-027EFD3619B7": {
+      "id": "SRC-027EFD3619B7",
+      "url": "http://example.com/rss",
+      "title": "http://example.com/rss",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:42:07.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-669B42EE9009": {
+      "id": "SRC-669B42EE9009",
+      "url": "https://example.com/feed?a=1&b=2",
+      "title": "https://example.com/feed?a=1&b=2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-5F571EA03F66": {
+      "id": "SRC-5F571EA03F66",
+      "url": "https://example.com/feed?a=1&amp%3Bb=2%5C",
+      "title": "https://example.com/feed?a=1&amp%3Bb=2%5C",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.828Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-263DCE460639": {
+      "id": "SRC-263DCE460639",
+      "url": "https://second.example/feed",
+      "title": "https://second.example/feed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-FBB60562BD8C": {
+      "id": "SRC-FBB60562BD8C",
+      "url": "https://example.com/Feed",
+      "title": "https://example.com/Feed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.840Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-9F4AAD6A92AB": {
+      "id": "SRC-9F4AAD6A92AB",
+      "url": "https://example.com/feed?token=abc%21",
+      "title": "https://example.com/feed?token=abc%21",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-17CEAD84625E": {
+      "id": "SRC-17CEAD84625E",
+      "url": "https://example.com/rss(topic",
+      "title": "https://example.com/rss(topic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.852Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-9C0C635954F7": {
+      "id": "SRC-9C0C635954F7",
+      "url": "https://example.com/feed?token=abc%21%5C",
+      "title": "https://example.com/feed?token=abc%21%5C",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-3539EAD37859": {
+      "id": "SRC-3539EAD37859",
+      "url": "https://example.com/feeds/o",
+      "title": "https://example.com/feeds/o",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-B46A2858E65F": {
+      "id": "SRC-B46A2858E65F",
+      "url": "https://www.openpolicyagent.org/docs/latest/v0-compatibility",
+      "title": "https://www.openpolicyagent.org/docs/latest/v0-compatibility",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-1EC674EA5331": {
+      "id": "SRC-1EC674EA5331",
+      "url": "https://github.com/xeipuuv",
+      "title": "https://github.com/xeipuuv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.886Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-7464BDC35080": {
+      "id": "SRC-7464BDC35080",
+      "url": "https://golang.org/pkg/encoding/json",
+      "title": "https://golang.org/pkg/encoding/json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-37A0A24CAC2D": {
+      "id": "SRC-37A0A24CAC2D",
+      "url": "https://www.openpolicyagent.org/docs/latest",
+      "title": "https://www.openpolicyagent.org/docs/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-9E3DD3EDCEBE": {
+      "id": "SRC-9E3DD3EDCEBE",
+      "url": "https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM",
+      "title": "https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-0133CC21A03E": {
+      "id": "SRC-0133CC21A03E",
+      "url": "https://ciolek.dev/",
+      "title": "https://ciolek.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.914Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-81945E51915D": {
+      "id": "SRC-81945E51915D",
+      "url": "https://go.dev/issue/82563",
+      "title": "https://go.dev/issue/82563",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-7DBBAEB0CC26": {
+      "id": "SRC-7DBBAEB0CC26",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-97054",
+      "title": "Vulnerability Advisory CVE-2026-97054",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:42:07.927Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
       }
     }
   }

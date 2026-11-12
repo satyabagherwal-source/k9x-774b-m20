@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T21:31:14.693Z",
+  "last_updated": "2026-11-12T21:42:01.644Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50424,8 +50424,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "ef171a81",
-      "content_hash": "dd242ff1727d33fbe746c9e3e2a5955f8aa2450a3dd08af0ee708ea21c9b3cbd",
+      "source_version": "80f27558",
+      "content_hash": "09b2b64e6fd68d991097b72e702e376c8137a29e679ad0bdcd12d09fcad7492b",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -50447,6 +50447,11 @@
         {
           "number": null,
           "title": "topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs: Amend security reporting docs to cover scanners (#9551)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50525,7 +50530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:26:48.847Z",
+      "verified_at": "2026-11-12T21:41:54.789Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53314,14 +53319,19 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "77a8d8a3",
-      "content_hash": "b72e4090ba6c00b6da00d968e88baa53ed9d6eb876e204acaf3f96c1f50a649f",
+      "source_version": "0e896b49",
+      "content_hash": "bb61a02372ee6b5277dd8318320102f25a3e5159564eeb9fa1bbcb18d3e0406e",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Remove the debug-only add-pixel button from iOS blocked words and stop the add b",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Skip Crashlytics logging on iOS until Firebase is configured",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53350,7 +53360,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T15:49:51.343Z",
+      "verified_at": "2026-11-12T21:41:50.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61480,11 +61490,16 @@
       "slug": "synalinks-synalinks-skills",
       "platform": "github",
       "source_url": "https://github.com/SynaLinks/synalinks-skills",
-      "source_version": "092970a5",
-      "content_hash": "7c1d2f9e9f5f9b8f68e65f4e237ca5d17ee298d0f1061248c376eaebba531611",
+      "source_version": "2b5d7ed8",
+      "content_hash": "e720feffecbb62d8bdd5a4db0adb44cbb863d7dc6f61722e588f15a55d9c8477",
       "dossier_path": "07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add Claude Code and Codex plugin manifests (#52)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1694,
           "title": "ci: validate and install skills for all agents; fix SKILL.md frontmatter (#51)",
@@ -61496,7 +61511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:00:58.155Z",
+      "verified_at": "2026-11-12T21:42:01.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61961,8 +61976,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "e3ecbb98",
-      "content_hash": "9551251464208ecda3150bdd50117abd223313e62cf22361a096e8b2ea0ac2a0",
+      "source_version": "11c82084",
+      "content_hash": "84248f5792c652bbab7844c7177bf2da83d1e789e633e6d9be37cef723086c7f",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -62014,6 +62029,11 @@
         {
           "number": null,
           "title": "tstime: fold fractional ParseDuration cases into TestParseDuration",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ipn/ipnstate,tailcfg: fix comment",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62212,7 +62232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T09:55:22.660Z",
+      "verified_at": "2026-11-12T21:41:56.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63673,8 +63693,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "c26ade9a",
-      "content_hash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
+      "source_version": "b7ae844e",
+      "content_hash": "451ad5b05e5704584492e895a5bf9e5368ef8e45704270758403b1293a2b359f",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -63702,6 +63722,11 @@
           "number": null,
           "title": "Cross-Subsystem Packaging Ownership Mutual Exclusion",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "ci: migrate from attest-build-provenance to actions/attest (#2512)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2264,
@@ -63769,7 +63794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:02:32.761Z",
+      "verified_at": "2026-11-12T21:41:37.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69627,11 +69652,16 @@
       "slug": "zilliztech-claude-context",
       "platform": "github",
       "source_url": "https://github.com/zilliztech/claude-context",
-      "source_version": "6fc318b4",
-      "content_hash": "c76fe0b1a5d7c991cba6ba172af2eb6338add2f432147fa0b40f8bd72d4cbe27",
+      "source_version": "64a87f9b",
+      "content_hash": "86dd3d53128b760e038f78dc6ca592c61b619f6fa6cbd942df0272a20ee74962",
       "dossier_path": "07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "core): preserve source coverage in AST chunks",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2441,
           "title": "core): support gitignore negation patterns",
@@ -69643,7 +69673,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:49:00.321Z",
+      "verified_at": "2026-11-12T21:42:00.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

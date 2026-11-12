@@ -9224,3 +9224,9 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `3bd2b588` | Multi-dimensional audit evidence | 2026-11-12T21:31:11.094Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `db4dee82` | Multi-dimensional audit evidence | 2026-11-12T21:31:14.537Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b20fce7c` | Multi-dimensional audit evidence | 2026-11-12T21:31:14.853Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `b7ae844e` | Multi-dimensional audit evidence | 2026-11-12T21:41:38.080Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `0e896b49` | Multi-dimensional audit evidence | 2026-11-12T21:41:50.439Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `80f27558` | Multi-dimensional audit evidence | 2026-11-12T21:41:55.168Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `11c82084` | Multi-dimensional audit evidence | 2026-11-12T21:41:56.905Z |
+| `learn-github-zilliztech-claude-context` | `https://github.com/zilliztech/claude-context` | `64a87f9b` | Multi-dimensional audit evidence | 2026-11-12T21:42:00.839Z |
+| `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `2b5d7ed8` | Multi-dimensional audit evidence | 2026-11-12T21:42:01.753Z |

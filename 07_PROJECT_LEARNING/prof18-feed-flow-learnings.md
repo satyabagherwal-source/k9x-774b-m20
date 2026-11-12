@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source**: github ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
-> **Source Version**: `77a8d8a3`  
+> **Source Version**: `0e896b49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:49:50.121Z  
+> **Timestamp**: 2026-11-12T21:41:33.242Z  
 > **Learning ID**: `learn-github-prof18-feed-flow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:49:50.114Z  
+> **Harvest Timestamp**: 2026-11-12T21:41:33.235Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1326 stars
+- **Stars / Engagement**: 1342 stars
 
 ---
 
@@ -615,230 +615,577 @@ internal fun rememberAndroidFeedFlowStrings(settingsRepository: SettingsReposito
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a717f945` (2026-11-07)
-**Commit Message**: Remove the debug-only add-pixel button from iOS blocked words and stop the add button firing on any row tap
+### Incident Patch 1: `306fd6ea` (2026-11-12)
+**Commit Message**: Skip Crashlytics logging on iOS until Firebase is configured
 
-**File**: `e2e/maestro/ios/smoke/012-blocked-words.yaml` (modified, +4/-1)
+**File**: `iosApp/Source/DI/Koin.swift` (modified, +3/-0)
 ```diff
-@@ -18,7 +18,10 @@ appId: com.prof18.feedflow.dev
- - tapOn:
-     id: settings_blocked_words
- - tapOn:
--    id: blocked_words_add_pixel_e2e
-+    id: blocked_words_input
-+- inputText: "pixel"
-+- tapOn:
-+    id: blocked_words_add_button
- - assertVisible:
-     id: blocked_word_pixel
- - tapOn:
+@@ -7,6 +7,7 @@
+ //
+ 
+ import FeedFlowKit
++import FirebaseCore
+ import Foundation
+ 
+ private class NoOpNotifier: Notifier {
+@@ -49,6 +50,8 @@ func startKoin(notifier: (any Notifier)? = nil, websiteRecovery: Bool = false) {
+         telemetry: TelemetryReporter(),
+         notifier: notifier ?? NoOpNotifier(),
+         feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self],
++        // Firebase is configured after Koin starts in the app, and never in the share extension.
++        isCrashReportingConfigured: { KotlinBoolean(value: FirebaseApp.app() != nil) },
+         websiteSessionBridge: websiteSessionBridge,
+         websiteProfileCleaner: websiteProfileCleaner
+     )
 ```
 
-**File**: `iosApp/Source/Settings/FeedsAndAccounts/subpages/BlockedWords/BlockedWordsAccessibilityIdentifiers.swift` (modified, +0/-1)
+**File**: `shared/src/commonMain/kotlin/com/prof18/feedflow/shared/logging/GatedLogWriter.kt` (added, +23/-0)
 ```diff
-@@ -1,7 +1,6 @@
- enum BlockedWordsAccessibilityIdentifiers {
-     static let input = "blocked_words_input"
-     static let addButton = "blocked_words_add_button"
--    static let addPixelButton = "blocked_words_add_pixel_e2e"
- 
-     static func row(_ word: String) -> String {
-         "blocked_word_\(word.e2eIdSuffix)"
+@@ -0,0 +1,23 @@
++package com.prof18.feedflow.shared.logging
++
++import co.touchlab.kermit.LogWriter
++import co.touchlab.kermit.Severity
++
++/**
++ * Forwards to [delegate] only while [isEnabled] holds. The iOS Crashlytics writer throws an
++ * NSException when Firebase isn't configured, which is always the case in app extensions.
++ */
++internal class GatedLogWriter(
++    private val delegate: LogWriter,
++    private val isEnabled: () -> Boolean,
++) : LogWriter() {
++
++    override fun isLoggable(tag: String, severity: Severity): Boolean =
++        isEnabled() && delegate.isLoggable(tag, severity)
++
++    override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
++        if (isEnabled()) {
++            delegate.log(severity, message, tag, throwable)
++        }
++    }
++}
 ```
 
-**File**: `iosApp/Source/Settings/FeedsAndAccounts/subpages/BlockedWords/BlockedWordsScreenContent.swift` (modified, +2/-14)
+**File**: `shared/src/commonTest/kotlin/com/prof18/feedflow/shared/logging/GatedLogWriterTest.kt` (added, +59/-0)
 ```diff
-@@ -46,23 +46,11 @@ struct BlockedWordsScreenContent: View {
-                                 .contentShape(Rectangle())
-                                 .padding(-(Spacing.small + Spacing.xsmall))
-                         }
-+                        // Borderless keeps the Form row from firing this button on any tap in the row
-+                        .buttonStyle(.borderless)
-                         .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addButton)
-                         .hoverEffect()
-                     }
--
--                    #if DEBUG
--                    Button {
--                        onAddWord("pixel")
--                    } label: {
--                        Image(systemName: "plus.circle.fill")
--                            // Grows the hit area to 44 pt without moving the icon or making the row taller
--                            .padding(Spacing.small + Spacing.xsmall)
--                            .contentShape(Rectangle())
--                            .padding(-(Spacing.small + Spacing.xsmall))
--                    }
--                    .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addPixelButton)
--                    .hoverEffect()
--                    #endif
-                 }
-                 }
- 
+@@ -0,0 +1,59 @@
++package com.prof18.feedflow.shared.logging
++
++import co.touchlab.kermit.LogWriter
++import co.touchlab.kermit.Severity
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFalse
++import kotlin.test.assertTrue
++
++class GatedLogWriterTest {
++
++    @Test
++    fun `it never reaches the delegate while the gate is closed`() {
++        val delegate = ThrowingWhenUnconfiguredLogWriter(isConfigured = { false })
++        val logWriter = GatedLogWriter(delegate = delegate, isEnabled = { false })
++
++        logWriter.log(Severity.Error, "Download failed", "FeedFlow", IllegalStateException("boom"))
++
++        assertFalse(logWriter.isLoggable("FeedFlow", Severity.Error))
++        assertEquals(0, delegate.logs.size)
++    }
++
++    @Test
++    fun `it forwards logs once the gate opens`() {
++        var isConfigured = false
++        val delegate = ThrowingWhenUnconfiguredLogWriter(isConfigured = { isConfigured })
++        val logWriter = GatedLogWriter(delegate = delegate, isEnabled = { isConfigured })
++
++        logWriter.log(Severity.Warn, "Before configure", "FeedFlow", null)
++        isConfigured = true
++        logWriter.log(Severity.Warn, "After configure", "FeedFlow", null)
++
++        assertTrue(logWriter.isLoggable("FeedFlow", Severity.Warn))
++        assertEquals(listOf("After configure"), delegate.logs)
++    }
++
++    @Test
++    fun `it keeps the delegate severity filter`() {
++        val delegate = ThrowingWhenUnconfiguredLogWriter(isConfigured = { true })
++        val logWriter = GatedLogWriter(delegate = delegate, isEnabled = { true })
++
++        assertFalse(logWriter.isLoggable("FeedFlow", Severity.Debug))
++        assertTrue(logWriter.isLoggable("FeedFlow", Severity.Info))
++    }
++}
++
++// Behaves like Crashlytics: logging before Firebase is configured throws.
++private class ThrowingWhenUnconfiguredLogWriter(
++    private val isConfigured: () -> Boolean,
++) : LogWriter() {
++    val logs = mutableListOf<String>()
++
++    override fun isLoggable(tag: String, severity: Severity): Boolean = severity >= Severity.Info
++
++    override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
++        check(isConfigured()) { "The default Firebase app has not yet been configured" }
++        logs.add(message)
++    }
++}
+```
+
+**File**: `shared/src/iosMain/kotlin/com/prof18/feedflow/shared/di/KoinIOS.kt` (modified, +6/-1)
+```diff
+@@ -60,6 +60,7 @@ import com.prof18.feedflow.shared.domain.recovery.toRecoveryBytes
+ import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
+ import com.prof18.feedflow.shared.domain.widget.WidgetDateSettingsStore
+ import com.prof18.feedflow.shared.e2e.E2eSeedRunner
++import com.prof18.feedflow.shared.logging.GatedLogWriter
+ import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
+ import com.prof18.feedflow.shared.presentation.AccountsViewModel
+ import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+@@ -117,6 +118,7 @@ fun initKoinIos(
+     telemetry: Telemetry,
+     notifier: Notifier,
+     feedUrlProtocolClasses: List<*>,
++    isCrashReportingConfigured: () -> Boolean,
+     websiteSessionBridge: IosWebsiteSessionBridge? = null,
+     websiteProfileCleaner: WebsiteProfileCleaner? = null,
+ ): KoinApplication = initKoin(
+@@ -130,7 +132,10 @@ fun initKoinIos(
+         platformName = UIDevice.currentDevice.systemName(),
+         platformVersion = UIDevice.currentDevice.systemVersion,
+     ),
+-    crashReportingLogWriter = CrashlyticsLogWriter(),
++    crashReportingLogWriter = GatedLogWriter(
++        delegate = CrashlyticsLogWriter(),
++        isEnabled = isCrashReportingConfigured,
++    ),
+     modules = listOf(
+         module {
+             single { dropboxDataSource }
 ```
 
 ---
 
-### Incident Patch 2: `60cca435` (2026-11-07)
-**Commit Message**: Add a UI glossary and align feed, backup, offline and category terms
+### Incident Patch 2: `aada9d2f` (2026-11-12)
+**Commit Message**: Fix share to FeedFlow add flows on Android and iOS
 
-**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/components/AddCategoryDialog.kt` (modified, +1/-1)
+**File**: `androidApp/src/main/AndroidManifest.xml` (modified, +2/-1)
 ```diff
-@@ -40,7 +40,7 @@ internal fun AddCategoryDialog(
-             onDismissRequest = onDismiss,
-             title = {
-                 Text(
--                    text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
-+                    text = LocalFeedFlowStrings.current.newCategoryButton,
-                     style = MaterialTheme.typography.headlineSmall,
-                 )
-             },
+@@ -130,12 +130,13 @@
+ 
+         <activity
+             android:name=".addfeed.AddFeedExtensionActivity"
++            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+             android:exported="true"
+             android:theme="@style/Theme.Transparent">
+             <intent-filter>
+                 <action android:name="android.intent.action.SEND"/>
+                 <category android:name="android.intent.category.DEFAULT"/>
+-                <data android:mimeType="text/*"/>
++                <data android:mimeType="text/plain"/>
+             </intent-filter>
+         </activity>
+ 
 ```
 
-**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/components/EditCategoryContent.kt` (modified, +1/-1)
+**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/addfeed/AddFeedExtensionActivity.kt` (modified, +120/-62)
 ```diff
-@@ -128,7 +128,7 @@ fun AddCategoryButton(
-         )
-         Spacer(modifier = Modifier.width(Spacing.small))
-         Text(
--            text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
-+            text = LocalFeedFlowStrings.current.newCategoryButton,
-             fontWeight = FontWeight.Medium,
-         )
+@@ -1,26 +1,35 @@
+ package com.prof18.feedflow.android.addfeed
+ 
+ import android.content.Intent
+-import androidx.compose.foundation.background
+ import androidx.compose.foundation.clickable
++import androidx.compose.foundation.gestures.detectTapGestures
++import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.Spacer
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.layout.width
++import androidx.compose.foundation.layout.widthIn
+ import androidx.compose.material3.CircularProgressIndicator
+ import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Surface
+ import androidx.compose.material3.Text
++import androidx.compose.material3.TextButton
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+-import androidx.compose.ui.Alignment.Companion.Center
+ import androidx.compose.ui.Modifier
+-import androidx.compose.ui.draw.clip
++import androidx.compose.ui.input.pointer.pointerInput
++import androidx.compose.ui.unit.dp
++import androidx.core.net.toUri
+ import com.prof18.feedflow.android.base.BaseThemeActivity
+ import com.prof18.feedflow.android.ui.style.Spacing
+ import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+@@ -33,113 +42,115 @@ import kotlin.time.Duration.Companion.seconds
+ class AddFeedExtensionActivity : BaseThemeActivity() {
+     val viewModel by viewModel<AddFeedViewModel>()
+ 
+-    private fun startSharedFeedRequest() {
+-        when (intent?.action) {
+-            Intent.ACTION_SEND -> {
+-                when {
+-                    intent.type?.startsWith("text/plain") == true -> {
+-                        intent.getStringExtra(Intent.EXTRA_TEXT)?.let { url ->
+-                            addFeed(url)
+-                        }
+-                    }
++    private var sharedUrl: String? = null
+ 
+-                    intent.type?.startsWith("text/html") == true -> {
+-                        intent.getStringExtra(Intent.EXTRA_HTML_TEXT)?.let { url ->
+-                            addFeed(url)
+-                        }
+-                    }
+-                }
+-            }
+-        }
++    /** Starts adding the shared feed; false when the share holds no link to add. */
++    private fun startSharedFeedRequest(): Boolean {
++        if (intent?.action != Intent.ACTION_SEND) return false
++        val url = sharedFeedUrl(
++            text = intent.getStringExtra(Intent.EXTRA_TEXT),
++            html = intent.getStringExtra(Intent.EXTRA_HTML_TEXT),
++        ) ?: return false
++        sharedUrl = url
++        addFeed(url)
++        return true
      }
+ 
+     @Composable
+     override fun Content() {
+-        var showLoading by remember { mutableStateOf(true) }
+-        var message by remember { mutableStateOf("") }
++        var result by remember { mutableStateOf<ShareResult?>(null) }
+         val strings = LocalFeedFlowStrings.current
+ 
+         LaunchedEffect(Unit) {
+             observeShareFeedResults(
+                 results = viewModel.feedAddedState,
+-                startRequest = ::startSharedFeedRequest,
++                startRequest = {
++                    if (!startSharedFeedRequest()) {
++                        result = ShareResult(strings.shareNoFeedLinkFound, isError = true)
++                    }
++                },
+             ).collect { feedAddedState ->
+                 when (feedAddedState) {
+                     is FeedAddedState.Error -> {
+-                        showLoading = false
+-                        message = when (feedAddedState) {
++                        val message = when (feedAddedState) {
+                             is FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
+                             is FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                             is FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                             is FeedAddedState.Error.FetchFailed ->
+                                 strings.feedFetchRefusedError
+                         }
+-                        delay(2.seconds)
+-                        finish()
++                        result = ShareResult(message, isError = true)
+                     }
+ 
+                     is FeedAddedState.FeedAdded, is FeedAddedState.FeedAlreadyExists -> {
+-                        showLoading = false
+                         val feedName = (feedAddedState as? FeedAddedState.FeedAdded)?.feedName
+-  
 ```
 
-**File**: `docs/GLOSSARY.md` (added, +30/-0)
+**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/addfeed/SharedFeedRequest.kt` (added, +18/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+# FeedFlow glossary
+@@ -0,0 +1,18 @@
++package com.prof18.feedflow.android.addfeed
 +
-+The canonical English words for FeedFlow's user-facing concepts. Use them in `strings.xml`, the website FAQ and store copy, and translate each one the same way everywhere. The same terms are the Weblate glossary of the `feedflow` project.
++import com.prof18.feedflow.core.utils.AddFeedLinkParser
++import com.prof18.feedflow.core.utils.SharedTextUrlExtractor
++import java.net.URLEncoder
 +
-+English copy is US English and sentence case.
++/** The feed URL to add from a share, or null when the shared text and HTML hold no http(s) link. */
++internal fun sharedFeedUrl(text: String?, html: String?): String? =
++    SharedTextUrlExtractor.firstHttpUrl(text) ?: SharedTextUrlExtractor.firstHttpUrl(html)
 +
-+| Term | Use | Avoid | Definition for translators |
-+| --- | --- | --- | --- |
-+| feed | feed, feeds | feed source, source, subscription, channel | A website's RSS, Atom or JSON feed that the user follows. |
-+| Feeds | Feeds (section and screen title) | Feed Sources | The list of all feeds the user follows, grouped by category. |
-+| pinned feeds | Pinned feeds, Pin, Unpin | Pinned Feed Sources, favorites | Feeds and categories the user keeps at the top of the sidebar. |
-+| subscriptions | only for OPML import and export | subscriptions anywhere else | The feed list as stored in an OPML file, the format other feed readers use. |
-+| feed name | feed name | feed source | The title of a feed, shown on each article. |
-+| article | article, articles | item, post, entry, story | One entry of a feed: title, summary and link, which FeedFlow gets when it refreshes feeds. |
-+| full article | full article | article content, web content | The whole text of an article's web page, which FeedFlow gets from the website for reader mode. |
-+| offline copy | offline copy, offline copies | download, save, prefetch, cache | A full article stored on the device so it can be read without a connection. |
-+| image cache | Clear image cache | downloaded images | Images stored on the device so they load faster. Only used for images. |
-+| refresh | Refresh feeds, Background refresh | download, sync (for getting new articles), reload | Check the feeds for new articles. |
-+| sync | sync, syncing | upload, refresh | Keep feeds, read status and bookmarks the same across the user's devices through an account. |
-+| back up | Back up now (verb), backup (noun) | Backup (as a verb), Upload changes | Copy feeds, read status and bookmarks to a backup account (iCloud, Dropbox, Google Drive). |
-+| account | account, sync account | service, provider | A connected iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin or BazQux account. |
-+| bookmark | Bookmarks, bookmark (verb), bookmarked | saved, save for later, favorites | Articles the user keeps; they are never deleted automatically. |
-+| category | category, New category | + Category, folder, group | A user-made group of feeds. |
-+| Uncategorized | Uncategorized | No category | The group of feeds that have no category. |
-+| feed settings | Feed settings | Edit feed | The screen with the options of a single feed. |
-+| open website | Open website | Open feed website | Open the homepage of the feed's website in the browser. |
-+| reader mode | Reader mode | Reader Mode, reader view | FeedFlow's built-in, distraction-free view of a full article. |
-+| mark as read | Mark as read, Mark as unread, Mark all as read | Toggle read | Set an article's read status. |
-+
-+"Background sync" settings are still labelled with sync; they move to "Background refresh" when the notification and refresh settings are merged.
++/**
++ * The link that opens Add feed in FeedFlow prefilled with [feedUrl], or null when
++ * MainActivity would reject it, for example because the host is unsafe.
++ */
++internal fun openInFeedFlowLink(feedUrl: String): String? =
++    // The String charset overload: URLEncoder.encode(String, Charset) needs API 33.
++    ("feedflow://add?url=" + URLEncoder.encode(feedUrl, "UTF-8"))
++        .takeIf { AddFeedLinkParser.parse(it) != null }
 ```
 
-**File**: `e2e/maestro/android/fdroid/regression/133-home-sync-backup-action.yaml` (modified, +2/-2)
+**File**: `androidApp/src/test/kotlin/com/prof18/feedflow/android/addfeed/SharedFeedRequestTest.kt` (added, +42/-0)
 ```diff
-@@ -13,7 +13,7 @@ appId: com.prof18.feedflow.debug
-     text: "E2E Newest Unread Article.*"
- - tapOn:
-     id: home_more_menu_button
--- assertNotVisible: "Upload changes"
-+- assertNotVisible: "Back up now"
- - assertVisible: "Mark all as read"
- - back
+@@ -0,0 +1,42 @@
++package com.prof18.feedflow.android.addfeed
++
++import com.prof18.feedflow.core.utils.AddFeedLinkParser
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertNotNull
++import org.junit.Assert.assertNull
++import org.junit.Test
++
++class SharedFeedRequestTest {
++
++    @Test
++    fun `the url comes from the shared text`() {
++        assertEquals("https://example.com/feed", sharedFeedUrl(text = "Look https://example.com/feed", html = null))
++    }
++
++    @Test
++    fun `the html is used when the text has no link`() {
++        assertEquals(
++            "https://example.com/rss",
++            sharedFeedUrl(text = "no link", html = "<a href=\"https://example.com/rss\">"),
++        )
++    }
++
++    @Test
++    fun `a share without a link has no url`() {
++        assertNull(sharedFeedUrl(text = null, html = null))
++        assertNull(sharedFeedUrl(text = "hello", html = "<b>hi</b>"))
++    }
++
++    @Test
++    fun `the open in feedflow link round trips through the add feed parser`() {
++        val link = openInFeedFlowLink("https://example.com/rss?a=1&b=2")
++
++        assertNotNull(link)
++        assertEquals("https://example.com/rss?a=1&b=2", AddFeedLinkParser.parse(requireNotNull(link)))
++    }
++
++    @Test
++    fun `no open in feedflow link for a url the app would reject`() {
++        assertNull(openInFeedFlowLink("https://exa%zzmple.com/feed"))
++    }
++}
+```
+
+**File**: `core/src/commonMain/kotlin/com/prof18/feedflow/core/utils/SharedTextUrlExtractor.kt` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++package com.prof18.feedflow.core.utils
++
++/** Finds the link to add in text another app shared, which can be prose or HTML. */
++object SharedTextUrlExtractor {
++
++    // Apostrophes are valid in URLs (o'reilly.xml), so only whitespace, double quotes and angle brackets end a match.
++    private val httpUrl = Regex("""https?://[^\s"<>]+""", RegexOption.IGNORE_CASE)
++
++    // A share that is only a URL is taken whole: quotes and brackets only delimit URLs inside prose or HTML.
++    private val bareHttpUrl = Regex("""https?://\S+""", RegexOption.IGNORE_CASE)
++    private const val PROSE_TRAILING_PUNCTUATION = ".,;:!?'"
++    private const val MAX_URL_LENGTH = 2048
++    private val closingToOpening = mapOf(')' to '(', ']' to '[', '}' to '{')
++
++    fun firstHttpUrl(text: String?): String? {
++        if (text.isNullOrBlank()) return null
++        val decoded = text.replace("&amp;", "&")
++        val trimmed = decoded.trim()
++        if (bareHttpUrl.matches(trimmed)) return trimmed.takeIf { it.length <= MAX_URL_LENGTH }
++        val found = httpUrl.find(decoded) ?: return null
++        val match = found.value
++        if (match.length > MAX_URL_LENGTH) return null
++        return when (decoded.getOrNull(found.range.first - 1)) {
++            '"' -> match
++            '\'' -> match.substringBefore('\'')
++            else -> trimProse(match)
++        }.takeIf { it.isNotEmpty() }
++    }
++
++    private fun trimProse(url: String): String {
++        var result = url
++        while (true) {
++            val last = result.lastOrNull() ?: return result
++            val opening = closingToOpening[last]
++            val unbalanced = opening != null &&
++                result.count { it == opening } < result.count { it == last }
++            if (last !in PROSE_TRAILING_PUNCTUATION && !unbalanced) return result
++            result = result.dropLast(1)
++        }
++    }
++}
+```
+
+**File**: `core/src/commonTest/kotlin/com/prof18/feedflow/core/utils/SharedTextUrlExtractorTest.kt` (added, +132/-0)
+```diff
+@@ -0,0 +1,132 @@
++package com.prof18.feedflow.core.utils
++
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertNull
++
++class SharedTextUrlExtractorTest {
++
++    @Test
++    fun `null and empty text have no url`() {
++        assertNull(SharedTextUrlExtractor.firstHttpUrl(null))
++        assertNull(SharedTextUrlExtractor.firstHttpUrl(""))
++    }
++
++    @Test
++    fun `text without a link has no url`() {
++        assertNull(SharedTextUrlExtractor.firstHttpUrl("no link here"))
++    }
++
++    @Test
++    fun `a bare url is returned as is`() {
++        assertEquals(
++            "https://example.com/feed.xml",
++            SharedTextUrlExtractor.firstHttpUrl("https://example.com/feed.xml"),
++        )
++    }
++
++    @Test
++    fun `the url is taken out of surrounding prose`() {
++        assertEquals(
++            "https://example.com/feed.xml",
++            SharedTextUrlExtractor.firstHttpUrl("Read this: https://example.com/feed.xml cool"),
++        )
++    }
++
++    @Test
++    fun `trailing sentence punctuation and an unmatched bracket are trimmed`() {
++        assertEquals(
++            "http://example.com/rss",
++            SharedTextUrlExtractor.firstHttpUrl("(see http://example.com/rss)."),
++        )
++    }
++
++    @Test
++    fun `an html href is decoded`() {
++        assertEquals(
++            "https://example.com/feed?a=1&b=2",
++            SharedTextUrlExtractor.firstHttpUrl("<a href=\"https://example.com/feed?a=1&amp;b=2\">x</a>"),
++        )
++    }
++
++    @Test
++    fun `non http links are skipped`() {
++        assertEquals(
++            "https://second.example/feed",
++            SharedTextUrlExtractor.firstHttpUrl("ftp://example.com https://second.example/feed"),
++        )
++    }
++
++    @Test
++    fun `the scheme is matched case insensitively`() {
++        assertEquals(
++            "HTTPS://Example.com/Feed",
++            SharedTextUrlExtractor.firstHttpUrl("HTTPS://Example.com/Feed"),
++        )
++    }
++
++    @Test
++    fun `a bare url keeps a trailing exclamation mark`() {
++        assertEquals(
++            "https://example.com/feed?token=abc!",
++            SharedTextUrlExtractor.firstHttpUrl("https://example.com/feed?token=abc!"),
++        )
++    }
++
++    @Test
++    fun `balanced brackets in the url are kept`() {
++        assertEquals(
++            "https://example.com/rss(topic)",
++            SharedTextUrlExtractor.firstHttpUrl("Feed: https://example.com/rss(topic)."),
++        )
++    }
++
++    @Test
++    fun `a quoted href keeps its ending`() {
++        assertEquals(
++            "https://example.com/feed?token=abc!",
++            SharedTextUrlExtractor.firstHttpUrl("<a href=\"https://example.com/feed?token=abc!\">x</a>"),
++        )
++    }
++
++    @Test
++    fun `a bare url keeps an apostrophe`() {
++        assertEquals(
++            "https://example.com/feeds/o'reilly.xml",
++            SharedTextUrlExtractor.firstHttpUrl("  https://example.com/feeds/o'reilly.xml\n"),
++        )
++    }
++
++    @Test
++    fun `a url in prose keeps an apostrophe`() {
++        assertEquals(
++            "https://example.com/feeds/o'reilly.xml",
++            SharedTextUrlExtractor.firstHttpUrl("Read this: https://example.com/feeds/o'reilly.xml"),
++        )
++    }
++
++    @Test
++    fun `a double quoted href keeps an apostrophe`() {
++        assertEquals(
++            "https://example.com/feeds/o'reilly.xml",
++            SharedTextUrlExtractor.firstHttpUrl("<a href=\"https://example.com/feeds/o'reilly.xml\">x</a>"),
++        )
++    }
++
++    @Test
++    fun `a single quoted url ends at the closing quote`() {
++        assertEquals(
++            "https://example.com/rss",
++            SharedTextUrlExtractor.firstHttpUrl("<a href='https://example.com/rss'>x</a>"),
++        )
++        assertEquals(
++            "https://example.com/rss",
++            SharedTextUrlExtractor.firstHttpUrl("Subscribe to 'https://example.com/rss' today"),
++        )
++    }
++
++    @Test
++    fun `an overlong url is rejected`() {
++        assertNull(SharedTextUrlExtractor.firstHttpUrl("https://example.com/" + "a".repeat(2100)))
++    }
++}
+```
+
+**File**: `e2e/maestro/android/regression/179-share-existing-feed.yaml` (modified, +1/-1)
+```diff
+@@ -46,6 +46,6 @@ appId: com.prof18.feedflow.debug
+ - assertNotVisible: "Adding feed…"
+ - extendedWaitUntil:
+     notVisible: "Android Central RSS Feed is already in your feeds."
+-    timeout: 5000
++    timeout: 8000
  - assertVisible:
-@@ -31,7 +31,7 @@ appId: com.prof18.feedflow.debug
- - assertVisible: "Nothing else to read here!"
- - tapOn:
-     id: home_more_menu_button
--- assertNotVisible: "Upload changes"
-+- assertNotVisible: "Back up now"
- - assertVisible: "Mark all as read"
- - back
- - tapOn: "Refresh feeds"
+     id: article_row_e2e_article_newest_unread
 ```
 
-**File**: `e2e/maestro/android/regression/105-category-management.yaml` (modified, +2/-2)
+**File**: `e2e/maestro/maestro-e2e-tests.md` (modified, +1/-0)
 ```diff
-@@ -17,15 +17,15 @@ appId: com.prof18.feedflow.debug
-     id: edit_feed_category_selector
- - assertVisible: "Categories"
- - tapOn:
--    text: "Category"
-+    text: "New category"
- - tapOn:
-     text: "New category name"
- - inputText: "Technology"
- - assertVisible: "A category with this name already exists"
- - tapOn:
-     text: "Close"
- - tapOn:
--    text: "Category"
-+    text: "New category"
- - tapOn:
-     text: "New category name"
- - inputText: "E2E Created Category"
-```
-
-**File**: `e2e/maestro/android/regression/113-sync-storage-settings.yaml` (modified, +1/-1)
-```diff
-@@ -40,5 +40,5 @@ appId: com.prof18.feedflow.debug
-     timeout: 10000
- - tapOn:
-     id: sync_storage_clear_downloaded
--- assertVisible: "Clear downloaded articles?"
-+- assertVisible: "Delete offline copies?"
- - tapOn: "Cancel"
-```
-
-**File**: `e2e/maestro/android/regression/121-reading-behavior-secondary-settings.yaml` (modified, +4/-4)
-```diff
-@@ -12,11 +12,11 @@ appId: com.prof18.feedflow.debug
- - tapOn:
-     id: settings_reading_behavior
- - assertVisible: "Browser"
--- assertVisible: "Save article content on open for offline reading"
--- assertVisible: "Prefetch article content for offline reading"
-+- assertVisible: "Keep offline copies of articles you open"
-+- assertVisible: "Make offline copies when feeds refresh"
- - assertVisible: "Mark as read when scrolling"
--- tapOn: "Save article content on open for offline reading"
-+- tapOn: "Keep offline copies of articles you open"
- - tapOn: "Mark as read when scrolling"
--- tapOn: "Prefetch article content for offline reading"
-+- tapOn: "Make offline copies when feeds refresh"
- - assertVisible: "Enabling this option will increase synchronization time and data usage.*"
- - tapOn: "Confirm"
-```
-
-**File**: `e2e/maestro/android/regression/122-feed-list-settings-detail-controls.yaml` (modified, +2/-2)
-```diff
-@@ -16,8 +16,8 @@ appId: com.prof18.feedflow.debug
- - tapOn: "Hide article date"
- - assertVisible: "Hide unread indicator"
- - tapOn: "Hide unread indicator"
--- assertVisible: "Hide feed source"
--- tapOn: "Hide feed source"
-+- assertVisible: "Hide feed name"
-+- tapOn: "Hide feed name"
- - assertVisible: "Hide title from article description"
- - tapOn: "Hide title from article description"
- - tapOn: "Description lines"
+@@ -203,6 +203,7 @@ These are features intentionally not covered, with the reason recorded so they a
+ - **Leading-edge drag to open the drawer (REG-164)** — the outcome depends on the device navigation mode, which a flow cannot set. Under gesture navigation the system back gesture owns that edge and the drag leaves the app; under button navigation it opens the drawer. `systemGestureExclusion` is deliberately not used to claim the edge, since the platform honours only 200dp per side and would leave back working on most of the screen and dead near the bottom. REG-164 starts its drawer-opening swipe within the content instead and asserts only the nav-mode independent behaviour.
+ - **Android reader video fullscreen** — the fullscreen button lives inside the cross-origin YouTube player iframe, which needs live YouTube and whose auto-hiding controls Maestro cannot target reliably. `FullscreenVideoChromeClient.kt` hosts the view WebView hands to `onShowCustomView`; it was validated manually on a Pixel (enter, exit via back, exit via the player button).
+ - **iOS Share Extension via OS share sheet** — Maestro can reach `shareCell` from Safari, but the synthesized tap dispatches into MobileSafari's WebView instead of the remote-hosted `SharingUIService` popover, so the extension process never starts (Maestro/XCTest limitation on iOS 26).
++- **Android share without a feed link** — The REG-179 bridge (`e2e/scripts/android_share_feed.py`) sends one fixed feed URL, so no flow shares text without a link or a link that fails to add. `SharedTextUrlExtractorTest` and `SharedFeedRequestTest` cover link extraction, the no-link decision and the Open in FeedFlow link; the persistent error, Done and Open in FeedFlow are checked by hand on a device.
+ - **iOS large-dataset search (REG-134)** — XCTest hierarchy retrieval times out after opening the large search-result screen.
+ - **iOS 0xdead10cc suspension kills** — the Simulator does not enforce RunningBoard's file-lock kill, so no flow can show the app surviving suspension. `DatabaseHelperLiveQueryGateTest` checks that live queries stop while paused and re-run on resume, and `HomeViewModelBackgroundHandOffTest` that backgrounding awaits the upload inside one suspension guard. Only Xcode Organizer reports from a release confirm the kills are gone.
+ - **Per-feed keep unread when scrolling** — SM-008 only checks the switch is present, enabled and tappable; skipping scroll marking for excluded feeds is covered by `ScrollReadTrackerTest` and `HomeViewModelTest` because a scroll flow would need a dedicated seed profile.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1644** (2026-11-08): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1643** (2026-11-07): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1642** (2026-11-07): Add a UI glossary and align feed, backup, offline and category terms (@prof18)
-- **PR #1641** (2026-11-07): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1638** (2026-11-07): Merge localization into main (@github-actions[bot])
-- **PR #1636** (2026-11-07): Merge same-named categories when replaying cloud changes instead of failing sync (@prof18)
+- **PR #1666** (2026-11-12): Discard the old sync database journal files when installing a downloaded backup on iOS (@prof18)
+- **PR #1665** (closed): Remove stale sync database journals before installing a downloaded iOS backup (@prof18)
+- **PR #1664** (2026-11-12): Skip Crashlytics logging on iOS until Firebase is configured (@prof18)
+- **PR #1663** (2026-11-12): Start WebKit before reading website data store identifiers on iOS (@prof18)
+- **PR #1662** (2026-11-12): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1660** (2026-11-11): Translations update from Hosted Weblate (@hosted-weblate[bot])
 
 ---
 
@@ -858,31 +1205,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove the debug-only add-pixel button from iOS blocked words and stop the add b
+## X. Skip Crashlytics logging on iOS until Firebase is configured
 
 **RULE**:
-When implementing operations in `e2e/maestro/ios/smoke/012-blocked-words.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `iosApp/Source/DI/Koin.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a717f945`: Remove the debug-only add-pixel button from iOS blocked words and stop the add button firing on any row tap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `306fd6ea`: Skip Crashlytics logging on iOS until Firebase is configured. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/maestro/ios/smoke/012-blocked-words.yaml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `iosApp/Source/DI/Koin.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    id: blocked_words_input
-- inputText: "pixel"
-- tapOn:
-    id: blocked_words_add_button
+import FirebaseCore
+        // Firebase is configured after Koin starts in the app, and never in the share extension.
+        isCrashReportingConfigured: { KotlinBoolean(value: FirebaseApp.app() != nil) },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-    id: blocked_words_add_pixel_e2e
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a717f945` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `306fd6ea` are properly handled with clean fallback behavior.

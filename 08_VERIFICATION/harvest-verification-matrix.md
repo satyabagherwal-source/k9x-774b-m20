@@ -9215,3 +9215,9 @@
 | `CYCLE-20261112-BL2P` | `2026-11-12T21:31:11.089Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9c7d56d1...`) |
 | `CYCLE-20261112-BNQB` | `2026-11-12T21:31:14.531Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`03ba8688...`) |
 | `CYCLE-20261112-BNZ3` | `2026-11-12T21:31:14.847Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3e8b982f...`) |
+| `CYCLE-20261112-P0UZ` | `2026-11-12T21:41:38.075Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`451ad5b0...`) |
+| `CYCLE-20261112-PAE2` | `2026-11-12T21:41:50.426Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bb61a023...`) |
+| `CYCLE-20261112-PE1I` | `2026-11-12T21:41:55.158Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`09b2b64e...`) |
+| `CYCLE-20261112-PFDX` | `2026-11-12T21:41:56.901Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`84248f57...`) |
+| `CYCLE-20261112-PIF6` | `2026-11-12T21:42:00.834Z` | `zilliztech/claude-context` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`86dd3d53...`) |
+| `CYCLE-20261112-PJ4L` | `2026-11-12T21:42:01.749Z` | `SynaLinks/synalinks-skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e720feff...`) |

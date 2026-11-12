@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:31:23.146Z",
+  "last_updated": "2026-11-12T21:42:07.931Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -158,7 +158,7 @@
       "staged_for_review": 1
     },
     "open-policy-agent-opa-learnings.md": {
-      "processed_at": "2026-11-11T10:27:23.212Z",
+      "processed_at": "2026-11-12T21:42:07.872Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1246,9 +1246,19 @@
       "processed_at": "2026-11-12T21:31:22.990Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "topgrade-rs-topgrade-learnings.md": {
+      "processed_at": "2026-11-12T21:42:07.729Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "prof18-feed-flow-learnings.md": {
+      "processed_at": "2026-11-12T21:42:07.758Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 348,
+  "total_dossiers_evaluated": 351,
   "total_canonical_promoted": 44,
-  "total_staged_for_review": 303
+  "total_staged_for_review": 306
 }

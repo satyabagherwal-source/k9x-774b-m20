@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `ef171a81`  
+> **Source Version**: `80f27558`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:26:37.570Z  
+> **Timestamp**: 2026-11-12T21:41:35.619Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:26:37.415Z  
+> **Harvest Timestamp**: 2026-11-12T21:41:35.611Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12458 stars
+- **Stars / Engagement**: 12463 stars
 
 ---
 
@@ -967,165 +967,71 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4434f660` (2026-11-06)
-**Commit Message**: topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs
+### Incident Patch 1: `8c2117e6` (2026-11-11)
+**Commit Message**: build(go): bump to 1.27.4
 
-Signed-off-by: Nikita Pivkin <[REDACTED_EMAIL]>
+https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM
 
-**File**: `internal/cidr/merge/merge.go` (modified, +2/-1)
+This fix is relevant for OPA:
+
+> net/http: HTTP/1 server crash due to MaxBytesReader header race
+>
+> For HTTP/1 servers, when MaxBytesReader's limit is exceeded,
+> "Connection: close" header is automatically set without synchronization,
+> which might race with another header being set explicitly in the server
+> handler. As a result, an HTTP/1 server that utilizes MaxBytesReader or
+> MaxBytesHandler can crash due to runtime panic if its handler reads the
+> request body concurrently with writing the response header.
+>
+> Thanks to Jakub Ciolek (https://ciolek.dev) for reporting this issue.
+>
+> This is CVE-2026-97054 and Go issue https://go.dev/issue/82563.
+
+Note that our security guidance includes not running OPA with its
+interfaces exposed to adversarial actors, like the public internet. This
+is fixed regardless, if only to avoid too many spurious vulnerability
+checker reports.
+
+Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
+
+**File**: `.go-version` (modified, +1/-1)
 ```diff
-@@ -106,7 +106,8 @@ func GetAddressRange(ipNet net.IPNet) (net.IP, net.IP) {
- 	firstIP = firstIP.Mask(ipNet.Mask)
- 	lastIP = lastIP.Mask(ipNet.Mask)
- 
--	if firstIP.To4() != nil {
-+	// Only 4-byte addresses need the prefix. IPv4-mapped IPv6 addresses are already 16 bytes long.
-+	if len(firstIP) == net.IPv4len {
- 		firstIP = append(v4Mappedv6Prefix, firstIP...)
- 		lastIP = append(v4Mappedv6Prefix, lastIP...)
- 	}
-```
-
-**File**: `v1/test/cases/testdata/v1/netcidrmerge/test-ipv4-mapped-ipv6.yaml` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+---
-+cases:
-+  - note: netcidrmerge/ipv4-mapped ipv6, same twice
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
-+
-+        p := x if {
-+        	net.cidr_merge(["::ffff:10.0.0.0/104", "::ffff:10.0.0.0/104"], x)
-+        }
-+    want_result:
-+      - x:
-+          - 10.0.0.0/8
-+  - note: netcidrmerge/ipv4-mapped ipv6, adjacent
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
-+
-+        p := x if {
-+        	net.cidr_merge(["::ffff:10.0.0.0/104", "::ffff:11.0.0.0/104"], x)
-+        }
-+    want_result:
-+      - x:
-+          - 10.0.0.0/7
-+  - note: netcidrmerge/ipv4-mapped ipv6 and ipv4, adjacent
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
-+
-+        p := x if {
-+        	net.cidr_merge(["::ffff:10.0.0.0/104", "11.0.0.0/8"], x)
-+        }
-+    want_result:
-+      - x:
-+          - 10.0.0.0/7
+@@ -1 +1 @@
+-1.27.3
++1.27.4
 ```
 
 ---
 
-### Incident Patch 2: `e58aca58` (2026-11-09)
-**Commit Message**: build(deps): bump the dependencies group across 2 directories with 2 updates
+### Incident Patch 2: `40bd9e2e` (2026-11-12)
+**Commit Message**: docs: Amend security reporting docs to cover scanners (#9551)
 
-Bumps the dependencies group with 1 update in the / directory: [github.com/spf13/pflag](https://github.com/spf13/pflag).
-Bumps the dependencies group with 1 update in the /e2e directory: [modernc.org/sqlite](https://gitlab.com/cznic/sqlite).
+Just one more thing to try and fight the noise a little.
 
+Signed-off-by: Anders Eknert <[REDACTED_EMAIL]>
 
-Updates `github.com/spf13/pflag` from 1.0.10 to 1.1.0
-- [Release notes](https://github.com/spf13/pflag/releases)
-- [Commits](https://github.com/spf13/pflag/compare/v1.0.10...v1.1.0)
-
-Updates `modernc.org/sqlite` from 1.61.0 to 1.61.1
-- [Release notes](https://gitlab.com/cznic/sqlite/tags)
-- [Changelog](https://gitlab.com/cznic/sqlite/blob/master/CHANGELOG.md)
-- [Commits](https://gitlab.com/cznic/sqlite/compare/v1.61.0...v1.61.1)
-
----
-updated-dependencies:
-- dependency-name: github.com/spf13/pflag
-  dependency-version: 1.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: dependencies
-- dependency-name: modernc.org/sqlite
-  dependency-version: 1.61.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `e2e/go.mod` (modified, +1/-1)
+**File**: `docs/src/pages/security.mdx` (modified, +4/-0)
 ```diff
-@@ -15,7 +15,7 @@ require (
- 	github.com/rogpeppe/go-internal v1.16.0
- 	github.com/testcontainers/testcontainers-go v0.44.0
- 	google.golang.org/protobuf v1.36.12
--	modernc.org/sqlite v1.61.0
-+	modernc.org/sqlite v1.61.1
- )
+@@ -16,6 +16,10 @@ This page explains how to report a security issue to the Open Policy Agent (OPA)
+   We do not accept reports that need an OPA server with authentication and authorization turned off, because OPA does
+   not protect its APIs in that state. Authentication proves who you are. Authorization decides what you may do.
  
- require (
-```
-
-**File**: `e2e/go.sum` (modified, +2/-2)
-```diff
-@@ -367,8 +367,8 @@ modernc.org/opt v0.2.0 h1:tGyef5ApycA7FSEOMraay9SaTk5zmbx7Tu+cJs4QKZg=
- modernc.org/opt v0.2.0/go.mod h1:03fq9lsNfvkYSfxrfUhZCWPk1lm4cq4N+Bh//bEtgns=
- modernc.org/sortutil v1.2.1 h1:+xyoGf15mM3NMlPDnFqrteY07klSFxLElE2PVuWIJ7w=
- modernc.org/sortutil v1.2.1/go.mod h1:7ZI3a3REbai7gzCLcotuw9AC4VZVpYMjDzETGsSMqJE=
--modernc.org/sqlite v1.61.0 h1:sQi63oLQ9uquAUA4CzOisH35Q3pEszkPBuHM0tFL8CY=
--modernc.org/sqlite v1.61.0/go.mod h1:f4gr5tbpx2umklaT/QVtbi/50hNdM+4ng+2zMo8KXJ0=
-+modernc.org/sqlite v1.61.1 h1:TBEE49wz7VlxS+qXRXMQiPUZYOXHJ4ku83daYv1fe04=
-+modernc.org/sqlite v1.61.1/go.mod h1:f4gr5tbpx2umklaT/QVtbi/50hNdM+4ng+2zMo8KXJ0=
- modernc.org/strutil v1.2.1 h1:UneZBkQA+DX2Rp35KcM69cSsNES9ly8mQWD71HKlOA0=
- modernc.org/strutil v1.2.1/go.mod h1:EHkiggD70koQxjVdSBM3JKM7k6L0FbGE5eymy9i3B9A=
- modernc.org/token v1.1.0 h1:Xl7Ap9dKaEs5kLoOQeQmPWevfnk/DM5qcLcYlA8ys6Y=
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ require (
- 	github.com/sergi/go-diff v1.4.0
- 	github.com/sirupsen/logrus v1.10.2
- 	github.com/spf13/cobra v1.10.2
--	github.com/spf13/pflag v1.0.10
-+	github.com/spf13/pflag v1.1.0
- 	github.com/tetratelabs/wazero v1.12.0
- 	github.com/vektah/gqlparser/v2 v2.5.64
- 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -157,8 +157,8 @@ github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4
- github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
- github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
- github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
--github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
--github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-+github.com/spf13/pflag v1.1.0 h1:6W6MbVUrnMb8PEhjkqwsVLY7ryuzRfFHF4mQd7L94ag=
-+github.com/spf13/pflag v1.1.0/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
- github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
- github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
- github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
++- If you want to forward potential security issues reported to you by publicly available vulnerability scanners, we
++  appreciate that. Such issues should however be considered public knowledge, and as such we prefer that you report
++  them via normal GitHub issues. Please do not report them through the security email list.
++
+ - If you think you have found a security issue in an OPA project, please send an email to
+   [open-policy-agent-security@googlegroups.com](mailto:open-policy-agent-security@googlegroups.com).
+   A small security team reads this address. We will confirm that we received your report and decide how serious it is.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9542** (2026-11-10): Integrate patch release 1.22.3 (@srenatus)
-- **PR #9537** (2026-11-09): perf: Make sink writer perform on par with bytes.Buffer (@anderseknert)
-- **PR #9536** (2026-11-10): Prepare patch release v1.22.3 (@srenatus)
-- **PR #9535** (2026-11-09): website/events: Update lightning talk time (@charlieegan3)
-- **PR #9534** (2026-11-09): notebook: tweak breadcrumbs, bump plotje (0.18.0) (@srenatus)
-- **PR #9533** (2026-11-09): website: show live code query, highlight output some more (@srenatus)
+- **PR #9551** (2026-11-12): docs: Amend security reporting docs to cover scanners (@anderseknert)
+- **PR #9550** (2026-11-12): perf: add sync pool for evalTermNext, improve hasCollisions (@anderseknert)
+- **PR #9549** (2026-11-12): perf: Non-allocating out-of-bounds array.slice (@anderseknert)
+- **PR #9548** (2026-11-12): Release v1.22.4 (@srenatus)
+- **PR #9547** (2026-11-12): ci: lock GitHub Actions workflows (@srenatus)
+- **PR #9544** (2026-11-12): ast: two json roundtrip fixes ("some x", and "every ... in ...") (@srenatus)
 
 ---
 
@@ -1145,29 +1051,31 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs
+## X. docs: Amend security reporting docs to cover scanners (#9551)
 
 **RULE**:
-When implementing operations in `internal/cidr/merge/merge.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/pages/security.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4434f660`: topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40bd9e2e`: docs: Amend security reporting docs to cover scanners (#9551). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/cidr/merge/merge.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/pages/security.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Only 4-byte addresses need the prefix. IPv4-mapped IPv6 addresses are already 16 bytes long.
-	if len(firstIP) == net.IPv4len {
+- If you want to forward potential security issues reported to you by publicly available vulnerability scanners, we
+  appreciate that. Such issues should however be considered public knowledge, and as such we prefer that you report
+  them via normal GitHub issues. Please do not report them through the security email list.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if firstIP.To4() != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4434f660` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40bd9e2e` are properly handled with clean fallback behavior.

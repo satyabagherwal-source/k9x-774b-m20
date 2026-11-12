@@ -2133,10 +2133,10 @@
     "repository": "SynaLinks/synalinks-skills",
     "platform": "github",
     "sourceUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "sourceVersion": "092970a5",
+    "sourceVersion": "2b5d7ed8",
     "license": "Apache-2.0",
-    "contentHash": "7c1d2f9e9f5f9b8f68e65f4e237ca5d17ee298d0f1061248c376eaebba531611",
-    "lastHarvestedAt": "2026-10-18T21:00:58.197Z",
+    "contentHash": "e720feffecbb62d8bdd5a4db0adb44cbb863d7dc6f61722e588f15a55d9c8477",
+    "lastHarvestedAt": "2026-11-12T21:42:01.753Z",
     "learningId": "learn-github-synalinks-synalinks-skills"
   },
   "facebook-docusaurus": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "e3ecbb98",
+    "sourceVersion": "11c82084",
     "license": "BSD-3-Clause",
-    "contentHash": "9551251464208ecda3150bdd50117abd223313e62cf22361a096e8b2ea0ac2a0",
-    "lastHarvestedAt": "2026-11-12T09:55:22.984Z",
+    "contentHash": "84248f5792c652bbab7844c7177bf2da83d1e789e633e6d9be37cef723086c7f",
+    "lastHarvestedAt": "2026-11-12T21:41:56.905Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "ef171a81",
+    "sourceVersion": "80f27558",
     "license": "Apache-2.0",
-    "contentHash": "dd242ff1727d33fbe746c9e3e2a5955f8aa2450a3dd08af0ee708ea21c9b3cbd",
-    "lastHarvestedAt": "2026-11-11T10:26:49.053Z",
+    "contentHash": "09b2b64e6fd68d991097b72e702e376c8137a29e679ad0bdcd12d09fcad7492b",
+    "lastHarvestedAt": "2026-11-12T21:41:55.168Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "c26ade9a",
+    "sourceVersion": "b7ae844e",
     "license": "GPL-3.0",
-    "contentHash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
-    "lastHarvestedAt": "2026-11-10T01:02:32.904Z",
+    "contentHash": "451ad5b05e5704584492e895a5bf9e5368ef8e45704270758403b1293a2b359f",
+    "lastHarvestedAt": "2026-11-12T21:41:38.080Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {
@@ -7393,10 +7393,10 @@
     "repository": "zilliztech/claude-context",
     "platform": "github",
     "sourceUrl": "https://github.com/zilliztech/claude-context",
-    "sourceVersion": "6fc318b4",
+    "sourceVersion": "64a87f9b",
     "license": "MIT",
-    "contentHash": "c76fe0b1a5d7c991cba6ba172af2eb6338add2f432147fa0b40f8bd72d4cbe27",
-    "lastHarvestedAt": "2026-10-19T08:49:00.355Z",
+    "contentHash": "86dd3d53128b760e038f78dc6ca592c61b619f6fa6cbd942df0272a20ee74962",
+    "lastHarvestedAt": "2026-11-12T21:42:00.839Z",
     "learningId": "learn-github-zilliztech-claude-context"
   },
   "killercup-cargo-edit": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "77a8d8a3",
+    "sourceVersion": "0e896b49",
     "license": "Apache-2.0",
-    "contentHash": "b72e4090ba6c00b6da00d968e88baa53ed9d6eb876e204acaf3f96c1f50a649f",
-    "lastHarvestedAt": "2026-11-08T15:49:51.459Z",
+    "contentHash": "bb61a02372ee6b5277dd8318320102f25a3e5159564eeb9fa1bbcb18d3e0406e",
+    "lastHarvestedAt": "2026-11-12T21:41:50.439Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {
