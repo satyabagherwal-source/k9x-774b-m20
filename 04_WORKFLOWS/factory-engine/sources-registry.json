@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T07:46:43.291Z",
-    "lastVerified": "2026-11-12T07:46:43.291Z",
+    "lastChecked": "2026-11-12T07:54:33.620Z",
+    "lastVerified": "2026-11-12T07:54:33.620Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T06:56:12.792Z",
-    "lastVerified": "2026-11-12T06:56:12.792Z",
+    "lastChecked": "2026-11-12T07:54:16.773Z",
+    "lastVerified": "2026-11-12T07:54:16.773Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1645,9 +1645,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-12T01:44:25.165Z",
+    "lastChecked": "2026-11-12T07:54:11.712Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-12T01:44:25.165Z"
+    "lastVerified": "2026-11-12T07:54:11.712Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4947,14 +4947,14 @@
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T00:59:42.403Z",
-    "lastVerified": "2026-11-10T00:59:42.403Z",
+    "lastChecked": "2026-11-12T07:54:13.183Z",
+    "lastVerified": "2026-11-12T07:54:13.183Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
+    "contentHash": "8808a67e82e75809bb09629b8454cf971c7f13c4cf5cbd93d734e08e06676fec",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5253,8 +5253,8 @@
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T14:12:50.864Z",
-    "lastVerified": "2026-11-09T14:12:50.864Z",
+    "lastChecked": "2026-11-12T07:54:01.691Z",
+    "lastVerified": "2026-11-12T07:54:01.691Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webrtc-rs-webrtc",
@@ -7437,9 +7437,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-09T23:35:41.206Z",
+    "lastChecked": "2026-11-12T07:54:14.311Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-09T23:35:41.206Z"
+    "lastVerified": "2026-11-12T07:54:14.311Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -9973,11 +9973,21 @@
     "lastVerified": "2026-11-10T02:31:34.588Z"
   },
   "nsh07-tomato": {
-    "name": "Tomato",
+    "name": "nsh07/Tomato",
     "officialUrl": "https://github.com/nsh07/Tomato",
-    "lastChecked": "2026-11-08T06:18:51.266Z",
-    "revisionIdentifier": "98fa69ed",
-    "lastVerified": "2026-11-08T06:18:51.266Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-12T07:54:09.901Z",
+    "lastVerified": "2026-11-12T07:54:09.901Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nsh07-tomato",
+    "contentHash": "0061fbcd3beac8249bb8a851d1ec129ffcb175154f644513e1c3a8adb758f0a0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "jakeschincariol-arena-skill": {
     "name": "Jakeschincariol/arena-skill",
@@ -11821,8 +11831,8 @@
     "officialUrl": "https://github.com/RDFLib/rdflib",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T17:57:35.030Z",
-    "lastVerified": "2026-11-07T17:57:35.030Z",
+    "lastChecked": "2026-11-12T07:54:04.199Z",
+    "lastVerified": "2026-11-12T07:54:04.199Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rdflib-rdflib",

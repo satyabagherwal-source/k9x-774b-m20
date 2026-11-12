@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T07:46:38.036Z",
-  "total_cycles_completed": 8938,
-  "total_learnings_persisted": 8938,
-  "total_rules_promoted": 8780,
+  "last_updated": "2026-11-12T07:54:27.757Z",
+  "total_cycles_completed": 8940,
+  "total_learnings_persisted": 8940,
+  "total_rules_promoted": 8782,
   "history": [
-    {
-      "timestamp": "2026-11-11T09:14:30.416Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T09:15:42.104Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T09:15:56.838Z",
       "repository": "langchain4j/langchain4j",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T07:46:38.036Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:54:24.216Z",
+      "repository": "nsh07/Tomato",
+      "learningId": "learn-github-nsh07-tomato",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:54:27.757Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

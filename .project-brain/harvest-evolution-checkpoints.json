@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T07:46:43.628Z",
+  "last_updated": "2026-11-12T07:54:33.874Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T06:41:50.188Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-12T07:16:00.772Z",
+      "processed_at": "2026-11-12T07:54:33.844Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -936,9 +936,19 @@
       "processed_at": "2026-11-12T07:46:43.605Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "nsh07-tomato-learnings.md": {
+      "processed_at": "2026-11-12T07:54:33.747Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "clastix-kamaji-learnings.md": {
+      "processed_at": "2026-11-12T07:54:33.809Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 246,
+  "total_dossiers_evaluated": 249,
   "total_canonical_promoted": 29,
-  "total_staged_for_review": 214
+  "total_staged_for_review": 217
 }

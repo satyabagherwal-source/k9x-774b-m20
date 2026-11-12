@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T07:46:43.625Z",
+  "updated_at": "2026-11-12T07:54:33.837Z",
   "stats": {
-    "total_discovered": 997,
-    "approved_pending_harvest": 892,
+    "total_discovered": 1009,
+    "approved_pending_harvest": 904,
     "harvested_count": 0,
     "rejected_count": 105,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 921,
+      "COMMUNITY_AND_EXPERT": 933,
       "OFFICIAL_DOCUMENTATION": 30,
       "STANDARDS_AND_SPECIFICATIONS": 43,
       "ENGINEERING_BLOGS": 1,
@@ -21216,6 +21216,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
         "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-C1721F988C72": {
+      "id": "SRC-C1721F988C72",
+      "url": "https://github.com/nsh07/Tomato",
+      "title": "https://github.com/nsh07/Tomato",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.755Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+        "fileName": "nsh07-tomato-learnings.md"
+      }
+    },
+    "SRC-B49704C928A7": {
+      "id": "SRC-B49704C928A7",
+      "url": "https://m3.material.io/foundations/layout/applying-layout/window-size-classes",
+      "title": "https://m3.material.io/foundations/layout/applying-layout/window-size-classes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+        "fileName": "nsh07-tomato-learnings.md"
+      }
+    },
+    "SRC-3B791EFA7DF6": {
+      "id": "SRC-3B791EFA7DF6",
+      "url": "https://github.com/user-attachments/assets/9ded3a35-8843-4557-ad15-9ed8ccb9e5ce",
+      "title": "https://github.com/user-attachments/assets/9ded3a35-8843-4557-ad15-9ed8ccb9e5ce",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+        "fileName": "nsh07-tomato-learnings.md"
+      }
+    },
+    "SRC-47A4CD2BF7D0": {
+      "id": "SRC-47A4CD2BF7D0",
+      "url": "https://github.com/user-attachments/assets/9efa2d4b-7b60-4c41-9121-83ba885f8d13",
+      "title": "https://github.com/user-attachments/assets/9efa2d4b-7b60-4c41-9121-83ba885f8d13",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+        "fileName": "nsh07-tomato-learnings.md"
+      }
+    },
+    "SRC-BAC3F22D6CD6": {
+      "id": "SRC-BAC3F22D6CD6",
+      "url": "https://github.com/user-attachments/assets/f6c895ff-b796-49b4-966c-96cad02de657",
+      "title": "https://github.com/user-attachments/assets/f6c895ff-b796-49b4-966c-96cad02de657",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.784Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+        "fileName": "nsh07-tomato-learnings.md"
+      }
+    },
+    "SRC-DCBB832716C7": {
+      "id": "SRC-DCBB832716C7",
+      "url": "https://github.com/user-attachments/assets/d7863cbe-100f-40cc-b0a6-1d5c73e84123",
+      "title": "https://github.com/user-attachments/assets/d7863cbe-100f-40cc-b0a6-1d5c73e84123",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.792Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+        "fileName": "nsh07-tomato-learnings.md"
+      }
+    },
+    "SRC-E95163BB1EA2": {
+      "id": "SRC-E95163BB1EA2",
+      "url": "https://drive.google.com/file/d/1XAtkvZ0N9WZ72IuKwCsH-nm-WwGYC9ZR/view?usp=sharing",
+      "title": "https://drive.google.com/file/d/1XAtkvZ0N9WZ72IuKwCsH-nm-WwGYC9ZR/view?usp=sharing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+        "fileName": "nsh07-tomato-learnings.md"
+      }
+    },
+    "SRC-42F1A77448C4": {
+      "id": "SRC-42F1A77448C4",
+      "url": "https://github.com/clastix/kamaji",
+      "title": "https://github.com/clastix/kamaji",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-74CF27C785F9": {
+      "id": "SRC-74CF27C785F9",
+      "url": "https://kubernetes.io/docs/concepts/configuration/assign-pod-node",
+      "title": "https://kubernetes.io/docs/concepts/configuration/assign-pod-node",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.819Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-EEB1591C517C": {
+      "id": "SRC-EEB1591C517C",
+      "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration",
+      "title": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-09A599E9F71C": {
+      "id": "SRC-09A599E9F71C",
+      "url": "https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity",
+      "title": "https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-E61F200D69DB": {
+      "id": "SRC-E61F200D69DB",
+      "url": "https://kubernetes.io/docs/concepts/security/pod-security-standards",
+      "title": "https://kubernetes.io/docs/concepts/security/pod-security-standards",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:54:33.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
       }
     }
   }

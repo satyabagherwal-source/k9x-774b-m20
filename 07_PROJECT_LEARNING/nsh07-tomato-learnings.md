@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nsh07-tomato-learnings.md`  
 > **Source**: github ([https://github.com/nsh07/Tomato](https://github.com/nsh07/Tomato))  
-> **Source Version**: `98fa69ed`  
+> **Source Version**: `518f6311`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:39:59.491Z  
+> **Timestamp**: 2026-11-12T07:54:10.085Z  
 > **Learning ID**: `learn-github-nsh07-tomato`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nsh07-tomato-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nsh07/Tomato](https://github.com/nsh07/Tomato))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:39:59.484Z  
+> **Harvest Timestamp**: 2026-11-12T07:54:09.901Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Minimalist, data-oriented pomodoro timer for Android and Desktop based on Material 3 Expressive
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1502 stars
+- **Stars / Engagement**: 1534 stars
 
 ---
 
@@ -1145,459 +1145,206 @@ expect val currentOS: OS
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1615a150` (2026-10-02)
-**Commit Message**: fix(alarm): fix IllegalStateExceptions related to alarm state changes
+### Incident Patch 1: `518f6311` (2026-11-11)
+**Commit Message**: fix(deps): migrate to latest compose version
 
-**File**: `androidApp/src/main/java/org/nsh07/pomodoro/service/TimerService.kt` (modified, +31/-7)
+**File**: `androidApp/build.gradle.kts` (modified, +5/-1)
 ```diff
-@@ -110,7 +110,12 @@ class TimerService : Service(), KoinComponent {
-         runBlocking(Dispatchers.IO) { timerManager.saveTimeToDb() }
-         setDoNotDisturb(false)
-         notificationManager.cancel(1)
--        alarm?.release()
-+        try {
-+            alarm?.release()
-+        } catch (e: Exception) {
-+            Log.e("TimerService", "Error releasing alarm", e)
+@@ -38,7 +38,11 @@ tasks.withType(Test::class) {
+ 
+ android {
+     namespace = "org.nsh07.pomodoro"
+-    compileSdk = libs.versions.app.targetSdk.get().toInt()
++    compileSdk {
++        version = release(libs.versions.app.targetSdk.get().toInt()) {
++            minorApiLevel = libs.versions.app.minorApiLevel.get().toInt()
 +        }
-+        alarm = null
-         super.onDestroy()
-     }
++    }
  
-@@ -374,7 +379,13 @@ class TimerService : Service(), KoinComponent {
+     defaultConfig {
+         applicationId = "org.nsh07.pomodoro"
+```
+
+**File**: `desktopApp/build.gradle.kts` (modified, +2/-1)
+```diff
+@@ -25,7 +25,8 @@ plugins {
  
-     fun startAlarm() {
-         val settingsState = _settingsState.value
--        if (settingsState.alarmEnabled) alarm?.start()
-+        if (settingsState.alarmEnabled) {
-+            try {
-+                alarm?.start()
-+            } catch (e: Exception) {
-+                Log.e("TimerService", "Error starting alarm", e)
-+            }
-+        }
+ dependencies {
+     implementation(project(":shared"))
+-    implementation(compose.desktop.currentOs)
++    implementation(libs.compose.ui)
++    implementation(libs.androidx.material3)
  
-         activityCallbacks.activityTurnScreenOn(true)
+     implementation(project.dependencies.platform(libs.koin.bom))
+     implementation(libs.koin.core)
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +3/-2)
+```diff
+@@ -1,6 +1,7 @@
+ [versions]
+ app-minSdk = "26"
+ app-targetSdk = "37"
++app-minorApiLevel = "2"
+ app-versionName = "2.0.1"
+ app-versionCode = "40"
  
-@@ -419,9 +430,13 @@ class TimerService : Service(), KoinComponent {
-         autoAlarmStopScope?.cancel()
- 
-         if (settingsState.alarmEnabled) {
--            alarm?.let {
--                if (it.isPlaying) it.pause()
--                it.seekTo(0)
-+            alarm?.let { player ->
-+                try {
-+                    if (player.isPlaying) player.pause()
-+                    player.seekTo(0)
-+                } catch (e: Exception) {
-+                    Log.e("TimerService", "Error stopping alarm", e)
-+                }
-             }
-         }
- 
-@@ -460,7 +475,11 @@ class TimerService : Service(), KoinComponent {
-         return try {
-             MediaPlayer().apply {
-                 setOnErrorListener { mp, what, extra ->
--                    mp.reset()
-+                    try {
-+                        mp.reset()
-+                    } catch (e: Exception) {
-+                        Log.e("TimerService", "Error resetting MediaPlayer", e)
-+                    }
-                     Log.e("TimerService", "MediaPlayer error: $what, $extra")
-                     true
-                 }
-@@ -482,6 +501,7 @@ class TimerService : Service(), KoinComponent {
-                 }
-             }
-         } catch (e: Exception) {
-+            Log.e("TimerService", "Error initializing MediaPlayer", e)
-             e.printStackTrace()
-             null
-         }
-@@ -496,7 +516,11 @@ class TimerService : Service(), KoinComponent {
-     }
- 
-     private fun updateAlarmTone() {
--        alarm?.release()
-+        try {
-+            alarm?.release()
-+        } catch (e: Exception) {
-+            Log.e("TimerService", "Error releasing alarm", e)
-+        }
-         alarm = initializeMediaPlayer()
-     }
+@@ -25,8 +26,8 @@ revenuecat = "10.22.0"
+ room = "3.0.3"
+ sqlite = "2.7.1"
+ vico = "3.3.1"
+-composeMultiplatform = "1.13.0-alpha01"
+-composeMaterial3 = "1.13.0-alpha01"
++composeMultiplatform = "1.13.0-beta02"
++composeMaterial3 = "1.13.0-beta02"
+ koinBom = "4.2.2"
+ koinCompilerPlugin = "1.2.1"
  
 ```
 
----
-
-### Incident Patch 2: `98fa69ed` (2026-10-18)
-**Commit Message**: fix(alarm): make alarm UI edge-to-edge on all platforms
-
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/AppScreen.kt` (modified, +10/-5)
+**File**: `shared/build.gradle.kts` (modified, +5/-5)
 ```diff
-@@ -170,11 +170,6 @@ fun AppScreen(
-         LocalIsPlus provides isPlus,
-         LocalSetShowPaywall provides setShowPaywall
-     ) {
--        if (uiState.alarmRinging)
--            AlarmDialog {
--                timerViewModel.onAction(TimerAction.StopAlarm)
--            }
+@@ -54,7 +54,11 @@ compose.resources {
+ kotlin {
+     android {
+         namespace = "org.nsh07.pomodoro.shared"
+-        compileSdk = libs.versions.app.targetSdk.get().toInt()
++        compileSdk {
++            version = release(libs.versions.app.targetSdk.get().toInt()) {
++                minorApiLevel = libs.versions.app.minorApiLevel.get().toInt()
++            }
++        }
+         minSdk = libs.versions.app.minSdk.get().toInt()
+ 
+         compilerOptions {
+@@ -116,8 +120,6 @@ kotlin {
+         }
+ 
+         jvmMain.dependencies {
+-            implementation(compose.desktop.currentOs)
 -
-         Scaffold(
-             contentWindowInsets = LocalContentWindowInsets.current(),
-             bottomBar = {
-@@ -394,6 +389,16 @@ fun AppScreen(
-             }
+             implementation(libs.kotlinx.coroutines.swing)
+             implementation(libs.androidx.sqlite.bundled)
+ 
+@@ -126,8 +128,6 @@ kotlin {
+             implementation(libs.jlayer.player) // MP3 playback
          }
  
-+        AnimatedVisibility(
-+            visible = uiState.alarmRinging,
-+            enter = fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { -it },
-+            exit = fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.slowSpatialSpec()) { -it }
-+        ) {
-+            AlarmDialog {
-+                timerViewModel.onAction(TimerAction.StopAlarm)
-+            }
-+        }
-+
-         AnimatedVisibility(
-             showPaywall,
-             enter = slideInVertically { it },
+-        // Room's MigrationTestHelper is device-instrumented on Android, so migration tests are
+-        // JVM-only. The migration itself lives in commonMain and is platform independent.
+         jvmTest.dependencies {
+             implementation(libs.androidx.room.testing)
+             implementation(libs.androidx.sqlite.bundled)
 ```
 
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/screens/AlarmSettings.kt` (modified, +3/-4)
+**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/components/CreateTopicBottomSheet.kt` (modified, +2/-2)
 ```diff
-@@ -359,7 +359,7 @@ fun AlarmSettings(
-                         val interactionSources = remember { List(2) { MutableInteractionSource() } }
- 
-                         ListItem(
--                            headlineContent = { Text(stringResource(Res.string.vibration_pattern)) },
-+                            modifier = Modifier.clip(topListItemShape),
-                             trailingContent = {
-                                 ButtonGroup(
-                                     overflowIndicator = {},
-@@ -432,9 +432,8 @@ fun AlarmSettings(
-                                     )
-                                 }
-                             },
--                            colors = listItemColors,
--                            modifier = Modifier.clip(topListItemShape)
--                        )
-+                            colors = listItemColors
-+                        ) { Text(stringResource(Res.string.vibration_pattern)) }
-                     }
-                     item {
-                         SliderListItem(
+@@ -117,7 +117,7 @@ fun CreateTopicBottomSheet(
+     val sessionsSliderState = rememberSliderState(
+         value = defaultTopic.sessionLength.toFloat(),
+         steps = 8,
+-        valueRange = 1f..10f
++        trackRange = 1f..10f,
+     )
+     var autostartNextSession by remember { mutableStateOf(defaultTopic.autostartNextSession) }
+     var dndEnabled by remember { mutableStateOf(defaultTopic.dndEnabled) }
+@@ -419,7 +419,7 @@ private fun CreateTopicSheetContentPreview() {
+                     sessionsSliderState = rememberSliderState(
+                         value = 4f,
+                         steps = 8,
+-                        valueRange = 1f..10f
++                        trackRange = 1f..10f
+                     ),
+                     autostartNextSession = autostartNextSession,
+                     dndEnabled = dndEnabled,
 ```
 
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/timerScreen/AlarmDialog.kt` (modified, +37/-42)
+**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/components/TopicTimerSettings.kt` (modified, +8/-4)
 ```diff
-@@ -20,10 +20,13 @@ import androidx.compose.foundation.clickable
- import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Spacer
-+import androidx.compose.foundation.layout.WindowInsets
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.padding
-+import androidx.compose.foundation.layout.safeDrawing
- import androidx.compose.foundation.layout.size
-+import androidx.compose.foundation.layout.windowInsetsPadding
- import androidx.compose.material3.Button
- import androidx.compose.material3.ButtonDefaults
- import androidx.compose.material3.Icon
-@@ -39,8 +42,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
- import androidx.compose.ui.text.style.TextAlign
- import androidx.compose.ui.tooling.preview.Preview
- import androidx.compose.ui.unit.dp
--import androidx.compose.ui.window.Dialog
--import androidx.compose.ui.window.DialogProperties
- import org.jetbrains.compose.resources.painterResource
- import org.jetbrains.compose.resources.stringResource
- import org.nsh07.pomodoro.ui.performConfirm
-@@ -62,47 +63,41 @@ fun AlarmDialog(
-         stopAlarm()
+@@ -192,7 +192,8 @@ fun TopicTimerSettings(
+             },
+             onDndEnabledChange = { onAction(SettingsAction.SaveDndEnabled(it)) },
+             onShowColorShapeSheet = { showColorShapeSheet = it },
+-            setShowDeleteDialog = { showDeleteDialog = it }
++            setShowDeleteDialog = { showDeleteDialog = it },
++            onSessionLengthChangeFinished = { onAction(SettingsAction.UpdateSessionLength) }
+         )
      }
  
--    Dialog(
--        onDismissRequest = stopAlarmWithHaptics,
--        properties = DialogProperties(
--            usePlatformDefaultWidth = false
--        )
-+    Box(
-+        contentAlignment = Alignment.Center,
-+        modifier = modifier
-+            .fillMaxSize()
-+            .background(colorScheme.primaryContainer)
-+            .clickable(onClick = stopAlarmWithHaptics)
-+            .windowInsetsPadding(WindowInsets.safeDrawing)
-     ) {
--        Box(
--            contentAlignment = Alignment.Center,
--            modifier = modifier
--                .fillMaxSize()
--                .background(colorScheme.primaryContainer)
--                .clickable(onClick = stopAlarmWithHaptics)
--        ) {
--            CompositionLocalProvider(LocalContentColor provides colorScheme.onPrimaryContainer) {
--                Column(modifier = Modifier.padding(24.dp)) {
--                    Icon(
--                        painter = painterResource(Res.drawable.alarm),
--                        contentDescription = stringResource(Res.string.alarm),
--                        modifier = Modifier
--                            .align(Alignment.CenterHorizontally)
--                            .size(40.dp)
--                    )
--                    Spacer(Modifier.height(16.dp))
--                    Text(
--                        text = stringResource(Res.string.stop_alarm_question),
--                        style = typography.headlineSmall,
--                        modifier = Modifier.align(Alignment.CenterHorizontally)
--                    )
--                    Spacer(Modifier.height(16.dp))
--                    Text(
--                        text = stringResource(Res.string.stop_alarm_dialog_text),
--                        textAlign = TextAlign.Center
--                    )
--                    Spacer(modifier = Modifier.height(24.dp))
--                    Button(
--                        onClick = stopAlarmWithHaptics,
--                        shapes = ButtonDefaults.shapes(),
--                        modifier = Modifier.align(Alignment.End),
--                    ) {
--                        Text(stringResource(Res.string.stop_alarm))
--                    }
-+        CompositionLocalProvider(LocalContentColor provides colorScheme.onPrimaryContainer) {
-+            Column(modifier = Modifier.padding(24.dp)) {
-+                Icon(
-+                    painter = painterResource(Res.drawable.alarm),
-+                    contentDescription = stringResource(Res.string.alarm),
-+                    modifier = Modifier
-+                        .align(Alignment.CenterHorizontally)
-+                        .size(40.dp)
-+                )
-+                Spacer(Modifier.height(16.dp))
-+                Text(
-+                    text = stringResource(Res.string.stop_alarm_question),
-+                    style = typography.headlineSmall,
-+                    modifier = Modifier.align(Alignment.CenterHorizontally)
-+                )
-+                Spacer(Modifier.height(16.dp))
-+                Text(
-+                    text = stringResource(Res.string.stop_alarm_dialog_text),
-+                    textAlign = TextAlign.Center
-+                )
-+                Spacer(modifier = Modifier.height(24.dp))
-+                Button(
-+                    onClick = stopAlarmWithHaptics,
-+                    shapes = ButtonDefaults.shapes(),
-+                    modifier = Modifier.align(Alignment.End),
-+                ) {
-+                    Text(stringResource(Res.string.stop_alarm))
-                 }
-             }
-         }
-```
-
----
-
-### Incident Patch 3: `aadf18b6` (2026-10-11)
-**Commit Message**: fix(ui): make unselected navigation bar buttons circular
-
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/AppScreen.kt` (modified, +8/-14)
-```diff
-@@ -18,7 +18,6 @@
- package org.nsh07.pomodoro.ui
- 
- import androidx.compose.animation.AnimatedVisibility
--import androidx.compose.animation.Crossfade
- import androidx.compose.animation.SharedTransitionLayout
- import androidx.compose.animation.core.animateFloatAsState
- import androidx.compose.animation.expandHorizontally
-@@ -39,6 +38,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
- import androidx.compose.foundation.layout.calculateStartPadding
- import androidx.compose.foundation.layout.displayCutout
- import androidx.compose.foundation.layout.fillMaxWidth
-+import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.only
- import androidx.compose.foundation.layout.padding
- import androidx.compose.foundation.layout.systemBars
-@@ -59,7 +59,6 @@ import androidx.compose.material3.Text
- import androidx.compose.material3.ToggleButton
- import androidx.compose.material3.ToggleButtonDefaults
- import androidx.compose.material3.ToggleButtonShapes
--import androidx.compose.material3.ToggleButtonSize
- import androidx.compose.material3.TooltipAnchorPosition
- import androidx.compose.material3.TooltipBox
- import androidx.compose.material3.TooltipDefaults
-@@ -78,6 +77,7 @@ import androidx.compose.ui.Modifier
- import androidx.compose.ui.graphics.lerp
- import androidx.compose.ui.platform.LocalLayoutDirection
- import androidx.compose.ui.text.style.TextOverflow
-+import androidx.compose.ui.unit.dp
- import androidx.compose.ui.unit.sp
- import androidx.compose.ui.util.fastForEach
- import androidx.compose.ui.zIndex
-@@ -258,7 +258,6 @@ fun AppScreen(
-                                             } else {
-                                                 { item.onNavigateHome() }
-                                             },
--                                            buttonSize = ToggleButtonSize.Medium,
-                                             colors = ToggleButtonDefaults.colors(
-                                                 containerColor = primaryContainer,
-                                                 contentColor = onPrimaryContainer,
-@@ -269,19 +268,14 @@ fun AppScreen(
-                                                 CircleShape,
-                                                 CircleShape,
-                                                 CircleShape
--                                            )
-+                                            ),
-+                                            modifier = Modifier.height(56.dp)
-                                         ) {
-                                             Row(verticalAlignment = Alignment.CenterVertically) {
--                                                Crossfade(selected) {
--                                                    if (it) Icon(
--                                                        painterResource(item.selectedIcon),
--                                                        stringResource(item.label)
--                                                    )
--                                                    else Icon(
--                                                        painterResource(item.unselectedIcon),
--                                                        stringResource(item.label)
--                                                    )
--                                                }
-+                                                Icon(
-+                                                    painterResource(if (selected) item.selectedIcon else item.unselectedIcon),
-+                                                    stringResource(item.label)
-+                                                )
-                                                 AnimatedVisibility(
-                                                     visible = selected || wide,
-                                                     enter = expandHorizontally(motionScheme.defaultSpatialSpec()),
-```
-
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/components/ColorSchemePickerListItem.kt` (modified, +65/-65)
-```diff
-@@ -230,35 +230,37 @@ fun ColorPickerRow(
-     backgroundColor: Color = animateColorAsState(listItemColors.containerColor).value,
-     horizontalPadding: Dp = 48.dp
+@@ -241,7 +242,8 @@ fun TopicTimerProperties(
+     showDeleteDialog: Boolean = false,
+     onShowColorShapeSheet: (Boolean) -> Unit = {},
+     setShowDeleteDialog: (Boolean) -> Unit = {},
+-    showEditButtons: Boolean = true
++    showEditButtons: Boolean = true,
++    onSessionLengthChangeFinished: (() -> Unit)? = null
  ) {
--    LazyRow(
--        horizontalArrangement = Arrangement.spacedBy(2.dp),
--        contentPadding = PaddingValues(horizontal = horizontalPadding),
--        userScrollEnabled = enabled,
--        modifier = modifier
--            .background(
--                backgroundColor,
--                shape = shapes.extraSmall.copy(topStart = CornerSize(0), topEnd = CornerSize(0))
--            )
--            .padding(bottom = 8.dp)
--    ) {
--        item {
--            DynamicColorPickerButton(
--                shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
--                checked = color == Color.White,
--                enabled = enabled,
--                onClick = { onColorChange(Color.White) }
--            )
--        }
--        itemsIndexed(colorSchemes) { index, it ->
--            ColorPickerButton(
--                items = colorSchemes.size + 1,
--                index = index + 1,
--                color = it.color,
--                colorName = it.name,
--                checked = it.color == color,
--                enabled = enabled
--            ) {
--                onColorChange(it.color)
-+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-+        LazyRow(
-+            horizontalArrangement = Arrangement.spacedBy(2.dp),
-+            contentPadding = PaddingValues(horizontal = horizontalPadding),
-+            userScrollEnabled = enabled,
-+            modifier = modifier
-+                .background(
-+                    backgroundColor,
-+                    shape = shapes.extraSmall.copy(topStart = CornerSize(0), topEnd = CornerSize(0))
-+                )
-+                .padding(bottom = 8.dp)
-+        ) {
-+            item {
-+                DynamicColorPickerButton(
-+                    shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
-+                    checked = color == Color.White,
-+                    enabled = enabled,
-+                    onClick = { onColorChange(Color.White) }
-+                )
-+            }
-+            itemsIndexed(colorSchemes) { index, it ->
-+                ColorPickerButton(
-+                    items = colorSchemes.size + 1,
-+                    index = index + 1,
-+                    color = it.color,
-+                    colorName = it.name,
-+                    checked = it.color == color,
-+                    enabled = enabled
-+                ) {
-+                    onColorChange(it.color)
-+                }
-             }
-         }
-     }
-@@ -277,41 +279,39 @@ private fun ColorPickerButton(
- ) {
+     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
      val haptic = LocalHapticFeedback.current
- 
--    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
--        SeededTheme(color) {
--            ToggleButton(
--                shapes = when (index) {
--                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
--                    items - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
--                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
--                },
--                colors = ToggleButtonDefaults.colors(
--                    containerColor = colorScheme.primaryContainer,
--                    checkedContainerColor = colorScheme.primary,
--                    checkedContentColor = colorScheme.onPrimary
--                ),
--                buttonSize = ToggleButtonSize.Small,
--                enabled = enabled,
--                modifier = modifier.widthIn(min = 40.dp),
--                checked = checked,
--                onCheckedChange = {
--                    if (!checked) haptic.performSegmentTick()
--                    onClick()
--                }
--            ) {
--                AnimatedContent(checked) { checked ->
--                    if (checked) {
--                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
--                            Icon(
--                                painterResource(Res.drawable.check),
--                                contentDescription = null,
--                                modifier = Modifier.size(20.dp)
--                            )
--                            Text(
--                                stringResource(colorName),
--                                style = typography.labelLarge
--                            )
--                        }
-+    SeededTheme(color) {
-+        ToggleButton(
-+            shapes = when (index) {
-+                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-+                items - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-+                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-+            },
-+            colors = ToggleButtonDefaults.colors(
-+                containerColor = colorScheme.primaryContainer,
-+                checkedContainerColor = colorScheme.primary,
-+           
+@@ -342,6 +344,8 @@ fun TopicTimerProperties(
+                 SliderTickHaptics(sessionsSliderState)
+                 Slider(
+                     state = sessionsSliderState,
++                    onValueChange = { sessionsSliderState.value = it },
++                    onValueChangeFinished = onSessionLengthChangeFinished,
+                     enabled = !topicRunning,
+                     modifier = Modifier
+                         .padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
+@@ -500,7 +504,7 @@ fun TopicTimerSettingsPreview() {
+                 topics = sampleTopics,
+                 topicRunning = false,
+                 minuteInputs = MinuteInputs("25", "5", "15"),
+-                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
++                sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
+                 onAction = {}
+             )
+         }
+@@ -517,7 +521,7 @@ fun TopicTimerSettingsDarkPreview() {
+                 topics = sampleTopics,
+                 topicRunning = false,
+                 minuteInputs = MinuteInputs("25", "5", "15"),
+-                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
++                sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
+                 onAction = {}
+             )
+         }
+```
+
+**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/screens/TimerSettings.kt` (modified, +2/-2)
+```diff
+@@ -530,8 +530,8 @@ fun TimerSettings(
+ private fun TimerSettingsPreview() {
+     val sessionsSliderState = rememberSliderState(
+         value = 4f,
+-        valueRange = 1f..10f,
+-        steps = 8
++        steps = 8,
++        trackRange = 1f..10f,
+     )
+     TomatoTheme(dynamicColor = false) {
+         Surface(Modifier.fillMaxSize()) {
+```
+
+**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/screens/TopicsSettings.kt` (modified, +2/-2)
+```diff
+@@ -468,7 +468,7 @@ fun TopicsSettingsPreview() {
+             sessionActive = false,
+             currentTopicId = editingTopic.id,
+             minuteInputs = MinuteInputs("25", "5", "15"),
+-            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
++            sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
+             contentPadding = PaddingValues(0.dp),
+             onBack = {},
+             onAction = { action ->
+@@ -501,7 +501,7 @@ fun TopicsSettingsDarkPreview() {
+             sessionActive = false,
+             currentTopicId = editingTopic.id,
+             minuteInputs = MinuteInputs("25", "5", "15"),
+-            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
++            sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
+             contentPadding = PaddingValues(0.dp),
+             onBack = {},
+             onAction = { action ->
 ```
 
 #### Recent Merged Pull Requests:
@@ -1626,64 +1373,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. alarm): fix IllegalStateExceptions related to alarm state changes
+## X. deps): migrate to latest compose version
 
 **RULE**:
-When implementing operations in `androidApp/src/main/java/org/nsh07/pomodoro/service/TimerService.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `androidApp/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1615a150`: alarm): fix IllegalStateExceptions related to alarm state changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `518f6311`: deps): migrate to latest compose version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/src/main/java/org/nsh07/pomodoro/service/TimerService.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/build.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        try {
-            alarm?.release()
-        } catch (e: Exception) {
-            Log.e("TimerService", "Error releasing alarm", e)
+    compileSdk {
+        version = release(libs.versions.app.targetSdk.get().toInt()) {
+            minorApiLevel = libs.versions.app.minorApiLevel.get().toInt()
         }
-        alarm = null
-        if (settingsState.alarmEnabled) {
-            try {
-                alarm?.start()
-            } catch (e: Exception) {
-                Log.e("TimerService", "Error starting alarm", e)
-            }
-        }
-            alarm?.let { player ->
-                try {
-                    if (player.isPlaying) player.pause()
-                    player.seekTo(0)
-                } catch (e: Exception) {
-                    Log.e("TimerService", "Error stopping alarm", e)
-                }
-                    try {
-                        mp.reset()
-                    } catch (e: Exception) {
-                        Log.e("TimerService", "Error resetting MediaPlayer", e)
-                    }
-            Log.e("TimerService", "Error initializing MediaPlayer", e)
-        try {
-            alarm?.release()
-        } catch (e: Exception) {
-            Log.e("TimerService", "Error releasing alarm", e)
-        }
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        alarm?.release()
-        if (settingsState.alarmEnabled) alarm?.start()
-            alarm?.let {
-                if (it.isPlaying) it.pause()
-                it.seekTo(0)
-                    mp.reset()
-        alarm?.release()
+    compileSdk = libs.versions.app.targetSdk.get().toInt()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1615a150` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `518f6311` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T07:46:37.920Z",
+  "last_updated": "2026-11-12T07:54:27.577Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8228,8 +8228,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "af5ad885",
-      "content_hash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
+      "source_version": "8edc639f",
+      "content_hash": "8808a67e82e75809bb09629b8454cf971c7f13c4cf5cbd93d734e08e06676fec",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -8241,6 +8241,11 @@
         {
           "number": null,
           "title": "deps): bump k8s.io/apimachinery (#1404)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "datastore): schedule and securitycontext migration jobs from the DataStore (#140",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8289,7 +8294,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:59:44.598Z",
+      "verified_at": "2026-11-12T07:54:27.536Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48408,11 +48413,16 @@
       "slug": "nsh07-tomato",
       "platform": "github",
       "source_url": "https://github.com/nsh07/Tomato",
-      "source_version": "98fa69ed",
-      "content_hash": "3763145c0b5d577e4c0a70f2296d737c5e5e4fa166063d044964ff5f6cf9eebe",
+      "source_version": "518f6311",
+      "content_hash": "0061fbcd3beac8249bb8a851d1ec129ffcb175154f644513e1c3a8adb758f0a0",
       "dossier_path": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): migrate to latest compose version",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2633,
           "title": "alarm): fix IllegalStateExceptions related to alarm state changes",
@@ -48424,7 +48434,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:39:59.773Z",
+      "verified_at": "2026-11-12T07:54:24.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
