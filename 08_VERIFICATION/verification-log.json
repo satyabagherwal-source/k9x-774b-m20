@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-UZMG",
-    "timestamp": "2026-11-08T23:03:34.360Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "4ca7e58b32372b50861b8858fb380f2e36eb8c29ab316b3cecf39d8519db1e35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-6IBD",
-    "timestamp": "2026-11-08T23:12:31.801Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "34d9ef05bba70dfed3818b84850c8b09a9ff5e23864f671c06a03c7ed0bf094f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-6QY7",
-    "timestamp": "2026-11-08T23:12:42.991Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "1616cbd63970b75d6ff1851b4fddc9835804dac0050fe3a2062edadf82b09e15",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-6S1R",
-    "timestamp": "2026-11-08T23:12:44.415Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "6c7beec61d75bcf89d5c6d4fcb6eee9ca0de490d03ee2151a48dfb4306fe8070",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-FZT5",
-    "timestamp": "2026-11-08T23:19:54.377Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "e8910081e4134775b1ff1d1bca8b8063eec11d3064808fea49331ec4f440f9b2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-RPGX",
     "timestamp": "2026-11-08T23:29:00.849Z",
     "repository": "openai/gpt-oss-20b",
@@ -7490,6 +7415,81 @@
     "repository": "rqlite/rqlite",
     "learningId": "learn-github-rqlite-rqlite",
     "contentHash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-00IY",
+    "timestamp": "2026-11-12T03:10:26.218Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "02d6baf1e92f3110cae5f0dfee5e75a66d88094ca3fa0e284cce7fdcf0028639",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-02V3",
+    "timestamp": "2026-11-12T03:10:29.247Z",
+    "repository": "vi/websocat",
+    "learningId": "learn-github-vi-websocat",
+    "contentHash": "84feebe60d2749e442bd1594babe3632d0d7a95245a917bb6ab5ab8bf6c29f0c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-04MJ",
+    "timestamp": "2026-11-12T03:10:31.532Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "e603f3d2ecc2cf52b9796fe26d4b51eba07fb4944b4e23d9b31d5bcd18b47535",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-0AK6",
+    "timestamp": "2026-11-12T03:10:39.222Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "f2c98b2c6e4af52cb5af7039b38cbc0c927f7052481efd715d109621ebbd7a00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-0FNP",
+    "timestamp": "2026-11-12T03:10:45.829Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "6b1c1a0fdb06274053c266aa45f29f2855ceecc2fec835a4647af0a6734900ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

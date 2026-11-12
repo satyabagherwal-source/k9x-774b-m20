@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T02:56:44.452Z",
+  "last_updated": "2026-11-12T03:10:45.739Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2872,8 +2872,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "91a45282",
-      "content_hash": "e3df911e483a6e6cfed9835f556d9a2dbfa4865b38ad6f380a978ea519877f3c",
+      "source_version": "5431e621",
+      "content_hash": "6b1c1a0fdb06274053c266aa45f29f2855ceecc2fec835a4647af0a6734900ac",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2885,6 +2885,11 @@
         {
           "number": null,
           "title": "Reject starting a backup at a location used by another running backup (#14451)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2953,7 +2958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:26:06.946Z",
+      "verified_at": "2026-11-12T03:10:45.724Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46287,8 +46292,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "14da8d0e",
-      "content_hash": "7cd0775f119ffc62ffb9c297e0d05213e6dc5aa0cc0422e9985512d6d93157c0",
+      "source_version": "61311f6a",
+      "content_hash": "02d6baf1e92f3110cae5f0dfee5e75a66d88094ca3fa0e284cce7fdcf0028639",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -46313,7 +46318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:35:46.445Z",
+      "verified_at": "2026-11-12T03:10:26.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58788,8 +58793,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "a9a8a317",
-      "content_hash": "ea414e3508093a660d34058e6b5a00aafe616634d8abafe5204f664441b25184",
+      "source_version": "bb49df41",
+      "content_hash": "f2c98b2c6e4af52cb5af7039b38cbc0c927f7052481efd715d109621ebbd7a00",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -58811,6 +58816,11 @@
         {
           "number": null,
           "title": "desktop): add AppImage build (#2293)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Read pod-level resources in rightsizing, crash-loop OOM, MCP overview and AI met",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58904,7 +58914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:35:01.767Z",
+      "verified_at": "2026-11-12T03:10:39.098Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65739,11 +65749,16 @@
       "slug": "vi-websocat",
       "platform": "github",
       "source_url": "https://github.com/vi/websocat",
-      "source_version": "3a3574cd",
-      "content_hash": "fd20b733ab2d87ef6ac693befa8a07551bd578826f09f34bd45a547795ec9a04",
+      "source_version": "734de478",
+      "content_hash": "84feebe60d2749e442bd1594babe3632d0d7a95245a917bb6ab5ab8bf6c29f0c",
       "dossier_path": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "help examples that use ws-l: where ws-u: is meant",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1958,
           "title": "Update OpenSSL to 3.5.4 for the pre-built executables",
@@ -65755,7 +65770,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:16:20.292Z",
+      "verified_at": "2026-11-12T03:10:29.140Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82190,14 +82205,19 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "9c682911",
-      "content_hash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
+      "source_version": "70bfbf41",
+      "content_hash": "e603f3d2ecc2cf52b9796fe26d4b51eba07fb4944b4e23d9b31d5bcd18b47535",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -82231,7 +82251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:22:26.292Z",
+      "verified_at": "2026-11-12T03:10:31.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

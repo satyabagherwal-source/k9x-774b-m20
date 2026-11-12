@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T02:57:07.561Z",
+  "updated_at": "2026-11-12T03:10:59.811Z",
   "stats": {
-    "total_discovered": 575,
-    "approved_pending_harvest": 523,
+    "total_discovered": 596,
+    "approved_pending_harvest": 542,
     "harvested_count": 0,
-    "rejected_count": 52,
+    "rejected_count": 54,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 534,
+      "COMMUNITY_AND_EXPERT": 555,
       "OFFICIAL_DOCUMENTATION": 21,
       "STANDARDS_AND_SPECIFICATIONS": 18,
       "ENGINEERING_BLOGS": 1,
@@ -12303,6 +12303,454 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
         "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-76CF78C93320": {
+      "id": "SRC-76CF78C93320",
+      "url": "https://github.com/vi/websocat",
+      "title": "https://github.com/vi/websocat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vi-websocat-learnings.md",
+        "fileName": "vi-websocat-learnings.md"
+      }
+    },
+    "SRC-B66A421A97B2": {
+      "id": "SRC-B66A421A97B2",
+      "url": "https://github.com/rust-lang/rust/issues/51942",
+      "title": "https://github.com/rust-lang/rust/issues/51942",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.947Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vi-websocat-learnings.md",
+        "fileName": "vi-websocat-learnings.md"
+      }
+    },
+    "SRC-428186460796": {
+      "id": "SRC-428186460796",
+      "url": "http://www.dest-unreach.org/socat/doc/socat.html",
+      "title": "http://www.dest-unreach.org/socat/doc/socat.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:10:50.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vi-websocat-learnings.md",
+        "fileName": "vi-websocat-learnings.md"
+      }
+    },
+    "SRC-2A1B402420EF": {
+      "id": "SRC-2A1B402420EF",
+      "url": "http://example.com/",
+      "title": "http://example.com/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:10:50.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vi-websocat-learnings.md",
+        "fileName": "vi-websocat-learnings.md"
+      }
+    },
+    "SRC-621F633F9B95": {
+      "id": "SRC-621F633F9B95",
+      "url": "https://github.com/cheeriojs/dom-serializer",
+      "title": "https://github.com/cheeriojs/dom-serializer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.957Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-8C161EC5A297": {
+      "id": "SRC-8C161EC5A297",
+      "url": "https://html.spec.whatwg.org/multipage/parsing.html",
+      "title": "https://html.spec.whatwg.org/multipage/parsing.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.959Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-8D19E4036082": {
+      "id": "SRC-8D19E4036082",
+      "url": "https://github.com/biomejs/biome/tree/HEAD/packages/@biomejs/biome",
+      "title": "https://github.com/biomejs/biome/tree/HEAD/packages/@biomejs/biome",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.964Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-950FB3D57224": {
+      "id": "SRC-950FB3D57224",
+      "url": "https://github.com/biomejs/biome/releases",
+      "title": "https://github.com/biomejs/biome/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-B21C57AD5C6F": {
+      "id": "SRC-B21C57AD5C6F",
+      "url": "https://redirect.github.com/biomejs/biome/pull/12755",
+      "title": "https://redirect.github.com/biomejs/biome/pull/12755",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-7D01400B612A": {
+      "id": "SRC-7D01400B612A",
+      "url": "https://github.com/biomejs/biome/commit/bbc4887f1b885d8f9bea8e265108c919f021eec4",
+      "title": "https://github.com/biomejs/biome/commit/bbc4887f1b885d8f9bea8e265108c919f021eec4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-A04D75EBCDDE": {
+      "id": "SRC-A04D75EBCDDE",
+      "url": "https://github.com/dyc3",
+      "title": "https://github.com/dyc3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-16BDD187E65E": {
+      "id": "SRC-16BDD187E65E",
+      "url": "https://biomejs.dev/linter/rules/no-array-for-each",
+      "title": "https://biomejs.dev/linter/rules/no-array-for-each",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.976Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-B2294C07B9CA": {
+      "id": "SRC-B2294C07B9CA",
+      "url": "https://redirect.github.com/biomejs/biome/pull/12777",
+      "title": "https://redirect.github.com/biomejs/biome/pull/12777",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-60A786FBC377": {
+      "id": "SRC-60A786FBC377",
+      "url": "https://github.com/biomejs/biome/commit/ba692e45d4e9ad0d7c0d6b341a603bbbdbeaa4c8",
+      "title": "https://github.com/biomejs/biome/commit/ba692e45d4e9ad0d7c0d6b341a603bbbdbeaa4c8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-11B003BA005C": {
+      "id": "SRC-11B003BA005C",
+      "url": "https://biomejs.dev/linter/rules/no-await-in-promise-methods",
+      "title": "https://biomejs.dev/linter/rules/no-await-in-promise-methods",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-D47E907F189A": {
+      "id": "SRC-D47E907F189A",
+      "url": "https://redirect.github.com/github/codeql-action/pull/4283",
+      "title": "https://redirect.github.com/github/codeql-action/pull/4283",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-01AD891B7384": {
+      "id": "SRC-01AD891B7384",
+      "url": "https://github.com/github/codeql-action/commit/33d7b85da1a04171e211befe2c739303b9a4c066",
+      "title": "https://github.com/github/codeql-action/commit/33d7b85da1a04171e211befe2c739303b9a4c066",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-4BAED55FD9F5": {
+      "id": "SRC-4BAED55FD9F5",
+      "url": "https://redirect.github.com/github/codeql-action/issues/4299",
+      "title": "https://redirect.github.com/github/codeql-action/issues/4299",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-48D680CE5393": {
+      "id": "SRC-48D680CE5393",
+      "url": "https://github.com/github/codeql-action/commit/24393f8692ae5a8fb94c4f5829ffa08cea01bd1b",
+      "title": "https://github.com/github/codeql-action/commit/24393f8692ae5a8fb94c4f5829ffa08cea01bd1b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:50.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-FC76F81805A3": {
+      "id": "SRC-FC76F81805A3",
+      "url": "https://github.com/momenbasel/PureMac",
+      "title": "https://github.com/momenbasel/PureMac",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:59.809Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-DBB3E92B2015": {
+      "id": "SRC-DBB3E92B2015",
+      "url": "https://github.com/user-attachments/assets/6ceaff45-b464-41a5-a7ca-d1b559d98877",
+      "title": "https://github.com/user-attachments/assets/6ceaff45-b464-41a5-a7ca-d1b559d98877",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:10:59.811Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
       }
     }
   }

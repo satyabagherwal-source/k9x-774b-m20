@@ -9051,3 +9051,9 @@
 | `CYCLE-20261112-IBWD` | `2026-11-12T02:56:41.149Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4bd6b78e...`) |
 | `CYCLE-20261112-IEJN` | `2026-11-12T02:56:44.579Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dbcada57...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T02:57:07.405Z` | `kumahq-kuma` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3429AF3D` [Domain D] | Yes (`c8e18f3d...`) |
+| `CYCLE-20261112-00IY` | `2026-11-12T03:10:26.218Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`02d6baf1...`) |
+| `CYCLE-20261112-02V3` | `2026-11-12T03:10:29.247Z` | `vi/websocat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`84feebe6...`) |
+| `CYCLE-20261112-04MJ` | `2026-11-12T03:10:31.532Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e603f3d2...`) |
+| `CYCLE-20261112-0AK6` | `2026-11-12T03:10:39.222Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f2c98b2c...`) |
+| `CYCLE-20261112-0FNP` | `2026-11-12T03:10:45.829Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6b1c1a0f...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T03:10:59.806Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E8885F06` [Domain D] | Yes (`0988e74b...`) |

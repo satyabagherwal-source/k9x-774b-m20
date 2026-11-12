@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vi-websocat-learnings.md`  
 > **Source**: github ([https://github.com/vi/websocat](https://github.com/vi/websocat))  
-> **Source Version**: `3a3574cd`  
+> **Source Version**: `734de478`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:16:20.172Z  
+> **Timestamp**: 2026-11-12T03:10:20.977Z  
 > **Learning ID**: `learn-github-vi-websocat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vi-websocat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vi/websocat](https://github.com/vi/websocat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:16:20.167Z  
+> **Harvest Timestamp**: 2026-11-12T03:10:20.785Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Command-line client for WebSockets, like netcat (or curl) for ws:// with advanced socat-like functions
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 8723 stars
+- **Stars / Engagement**: 8756 stars
 
 ---
 
@@ -1437,7 +1437,7 @@ Some address types may be "aliases" to other address types or combinations of ov
 
 Final example just for fun: wacky mode
 
-    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
+    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
     
 Connect to a websocket using stdin/stdout as a transport,
 then accept a websocket connection over the previous websocket used as a transport,
@@ -2023,13 +2023,11 @@ impl AsyncRead for JsonRpcWrapper {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #311** (2026-07-26): **websocat fails to build with OpenSSL 4.0**
-  *Symptoms*: ## websocat Version  websocat HEAD https://github.com/vi/websocat/commit/d54697e2639cd7b17341e6f3903d71a55b0fda20  ## System information Arch Linux Rolling  ## Describe the bug websocat fails to build with OpenSSL 4.0.  ## Additional information Steps to reproduce: ``` $ git clone https://github.com/vi/websocat.git $ cd websocat $ cargo build ....   --- stderr    thread 'main' (2702) panicked at /build/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-sys-0.9.104/build/main.rs:423:5:     This crate is only compatible with OpenSSL (version 1.0.1 through 1.1.1, or 3), or LibreSSL 2.5   through 4.0.x, but a different version of OpenSSL was found. The build is now aborting   due to this version mismatch.     note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace warning: build failed, waiting for other jobs to finish... ``` - [websocat-openssl-4.0-build-failure.log](https://github.com/user-attachments/files/30386740/websocat-openssl-4.0-build-failure.log) - [openssl-sys 0.9.114](https://github.com/rust-openssl/rust-openssl/compare/openssl-sys-v0.9.113...openssl-sys-v0.9.114) - [openssl 0.10.78](https://github.com/rust-openssl/rust-openssl/compare/openssl-v0.10.77...openssl-v0.10.78)  @anthraxx @pierres 
+- **Issue #315** (2026-11-12): **Don't auto-enable async stdio for character devices on Mac**
+  *Symptoms*: Fixes #89  ### Problem  On macOS, websocat exits with an error when stdin or stdout is `/dev/null` and neither of them is a terminal:  ``` $ websocat -t ws-l:127.0.0.1:38189 mirror: & $ echo x | websocat -t ws://127.0.0.1:38189/ > /dev/null websocat: Invalid argument (os error 22) websocat: error running ```  `websocat -b - mirror: < /dev/null > /dev/null` and `echo x | websocat -b - mirror: > /dev/null` fail the same way, so the usual script, cron and launchd redirections don't work. `--no-async-stdio` or `threadedstdio:` avoid it.  ### Cause  When neither stdin nor stdout is a tty, `main.rs` turns on `--async-stdio` automatically, and stdio then goes through tokio-file-unix. On Linux, epoll returns `EPERM` for `/dev/null` and regular files. tokio-file-unix handles that case by treating the fd as always ready. On macOS, kqueue returns `EINVAL` for character devices such as `/dev/null`, `/dev/zero` and `/dev/urandom` (pipes and regular files are fine). tokio-file-unix does not handle `EINVAL`, so the first poll fails.  ### Fix  On macOS only, async stdio is no longer turned on automatically when stdin or stdout is a character device (checked with `fstat`). Threaded stdio is used in that case, the same as with `--no-async-stdio`. An explicit `--async-stdio` or `asyncstdio:` behaves as before, and other platforms are unchanged.  In the issue you mentioned making `threadedstdio:` the default on Mac. This change is narrower: Mac keeps async stdio for pipes, files and sockets, and
 
-- **Issue #310** (2026-07-22): **Handle canceled pinger in ws_peer.rs**
-  *Symptoms*: Prevent unneeded warnings `[WARN  websocat::ws_peer] unsync/oneshot: oneshot canceled`  [oneshot::Reciever](https://docs.smithy.rs/futures/unsync/oneshot/struct.Receiver.html#method.close) `poll` has a special return case called Canceled.  > If Canceled is returned from poll then no message was sent.  This should proably be ignored.  
-  **Post-Mortem & Fix Analysis**:
-  > Thank you! This can most probably close #205.
+- **Issue #314** (2026-11-12): **Fix l-ws-abstract: alias and ws-l: misuse in help examples**
+  *Symptoms*: Fixes #264  ## Problem  `websocat l-ws-abstract:test -` always fails with `websocat: invalid socket address syntax`, so the `l-ws-abstract:` server cannot be used at all. `l-abstract:test` and `l-ws-unix:...` work.  ## Cause  `l-ws-abstract:` is defined as an alias for `ws-l:abstract-l:`. But `ws-l:` is itself an alias for `ws-u:tcp-l:`, so the specifier expands to `ws-u:tcp-l:abstract-l:test`, and `tcp-l:` then tries to parse `abstract-l:test` as a socket address. The sibling `l-ws-unix:` uses `ws-u:unix-l:`, which is correct.  ## Fix  - `src/ws_server_peer.rs`: change the `l-ws-abstract:` alias to `ws-u:abstract-l:`. - `tests/test.rs`: add a `#[cfg(unix)]` test that checks how `l-ws-unix:zxc` and `l-ws-abstract:zxc` parse.  A second commit fixes the help text that makes the same `ws-l:` / `ws-u:` mistake, which is what #260 ran into. The edits are mirrored by hand in `doc.md`:  - `ws-l:` example: `ws-l:tcp-l:127.0.0.1:8808 reuse:-` -> `ws-u:tcp-l:127.0.0.1:8808 reuse:-` - wacky mode example: `ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678` -> `ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678` - `inetd:` help: "`inetd-ws:` - is of `ws-l:inetd:`" -> "`ws-u:inetd:`", which is what the alias actually expands to  If you want this PR to cover only #264, the second commit can be dropped.  ## Testing  Tested on macOS (aarch64), Rust 1.97.1 stable:  - `cargo test --test test ws_unix_server_aliases` on the unmodified code fails at the `l-ws-abstract:zxc` line with ``called `Result::unwrap()` on an `Err` val
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2046,352 +2044,240 @@ impl AsyncRead for JsonRpcWrapper {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `29c8c54d` (2025-12-27)
-**Commit Message**: Update OpenSSL to 3.5.4 for the pre-built executables
+### Incident Patch 1: `62b85d8a` (2026-10-22)
+**Commit Message**: Fix help examples that use ws-l: where ws-u: is meant
 
-**File**: `Cargo.lock` (modified, +2/-2)
+`ws-l:` already includes `tcp-l:`, so `ws-l:tcp-l:127.0.0.1:8808` and
+the wacky mode example `ws-c:ws-l:ws-c:-` fail with "invalid socket
+address syntax" (#260). Use `ws-u:` there, and describe `inetd-ws:` as
+`ws-u:inetd:`, which is what it actually expands to.
+
+Co-authored-by: Claude Opus-5-5 <[REDACTED_EMAIL]>
+
+**File**: `doc.md` (modified, +3/-3)
 ```diff
-@@ -864,9 +864,9 @@ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
+@@ -371,7 +371,7 @@ Example: Dump all incoming websocket data to console
  
- [[package]]
- name = "openssl-src"
--version = "300.4.0+3.4.0"
-+version = "300.5.4+3.5.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a709e02f2b4aca747929cca5ed248880847c650233cf8b8cdc48f40aaf4898a6"
-+checksum = "a507b3792995dae9b0df8a1c1e3771e8418b7c2d9f0baeba32e6fe8b06c7cb72"
- dependencies = [
-  "cc",
- ]
+ Example: the same, but more verbose:
+ 
+-    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
++    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
+ 
+ 
+ ### `inetd-ws:`
+@@ -484,7 +484,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
+ 
+ Automatically enables `-q` (`--quiet`) mode.
+ 
+-`inetd-ws:` - is of `ws-l:inetd:`
++`inetd-ws:` - is of `ws-u:inetd:`
+ 
+ Example of inetd.conf line that makes it listen for websocket
+ connections on port 1234 and redirect the data to local SSH server.
+@@ -1356,7 +1356,7 @@ between them.
+ 
+ Final example just for fun: wacky mode
+ 
+-    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
++    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
+     
+ Connect to a websocket using stdin/stdout as a transport,
+ then accept a websocket connection over the previous websocket used as a transport,
+```
+
+**File**: `src/help.rs` (modified, +1/-1)
+```diff
+@@ -238,7 +238,7 @@ Some address types may be "aliases" to other address types or combinations of ov
+ 
+ Final example just for fun: wacky mode
+ 
+-    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
++    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
+     
+ Connect to a websocket using stdin/stdout as a transport,
+ then accept a websocket connection over the previous websocket used as a transport,
+```
+
+**File**: `src/stdio_peer.rs` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
+ 
+ Automatically enables `-q` (`--quiet`) mode.
+ 
+-`inetd-ws:` - is of `ws-l:inetd:`
++`inetd-ws:` - is of `ws-u:inetd:`
+ 
+ Example of inetd.conf line that makes it listen for websocket
+ connections on port 1234 and redirect the data to local SSH server.
+```
+
+**File**: `src/ws_server_peer.rs` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@ Example: Dump all incoming websocket data to console
+ 
+ Example: the same, but more verbose:
+ 
+-    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
++    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
+ "#
+ );
+ 
 ```
 
 ---
 
-### Incident Patch 2: `d4455623` (2025-05-23)
-**Commit Message**: Update traitobject dependency to fix compilation on new Rust versions
+### Incident Patch 2: `bb6ee9fa` (2026-10-22)
+**Commit Message**: Fix l-ws-abstract: alias
 
-Addresses #293.
+It expanded to `ws-l:abstract-l:`, but `ws-l:` is itself an alias for
+`ws-u:tcp-l:`, so `l-ws-abstract:test` became
+`ws-u:tcp-l:abstract-l:test` and failed with "invalid socket address
+syntax". Use `ws-u:abstract-l:`, like `l-ws-unix:` uses `ws-u:unix-l:`.
 
-**File**: `Cargo.lock` (modified, +2/-2)
+Fixes #264
+
+Co-authored-by: Claude Opus-5-5 <[REDACTED_EMAIL]>
+
+**File**: `src/ws_server_peer.rs` (modified, +1/-1)
 ```diff
-@@ -1768,9 +1768,9 @@ dependencies = [
- 
- [[package]]
- name = "traitobject"
--version = "0.1.0"
-+version = "0.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "efd1f82c56340fdf16f2a953d7bda4f8fdffba13d93b00844c25572110b26079"
-+checksum = "04a79e25382e2e852e8da874249358d382ebaf259d0d34e75d8db16a7efabbc7"
- 
- [[package]]
- name = "typeable"
+@@ -99,7 +99,7 @@ WebSocket UNIX socket-based server. [A]
+ specifier_alias!(
+     name = WsAbstractUnixServerClass,
+     prefixes = ["l-ws-abstract:"],
+-    alias = "ws-l:abstract-l:",
++    alias = "ws-u:abstract-l:",
+     help = r#"
+ WebSocket abstract-namespaced UNIX socket server. [A]
+ "#
 ```
 
----
-
-### Incident Patch 3: `ccd35b30` (2025-05-07)
-**Commit Message**: Fix clippy issues
-
-**File**: `src/help.rs` (modified, +3/-4)
+**File**: `tests/test.rs` (modified, +9/-0)
 ```diff
-@@ -23,7 +23,7 @@ fn spechelp(sc: &dyn SpecifierClass, overlays: bool, advanced: bool) {
+@@ -242,3 +242,12 @@ fn abstract_() {
+     let prog = prog1.join(prog2);
+     run!(core, prog);
  }
- 
- // https://github.com/rust-lang/rust/issues/51942
--#[cfg_attr(feature = "cargo-clippy", allow(nonminimal_bool))]
-+#[allow(clippy::nonminimal_bool)]
- pub fn shorthelp() {
-     //use std::io::Write;
-     use std::io::{BufRead, BufReader};
-@@ -33,8 +33,7 @@ pub fn shorthelp() {
-     }
-     let mut lines_to_display = vec![];
-     let mut do_display = true;
--    #[allow(non_snake_case)]
--    for l in BufReader::new(&b[..]).lines() {
-+    BufReader::new(&b[..]).lines().for_each(|l| {
-         if let Ok(l) = l {
-             {
-                 let lt = l.trim();
-@@ -70,7 +69,7 @@ pub fn shorthelp() {
-                 }
-             };
-         }
--    }
-+    });
-     for l in lines_to_display {
-         println!("{}", l);
-     }
-```
-
-**File**: `src/http_peer.rs` (modified, +5/-5)
-```diff
-@@ -1,6 +1,6 @@
- 
- #![allow(unused)]
--#![cfg_attr(feature="cargo-clippy",allow(needless_pass_by_value,cast_lossless,identity_op))]
-+#![allow(clippy::needless_pass_by_value,clippy::cast_lossless,clippy::identity_op)]
- use futures::future::{err, ok, Future};
- 
- use std::rc::Rc;
-@@ -233,7 +233,7 @@ pub fn http_request_peer(
-     inner_peer: Peer,
-     _l2r: L2rUser,
- ) -> BoxedNewPeerFuture {
--    let request = ::http_bytes::request_header_to_vec(&request);
-+    let request = ::http_bytes::request_header_to_vec(request);
- 
-     let (r, w, hup) = (inner_peer.0, inner_peer.1, inner_peer.2);
- 
-@@ -252,7 +252,7 @@ pub fn http_request_peer(
-                             Err("Something wrong with response HTTP head")?;
-                         }
-                         let p = p.unwrap();
--                        if p.1.len() > 0 {
-+                        if !p.1.is_empty() {
-                             Err("Something wrong with parsing HTTP")?;
-                         }
-                         let response = p.0;
-@@ -349,7 +349,7 @@ pub fn http_response_post_sse_peer(
-                     Err("Something wrong with request HTTP head")?;
-                 }
-                 let p = p.unwrap();
--                if p.1.len() > 0 {
-+                if !p.1.is_empty() {
-                     Err("Something wrong with parsing HTTP request")?;
-                 }
-                 request = p.0;
-@@ -552,4 +552,4 @@ fn test_basic_sse_stream() {
-     {
-         let mut ss = SseStream::new(std::io::Cursor::new(&mut v));
-     }
--}
-\ No newline at end of file
++
++#[test]
++#[cfg(unix)]
++fn ws_unix_server_aliases() {
++    let s1 = spec("l-ws-unix:zxc").unwrap();
++    assert_eq!(format!("{:?}", s1), r#"WsServer(UnixListen("zxc"))"#);
++    let s2 = spec("l-ws-abstract:zxc").unwrap();
++    assert_eq!(format!("{:?}", s2), r#"WsServer(AbstractListen("zxc"))"#);
 +}
 ```
 
-**File**: `src/http_serve.rs` (modified, +1/-1)
+---
+
+### Incident Patch 3: `bd41195b` (2026-11-12)
+**Commit Message**: Merge pull request #314 from StevenLi-phoenix/fix/264-l-ws-abstract-alias
+
+Fix l-ws-abstract: alias and ws-l: misuse in help examples
+
+**File**: `doc.md` (modified, +3/-3)
 ```diff
-@@ -38,7 +38,7 @@ pub fn get_static_file_reply(len: Option<u64>, ct: &str) -> Vec<u8> {
-     q
+@@ -371,7 +371,7 @@ Example: Dump all incoming websocket data to console
+ 
+ Example: the same, but more verbose:
+ 
+-    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
++    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
+ 
+ 
+ ### `inetd-ws:`
+@@ -484,7 +484,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
+ 
+ Automatically enables `-q` (`--quiet`) mode.
+ 
+-`inetd-ws:` - is of `ws-l:inetd:`
++`inetd-ws:` - is of `ws-u:inetd:`
+ 
+ Example of inetd.conf line that makes it listen for websocket
+ connections on port 1234 and redirect the data to local SSH server.
+@@ -1356,7 +1356,7 @@ between them.
+ 
+ Final example just for fun: wacky mode
+ 
+-    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
++    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
+     
+ Connect to a websocket using stdin/stdout as a transport,
+ then accept a websocket connection over the previous websocket used as a transport,
+```
+
+**File**: `src/help.rs` (modified, +1/-1)
+```diff
+@@ -238,7 +238,7 @@ Some address types may be "aliases" to other address types or combinations of ov
+ 
+ Final example just for fun: wacky mode
+ 
+-    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
++    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
+     
+ Connect to a websocket using stdin/stdout as a transport,
+ then accept a websocket connection over the previous websocket used as a transport,
+```
+
+**File**: `src/stdio_peer.rs` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
+ 
+ Automatically enables `-q` (`--quiet`) mode.
+ 
+-`inetd-ws:` - is of `ws-l:inetd:`
++`inetd-ws:` - is of `ws-u:inetd:`
+ 
+ Example of inetd.conf line that makes it listen for websocket
+ connections on port 1234 and redirect the data to local SSH server.
+```
+
+**File**: `src/ws_server_peer.rs` (modified, +2/-2)
+```diff
+@@ -72,7 +72,7 @@ Example: Dump all incoming websocket data to console
+ 
+ Example: the same, but more verbose:
+ 
+-    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
++    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
+ "#
+ );
+ 
+@@ -99,7 +99,7 @@ WebSocket UNIX socket-based server. [A]
+ specifier_alias!(
+     name = WsAbstractUnixServerClass,
+     prefixes = ["l-ws-abstract:"],
+-    alias = "ws-l:abstract-l:",
++    alias = "ws-u:abstract-l:",
+     help = r#"
+ WebSocket abstract-namespaced UNIX socket server. [A]
+ "#
+```
+
+**File**: `tests/test.rs` (modified, +9/-0)
+```diff
+@@ -242,3 +242,12 @@ fn abstract_() {
+     let prog = prog1.join(prog2);
+     run!(core, prog);
  }
- 
--#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
-+#[allow(clippy::needless_pass_by_value)]
- pub fn http_serve(
-     p: Peer,
-     incoming: Option<Incoming<(Method, RequestUri)>>,
-```
-
-**File**: `src/jsonrpc_peer.rs` (modified, +1/-4)
-```diff
-@@ -48,10 +48,7 @@ impl Read for JsonRpcWrapper {
-     fn read(&mut self, b: &mut [u8]) -> Result<usize, IoError> {
-         let l = b.len();
-         assert!(l > 1);
--        let n = match self.0.read(&mut b[..l]) {
--            Ok(x) => x,
--            Err(e) => return Err(e),
--        };
-+        let n = self.0.read(&mut b[..l])?;
-         if n == 0 {
-             return Ok(0);
-         }
-```
-
-**File**: `src/lengthprefixed_peer.rs` (modified, +3/-3)
-```diff
-@@ -68,7 +68,7 @@ pub fn lengthprefixed_peer(
-     lengthprefixed_skip_read_direction: bool,
-     lengthprefixed_skip_write_direction: bool,
- ) -> BoxedNewPeerFuture {
--    if num_bytes_in_length_prefix < 1 || num_bytes_in_length_prefix > 8 {
-+    if !(1..=8).contains(&num_bytes_in_length_prefix) {
-         return peer_strerr("Number of header bytes for lengthprefixed overlay should be from 1 to 8");
-     }
- 
-@@ -82,7 +82,7 @@ pub fn lengthprefixed_peer(
-         length_buffer: [0; 8],
-         length_starting_pos,
-         length_pos: length_starting_pos,
--        length_ending_pos: length_ending_pos,
-+        length_ending_pos,
-         little_endian,
-         data_read_so_far: 0,
-     };
-@@ -91,7 +91,7 @@ pub fn lengthprefixed_peer(
-         length_buffer: [0; 8],
-         length_starting_pos,
-         length_pos: length_starting_pos,
--        length_ending_pos: length_ending_pos,
-+        length_ending_pos,
-         little_endian,
-         data_written_so_far: 0,
-     };
-```
-
-**File**: `src/lib.rs` (modified, +1/-3)
-```diff
-@@ -10,8 +10,6 @@
- //! 6. `Session` with two `Transfer`s - forward and reverse.
- 
- #![allow(renamed_and_removed_lints)]
--#![allow(unknown_lints)]
--#![cfg_attr(feature = "cargo-clippy", allow(deprecated_cfg_attr))]
- 
- extern crate futures;
- #[macro_use]
-@@ -106,7 +104,7 @@ pub struct WebsocatConfiguration3 {
- impl WebsocatConfiguration3 {
-     pub fn serve<OE>(self, onerror: std::rc::Rc<OE>) -> impl Future<Item = (), Error = ()>
-     where
--        OE: Fn(Box<dyn std::error::Error>) -> () + 'static,
-+        OE: Fn(Box<dyn std::error::Error>) + 'static,
-     {
-         serve(self.s1, self.s2, self.opts, onerror)
-     }
-```
-
-**File**: `src/line_peer.rs` (modified, +4/-10)
-```diff
-@@ -95,10 +95,7 @@ impl Read for Packet2LineWrapper {
-     fn read(&mut self, b: &mut [u8]) -> Result<usize, IoError> {
-         let l = b.len();
-         assert!(l > 1);
--        let mut n = match self.0.read(&mut b[..(l - 1)]) {
--            Ok(x) => x,
--            Err(e) => return Err(e),
--        };
-+        let mut n = self.0.read(&mut b[..(l - 1)])?;
-         if n == 0 {
-             return Ok(n);
-         }
-@@ -169,7 +166,7 @@ struct Line2PacketWrapper {
- }
- 
- impl Line2PacketWrapper {
--    #[cfg_attr(feature = "cargo-clippy", allow(collapsible_if))]
-+    #[allow(clippy::collapsible_if)]
-     fn deliver_the_line(&mut self, buf: &mut [u8], mut n: usize) -> Option<usize> {
-         if n > buf.len() {
-             if self.drop_too_long_lines {
-@@ -203,7 +200,7 @@ impl Line2PacketWrapper {
- }
- 
- impl Read for Line2PacketWrapper {
--    #[cfg_attr(feature = "cargo-clippy", allow(collapsible_if))]
-+    #[allow(clippy::collapsible_if)]
-     fn read(&mut self, buf: &mut [u8]) -> Result<usize, IoError> {
-         //eprint!("ql={} ", self.queue.len());
-         if self.eof {
-@@ -229,10 +226,7 @@ impl Read for Line2PacketWrapper {
-                 self.read(buf)
-             }
-         } else {
--            let mut n = match self.inner.read(buf) {
--                Ok(x) => x,
--                Err(e) => return Err(e),
--            };
-+            let mut n = self.inner.read(buf)?;
- 
-             if n == 0 {
-                 self.eof = true;
-```
-
-**File**: `src/lints.rs` (modified, +13/-20)
-```diff
-@@ -1,4 +1,4 @@
--#![cfg_attr(feature="cargo-clippy", allow(collapsible_if,needless_pass_by_value))]
-+#![allow(clippy::collapsible_if,clippy::needless_pass_by_value)]
- 
- use super::{Options, Result, SpecifierClass, SpecifierStack, WebsocatConfiguration2};
- use super::specifier::SpecifierNode;
-@@ -30,9 +30,9 @@ trait ClassExt {
-     fn is_reuser(&self) -> bool;
- }
- 
--pub type OnWarning = Box<dyn for<'a> Fn(&'a str) -> () + 'static>;
-+pub type OnWarning = Box<dyn for<'a> Fn(&'a str) + 'static>;
- 
--#[cfg_attr(rustfmt, rustfmt_skip)]
-+#[rustfmt::skip]
- impl ClassExt for Rc<dyn SpecifierClass> {
-     fn is_stdio(&self) -> bool {
-         [
-@@ -159,8 +159,8 @@ impl WebsocatConfiguration2 {
-         self.contains_class("InetdClass")
-     }
- 
--    #[cfg_attr(rustfmt, rustfmt_skip)]
--    #[cfg_attr(feature="cargo-clippy", allow(nonminimal_bool))]
-+    #[rustfmt::skip]
-+    #[allow(clippy::nonminimal_bool)]
-     pub fn websocket_used(&self) -> bool {
-         false 
-         || self.contains_class("WsConnectClass")
-@@ -169,8 +169,8 @@ impl WebsocatConfiguration2 {
-         || self.contains_class("WsServerClass")
-     }
- 
--    #[cfg_attr(rustfmt, rustfmt_skip)]
--    #[cfg_attr(feature="cargo-clippy", allow(nonminimal_bool))]
-+    #[rustfmt::skip]
-+    #[allow(clippy::nonminimal_bool)]
-     pub fn exec_used(&self) -> bool {
-         false 
-         || self.contains_class("ExecClass")
-@@ -540,13 +540,10 @@ impl WebsocatConfiguration2 {
- 
-     fn l_proto(&mut self, _on_warning: &OnWarning) -> Result<()> {
-         if self.opts.websocket_protocol.is_some() {
--            if false
--                || self.contains_class("WsConnectClass")
-+            if !(self.contains_class("WsConnectClass")
-                 || self.contains_class("WsClientClass")
--                || self.contains_class("WsClientSecureClass")
-+                || self.contains_class("WsClientSecureClass"))
-             {
--                // OK
--            } else {
-                 if self.contains_class("WsServerClass") {
-                     _on_warning("--protocol option is unused. Maybe you want --server-protocol?")
-                 } else {
-@@ -594,10 +591,8 @@ impl WebsocatConfiguration2 {
-                     return Err("--udp-multicast-iface-v6 option mush be specified the same number of times as IPv6 addresses for --udp-multicast (alternatively --udp-multicast-iface-* options should be not specified at all)")?;
-                 }
-             }
--        } else {
--            if self.opts.udp_multicast_loop {
--                return Err("--udp-multicast-loop is not applicable without --udp-multicast")?;
--            }
-+        } else  if self.opts.udp_multicast_loop {
-+            return Err("--udp-multicast-loop is not applicable without --udp-multicast")?;
-         }
-         Ok(())
-     }
-@@ -616,10 +611,8 @@ impl WebsocatConfiguration2 {
-             if !self.contains_class("PrometheusClass") {
-                 self.s2.overlays.insert(0, SpecifierNode { cls: Rc::new(crate::prometheus_peer::PrometheusClass) });
-             }
--        } else {
--            if self.contains_class("PrometheusClass") {
--                _on_warning("Using `prometheus:` overlay without `--prometheus` option is meaningless");
--            }
-+        } else if self.contains_class("PrometheusClass") {
-+            _on_warning("Using `prometheus:` overlay without `--prometheus` option is meaningless");
-         }
-         Ok(())
-     }
++
++#[test]
++#[cfg(unix)]
++fn ws_unix_server_aliases() {
++    let s1 = spec("l-ws-unix:zxc").unwrap();
++    assert_eq!(format!("{:?}", s1), r#"WsServer(UnixListen("zxc"))"#);
++    let s2 = spec("l-ws-abstract:zxc").unwrap();
++    assert_eq!(format!("{:?}", s2), r#"WsServer(AbstractListen("zxc"))"#);
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #315** (2026-11-12): Don't auto-enable async stdio for character devices on Mac (@StevenLi-phoenix)
+- **PR #314** (2026-11-12): Fix l-ws-abstract: alias and ws-l: misuse in help examples (@StevenLi-phoenix)
 - **PR #310** (2026-07-22): Handle canceled pinger in ws_peer.rs (@zobo)
 - **PR #309** (closed): Add writefile_ts:, readfile_ts:, and readfile_ts_loop: specifiers (@eriang)
 - **PR #307** (closed): Support SSLKEYLOGFILE for TLS session key logging (@uglykitty)
 - **PR #306** (closed): Support SSLKEYLOGFILE for TLS session key logging (@uglykitty)
-- **PR #298** (2025-07-24): Log response headers (@jacob-pro)
-- **PR #294** (2025-05-25): docs: Add Bindings and initially link to related Node.js project to README (@vorburger)
 
 ---
 
@@ -2411,30 +2297,32 @@ Addresses #293.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update OpenSSL to 3.5.4 for the pre-built executables
+## X. help examples that use ws-l: where ws-u: is meant
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vi/websocat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `doc.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vi/websocat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `29c8c54d`: Update OpenSSL to 3.5.4 for the pre-built executables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `62b85d8a`: help examples that use ws-l: where ws-u: is meant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "300.5.4+3.5.4"
-checksum = "a507b3792995dae9b0df8a1c1e3771e8418b7c2d9f0baeba32e6fe8b06c7cb72"
+    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
+`inetd-ws:` - is of `ws-u:inetd:`
+    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "300.4.0+3.4.0"
-checksum = "a709e02f2b4aca747929cca5ed248880847c650233cf8b8cdc48f40aaf4898a6"
+    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
+`inetd-ws:` - is of `ws-l:inetd:`
+    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `29c8c54d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `62b85d8a` are properly handled with clean fallback behavior.

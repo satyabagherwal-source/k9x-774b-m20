@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:56:44.590Z",
-  "total_cycles_completed": 8889,
-  "total_learnings_persisted": 8889,
-  "total_rules_promoted": 8739,
+  "last_updated": "2026-11-12T03:10:45.848Z",
+  "total_cycles_completed": 8894,
+  "total_learnings_persisted": 8894,
+  "total_rules_promoted": 8743,
   "history": [
-    {
-      "timestamp": "2026-11-10T02:31:53.310Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T02:43:56.849Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T02:43:58.303Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T02:44:03.553Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T02:59:42.413Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T03:04:38.498Z",
       "repository": "aws/aws-cdk",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-12T02:56:44.590Z",
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:10:26.225Z",
+      "repository": "momenbasel/PureMac",
+      "learningId": "learn-github-momenbasel-puremac",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:10:29.255Z",
+      "repository": "vi/websocat",
+      "learningId": "learn-github-vi-websocat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:10:31.541Z",
+      "repository": "cheeriojs/dom-serializer",
+      "learningId": "learn-github-cheeriojs-dom-serializer",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:10:39.243Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:10:45.848Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

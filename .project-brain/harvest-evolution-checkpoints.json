@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:57:07.563Z",
+  "last_updated": "2026-11-12T03:10:59.813Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T01:44:30.411Z",
@@ -721,9 +721,24 @@
       "processed_at": "2026-11-12T02:57:07.405Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "vi-websocat-learnings.md": {
+      "processed_at": "2026-11-12T03:10:50.937Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "cheeriojs-dom-serializer-learnings.md": {
+      "processed_at": "2026-11-12T03:10:50.956Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "momenbasel-puremac-learnings.md": {
+      "processed_at": "2026-11-12T03:10:59.806Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 186,
-  "total_canonical_promoted": 23,
-  "total_staged_for_review": 160
+  "total_dossiers_evaluated": 189,
+  "total_canonical_promoted": 24,
+  "total_staged_for_review": 162
 }

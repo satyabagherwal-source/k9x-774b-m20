@@ -9060,3 +9060,9 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `2c078840` | Multi-dimensional audit evidence | 2026-11-12T02:56:41.154Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `d904ad91` | Multi-dimensional audit evidence | 2026-11-12T02:56:44.583Z |
 | `learn-dom-d-3429af3d` | `project://kumahq-kuma` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | 2026-11-12T02:57:07.405Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `61311f6a` | Multi-dimensional audit evidence | 2026-11-12T03:10:26.221Z |
+| `learn-github-vi-websocat` | `https://github.com/vi/websocat` | `734de478` | Multi-dimensional audit evidence | 2026-11-12T03:10:29.250Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `70bfbf41` | Multi-dimensional audit evidence | 2026-11-12T03:10:31.535Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `bb49df41` | Multi-dimensional audit evidence | 2026-11-12T03:10:39.224Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `5431e621` | Multi-dimensional audit evidence | 2026-11-12T03:10:45.844Z |
+| `learn-dom-d-e8885f06` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-12T03:10:59.806Z |

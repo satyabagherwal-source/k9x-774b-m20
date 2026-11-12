@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T02:57:07.405Z",
+  "updated_at": "2026-11-12T03:10:59.806Z",
   "statistics": {
-    "total_nodes": 8,
+    "total_nodes": 9,
     "total_edges": 3,
     "domain_distribution": {
-      "D": 7,
+      "D": 8,
       "M": 1
     },
     "relation_distribution": {
@@ -184,6 +184,28 @@
       ],
       "created_at": "2026-11-12T02:57:07.405Z",
       "updated_at": "2026-11-12T02:57:07.405Z"
+    },
+    "DOM-D-E8885F06": {
+      "id": "DOM-D-E8885F06",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): momenbasel/PureMac",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://momenbasel-puremac/momenbasel-puremac-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T03:10:50.996Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (momenbasel-puremac)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T03:10:59.806Z",
+      "updated_at": "2026-11-12T03:10:59.806Z"
     }
   },
   "edges": [

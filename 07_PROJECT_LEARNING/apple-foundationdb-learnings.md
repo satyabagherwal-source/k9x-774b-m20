@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `91a45282`  
+> **Source Version**: `5431e621`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:26:05.523Z  
+> **Timestamp**: 2026-11-12T03:10:34.168Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:26:05.515Z  
+> **Harvest Timestamp**: 2026-11-12T03:10:34.155Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16849 stars
+- **Stars / Engagement**: 16855 stars
 
 ---
 
@@ -460,18 +460,19 @@ void printProgressMetrics(double avgBytesPerSecond, Optional<double> etaSeconds,
 	}
 }
 
-// Print detailed task breakdown for bulk operations
-void printTaskBreakdown(int submittedTasks, int triggeredTasks, int runningTasks, int completeTasks, int errorTasks) {
-	int totalTasks = submittedTasks + triggeredTasks + runningTasks + completeTasks + errorTasks;
-	if (totalTasks > 0) {
-		fmt::println(" Task Status Breakdown:");
-		if (submittedTasks > 0)
-			fmt::println("   Submitted: {}", submittedTasks);
-		if (triggeredTasks > 0)
-			fmt::println("   Triggered: {}", triggeredTasks);
-		if (runningTasks > 0)
-			fmt::println("   Running: {}", runningTasks);
-	
+// Format bytes with progress percentage for bulk operations
+std::string formatBytesProgress(int64_t completedBytes, Optional<int64_t> totalBytes) {
+	std::string result = format("%.2f MB", completedBytes / 1048576.0);
+	if (totalBytes.present()) {
+		result += fmt::format(" / {:.2f} MB ({:.1f}%)",
+		                      totalBytes.get() / 1048576.0,
+		                      totalBytes.get() > 0 ? 100.0 * completedBytes / totalBytes.get() : 0.0);
+	}
+	return result;
+}
+
+void printStalledTasks(const std::vector<BulkLoadStalledTask>& stalledTasks) {
+	if (!stalledTas
 ```
 
 ### Core Architecture Module: `fdbclient/AuditUtils.cpp`
@@ -1956,374 +1957,224 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91a45282` (2026-11-09)
-**Commit Message**: Reject starting a backup at a location used by another running backup (#14451)
+### Incident Patch 1: `50f1c933` (2026-11-10)
+**Commit Message**: tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)
 
-Two backups writing the same container corrupt each other, and nothing
-stopped a second tag from starting on a URL that a running backup uses.
+Each producer thread called `s.doneProducing.send(Void())` directly.
+Promises aren't thread-safe: `SAV::send()` sets the ready state and then
+walks the callback list with no synchronization. Meanwhile the main thread,
+having drained the queue, enters `waitForAll(doneProducing)` and registers
+a callback on that promise. If the main thread sees "not ready" and the
+producer sees "no callbacks" (at roughly the same time), the wakeup is lost
+and the test hangs.
 
-- IBackupContainer::getLocation(): where a container's files live,
-  ignoring credentials, URL parameters and proxy. Blobstore uses host,
-  port, bucket (default applied) and the data path built from the
-  normalized prefix and name; file:// uses the normalized path.
-- FileBackupAgent::findRunningBackupAtLocation(): returns the tag of a
-  runnable backup on another tag at the same location, read in the
-  caller's transaction so concurrent submits conflict.
-- submitBackup, fdbbackup modify -d and fdbbackup start -n reject such
-  a location with backup_error. Finished or aborted backups do not hold
-  their location, and the same tag can restart on its own URL.
-- Unit test for the location compare, an opt-in BackupS3BlobCorrectness
-  probe enabled in BackupS3BlobBulkLoadIncrementalRejected.toml, and an
-  fdbbackup step in blob_backup_restore_test.sh.
+In flow/Net2/ThreadSafeQueue/Threaded, the consumer loop already knows
+when every element has been popped, it doesn't need promises. It now
+just joins the producer threads, checks counts, and returns Void()
+instead of being a coroutine.
 
-rdar://191428032
+In noSim/flow/Net2/onMainThreadFIFO, it does need to wait on
+doneProducing, so it needs to call Future.send() on the main thread
+(instead of each producer thread).
 
-**File**: `documentation/sphinx/source/backups.rst` (modified, +2/-2)
+**File**: `flow/Net2.cpp` (modified, +2/-12)
 ```diff
-@@ -288,7 +288,7 @@ The following options apply to most subcommands:
- ``start``
- ---------
+@@ -2406,12 +2406,10 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
+ 	std::vector<QueueTestThreadState> perThread = { QueueTestThreadState(0, 1000000),
+ 		                                            QueueTestThreadState(1, 100000),
+ 		                                            QueueTestThreadState(2, 1000000) };
+-	std::vector<Future<Void>> doneProducing;
  
--The ``start`` subcommand is used to start a backup.  If there is already a backup in progress, the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
-+The ``start`` subcommand is used to start a backup.  If there is already a backup in progress on the tag, or a backup on another tag is running at the same location (for a blob store URL, the same host, port, bucket, prefix, and backup name, regardless of credentials and other URL parameters), the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
- 
- ::
- 
-@@ -329,7 +329,7 @@ The ``modify`` subcommand is used to modify parameters of a running backup.  All
-    user@host$ fdbbackup modify [-t <TAG>] [-d <BACKUP_URL>] [-s <DURATION>] [--active-snapshot-interval <DURATION>] [--verify-uid <UID>]
- 
- ``-d <BACKUP_URL>``
--  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.
-+  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.  The new location cannot be one that a backup on another tag is running at.
- 
- ``-s <DURATION>`` or ``--snapshot-interval <DURATION>``  
-   Sets a new duration for backup snapshots, in seconds.
-```
-
-**File**: `fdbbackup/backup.cpp` (modified, +26/-0)
-```diff
-@@ -1872,6 +1872,23 @@ Future<Void> submitDBBackup(Database src,
- 	}
- }
- 
-+// Fails with backup_error if a backup on a tag other than tagName is running at bc's location.
-+static Future<Void> checkBackupLocationNotInUse(Reference<ReadYourWritesTransaction> tr,
-+                                                Reference<IBackupContainer> bc,
-+                                                std::string tagName) {
-+	Optional<std::string> conflictingTag = co_await FileBackupAgent::findRunningBackupAtLocation(tr, bc, tagName);
-+	if (conflictingTag.present()) {
-+		TraceEvent(SevWarnAlways, "BackupLocationInUse")
-+		    .detail("TagName", tagName)
-+		    .detail("ConflictingTag", conflictingTag.get())
-+		    .detail("Location", bc->getLocation());
-+		fprintf(stderr,
-+		        "ERROR: The backup location is already in use by the running backup on tag `%s'.\n",
-+		        printable(StringRef(conflictingTag.get())).c_str());
-+		throw backup_error();
-+	}
-+}
-+
- Future<Void> submitBackup(Database db,
-                           std::string url,
-                           Optional<std::string> proxy,
-@@ -1905,6 +1922,14 @@ Future<Void> submitBackup(Database db,
+ 	int total = 0;
+ 	for (int t = 0; t < perThread.size(); ++t) {
+ 		auto& s = perThread[t];
+-		doneProducing.push_back(s.doneProducing.getFuture());
+ 		total += s.toProduce;
+ 		auto produce = [&queue, &s]() {
+ 			printf("Thread%d\n", s.threadId);
+@@ -2424,7 +2422,6 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
  				}
  			}
- 
-+			// submitBackup appends a unique directory to file:// URLs, so only blobstore locations can collide.
-+			if (url.find("file://") != 0) {
-+				Reference<IBackupContainer> bc = IBackupContainer::openContainer(url, proxy, {}, 0);
-+				co_await runRYWTransaction(db, [=](Reference<ReadYourWritesTransaction> tr) {
-+					return checkBackupLocationNotInUse(tr, bc, tagName);
-+				});
-+			}
-+
- 			if (waitForCompletion) {
- 				printf("Submitted and now waiting for the backup on tag `%s' to complete. (DRY RUN)\n",
- 				       printable(StringRef(tagName)).c_str());
-@@ -2901,6 +2926,7 @@ Future<Void> modifyBackup(Database db, std::string tagName, BackupModifyOptions
- 				                         options.proxy,
- 				                         options.encryptionKeyFile,
- 				                         prevContainer->getEncryptionBlockSize());
-+				co_await checkBackupLocationNotInUse(tr, bc, tagName);
- 				try {
- 					co_await timeoutError(bc->create(), 30);
- 				} catch (Error& e) {
-```
-
-**File**: `fdbbackup/tests/blob_backup_restore_test.sh` (modified, +99/-0)
-```diff
-@@ -179,6 +179,99 @@ function verify_backup_key_prefix_layout {
-   return 0
- }
- 
-+# Run fdbbackup and check the outcome. Commands expected to fail log to location_in_use_logs, which
-+# grep_for_severity40 skips, because fdbbackup traces any failure at Severity 40.
-+# $1 build directory, $2 scratch directory, $3 "ok", or the message the command must fail with,
-+# $4+ fdbbackup arguments
-+function fdbbackup_expect {
-+  local local_build_dir="${1}"
-+  local local_scratch_dir="${2}"
-+  local expected="${3}"
-+  local logdir="${local_scratch_dir}"
-+  if [[ "${expected}" != "ok" ]]; then
-+    logdir="${local_scratch_dir}/location_in_use_logs"
-+    mkdir -p "${logdir}"
-+  fi
-+  local output
-+  local exit_code=0
-+  output=$("${local_build_dir}/bin/fdbbackup" "${@:4}" --log "--logdir=${logdir}" 2>&1) || exit_code=$?
-+  if [[ "${expected}" == "ok" ]]; then
-+    if (( exit_code != 0 )); then
-+      err "fdbbackup ${*:4} failed: ${output}"
-+      return 1
-+    fi
-+  elif (( exit_code == 0 )) || ! output_contains "${output}" "${expected}"; then
-+    err "fdbbackup ${*:4} did not fail with '${expected}': ${output}"
-+    return 1
-+  fi
-+  return 0
-+}
-+
-+# Abort a backup started by test_backup_location_in_use. abort disables idle backup workers
-+# concurrently, which can fail its own commit with commit_unknown_result; the retry then finds the
-+# backup already aborted, so "not running" counts as aborted.
-+# $1 build directory, $2 scratch directory, $3+ fdbbackup abort arguments
-+function abort_in_use_backup {
-+  local local_build_dir="${1}"
-+  local local_scratch_dir="${2}"
-+  local logdir="${local_scratch_dir}/location_in_use_logs"
-+  mkdir -p "${logdir}"
-+  local output
-+  local exit_code=0
-+  output=$("${local_build_dir}/bin/fdbbackup" abort "${@:3}" --log "--logdir=${logdir}" 2>&1) || exit_code=$?
-+  if (( exit_code != 0 )) && ! output_contains "${output}" "A backup was not running on tag"; then
-+    err "fdbbackup abort ${*:3} failed: ${output}"
-+    return 1
-+  fi
-+  return 0
-+}
-+
-+# A backup must not start, or be moved by modify, onto a location that a backup on another tag
-+# is running at. Once that backup is aborted, the location can be reused by any tag.
-+# $1 build directory, $2 scratch directory, $3 credentials file
-+function test_backup_location_in_use {
-+  local local_build_dir="${1}"
-+  local local_scratch_dir="${2}"
-+  local credentials="${3}"
-+
-+  local params="${query_str}"
-+  if [[ -n "${BACKUP_URL_KEY_PREFIX}" ]]; then
-+    params="${params}&prefix=${BACKUP_URL_KEY_PREFIX}"
-+  fi
-+  # Nested under this run's container so the existing cleanup removes it too.
-+  local name="${url_path_prefix}/${test}/in_use"
-+  local in_use_url="blobstore://${host}/${name}?${params}"
-+  # The same location with the parameters reversed and a trailing slash on the name.
-+  local respelled_url
-+  respelled_url="blobstore://${host}/${name}/?$(awk -F'&' '{ for (i = NF; i > 1; i--) printf "%s&", $i; print $1 }' <<< "${params}")"
-+  local other_url="blobstore://${host}/${name}_other?${params}"
-+  local tag_a="${TAG}_in_use_a"
-+  local tag_b="${TAG}_in_use_b"
-+  local in_use="already in use by the running backup on tag \`${tag_a}'"
-+  local run=(fdbbackup_expect "${local_build_dir}" "${local_scratch_dir}")
-+  local abort=(abort_in_use_backup "${local_build_dir}" "${local_scratch_dir}")
-+  # abort does not take --blob-credentials.
-+  local cluster=("-C" "${local_scratch_dir}/loopback_cluster/fdb.cluster" "${KNOBS[@]}")
-+  local args=("${cluster[@]}" "--blob-credentials" "${credentials}")
-+
-+  "${run[@]}" ok start -z -t "${tag_a}" -d "${in_use_url}" "${args[@]}" || return 1
-+  "${run[@]}" "${in_use}" start -z -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
-+  "${run[@]}" "${in_use}" start -n -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
-+  "${run[@]}" "${in_use}" start -z -t "${tag_b}" -d "${respelled_url}" "${args[@]}" || return 1
-+  "${run[@]}" ok start -n -t "${tag_b}" -d "${other_url}" "${args[@]}" || return 1
-+  "${run[@]}" ok start -z -t "${tag_b}" -d "${other_url}" "${args[@]}" || return 1
-+  "${run[@]}" "${in_use}" modify -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
-+  "${abort[@]}" -t "${tag_b}" "${cluster[@]}" || return 1
-+  "${abort[@]}" -t "${tag_a}" "${cluster[@]}" || return 1
-+  # Aborted backups no longer hold the location, for the same tag or another one.
-+  "${run[@]}" ok start -z -t "${tag_a}" -d "${in_use_url}" "${args[@]}" || return 1
-+  "${abort[@]}" -t "${tag_a}" "${cluster[@]}" || return 1
-+  "${run[@]}" ok start -z -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
-+  "${abort[@]}" -t "${tag_b}" "${cluster[@]}" || return 1
-+  log "Verified a backup location in use by another tag is rejected"
-+  return 0
-+}
-+
- # Run a backup to s3 and then a restore.
- # $1 The url to use
- # $2 the scratch directory
-@@ -249,6 +342,12 @@ function test_s3_backup_and_restore {
-     return 1
-   fi
- 
-+  log "Test backup location in use"
-+  if ! test_backup_location_in_use "${local_build_dir
-```
-
-**File**: `fdbclient/BackupContainerBlobStore.cpp` (modified, +65/-1)
-```diff
-@@ -27,6 +27,8 @@
- #include "flow/Platform.h"
- #include "flow/UnitTest.h"
- 
-+#include <boost/algorithm/string/case_conv.hpp>
-+
- class BackupContainerBlobStoreImpl {
- public:
- 	// Backup files to under a single folder prefix with subfolders for each named backup
-@@ -141,7 +143,7 @@ class BackupContainerBlobStoreImpl {
- const std::string BackupContainerBlobStoreImpl::DATAFOLDER = "data";
- const std::string BackupContainerBlobStoreImpl::INDEXFOLDER = "backups";
- 
--std::string BackupContainerBlobStore::dataPath(const std::string& path) {
-+std::string BackupContainerBlobStore::dataPath(const std::string& path) const {
- 	// if a key prefix was given, the entire layout lives under it.
- 	// if backup, include the backup data prefix.
- 	// if m_name ends in a trailing slash, don't add another
-@@ -286,6 +288,22 @@ std::string BackupContainerBlobStore::getPrefix() const {
- 	return m_prefix;
- }
- 
-+std::string BackupContainerBlobStore::getLocation() const {
-+	// Spell the service as a port, so a URL without one matches the same URL with the default port.
-+	std::string service = m_bstore->service.empty() ? m_bstore->defaultService() : m_bstore->service;
-+	if (service == "https") {
-+		service = "443";
-+	} else if (service == "http") {
-+		service = "80";
-+	}
-+	// Bucket names cannot contain '/', so the data path that follows keeps the location unambiguous.
-+	return format("blobstore://%s:%s/%s/%s",
-+	              boost::algorithm::to_lower_copy(m_bstore->host).c_str(),
-+	              service.c_str(),
-+	              m_bucket.c_str(),
-+	              dataPath("").c_str());
-+}
-+
- TEST_CASE("/backup/containers/blobstore/encryptionSetup") {
- 	std::string keyFile = joinPath(params.getDataDir(), "encryption-key");
- 	co_await BackupContainerFileSystem::createTestEncryptionKeyFile(keyFile);
-@@ -379,3 +397,49 @@ TEST_CASE("/backup/containers/blobstore/prefix") {
- 
- 	return Void();
- }
-+
-+TEST_CASE("/backup/containers/location") {
-+	// Non-AWS hosts need an explicit region to parse.
-+	auto location = [](const std::string& url) {
-+		return IBackupContainer::openContainer(url, {}, {}, 0)->getLocation();
-+	};
-+	const std::string base = location("blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1");
-+
-+	// Credentials, parameter order, other parameters, host case and slashes around the prefix are ignored.
-+	for (auto same :
-+	     { "blobstore://other:creds@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1",
-+	       "blobstore://host.example.com:8080/name?region=r1&prefix=p1/p2&bucket=bkt",
-+	       "blobstore://ak:sk@HOST.example.com:8080/name?bucket=bkt&prefix=/p1/p2/&sc=0&region=r2",
-+	       "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1&header=x-a:b&cu=1",
-+	       // A trailing slash on the name does not change the data path.
-+	       "blobstore://ak:sk@host.example.com:8080/name/?bucket=bkt&prefix=p1/p2&region=r1" }) {
-+		ASSERT_EQ(location(same), base);
-+	}
-+	ASSERT_EQ(location("blobstore://h:80/n?region=r1"), location("blobstore://h:80/n?bucket=FDB_BACKUPS_V2&region=r1"));
-+	// A missing port is the default port for the connection type.
-+	ASSERT_EQ(location("blobstore://h/n?region=r1"), location("blobstore://h:443/n?region=r1"));
-+	ASSERT_EQ(location("blobstore://h/n?region=r1"), location("blobstore://h:https/n?region=r1"));
-+	ASSERT_EQ(location("blobstore://h/n?region=r1&sc=0"), location("blobstore://h:80/n?region=r1&sc=0"));
-+	ASSERT_NE(location("blobstore://h/n?region=r1"), location("blobstore://h:80/n?region=r1"));
-+	ASSERT_NE(location("blobstore://h/n?region=r1&sc=0"), location("blobstore://h:443/n?region=r1&sc=0"));
-+	// Different prefix and name splits can address the same data objects.
-+	ASSERT_EQ(location("blobstore://h:80/b?prefix=a/data&region=r1"),
-+	          location("blobstore://h:80/data/b?prefix=a&region=r1"));
-+
-+	for (auto different : { "blobstore://ak:sk@other.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8081/name?bucket=bkt&prefix=p1/p2&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt2&prefix=p1/p2&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p3&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8080/name2?bucket=bkt&prefix=p1/p2&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8080/name/sub?bucket=bkt&prefix=p1/p2&region=r1",
-+	                        "blobstore://ak:sk@host.example.com:8080//name?bucket=bkt&prefix=p1/p2&region=r1",
-+	                        "file:///p1/p2/data/name" }) {
-+		ASSERT_NE(location(different), base);
-+	}
-+
-+	ASSERT_EQ(location("file:///backups/a"), location("file:///backups/a/"));
-+	AS
-```
-
-**File**: `fdbclient/BackupContainerBlobStore.h` (modified, +3/-1)
-```diff
-@@ -39,7 +39,7 @@ class BackupContainerBlobStore final : public BackupContainerFileSystem, Referen
- 	// if not used for backup, don't prefix paths with fdbbackup-specific logic
- 	bool isBackup;
- 
--	std::string dataPath(const std::string& path);
-+	std::string dataPath(const std::string& path) const;
- 
- 	// Get the path of the backups's index entry
- 	std::string indexEntry();
-@@ -138,6 +138,8 @@ class BackupContainerBlobStore final : public BackupContainerFileSystem, Referen
- 	std::string getBucket() const;
- 
- 	std::string getPrefix() const;
-+
-+	std::string getLocation() const final;
- };
- 
- #endif
-```
-
-**File**: `fdbclient/BackupContainerLocalDirectory.cpp` (modified, +4/-0)
-```diff
-@@ -355,6 +355,10 @@ Future<Void> BackupContainerLocalDirectory::deleteContainer(int* pNumDeleted) {
- 	});
- }
- 
-+std::string BackupContainerLocalDirectory::getLocation() const {
-+	return "file://" + m_path;
-+}
-+
- TEST_CASE("/backup/containers/localdir/rejectsEscapingPaths") {
- 	// Nothing is read or written: every name below is rejected before the container directory is touched.
- 	auto bc = makeReference<BackupContainerLocalDirectory>(
-```
-
-**File**: `fdbclient/BackupContainerLocalDirectory.h` (modified, +2/-0)
-```diff
-@@ -56,6 +56,8 @@ class BackupContainerLocalDirectory : public BackupContainerFileSystem,
- 
- 	Future<Void> deleteContainer(int* pNumDeleted) final;
- 
-+	std::string getLocation() const final;
-+
- private:
- 	std::string m_path;
- };
-```
-
-**File**: `fdbclient/BlobStoreCommon.cpp` (modified, +1/-1)
-```diff
-@@ -688,7 +688,7 @@ Future<IBlobStoreEndpoint::ReusableConnection> connect_impl(Reference<IBlobStore
- 			fprintf(stderr, "ERROR: Port can't be empty when using HTTP proxy.\n");
- 			throw connection_failed();
- 		}
--		service = b->knobs.secure_connection ? "https" : "http";
-+		service = b->defaultService();
+ 			printf("T%dDone\n", s.threadId);
+-			s.doneProducing.send(Void());
+ 		};
+ 		s.handle = startThreadF(produce);
  	}
- 	bool isTLS = b->knobs.isTLS();
- 	Reference<IConnection> conn;
+@@ -2443,18 +2440,11 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
+ 			queue.canSleep();
+ 	}
+ 
+-	co_await waitForAll(doneProducing);
+-
+-	// Make sure we continue on the main thread.
+-	Promise<Void> signal;
+-	Future<Void> doneConsuming = signal.getFuture();
+-	g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
+-	co_await doneConsuming;
+-
+ 	for (int t = 0; t < perThread.size(); ++t) {
+ 		waitThread(perThread[t].handle);
+ 		perThread[t].checkDone();
+ 	}
++	return Void();
+ }
+ 
+ TEST_CASE("noSim/flow/Net2/onMainThreadFIFO") {
+@@ -2478,7 +2468,7 @@ TEST_CASE("noSim/flow/Net2/onMainThreadFIFO") {
+ 				int v = s.nextProduced();
+ 				onMainThreadVoid([&s, v]() { ASSERT_EQ(v, s.nextConsumed()); });
+ 			}
+-			s.doneProducing.send(Void());
++			onMainThreadVoid([&s]() { s.doneProducing.send(Void()); });
+ 		});
+ 	}
+ 	co_await waitForAll(doneProducing);
+```
+
+---
+
+### Incident Patch 2: `5ca27474` (2026-11-11)
+**Commit Message**: bindings/ruby: fix tuple float comparison on Ruby 3.3 and later (#14507)
+
+FDB::Tuple._compare_floats packed its arguments with the format
+strings ">g" and ">G". ">" is only a modifier for the integer
+directives; in front of "g"/"G" it is an unknown directive. Older
+Rubies ignored it (with a warning under -w), but since Ruby 3.3
+Array#pack raises ArgumentError for unknown directives. As a result
+FDB::Tuple.compare raised for any pair of tuples that reached a float
+or double comparison, and so did FDB::Tuple::SingleFloat#<=>.
+
+"g" and "G" are already big-endian, so drop the ">". The packed bytes
+are the same as before on Rubies that ignored it.
+
+Add a TUPLE_SORT of tuples containing floats and doubles to the
+scripted binding test, which until now did not sort tuples at all.
+
+Signed-off-by: Dezhen Lu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `bindings/bindingtester/tests/scripted.py` (modified, +17/-0)
+```diff
+@@ -331,6 +331,23 @@ def generate(self, args, thread_number):
+         self.add_result(main_thread, args, rng.stop)
+         self.add_result(main_thread, args, rng.start)
+ 
++        main_thread.append("EMPTY_STACK")
++        float_tups = [
++            (2.5,),
++            (fdb.tuple.SingleFloat(1.5), b"foo"),
++            (-1.0, "bar"),
++            (fdb.tuple.SingleFloat(-3.0),),
++            ((0.0, -0.0),),
++            ((-0.0, 0.0),),
++        ]
++        for float_tup in float_tups:
++            main_thread.push_args(*test_util.with_length(float_tup))
++            main_thread.append("TUPLE_PACK")
++        main_thread.push_args(len(float_tups))
++        main_thread.append("TUPLE_SORT")
++        for packed in sorted(map(fdb.tuple.pack, float_tups), reverse=True):
++            self.add_result(main_thread, args, packed)
++
+         stampKey = b"stampedXXXXXXXXXXsuffix"
+         stampKeyIndex = stampKey.find(b"XXXXXXXXXX")
+         main_thread.push_args(
+```
+
+**File**: `bindings/ruby/lib/fdbtuple.rb` (modified, +2/-2)
+```diff
+@@ -308,8 +308,8 @@ def self._compare_floats(f1, f2, is_double)
+       #   2) -0.0 == 0.0 in Ruby but not in our representation
+       # It would be better to just take the floats and compare them, but
+       # this way handles the edge cases correctly.
+-      b1 = float_adjust([f1].pack(is_double ? ">G" : ">g"), 0, (is_double ? 8 : 4), true)
+-      b2 = float_adjust([f2].pack(is_double ? ">G" : ">g"), 0, (is_double ? 8 : 4), true)
++      b1 = float_adjust([f1].pack(is_double ? "G" : "g"), 0, (is_double ? 8 : 4), true)
++      b2 = float_adjust([f2].pack(is_double ? "G" : "g"), 0, (is_double ? 8 : 4), true)
+       b1 <=> b2
+     end
+ 
+```
+
+---
+
+### Incident Patch 3: `26fc5eea` (2026-11-11)
+**Commit Message**: bindings/python: fix truth testing of an absent Value on Python 3 (#14508)
+
+FutureString defined __nonzero__, the Python 2 name of the truth
+hook. Python 3 never calls it, so bool() fell back to __len__,
+which is forwarded to bytes.__len__(self.value). For the Value of a
+key that is not present self.value is None, and code such as
+
+    if not tr[key]:
+
+raised "TypeError: descriptor '__len__' requires a 'bytes' object but
+received a 'NoneType'" instead of treating the value as false.
+
+Rename the method to __bool__. An absent value is now false; present
+values and keys keep the truth value they already had through __len__
+(false only when empty).
+
+Signed-off-by: Dezhen Lu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `bindings/python/fdb/impl.py` (modified, +1/-1)
+```diff
+@@ -1082,7 +1082,7 @@ def __eq__(self, rhs):
+     def __ne__(self, rhs):
+         return not self == rhs
+ 
+-    def __nonzero__(self):
++    def __bool__(self):
+         return bool(self.value)
+ 
+     def __int__(self):
+```
+
+**File**: `bindings/python/tests/unit_tests.py` (modified, +19/-0)
+```diff
+@@ -210,6 +210,23 @@ def test_predicates():
+     assert not fdb.predicates.is_retryable(fdb.FDBError(10))
+ 
+ 
++def test_value_truthiness(db):
++    missing = b"\x02value-truthiness-missing"
++    empty = b"\x02value-truthiness-empty"
++    present = b"\x02value-truthiness-present"
++
++    # Nothing is committed; the reads below see the transaction's own writes.
++    tr = db.create_transaction()
++    del tr[missing]
++    tr[empty] = b""
++    tr[present] = b"x"
++
++    assert not tr[missing]
++    assert not tr[empty]
++    assert tr[present]
++    assert tr.get_key(fdb.KeySelector.first_greater_or_equal(present))
++
++
+ def test_get_client_status(db):
+     @fdb.transactional
+     def simple_txn(tr):
+@@ -263,6 +280,8 @@ def run_unit_tests(db):
+         test_locality(db)
+         log("test_predicates")
+         test_predicates()
++        log("test_value_truthiness")
++        test_value_truthiness(db)
+         log("test_size_limit_option")
+         test_size_limit_option(db)
+         log("test_get_approximate_size")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14471** (2026-11-06): Backup per-URL aws_v4_header (v4) blobstore parameter (@neethuhaneesha)
-- **PR #14470** (2026-11-06): Stop reporting a byte total for bulkdump progress (@saintstack)
-- **PR #14466** (2026-11-06): Remove unused getDatabaseConfiguration() reads from backup and restore (@shreechaturvedi)
-- **PR #14459** (2026-11-06): fdb-kubernetes-monitor: check binary present (@johscheuer)
-- **PR #14458** (2026-11-06): Update go version for fdb-kubernetes-monitor to go 1.27.3 and update go.mod to 1.26.0 (@johscheuer)
-- **PR #14457** (2026-11-05): Allow transaction_profiling_analyzer to have a dedicated audit log directory (@spraza)
+- **PR #14515** (2026-11-11): [release-7.4] Release notes 7.4.9 (@spraza)
+- **PR #14514** (2026-11-12): Open every backup's container in getLayerStatus() (@shreechaturvedi)
+- **PR #14513** (2026-11-11): [release-8.0] Send one clear per range-restore transaction instead of one per gap (@nos-a)
+- **PR #14512** (2026-11-11): Skip the range-restore clear when the span has no keys (@nos-a)
+- **PR #14510** (2026-11-11): release notes 7.3.80,81 (@ploxiln)
+- **PR #14509** (2026-11-11): [release-8.0] release notes 7.3.80,81 (@ploxiln)
 
 ---
 
@@ -2343,30 +2194,40 @@ rdar://191428032
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reject starting a backup at a location used by another running backup (#14451)
+## X. tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)
 
 **RULE**:
-When implementing operations in `documentation/sphinx/source/backups.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/Net2.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91a45282`: Reject starting a backup at a location used by another running backup (#14451). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50f1c933`: tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/sphinx/source/backups.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/Net2.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-The ``start`` subcommand is used to start a backup.  If there is already a backup in progress on the tag, or a backup on another tag is running at the same location (for a blob store URL, the same host, port, bucket, prefix, and backup name, regardless of credentials and other URL parameters), the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
-  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.  The new location cannot be one that a backup on another tag is running at.
+	return Void();
+			onMainThreadVoid([&s]() { s.doneProducing.send(Void()); });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-The ``start`` subcommand is used to start a backup.  If there is already a backup in progress, the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
-  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.
+	std::vector<Future<Void>> doneProducing;
+		doneProducing.push_back(s.doneProducing.getFuture());
+			s.doneProducing.send(Void());
+	co_await waitForAll(doneProducing);
+
+	// Make sure we continue on the main thread.
+	Promise<Void> signal;
+	Future<Void> doneConsuming = signal.getFuture();
+	g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
+	co_await doneConsuming;
+
+			s.doneProducing.send(Void());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91a45282` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50f1c933` are properly handled with clean fallback behavior.
