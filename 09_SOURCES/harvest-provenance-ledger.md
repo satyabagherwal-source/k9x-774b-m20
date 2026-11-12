@@ -9195,3 +9195,7 @@ Every entry in this ledger must capture:
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `47c87ebb` | Multi-dimensional audit evidence | 2026-11-12T14:44:44.065Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `0863eb48` | Multi-dimensional audit evidence | 2026-11-12T14:44:54.863Z |
 | `learn-dom-h-b77a0fed` | `project://clockworklabs-spacetimedb` | `0863eb48` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | 2026-11-12T14:45:15.021Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `1c4984ad` | Multi-dimensional audit evidence | 2026-11-12T14:59:49.316Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `3443896f` | Multi-dimensional audit evidence | 2026-11-12T14:59:50.293Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `444dc948` | Multi-dimensional audit evidence | 2026-11-12T14:59:56.952Z |
+| `learn-github-tonhowtf-omniget` | `https://github.com/tonhowtf/omniget` | `5d91e41a` | Multi-dimensional audit evidence | 2026-11-12T15:04:38.650Z |

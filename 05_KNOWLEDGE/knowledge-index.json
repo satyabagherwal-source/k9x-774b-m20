@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T14:44:54.750Z",
-  "total_verified_learnings": 1258,
+  "last_updated": "2026-11-12T15:04:38.528Z",
+  "total_verified_learnings": 1259,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -38844,11 +38844,16 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "e2e0abd3",
-      "content_hash": "e4a5f18dd452f536ac4b584ebafbe61bc3a8e00fc9330a0e2c2945ea92fe5dd3",
+      "source_version": "1c4984ad",
+      "content_hash": "d5dcd248592e43f6b6c9808889edd6c206dc75250e57762fcc9f8b936eb49269",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update macos_arm.yaml",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2120,
           "title": "runner): install the panic hook once instead of swapping it per run (#2224)",
@@ -38905,7 +38910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:56:18.458Z",
+      "verified_at": "2026-11-12T14:59:49.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64639,13 +64644,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "719fcc41",
-      "content_hash": "fca586e8119109f6d6af9a4127f0eb896be38bbdbdb9cecea7da90b47c8c3070",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "444dc948",
+      "content_hash": "c88d5a658de72a9743c9acd49bbaa9a1bddb008e41b1d663e8ecd0ea60a3700f",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -64680,6 +64685,11 @@
         {
           "number": null,
           "title": "Merge 'postgres: Add row-level security policies' from Pekka Enberg",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "postgres/conformance: test that security_invoker views are refused",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64833,7 +64843,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T09:55:28.609Z",
+      "verified_at": "2026-11-12T14:59:56.752Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84583,14 +84593,19 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "4f1753e7",
-      "content_hash": "50a09375bb7b0b85a7422efca6a71f6bc35c0a581ab2ddb738e086843a359bc8",
+      "source_version": "3443896f",
+      "content_hash": "f04ec34028214dbc8d1c405eecd7d916dfb2609b1418738fe0dcb8e94573fba6",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "avoid browser blocked ports for the runner server (#35262)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "accept consecutive arrow keys in cy.type() on date-like inputs (#35352)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84634,7 +84649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:43:54.420Z",
+      "verified_at": "2026-11-12T14:59:50.041Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191798,6 +191813,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-12T05:13:03.000Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-tonhowtf-omniget": {
+      "learning_id": "learn-github-tonhowtf-omniget",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tonhowtf/omniget",
+      "repository": "tonhowtf/omniget",
+      "slug": "tonhowtf-omniget",
+      "platform": "github",
+      "source_url": "https://github.com/tonhowtf/omniget",
+      "source_version": "5d91e41a",
+      "content_hash": "23685f9a43a5f05e63461fb3c22fb1df800f5904512764274ca4596549a8f31d",
+      "dossier_path": "07_PROJECT_LEARNING/tonhowtf-omniget-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tonhowtf-omniget-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "menu rebranding, benchmark-driven download fixes, cheaper agent jobs and omniget",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T15:04:38.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

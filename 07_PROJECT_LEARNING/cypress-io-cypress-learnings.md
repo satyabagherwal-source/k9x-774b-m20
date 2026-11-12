@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source**: github ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
-> **Source Version**: `4f1753e7`  
+> **Source Version**: `3443896f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:43:52.911Z  
+> **Timestamp**: 2026-11-12T14:59:32.446Z  
 > **Learning ID**: `learn-github-cypress-io-cypress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:43:51.373Z  
+> **Harvest Timestamp**: 2026-11-12T14:59:28.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, easy and reliable testing for anything that runs in a browser.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 51022 stars
+- **Stars / Engagement**: 51028 stars
 
 ---
 
@@ -981,11 +981,11 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35297** (2026-11-07): **fix: stop printing EPERM when the Firefox profile cannot be removed on exit**
-  *Symptoms*: firefox-profile's own delete-on-exit made a single rmSync attempt and printed failures with console.warn. On Windows, Firefox's processes can still hold handles in the profile right after kill(), so the delete failed with EPERM. The CLI's stderr filter then let only the indented `errno:`/`code:`/`path:`/`syscall:` lines of the error object through, which is the fragment reported in the issue.  Cypress now owns the removal: one exit listener deletes every Firefox profile dir launched in the process, retrying on EPERM/EBUSY, and logs a final failure to debug. A leftover run profile is still removed by removeOldProfiles at the start of the next run.  Fixes #35293  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com> Claude-Session: https://claude.ai/code/session_01WUv8r1gaC2CQsdxRJNvjwt  <!-- CURSOR_SUMMARY --> ---  > [!NOTE] > **Low Risk** > Scoped to Firefox temporary profile cleanup on process exit on all platforms, with no changes to test execution or browser launch logic. >  > **Overview** > Fixes spurious `EPERM` / `syscall: 'rm'` output after **`cypress run`** on **Firefox (Windows)** when the temporary profile could not be deleted because Firefox still held file handles. >  > Cypress **takes over profile teardown** instead of relying on `firefox-profile`'s single-attempt `shouldDeleteOnExit` (which logged failures to `console.warn`). Launched profile directories are queued and removed on **`process` exit** via **`fs.rmSync`** with **retries**; failures are **debug-log
+- **Issue #35361** (2026-11-12): **chore: lint Vitest specs with @vitest/eslint-plugin**
+  *Symptoms*: - Closes N/A. This is one slice of the ESLint 10 and plugin-major upgrade of `@packages/eslint-config`.  ### Additional details  This adds `@vitest/eslint-plugin` 1.6 to `@packages/eslint-config` as an opt-in `vitestConfig` export, alongside `jsonConfig` and `nodeConfig`. It applies the plugin's `recommended` rules to `**/*.{test,spec}.{ts,tsx,js}` and `test/**`, skipping `fixtures/` and `__fixtures__/`. On top of those, `no-focused-tests`, `no-disabled-tests` and `hoisted-apis-on-top` are errors. `vitest/unbound-method`, the plugin's one type-aware rule, is left out. Its TypeScript 6 and `@typescript-eslint/eslint-plugin` peers are optional and only serve that rule, so the rest runs on our TypeScript 5.4.5.  All 32 workspaces with `vitest` in their `package.json` opt in. `@packages/server` narrows the config to `test/unit/**`, because its integration and performance specs run on mocha.  **What the plugin reported first,** across those workspaces. These counts include server's mocha specs and the bundled fixtures, which are now out of scope:  | Rule | Hits | Outcome | | --- | --- | --- | | `expect-expect` | 682 | Off: specs assert through sinon/chai helpers or by not throwing | | `no-conditional-expect` | 282 | Off: assertions in `catch` blocks and platform branches; style | | `valid-expect` | 135 | Fixed (below); allows Vitest's message argument | | `prefer-called-exactly-once-with` | 47 | Off: style | | `no-standalone-expect` | 34 | All in hooks or fixtures; assertions in h
 
-- **Issue #35296** (2026-11-06): **chore(ci): TEMP minimal config for self-hosted Windows runner SSH test**
-  *Symptoms*: <!-- Thanks for contributing! PLEASE... - Before writing any code, confirm an open issue exists for this work and that you have commented on it to indicate your intent. See: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#pull-requests - Read our contributing guidelines: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md  - Read our Code Review Checklist on coding standards and what needs to be done before a PR can be merged: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#Code-Review-Checklist - Mark this PR as "Draft" if it is not ready for review. - Make sure you set the correct base branch based on what packages you're changing: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#branches -->  - Closes <!-- link to the issue here, if there is one -->  ### Additional details <!-- Examples: - Why was this change necessary? - What is affected by this change? - Any implementation details to explain? -->  <!-- CURSOR_SUMMARY --> <!-- /CURSOR_SUMMARY -->  ### Steps to test <!-- For non-trivial behavior changes, list the steps that a reviewer should follow to validate the new behavior. This is not meant to be the only testing performed by a reviewer, just the "happy path" that leads to the new behavior. -->  ### How has the user experience changed? <!-- For any change that affects what a user sees or interacts with, or changes behavior, include before/after screenshots or a short video. Screenshots or videos ar
+- **Issue #35360** (2026-11-12): **perf: sniff cy.intercept stubbed-response HTML in linear time**
+  *Symptoms*: <!-- Thanks for contributing! PLEASE... - Before writing any code, confirm an open issue exists for this work and that you have commented on it to indicate your intent. See: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#pull-requests - Read our contributing guidelines: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md  - Read our Code Review Checklist on coding standards and what needs to be done before a PR can be merged: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#Code-Review-Checklist - Mark this PR as "Draft" if it is not ready for review. - Make sure you set the correct base branch based on what packages you're changing: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#branches -->  - Closes N/A (no issue; this came out of a ReDoS audit of regexes that run on user-controlled input)  ### Additional details  `parseContentType` in `packages/net-stubbing/lib/server/util.ts` picks a `Content-Type` for a [`cy.intercept()`](https://on.cypress.io/intercept) response stubbed with a fixture or a static `body` and no `Content-Type` header. It decided whether the body was HTML with `/<.+>[\s\S]+<\/.+>/`, which backtracks polynomially on bodies with many `<` and `>` characters. Those bodies are user fixtures, so they can be large.  This PR replaces the regex with `isHtmlLike()`, a hand-written scan with two forward passes that gives exactly the same answers:  - An opening `<…>` and a later closing `</…>`, 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1002,728 +1002,480 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `214545f2` (2026-11-06)
-**Commit Message**: fix: avoid browser blocked ports for the runner server (#35262)
+### Incident Patch 1: `e4d77771` (2026-11-11)
+**Commit Message**: fix: accept consecutive arrow keys in cy.type() on date-like inputs (#35352)
 
-* fix: avoid browser blocked ports for the runner server
+* fix: accept consecutive arrow keys in cy.type() on date-like inputs
 
-Discard a randomly assigned port that browsers refuse to load and report an actionable error when a blocked port is configured
+Typing more than one {upArrow} or {downArrow} in a row into a date,
+month, week, time, or datetime-local input failed validation with an
+invalid_* format error, even though a single arrow worked.
 
-Reject a bind failure other than EADDRINUSE so the run cannot hang before it starts
+validateTyping() matched the arrow regex against every key from the
+current index to the end of the string, and the regex was anchored at
+the end, so it only matched when exactly one arrow remained. Dropping
+the end anchor lets each arrow be accepted as typing reaches it, so
+the value steps once per arrow. A non-arrow sequence such as
+{upArrow}{leftArrow} still throws the existing error when typing
+reaches the non-arrow key.
 
-Fixes #30869
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r4w5uzy9X1Ca4MUQ3W
 
-* fix: validate browser blocked ports during config loading
+* chore: move cy.type() arrow-key changelog entry to 16.3.1
 
-Add the missing 4190 and 6679 restricted ports and correct the 993 comment
+16.3.0 shipped while this branch was open, so the entry now belongs
+under the next unreleased version.
 
-Reject a configured port that browsers block during configuration validation so it is reported before the file server starts
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r4w5uzy9X1Ca4MUQ3W
 
-Use a separate message when every randomly assigned port was blocked
+* chore: se
 
-Close the file server when the runner server fails to start and surface close errors instead of retrying
+**File**: `cli/CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -1,6 +1,10 @@
+ <!-- See ../guides/writing-the-cypress-changelog.md for details on writing the changelog. -->
+ ## 16.3.1
+ 
++**Bugfixes:**
++
++- [`.type()`](https://on.cypress.io/type) now accepts consecutive `{upArrow}` and `{downArrow}` sequences, such as `{upArrow}{upArrow}`, on `date`, `month`, `week`, `time`, and `datetime-local` inputs, and steps the value once per arrow. Previously, a single arrow worked but more than one in a row failed with an error saying the input required a valid date, month, week, time, or datetime. Fixed in [#35352](https://github.com/cypress-io/cypress/pull/35352).
++
+ **Misc:**
+ 
+ - Firefox launched by Cypress no longer starts its remote debugging server. Addressed in [#35284](https://github.com/cypress-io/cypress/pull/35284).
+```
 
-Fixes #30869
+**File**: `packages/driver/cypress/e2e/commands/actions/type.cy.ts` (modified, +94/-0)
+```diff
+@@ -3226,6 +3226,32 @@ describe('src/cy/commands/actions/type - #type', () => {
+           cy.get('#date-without-value').should('have.value', '1999-12-31')
+         })
+ 
++        it('consecutive {upArrow} increases day once per arrow', () => {
++          cy.get('#date-without-value').type('1999-12-30').type('{upArrow}{upArrow}')
++          cy.get('#date-without-value').should('have.value', '2000-01-01')
++        })
++
++        it('consecutive {downArrow} decreases day once per arrow', () => {
++          cy.get('#date-without-value').type('2000-01-01').type('{downArrow}{downArrow}')
++          cy.get('#date-without-value').should('have.value', '1999-12-30')
++        })
++
++        it('mixed {upArrow} and {downArrow} step the day in order', () => {
++          cy.get('#date-without-value').type('2000-01-01').type('{upArrow}{downArrow}{upArrow}')
++          cy.get('#date-without-value').should('have.value', '2000-01-02')
++        })
++
++        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
++          cy.on('fail', (err) => {
++            expect(err.message).to.include('requires a valid date')
++            expect(err.message).to.include('{ArrowUp}{ArrowLeft}')
++
++            done()
++          })
++
++          cy.get('#date-without-value').type('{upArrow}{leftArrow}')
++        })
++
+         it('{upArrow} triggers events on input', () => {
+           cy.get('#date-with-value')
+           .then(($input) => {
+@@ -3271,6 +3297,23 @@ describe('src/cy/commands/actions/type - #type', () => {
+           cy.get('#month-without-value').should('have.value', '1999-12')
+         })
+ 
++        it('consecutive {upArrow} and {downArrow} step the month once per arrow', () => {
++          cy.get('#month-without-value').type('1999-11').type('{upArrow}{upArrow}')
++          cy.get('#month-without-value').should('have.value', '2000-01')
++          cy.get('#month-without-value').type('{downArrow}{downArrow}{upArrow}')
++          cy.get('#month-without-value').should('have.value', '1999-12')
++        })
++
++        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
++          cy.on('fail', (err) => {
++            expect(err.message).to.include('requires a valid month')
++
++            done()
++          })
++
++          cy.get('#month-without-value').type('{upArrow}{leftArrow}')
++        })
++
+         it('{upArrow} triggers events on input', () => {
+           cy.get('#month-with-value')
+           .then(($input) => {
+@@ -3316,6 +3359,23 @@ describe('src/cy/commands/actions/type - #type', () => {
+           cy.get('#week-without-value').should('have.value', '2017-W04')
+         })
+ 
++        it('consecutive {upArrow} and {downArrow} step the week once per arrow', () => {
++          cy.get('#week-without-value').type('2017-W05').type('{upArrow}{upArrow}')
++          cy.get('#week-without-value').should('have.value', '2017-W07')
++          cy.get('#week-without-value').type('{downArrow}{downArrow}{upArrow}')
++          cy.get('#week-without-value').should('have.value', '2017-W06')
++        })
++
++        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
++          cy.on('fail', (err) => {
++            expect(err.message).to.include('requires a valid week')
++
++            done()
++          })
++
++          cy.get('#week-without-value').type('{upArrow}{leftArrow}')
++        })
++
+         it('{upArrow} triggers events on input', () => {
+           cy.get('#week-with-value')
+           .then(($input) => {
+@@ -3361,6 +3421,23 @@ describe('src/cy/commands/actions/type - #type', () => {
+           cy.get('#time-without-value').should('have.value', '01:22')
+         })
+ 
++        it('consecutive {upArrow} and {downArrow} step the minute once per arrow', () => {
++          cy.get('#time-without-value').type('01:59').type('{upArrow}{upArrow}')
++          cy.get('#time-without-value').should('have.value', '02:01')
++          cy.get('#time-without-value').type('{downArrow}{downArrow}{upArrow}')
++          cy.get('#time-without-value').should('have.value', '02:00')
++        })
++
++        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
++          cy.on('fail', (err) => {
++            expect(err.message).to.include('requires a valid time')
++
++            done()
++          })
++
++          cy.get('#time-without-value').type('{upArrow}{leftArrow}')
++        })
++
+         it('{upArrow} triggers events on input', () => {
+           cy.get('#time-with-value')
+           .then(($input) => {
+@@ -3402,6 +3479,23 @@ describe('src/cy/commands/actions/type - #type', () => {
+           cy.get('#datetime-local-without-value').type('{downArrow}')
+         })
+ 
++        it('consecutive {upArrow} and {downArrow} step the value once per arrow', () => {
++          cy.get('#datetime-local-without-value').type('2000-01-01T01:30').type('{upArrow}{upArrow}')
++          cy.get('#datetime-local-without-value').should('have.value', '2000-01-01T01:32')
++    
+```
 
-* fix: simplify browser blocked port handling (#35262)
+**File**: `packages/driver/src/cy/keyboard.ts` (modified, +3/-1)
+```diff
+@@ -68,7 +68,9 @@ const dateTimeRe = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?(\.
+ const numberRe = /^-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?$/i
+ const charsBetweenCurlyBracesRe = /({.+?})/
+ const isValidNumberInputChar = /[-+eE\d.]/
+-const arrowKeysRe = /^\{(ArrowUp|ArrowDown)\}$/
++// Unanchored at the end so that each arrow in a run such as
++// {upArrow}{upArrow} is accepted on its own as typing reaches it
++const arrowKeysRe = /^\{(ArrowUp|ArrowDown)\}/
+ 
+ const INITIAL_MODIFIERS = {
+   alt: false,
+```
 
-Rely on configuration validation for configured ports and keep the runner error specific to exhausted ephemeral port retries
+---
 
-Remove the duplicate validation, helper, test and unused error variant, restore port-in-use handling and remove historical test commentary
+### Incident Patch 2: `e9aaccd2` (2026-11-11)
+**Commit Message**: fix(server): apply intercepted redirect header changes (#35295)
 
-Keep one current changelog entry after rebasing onto develop
+- Fulfill a paused redirect in Chromium when a cy.intercept response handler changes, adds or removes its Location or Referrer-Policy header. Previously the change went out through Fetch.continueResponse, which Chrome ignores at a redirect pause, so the browser followed the redirect as the origin sent it.
+- Classify a redirect pause once in the CDP transport and pass it to the codec as a redirectPause flag, instead of both modules checking separately
+- Add isRedirectStatus to @packages/network-interception so the proxy and the CDP transport share one list of redirect status codes
+- Add codec, transport and system tests covering rewritten, removed and added Location and Referrer-Policy headers, POST redirects by status, cross-site redirects, redirect chains and EventSource
+- Add a changelog entry
+
+Fixes #34704
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -15,6 +15,7 @@
+@@ -32,6 +32,7 @@
  **Bugfixes:**
  
  - Fixed a regression in [16.0.0](#16-0-0) where changes a [`cy.intercept()`](https://on.cypress.io/intercept) response handler made to `Set-Cookie` headers did not reach the browser in Chromium-based browsers. The browser stored the cookies exactly as the server sent them, so a handler that rewrote a cookie's attributes, such as adding `SameSite=None` so a cross-site login cookie is accepted, or that removed a cookie, had no effect. Cookies in the browser now match the `Set-Cookie` headers the handler leaves on the response. Fixes [#34902](https://github.com/cypress-io/cypress/issues/34902).
-+- Fixed an issue where Cypress could use a port that browsers refuse to load, such as 10080, when the [`port`](https://on.cypress.io/configuration) option was not set. The runner then failed with `ERR_UNSAFE_PORT`. Cypress now redraws a blocked randomly assigned port, and a blocked port in configuration is reported as a configuration error that names the port before the runner server starts. Fixes [#30869](https://github.com/cypress-io/cypress/issues/30869).
++- Fixed a regression in [16.0.0](#16-0-0) where a [`cy.intercept()`](https://on.cypress.io/intercept) response handler that changed the `Location` or `Referrer-Policy` header of a redirect had no effect in Chromium-based browsers. The browser followed the redirect as the server sent it, to the server's URL and with the server's referrer policy. Fixes [#34704](https://github.com/cypress-io/cypress/issues/34704).
+ - Fixed an issue where Cypress could use a port that browsers refuse to load, such as 10080, when the [`port`](https://on.cypress.io/configuration) option was not set. The runner then failed with `ERR_UNSAFE_PORT`. Cypress now redraws a blocked randomly assigned port, and a blocked port in configuration is reported as a configuration error that names the port before the runner server starts. Fixes [#30869](https://github.com/cypress-io/cypress/issues/30869).
  - Fixed an issue where a spec whose bundled file includes a large inline source map could crash the browser tab, leaving `cypress run` hanging with no error until it was killed. The crash could happen while the spec first loaded, or when it loaded again after its first [`cy.visit()`](https://on.cypress.io/visit) to another origin. Specs with inline source maps now also load faster and use less memory. Fixes [#35201](https://github.com/cypress-io/cypress/issues/35201).
  - Fixed an issue where `cypress run` could hang until it was killed, or exit with an unrelated `socket hang up` error, when the process that loads your config file and runs your [Node events](https://docs.cypress.io/app/plugins/plugins-guide) exited, for example because the operating system ran out of memory or `setupNodeEvents` called `process.exit()`. In component testing this process also runs the dev server. Cypress now stops the run with an error that says the process exited, with its exit code or signal. Fixes [#25507](https://github.com/cypress-io/cypress/issues/25507) and [#35223](https://github.com/cypress-io/cypress/issues/35223).
- - Fixed an issue where, in Chrome 158 and later, `cypress run` stopped with the error `* is not a valid URL` when it opened a second spec. Fixes [#35195](https://github.com/cypress-io/cypress/issues/35195).
 ```
 
-**File**: `packages/config/src/index.ts` (modified, +2/-0)
+**File**: `packages/network-interception/lib/core/index.ts` (modified, +2/-0)
 ```diff
-@@ -7,3 +7,5 @@ export * from './project'
- export { addProjectIdToCypressConfig, addToCypressConfig, addTestingTypeToCypressConfig, AddTestingTypeToCypressConfigOptions, defineConfigAvailable } from './ast-utils/addToCypressConfig'
+@@ -10,6 +10,8 @@ export * from './document-preparation'
  
- export * from './utils'
+ export * from './request-logging'
+ 
++export * from './redirect-status'
 +
-+export { isUnsafePort } from './unsafe_ports'
+ export * from './network-interception-core'
+ 
+ export * from './http-intercept'
 ```
 
-**File**: `packages/config/src/options.ts` (modified, +1/-1)
+**File**: `packages/network-interception/lib/core/redirect-status.ts` (added, +9/-0)
 ```diff
-@@ -338,7 +338,7 @@ const driverConfigOptions: Array<DriverConfigOption> = [
-   }, {
-     name: 'port',
-     defaultValue: null,
--    validation: validate.isNumber,
-+    validation: validate.isValidPort,
-   }, {
-     name: 'projectId',
-     defaultValue: null,
-```
-
-**File**: `packages/config/src/unsafe_ports.ts` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+// Browsers refuse to load a URL on any of these ports with ERR_UNSAFE_PORT.
-+// The list mirrors Chromium's restricted ports in net/base/port_util.cc, which
-+// is also the Fetch standard's bad port list, so Chrome, Electron, Firefox and
-+// WebKit all block them.
-+const UNSAFE_PORTS = new Set([
-+  1, // tcpmux
-+  7, // echo
-+  9, // discard
-+  11, // systat
-+  13, // daytime
-+  15, // netstat
-+  17, // qotd
-+  19, // chargen
-+  20, // ftp data
-+  21, // ftp access
-+  22, // ssh
-+  23, // telnet
-+  25, // smtp
-+  37, // time
-+  42, // name
-+  43, // nicname
-+  53, // domain
-+  69, // tftp
-+  77, // priv-rjs
-+  79, // finger
-+  87, // ttylink
-+  95, // supdup
-+  101, // hostriame
-+  102, // iso-tsap
-+  103, // gppitnp
-+  104, // acr-nema
-+  109, // pop2
-+  110, // pop3
-+  111, // sunrpc
-+  113, // auth
-+  115, // sftp
-+  117, // uucp-path
-+  119, // nntp
-+  123, // NTP
-+  135, // loc-srv / epmap
-+  137, // netbios
-+  139, // netbios
-+  143, // imap2
-+  161, // snmp
-+  179, // BGP
-+  389, // ldap
-+  427, // SLP (also used by Apple Filing Protocol)
-+  465, // smtp+ssl
-+  512, // print / exec
-+  513, // login
-+  514, // shell
-+  515, // printer
-+  526, // tempo
-+  530, // courier
-+  531, // chat
-+  532, // netnews
-+  540, // uucp
-+  548, // AFP (Apple Filing Protocol)
-+  554, // rtsp
-+  556, // remotefs
-+  563, // nntp+ssl
-+  587, // smtp (rfc6409)
-+  601, // syslog-conn (rfc3195)
-+  636, // ldap+ssl
-+  989, // ftps-data
-+  990, // ftps
-+  993, // imap+ssl
-+  995, // pop3+ssl
-+  1719, // h323gatestat
-+  1720, // h323hostcall
-+  1723, // pptp
-+  2049, // nfs
-+  3659, // apple-sasl / PasswordServer
-+  4045, // lockd
-+  4190, // sieve
-+  5060, // sip
-+  5061, // sips
-+  6000, // X11
-+  6566, // sane-port
-+  6665, // Alternate IRC [Apple addition]
-+  6666, // Alternate IRC [Apple addition]
-+  6667, // Standard IRC [Apple addition]
-+  6668, // Alternate IRC [Apple addition]
-+  6669, // Alternate IRC [Apple addition]
-+  6679, // osaut
-+  6697, // IRC + TLS
-+  10080, // Amanda
-+])
+@@ -0,0 +1,9 @@
++const REDIRECT_STATUS_CODES: ReadonlySet<number> = new Set([301, 302, 303, 307, 308])
 +
-+export const isUnsafePort = (port: number): boolean => {
-+  return UNSAFE_PORTS.has(port)
++/**
++ * Whether a browser follows the response's Location header. The proxy and the
++ * CDP transport both use this, so they agree on which responses are redirects.
++ */
++export function isRedirectStatus (statusCode: number | undefined): boolean {
++  return statusCode !== undefined && REDIRECT_STATUS_CODES.has(statusCode)
 +}
 ```
 
-**File**: `packages/config/src/validation.ts` (modified, +17/-0)
+**File**: `packages/network-interception/test/unit/redirect-status.spec.ts` (added, +13/-0)
 ```diff
-@@ -3,6 +3,7 @@ import _ from 'lodash'
- import { commaListsOr } from 'common-tags'
- import Debug from 'debug'
- import { BROWSER_FAMILY } from '@packages/types'
-+import { isUnsafePort } from './unsafe_ports'
- 
- const debug = Debug('cypress:server:validation')
- 
-@@ -528,6 +529,22 @@ export function isNumber (key: string, value: any): ErrResult | true {
-   return errMsg(key, value, 'a number')
- }
- 
-+export function isValidPort (key: string, value: any): ErrResult | true {
-+  if (value == null) {
-+    return true
-+  }
+@@ -0,0 +1,13 @@
++import { describe, it, expect } from 'vitest'
++import { isRedirectStatus } from '../../lib/core/redirect-status'
 +
-+  if (!_.isNumber(value)) {
-+    return errMsg(key, value, 'a number')
-+  }
-+
-+  if (isUnsafePort(value)) {
-+    return errMsg(key, value, `a port browsers allow, since Chrome, Electron, Firefox and WebKit refuse to load any URL on port ${value}`)
-+  }
-+
-+  return true
-+}
-+
- export function isString (key: string, value: any): ErrResult | true {
-   if (value == null || _.isString(value)) {
-     return true
-```
-
-**File**: `packages/config/test/unsafe_ports.spec.ts` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+import { describe, expect, it } from 'vitest'
-+import { isUnsafePort } from '../src/unsafe_ports'
-+
-+describe('unsafe_ports', () => {
-+  it('flags ports browsers refuse to load', () => {
-+    for (const port of [1, 20, 69, 4190, 6679, 10080]) {
-+      expect(isUnsafePort(port), `port ${port}`).toBe(true)
-+    }
++describe('core/redirect-status', () => {
++  it.each([301, 302, 303, 307, 308])('treats %i as a redirect', (statusCode) => {
++    expect(isRedirectStatus(statusCode)).toBe(true)
 +  })
 +
-+  it('allows ordinary application ports', () => {
-+    for (const port of [80, 3000, 8080, 54321, 65535]) {
-+      expect(isUnsafePort(port), `port ${port}`).toBe(false)
-+    }
++  // 300 and 305 are 3xx, but browsers don't follow their Location; 304 has none.
++  it.each([200, 300, 304, 305, 400, undefined])('does not treat %s as a redirect', (statusCode) => {
++    expect(isRedirectStatus(statusCode)).toBe(false)
 +  })
 +})
 ```
 
-**File**: `packages/config/test/validation.spec.ts` (modified, +18/-0)
+**File**: `packages/proxy/lib/http/response-middleware.ts` (modified, +2/-3)
 ```diff
-@@ -627,6 +627,24 @@ describe('config/src/validation', () => {
-     })
-   })
+@@ -5,6 +5,7 @@ import { PassThrough } from 'stream'
+ import { URL } from 'url'
+ import zlib from 'zlib'
+ import { InterceptResponse } from '@packages/net-stubbing'
++import { isRedirectStatus } from '@packages/network-interception'
+ import { concatStream, httpUtils } from '@packages/network'
+ import { telemetry } from '@packages/telemetry'
+ import { hasServiceWorkerHeader, isVerboseTelemetry as isVerbose } from '.'
+@@ -505,16 +506,14 @@ const MaybeCopyCookiesFromIncomingRes: ResponseMiddleware = async function () {
+   return this.networkInterceptionCore.copyCookiesFromResponse(this)
+ }
  
-+  describe('.isValidPort', () => {
-+    it('returns true for null or a port browsers allow', () => {
-+      expect(validation.isValidPort(mockKey, null)).toBe(true)
-+      expect(validation.isValidPort(mockKey, 3000)).toBe(true)
-+      expect(validation.isValidPort(mockKey, 65535)).toBe(true)
-+    })
-+
-+    it('returns an error for a port browsers block', () => {
-+      expect(validation.isValidPort(mockKey, 10080)).toMatchObject({ key: mockKey, value: 10080 })
-+      expect(validation.isValidPort(mockKey, 4190)).toMatchObject({ key: mockKey, value: 4190 })
-+      expect(validation.isValidPort(mockKey, 6679)).toMatchObject({ key: mockKey, value: 6679 })
-+    })
-+
-+    it('returns an error for a value that is not a number', () => {
-+      expect(validation.isValidPort(mockKey, '3000')).toMatchObject({ key: mockKey, value: '3000', type: 'a number' })
-+    })
-+  })
-+
-   describe('.isNumberOrFalse', () => {
-     it('returns true for value=number', () => {
-       const result = validation.isNumberOrFalse(mockKey, 1)
-```
-
-**File**: `packages/cypress-sessions/lib/generated/graphql.ts` (modified, +1/-0)
-```diff
-@@ -241,6 +241,7 @@ export type ErrorTypeEnum =
-   | 'PLAN_EXCEEDS_MONTHLY_TESTS'
-   | 'PLAN_IN_GRACE_PERIOD_RUN_GROUPING_FEATURE_USED'
-   | 'PLUGINS_RUN_EVENT_ERROR'
-+  | 'PORT_BLOCKED_BY_BROWSER'
-   | 'PORT_IN_USE_SHORT'
-   | 'PROJECT_ID_AND_KEY_BUT_MISSING_RECORD_OPTION'
-   | 'PROXY_ENCOUNTERED_INVALID_HEADER_NAME'
-```
-
----
-
-### Incident Patch 2: `697f8f94` (2026-11-05)
-**Commit Message**: chore: enable mocha/no-async-suite, mocha/no-nested-tests and two Vue template rules (#35282)
-
-Re-enables four rules from the "gold standard, but have many violations"
-block in baseConfig.ts (#35250):
-
-- mocha/no-async-suite: error, from eslint-plugin-mocha's recommended
-  config. The block turned it off under its pre-v11 name,
-  mocha/no-async-describe, which ESLint accepts silently as an unknown
-  rule set to off. No violations.
-- mocha/no-nested-tests: error, from the recommended config. The two
-  violations are the runner-specs fixtures errors/hooks.cy.js and
-  errors/nested_hooks.cy.js, which register a beforeEach inside a before
-  on purpose, to exercise Cypress's "registered a hook while a test was
-  running" error. They get an eslint-disable-next-line with that reason.
-  The comment shifts the hook down a line, but reporter.errors.cy.ts
-  asserts only on its column and code frame, not its line.
-- vue/no-useless-template-attributes: error, from flat/recommended.
-  Removed the :data-cy on the v-for <template> in DebugFailedTest.vue,
-  which never reached the DOM; no spec queries it.
-- vue/html-closing-bracket-spacing: error, with default options.
-  flat/recommended ships it a
-
-**File**: `npm/vue/cypress/component/advanced/i18n/TranslatedI18nMessage.vue` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <!-- uses special loader to load i18n blocks -->
- <!-- see https://github.com/intlify/vue-i18n-loader -->
- <!-- You can also inline the translations like <i18n>{...}</i18n> -->
--<i18n src="./translations.json"/>
-+<i18n src="./translations.json" />
+-const REDIRECT_STATUS_CODES: any[] = [301, 302, 303, 307, 308]
+-
+ // TODO: this shouldn't really even be necessary?
+ const MaybeSendRedirectToClient: ResponseMiddleware = async function () {
+   const span = telemetry.startSpan({ name: 'maybe:send:redirect:to:client', parentSpan: this.resMiddlewareSpan, isVerbose })
  
- <template>
-   <div id="app">
-```
-
-**File**: `packages/app/src/debug/DebugFailedTest.vue` (modified, +0/-1)
-```diff
-@@ -12,7 +12,6 @@
-     <template
-       v-for="{text, type}, index in failedTestData.mappedTitleParts"
-       :key="`${text}-${index}`"
--      :data-cy="`titleParts-${index}`"
-     >
-       <IconChevronRightSmall
-         v-if="index !== 0 && type !== 'LAST-PART-END'"
-```
-
-**File**: `packages/eslint-config/src/baseConfig.ts` (modified, +1/-5)
-```diff
-@@ -248,17 +248,12 @@ export const baseConfig = <InfiniteDepthConfigWithExtends[]>[
-       'mocha/consistent-spacing-between-blocks': 'off',
-       'mocha/no-global-tests': 'off',
-       'mocha/no-sibling-hooks': 'off',
--      'mocha/no-skipped-tests': 'off',
-       'mocha/no-exports': 'off',
--      'mocha/no-async-describe': 'off',
-       'mocha/no-return-and-callback': 'off',
-       'mocha/no-pending-tests': 'off',
--      'mocha/no-nested-tests': 'off',
+   const { statusCode, headers } = this.incomingRes
+   const newUrl = headers['location']
  
-       'vue/multi-word-component-names': 'off',
--      'vue/html-closing-bracket-spacing': 'off',
-       'vue/no-dupe-keys': 'off',
--      'vue/no-useless-template-attributes': 'off',
+-  const isRedirectNeeded = !REDIRECT_STATUS_CODES.includes(statusCode) || !newUrl
++  const isRedirectNeeded = !isRedirectStatus(statusCode) || !newUrl
  
-       'cypress/no-unnecessary-waiting': 'off',
-       'cypress/unsafe-to-chain-command': 'off',
-@@ -285,6 +280,7 @@ export const baseConfig = <InfiniteDepthConfigWithExtends[]>[
-       'vue/component-definition-name-casing': 'error',
-       'vue/first-attribute-linebreak': 'error',
-       'vue/html-closing-bracket-newline': 'error',
-+      'vue/html-closing-bracket-spacing': 'error',
-       'vue/html-end-tags': 'error',
-       'vue/html-indent': 'error',
-       'vue/html-quotes': 'error',
+   span?.setAttributes({
+     isRedirectNeeded,
 ```
 
-**File**: `packages/frontend-shared/src/gql-components/RecordRunModal.vue` (modified, +1/-1)
+**File**: `packages/server/lib/browsers/cdp-protocol/cdp-fetch-codec.ts` (modified, +32/-14)
 ```diff
-@@ -18,7 +18,7 @@
-   </StandardModal>
- </template>
- 
--<script setup lang="ts" >
-+<script setup lang="ts">
- import { useI18n } from '@cy/i18n'
- import StandardModal from '../components/StandardModal.vue'
- import RecordPromptAdapter from './RecordPromptAdapter.vue'
-```
-
-**File**: `packages/frontend-shared/src/gql-components/topnav/UserAvatar.vue` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-   />
- </template>
- 
--<script setup lang="ts" >
-+<script setup lang="ts">
- import gravatar from 'gravatar'
- import { computed } from 'vue'
- 
-```
-
-**File**: `system-tests/project-fixtures/runner-specs/cypress/e2e/errors/hooks.cy.js` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@ describe('nested_hooks', () => {
-   describe('nested beforeEach', () => {
-     before(() => {
-       log()
-+      // eslint-disable-next-line mocha/no-nested-tests -- registering a hook while a test runs is the error this fixture exercises
-       beforeEach(() => {
-         log()
-       })
-```
-
-**File**: `system-tests/project-fixtures/runner-specs/cypress/e2e/errors/nested_hooks.cy.js` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ describe('nested_hooks', () => {
-   describe('nested beforeEach', () => {
-     before(() => {
-       log()
-+      // eslint-disable-next-line mocha/no-nested-tests -- registering a hook while a test runs is the error this fixture exercises
-       beforeEach(() => {
-         log()
-       })
-```
-
----
-
-### Incident Patch 3: `5b72b7ee` (2026-11-05)
-**Commit Message**: fix: sync cy.intercept Set-Cookie edits to the browser in Chromium (#35222)
-
-* fix(server): sync cy.intercept Set-Cookie edits to Chrome
-
-- Make the browser's cookie store match the Set-Cookie headers a cy.intercept response handler leaves on the response under native CDP interception. Previously Chrome stored the origin's cookies before the response was paused, so handler edits, additions and removals had no effect
-- Add planSetCookieSync, which works out the Network.setCookie and Network.deleteCookies commands that turn what the origin's headers stored into what the handler's headers describe, and restores cookies the origin overwrote from the cookies sent with the request
-- Skip cookies Chrome blocked, partitioned cookies with no usable partition key, and responses Chrome stored nothing from (requests sent without credentials)
-- Record the cookies sent with each request from Network.requestWillBeSentExtraInfo so they can serve as the baseline
-- Run the sync before the paused response is released, so the page and any redirect hop that follows already see the result
-
-Fixes #34902
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): add entry for cy.intercept Set
-
-**File**: `cli/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@
- 
- **Bugfixes:**
- 
-+- Fixed a regression in [16.0.0](#16-0-0) where changes a [`cy.intercept()`](https://on.cypress.io/intercept) response handler made to `Set-Cookie` headers did not reach the browser in Chromium-based browsers. The browser stored the cookies exactly as the server sent them, so a handler that rewrote a cookie's attributes, such as adding `SameSite=None` so a cross-site login cookie is accepted, or that removed a cookie, had no effect. Cookies in the browser now match the `Set-Cookie` headers the handler leaves on the response. Fixes [#34902](https://github.com/cypress-io/cypress/issues/34902).
- - Fixed an issue where a spec whose bundled file includes a large inline source map could crash the browser tab, leaving `cypress run` hanging with no error until it was killed. The crash could happen while the spec first loaded, or when it loaded again after its first [`cy.visit()`](https://on.cypress.io/visit) to another origin. Specs with inline source maps now also load faster and use less memory. Fixes [#35201](https://github.com/cypress-io/cypress/issues/35201).
- - Fixed an issue where `cypress run` could hang until it was killed, or exit with an unrelated `socket hang up` error, when the process that loads your config file and runs your [Node events](https://docs.cypress.io/app/plugins/plugins-guide) exited, for example because the operating system ran out of memory or `setupNodeEvents` called `process.exit()`. In component testing this process also runs the dev server. Cypress now stops the run with an error that says the process exited, with its exit code or signal. Fixes [#25507](https://github.com/cypress-io/cypress/issues/25507) and [#35223](https://github.com/cypress-io/cypress/issues/35223).
- - Fixed an issue where, in Chrome 158 and later, `cypress run` stopped with the error `* is not a valid URL` when it opened a second spec. Fixes [#35195](https://github.com/cypress-io/cypress/issues/35195).
-```
-
-**File**: `packages/server/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -33,6 +33,7 @@ Read [`.cursor/skills/server-mocha-to-vitest/SKILL.md`](../../.cursor/skills/ser
- **Architecture**
- 
- - `lib/browsers/` — Browser launch, automation, and CDP/BiDi communication for Chrome, Firefox, Electron, and WebKit
-+  - `lib/browsers/cdp-protocol/` — The browser network path for Chromium browsers (CDP Fetch interception instead of the HTTP proxy); its [README](./lib/browsers/cdp-protocol/README.md) explains how cookies work there
- - `lib/project-base.ts` — Base project class; orchestrates proxy, socket, and server setup
- - `lib/server-base.ts` — HTTP/HTTPS server setup and routing
- - `lib/socket-base.ts`, `lib/socket-e2e.ts`, `lib/socket-ct.ts` — WebSocket communication with the browser/driver
-```
-
-**File**: `packages/server/lib/browsers/cdp-protocol/README.md` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+# Cookies on the browser network path
-+
-+Chrome, Chromium and Edge don't send test traffic through Cypress's HTTP proxy. Cypress intercepts it inside the browser with the CDP Fetch domain instead, which is the default whenever [`isBrowserNetworkMode`](../../util/network-mode.ts) returns true. Firefox, WebKit and Electron, and any browser run with the deprecated `forceHttp1` option, stay on the proxy.
-+
-+This page explains how cookies work on the browser network path, and where the result differs from the proxy. The detailed rules live in the doc comments of the files it links to, so read those before changing the behavior.
-+
-+## Shared middleware
-+
-+The request and response middleware in [`@packages/proxy`](../../../../proxy/lib/http/) runs on both paths, unchanged. It is the ordered pipeline the HTTP proxy runs on every request and response, and it includes both the cookie steps and the `cy.intercept()` handlers. [`network-runtime.ts`](../../network-runtime.ts) runs the same `NetworkProxy` pipeline over a synthetic Express request and response built from each Fetch pause, and no cookie step checks which path it is on. The server-side cookie jar is the same singleton on both paths.
-+
-+What differs is the browser around that middleware:
-+
-+| | Proxy path | Browser network path |
-+| --- | --- | --- |
-+| Who stores a response's cookies | The browser, from the headers the proxy sends it, after the response middleware, including `cy.intercept()`, has run | Chrome, from the origin's headers, **before** pausing the response for the response middleware |
-+| Where Cypress reads `Set-Cookie` | The upstream response | `Network.responseReceivedExtraInfo`, because Fetch pauses never include it |
-+| How a `cy.intercept()` handler's `Set-Cookie` changes reach the browser | The browser receives them as the response headers | [`cdp-set-cookie-sync.ts`](./cdp-set-cookie-sync.ts) writes them into Chrome's store with CDP cookie commands |
-+
-+## A request on the browser network path
-+
-+1. Chrome pauses the request (`Fetch.requestPaused`). The pause already carries the `Cookie` header Chrome is about to send, for documents and for `fetch()`/XHR alike, so the middleware's `req.cookies` is populated the same way as on the proxy path. [`cdp-fetch-transport.ts`](./cdp-fetch-transport.ts) marks AUT-frame documents with an `x-cypress-is-aut-frame` header. The request middleware reads it to tell those documents apart from other requests, then strips it before the request goes out.
-+2. The request middleware runs. When the AUT isn't on the primary origin, or the request is for the AUT frame, the middleware *simulates top*: it treats the AUT URL as the top-level page when deciding which cookies apply. In that case `MaybeAttachCrossOriginCookies` adds the jar's cookies for the URL to the `Cookie` header, with the jar winning on a name clash. The `cy.intercept()` request handler runs after it.
-+3. If the middleware changed any header, the transport sends the full header list with `Fetch.continueRequest`. Otherwise it sends none and Chrome's own headers stand. A `Cookie` header in that list replaces the one Chrome would have sent. Leaving `Cookie` out of the list does not remove it: Chrome adds its stored cookies back. So when the middleware removes the `Cookie` header Chrome paused with, the transport sends an empty one in its place. For a request a `cy.intercept()` route matched, the transport also reads Chrome's whole cookie store with `Network.getAllCookies`, sent just before `Fetch.continueRequest` in the same tick. Chrome answers that read before it stores the response's cookies, so it is the store as it was before the response, which [the cookie sync](#syncing-chromes-store-with-the-handlers-headers) restores from.
-+
-+Top simulation decides which cookies are same-site by comparing against the AUT's current URL, so that URL has to stay current. The middleware records it whenever it handles an AUT document, which on the proxy path is every time. On the browser network path, a navigation can commit without a Fetch pause, so the middleware never sees it. Chrome pauses documents it serves from its HTTP cache, but not a page it restores from the back/forward cache. The runtime therefore also records the URL on every http(s) navigation of the AUT frame (`onAUTFrameNavigated` in `network-runtime.ts`). Other schemes are ignored, so the `about:blank` that test isolation loads between tests is never recorded as top.
-+
-+## A response on the browser network path
-+
-+1. Chrome receives the response, **stores the origin's `Set-Cookie` headers**, then pauses it. Neither `Fetch.continueResponse` nor `Fetch.fulfillRequest` reverts that store.
-+2. The pause has no `Set-Cookie`. The transport takes the raw headers from `Network.responseReceivedExtraInfo`, along with the lines Chrome blocked and the cookie partition key, and merges them into the response (`resolveCookieHeaders`).
-+3. The response middleware runs:
-+   - `InterceptResponse
-```
-
-**File**: `packages/server/lib/browsers/cdp-protocol/cdp-fetch-codec.ts` (modified, +6/-1)
-```diff
-@@ -100,8 +100,13 @@ function headerEntriesChanged (left: Protocol.Fetch.HeaderEntry[], right: Protoc
-   // Compare case-insensitively on name and order-insensitively overall — CDP
-   // pause events and the middleware view can fold the same headers back in a
-   // different order and casing without that being a meaningful change.
-+  // Set-Cookie keeps its order: when two lines set the same cookie, the later
-+  // one wins, so a handler that only reorders them changes the cookie stored.
-   const normalize = (entries: Protocol.Fetch.HeaderEntry[]) => {
--    return entries.map(({ name, value }) => `${name.toLowerCase()}: ${value}`).sort()
-+    const lines = entries.map(({ name, value }) => `${name.toLowerCase()}: ${value}`)
-+    const isSetCookie = (line: string) => line.startsWith('set-cookie: ')
-+
-+    return [...lines.filter((line) => !isSetCookie(line)).sort(), ...lines.filter(isSetCookie)]
+@@ -125,9 +125,7 @@ function headerEntriesChanged (left: Protocol.Fetch.HeaderEntry[], right: Protoc
+  * stale length headers. The pause-header fallback describes the wire body, not
+  * the decoded body we fulfill with, so its encoding headers are stripped too.
+  */
+-function toFulfilledHeaders (headers?: HttpHeaders, pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
+-  const middlewareHeaders = toResponseHeaders(headers)
+-
++function toFulfilledHeaders (middlewareHeaders?: Protocol.Fetch.HeaderEntry[], pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
+   if (middlewareHeaders) {
+     return stripHeaderEntries(middlewareHeaders, WIRE_LENGTH_HEADERS)
    }
+@@ -143,9 +141,7 @@ function toFulfilledHeaders (headers?: HttpHeaders, pauseHeaders?: Protocol.Fetc
+  * lowercased, re-folded reconstruction — the same "don't override what you
+  * didn't touch" rule continueRequestHeaders applies at the request stage.
+  */
+-function toContinuedHeaders (headers?: HttpHeaders, pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
+-  const middlewareHeaders = toResponseHeaders(headers)
+-
++function toContinuedHeaders (middlewareHeaders?: Protocol.Fetch.HeaderEntry[], pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
+   if (!middlewareHeaders) {
+     return undefined
+   }
+@@ -200,14 +196,19 @@ function toPausePostData (entries?: Protocol.Network.PostDataEntry[]): Buffer |
+   return Buffer.concat(entries.map(({ bytes }) => Buffer.from(bytes!, 'base64')))
+ }
  
-   const leftNorm = normalize(left)
+-function contentTypeOf (entries?: Protocol.Fetch.HeaderEntry[]): string | undefined {
++function headerValueOf (entries: Protocol.Fetch.HeaderEntry[] | undefined, headerName: string): string | undefined {
+   const values = entries
+-  ?.filter(({ name }) => name.toLowerCase() === 'content-type')
++  ?.filter(({ name }) => name.toLowerCase() === headerName)
+   .map(({ value }) => value)
+ 
+   return values?.length ? values.join(', ') : undefined
+ }
+ 
++// Headers that decide where and how Chrome follows a redirect. Only these are
++// compared, because the pipeline drops hop-by-hop headers such as Connection,
++// so a full comparison would flag every HTTP/1.1 redirect as changed.
++const REDIRECT_FOLLOW_HEADERS = ['location', 'referrer-policy']
++
+ /**
+  * Fulfill only when continueResponse would leave the Network record out of
+  * sync with what the page received; continue everything else, since
+@@ -223,6 +224,14 @@ function contentTypeOf (entries?: Protocol.Fetch.HeaderEntry[]): string | undefi
+  * Fetch.fulfillRequest:
+  *   - the body, which no longer matches the origin bytes
+  *   - the content-type, which mimeType and charset are derived from
++ *
++ * A redirect whose location or referrer-policy changed is fulfilled too. At a
++ * redirect pause, Chrome records overridden headers but follows the redirect
++ * as the origin sent it: to the origin's location, with the referrer policy
++ * the origin set. CDP cannot read a redirect's body, so it is fulfilled empty.
++ * A handler that removes the location therefore gets an empty body here, where
++ * the MITM path sends the origin's.
++ *
+  * Spy-only, status, and other header intercepts stay on continueResponse.
+  * If Chrome ever derives another Network.responseReceived field from a header
+  * without recomputing it for overrides, that header joins the fulfill list.
+@@ -234,20 +243,29 @@ function encodePausedResponse (
+   { originalBodyDigest, ...pausedResponse }: CdpFetchTransportResponse,
+   response: CdpFetchHttpResponse,
+ ): CdpFetchTransportResponse {
++  const middlewareHeaders = toResponseHeaders(response.headers)
+   const bodyModified = response.body !== undefined && !isOriginBody(response.body, originalBodyDigest)
+-  const middlewareContentType = contentTypeOf(toResponseHeaders(response.headers))
++  const middlewareContentType = headerValueOf(middlewareHeaders, 'content-type')
+   const contentTypeModified = middlewareContentType !== undefined
+-    && middlewareContentType !== contentTypeOf(pausedResponse.responseHeaders)
++    && middlewareContentType !== headerValueOf(pausedResponse.responseHeaders, 'content-type')
++
++  // A header the middleware removed counts as changed; middleware that
++  // reported no headers at all changed nothing.
++  const redirectModified = pausedResponse.redirectPause === true
++    && middlewareHeaders !== undefined
++    && REDIRECT_FOLLOW_HEADERS.some((headerName) => {
++      return headerValueOf(middlewareHeaders, headerName) !== headerValueOf(pausedResponse.responseHeaders, headerName)
++    })
+ 
+-  const fulfilled = bodyModified || (contentTypeModified && response.body !== undefined)
++  const fulfilled = bodyModified || (contentTypeModified && response.body !== undefined) || redirectModified
+ 
+   return {
+     ...pausedResponse,
+     fulfilled,
+     responseCode: response.statusCode ?? pausedResponse.responseCode,
+     responseHeaders: fulfilled
+- 
 ```
 
-**File**: `packages/server/lib/browsers/cdp-protocol/cdp-fetch-transport.ts` (modified, +154/-17)
+**File**: `packages/server/lib/browsers/cdp-protocol/cdp-fetch-transport.ts` (modified, +11/-7)
 ```diff
-@@ -14,6 +14,8 @@ import { CdpBodyCapture } from './cdp-body-capture'
- import { toNetworkError } from './cdp-network-error'
- import { AUT_FRAME_HEADER, EXTRA_TARGET_HEADER } from '../constants'
- import { normalizeResourceType } from './normalize-resource-type'
-+import type { CookiesBeforeIntercept } from './cdp-set-cookie-sync'
-+import { planSetCookieSync } from './cdp-set-cookie-sync'
+@@ -3,7 +3,7 @@ import debugModule from 'debug'
+ import { STATUS_CODES } from 'http'
+ import { Readable } from 'stream'
+ import type { ForHttpIntercept, HttpRequest } from '@packages/network-interception'
+-import { HttpIntercept } from '@packages/network-interception'
++import { HttpIntercept, isRedirectStatus } from '@packages/network-interception'
+ import type { ResourceType } from '@packages/proxy'
+ import type { BodyDigest } from './body-digest'
+ import { digestBody } from './body-digest'
+@@ -23,7 +23,6 @@ type CdpFetchClient = Pick<ICriClient, 'send' | 'on' | 'off'>
  
- const debug = debugModule('cypress:server:browsers:cdp-fetch-transport')
- 
-@@ -23,6 +25,17 @@ type CdpFetchRequest = Protocol.Fetch.RequestPausedEvent['request']
+ type CdpFetchRequest = Protocol.Fetch.RequestPausedEvent['request']
  const RESPONSE_PAUSE_TIMEOUT_MS = 30000
- const REDIRECT_STATUS_CODES = [301, 302, 303, 307, 308]
+-const REDIRECT_STATUS_CODES = [301, 302, 303, 307, 308]
  
-+const setCookieHeaders = (headers: Protocol.Fetch.HeaderEntry[]): string[] => {
-+  return headers
-+  .filter(({ name }) => name.toLowerCase() === 'set-cookie')
-+  // devtools folds multiple Set-Cookie values into one newline-separated string
-+  .flatMap(({ value }) => value.split('\n'))
-+}
-+
-+const hasCookieHeader = (headers: Protocol.Network.Headers): boolean => {
-+  return Object.keys(headers).some((name) => name.toLowerCase() === 'cookie')
-+}
-+
- // Shared by every session this transport enables so none of them can drift
- // into pausing a different set of requests than the others.
- const FETCH_PATTERNS: Protocol.Fetch.EnableRequest = {
-@@ -157,6 +170,9 @@ export interface CdpFetchTransportResponse extends CdpFetchTransportRequest {
+ const setCookieHeaders = (headers: Protocol.Fetch.HeaderEntry[]): string[] => {
+   return headers
+@@ -55,7 +54,7 @@ const FETCH_PATTERNS: Protocol.Fetch.EnableRequest = {
+ // so an untouched 3xx continues natively while a middleware that writes a body
+ // onto one falls back to fulfill.
+ const isRedirectPause = (event: Protocol.Fetch.RequestPausedEvent): boolean => {
+-  return REDIRECT_STATUS_CODES.includes(event.responseStatusCode as number)
++  return isRedirectStatus(event.responseStatusCode)
+     && !!event.responseHeaders?.some(({ name }) => name.toLowerCase() === 'location')
+ }
+ 
+@@ -170,6 +169,9 @@ export interface CdpFetchTransportResponse extends CdpFetchTransportRequest {
    captureStream?: Readable
    fulfilled?: boolean
    originalBodyDigest?: BodyDigest
-+  // Chrome's cookie handling before cy.intercept ran: the baseline the
-+  // response's final Set-Cookie headers are synced against
-+  cookiesBeforeIntercept?: CookiesBeforeIntercept
-   requestId: string
-   responseCode: number
-   responseStatusText?: string
-@@ -177,6 +193,10 @@ type ResponsePauseDeferred = PromiseWithResolvers<CdpFetchTransportResponse> & {
-   // back from the middleware onion — read by resolveResponse's shouldStreamBody
-   // call so classification agrees with the interception that actually ran.
-   hadMatchingRoutes?: boolean
-+  // Chrome's cookie store as it was when the request was continued, read for
-+  // requests a cy.intercept route matched. Resolves to undefined when the read
-+  // failed.
-+  cookieStoreWhenContinued?: Promise<Protocol.Network.Cookie[] | undefined>
- }
++  // Paused in the redirect-received state, where Chrome ignores
++  // continueResponse overrides
++  redirectPause?: boolean
+   // Chrome's cookie handling before cy.intercept ran: the baseline the
+   // response's final Set-Cookie headers are synced against
+   cookiesBeforeIntercept?: CookiesBeforeIntercept
+@@ -852,6 +854,7 @@ export class CdpFetchTransport {
  
- export class CdpFetchTransport {
-@@ -281,8 +301,8 @@ export class CdpFetchTransport {
-     // The Fetch domain reports nothing when a paused request is canceled, so
-     // the Network domain is the only signal that a flow is never coming back.
-     this.client.on('Network.loadingFailed', this.onLoadingFailed)
--    // Set-Cookie never appears on Fetch response pauses — the raw cookie
--    // headers only arrive on the Network extraInfo events tracked here.
-+    // Fetch response pauses carry no Set-Cookie, sent request cookies or blocked
-+    // Set-Cookie lines. Only the Network extraInfo events tracked here do.
-     this.networkExtraInfo.start()
-     this.bodyCapture.start()
-     // Set ahead of the own-session enable below settling, not after - the
-@@ -612,6 +632,15 @@ export class CdpFetchTransport {
-             headersChanged: !!headers,
-           })
+     // no predicate composed → materialize everything
+     const bodySkipped = this.options.shouldStreamBody?.(event, { hasMatchingRoute: deferred.hadMatchingRoutes ?? false }) ?? false
++    const redirectPause = isRedirectPause(event)
+     let originalBody: Buffer
+     let captureStream: Readable | undefined
  
-+        // The cookie sync restores what the origin's Set-Cookie overwrote from
-+        // this read. Only a cy.intercept handler can drop those lines, so it is
-+        // skipped when no route matched. Nothing may be awaited between the
-+        // read and continueRequest, or Chrome stores the response's cookies
-+        // before answering it.
-+        if (outbound.hadMatchingRoutes) {
-+          responseDeferred.cookieStoreWhenContinued = this.readCookieStore(outbound.sessionId)
-+        }
-+
-         await this.client.send('Fetch.continueRequest', {
-           requestId: event.requestId,
-           ...(outbound.url !== event.request.url ? { url: outbound.url } : {}),
-@@ -654,6 +683,8 @@ export class CdpFetchTransport {
-         }
-       })
+@@ -863,7 +866,7 @@ export class CdpFetchTransport {
+       // already be listening before that happens or its opening bytes are lost.
+       // Redirect pauses never arm: their hop emits no loadingFinished, so an
+       // armed entry would sit unread until the transport resets.
+-      if (event.networkId && !isRedirectPause(event) && this.options.shouldCaptureBody?.()) {
++      if (event.networkId && !redirectPause && this.options.shouldCaptureBody?.()) {
+         captureStream = await this.bodyCapture.arm(event.networkId, sessionId)
  
-+      await this.syncSetCookies(response, responseDeferred.cookieStoreWhenContinued)
-+
-       if (response.fulfilled) {
-         // base64 of the gzip magic bytes starts with 'H4sI' — an encoded body
-         // here with no content-encoding header means mangled rendering
-@@ -815,7 +846,7 @@ export class CdpFetchTransport {
+         // The flow may have been rejected while arming awaited CDP, by
+@@ -894,7 +897,7 @@ export class CdpFetchTransport {
+       originalBody = Buffer.alloc(0)
+     } else {
+       try {
+-        originalBody = await this.fetchResponseBody(event, sessionId)
++        originalBody = await this.fetchResponseBody(event, redirectPause, sessionId)
+       } catch (err) {
+         deferred.reject(new Error(`CDP Fetch response body unavailable for ${event.request.url}: ${(err as Error).message}`))
  
-     debug('response pause for %s: status %s, header names %o', event.request.url, event.responseStatusCode, event.responseHeaders?.map(({ name }) => name))
- 
--    const responseHeaders = await this.withSetCookieHeaders(event, sessionId)
-+    const { responseHeaders, cookiesBeforeIntercept } = await this.resolveCookieHeaders(event, sessionId)
- 
-     deferred.headersReady.resolve()
- 
-@@ -875,7 +906,7 @@ export class CdpFetchTransport {
-       }
-     }
- 
--    // reset() may have rejected this flow while the merge/fetch awaited CDP.
-+    // reset() may have rejected this flow while the awaits above were pending.
-     // The resolve below would be a no-op and nothing else owns this pause —
-     // release it, or the browser stays paused (
-```
-
-**File**: `packages/server/lib/browsers/cdp-protocol/cdp-set-cookie-sync.ts` (added, +546/-0)
-```diff
-@@ -0,0 +1,546 @@
-+import { isDeepStrictEqual } from 'util'
-+import type { Protocol } from 'devtools-protocol'
-+import { Cookie, defaultPath } from 'tough-cookie'
-+import { isHostOnlyCookie } from '../../automation/cookie/util'
-+
-+/**
-+ * Chrome saves a response's Set-Cookie headers to its cookie store before it
-+ * pauses the response for Fetch interception, and neither Fetch.continueResponse
-+ * nor Fetch.fulfillRequest undoes that. So when a cy.intercept response handler
-+ * edits, adds or removes Set-Cookie headers, Chrome's store still reflects the
-+ * origin's headers, not the handler's.
-+ *
-+ * This module works out the CDP cookie commands that close that gap. The target
-+ * is the store the browser ends with on the "proxy path", where the request goes
-+ * through Cypress's HTTP proxy and the browser only ever sees the handler's
-+ * headers. Where CDP can't reproduce that exactly, the differences are listed on
-+ * `planSetCookieSync`.
-+ */
-+
-+/**
-+ * What Chrome reported about this request's cookies before cy.intercept saw the
-+ * response. `setCookieHeaders…` fields hold raw `Set-Cookie` header values, one
-+ * per header.
-+ */
-+export type CookiesBeforeIntercept = {
-+  // every Set-Cookie header the origin sent, from
-+  // Network.responseReceivedExtraInfo
-+  setCookieHeadersFromOrigin: string[]
-+  // the headers above that Chrome refused to store
-+  setCookieHeadersBlockedByChrome: string[]
-+  // the partition Chrome stored this response's partitioned cookies in; absent
-+  // when Chrome reports the partition key as opaque and CDP cannot address it
-+  partitionKey?: Protocol.Network.CookiePartitionKey
-+}
-+
-+export type SetCookieSyncCommand =
-+  | { method: 'Network.setCookie', params: Protocol.Network.SetCookieRequest }
-+  | { method: 'Network.deleteCookies', params: Protocol.Network.DeleteCookiesRequest }
-+
-+export type ChromeStoreCookie = Pick<Protocol.Network.Cookie, 'name' | 'value' | 'path' | 'domain' | 'partitionKey'>
-+
-+// What identifies a cookie in Chrome's store: name, domain, path and partition.
-+// Chrome reports cookies in this form (`cookiesWhenRequestSent`,
-+// `getChromeCookieStore`), with the domain already resolved: dotted for a
-+// domain cookie, the bare host for a host-only one. `parseSetCookie` resolves
-+// each header the same way (see `cookieStoreDomain`) so the two can be compared.
-+type ChromeCookieIdentity = Omit<ChromeStoreCookie, 'value'>
-+
-+type ParsedSetCookie = {
-+  cookie: Cookie
-+  // Matches a header against the ones Chrome blocked: name, the header's own
-+  // Domain=, path, the partitioned flag, and the attributes Chrome stores.
-+  // Formatting is ignored: a handler's copy of a blocked header that differs
-+  // only in spacing, casing or attribute order is still blocked. A change to
-+  // any of those fields makes it a new header, which Chrome didn't block.
-+  headerFingerprint: string
-+  // where Chrome stores the cookie, for matching against what Chrome reports
-+  identity: ChromeCookieIdentity
-+  priority?: Protocol.Network.CookiePriority
-+  partitioned: boolean
-+}
-+
-+type CookiesByIdentity = Map<string, ParsedSetCookie>
-+
-+type ReadChromeCookieStore = () => Promise<ChromeStoreCookie[]>
-+
-+// tough-cookie normalizes SameSite and Priority to lowercase
-+const CDP_SAME_SITE: Record<string, Protocol.Network.CookieSameSite | undefined> = { strict: 'Strict', lax: 'Lax', none: 'None' }
-+const CDP_PRIORITY: Record<string, Protocol.Network.CookiePriority | undefined> = { low: 'Low', medium: 'Medium', high: 'High' }
-+
-+// The proxy middleware adds __cypress.* cookies for its own bookkeeping. They
-+// are not part of the page's traffic, so they are left out of the sync.
-+const isInternalCookie = (name: string) => name.startsWith('__cypress.')
-+
-+// Whether Chrome stores Domain=<host> as a domain cookie. A host with no
-+// registrable domain (an IP, a single label such as localhost, or a public
-+// suffix such as github.io or co.uk) can't hold one, so Chrome stores the
-+// cookie host-only instead. A host like example.test or foo.github.io can.
-+// `isHostOnlyCookie` is named for the opposite of what it returns here: true
-+// means a domain cookie is allowed.
-+const hostAcceptsDomainCookie = (host: string): boolean => !!isHostOnlyCookie({ domain: host })
-+
-+/**
-+ * The domain Chrome stores a cookie under, resolved the same way Chrome
-+ * resolves a Set-Cookie header's Domain= attribute:
-+ * - no Domain=, or Domain= naming the host itself where that is stored
-+ *   host-only — under `URL.hostname`. Chrome keeps the brackets on an IPv6
-+ *   host (`[::1]`), and normalizes an address the same way `URL` does.
-+ * - any other Domain= — dotted (tough-cookie strips the dot from the header, so
-+ *   it is added back).
-+ *
-+ * Only used for matching a header against what Chrome reports. The commands
-+ * don't need it: `setParsedCookieCommand` passes the header's own domain and
-+ * lets Chrome resolve it, and `restoreCookieCommand` already has the resolved
-+ * form from Chrome.
-+
-```
-
-**File**: `packages/server/test/unit/browsers/cdp-fetch-transport.spec.ts` (modified, +492/-0)
-```diff
-@@ -8,6 +8,7 @@ import { digestBody } from '../../../lib/browsers/cdp-protocol/body-digest'
- import { createCdpFetchCodec } from '../../../lib/browsers/cdp-protocol/cdp-fetch-codec'
- import { CdpFetchTransport } from '../../../lib/browsers/cdp-protocol/cdp-fetch-transport'
- import type { CdpFetchTransportRequest } from '../../../lib/browsers/cdp-protocol/cdp-fetch-transport'
-+import type { ChromeStoreCookie } from '../../../lib/browsers/cdp-protocol/cdp-set-cookie-sync'
- import { CdpBodyCapture } from '../../../lib/browsers/cdp-protocol/cdp-body-capture'
- import { toNetworkError } from '../../../lib/browsers/cdp-protocol/cdp-network-error'
- import { shouldStreamResponseBody } from '../../../lib/browsers/cdp-protocol/should-stream-response-body'
-@@ -80,6 +81,7 @@ function createClient () {
-       resolves: (value: unknown) => define(() => Promise.resolve(value)),
-       rejects: (error: Error) => define(() => Promise.reject(error)),
-       returns: (value: unknown) => define(() => value),
-+      callsFake: (respond: () => unknown) => define(respond),
-     }
+@@ -935,6 +938,7 @@ export class CdpFetchTransport {
+       ...(cookiesBeforeIntercept ? { cookiesBeforeIntercept } : {}),
+       sessionId,
+       ...(bodySkipped ? { bodySkipped: true } : {}),
++      ...(redirectPause ? { redirectPause: true } : {}),
+       ...(captureStream ? { captureStream } : {}),
+     })
+   }
+@@ -1054,8 +1058,8 @@ export class CdpFetchTransport {
+     })
    }
  
-@@ -756,6 +758,71 @@ describe('CdpFetchTransport', () => {
-       expect(encoded.responseHeaders).toBeUndefined()
+-  private fetchResponseBody = async (event: Protocol.Fetch.RequestPausedEvent, sessionId?: string): Promise<Buffer> => {
+-    if (isRedirectPause(event)) {
++  private fetchResponseBody = async (event: Protocol.Fetch.RequestPausedEvent, redirectPause: boolean, sessionId?: string): Promise<Buffer> => {
++    if (redirectPause) {
+       return Buffer.alloc(0)
+     }
+ 
+```
+
+**File**: `packages/server/test/unit/browsers/cdp-fetch-transport.spec.ts` (modified, +200/-0)
+```diff
+@@ -855,6 +855,133 @@ describe('CdpFetchTransport', () => {
+       expect(encoded.body).toBe(Buffer.from('stubbed').toString('base64'))
      })
  
-+    describe('continuing a response whose headers only changed order', () => {
-+      const decodePausedResponse = (codec: ReturnType<typeof createCdpFetchCodec>, responseHeaders: Protocol.Fetch.HeaderEntry[]) => {
++    // https://github.com/cypress-io/cypress/issues/34704
++    // At a redirect pause Chrome follows the redirect as the origin sent it even
++    // when continueResponse overrides its headers, so a changed location or
++    // referrer-policy has to be fulfilled.
++    describe('encoding a redirect', () => {
++      const decodePausedResponse = (codec: ReturnType<typeof createCdpFetchCodec>, options: {
++        responseHeaders?: Protocol.Fetch.HeaderEntry[]
++        redirectPause?: boolean
++      } = {}) => {
 +        const request: CdpFetchTransportRequest = {
 +          id: 'network-1',
-+          url: 'https://example.test/',
++          url: 'https://example.test/redirect',
 +          method: 'GET',
 +          headers: {},
 +          initialPriority: 'High',
@@ -1735,232 +1487,214 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +        return codec.decodeResponse({
 +          ...request,
 +          requestId: 'fetch-request',
-+          responseCode: 200,
-+          responseStatusText: 'OK',
-+          responseHeaders,
-+          originalBodyDigest: digestBody(Buffer.from('origin')),
++          responseCode: 302,
++          responseStatusText: 'Found',
++          responseHeaders: options.responseHeaders ?? [
++            { name: 'Location', value: '/original' },
++            { name: 'Date', value: 'today' },
++          ],
++          ...(options.redirectPause ?? true ? { redirectPause: true } : {}),
++          originalBodyDigest: digestBody(Buffer.alloc(0)),
 +        })
 +      }
 +
-+      it('omits the headers when only their order and casing changed', () => {
-+        const codec = createCdpFetchCodec()
-+        const response = decodePausedResponse(codec, [
-+          { name: 'Content-Type', value: 'text/plain' },
-+          { name: 'X-Foo', value: 'bar' },
-+        ])
++      const toHeaderEntries = (headers: Record<string, string>) => Object.entries(headers).map(([name, value]) => ({ name, value }))
 +
-+        const encoded = codec.encodeResponse({
-+          ...response,
-+          body: 'origin',
-+          headers: { 'x-foo': 'bar', 'content-type': 'text/plain' },
++      it.each([
++        { change: 'changed', headers: { location: '/rewritten', date: 'today' } },
++        { change: 'removed', headers: { date: 'today' } },
++      ])('fulfills a redirect whose location middleware $change', ({ headers }) => {
++        const codec = createCdpFetchCodec()
++        const response = decodePausedResponse(codec)
++
++        expect(response.headers).toStrictEqual({ location: '/original', date: 'today' })
++
++        const encoded = codec.encodeResponse({ ...response, body: '', headers })
++
++        expect(encoded.fulfilled).toBe(true)
++        expect(encoded.responseCode).toBe(302)
++        expect(encoded.responseHeaders).toStrictEqual(toHeaderEntries(headers))
++        expect(encoded.body).toBe('')
++      })
++
++      // Chrome applies a redirect's Referrer-Policy to the request it follows
++      // the redirect with, and ignores a continueResponse override of it.
++      it.each([
++        { change: 'added', originPolicy: undefined, policy: 'no-referrer' },
++        { change: 'changed', originPolicy: 'unsafe-url', policy: 'no-referrer' },
++        { change: 'removed', originPolicy: 'no-referrer', policy: undefined },
++      ])('fulfills a redirect whose referrer-policy middleware $change', ({ originPolicy, policy }) => {
++        const codec = createCdpFetchCodec()
++        const response = decodePausedResponse(codec, {
++          responseHeaders: [
++            { name: 'Location', value: '/original' },
++            ...(originPolicy ? [{ name: 'Referrer-Policy', value: originPolicy }] : []),
++          ],
 +        })
++
++        const headers = { location: '/original', ...(policy ? { 'referrer-policy': policy } : {}) }
++        const encoded = codec.encodeResponse({ ...response, body: '', headers })
++
++        expect(encoded.fulfilled).toBe(true)
++        expect(encoded.responseHeaders).toStrictEqual(toHeaderEntries(headers))
++        expect(encoded.body).toBe('')
++      })
++
++      // The origin's casing differs from the middleware view, which a plain
++      // string comparison of the header lists would mistake for a change.
++      it('continues a redirect that middleware passed through untouched', () => {
++        const codec = createCdpFetchCodec()
++        const response = decodePausedResponse(codec)
++
++        const encoded = codec.encodeResponse({ ...response, body: '' })
 +
 +        expect(encoded.fulfilled).toBe(false)
 +        expect(encoded.responseHeaders).toBeUndefined()
 +      })
 +
-+      // the later of two lines for the same cookie is the one stored, so the
-+      // reorder has to reach the set-cookie sync
-+      it('sends the headers when Set-Cookie lines were reordered', () => {
++      it('continues a redirect when middleware changed a header that does not affect how it is followed', () => {
 +        const codec = createCdpFetchCodec()
-+        const response = decodePausedResponse(codec, [
-+          { name: 'content-type', value: 'text/plain' },
-+          { name: 'set-cookie', value: 'a=1' },
-+          { name: 'set-cookie', value: 'a=2' },
-+        ])
++        const response = decodePausedResponse(codec)
++
++        const headers = { 'location': '/original', 'date': 'today', 'x-custom': 'yes' }
++        const encoded = codec.encodeResponse({ ...response, body: '', headers })
++
++        expect(encoded.fulfilled).toBe(false)
++        expect(encoded.responseHeaders).toStrictEqual(toHeaderEntries(headers))
++      })
++
++      it('continues a redirect when middleware reported no headers', () => {
++        const codec = createCdpFetchCodec()
++        const response = decodePausedResponse(codec)
 +
 +        const encoded = codec.encodeResponse({
 +          ...response,
-+          body: 'origin',
-+          headers: { 'content-type': 'text/plain', 'set-cookie': ['a=2', 'a=1'] },
++          body: '',
++          headers: undefined,
 +        })
 +
 +        expect(encoded.fulfilled).toBe(false)
-+        expect(encoded.responseHeaders).toStrictEqual([
-+          { name: 'content-type', value: 'text/plain' },
-+          { name: 'set-cookie', value: 'a=2' },
-+          { name: 'set-cookie', value: 'a=1' },
-+        ])
 +      })
-+    })
-+
-     it('fulfills a skipped response when middleware sets a body', () => {
-       const codec = createCdpFetchCodec()
- 
-@@ -1348,6 +1415,46 @@ describe('CdpFetchTransport', () => {
-       await handled
-     })
- 
-+    it('sends an empty Cookie header when middleware removes the one Chrome paused with', async () => {
-+      const client = createClient()
-+      const httpIntercept = new HttpIntercept(createCdpFetchCodec())
-+      const { transport } = createTransport(client, { httpIntercept })
-+      const request = createPausedRequest({ requestId: 'fetch-request', networkId: 'network-1' })
-+      const response = createPausedRequest({ requestId: 'fetch-request', networkId: 'network-1', responseStatusCode: 200 })
-+      const onRequestPaused = await startTransport(transport, client)
-+
-+      request.request.headers = {
-+        'X-Foo': 'Bar',
-+        'Cookie': 'session=abc',
-+      }
-+
-+      httpIntercept.use((req, next) => {
-+        // removes the Cookie header the way `delete req.headers.cookie` in a
-+        // cy.intercept handler does
-+        const headers = Object.fromEntries(Object.entries(req.headers ?? {}).filter(([name]) => name.toLowerCase() !== 'cookie'))
-+
-+        return next({ ...req, headers })
-+      })
-+
-+      const handled = onRequestPaused(request)
-+
-+      await tick()
-+
-+      expectCalledWith(client.send, 'Fetch.continueRequest', {
-+        requestId: 'fetch-req
 ```
 
-**File**: `packages/server/test/unit/browsers/cdp-set-cookie-sync.spec.ts` (added, +939/-0)
+---
+
+### Incident Patch 3: `8811f2e2` (2026-11-10)
+**Commit Message**: test: drive graceful-exit step timeout specs with fake timers (#35340)
+
+Two specs measured a real setTimeout with Date.now() and asserted a lower
+bound equal to the timeout. libuv truncates a timer's start to whole
+milliseconds, so the timer can fire just under the requested delay and
+Date.now() reads 99 for a 100ms step. Fake timers assert the boundary
+exactly and drop ~1.7s of real waiting.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `packages/server/test/unit/util/graceful_exit.spec.ts` (modified, +19/-34)
 ```diff
-@@ -0,0 +1,939 @@
-+import { afterEach, describe, expect, it, vi } from 'vitest'
-+import type { Protocol } from 'devtools-protocol'
-+import { Cookie, defaultPath } from 'tough-cookie'
-+import { cookieStoreDomain, planSetCookieSync } from '../../../lib/browsers/cdp-protocol/cdp-set-cookie-sync'
-+import type { ChromeStoreCookie, CookiesBeforeIntercept, SetCookieSyncCommand } from '../../../lib/browsers/cdp-protocol/cdp-set-cookie-sync'
-+
-+const REQUEST_URL = 'https://api.example.test/a/b'
-+
-+const partitionKey: Protocol.Network.CookiePartitionKey = {
-+  topLevelSite: 'https://app.example.test',
-+  hasCrossSiteAncestor: true,
-+}
-+
-+async function plan (options: {
-+  setCookieHeadersFromOrigin: string[]
-+  setCookieHeadersAfterIntercept: string[]
-+  setCookieHeadersBlockedByChrome?: string[]
-+  partitionKey?: Protocol.Network.CookiePartitionKey
-+  includeWrites?: boolean
-+  url?: string
-+  // what Chrome's cookie store holds after the origin's response. Defaults to
-+  // every origin cookie Chrome didn't block, which is what Chrome stores when
-+  // the request was sent with credentials.
-+  chromeCookieStore?: ChromeStoreCookie[]
-+  // Chrome's whole cookie store before the response
-+  cookiesWhenRequestSent?: Protocol.Network.Cookie[]
-+}) {
-+  const url = options.url ?? REQUEST_URL
-+  const parsedUrl = URL.canParse(url) ? new URL(url) : undefined
-+
-+  const chromeCookieStoreByDefault: ChromeStoreCookie[] = options.setCookieHeadersFromOrigin
-+  .filter((header) => !options.setCookieHeadersBlockedByChrome?.includes(header))
-+  .flatMap((header) => {
-+    const cookie = Cookie.parse(header, { loose: true })
-+
-+    return cookie && parsedUrl ? [{
-+      name: cookie.key,
-+      value: cookie.value,
-+      path: cookie.path ?? defaultPath(parsedUrl.pathname),
-+      domain: cookieStoreDomain(cookie, parsedUrl),
-+      ...(/;\s*partitioned/i.test(header) ? { partitionKey: options.partitionKey } : {}),
-+    }] : []
-+  })
-+
-+  const cookiesBeforeIntercept: CookiesBeforeIntercept = {
-+    setCookieHeadersFromOrigin: options.setCookieHeadersFromOrigin,
-+    setCookieHeadersBlockedByChrome: options.setCookieHeadersBlockedByChrome ?? [],
-+    ...(options.partitionKey ? { partitionKey: options.partitionKey } : {}),
-+  }
-+
-+  return planSetCookieSync({
-+    url,
-+    cookiesWhenRequestSent: options.cookiesWhenRequestSent ?? [],
-+    cookiesBeforeIntercept,
-+    setCookieHeadersAfterIntercept: options.setCookieHeadersAfterIntercept,
-+    includeWrites: options.includeWrites ?? true,
-+    getChromeCookieStore: async () => options.chromeCookieStore ?? chromeCookieStoreByDefault,
-+  })
-+}
-+
-+function set (params: Protocol.Network.SetCookieRequest): SetCookieSyncCommand {
-+  return { method: 'Network.setCookie', params }
-+}
-+
-+// a removal targets the name, domain and path Chrome stored the cookie under,
-+// which can differ from the attributes in the header
-+function removal (params: Protocol.Network.DeleteCookiesRequest): SetCookieSyncCommand {
-+  return { method: 'Network.deleteCookies', params }
-+}
-+
-+// when the handler's header is already expired, the cookie is written with
-+// expires: 1 (a date in 1970). Chrome then deletes the cookie, just as it would
-+// for the header.
-+function expiry (params: Partial<Protocol.Network.SetCookieRequest>) {
-+  return { method: 'Network.setCookie', params: expect.objectContaining({ ...params, expires: 1 }) }
-+}
-+
-+function cookieWhenRequestSent (overrides: Partial<Protocol.Network.Cookie>): Protocol.Network.Cookie {
-+  return {
-+    name: 'a',
-+    value: 'before',
-+    domain: 'api.example.test',
-+    path: '/',
-+    expires: Date.parse('2030-01-01T00:00:00Z') / 1000,
-+    size: 7,
-+    httpOnly: false,
-+    secure: true,
-+    session: false,
-+    sameSite: 'None',
-+    priority: 'Medium',
-+    sourceScheme: 'Secure',
-+    sourcePort: 443,
-+    ...overrides,
-+  }
-+}
-+
-+// every cookie the plan sets, as name=value, including cookies it puts back
-+function cookiesSet (commands: SetCookieSyncCommand[]) {
-+  return commands.flatMap(({ method, params }) => method === 'Network.setCookie' ? [`${params.name}=${params.value}`] : [])
-+}
-+
-+describe('planSetCookieSync', () => {
-+  afterEach(() => {
+@@ -43,6 +43,7 @@ describe('lib/util/graceful-exit', () => {
+ 
+   afterEach(() => {
+     GracefulExit.resetForTesting()
 +    vi.useRealTimers()
-+  })
+     delete process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT
+     vi.restoreAllMocks()
+   })
+@@ -253,13 +254,9 @@ describe('lib/util/graceful-exit', () => {
+   it('abandons a hung step on its own budget so the remaining steps still complete', async () => {
+     process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT = '1000'
+ 
+-    const startedAt = Date.now()
+-    let exitedAfter: number | undefined
+-    const exitStub = vi.spyOn(process, 'exit').mockImplementation(() => {
+-      exitedAfter = exitedAfter ?? Date.now() - startedAt
++    vi.useFakeTimers()
+ 
+-      return undefined as never
+-    })
++    const exitStub = stubExit()
+     const logStub = stubLog()
+ 
+     let quickStepRan = false
+@@ -272,22 +269,21 @@ describe('lib/util/graceful-exit', () => {
+ 
+     void GracefulExit.exitGracefully(0)
+ 
+-    await new Promise((r) => setTimeout(r, 1200))
+-
+-    const logged = logStub.mock.calls.flat().join('\n')
+-
+-    logStub.mockRestore()
++    // 0.8 of the 1000ms budget, so teardown settles before the shared force-exit timer can fire
++    await vi.advanceTimersByTimeAsync(800)
+ 
+     expect(quickStepRan, 'the quick step is not cut off by the hung one').toBe(true)
+-    // 0.8 of the 1000ms budget, so teardown settles before the shared force-exit timer can fire
+-    expect(exitedAfter).toBeGreaterThanOrEqual(800)
+-    expect(exitedAfter).toBeLessThanOrEqual(999)
++    expect(exitStub).toHaveBeenCalledTimes(1)
+     expect(exitStub).toHaveBeenCalledWith(0)
 +
-+  it('plans nothing when the handler only reformatted a header', async () => {
-+    expect(await plan({
-+      setCookieHeadersFromOrigin: ['a=1; Path=/; Secure; SameSite=None'],
-+      setCookieHeadersAfterIntercept: ['a=1;samesite=none;secure;path=/'],
-+    })).toEqual([])
-+  })
++    await vi.advanceTimersByTimeAsync(1000)
 +
-+  it('sets a cookie whose value was rewritten', async () => {
-+    expect(await plan({
-+      setCookieHeadersFromOrigin: ['a=1; Path=/; Secure; SameSite=None'],
-+      setCookieHeadersAfterIntercept: ['a=2; Path=/; Secure; SameSite=None'],
-+    })).toEqual([set({
-+      name: 'a',
-+      value: '2',
-+      url: REQUEST_URL,
-+      path: '/',
-+      secure: true,
-+      httpOnly: false,
-+      sameSite: 'None',
-+    })])
-+  })
++    const logged = logStub.mock.calls.flat().join('\n')
 +
-+  // Chrome treats a missing SameSite as Lax, so adding None i
++    expect(exitStub).toHaveBeenCalledTimes(1)
+     expect(logged).toContain('The "hang" teardown step did not finish within 800ms')
+     expect(logged).not.toContain('Failed to gracefully exit')
+-
+-    exitStub.mockRestore()
+-  }, 5000)
++  })
+ 
+   it('a reset cancels the step bounds of an in-flight teardown', async () => {
+     process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT = '200'
+@@ -352,30 +348,19 @@ describe('lib/util/graceful-exit', () => {
+   it('honors a step-specific timeout shorter than the shared budget', async () => {
+     process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT = '2000'
+ 
+-    const startedAt = Date.now()
+-    let exitedAfter: number | undefined
+-    const exitStub = vi.spyOn(process, 'exit').mockImplementation(() => {
+-      exitedAfter = exitedAfter ?? Date.now() - startedAt
++    vi.useFakeTimers()
+ 
+-      return undefined as never
+-    })
++    const exitStub = stubExit()
+     const logStub = stubLog()
+ 
+     GracefulExit.addStep(() => new Promise(() => {}), 'best-effort', 100)
+ 
+     void GracefulExit.exitGracefully(0)
+ 
+-    await new Promise((r) => setTimeout(r, 500))
+-
+-    const logged = logStub.mock.calls.flat().join('\n')
++    await vi.advanceTimersByTimeAsync(100)
+ 
+-    logStub.mockRestore()
+-
+-    expect(exitedAfter).toBeGreaterThanOrEqual(100)
+-    expect(exitedAfter).toBeLessThanOrEqual(400)
++    expect(exitStub).toHaveBeenCalledTimes(1)
+     expect(exitStub).toHaveBeenCalledWith(0)
+-    expect(logged).toContain('The "best-effort" teardown step did not finish within 100ms')
+-
+-    exitStub.mockRestore()
+-  }, 5000)
++    expect(logStub.mock.calls.flat().join('\n')).toContain('The "best-effort" teardown step did not finish within 100ms')
++  })
+ })
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35297** (2026-11-07): fix: stop printing EPERM when the Firefox profile cannot be removed on exit (@jennifer-shehane)
-- **PR #35296** (closed): chore(ci): TEMP minimal config for self-hosted Windows runner SSH test (@kstephens-)
-- **PR #35288** (2026-11-06): chore: enable cypress/no-unnecessary-waiting (@jennifer-shehane)
-- **PR #35286** (2026-11-06): chore: enable @typescript-eslint/no-empty-object-type (@jennifer-shehane)
-- **PR #35285** (2026-11-06): chore: enable no-useless-escape (@jennifer-shehane)
-- **PR #35282** (2026-11-05): chore: enable mocha/no-async-suite, mocha/no-nested-tests and two Vue template rules (@jennifer-shehane)
+- **PR #35361** (2026-11-12): chore: lint Vitest specs with @vitest/eslint-plugin (@jennifer-shehane)
+- **PR #35360** (2026-11-12): perf: sniff cy.intercept stubbed-response HTML in linear time (@jennifer-shehane)
+- **PR #35358** (2026-11-12): dependency: update qs to 6.16.2 (@mschile)
+- **PR #35357** (2026-11-12): dependency: update js-yaml to 3.15.2 (@mschile)
+- **PR #35356** (2026-11-11): chore: document that vN pushes build platforms from the schedule (@mschile)
+- **PR #35354** (2026-11-11): chore: update js-yaml to 4.3.2 (@mschile)
 
 ---
 
@@ -1980,13 +1714,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid browser blocked ports for the runner server (#35262)
+## X. accept consecutive arrow keys in cy.type() on date-like inputs (#35352)
 
 **RULE**:
 When implementing operations in `cli/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `214545f2`: avoid browser blocked ports for the runner server (#35262). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4d77771`: accept consecutive arrow keys in cy.type() on date-like inputs (#35352). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/CHANGELOG.md`.
@@ -1994,7 +1728,10 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- Fixed an issue where Cypress could use a port that browsers refuse to load, such as 10080, when the [`port`](https://on.cypress.io/configuration) option was not set. The runner then failed with `ERR_UNSAFE_PORT`. Cypress now redraws a blocked randomly assigned port, and a blocked port in configuration is reported as a configuration error that names the port before the runner server starts. Fixes [#30869](https://github.com/cypress-io/cypress/issues/30869).
+**Bugfixes:**
+
+- [`.type()`](https://on.cypress.io/type) now accepts consecutive `{upArrow}` and `{downArrow}` sequences, such as `{upArrow}{upArrow}`, on `date`, `month`, `week`, `time`, and `datetime-local` inputs, and steps the value once per arrow. Previously, a single arrow worked but more than one in a row failed with an error saying the input required a valid date, month, week, time, or datetime. Fixed in [#35352](https://github.com/cypress-io/cypress/pull/35352).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2004,4 +1741,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `214545f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4d77771` are properly handled with clean fallback behavior.

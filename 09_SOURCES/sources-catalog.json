@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "4f1753e7",
+    "sourceVersion": "3443896f",
     "license": "MIT",
-    "contentHash": "50a09375bb7b0b85a7422efca6a71f6bc35c0a581ab2ddb738e086843a359bc8",
-    "lastHarvestedAt": "2026-11-07T21:43:54.544Z",
+    "contentHash": "f04ec34028214dbc8d1c405eecd7d916dfb2609b1418738fe0dcb8e94573fba6",
+    "lastHarvestedAt": "2026-11-12T14:59:50.293Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "e2e0abd3",
+    "sourceVersion": "1c4984ad",
     "license": "Apache-2.0",
-    "contentHash": "e4a5f18dd452f536ac4b584ebafbe61bc3a8e00fc9330a0e2c2945ea92fe5dd3",
-    "lastHarvestedAt": "2026-11-07T03:56:18.599Z",
+    "contentHash": "d5dcd248592e43f6b6c9808889edd6c206dc75250e57762fcc9f8b936eb49269",
+    "lastHarvestedAt": "2026-11-12T14:59:49.316Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "9833b0f7",
+    "sourceVersion": "444dc948",
     "license": "MIT",
-    "contentHash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
-    "lastHarvestedAt": "2026-11-11T06:33:49.340Z",
+    "contentHash": "c88d5a658de72a9743c9acd49bbaa9a1bddb008e41b1d663e8ecd0ea60a3700f",
+    "lastHarvestedAt": "2026-11-12T14:59:56.952Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -12398,5 +12398,15 @@
     "contentHash": "25dac713a24cea0c0d42073676ee7a715a4fb3c5878193dfdf249699547242fb",
     "lastHarvestedAt": "2026-11-12T05:13:03.127Z",
     "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m"
+  },
+  "tonhowtf-omniget": {
+    "repository": "tonhowtf/omniget",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tonhowtf/omniget",
+    "sourceVersion": "5d91e41a",
+    "license": "GPL-3.0",
+    "contentHash": "23685f9a43a5f05e63461fb3c22fb1df800f5904512764274ca4596549a8f31d",
+    "lastHarvestedAt": "2026-11-12T15:04:38.650Z",
+    "learningId": "learn-github-tonhowtf-omniget"
   }
 }

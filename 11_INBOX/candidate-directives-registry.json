@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T14:45:15.057Z",
+  "last_updated": "2026-11-12T15:04:44.642Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7076,6 +7076,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-431057-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-AFC8E5",
+      "directive_title": "menu rebranding, benchmark-driven download fixes, cheaper agent jobs and omniget",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tonhowtf-omniget",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AFC8E5-menu-rebranding-benchmark-driven-downloa.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-265E7B",
+      "directive_title": "accept consecutive arrow keys in cy.type() on date-like inputs (#35352)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cypress-io-cypress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-265E7B-accept-consecutive-arrow-keys-in-cy-type.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-AAFD96",
+      "directive_title": "Update macos_arm.yaml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kcl-lang-kcl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AAFD96-update-macos-arm-yaml.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -20926,5 +20926,20 @@
     "downloads": 704782,
     "qualityScore": 23250,
     "discoveredAt": "2026-11-12T05:10:49.095Z"
+  },
+  {
+    "name": "omniget",
+    "fullName": "tonhowtf/omniget",
+    "url": "https://github.com/tonhowtf/omniget",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Free, open source video downloader for Windows, macOS and Linux that AI agents can drive. Downloads from YouTube, Instagram, TikTok, X, Reddit, torrents and the sites yt-dlp supports. Its MCP server lets Claude Code, Cursor and Codex queue downloads, and it runs Claude Code, Codex, Gemini CLI and Ollama as agents.",
+    "stars": 14360,
+    "forks": 1240,
+    "openIssues": 3,
+    "language": "Rust",
+    "qualityScore": 7808,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-12T14:55:56.699Z"
   }
 ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T14:44:54.873Z",
+  "last_updated": "2026-11-12T15:04:38.673Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3021,14 +3021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cypress-io-cypress",
-      "content_hash": "50a09375bb7b0b85a7422efca6a71f6bc35c0a581ab2ddb738e086843a359bc8",
-      "verified_at": "2026-11-07T21:43:54.555Z",
+      "content_hash": "f04ec34028214dbc8d1c405eecd7d916dfb2609b1418738fe0dcb8e94573fba6",
+      "verified_at": "2026-11-12T14:59:50.307Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:43:54.555Z"
+      "last_updated": "2026-11-12T14:59:50.307Z"
     },
     "syntax-tree/unist": {
       "repository": "syntax-tree/unist",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "e4a5f18dd452f536ac4b584ebafbe61bc3a8e00fc9330a0e2c2945ea92fe5dd3",
-      "verified_at": "2026-11-07T03:56:18.608Z",
+      "content_hash": "d5dcd248592e43f6b6c9808889edd6c206dc75250e57762fcc9f8b936eb49269",
+      "verified_at": "2026-11-12T14:59:49.327Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:56:18.608Z"
+      "last_updated": "2026-11-12T14:59:49.327Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "fca586e8119109f6d6af9a4127f0eb896be38bbdbdb9cecea7da90b47c8c3070",
-      "verified_at": "2026-11-12T09:55:29.130Z",
+      "content_hash": "c88d5a658de72a9743c9acd49bbaa9a1bddb008e41b1d663e8ecd0ea60a3700f",
+      "verified_at": "2026-11-12T14:59:57.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T09:55:29.130Z"
+      "last_updated": "2026-11-12T14:59:57.163Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -18659,6 +18659,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-12T05:13:03.135Z"
+    },
+    "tonhowtf/omniget": {
+      "repository": "tonhowtf/omniget",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tonhowtf-omniget",
+      "content_hash": "23685f9a43a5f05e63461fb3c22fb1df800f5904512764274ca4596549a8f31d",
+      "verified_at": "2026-11-12T15:04:38.673Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-12T15:04:38.673Z"
     }
   },
   "repos": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T14:44:54.869Z",
-  "total_cycles_completed": 9007,
-  "total_learnings_persisted": 9007,
-  "total_rules_promoted": 8849,
+  "last_updated": "2026-11-12T15:04:38.669Z",
+  "total_cycles_completed": 9011,
+  "total_learnings_persisted": 9011,
+  "total_rules_promoted": 8853,
   "history": [
-    {
-      "timestamp": "2026-11-11T14:56:47.114Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:56:51.604Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T15:27:24.511Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T15:27:48.621Z",
-      "repository": "arkivanov/Decompose",
-      "learningId": "learn-github-arkivanov-decompose",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T16:06:52.781Z",
       "repository": "tw93/Mole",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T14:44:54.869Z",
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:59:49.323Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:59:50.302Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:59:57.056Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:04:38.669Z",
+      "repository": "tonhowtf/omniget",
+      "learningId": "learn-github-tonhowtf-omniget",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
