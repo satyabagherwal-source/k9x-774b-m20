@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T14:08:45.603Z",
+  "last_updated": "2026-11-12T14:31:52.382Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15947,8 +15947,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "41d49a9e",
-      "content_hash": "3186e47c62c7a4785af26c5f924752925907221f9156f4fa8fd9782f58a6fc8b",
+      "source_version": "201a62bc",
+      "content_hash": "b294ca60d16c4ee225e74c8ba611fa806b5174a8caa4ecae6f94482c98720975",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -16020,6 +16020,11 @@
         {
           "number": null,
           "title": "transport): report the QUIC endpoint state in telemetry; deprecate transport-qui",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): keep the last eighth of the QUIC ingress queue for quiet sources (#6",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16238,7 +16243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T06:56:24.339Z",
+      "verified_at": "2026-11-12T14:24:06.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54360,14 +54365,19 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "2101aafb",
-      "content_hash": "cb15331ff6fc96aeb3f3f3cf9acd21a9b1110d5021d35521d73babd8ad6e1a5d",
+      "source_version": "898ea993",
+      "content_hash": "b411170aa1ffe065cd850988006c401b273780813a8de921297bef81a72d76a6",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "stale currency conversion for perps and Polymarket balances (#7935)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "navigation): support native iOS interruptible sheet navigation and polish scroll",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -54406,7 +54416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T13:59:55.612Z",
+      "verified_at": "2026-11-12T14:24:02.471Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84359,14 +84369,19 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "dbeba0d5",
-      "content_hash": "8be8e5531f1c80ddd8be2040d5dd635c20731de0257aea68194ccadb7e6d7879",
+      "source_version": "a2e03dbc",
+      "content_hash": "52ddbaf2b4633ce4902cd23e0d9edb08e097e99888bfcabeb977dcc8601a1a4c",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Pass a thrown null or undefined to error boundaries",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: harden release build and workflow token permissions",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84410,7 +84425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:18:16.999Z",
+      "verified_at": "2026-11-12T14:23:56.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84427,14 +84442,19 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "b72200d2",
-      "content_hash": "989fe43af4768c8f04611c32ae419560967a477efb9f637f40d7aba7e1495f92",
+      "source_version": "22e24311",
+      "content_hash": "953415d49d9b9771a6e542adcc0efd74afc9d839bcdcbd564147f9e6e2ef009f",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "router): replace a crashed ssg worker",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "router): isolate concurrent adapter build entries",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84468,7 +84488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:29:25.165Z",
+      "verified_at": "2026-11-12T14:31:52.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source**: github ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
-> **Source Version**: `dbeba0d5`  
+> **Source Version**: `a2e03dbc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:18:16.023Z  
+> **Timestamp**: 2026-11-12T14:23:40.794Z  
 > **Learning ID**: `learn-github-preactjs-preact`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:18:15.570Z  
+> **Harvest Timestamp**: 2026-11-12T14:23:40.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 38987 stars
+- **Stars / Engagement**: 38998 stars
 
 ---
 
@@ -1284,458 +1284,397 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `98ea442b` (2026-11-03)
-**Commit Message**: Pass a thrown null or undefined to error boundaries
+### Incident Patch 1: `d0788297` (2026-11-12)
+**Commit Message**: ci: harden release build and workflow token permissions
 
-When a component threw `null` or `undefined`, the catch block in diff()
-read `e.then` to check for a promise, so a TypeError escaped render()
-and hydrate() past the nearest error boundary. The `_catchError` hooks
-in compat and debug read `error.then` the same way. Guard each read so
-getDerivedStateFromError and componentDidCatch receive the thrown value
-as is, like they do for other values and like React does.
+- Only use the pnpm dependency cache for pull request builds. The previous
+  condition excluded main but not release tags, so release builds restored a
+  cache written by runs on main.
+- Package and upload the npm tarball right after the build, before tests and
+  coverage reporting run.
+- Pin the Coveralls reporter binary and skip it on tag builds.
+- Declare least-privilege GITHUB_TOKEN permissions in every workflow that
+  relied on the repository default.
 
-Fixes #5346
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `compat/src/suspense.js` (modified, +1/-1)
+**File**: `.github/workflows/benchmarks.yml` (modified, +5/-0)
 ```diff
-@@ -12,7 +12,7 @@ import { assign } from './util';
- function initSuspenseHooks() {
- 	const oldCatchError = options._catchError;
- 	options._catchError = (error, newVNode, oldVNode, errorInfo) => {
--		if (error.then) {
-+		if (error && error.then) {
- 			/** @type {import('./internal').Component} */
- 			let component;
- 			let vnode = newVNode;
+@@ -4,6 +4,11 @@ on:
+   workflow_dispatch:
+   workflow_call:
+ 
++permissions:
++  contents: read
++  # download-base-artifact fetches the package built by the latest run on main
++  actions: read
++
+ jobs:
+   prepare:
+     name: Prepare environment
 ```
 
-**File**: `compat/test/browser/suspense.test.jsx` (modified, +33/-0)
+**File**: `.github/workflows/build-test.yml` (modified, +17/-12)
 ```diff
-@@ -1312,6 +1312,39 @@ describe('suspense', () => {
- 		expect(scratch.innerHTML).to.eql(`<div>Catcher did catch: {Promise}</div>`);
- 	});
- 
-+	[null, undefined].forEach(value => {
-+		it(`should pass a thrown ${value} to the error boundary`, () => {
-+			const caught = [];
-+			class Boundary extends Component {
-+				componentDidCatch(error) {
-+					caught.push(error);
-+					this.setState({ failed: true });
-+				}
-+
-+				render(props, state) {
-+					return state.failed ? 'caught' : props.children;
-+				}
-+			}
-+
-+			function Thrower() {
-+				throw value;
-+			}
-+
-+			render(
-+				<Boundary>
-+					<Suspense fallback={<div>Suspended...</div>}>
-+						<Thrower />
-+					</Suspense>
-+				</Boundary>,
-+				scratch
-+			);
-+			rerender();
-+
-+			expect(caught).to.deep.equal([value]);
-+			expect(scratch.innerHTML).to.equal('caught');
-+		});
-+	});
-+
- 	it("should throw when lazy's loader throws", () => {
- 		/** @type {() => Promise<any>} */
- 		let reject;
+@@ -32,32 +32,37 @@ jobs:
+       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+         with:
+           node-version-file: 'package.json'
+-          # The main build artifact is used for publishing, so avoid cached dependencies.
+-          cache: ${{ github.ref != 'refs/heads/main' && 'pnpm' || '' }}
++          # Builds from main and release tags are published or used as a baseline,
++          # so only pull request builds may use cached dependencies.
++          cache: ${{ github.event_name == 'pull_request' && 'pnpm' || '' }}
+           # Prevent automatic caching when the explicit cache input is empty.
+           package-manager-cache: false
+           cache-dependency-path: pnpm-lock.yaml
+       - run: pnpm install --frozen-lockfile
+       - run: pnpm run build
++      - name: Package
++        # Package and upload the build before any test or reporting tooling
++        # runs, without running pack lifecycle scripts.
++        run: |
++          pnpm pack --config.ignore-scripts=true
++          mv preact-*.tgz preact.tgz
++      - name: Upload npm package
++        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        with:
++          name: ${{ inputs.artifact_name || 'npm-package' }}
++          path: preact.tgz
+       - name: test
+         env:
+           CI: true
+           COVERAGE: true
+           FLAKEY: false
+         run: pnpm run lint && pnpm run test:unit
+       - name: Coveralls GitHub Action
++        # The reporter binary is downloaded at runtime: keep it out of release builds.
++        if: ${{ github.ref_type != 'tag' }}
+         uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
+         timeout-minutes: 2
+         with:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
++          coverage-reporter-version: v0.6.22
+           fail-on-error: false
+-      - name: Package
+-        # Package the tested build without running pack lifecycle scripts.
+-        run: |
+-          pnpm pack --config.ignore-scripts=true
+-          mv preact-*.tgz preact.tgz
+-      - name: Upload npm package
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+-        with:
+-          name: ${{ inputs.artifact_name || 'npm-package' }}
+-          path: preact.tgz
 ```
 
-**File**: `debug/src/debug.js` (modified, +2/-2)
+**File**: `.github/workflows/ci.yml` (modified, +13/-0)
 ```diff
-@@ -107,7 +107,7 @@ export function initDebug() {
+@@ -11,10 +11,17 @@ on:
+       - restructure
+       - v11
  
- 		try {
- 			let component = vnode && vnode._component;
--			if (component && typeof error.then == 'function') {
-+			if (component && error && typeof error.then == 'function') {
- 				const promise = error;
- 				error = new Error(
- 					`Missing Suspense. The throwing component was: ${getDisplayName(vnode)}`
-@@ -156,7 +156,7 @@ export function initDebug() {
- 		// when an error was handled by an ErrorBoundary we still log it, matching what
- 		// React does in development. Errors that were not handled are rethrown by the
- 		// core and thus surface as regular uncaught errors.
--		if (typeof error.then != 'function') {
-+		if (!error || typeof error.then != 'function') {
- 			console.error(error);
- 		}
- 	};
++permissions:
++  contents: read
++
+ jobs:
+   filter_jobs:
+     name: Filter jobs
+     runs-on: ubuntu-26.04
++    permissions:
++      contents: read
++      # dorny/paths-filter lists the changed files of a PR through the API
++      pull-requests: read
+     outputs:
+       jsChanged: ${{ steps.filter.outputs.jsChanged }}
+     steps:
+@@ -33,6 +40,9 @@ jobs:
+     name: Compressed Size
+     needs: filter_jobs
+     if: ${{ needs.filter_jobs.outputs.jsChanged == 'true' }}
++    permissions:
++      contents: read
++      pull-requests: write
+     uses: ./.github/workflows/size.yml
+ 
+   build_test:
+@@ -44,4 +54,7 @@ jobs:
+     name: Benchmarks
+     needs: build_test
+     if: ${{ needs.filter_jobs.outputs.jsChanged == 'true' }}
++    permissions:
++      contents: read
++      actions: read
+     uses: ./.github/workflows/benchmarks.yml
 ```
 
-**File**: `debug/test/browser/debug.test.jsx` (modified, +32/-0)
+**File**: `.github/workflows/pr-reporter.yml` (modified, +13/-0)
 ```diff
-@@ -48,6 +48,38 @@ describe('debug', () => {
- 		expect(fn).to.throw(/render/);
- 	});
+@@ -9,10 +9,17 @@ on:
+       - completed
+       - requested
  
-+	[null, undefined].forEach(value => {
-+		it(`should pass a thrown ${value} to the error boundary and log it`, () => {
-+			const caught = [];
-+			class Boundary extends Component {
-+				componentDidCatch(error) {
-+					caught.push(error);
-+					this.setState({ failed: true });
-+				}
++# This workflow handles artifacts produced by pull requests from forks, so every
++# job only gets the permissions it needs.
++permissions: {}
 +
-+				render() {
-+					return this.state.failed ? 'caught' : this.props.children;
-+				}
-+			}
-+
-+			function Thrower() {
-+				throw value;
-+			}
-+
-+			render(
-+				<Boundary>
-+					<Thrower />
-+				</Boundary>,
-+				scratch
-+			);
-+			rerender();
-+
-+			expect(caught).to.deep.equal([value]);
-+			expect(errors).to.deep.equal([value]);
-+			expect(scratch.innerHTML).to.equal('caught');
-+		});
-+	});
-+
- 	it('should print an error on rendering on invalid parent', () => {
- 		let fn = () => render(<div />, 6);
- 		expect(fn).to.throw(/valid HTML node/);
+ jobs:
+   filter_jobs:
+     name: Filter jobs
+     runs-on: ubuntu-26.04
++    permissions:
++      contents: read
++      pull-requests: read
+     if: |
+       github.event.workflow_run.event == 'pull_request'
+     outputs:
+@@ -62,6 +69,8 @@ jobs:
+     name: Report benchmarks are in-progress
+     needs: filter_jobs
+     runs-on: ubuntu-26.04
++    permissions:
++      pull-requests: write
+     # Only add the "benchmarks are running" text when a workflow_run is
+     # requested (a.k.a starting)
+     if: |
+@@ -79,6 +88,10 @@ jobs:
+     name: Report benchmark results
+     needs: filter_jobs
+     runs-on: ubuntu-26.04
++    permissions:
++      # Download the results from the triggering workflow run
++      actions: read
++      pull-requests: write
+     # Only run this job if the event action was "completed" and the triggering
+     # workflow_run was successful
+     if: |
 ```
 
-**File**: `src/diff/index.js` (modified, +2/-2)
+**File**: `.github/workflows/run-bench.yml` (modified, +3/-0)
 ```diff
-@@ -360,7 +360,7 @@ export function diff(
- 			newVNode._original = NULL;
- 			// if hydrating or creating initial tree, bailout preserves DOM:
- 			if (isHydrating || excessDomChildren) {
--				if (e.then) {
-+				if (e && e.then) {
- 					let startMarker, end;
+@@ -25,6 +25,9 @@ on:
+         required: false
+         default: 20
  
- 					// isHydrating is MODE_HYDRATE or falsy
-@@ -420,7 +420,7 @@ export function diff(
- 				newVNode._children = oldVNode._children || [];
- 			}
- 
--			if (!e.then) markAsForce(newVNode);
-+			if (!(e && e.then)) markAsForce(newVNode);
- 			options._catchError(e, newVNode, oldVNode);
- 		}
- 	} else {
++permissions:
++  contents: read
++
+ jobs:
+   run_bench:
+     name: Bench ${{ inputs.benchmark }}
 ```
 
-**File**: `test/browser/lifecycles/componentDidCatch.test.jsx` (modified, +51/-1)
+**File**: `.github/workflows/size.yml` (modified, +5/-0)
 ```diff
-@@ -1,5 +1,5 @@
- import { setupRerender } from 'preact/test-utils';
--import { createElement, render, Component, Fragment } from 'preact';
-+import { createElement, render, hydrate, Component, Fragment } from 'preact';
- import { setupScratch, teardown } from '../../_util/helpers';
- import { vi, expect } from 'vitest';
+@@ -3,6 +3,11 @@ name: Compressed Size
+ on:
+   workflow_call:
  
-@@ -542,6 +542,56 @@ describe('Lifecycle methods', () => {
- 			);
- 		});
- 
-+		[null, undefined].forEach(value => {
-+			describe(`when a child throws ${value}`, () => {
-+				let caught;
++permissions:
++  contents: read
++  # compressed-size-action reports its results in a PR comment
++  pull-requests: write
 +
-+				class Boundary extends Component {
-+					componentDidCatch(error) {
-+						caught.push(error);
-+						this.setState({ failed: true });
-+					}
-+
-+					render() {
-+						return this.state.failed ? 'caught' : this.props.children;
-+					}
-+				}
-+
-+				function Thrower() {
-+					throw value;
-+				}
-+
-+				beforeEach(() => {
-+					caught = [];
-+				});
-+
-+				it('should be called on render', () => {
-+					render(
-+						<Boundary>
-+							<Thrower />
-+						</Boundary>,
-+						scratch
-+					);
-+					rerender();
-+					expect(caught).to.deep.equal([value]);
-+					expect(scratch.innerHTML).to.equal('caught');
-+				});
-+
-+				it('should be called on hydrate', () => {
-+					scratch.innerHTML = '<div>server</div>';
-+					hydrate(
-+						<Boundary>
-+							<Thrower />
-+						</Boundary>,
-+						scratch
-+					);
-+					rerender();
-+					expect(caught).to.deep.equal([value]);
-+					expect(scratch.innerHTML).to.equal('caught');
-+				});
-+			});
-+		});
-+
- 		it('should be called when child inside a Fragment fails', () => {
- 			function ThrowErr() {
- 				throwExpectedError();
+ jobs:
+   build:
+     runs-on: ubuntu-26.04
 ```
 
 ---
 
-### Incident Patch 2: `4bfd0803` (2026-11-04)
-**Commit Message**: Merge pull request #5347 from jonkwheeler/fix/throw-null-then
+### Incident Patch 2: `18d8bf78` (2026-11-12)
+**Commit Message**: feat: Warn on deeply nested illegal HTML structures in debug (#5358)
 
-Pass a thrown null or undefined to error boundaries
+* feat: Warn on deeply nested illegal HTML structures in debug
+
+* refactor: Slightly smaller
+
+**File**: `debug/src/debug.js` (modified, +19/-13)
+```diff
+@@ -19,23 +19,25 @@ const isWeakMapSupported = typeof WeakMap == 'function';
+  * @param {import('./internal').VNode} vnode
+  * @returns {Array<string>}
+  */
+-function getDomChildren(vnode) {
+-	let domChildren = [];
++function getDomDescendants(vnode) {
++	let domDescendants = /** @type {string[]} */ ([]);
+ 
+-	if (!vnode._children) return domChildren;
++	if (!vnode._children) return domDescendants;
+ 
+ 	vnode._children.forEach(child => {
+-		if (child && typeof child.type === 'function') {
++		if (!child) return;
++		if (typeof child.type === 'function') {
+ 			// Portal children are mounted into another DOM parent (v11 keeps
+ 			// them in the vnode tree), so they are not DOM children of `vnode`.
+ 			if (child.props._parentDom) return;
+-			domChildren.push.apply(domChildren, getDomChildren(child));
+-		} else if (child && typeof child.type === 'string') {
+-			domChildren.push(child.type);
++			domDescendants.push.apply(domDescendants, getDomDescendants(child));
++		} else if (typeof child.type === 'string') {
++			domDescendants.push(child.type);
++			domDescendants.push.apply(domDescendants, getDomDescendants(child));
+ 		}
+ 	});
+ 
+-	return domChildren;
++	return domDescendants;
+ }
+ 
+ /**
+@@ -462,8 +464,8 @@ export function initDebug() {
+ 					);
+ 				}
+ 			} else if (type === 'p') {
+-				let illegalDomChildrenTypes = getDomChildren(vnode).filter(childType =>
+-					ILLEGAL_PARAGRAPH_CHILD_ELEMENTS.test(childType)
++				let illegalDomChildrenTypes = getDomDescendants(vnode).filter(childType =>
++					ILLEGAL_PARAGRAPH_CHILD_ELEMENTS.has(childType)
+ 				);
+ 				if (illegalDomChildrenTypes.length) {
+ 					console.error(
+@@ -475,7 +477,7 @@ export function initDebug() {
+ 					);
+ 				}
+ 			} else if (type === 'a' || type === 'button') {
+-				if (getDomChildren(vnode).indexOf(type) !== -1) {
++				if (getDomDescendants(vnode).indexOf(type) !== -1) {
+ 					console.error(
+ 						`Improper nesting of interactive content. Your <${type}>` +
+ 							` should not have other ${type === 'a' ? 'anchor' : 'button'}` +
+@@ -570,8 +572,12 @@ function isTableElement(type) {
+ 	);
+ }
+ 
+-const ILLEGAL_PARAGRAPH_CHILD_ELEMENTS =
+-	/^(address|article|aside|blockquote|details|div|dl|fieldset|figcaption|figure|footer|form|h1|h2|h3|h4|h5|h6|header|hgroup|hr|main|menu|nav|ol|p|pre|search|section|table|ul)$/;
++const ILLEGAL_PARAGRAPH_CHILD_ELEMENTS = new Set([
++	'address', 'article', 'aside', 'blockquote', 'details', 'div', 'dl',
++	'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3',
++	'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'main', 'menu', 'nav', 'ol',
++	'p', 'pre', 'search', 'section', 'table', 'ul'
++]);
+ 
+ const forceUpdate = Component.prototype.forceUpdate;
+ Component.prototype.forceUpdate = function (callback) {
+```
+
+**File**: `debug/test/browser/debug.test.jsx` (modified, +39/-0)
+```diff
+@@ -694,6 +694,19 @@ describe('debug', () => {
+ 			expect(console.error).toHaveBeenCalledOnce();
+ 		});
+ 
++		it('should warn for deeply nesting illegal dom-nodes under a paragraph', () => {
++			const Paragraph = () => (
++				<p>
++					<b>
++						<h1>Hello world</h1>
++					</b>
++				</p>
++			);
++
++			render(<Paragraph />, scratch);
++			expect(console.error).toHaveBeenCalledOnce();
++		});
++
+ 		it('should warn for nesting illegal dom-nodes under a paragraph with a parent', () => {
+ 			const Paragraph = () => (
+ 				<div>
+@@ -750,6 +763,19 @@ describe('debug', () => {
+ 			expect(console.error).toHaveBeenCalledOnce();
+ 		});
+ 
++		it('should warn for deeply nesting illegal dom-nodes under a button', () => {
++			const Button = () => (
++				<button>
++					<div>
++						<button>Hello world</button>
++					</div>
++				</button>
++			);
++
++			render(<Button />, scratch);
++			expect(console.error).toHaveBeenCalledOnce();
++		});
++
+ 		it('should warn for nesting illegal dom-nodes under a button as func', () => {
+ 			const ButtonChild = ({ children }) => <button>{children}</button>;
+ 			const Button = () => (
+@@ -794,6 +820,19 @@ describe('debug', () => {
+ 			expect(console.error).toHaveBeenCalledOnce();
+ 		});
+ 
++		it('should warn for deeply nesting illegal dom-nodes under an anchor', () => {
++			const Anchor = () => (
++				<a>
++					<div>
++						<a>Hello world</a>
++					</div>
++				</a>
++			);
++
++			render(<Anchor />, scratch);
++			expect(console.error).toHaveBeenCalledOnce();
++		})
++
+ 		it('should warn for nesting illegal dom-nodes under an anchor as func', () => {
+ 			const AnchorChild = ({ children }) => <a>{children}</a>;
+ 			const Anchor = () => (
+```
+
+---
+
+### Incident Patch 3: `adc1acc3` (2026-11-11)
+**Commit Message**: chore: fix typos in comments (#5357)
+
+**File**: `compat/scheduler.mjs` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ /* eslint-disable */
+ 
+ // This file includes experimental React APIs exported from the "scheduler"
+-// npm package. Despite being explicitely marked as unstable some libraries
++// npm package. Despite being explicitly marked as unstable some libraries
+ // already make use of them. This file is not a full replacement for the
+ // scheduler package, but includes the necessary shims to make those libraries
+ // work with Preact.
+```
 
 **File**: `compat/src/suspense.js` (modified, +1/-1)
 ```diff
-@@ -12,7 +12,7 @@ import { assign } from './util';
- function initSuspenseHooks() {
- 	const oldCatchError = options._catchError;
- 	options._catchError = (error, newVNode, oldVNode, errorInfo) => {
--		if (error.then) {
-+		if (error && error.then) {
- 			/** @type {import('./internal').Component} */
- 			let component;
- 			let vnode = newVNode;
+@@ -184,7 +184,7 @@ function createSuspense() {
+ 		/**
+ 		 * We do not set `suspended: true` during hydration because we want the actual markup
+ 		 * to remain on screen and hydrate it when the suspense actually gets resolved.
+-		 * While in non-hydration cases the usual fallback -> component flow would occour.
++		 * While in non-hydration cases the usual fallback -> component flow would occur.
+ 		 */
+ 		if (
+ 			!this._pendingSuspensionCount++ &&
 ```
 
-**File**: `compat/test/browser/suspense.test.jsx` (modified, +33/-0)
+**File**: `debug/src/component-stack.js` (modified, +1/-1)
 ```diff
-@@ -1312,6 +1312,39 @@ describe('suspense', () => {
- 		expect(scratch.innerHTML).to.eql(`<div>Catcher did catch: {Promise}</div>`);
- 	});
+@@ -40,7 +40,7 @@ let renderStack = [];
+  * ```
+  *
+  * Note: A `vnode` may be hoisted to the root scope due to compiler
+- * optimiztions. In these cases the owner will be different.
++ * optimizations. In these cases the owner will be different.
+  */
+ let ownerStack = [];
  
-+	[null, undefined].forEach(value => {
-+		it(`should pass a thrown ${value} to the error boundary`, () => {
-+			const caught = [];
-+			class Boundary extends Component {
-+				componentDidCatch(error) {
-+					caught.push(error);
-+					this.setState({ failed: true });
-+				}
-+
-+				render(props, state) {
-+					return state.failed ? 'caught' : props.children;
-+				}
-+			}
-+
-+			function Thrower() {
-+				throw value;
-+			}
-+
-+			render(
-+				<Boundary>
-+					<Suspense fallback={<div>Suspended...</div>}>
-+						<Thrower />
-+					</Suspense>
-+				</Boundary>,
-+				scratch
-+			);
-+			rerender();
-+
-+			expect(caught).to.deep.equal([value]);
-+			expect(scratch.innerHTML).to.equal('caught');
-+		});
-+	});
-+
- 	it("should throw when lazy's loader throws", () => {
- 		/** @type {() => Promise<any>} */
- 		let reject;
-```
-
-**File**: `debug/src/debug.js` (modified, +2/-2)
-```diff
-@@ -107,7 +107,7 @@ export function initDebug() {
- 
- 		try {
- 			let component = vnode && vnode._component;
--			if (component && typeof error.then == 'function') {
-+			if (component && error && typeof error.then == 'function') {
- 				const promise = error;
- 				error = new Error(
- 					`Missing Suspense. The throwing component was: ${getDisplayName(vnode)}`
-@@ -156,7 +156,7 @@ export function initDebug() {
- 		// when an error was handled by an ErrorBoundary we still log it, matching what
- 		// React does in development. Errors that were not handled are rethrown by the
- 		// core and thus surface as regular uncaught errors.
--		if (typeof error.then != 'function') {
-+		if (!error || typeof error.then != 'function') {
- 			console.error(error);
- 		}
- 	};
-```
-
-**File**: `debug/test/browser/debug.test.jsx` (modified, +32/-0)
-```diff
-@@ -48,6 +48,38 @@ describe('debug', () => {
- 		expect(fn).to.throw(/render/);
- 	});
- 
-+	[null, undefined].forEach(value => {
-+		it(`should pass a thrown ${value} to the error boundary and log it`, () => {
-+			const caught = [];
-+			class Boundary extends Component {
-+				componentDidCatch(error) {
-+					caught.push(error);
-+					this.setState({ failed: true });
-+				}
-+
-+				render() {
-+					return this.state.failed ? 'caught' : this.props.children;
-+				}
-+			}
-+
-+			function Thrower() {
-+				throw value;
-+			}
-+
-+			render(
-+				<Boundary>
-+					<Thrower />
-+				</Boundary>,
-+				scratch
-+			);
-+			rerender();
-+
-+			expect(caught).to.deep.equal([value]);
-+			expect(errors).to.deep.equal([value]);
-+			expect(scratch.innerHTML).to.equal('caught');
-+		});
-+	});
-+
- 	it('should print an error on rendering on invalid parent', () => {
- 		let fn = () => render(<div />, 6);
- 		expect(fn).to.throw(/valid HTML node/);
-```
-
-**File**: `src/diff/index.js` (modified, +2/-2)
-```diff
-@@ -360,7 +360,7 @@ export function diff(
- 			newVNode._original = NULL;
- 			// if hydrating or creating initial tree, bailout preserves DOM:
- 			if (isHydrating || excessDomChildren) {
--				if (e.then) {
-+				if (e && e.then) {
- 					let startMarker, end;
- 
- 					// isHydrating is MODE_HYDRATE or falsy
-@@ -420,7 +420,7 @@ export function diff(
- 				newVNode._children = oldVNode._children || [];
- 			}
- 
--			if (!e.then) markAsForce(newVNode);
-+			if (!(e && e.then)) markAsForce(newVNode);
- 			options._catchError(e, newVNode, oldVNode);
- 		}
- 	} else {
-```
-
-**File**: `test/browser/lifecycles/componentDidCatch.test.jsx` (modified, +51/-1)
-```diff
-@@ -1,5 +1,5 @@
- import { setupRerender } from 'preact/test-utils';
--import { createElement, render, Component, Fragment } from 'preact';
-+import { createElement, render, hydrate, Component, Fragment } from 'preact';
- import { setupScratch, teardown } from '../../_util/helpers';
- import { vi, expect } from 'vitest';
- 
-@@ -542,6 +542,56 @@ describe('Lifecycle methods', () => {
- 			);
- 		});
- 
-+		[null, undefined].forEach(value => {
-+			describe(`when a child throws ${value}`, () => {
-+				let caught;
-+
-+				class Boundary extends Component {
-+					componentDidCatch(error) {
-+						caught.push(error);
-+						this.setState({ failed: true });
-+					}
-+
-+					render() {
-+						return this.state.failed ? 'caught' : this.props.children;
-+					}
-+				}
-+
-+				function Thrower() {
-+					throw value;
-+				}
-+
-+				beforeEach(() => {
-+					caught = [];
-+				});
-+
-+				it('should be called on render', () => {
-+					render(
-+						<Boundary>
-+							<Thrower />
-+						</Boundary>,
-+						scratch
-+					);
-+					rerender();
-+					expect(caught).to.deep.equal([value]);
-+					expect(scratch.innerHTML).to.equal('caught');
-+				});
-+
-+				it('should be called on hydrate', () => {
-+					scratch.innerHTML = '<div>server</div>';
-+					hydrate(
-+						<Boundary>
-+							<Thrower />
-+						</Boundary>,
-+						scratch
-+					);
-+					rerender();
-+					expect(caught).to.deep.equal([value]);
-+					expect(scratch.innerHTML).to.equal('caught');
-+				});
-+			});
-+		});
-+
- 		it('should be called when child inside a Fragment fails', () => {
- 			function ThrowErr() {
- 				throwExpectedError();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5359** (2026-11-12): ci: harden release build and workflow token permissions (@JoviDeCroock)
+- **PR #5358** (2026-11-12): feat: Warn on deeply nested illegal HTML structures in debug (@rschristian)
+- **PR #5357** (2026-11-11): chore: fix typos in comments (@ninglinLiu)
+- **PR #5355** (2026-11-08): docs: fix duplicated words and initial-letter typo (@ninglinLiu)
 - **PR #5352** (closed): Normalize Document containers before invoking root hooks (@wozhenbang2004)
 - **PR #5351** (2026-11-06): ci: pin Ubuntu runner images to 26.04 (@JoviDeCroock)
-- **PR #5350** (2026-11-06): 11.2.0 (@JoviDeCroock)
-- **PR #5349** (2026-11-04): Preserve event handlers on unmounted nodes (@JoviDeCroock)
-- **PR #5348** (closed): Pass a thrown null or undefined to error boundaries (v10.x) (@jonkwheeler)
-- **PR #5347** (2026-11-04): Pass a thrown null or undefined to error boundaries (@jonkwheeler)
 
 ---
 
@@ -1755,28 +1694,32 @@ Pass a thrown null or undefined to error boundaries
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pass a thrown null or undefined to error boundaries
+## X. ci: harden release build and workflow token permissions
 
 **RULE**:
-When implementing operations in `compat/src/suspense.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/benchmarks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `98ea442b`: Pass a thrown null or undefined to error boundaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0788297`: ci: harden release build and workflow token permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `compat/src/suspense.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmarks.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-		if (error && error.then) {
+permissions:
+  contents: read
+  # download-base-artifact fetches the package built by the latest run on main
+  actions: read
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-		if (error.then) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `98ea442b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0788297` are properly handled with clean fallback behavior.

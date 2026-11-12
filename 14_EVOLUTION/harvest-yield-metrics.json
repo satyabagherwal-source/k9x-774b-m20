@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T14:08:45.723Z",
-  "total_cycles_completed": 9001,
-  "total_learnings_persisted": 9001,
-  "total_rules_promoted": 8843,
+  "last_updated": "2026-11-12T14:31:52.529Z",
+  "total_cycles_completed": 9005,
+  "total_learnings_persisted": 9005,
+  "total_rules_promoted": 8847,
   "history": [
-    {
-      "timestamp": "2026-11-11T14:16:56.005Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:38:51.958Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:39:02.038Z",
-      "repository": "joreilly/PeopleInSpace",
-      "learningId": "learn-github-joreilly-peopleinspace",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:39:22.229Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T14:43:51.381Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T14:08:45.723Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:23:56.969Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:24:02.679Z",
+      "repository": "rainbow-me/rainbow",
+      "learningId": "learn-github-rainbow-me-rainbow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:24:06.953Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:31:52.529Z",
+      "repository": "QwikDev/qwik",
+      "learningId": "learn-github-qwikdev-qwik",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
