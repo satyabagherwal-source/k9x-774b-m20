@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:32:18.392Z",
-  "total_cycles_completed": 8907,
-  "total_learnings_persisted": 8907,
-  "total_rules_promoted": 8755,
+  "last_updated": "2026-11-12T04:50:41.515Z",
+  "total_cycles_completed": 8910,
+  "total_learnings_persisted": 8910,
+  "total_rules_promoted": 8758,
   "history": [
-    {
-      "timestamp": "2026-11-10T05:21:51.747Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T05:21:57.349Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T06:05:22.278Z",
-      "repository": "VideoRebirthAI/hyperflow-h3-flash",
-      "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T06:12:51.616Z",
       "repository": "weaviate/weaviate",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T04:32:18.392Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T04:50:27.865Z",
+      "repository": "pimalaya/himalaya",
+      "learningId": "learn-github-pimalaya-himalaya",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T04:50:34.383Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T04:50:41.515Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

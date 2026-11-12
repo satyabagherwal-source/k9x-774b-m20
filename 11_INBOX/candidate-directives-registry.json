@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:32:23.514Z",
+  "last_updated": "2026-11-12T04:50:47.077Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6138,6 +6138,33 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-39FC47-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B3D88C",
+      "directive_title": "config)!: fix the flag glyphs, ignore the envelope.list.table block",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pimalaya-himalaya",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B3D88C-config-fix-the-flag-glyphs-ignore-the-en.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B63120",
+      "directive_title": "Read Claude Code credential via security tool to avoid Keychain prompts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jacklandrin-onlyswitch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B63120-read-claude-code-credential-via-security.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-296862",
+      "directive_title": "Evaluate user filters only on the rows that row-level security allows (#20183)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-pinot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-296862-evaluate-user-filters-only-on-the-rows-t.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "42134fd2",
+    "sourceVersion": "927950e2",
     "license": "Apache-2.0",
-    "contentHash": "8acab0b29b8568a29f837e151b64fef067e5f6c2041af2cbfcb918628a781d2a",
-    "lastHarvestedAt": "2026-11-09T11:16:19.146Z",
+    "contentHash": "00802509ab3b862ab6ff456d7a0fce89f1aaff9069d217f963f2cda0f9e49511",
+    "lastHarvestedAt": "2026-11-12T04:50:27.837Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "5919d349",
+    "sourceVersion": "9f6d833e",
     "license": "MIT",
-    "contentHash": "10fd17ab2d50d6f64c90216ac89b45a940d8d7c167265e0e8dd3aa7061951668",
-    "lastHarvestedAt": "2026-11-08T04:33:53.346Z",
+    "contentHash": "07a847cc25fbaa6b7f724aa2b9511506a879fe42245f1ef9f9a09e5e5ad72dfc",
+    "lastHarvestedAt": "2026-11-12T04:50:34.374Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "3b23abd0",
+    "sourceVersion": "18e46648",
     "license": "Apache-2.0",
-    "contentHash": "9ed37abde3a361feb02dc36e3927ae13f69970ef5befa82d77b3094d0728d7d9",
-    "lastHarvestedAt": "2026-11-09T17:57:03.835Z",
+    "contentHash": "32c85bdaf3d088fd7b9cf07f0b42214cdf260496f312bade3b20ad6deae0052d",
+    "lastHarvestedAt": "2026-11-12T04:50:41.496Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

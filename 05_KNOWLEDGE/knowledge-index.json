@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T04:32:18.236Z",
+  "last_updated": "2026-11-12T04:50:41.380Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37215,14 +37215,19 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "5919d349",
-      "content_hash": "10fd17ab2d50d6f64c90216ac89b45a940d8d7c167265e0e8dd3aa7061951668",
+      "source_version": "9f6d833e",
+      "content_hash": "07a847cc25fbaa6b7f724aa2b9511506a879fe42245f1ef9f9a09e5e5ad72dfc",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Stop crashing when a music player quits while its state is polled",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Read Claude Code credential via security tool to avoid Keychain prompts",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -37261,7 +37266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:33:53.245Z",
+      "verified_at": "2026-11-12T04:50:34.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52140,8 +52145,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "42134fd2",
-      "content_hash": "8acab0b29b8568a29f837e151b64fef067e5f6c2041af2cbfcb918628a781d2a",
+      "source_version": "927950e2",
+      "content_hash": "00802509ab3b862ab6ff456d7a0fce89f1aaff9069d217f963f2cda0f9e49511",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -52153,6 +52158,11 @@
         {
           "number": null,
           "title": "build: pin pimalaya-cli f976e40",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "config)!: fix the flag glyphs, ignore the envelope.list.table block",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52181,7 +52191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:16:18.964Z",
+      "verified_at": "2026-11-12T04:50:27.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -187894,8 +187904,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "3b23abd0",
-      "content_hash": "9ed37abde3a361feb02dc36e3927ae13f69970ef5befa82d77b3094d0728d7d9",
+      "source_version": "18e46648",
+      "content_hash": "32c85bdaf3d088fd7b9cf07f0b42214cdf260496f312bade3b20ad6deae0052d",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -187925,6 +187935,11 @@
           "status": "WITHHELD_REJECT"
         },
         {
+          "number": null,
+          "title": "Evaluate user filters only on the rows that row-level security allows (#20183)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 7139,
           "title": "Add a README Docker quickstart and improve GitHub metadata (#20164)",
           "status": "PROMOTED_AND_VERIFIED"
@@ -187935,7 +187950,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:57:03.692Z",
+      "verified_at": "2026-11-12T04:50:41.354Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

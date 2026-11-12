@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:32:23.526Z",
+  "last_updated": "2026-11-12T04:50:47.119Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T01:44:30.411Z",
@@ -796,9 +796,24 @@
       "processed_at": "2026-11-12T04:24:41.391Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "pimalaya-himalaya-learnings.md": {
+      "processed_at": "2026-11-12T04:50:46.910Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "jacklandrin-onlyswitch-learnings.md": {
+      "processed_at": "2026-11-12T04:50:47.061Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "apache-pinot-learnings.md": {
+      "processed_at": "2026-11-12T04:50:47.079Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 207,
+  "total_dossiers_evaluated": 210,
   "total_canonical_promoted": 24,
-  "total_staged_for_review": 180
+  "total_staged_for_review": 183
 }

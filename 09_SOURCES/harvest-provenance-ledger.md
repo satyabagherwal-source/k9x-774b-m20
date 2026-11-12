@@ -9079,3 +9079,6 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `bf73116b` | Multi-dimensional audit evidence | 2026-11-12T04:24:11.136Z |
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `fe1e32b8` | Multi-dimensional audit evidence | 2026-11-12T04:24:38.654Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `b9a7b08e` | Multi-dimensional audit evidence | 2026-11-12T04:32:18.372Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `927950e2` | Multi-dimensional audit evidence | 2026-11-12T04:50:27.837Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `9f6d833e` | Multi-dimensional audit evidence | 2026-11-12T04:50:34.374Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `18e46648` | Multi-dimensional audit evidence | 2026-11-12T04:50:41.496Z |
