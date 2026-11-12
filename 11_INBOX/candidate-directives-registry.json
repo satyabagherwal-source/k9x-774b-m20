@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T07:54:33.843Z",
+  "last_updated": "2026-11-12T08:07:22.852Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6482,6 +6482,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1C9882-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B179DA",
+      "directive_title": "core,server): keep StdioServerTransport running when a handler is cancelled (#11",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "modelcontextprotocol-kotlin-sdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B179DA-core-server-keep-stdioservertransport-ru.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2B99F6",
+      "directive_title": "py/plugins/mcp): say which server failed and why (#6930)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "genkit-ai-genkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2B99F6-py-plugins-mcp-say-which-server-failed-a.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-7A223B",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7A223B-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

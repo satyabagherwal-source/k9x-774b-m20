@@ -9117,3 +9117,5 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `ed0a4eb9` | Multi-dimensional audit evidence | 2026-11-12T07:46:38.030Z |
 | `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `518f6311` | Multi-dimensional audit evidence | 2026-11-12T07:54:24.209Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `8edc639f` | Multi-dimensional audit evidence | 2026-11-12T07:54:27.737Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `2e9dbfd6` | Multi-dimensional audit evidence | 2026-11-12T08:07:07.588Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `0fd2f874` | Multi-dimensional audit evidence | 2026-11-12T08:07:15.990Z |

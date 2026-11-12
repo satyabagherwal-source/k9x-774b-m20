@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "fd579905",
+    "sourceVersion": "2e9dbfd6",
     "license": "Apache-2.0",
-    "contentHash": "92fe3126c4bda76281396026a2b2de25c97d86c5d8955ee1499824c22b34b5f6",
-    "lastHarvestedAt": "2026-11-09T23:52:49.239Z",
+    "contentHash": "85e5a69ced15b20fab77b0bfc9e6f949e86e63d8aed1f7d40a8650bde97f7d5a",
+    "lastHarvestedAt": "2026-11-12T08:07:07.588Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "e55f946d",
+    "sourceVersion": "0fd2f874",
     "license": "NOASSERTION",
-    "contentHash": "926952b65d00a977709eff52b3b2cc52399762fa5b28e5dc69393f7ce57e3827",
-    "lastHarvestedAt": "2026-11-08T06:25:38.181Z",
+    "contentHash": "7f32221795f349b6551a0fcc24be9fe0b7eb5d78a23940566989cf0792c5258c",
+    "lastHarvestedAt": "2026-11-12T08:07:15.990Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {

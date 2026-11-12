@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T07:54:27.577Z",
+  "last_updated": "2026-11-12T08:07:15.863Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16599,8 +16599,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "fd579905",
-      "content_hash": "92fe3126c4bda76281396026a2b2de25c97d86c5d8955ee1499824c22b34b5f6",
+      "source_version": "2e9dbfd6",
+      "content_hash": "85e5a69ced15b20fab77b0bfc9e6f949e86e63d8aed1f7d40a8650bde97f7d5a",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -16622,6 +16622,11 @@
         {
           "number": null,
           "title": "genkit-tools): upgrade pure-ESM major dependencies and Express v5 (#7100)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "py/plugins/mcp): say which server failed and why (#6930)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16705,7 +16710,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:52:49.110Z",
+      "verified_at": "2026-11-12T08:07:07.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46068,14 +46073,19 @@
       "slug": "modelcontextprotocol-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-      "source_version": "e55f946d",
-      "content_hash": "926952b65d00a977709eff52b3b2cc52399762fa5b28e5dc69393f7ce57e3827",
+      "source_version": "0fd2f874",
+      "content_hash": "7f32221795f349b6551a0fcc24be9fe0b7eb5d78a23940566989cf0792c5258c",
       "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): bump the ktor group across 1 directory with 14 updates (#1157)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "core,server): keep StdioServerTransport running when a handler is cancelled (#11",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46104,7 +46114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:25:38.095Z",
+      "verified_at": "2026-11-12T08:07:15.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

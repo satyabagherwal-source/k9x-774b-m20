@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source**: github ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
-> **Source Version**: `e55f946d`  
+> **Source Version**: `0fd2f874`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T06:25:37.148Z  
+> **Timestamp**: 2026-11-12T08:07:04.928Z  
 > **Learning ID**: `learn-github-modelcontextprotocol-kotlin-sdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T06:25:36.907Z  
+> **Harvest Timestamp**: 2026-11-12T08:04:31.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1487 stars
+- **Stars / Engagement**: 1486 stars
 
 ---
 
@@ -597,6 +597,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -768,7 +769,7 @@ public class RequestHandlerExtra internal constructor(
     }
 }
 
-/** The [RequestHandlerExtra] of the MCP request
+/** The [
 ```
 
 ### Core Architecture Module: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt`
@@ -802,6 +803,9 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
     private val logger = KotlinLogging.logger { }
 
     private val buffer: Buffer = Buffer()
+
+    /** Number of bytes at the front of [buffer] already known to hold no line terminator. */
+    private var scannedBytes: Long = 0
 
     /** Appends raw bytes to the internal buffer for subsequent message parsing. */
     public fun append(chunk: ByteArray) {
@@ -848,11 +852,13 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
     }
 
     private fun readNextLine(): String? {
-        val lfIndex = if (buffer.exhausted()) -1L else buffer.indexOf('\n'.code.toByte())
+        val lfIndex = if (buffer.exhausted()) -1L else buffer.indexOf('\n'.code.toByte(), startIndex = scannedBytes)
         if (lfIndex == -1L) {
+            scannedBytes = buffer.size
             failIfFrameTooLong(buffer.size)
             return null
         }
+        scannedBytes = 0
         failIfFrameTooLong(lfIndex)
 
         return if (lfIndex == 0L) {
@@ -873,7 +879,7 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
 
     private fun failIfFrameTooLong(frameSize: Long) {
         if (maxFrameSize in 1..<frameSize) {
-            buffer.clear()
+            clear()
             throw TooLongFrameException(frameSize, maxFrameSize)
         }
     }
@@ -898,6 +904,7 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
     /** Clears all buffered data, discarding any partially received messages. */
     public fun clear() {
         buffer.clear()
+        scannedBytes = 0
     }
 }
 
@@ -1048,11 +1055,11 @@ public open class TransportSendOptions(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1080** (2026-10-16): **SseClientTransport cannot connect to an SSE server mounted on a subpath**
-  *Symptoms*: An SDK SSE server announces a query-only endpoint, `?sessionId=…`. `SseClientTransport` resolves a relative endpoint against the parent directory of the SSE URL instead of following RFC 3986, under which a query-only reference keeps the base path.  Steps: server `mcp("/sse")`, client `SseClientTransport(urlString = "http://localhost:…/sse")` without a custom `requestBuilder`. The client opens `GET /sse`, then posts to `/?sessionId=…` and gets `404`. `connect()` fails with `Error POSTing to endpoint (HTTP 404 Not Found)`. Servers mounted at the root work only by accident.  **Expected:** resolve the endpoint per RFC 3986, for example with Ktor's `URLBuilder.takeFrom`, and add a subpath test without a path override.  The SSE transport is deprecated, so this is a correctness fix for the releases that still ship it. 
+- **Issue #1093** (2026-11-09): **stdio: the time to receive a message grows with the square of its size**
+  *Symptoms*: **Describe the bug**  `ReadBuffer.readNextLine()` searches for the newline from the start of the buffer on every `readMessage()` call:  https://github.com/modelcontextprotocol/kotlin-sdk/blob/382e27b0ee5bfd3dad89c9fbc34fff1984e16ecd/kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt#L65-L72  The stdio transports read up to 8 KiB at a time and call `readMessage()` after each chunk, so the time to receive one message grows with the square of its size. A 15 MiB message arrives in at least 1,920 chunks, and about 14 GiB is searched in total.  **To Reproduce**  The snippet feeds one message to `ReadBuffer` in 8 KiB chunks, as the stdio transports do.  ```kotlin import io.modelcontextprotocol.kotlin.sdk.shared.ReadBuffer import kotlin.time.Duration import kotlin.time.measureTime  fun receive(sizeMiB: Int): Duration {     val data = "x".repeat(sizeMiB * 1024 * 1024)     val frame = """{"jsonrpc":"2.0","method":"notifications/message","params":{"level":"info","data":"$data"}}""" + "\n"     val bytes = frame.encodeToByteArray()     val readBuffer = ReadBuffer()     return measureTime {         for (offset in bytes.indices step 8192) {             readBuffer.append(bytes.copyOfRange(offset, minOf(offset + 8192, bytes.size)))             // null until the last chunk arrives; every call searches the buffer from the start             readBuffer.readMessage()         }     } }  fun main() {     receive(1) // warm-up     for (sizeMiB in listOf(1, 2
 
-- **Issue #1079** (2026-10-15): **mcpStreamableHttp fails when the SSE plugin is already installed**
-  *Symptoms*: `Application.mcp { }` and `Application.mcpStreamableHttp { }` call `install(SSE)` unconditionally. Ktor throws `DuplicatePluginException` when the application already has the SSE plugin installed, or when two `mcpStreamableHttp` endpoints are registered in one application. Content negotiation, right next to it, is already installed only when it is missing.  **Expected:** install SSE only if `pluginOrNull(SSE) == null`, with a test that registers two endpoints in one application. 
+- **Issue #1086** (2026-11-10): **A cancelled handler stops StdioServerTransport**
+  *Symptoms*: When a handler throws `CancellationException`, the `processorPump` of `StdioServerTransport` rethrows it. That ends the read loop, the `finally` block closes the write channel, and the transport fires `onClose` without `onError`. A single handler's cancellation, for example a cancelled request scope leaking out of a handler, therefore closes the whole connection. Other handler exceptions are logged and the loop continues.  **Expected:** treat a `CancellationException` that comes from a handler like any other handler failure, while the transport's own cancellation still stops it. They can be told apart, for example, with `currentCoroutineContext().isActive`. Update the test `should not invoke onError for CancellationException in handler`, which pins the current behavior.  Related: #518. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1069,151 +1076,508 @@ public open class TransportSendOptions(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e55f946d` (2026-11-06)
-**Commit Message**: chore(deps): bump the ktor group across 1 directory with 14 updates (#1157)
+### Incident Patch 1: `dfcb7a8b` (2026-11-10)
+**Commit Message**: fix(core,server): keep StdioServerTransport running when a handler is cancelled (#1101)
 
-Bumps the ktor group with 14 updates in the / directory:
+Fixes #1086
 
-| Package | From | To |
-| --- | --- | --- |
-| [io.ktor:ktor-client-auth](https://github.com/ktorio/ktor) | `3.5.2` |
-`3.6.1` |
-| [io.ktor:ktor-client-core](https://github.com/ktorio/ktor) | `3.5.2` |
-`3.6.1` |
-| [io.ktor:ktor-client-logging](https://github.com/ktorio/ktor) |
-`3.5.2` | `3.6.1` |
-|
-[io.ktor:ktor-server-content-negotiation](https://github.com/ktorio/ktor)
-| `3.5.2` | `3.6.1` |
-|
-[io.ktor:ktor-client-content-negotiation](https://github.com/ktorio/ktor)
-| `3.5.2` | `3.6.1` |
-|
-[io.ktor:ktor-serialization-kotlinx-json](https://github.com/ktorio/ktor)
-| `3.5.2` | `3.6.1` |
-| [io.ktor:ktor-server-auth](https://github.com/ktorio/ktor) | `3.5.2` |
-`3.6.1` |
-| [io.ktor:ktor-server-core](https://github.com/ktorio/ktor) | `3.5.2` |
-`3.6.1` |
-| [io.ktor:ktor-server-sse](https://github.com/ktorio/ktor) | `3.5.2` |
-`3.6.1` |
-| [io.ktor:ktor-server-websockets](https://github.com/ktorio/ktor) |
-`3.5.2` | `3.6.1` |
-| [io.ktor:ktor-client-mock](https://github.com/ktorio/ktor) | `3.5.2` |
-`3.6.1` |
-| [io.ktor:ktor-server-test-host](https://github.com/kt
+## Problem
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+When a message handler threw `CancellationException`, `processorPump`
+rethrew it. The read loop ended, the `finally` block closed the write
+channel, and the transport fired `onClose` without `onError`. A single
+handler's cancellation, for example a cancelled request scope leaking
+out of a handler, closed the whole connection. Other handler exceptions
+are logged and the loop continues.
+
+## Change
+
+- In the handler `catch` for `CancellationException`, call
+`currentCoroutineContext().ensureActive()` first. If the transport's own
+coroutine is cancelled (`close()` or a cancelled external scope), this
+rethrows and the loop stops as before.
+- Otherwise the exception came from the handler. It is logged and passed
+to `onError`, like any other handler failure, and the loop continues.
+- Follow-up in `Protocol.onRequest` (core, second commit): in the serial
+phase before `notifications/initialized`, a `CancellationException`
+leaking from a handler was rethrown. Once the Stdio transport stops
+closing on it, that request got no reply and the peer waited for its own
+timeout. It now ans
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/Protocol.kt` (modified, +4/-2)
 ```diff
-@@ -15,7 +15,7 @@ collections-immutable = "0.5.2"
- coroutines = "1.11.0"
- kotest = "6.2.6"
- kotlinx-io = "0.9.1"
--ktor = "3.5.2"
-+ktor = "3.6.1"
- logging = "8.0.4"
- mockk = "1.14.11"
- serialization = "1.12.0"
+@@ -42,6 +42,7 @@ import kotlinx.coroutines.NonCancellable
+ import kotlinx.coroutines.SupervisorJob
+ import kotlinx.coroutines.cancel
+ import kotlinx.coroutines.currentCoroutineContext
++import kotlinx.coroutines.ensureActive
+ import kotlinx.coroutines.job
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.sync.Semaphore
+@@ -625,8 +626,9 @@ public abstract class Protocol(@PublishedApi internal val options: ProtocolOptio
+                 )
+             } catch (e: CancellationException) {
+                 // Intentional exception to the always-rethrow-CE convention, only at this boundary.
+-                if (handlerJob == null) throw e // serial phase: inline dispatch is not response-suppressed
+-                if (handlerJob.isCancelled) throw e // genuine peer or close cancel: suppress the response
++                // Serial phase: the handler runs inline, so a real close cancels the delivering coroutine itself.
++                if (handlerJob == null) currentCoroutineContext().ensureActive()
++                if (handlerJob?.isCancelled == true) throw e // genuine peer or close cancel: suppress the response
+                 // CE escaped a live handler job (e.g. a leaked inner withTimeout). Answer
+                 // INTERNAL_ERROR so the peer does not hang until its own timeout.
+                 respondWithError(capturedTransport, request, e)
+```
+
+**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ProtocolConcurrencyTest.kt` (modified, +29/-0)
+```diff
+@@ -165,6 +165,35 @@ class ProtocolConcurrencyTest {
+         error.error.code shouldBe RPCError.ErrorCode.INTERNAL_ERROR
+     }
+ 
++    @Test
++    fun `handler leaking CancellationException in the serial phase produces INTERNAL_ERROR`() = runTest {
++        val (protocol, transport) = connected(concurrent = false)
++        protocol.fallbackRequestHandler = { _, _ -> throw CancellationException("leaked") }
++
++        transport.deliver(JSONRPCRequest(id = RequestId(7L), method = "test/leak"))
++
++        val error = errorsOn(transport).single()
++        error.id shouldBe RequestId(7L)
++        error.error.code shouldBe RPCError.ErrorCode.INTERNAL_ERROR
++    }
++
++    @Test
++    fun `cancelling the delivering coroutine in the serial phase sends no response`() = runTest {
++        val (protocol, transport) = connected(concurrent = false)
++        protocol.fallbackRequestHandler = { _, _ ->
++            delay(10.seconds)
++            EmptyResult()
++        }
++
++        val delivery = launch { transport.deliver(JSONRPCRequest(id = RequestId(8L), method = "test/slow")) }
++        runCurrent()
++        delivery.cancel()
++        advanceUntilIdle()
++
++        delivery.isCancelled shouldBe true
++        transport.sentWithOptions shouldBe emptyList()
++    }
++
+     @Test
+     fun `suspension-free notification handlers observe strict arrival order`() = runTest {
+         val (protocol, transport) = connected()
+```
+
+**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/StdioServerTransport.kt` (modified, +6/-1)
+```diff
+@@ -25,6 +25,7 @@ import kotlinx.coroutines.cancelAndJoin
+ import kotlinx.coroutines.channels.Channel
+ import kotlinx.coroutines.channels.ClosedSendChannelException
+ import kotlinx.coroutines.currentCoroutineContext
++import kotlinx.coroutines.ensureActive
+ import kotlinx.coroutines.isActive
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.withContext
+@@ -218,7 +219,11 @@ public class StdioServerTransport private constructor(
+                     try {
+                         _onMessage(message)
+                     } catch (e: CancellationException) {
+-                        throw e
++                        // Only the transport's own cancellation stops the loop. A cancellation that
++                        // escapes a handler is a failure of that handler, like any other exception.
++                        currentCoroutineContext().ensureActive()
++                        logger.error(e) { "Message handler leaked a CancellationException" }
++                        _onError(e)
+                     } catch (e: Throwable) {
+                         logger.error(e) { "Error processing message" }
+                         _onError(e)
+```
+
+**File**: `kotlin-sdk-server/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/server/StdioServerTransportTest.kt` (modified, +35/-19)
+```diff
+@@ -21,6 +21,7 @@ import kotlinx.coroutines.SupervisorJob
+ import kotlinx.coroutines.asCoroutineDispatcher
+ import kotlinx.coroutines.cancel
+ import kotlinx.coroutines.coroutineScope
++import kotlinx.coroutines.job
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.withTimeoutOrNull
+ import kotlinx.io.Buffer
+@@ -225,24 +226,6 @@ class StdioServerTransportTest {
+         server.close()
+     }
+ 
+-    @Test
+-    fun `should not invoke onError for CancellationException in handler`() = runIntegrationTest {
+-        val server = StdioServerTransport(input = bufferedInput, output = printOutput)
+-        val capturedError = CompletableDeferred<Throwable>()
+-        val closed = CompletableDeferred<Unit>()
+-        server.onError { capturedError.complete(it) }
+-        server.onClose { closed.complete(Unit) }
+-        server.onMessage { throw CancellationException("cancelled") }
+-        server.start()
+-
+-        inputWriter.write(serializeMessage(PingRequest().toJSON()))
+-        inputWriter.flush()
+-
+-        // The cancellation stops the processor; the transport then shuts down without reporting an error.
+-        closed.await()
+-        capturedError.isCompleted shouldBe false
+-    }
+-
+     // endregion
+ 
+     @Test
+@@ -400,9 +383,10 @@ class StdioServerTransportTest {
+     @Test
+     fun `should not hang close when handler suspends indefinitely`() = runIntegrationTest {
+         val server = StdioServerTransport(input = bufferedInput, output = printOutput)
++        val capturedErrors = mutableListOf<Throwable>()
+         val handlerEntered = CompletableDeferred<Unit>()
+         val neverComplete = CompletableDeferred<Unit>()
+-        server.onError {}
++        server.onError { capturedErrors.add(it) }
+         server.onMessage {
+             handlerEntered.complete(Unit)
+             neverComplete.await()
+@@ -414,6 +398,7 @@ class StdioServerTransportTest {
+ 
+         handlerEntered.await()
+         server.close()
++        capturedErrors shouldBe emptyList()
+     }
+ 
+     // endregion
+@@ -442,6 +427,36 @@ class StdioServerTransportTest {
+         ex.code shouldBe RPCError.ErrorCode.CONNECTION_CLOSED
+     }
+ 
++    @Test
++    fun `should stop without onError when the scope is cancelled during a handler`() = runIntegrationTest {
++        val externalScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
++        val server = StdioServerTransport(input = bufferedInput, output = printOutput) {
++            scope = externalScope
++        }
++        val capturedErrors = mutableListOf<Throwable>()
++        val handlerEntered = CompletableDeferred<Unit>()
++        val closeCaptured = CompletableDeferred<Unit>()
++        server.onError { capturedErrors.add(it) }
++        server.onClose { closeCaptured.complete(Unit) }
++        server.onMessage {
++            handlerEntered.complete(Unit)
++            CompletableDeferred<Unit>().await()
++        }
++        server.start()
++
++        inputWriter.write(serializeMessage(PingRequest().toJSON()))
++        inputWriter.flush()
++        handlerEntered.await()
++        externalScope.cancel()
++
++        closeCaptured.await()
++        // onClose can fire before the processor has handled the cancellation, so wait for all pumps.
++        // Closing the input lets the blocking reader return.
++        inputWriter.close()
++        externalScope.coroutineContext.job.join()
++        capturedErrors shouldBe emptyList()
++    }
++
+     @Test
+     fun `should use ioDispatcher for reader and writer`() = runIntegrationTest {
+         val threadName = "stdio-test-io-thread"
+@@ -541,6 +556,7 @@ class StdioServerTransportTest {
+     private fun handlerErrors() = listOf(
+         RuntimeException("handler failure"),
+         OutOfMemoryError("handler error"),
++        CancellationException("handler cancelled"),
+     )
+ 
+     /** A [RawSource] that immediately throws [throwable] on every read attempt. */
 ```
 
 ---
 
-### Incident Patch 2: `e156d630` (2026-11-06)
-**Commit Message**: chore: rewrite the mcp-docs skill for the 2026-07-28 spec (#1164)
+### Incident Patch 2: `cb43229a` (2026-11-10)
+**Commit Message**: fix: omit empty _meta from outgoing requests (#1121) (#1122)
 
-Rewrites the `mcp-docs` skill for the 2026-07-28 spec revision: how to
-pick the revision to answer from, where spec pages, SEPs, `schema.ts`
-and conformance scenarios live, and how to fetch them verbatim.
+Fixes #1121
+
+## Motivation and Context
+`Client.callTool` wrapped `meta` in `RequestMeta` even when empty, so
+every request carried `"_meta": {}`. Strict servers reject it: a Python
+SDK user hit HTTP 400 / -32602 "_meta for Request must be a dict or
+null" from Meta's hosted Ads MCP server (python-sdk#3473, fixed in
+python-sdk#3628). The Kotlin client now only sends `_meta` when it's
+non-empty, like the Swift, Go, Java and C# SDKs.
+
+## How Has This Been Tested?
+- `ClientMetaParameterTest`: an omitted meta now asserts `_meta` is
+absent (this test previously pinned the empty object), and a new test
+checks a non-empty meta is still sent.
+- Reverting the fix makes the new assertion fail.
+- `:kotlin-sdk-client:jvmTest` passes (57 tests), plus `ktlintCheck`,
+`detekt` and `checkKotlinAbi` for the client module. Native, JS and wasm
+targets weren't run locally.
 
 ## Breaking Changes
-None
+No API change (`checkKotlinAbi` passes). On the wire, an empty `_meta`
+is no longer sent.
 
 ## Types of changes
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing
-functionality to change)
-- [x] Documentation update
+- [x] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
 
 ## Checklist
-- [x] I have read the [MCP
-Documentation](https://modelcontextprotocol.io)
-- [x] My code follows the repository's style guidelines
-- [ ] New and existing tests pass locally
-- [ ] I have added appropriate error handling
-- [x] I have added or updated documentation as needed
+- [x]
 
-**File**: `.claude/skills/mcp-docs/SKILL.md` (modified, +69/-53)
+**File**: `integration-test/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/client/ClientTest.kt` (modified, +16/-0)
 ```diff
-@@ -1,76 +1,92 @@
- ---
- name: mcp-docs
--description: >
--  Fetch live MCP specification and docs from modelcontextprotocol.io. Training data may be
--  outdated — default to using this skill when the query touches MCP protocol in any way.
--  Trigger for: implementing or debugging MCP features (sampling, elicitation, completion, tools,
--  resources, prompts, transports); SEPs or spec requirements; MCP transport behavior (SSE,
--  Streamable HTTP, reconnection, retry); authorization/OAuth; conformance test failures;
--  capability negotiation; message schemas. Skip only for pure Kotlin, build system, or
--  refactoring tasks with zero MCP protocol dependency. When in doubt, trigger.
--user_invocable: true
-+description: >-
-+  Look up the live MCP specification instead of answering from memory: the spec moves faster
-+  than training data (the 2026-07-28 revision removed initialize, sessions and
-+  server-to-client requests). Covers spec pages for every revision, changelogs, SEPs,
-+  schema.ts, conformance-test scenarios, and how the reference TypeScript/Python SDKs read
-+  the spec. Use whenever a task depends on what MCP requires: implementing, reviewing or
-+  debugging protocol behavior (tools, resources, prompts, sampling, elicitation, completion,
-+  caching, MRTR, subscriptions, server/discover), transports (stdio, Streamable HTTP, SSE,
-+  headers, cancellation), version and era negotiation, authorization/OAuth, error codes,
-+  message schemas, or a failing conformance check. Skip only for work with no protocol
-+  dependency (pure Kotlin refactoring, build, dependency bumps). When in doubt, use it.
-+argument-hint: "[topic | SEP number | spec page]"
-+allowed-tools:
-+  - WebFetch(domain:modelcontextprotocol.io)
-+  - WebFetch(domain:raw.githubusercontent.com)
-+  - mcp__mcp-docs__search_model_context_protocol
-+  - mcp__mcp-docs__query_docs_filesystem_model_context_protocol
- ---
+@@ -36,6 +36,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
+ import io.modelcontextprotocol.kotlin.sdk.types.ListRootsRequest
++import io.modelcontextprotocol.kotlin.sdk.types.ListRootsResult
+ import io.modelcontextprotocol.kotlin.sdk.types.LoggingLevel
+ import io.modelcontextprotocol.kotlin.sdk.types.LoggingMessageNotification
+ import io.modelcontextprotocol.kotlin.sdk.types.LoggingMessageNotificationParams
+@@ -182,6 +183,21 @@ class ClientTest {
+         session.listRoots().roots.shouldBeEmpty()
+     }
  
--# MCP Documentation Skill
-+# MCP docs
++    @Test
++    fun `listRoots should omit _meta when no params are given`() = runTest {
++        val client = newClient(ClientCapabilities(roots = ClientCapabilities.Roots()))
++        val session = connect(client)
++        val received = CompletableDeferred<ListRootsRequest>()
++        client.setRequestHandler<ListRootsRequest>(Method.Defined.RootsList) { request, _ ->
++            received.complete(request)
++            ListRootsResult(emptyList())
++        }
++
++        session.listRoots()
++
++        received.await().params?.meta shouldBe null
++    }
++
+     @Test
+     fun `roots mutators should require roots capability`() {
+         val client = newClient()
+```
+
+**File**: `kotlin-sdk-client/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/client/Client.kt` (modified, +2/-2)
+```diff
+@@ -530,13 +530,13 @@ public open class Client(private val clientInfo: Implementation, options: Client
+         validateMetaKeys(meta.keys)
  
--Provides access to the official MCP specification and docs from modelcontextprotocol.io. The spec evolves faster than training data — always consult live documentation for protocol specifics like message schemas, required fields, capability negotiation, error handling, and transport requirements.
-+The MCP specification changes faster than training data. The 2026-07-28 revision, the newest when this skill was written, was a breaking rewrite: no `initialize` handshake, no protocol sessions, no GET stream, server-to-client requests replaced by multi round-trip results. Details recalled from memory are therefore often from the wrong revision. Look them up, quote what the spec says, and link the page.
+         val jsonArguments = arguments.toJson()
+-        val jsonMeta = meta.toJson()
++        val requestMeta = meta.takeIf { it.isNotEmpty() }?.let { RequestMeta(JsonObject(it.toJson())) }
  
--## When to use
-+## Pick the revision
+         val request = CallToolRequest(
+             CallToolRequestParams(
+                 name = name,
+                 arguments = JsonObject(jsonArguments),
+-                meta = RequestMeta(JsonObject(jsonMeta)),
++                meta = requestMeta,
+             ),
+         )
+         return callTool(request, options)
+```
+
+**File**: `kotlin-sdk-client/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/client/ClientMetaParameterTest.kt` (modified, +2/-3)
+```diff
+@@ -5,7 +5,6 @@ import io.kotest.assertions.withClue
+ import io.kotest.matchers.shouldBe
+ import io.kotest.matchers.string.shouldContain
+ import io.kotest.matchers.types.shouldBeInstanceOf
+-import io.modelcontextprotocol.kotlin.sdk.types.EmptyJsonObject
+ import io.modelcontextprotocol.kotlin.sdk.types.Implementation
+ import kotlinx.coroutines.test.runTest
+ import kotlinx.serialization.json.JsonElement
+@@ -77,10 +76,10 @@ class ClientMetaParameterTest {
+     }
  
--**Proactively** (without being asked):
--- Implementing a feature defined in the MCP spec
--- Reviewing code that implements MCP protocol behavior
--- Fixing conformance test failures
-+Use the newest released revision unless the question is tied to another one: the user names a revision ("по 2025-11-25", "what does the draft say"), or the thing being asked about cites one (a conformance check's `specReferences`, a SEP). `latest` in a spec URL redirects to the newest revision (`curl -sI https://modelcontextprotocol.io/specification/latest` names it), so you never need to guess its date.
+     @Test
+-    fun `should send an empty _meta object when no meta is given`() = runTest {
++    fun `should omit _meta when no meta is given`() = runTest {
+         connectedClient().callTool("test-tool", mapOf("arg" to "value"))
  
--**On demand** (user asks or invokes `/mcp-docs`):
--- Questions about how a specific MCP feature works
--- Clarifying spec ambiguities
--- Looking up SEPs (Specification Enhancement Proposals)
-+Give the verdict from that revision, even when the code at hand implements an older one: the SDK is being brought up to the newest revision, so "is this allowed by the spec" means allowed by the newest one. The SDK implements `LATEST_PROTOCOL_VERSION` from `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/common.kt`. When that revision says something different on the point in question, add a short block after the main answer, labelled with its revision and carrying its key quote, so the user sees why the code behaves as it does today. Put the newest revision first in a summary too, and go deeper into the older text only if the user asks.
+-        sentMeta() shouldBe EmptyJsonObject
++        sentMeta() shouldBe null
+     }
  
--## How to fetch documentation
-+Revisions also remove things, 2026-07-28 more than any before it, and that changes how to read what you find:
+     @Test
+```
+
+**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/ServerSession.kt` (modified, +2/-1)
+```diff
+@@ -438,7 +438,8 @@ public open class ServerSession(
+         options: RequestOptions? = null,
+     ): ListRootsResult {
+         logger.debug { "Listing roots with params: $params" }
+-        return request(ListRootsRequest(BaseRequestParams(RequestMeta(params))), options)
++        val requestParams = params.takeIf { it.isNotEmpty() }?.let { BaseRequestParams(RequestMeta(it)) }
++        return request(ListRootsRequest(requestParams), options)
+     }
  
--### Strategy: MCP tool first, llms.txt fallback
-+- If the topic does not exist in the revision you answer from (in 2026-07-28: sessions, `initialize`, `ping`, `resources/subscribe`, `logging/setLevel`, SSE resumability, ...), the answer is that it was removed. Say what replaced it, cite `changelog.md`, and name the last revision that defined it so the user can ask for that one. Don't fill the gap from memory.
-+- Pages of removed features redirect without warning: `specification/2026-07-28/basic/lifecycle.md` lands on `basic/versioning.md`. If the page you got is not about what you asked for, the feature probably moved or was removed.
+     /**
+```
+
+---
+
+### Incident Patch 3: `e3567782` (2026-11-09)
+**Commit Message**: fix(core): resume ReadBuffer's newline search where it left off (#1094)
+
+Remember how far `ReadBuffer` has searched for a newline and continue
+from there, instead of searching the whole buffer again after every
+chunk.
+
+fixes #1093
+
+## Motivation and Context
+
+With this change, the time to receive a message over stdio grows in
+proportion to its size, not with its square (#1093). Results are
+unchanged; only the amount of searching differs.
+
+The position is reset to 0 wherever bytes leave the buffer: when a line
+is taken out, in `clear()`, and when the frame cap trips.
+
+## How Has This Been Tested?
+
+This change improves performance without changing results, so the
+existing tests pass with or without it, and so do the new ones. The
+three tests added to `ReadBufferTest` protect the state this change
+introduces: each covers one place where the search position is reset,
+and fails if that reset is removed. A test that reproduces the slowdown
+would have to measure time, which depends on the machine, so I did not
+add one; the speed-up is shown by the measurements in #1093.
+
+## Breaking Changes
+
+None. The public API is unchanged.
+
+## Types of changes
+- [x] Bug fix (non-breaking change which fi
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt` (modified, +8/-2)
+```diff
+@@ -28,6 +28,9 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
  
--**Step 1 — Try the MCP search tool.** If `search_model
+     private val buffer: Buffer = Buffer()
+ 
++    /** Number of bytes at the front of [buffer] already known to hold no line terminator. */
++    private var scannedBytes: Long = 0
++
+     /** Appends raw bytes to the internal buffer for subsequent message parsing. */
+     public fun append(chunk: ByteArray) {
+         buffer.write(chunk)
+@@ -73,11 +76,13 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
+     }
+ 
+     private fun readNextLine(): String? {
+-        val lfIndex = if (buffer.exhausted()) -1L else buffer.indexOf('\n'.code.toByte())
++        val lfIndex = if (buffer.exhausted()) -1L else buffer.indexOf('\n'.code.toByte(), startIndex = scannedBytes)
+         if (lfIndex == -1L) {
++            scannedBytes = buffer.size
+             failIfFrameTooLong(buffer.size)
+             return null
+         }
++        scannedBytes = 0
+         failIfFrameTooLong(lfIndex)
+ 
+         return if (lfIndex == 0L) {
+@@ -98,7 +103,7 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
+ 
+     private fun failIfFrameTooLong(frameSize: Long) {
+         if (maxFrameSize in 1..<frameSize) {
+-            buffer.clear()
++            clear()
+             throw TooLongFrameException(frameSize, maxFrameSize)
+         }
+     }
+@@ -123,6 +128,7 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
+     /** Clears all buffered data, discarding any partially received messages. */
+     public fun clear() {
+         buffer.clear()
++        scannedBytes = 0
+     }
+ }
+ 
+```
+
+**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBufferTest.kt` (modified, +38/-0)
+```diff
+@@ -29,6 +29,21 @@ class ReadBufferTest {
+         readBuffer.readMessage().shouldBeNull()
+     }
+ 
++    @Test
++    fun `should yield a short message that follows a longer one split across chunks`() {
++        val readBuffer = ReadBuffer()
++        val longMessage: JSONRPCMessage = JSONRPCNotification(method = "x".repeat(line.length * 2))
++
++        readBuffer.append(serializeMessage(longMessage).removeSuffix("\n"))
++        readBuffer.readMessage().shouldBeNull()
++        // The rest of the long frame and a whole frame shorter than what was already searched.
++        readBuffer.append("\n$line")
++
++        readBuffer.readMessage() shouldBe longMessage
++        readBuffer.readMessage() shouldBe message
++        readBuffer.readMessage().shouldBeNull()
++    }
++
+     @Test
+     fun `should skip empty blank and malformed lines and return the next message`() {
+         val readBuffer = ReadBuffer()
+@@ -60,6 +75,18 @@ class ReadBufferTest {
+         readBuffer.readMessage() shouldBe message
+     }
+ 
++    @Test
++    fun `should yield a message shorter than the searched partial data discarded by clear`() {
++        val readBuffer = ReadBuffer()
++        readBuffer.append("a".repeat(line.length * 2))
++        readBuffer.readMessage().shouldBeNull()
++
++        readBuffer.clear()
++        readBuffer.append(line)
++
++        readBuffer.readMessage() shouldBe message
++    }
++
+     @Test
+     fun `should fail when an unframed blob exceeds the cap`() {
+         val readBuffer = ReadBuffer(maxFrameSize = 64)
+@@ -69,6 +96,17 @@ class ReadBufferTest {
+         shouldThrow<TooLongFrameException> { readBuffer.readMessage() }.message shouldContain "maximum size"
+     }
+ 
++    @Test
++    fun `should yield the next message after rejecting an unframed blob`() {
++        val readBuffer = ReadBuffer(maxFrameSize = 64)
++        readBuffer.append("a".repeat(100))
++        shouldThrow<TooLongFrameException> { readBuffer.readMessage() }
++
++        readBuffer.append(line)
++
++        readBuffer.readMessage() shouldBe message
++    }
++
+     @Test
+     fun `should accept a line of exactly maxFrameSize bytes and reject a longer one`() {
+         val frameSize = json.encodeToByteArray().size
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1169** (2026-11-09): chore(deps): bump github/codeql-action from 4.39.1 to 4.39.3 in the all-actions group (@dependabot[bot])
+- **PR #1168** (2026-11-09): chore(deps): bump org.jetbrains.dokka:dokka-gradle-plugin from 2.2.0 to 2.3.0 in the gradle-plugins group across 1 directory (@dependabot[bot])
+- **PR #1167** (2026-11-10): chore(deps): bump org.jetbrains.kotlinx:kotlinx-io-core from 0.9.1 to 0.9.2 in the kotlinx group across 1 directory (@dependabot[bot])
+- **PR #1166** (2026-11-09): chore(deps): bump com.anthropic:anthropic-java from 3.3.0 to 3.6.0 in /samples/kotlin-mcp-client in the other-dependencies group across 1 directory (@dependabot[bot])
 - **PR #1164** (2026-11-06): chore: rewrite the mcp-docs skill for the 2026-07-28 spec (@devcrocod)
-- **PR #1162** (2026-11-04): chore(deps): bump gradle/actions from 6.4.0 to 6.4.1 in the all-actions group across 1 directory (@dependabot[bot])
-- **PR #1161** (2026-11-02): chore(deps): bump the all-dependencies group in /integration-test/src/jvmTest/typescript with 2 updates (@dependabot[bot])
-- **PR #1160** (2026-11-02): chore(deps): bump io.ktor:ktor-bom from 3.6.0 to 3.6.1 in /samples/weather-stdio-server (@dependabot[bot])
-- **PR #1159** (2026-11-04): chore(deps): bump mcp-kotlin from 0.15.0 to 0.16.0 in /samples/weather-stdio-server (@dependabot[bot])
-- **PR #1158** (2026-11-04): chore(deps): bump mcp-kotlin from 0.15.0 to 0.16.0 in /samples/simple-streamable-server (@dependabot[bot])
+- **PR #1163** (2026-11-10): build: require Kotlin 2.3 and stop core from pulling in the Ktor server (@devcrocod)
 
 ---
 
@@ -1233,28 +1597,32 @@ Documentation](https://modelcontextprotocol.io)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the ktor group across 1 directory with 14 updates (#1157)
+## X. core,server): keep StdioServerTransport running when a handler is cancelled (#11
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/Protocol.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e55f946d`: deps): bump the ktor group across 1 directory with 14 updates (#1157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfcb7a8b`: core,server): keep StdioServerTransport running when a handler is cancelled (#1101). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/Protocol.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-ktor = "3.6.1"
+import kotlinx.coroutines.ensureActive
+                // Serial phase: the handler runs inline, so a real close cancels the delivering coroutine itself.
+                if (handlerJob == null) currentCoroutineContext().ensureActive()
+                if (handlerJob?.isCancelled == true) throw e // genuine peer or close cancel: suppress the response
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-ktor = "3.5.2"
+                if (handlerJob == null) throw e // serial phase: inline dispatch is not response-suppressed
+                if (handlerJob.isCancelled) throw e // genuine peer or close cancel: suppress the response
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e55f946d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfcb7a8b` are properly handled with clean fallback behavior.

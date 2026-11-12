@@ -9108,3 +9108,5 @@
 | `CYCLE-20261112-V7EY` | `2026-11-12T07:46:38.026Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1f852059...`) |
 | `CYCLE-20261112-574D` | `2026-11-12T07:54:24.205Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0061fbcd...`) |
 | `CYCLE-20261112-59UD` | `2026-11-12T07:54:27.733Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8808a67e...`) |
+| `CYCLE-20261112-LK5B` | `2026-11-12T08:07:07.583Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`85e5a69c...`) |
+| `CYCLE-20261112-LQMR` | `2026-11-12T08:07:15.987Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7f322217...`) |

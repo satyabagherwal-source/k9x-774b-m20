@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T07:54:33.837Z",
+  "updated_at": "2026-11-12T08:07:22.846Z",
   "stats": {
-    "total_discovered": 1009,
-    "approved_pending_harvest": 904,
+    "total_discovered": 1024,
+    "approved_pending_harvest": 918,
     "harvested_count": 0,
-    "rejected_count": 105,
+    "rejected_count": 106,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 933,
+      "COMMUNITY_AND_EXPERT": 948,
       "OFFICIAL_DOCUMENTATION": 30,
       "STANDARDS_AND_SPECIFICATIONS": 43,
       "ENGINEERING_BLOGS": 1,
@@ -21480,6 +21480,329 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
         "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-DCC129398CFD": {
+      "id": "SRC-DCC129398CFD",
+      "url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "title": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-44399078C55F": {
+      "id": "SRC-44399078C55F",
+      "url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle",
+      "title": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.769Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-7D69F84DA05D": {
+      "id": "SRC-7D69F84DA05D",
+      "url": "https://github.com/modelcontextprotocol/kotlin-sdk/blob/382e27b0ee5bfd3dad89c9fbc34fff1984e16ecd/kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt",
+      "title": "https://github.com/modelcontextprotocol/kotlin-sdk/blob/382e27b0ee5bfd3dad89c9fbc34fff1984e16ecd/kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-DB75D4703225": {
+      "id": "SRC-DB75D4703225",
+      "url": "https://github.com/genkit-ai/genkit",
+      "title": "https://github.com/genkit-ai/genkit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.789Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-113AB760DF1B": {
+      "id": "SRC-113AB760DF1B",
+      "url": "http://${host/",
+      "title": "http://${host/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T08:07:22.796Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-D5DB078DB910": {
+      "id": "SRC-D5DB078DB910",
+      "url": "https://storage.googleapis.com/genkit-assets-cli",
+      "title": "https://storage.googleapis.com/genkit-assets-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-D29E9FE6CC22": {
+      "id": "SRC-D29E9FE6CC22",
+      "url": "https://genkit.dev/docs/devtools",
+      "title": "https://genkit.dev/docs/devtools",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.805Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-66442611ECD9": {
+      "id": "SRC-66442611ECD9",
+      "url": "https://registry.npmjs.org/$%7BpackageName",
+      "title": "https://registry.npmjs.org/$%7BpackageName",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.810Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-DECC70371525": {
+      "id": "SRC-DECC70371525",
+      "url": "https://github.com/firebase/firebase-tools/blob/master/src/track.ts",
+      "title": "https://github.com/firebase/firebase-tools/blob/master/src/track.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-7CB5574C002D": {
+      "id": "SRC-7CB5574C002D",
+      "url": "https://policies.google.com/technologies/cookies/n",
+      "title": "https://policies.google.com/technologies/cookies/n",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.821Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-A2E2C02CFDCF": {
+      "id": "SRC-A2E2C02CFDCF",
+      "url": "https://support.google.com/analytics/answer/9191807",
+      "title": "https://support.google.com/analytics/answer/9191807",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-13C041F0E7DC": {
+      "id": "SRC-13C041F0E7DC",
+      "url": "https://www.google-analytics.com/$%7BvalidatePath",
+      "title": "https://www.google-analytics.com/$%7BvalidatePath",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-5AA9467E757C": {
+      "id": "SRC-5AA9467E757C",
+      "url": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag",
+      "title": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-C2D9B3BCEBEC": {
+      "id": "SRC-C2D9B3BCEBEC",
+      "url": "https://support.google.com/analytics/answer/11109416?hl=en",
+      "title": "https://support.google.com/analytics/answer/11109416?hl=en",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-CAD7D91688DD": {
+      "id": "SRC-CAD7D91688DD",
+      "url": "https://support.google.com/analytics/answer/7201382?hl=en",
+      "title": "https://support.google.com/analytics/answer/7201382?hl=en",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:07:22.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
       }
     }
   }
