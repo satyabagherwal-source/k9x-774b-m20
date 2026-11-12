@@ -9112,3 +9112,6 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `e62a47c3` | Multi-dimensional audit evidence | 2026-11-12T07:38:13.650Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `ef4c7459` | Multi-dimensional audit evidence | 2026-11-12T07:38:17.616Z |
 | `learn-dom-d-91eb11da` | `project://hf-prunaai-p-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | 2026-11-12T07:38:38.948Z |
+| `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `5c3dabee` | Multi-dimensional audit evidence | 2026-11-12T07:46:13.014Z |
+| `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `01ebe841` | Multi-dimensional audit evidence | 2026-11-12T07:46:25.609Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `ed0a4eb9` | Multi-dimensional audit evidence | 2026-11-12T07:46:38.030Z |

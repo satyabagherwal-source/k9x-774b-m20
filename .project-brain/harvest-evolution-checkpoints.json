@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T07:38:39.109Z",
+  "last_updated": "2026-11-12T07:46:43.628Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T06:41:50.188Z",
@@ -921,9 +921,24 @@
       "processed_at": "2026-11-12T07:38:38.962Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "telemt-telemt-learnings.md": {
+      "processed_at": "2026-11-12T07:46:43.420Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rdfjs-n3.js-learnings.md": {
+      "processed_at": "2026-11-12T07:46:43.478Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "vespa-engine-vespa-learnings.md": {
+      "processed_at": "2026-11-12T07:46:43.605Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 243,
+  "total_dossiers_evaluated": 246,
   "total_canonical_promoted": 29,
-  "total_staged_for_review": 211
+  "total_staged_for_review": 214
 }

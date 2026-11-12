@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T07:38:17.480Z",
+  "last_updated": "2026-11-12T07:46:37.920Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -62357,8 +62357,8 @@
       "slug": "telemt-telemt",
       "platform": "github",
       "source_url": "https://github.com/telemt/telemt",
-      "source_version": "66708d28",
-      "content_hash": "e32a44c64f750585bdc29326c15caccd594fc3bf26b99ae23a829c816589805b",
+      "source_version": "5c3dabee",
+      "content_hash": "37ef238c6ebdcbb22a6e86aef5c33d0d157bb76a9ff141f198b86ac63fd0587d",
       "dossier_path": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "promoted_rules": [
@@ -62383,7 +62383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T14:04:33.920Z",
+      "verified_at": "2026-11-12T07:46:12.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65721,8 +65721,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "b7e625df",
-      "content_hash": "34313097b1a1a3583cbdf0dd571cd9f47efee32f0fb20f45d44e360943d16b6f",
+      "source_version": "ed0a4eb9",
+      "content_hash": "1f852059955f4a3b98812afc98e6ba4327953694b1e7985bba7bccbbda268507",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -65744,6 +65744,11 @@
         {
           "number": null,
           "title": "Merge pull request #38475 from vespa-engine/bratseth/avoid-deprecation",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65837,7 +65842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:17:55.125Z",
+      "verified_at": "2026-11-12T07:46:37.894Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121747,11 +121752,16 @@
       "slug": "rdfjs-n3.js",
       "platform": "github",
       "source_url": "https://github.com/rdfjs/N3.js",
-      "source_version": "f551cfec",
-      "content_hash": "b92faee293b003b6491ab909240c418b3ac868cd0b9b4bb96166a0ad1b22dde6",
+      "source_version": "01ebe841",
+      "content_hash": "05762807bcc591f8012100bbfd29b5d754e9d9de45b3cd51aae3534392316f1d",
       "dossier_path": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ci): refetch upstream spec suites (#874)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2931,
           "title": "ci: announce each fix once and close issues fixed on next-major (#843)",
@@ -121773,7 +121783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:38:30.581Z",
+      "verified_at": "2026-11-12T07:46:25.418Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

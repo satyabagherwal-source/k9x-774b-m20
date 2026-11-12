@@ -5443,10 +5443,10 @@
     "repository": "telemt/telemt",
     "platform": "github",
     "sourceUrl": "https://github.com/telemt/telemt",
-    "sourceVersion": "66708d28",
+    "sourceVersion": "5c3dabee",
     "license": "NOASSERTION",
-    "contentHash": "e32a44c64f750585bdc29326c15caccd594fc3bf26b99ae23a829c816589805b",
-    "lastHarvestedAt": "2026-11-09T14:04:34.099Z",
+    "contentHash": "37ef238c6ebdcbb22a6e86aef5c33d0d157bb76a9ff141f198b86ac63fd0587d",
+    "lastHarvestedAt": "2026-11-12T07:46:13.014Z",
     "learningId": "learn-github-telemt-telemt"
   },
   "react-native-modal-react-native-modal": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "b7e625df",
+    "sourceVersion": "ed0a4eb9",
     "license": "Apache-2.0",
-    "contentHash": "34313097b1a1a3583cbdf0dd571cd9f47efee32f0fb20f45d44e360943d16b6f",
-    "lastHarvestedAt": "2026-11-09T23:17:55.262Z",
+    "contentHash": "1f852059955f4a3b98812afc98e6ba4327953694b1e7985bba7bccbbda268507",
+    "lastHarvestedAt": "2026-11-12T07:46:38.030Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -9713,10 +9713,10 @@
     "repository": "rdfjs/N3.js",
     "platform": "github",
     "sourceUrl": "https://github.com/rdfjs/N3.js",
-    "sourceVersion": "f551cfec",
+    "sourceVersion": "01ebe841",
     "license": "NOASSERTION",
-    "contentHash": "b92faee293b003b6491ab909240c418b3ac868cd0b9b4bb96166a0ad1b22dde6",
-    "lastHarvestedAt": "2026-11-04T00:38:30.651Z",
+    "contentHash": "05762807bcc591f8012100bbfd29b5d754e9d9de45b3cd51aae3534392316f1d",
+    "lastHarvestedAt": "2026-11-12T07:46:25.609Z",
     "learningId": "learn-github-rdfjs-n3-js"
   },
   "iziz-libphonenumber-ios": {

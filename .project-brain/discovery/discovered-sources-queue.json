@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T07:38:39.103Z",
+  "updated_at": "2026-11-12T07:46:43.625Z",
   "stats": {
-    "total_discovered": 966,
-    "approved_pending_harvest": 880,
+    "total_discovered": 997,
+    "approved_pending_harvest": 892,
     "harvested_count": 0,
-    "rejected_count": 86,
+    "rejected_count": 105,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 891,
-      "OFFICIAL_DOCUMENTATION": 29,
+      "COMMUNITY_AND_EXPERT": 921,
+      "OFFICIAL_DOCUMENTATION": 30,
       "STANDARDS_AND_SPECIFICATIONS": 43,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
@@ -20667,6 +20667,555 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
         "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-1288A631F0CD": {
+      "id": "SRC-1288A631F0CD",
+      "url": "https://github.com/telemt/telemt",
+      "title": "https://github.com/telemt/telemt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.429Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-F45B96669576": {
+      "id": "SRC-F45B96669576",
+      "url": "https://github.com/telemt/telemt/blob/main/docs/API.md",
+      "title": "https://github.com/telemt/telemt/blob/main/docs/API.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.435Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-F61A638570DD": {
+      "id": "SRC-F61A638570DD",
+      "url": "http://172.17.0.2:9091/v1/health",
+      "title": "http://172.17.0.2:9091/v1/health",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.440Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-24F01EBEB15F": {
+      "id": "SRC-24F01EBEB15F",
+      "url": "http://172.17.0.2:9091/v1/system/info",
+      "title": "http://172.17.0.2:9091/v1/system/info",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.446Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-471EC1676EEC": {
+      "id": "SRC-471EC1676EEC",
+      "url": "https://github.com/telemt/telemt/releases/tag/3.4.0",
+      "title": "https://github.com/telemt/telemt/releases/tag/3.4.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-243F84B39DFF": {
+      "id": "SRC-243F84B39DFF",
+      "url": "https://github.com/user-attachments/assets/07a497c3-0cde-4e07-8b9f-bc",
+      "title": "https://github.com/user-attachments/assets/07a497c3-0cde-4e07-8b9f-bc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.459Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-0FD8D8F37040": {
+      "id": "SRC-0FD8D8F37040",
+      "url": "https://docs.kernel.org/networking/ip-sysctl.html",
+      "title": "https://docs.kernel.org/networking/ip-sysctl.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-E3AAF894473F": {
+      "id": "SRC-E3AAF894473F",
+      "url": "https://api.ipify.org/",
+      "title": "https://api.ipify.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.472Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
+      }
+    },
+    "SRC-1B815238656E": {
+      "id": "SRC-1B815238656E",
+      "url": "https://github.com/rdfjs/N3.js",
+      "title": "https://github.com/rdfjs/N3.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-F650D7026F0F": {
+      "id": "SRC-F650D7026F0F",
+      "url": "http://example.org/a/b/c",
+      "title": "http://example.org/a/b/c",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-9BE1A5953317": {
+      "id": "SRC-9BE1A5953317",
+      "url": "http://example.org/a/b",
+      "title": "http://example.org/a/b",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-72FC01A8026B": {
+      "id": "SRC-72FC01A8026B",
+      "url": "https://example.org/x?y=",
+      "title": "https://example.org/x?y=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-8ABE98C4BA83": {
+      "id": "SRC-8ABE98C4BA83",
+      "url": "http://example.org/a/b/c$%7Bi",
+      "title": "http://example.org/a/b/c$%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-D3E9B38F8FB9": {
+      "id": "SRC-D3E9B38F8FB9",
+      "url": "http://example.org/a/d/$%7Bi",
+      "title": "http://example.org/a/d/$%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-66DA5DE5E1E2": {
+      "id": "SRC-66DA5DE5E1E2",
+      "url": "http://example.org/$%7Bi",
+      "title": "http://example.org/$%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-1AD827FE727A": {
+      "id": "SRC-1AD827FE727A",
+      "url": "http://example.org/a/b/c?q=%24%7Bi",
+      "title": "http://example.org/a/b/c?q=%24%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-3BDEC0DAD9EB": {
+      "id": "SRC-3BDEC0DAD9EB",
+      "url": "http://other.example/$%7Bi",
+      "title": "http://other.example/$%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-BD7CD2D07D92": {
+      "id": "SRC-BD7CD2D07D92",
+      "url": "http://example.org/s$%7Bi",
+      "title": "http://example.org/s$%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.539Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-128C954CBE72": {
+      "id": "SRC-128C954CBE72",
+      "url": "http://example.org/p",
+      "title": "http://example.org/p",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-E279104A6FE7": {
+      "id": "SRC-E279104A6FE7",
+      "url": "http://example.org///u0073$%7Bi",
+      "title": "http://example.org///u0073$%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-3BF0109E117A": {
+      "id": "SRC-3BF0109E117A",
+      "url": "http://example.org///U00000070",
+      "title": "http://example.org///U00000070",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-CCD8960DA8AB": {
+      "id": "SRC-CCD8960DA8AB",
+      "url": "http://example.org///U0001f600",
+      "title": "http://example.org///U0001f600",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.564Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-8672FDCE3996": {
+      "id": "SRC-8672FDCE3996",
+      "url": "http://example.org/o$%7Bi",
+      "title": "http://example.org/o$%7Bi",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.570Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-84D35D6F0567": {
+      "id": "SRC-84D35D6F0567",
+      "url": "https://rdf.js.org/data-model-spec",
+      "title": "https://rdf.js.org/data-model-spec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-6CFFC32A14B1": {
+      "id": "SRC-6CFFC32A14B1",
+      "url": "http://ex.org/",
+      "title": "http://ex.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-F1C063845A99": {
+      "id": "SRC-F1C063845A99",
+      "url": "http://ex.org/label",
+      "title": "http://ex.org/label",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.593Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-F713DC421913": {
+      "id": "SRC-F713DC421913",
+      "url": "https://github.com/rdfjs/N3.js/blob/8c926b9afbee2e5862110259f9c0ffd616d8a4ba/src/N3Writer.js",
+      "title": "https://github.com/rdfjs/N3.js/blob/8c926b9afbee2e5862110259f9c0ffd616d8a4ba/src/N3Writer.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.598Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-BBA4A779D782": {
+      "id": "SRC-BBA4A779D782",
+      "url": "https://github.com/vespa-engine/vespa",
+      "title": "https://github.com/vespa-engine/vespa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-A802123BB06F": {
+      "id": "SRC-A802123BB06F",
+      "url": "http://%s:%d/cluster/v2/%s/?recursive=true",
+      "title": "http://%s:%d/cluster/v2/%s/?recursive=true",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.614Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-CDDB983B8292": {
+      "id": "SRC-CDDB983B8292",
+      "url": "http://%s:%d/cluster/v2/%s/%s/%d",
+      "title": "http://%s:%d/cluster/v2/%s/%s/%d",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T07:46:43.619Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-B2305ACBEB8F": {
+      "id": "SRC-B2305ACBEB8F",
+      "url": "https://github.com/vespa-engine/vespa/blob/c37f89a8c712d734f0f86fb98cfeb83cf346be16/searchlib/src/vespa/searchlib/common/bitvector.h",
+      "title": "https://github.com/vespa-engine/vespa/blob/c37f89a8c712d734f0f86fb98cfeb83cf346be16/searchlib/src/vespa/searchlib/common/bitvector.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:46:43.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
       }
     }
   }

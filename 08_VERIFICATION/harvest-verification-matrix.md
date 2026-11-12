@@ -9103,3 +9103,6 @@
 | `CYCLE-20261112-KE8D` | `2026-11-12T07:38:13.645Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e25c771b...`) |
 | `CYCLE-20261112-KHAJ` | `2026-11-12T07:38:17.611Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e57571ca...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T07:38:38.948Z` | `hf-prunaai-p-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-91EB11DA` [Domain D] | Yes (`c5f92320...`) |
+| `CYCLE-20261112-UO41` | `2026-11-12T07:46:13.009Z` | `telemt/telemt` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/telemt-telemt-learnings.md` | Yes (`37ef238c...`) |
+| `CYCLE-20261112-UXTW` | `2026-11-12T07:46:25.604Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`05762807...`) |
+| `CYCLE-20261112-V7EY` | `2026-11-12T07:46:38.026Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1f852059...`) |

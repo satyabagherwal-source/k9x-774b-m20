@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T07:38:17.641Z",
-  "total_cycles_completed": 8935,
-  "total_learnings_persisted": 8935,
-  "total_rules_promoted": 8778,
+  "last_updated": "2026-11-12T07:46:38.036Z",
+  "total_cycles_completed": 8938,
+  "total_learnings_persisted": 8938,
+  "total_rules_promoted": 8780,
   "history": [
-    {
-      "timestamp": "2026-11-11T08:27:47.285Z",
-      "repository": "gkd-kit/gkd",
-      "learningId": "learn-github-gkd-kit-gkd",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T08:28:08.220Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T08:28:21.339Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T09:14:30.416Z",
       "repository": "astral-sh/ruff",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T07:38:17.641Z",
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:46:13.025Z",
+      "repository": "telemt/telemt",
+      "learningId": "learn-github-telemt-telemt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:46:25.616Z",
+      "repository": "rdfjs/N3.js",
+      "learningId": "learn-github-rdfjs-n3-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:46:38.036Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

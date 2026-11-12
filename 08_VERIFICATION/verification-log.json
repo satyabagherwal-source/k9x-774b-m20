@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-7DOR",
-    "timestamp": "2026-11-09T02:01:10.155Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-    "contentHash": "9e0170ef78910af4491e03bd2e9ad41b535f38b7316eef7beefb818dbab75126",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-7HJN",
-    "timestamp": "2026-11-09T02:01:15.155Z",
-    "repository": "SeaQL/sea-orm",
-    "learningId": "learn-github-seaql-sea-orm",
-    "contentHash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-G819",
-    "timestamp": "2026-11-09T02:08:02.733Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "9848cfd07622d41ea8ea63b16fffac813dfab7df6950db697339c5f020887c05",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-GEXU",
     "timestamp": "2026-11-09T02:08:11.682Z",
     "repository": "DNSControl/dnscontrol",
@@ -7490,6 +7445,51 @@
     "repository": "MariaDB/server",
     "learningId": "learn-github-mariadb-server",
     "contentHash": "e57571ca8efac2b915ab5d65b5670689615fc834d8825ab6e67e53f7703b1b26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-UO41",
+    "timestamp": "2026-11-12T07:46:13.009Z",
+    "repository": "telemt/telemt",
+    "learningId": "learn-github-telemt-telemt",
+    "contentHash": "37ef238c6ebdcbb22a6e86aef5c33d0d157bb76a9ff141f198b86ac63fd0587d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-UXTW",
+    "timestamp": "2026-11-12T07:46:25.604Z",
+    "repository": "rdfjs/N3.js",
+    "learningId": "learn-github-rdfjs-n3-js",
+    "contentHash": "05762807bcc591f8012100bbfd29b5d754e9d9de45b3cd51aae3534392316f1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-V7EY",
+    "timestamp": "2026-11-12T07:46:38.026Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "1f852059955f4a3b98812afc98e6ba4327953694b1e7985bba7bccbbda268507",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
