@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T07:16:00.764Z",
+  "updated_at": "2026-11-12T07:38:39.103Z",
   "stats": {
-    "total_discovered": 940,
-    "approved_pending_harvest": 854,
+    "total_discovered": 966,
+    "approved_pending_harvest": 880,
     "harvested_count": 0,
     "rejected_count": 86,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 868,
-      "OFFICIAL_DOCUMENTATION": 26,
+      "COMMUNITY_AND_EXPERT": 891,
+      "OFFICIAL_DOCUMENTATION": 29,
       "STANDARDS_AND_SPECIFICATIONS": 43,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
@@ -20095,6 +20095,578 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
         "fileName": "hf-nousresearch-arete-27b-learnings.md"
+      }
+    },
+    "SRC-29857CD388BC": {
+      "id": "SRC-29857CD388BC",
+      "url": "https://github.com/embassy-rs/embassy",
+      "title": "https://github.com/embassy-rs/embassy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:23.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-1B64F10455AA": {
+      "id": "SRC-1B64F10455AA",
+      "url": "https://pinplanner.app/",
+      "title": "https://pinplanner.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:23.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-BF5E6415F103": {
+      "id": "SRC-BF5E6415F103",
+      "url": "https://huggingface.co/PrunaAI/P-H3-Image",
+      "title": "https://huggingface.co/PrunaAI/P-H3-Image",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:38.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
+        "fileName": "hf-prunaai-p-h3-image-learnings.md"
+      }
+    },
+    "SRC-CE19132345F0": {
+      "id": "SRC-CE19132345F0",
+      "url": "https://github.com/zarf-dev/zarf",
+      "title": "https://github.com/zarf-dev/zarf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:38.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-01DD0D7854C2": {
+      "id": "SRC-01DD0D7854C2",
+      "url": "https://github.com/deckhouse/deckhouse-cli/blob/7e0c1e743b16c82134a062985dde161178bd45f6/cmd/commands/utils.go",
+      "title": "https://github.com/deckhouse/deckhouse-cli/blob/7e0c1e743b16c82134a062985dde161178bd45f6/cmd/commands/utils.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:38.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-C24937A98E85": {
+      "id": "SRC-C24937A98E85",
+      "url": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/types.go",
+      "title": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/types.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:38.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-515601837796": {
+      "id": "SRC-515601837796",
+      "url": "https://argo-cd.readthedocs.io/en/stable/user-guide/import",
+      "title": "https://argo-cd.readthedocs.io/en/stable/user-guide/import",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:38.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-00EA80CFE484": {
+      "id": "SRC-00EA80CFE484",
+      "url": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/applicationset_types.go",
+      "title": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/applicationset_types.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:38.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-6F6C3D7D788C": {
+      "id": "SRC-6F6C3D7D788C",
+      "url": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/app_project_types.go",
+      "title": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/app_project_types.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:38.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-01E200582C02": {
+      "id": "SRC-01E200582C02",
+      "url": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/repository_types.go",
+      "title": "https://github.com/argoproj/argo-cd/blob/v2.11.0/pkg/apis/application/v1alpha1/repository_types.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.003Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-98124E6322B3": {
+      "id": "SRC-98124E6322B3",
+      "url": "https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations",
+      "title": "https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.008Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-7218C60F7583": {
+      "id": "SRC-7218C60F7583",
+      "url": "https://github.com/zarf-dev/zarf/compare/v1.0.0...v1.0.1",
+      "title": "https://github.com/zarf-dev/zarf/compare/v1.0.0...v1.0.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-110D5ADDA23A": {
+      "id": "SRC-110D5ADDA23A",
+      "url": "https://github.com/zarf-dev/zarf/issues/5644",
+      "title": "https://github.com/zarf-dev/zarf/issues/5644",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.020Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-8A1239CCEF1D": {
+      "id": "SRC-8A1239CCEF1D",
+      "url": "https://github.com/zarf-dev/zarf/commit/e4455451cb2ef171b939bfc802c69cc96ac42524",
+      "title": "https://github.com/zarf-dev/zarf/commit/e4455451cb2ef171b939bfc802c69cc96ac42524",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-5A91A692522F": {
+      "id": "SRC-5A91A692522F",
+      "url": "https://github.com/googleapis/release-please",
+      "title": "https://github.com/googleapis/release-please",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-0C03C8B4C32C": {
+      "id": "SRC-0C03C8B4C32C",
+      "url": "https://app.netlify.com/projects/zarf-docs/deploys/6af4beeb4ab93ee08db42240",
+      "title": "https://app.netlify.com/projects/zarf-docs/deploys/6af4beeb4ab93ee08db42240",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-F83DA201CDD6": {
+      "id": "SRC-F83DA201CDD6",
+      "url": "https://app.codecov.io/gh/zarf-dev/zarf/pull/5648?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/zarf-dev/zarf/pull/5648?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-C9E021F41ADD": {
+      "id": "SRC-C9E021F41ADD",
+      "url": "https://app.codecov.io/gh/zarf-dev/zarf/pull/5648/indirect-changes?src=pr&el=tree-more",
+      "title": "https://app.codecov.io/gh/zarf-dev/zarf/pull/5648/indirect-changes?src=pr&el=tree-more",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-21103F1FF455": {
+      "id": "SRC-21103F1FF455",
+      "url": "https://docs.codecov.com/docs/test-analytics",
+      "title": "https://docs.codecov.com/docs/test-analytics",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.062Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-13772A9D86D5": {
+      "id": "SRC-13772A9D86D5",
+      "url": "https://docs.codecov.com/docs/javascript-bundle-analysis",
+      "title": "https://docs.codecov.com/docs/javascript-bundle-analysis",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-BEF99D9D1575": {
+      "id": "SRC-BEF99D9D1575",
+      "url": "https://astro.build/config",
+      "title": "https://astro.build/config",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-6115A9A529B4": {
+      "id": "SRC-6115A9A529B4",
+      "url": "https://zarf.dev/cosign.pub",
+      "title": "https://zarf.dev/cosign.pub",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-2F78DE71DC5E": {
+      "id": "SRC-2F78DE71DC5E",
+      "url": "https://argoproj.github.io/argo-helm",
+      "title": "https://argoproj.github.io/argo-helm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.085Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-CC5BC408AFFA": {
+      "id": "SRC-CC5BC408AFFA",
+      "url": "https://github.com/stefanprodan/podinfo.git",
+      "title": "https://github.com/stefanprodan/podinfo.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-132C213EE9BC": {
+      "id": "SRC-132C213EE9BC",
+      "url": "https://github.com/argoproj/argocd-example-apps.git@0d521c6e049889134f3122eb32d7ed342f43ca0d",
+      "title": "https://github.com/argoproj/argocd-example-apps.git@0d521c6e049889134f3122eb32d7ed342f43ca0d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.097Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-C83303BABCF2": {
+      "id": "SRC-C83303BABCF2",
+      "url": "https://github.com/argoproj/argocd-example-apps.git",
+      "title": "https://github.com/argoproj/argocd-example-apps.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T07:38:39.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
       }
     }
   }

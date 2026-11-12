@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "328d1d31",
+    "sourceVersion": "e62a47c3",
     "license": "Apache-2.0",
-    "contentHash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
-    "lastHarvestedAt": "2026-11-10T00:31:56.207Z",
+    "contentHash": "e25c771ba2b73f66bae3775bd502590e7624ea8ac9b12c77c951e6266c751bdb",
+    "lastHarvestedAt": "2026-11-12T07:38:13.650Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "e2db494d",
+    "sourceVersion": "90a50e46",
     "license": "Apache-2.0",
-    "contentHash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
-    "lastHarvestedAt": "2026-11-09T13:46:46.817Z",
+    "contentHash": "18882c2567cc4000d4948aacdb171511069343ef782d6cfc88ad1b088f52f91c",
+    "lastHarvestedAt": "2026-11-12T07:38:00.624Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "429abfaf",
+    "sourceVersion": "ef4c7459",
     "license": "GPL-2.0",
-    "contentHash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
-    "lastHarvestedAt": "2026-11-09T23:07:33.430Z",
+    "contentHash": "e57571ca8efac2b915ab5d65b5670689615fc834d8825ab6e67e53f7703b1b26",
+    "lastHarvestedAt": "2026-11-12T07:38:17.616Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -12125,8 +12125,8 @@
     "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image",
     "sourceVersion": "hf-prunaai-p-h3-image",
     "license": "Open-Source",
-    "contentHash": "e28d3e570354bb0e61af36e3cbf6fcbf35a044675c63947f2df4f843bf0b4682",
-    "lastHarvestedAt": "2026-11-07T17:40:39.333Z",
+    "contentHash": "76c24eeaf82fb55fb7feb1c86642d2e777eedadd15df152d7bab463de89cc4ca",
+    "lastHarvestedAt": "2026-11-12T07:37:46.470Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image"
   },
   "hf-nousresearch-arete-27b": {

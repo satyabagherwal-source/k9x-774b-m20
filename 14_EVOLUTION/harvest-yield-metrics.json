@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T07:15:39.169Z",
-  "total_cycles_completed": 8931,
-  "total_learnings_persisted": 8931,
-  "total_rules_promoted": 8775,
+  "last_updated": "2026-11-12T07:38:17.641Z",
+  "total_cycles_completed": 8935,
+  "total_learnings_persisted": 8935,
+  "total_rules_promoted": 8778,
   "history": [
-    {
-      "timestamp": "2026-11-11T07:46:13.517Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T07:46:26.244Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T07:58:40.070Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T08:22:47.072Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T08:27:47.285Z",
       "repository": "gkd-kit/gkd",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T07:15:39.169Z",
       "repository": "grpc/grpc-rust",
       "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:37:46.476Z",
+      "repository": "PrunaAI/P-H3-Image",
+      "learningId": "learn-huggingface-prunaai-p-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:38:00.631Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:38:13.672Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T07:38:17.641Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

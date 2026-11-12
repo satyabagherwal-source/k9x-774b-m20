@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T07:15:38.990Z",
+  "last_updated": "2026-11-12T07:38:17.480Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13331,8 +13331,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "e2db494d",
-      "content_hash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
+      "source_version": "90a50e46",
+      "content_hash": "18882c2567cc4000d4948aacdb171511069343ef782d6cfc88ad1b088f52f91c",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -13359,6 +13359,11 @@
         {
           "number": null,
           "title": "Merge pull request #7476 from lennlouisgeek/feature/stm32c5-dac-v9",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "usb: minor fixes",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -13437,7 +13442,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:46:46.690Z",
+      "verified_at": "2026-11-12T07:38:00.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42682,8 +42687,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "429abfaf",
-      "content_hash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
+      "source_version": "ef4c7459",
+      "content_hash": "e57571ca8efac2b915ab5d65b5670689615fc834d8825ab6e67e53f7703b1b26",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -42700,6 +42705,11 @@
         {
           "number": null,
           "title": "MDEV-41810 Atomic CoR: a crash at the end of CREATE OR REPLACE loses both the ol",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "main.mdev_31342_kill with view and cursor protocol",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42753,7 +42763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:07:33.296Z",
+      "verified_at": "2026-11-12T07:38:17.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68610,8 +68620,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "328d1d31",
-      "content_hash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
+      "source_version": "e62a47c3",
+      "content_hash": "e25c771ba2b73f66bae3775bd502590e7624ea8ac9b12c77c951e6266c751bdb",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -68628,6 +68638,11 @@
         {
           "number": null,
           "title": "deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "update agent mutation policy handling helm schema validation (#5644)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -68706,7 +68721,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:31:56.088Z",
+      "verified_at": "2026-11-12T07:38:13.502Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190513,7 +190528,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PrunaAI/P-H3-Image",
       "source_version": "hf-prunaai-p-h3-image",
-      "content_hash": "e28d3e570354bb0e61af36e3cbf6fcbf35a044675c63947f2df4f843bf0b4682",
+      "content_hash": "76c24eeaf82fb55fb7feb1c86642d2e777eedadd15df152d7bab463de89cc4ca",
       "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
       "promoted_rules": [],
@@ -190522,7 +190537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:40:39.201Z",
+      "verified_at": "2026-11-12T07:37:46.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

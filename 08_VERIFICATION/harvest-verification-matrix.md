@@ -9098,3 +9098,8 @@
 | `CYCLE-20261112-R19B` | `2026-11-12T07:15:23.807Z` | `NousResearch/Arete-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | Yes (`f288ffdf...`) |
 | `CYCLE-20261112-RD3B` | `2026-11-12T07:15:39.143Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cba6b2c9...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T07:16:00.760Z` | `hf-nousresearch-arete-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2EFB96C5` [Domain D] | Yes (`893c0373...`) |
+| `CYCLE-20261112-JT9D` | `2026-11-12T07:37:46.465Z` | `PrunaAI/P-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | Yes (`76c24eea...`) |
+| `CYCLE-20261112-K46J` | `2026-11-12T07:38:00.619Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18882c25...`) |
+| `CYCLE-20261112-KE8D` | `2026-11-12T07:38:13.645Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e25c771b...`) |
+| `CYCLE-20261112-KHAJ` | `2026-11-12T07:38:17.611Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e57571ca...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T07:38:38.948Z` | `hf-prunaai-p-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-91EB11DA` [Domain D] | Yes (`c5f92320...`) |

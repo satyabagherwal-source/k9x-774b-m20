@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `e2db494d`  
+> **Source Version**: `90a50e46`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T13:46:45.371Z  
+> **Timestamp**: 2026-11-12T07:37:48.558Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T13:46:45.363Z  
+> **Harvest Timestamp**: 2026-11-12T07:37:48.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10088 stars
+- **Stars / Engagement**: 10105 stars
 
 ---
 
@@ -1435,11 +1435,16 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7477** (2026-11-09): **usb/hid: notify RequestHandler on bus reset**
-  *Symptoms*: ## Summary  Adds a backward-compatible `fn reset(&mut self) {}` callback to `RequestHandler`, invoked from `Control::reset()` when a USB bus reset occurs.  This addresses #6891, where a HID implementation tracking protocol mode (e.g. Boot vs Report) had no trait-level hook to reset back to the default Report protocol mode following a USB bus reset, as required by HID 1.11 Section 7.2.6 and Appendix F.3.  - Adds default no-op `fn reset(&mut self) {}` to `RequestHandler` - Calls `handler.reset()` in `Control::reset()` while clearing partial report offset - Adds unit tests verifying that `Control::reset()` invokes the callback and clears offset both with and without a handler attached - Adds entry to `embassy-usb/CHANGELOG.md`  Fixes #6891  ## Testing  - `cargo test --manifest-path embassy-usb/Cargo.toml` passes (257 unit tests + 9 doc tests) - `cargo fmt --manifest-path embassy-usb/Cargo.toml --check` passes
+- **Issue #7510** (2026-11-11): **nrf: check pin-peripheral compatibility at compile time for nrf54.**
+  *Symptoms*:   nrf: check pin-peripheral compatibility at compile time for nrf54.  This adds TxPin, RxPin, etc traits similar to what stm32, rp and other HALs already have. The impls are a bit different since they're made per domain but the idea is the same.  This also adds support for the funny "Select P2 pins can be used for some serial interfaces in the peripheral domain" edge case, behind a Cargo feature to opt in to the "constant latency" power mode.  For nRFs other than nRF54 the traits are implemented for all pins.  Fixes #4854 Fixes #7470
+  **Post-Mortem & Fix Analysis**:
+  > Does it really have to be so explicit and verbose like implemented?  I think, you just need these boundaries: - Each pin has to be marked if it is usable for a certain SERIAL peripheral. - Some pins are clock pins. Clock signals require a pin also to be a clock pin.  Something like this for a SPIM:  ```rs pub fn new<S, T: SpimInstance<S>>(     spim: Peri<'d, T>,     sck: Peri<'d, impl SerialPin<S> + impl ClockPin>,     mosi: Peri<'d, impl SerialPin<S>>,     miso: Peri<'d, impl SerialPin<S>>,     cs: Peri<'d, impl SerialPin<S>>,     _irq: impl interrupt::typelevel::Binding<T::Interrupt, InterruptHandler<T>> + 'd,     config: Config, ) -> Self; ```  Or do I misunderstand your PR?  Maybe this tool is handy to verify the changes: https://pinplanner.app  
+  > > Each pin has to be marked if it is usable for a certain SERIAL peripheral.  Yes, this is exactly what the traits do. `RxPin<SERIAL20>` marks a pin as "this is usable as RX pin for peripheral SERIAL20".  It's not enough to do one trait for all pin functions like  `PinUsableWith<SERIAL20>` because some peripherals have fixed mappings, see QSPI for example. Also doing it this way would be inconsistent with what other HALs (stm32, rp...) do.  > Some pins are clock pins. Clock signals require a pin also to be a clock pin.  This PR intentionally doesn't enforce this, putting clocks on non-clock pins still works, just not very well at high frequencies.  (also note this restriction is in all nRFs, not just nrf54. For example in nrf52 many pins are marked "not for high-frequency IO". So not enforcing this in nRF54 is consistent with what we were already doing)
 
-- **Issue #7476** (2026-11-09): **stm32c5: add C5 DAC DMA example**
-  *Symptoms*: Add a timer-triggered DAC DMA example for STM32C5.  TIM6 triggers a 128-sample circular DMA buffer at 12.8 kHz, producing a 100 Hz triangle wave on PA4.  Tested on STM32C562RE.
+- **Issue #7509** (2026-11-11): **nrf: remove Any types on ppi, gpiote. Remove instance generic on ppi.**
+  *Symptoms*: - **nrf/gpiote: remove AnyChannel** - **nrf/ppi: remove instance generics and the Anys.** 
+  **Post-Mortem & Fix Analysis**:
+  > bender run
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1456,227 +1461,330 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `135ddb45` (2026-11-09)
-**Commit Message**: Merge pull request #7476 from lennlouisgeek/feature/stm32c5-dac-v9
+### Incident Patch 1: `455ca7b9` (2026-11-12)
+**Commit Message**: usb: minor fixes
 
-stm32c5: add C5 DAC DMA example
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-1)
+**File**: `embassy-usb/src/class/midi/device/mod.rs` (modified, +50/-5)
 ```diff
-@@ -316,7 +316,7 @@ DAC:
- - feat: stm32/dac: add HRTIM DAC triggers
- - feat: stm32/dac: type-erase DAC
- - feat: stm32/dac: add trigger trait impl
--- feat: stm32/dac: add DAC v9 (STM32C5) support. DMA, triggered output, and ring-buffered output have not been hardware tested.
-+- feat: stm32/dac: add DAC v9 (STM32C5) support
+@@ -2,6 +2,8 @@
  
- OPAMP:
- - feat: stm32/opamp: allow VINM0 as bias input
-```
-
-**File**: `examples/stm32c5/src/bin/dac_dma.rs` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+#![no_std]
-+#![no_main]
-+
-+// Tested on STM32C562RE. Observe DAC1 channel 1 on PA4 relative to GND
-+// with an oscilloscope.
-+// TIM6 triggers 12,800 samples/s; the 128-sample DMA ring produces a 100 Hz
-+// triangle wave spanning approximately 0..VREF+. No external wiring is needed
-+// other than the scope probe.
-+
-+use defmt::*;
-+use defmt_rtt as _;
-+use embassy_executor::Spawner;
-+use embassy_stm32::dac::{DacChannel, u12r};
-+use embassy_stm32::time::Hertz;
-+use embassy_stm32::timer::low_level::{MasterMode, RoundTo, Timer};
-+use embassy_stm32::triggers::TIM6_TRGO;
-+use embassy_stm32::{Config, bind_interrupts, dma, peripherals};
-+use embassy_time::Timer as EmbassyTimer;
-+use panic_probe as _;
-+use static_cell::StaticCell;
-+
-+const SAMPLE_COUNT: usize = 128;
-+static DMA_BUF: StaticCell<[u12r; SAMPLE_COUNT]> = StaticCell::new();
-+
-+bind_interrupts!(struct Irqs {
-+    LPDMA1_CH0 => dma::InterruptHandler<peripherals::LPDMA1_CH0>;
-+});
-+
-+#[embassy_executor::main]
-+async fn main(_spawner: Spawner) {
-+    let mut config = Config::default();
-+
-+    config.rcc.mux.adcdacsel = embassy_stm32::rcc::mux::Adcdacsel::Hclk1;
-+    config.rcc.adcdac_pre = embassy_stm32::pac::rcc::vals::Adcdacpre::Div2;
-+
-+    let p = embassy_stm32::init(config);
-+
-+    let timer = Timer::new(p.TIM6);
-+    timer.set_frequency(Hertz(12_800), RoundTo::Slower);
-+    timer.set_master_mode(MasterMode::Update);
-+
-+    // Use the external buffered output. new_internal() does not drive PA4.
-+    let mut dac = DacChannel::new_triggered(p.DAC1, p.LPDMA1_CH0, TIM6_TRGO, p.PA4, Irqs);
-+    dac.set(u12r(0));
-+
-+    let samples = DMA_BUF.init([u12r(0); SAMPLE_COUNT]);
-+    for (i, sample) in samples.iter_mut().enumerate() {
-+        let step = if i < SAMPLE_COUNT / 2 { i } else { SAMPLE_COUNT - 1 - i };
-+        *sample = u12r((step * 4095 / (SAMPLE_COUNT / 2 - 1)) as u16);
-+    }
-+
-+    // Arm DMA before starting the timer so the first trigger can be serviced.
-+    let mut dac = dac.into_ring_buffered(samples);
-+    dac.start();
-+    timer.start();
-+
-+    info!("DAC DMA running: PA4, triangle wave ~100 Hz, 0..VREF+");
-+
-+    // Keep both drivers alive while DMA repeatedly reads the same sample table.
-+    loop {
-+        EmbassyTimer::after_secs(1).await;
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `9b0680bd` (2026-11-09)
-**Commit Message**: Merge pull request #7477 from leftger/fix/hid-request-handler-reset
-
-usb/hid: notify RequestHandler on bus reset
-
-**File**: `embassy-usb/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- <!-- next-header -->
- ## Unreleased - ReleaseDate
+ use core::sync::atomic::{AtomicU8, Ordering};
  
-+- `HID`: Notify `RequestHandler::reset()` on USB bus reset, allowing handlers to restore default Report protocol mode
++use embassy_futures::select::select;
 +
- - `HID`: Add `GamepadReport`, `ConsumerReport`, and composite multi-report presets (`COMPOSITE_DESCRIPTOR`, `IdKeyboardReport`, `IdMouseReport`, `IdConsumerReport`, `IdGamepadReport`) at `class::hid`
- - Add `class::ccid::device`, implementing USB Chip/Smart Card Interface Device (CCID) with 54-byte functional descriptor, APDU transfer chunking, and reader/writer split
- - `CCID`: Extract shared CCID constants, commands, responses, and status types into `class::ccid::types`
-```
-
-**File**: `embassy-usb/src/class/hid/device.rs` (modified, +68/-0)
-```diff
-@@ -329,6 +329,13 @@ impl<'d, D: Driver<'d>, const N: usize> HidReader<'d, D, N> {
+ use super::{
+     CS_GR_TRM_BLOCK, GR_TRM_BLOCK_HEADER_LEN, GR_TRM_BLOCK_LEN, GroupTerminalBlock, GroupTerminalBlockConfig, MAX_GTBS,
+     MAX_MIDI_JACKS, MAX_UMP_BYTES, MIDI_IN_JACK_LEN, MIDI_IN_JACK_SUBTYPE, MIDI_OUT_JACK_BASE_LEN,
+@@ -692,11 +694,7 @@ impl<'d, D: Driver<'d>> MidiClass<'d, D> {
  
- /// Handler for HID-related control requests.
- pub trait RequestHandler {
-+    /// Called after a USB bus reset sequence is complete.
-+    ///
-+    /// Handlers that track protocol mode (e.g. Boot vs Report) or idle rate can
-+    /// use this to restore default state (such as returning to Report protocol mode
-+    /// per HID 1.11 Appendix F.3).
-+    fn reset(&mut self) {}
-+
-     /// Reads the value of report `id` into `buf` returning the size.
-     ///
-     /// Returns `None` if `id` is invalid or no data is available.
-@@ -407,6 +414,9 @@ impl<'d> Control<'d> {
- impl<'d> Handler for Control<'d> {
-     fn reset(&mut self) {
-         self.out_report_offset.store(0, Ordering::Release);
-+        if let Some(handler) = self.request_handler.as_mut() {
-+            handler.reset();
-+        }
+     /// Waits for the USB host to enable this interface.
+     pub async fn wait_connection(&mut self) {
+-        if let Some(read_ep) = &mut self.read_ep {
+-            read_ep.wait_enabled().await;
+-        } else if let Some(write_ep) = &mut self.write_ep {
+-            write_ep.wait_enabled().await;
+-        }
++        wait_any_enabled(&mut self.read_ep, &mut self.write_ep).await;
      }
  
-     fn control_out(&mut self, req: Request, data: &[u8]) -> Option<OutResponse> {
-@@ -511,3 +521,61 @@ impl<'d> Handler for Control<'d> {
-         }
+     /// Split the endpoints into a sender and receiver.
+@@ -711,6 +709,18 @@ impl<'d, D: Driver<'d>> MidiClass<'d, D> {
      }
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    struct StatefulRequestHandler {
-+        reset_count: usize,
-+        protocol: HidProtocolMode,
-+        idle_ms: Option<u32>,
-+    }
-+
-+    impl RequestHandler for StatefulRequestHandler {
-+        fn reset(&mut self) {
-+            self.reset_count += 1;
-+            self.protocol = HidProtocolMode::Report;
-+            self.idle_ms = None;
+ 
++/// Wait until either endpoint is enabled; the alternate setting in use may need only one.
++async fn wait_any_enabled<R: Endpoint, W: Endpoint>(read_ep: &mut Option<R>, write_ep: &mut Option<W>) {
++    match (read_ep, write_ep) {
++        (Some(read_ep), Some(write_ep)) => {
++            select(read_ep.wait_enabled(), write_ep.wait_enabled()).await;
 +        }
-+
-+        fn get_protocol(&self) -> HidProtocolMode {
-+            self.protocol
-+        }
-+
-+        fn set_protocol(&mut self, protocol: HidProtocolMode) -> OutResponse {
-+            self.protocol = protocol;
-+            OutResponse::Accepted
-+        }
-+    }
-+
-+    #[test]
-+    fn reset_notifies_request_handler_and_clears_report_offset() {
-+        let offset = AtomicUsize::new(7);
-+        let mut request_handler = StatefulRequestHandler {
-+            reset_count: 0,
-+            protocol: HidProtocolMode::Boot,
-+            idle_ms: Some(20),
-+        };
-+
-+        {
-+            let mut control = Control::new(InterfaceNumber(0), &[], Some(&mut request_handler), &offset);
-+            Handler::reset(&mut control);
-+        }
-+
-+        assert_eq!(offset.load(Ordering::Acquire), 0);
-+        assert_eq!(request_handler.reset_count, 1);
-+        assert_eq!(request_handler.protocol, HidProtocolMode::Report);
-+        assert_eq!(request_handler.idle_ms, None);
-+    }
-+
-+    #[test]
-+    fn reset_without_request_handler_clears_report_offset() {
-+        let offset = AtomicUsize::new(7);
-+        let mut control = Control::new(InterfaceNumber(0), &[], None, &offset);
-+
-+        Handler::reset(&mut control);
-+
-+        assert_eq!(offset.load(Ordering::Acquire), 0);
++        (Some(read_ep), None) => read_ep.wait_enabled().await,
++        (None, Some(write_ep)) => write_ep.wait_enabled().await,
++        (None, None) => {}
 +    }
 +}
++
+ /// Write UMPs in transfers of whole packets, ending one that exactly fills the last packet with a ZLP.
+ async fn write_umps<E: EndpointIn>(ep: &mut E, packets: &[UmpPacket]) -> Result<(), EndpointError> {
+     let max_packet_size = usize::from(ep.info().max_packet_size);
+@@ -881,4 +891,39 @@ mod tests {
+         ));
+         assert!(ep.writes.is_empty());
+     }
++
++    #[test]
++    fn wait_connection_ends_when_only_one_of_the_endpoints_is_enabled() {
++        use embassy_futures::block_on;
++        use embassy_usb_driver::{Endpoint, EndpointAddress, EndpointInfo, EndpointType};
++
++        // `Never` is the OUT endpoint after switching to an IN-only setting.
++        struct Never(EndpointInfo);
++        struct Enabled(EndpointInfo);
++        impl Endpoint for Never {
++            fn info(&self) -> &EndpointInfo {
++                &self.0
++            }
++            async fn wait_enabled(&mut self) {
++                core::future::pending::<()>().await
++            }
++        }
++        impl Endpoint for Enabled {
++            fn info(&self) -> &EndpointInfo {
++                &self.0
++            }
++            async fn wait_enabled(&mut self) {}
++        }
++        let info = EndpointInfo {
++            addr: EndpointAddress::from(0x01),
++            ep_type: EndpointType::Bulk,
++            max_packet_size: 64,
++            interval_ms: 0,
++            max_burst: 0,
++        };
++
++        block_on(wait_any_enabled(&mut Some(Never(info)), &mut Some(Enabled(info))));
++        block_on(wait_any_enabled(&mut Some(Enabled(info)), &mut Some(Never(info))));
++        block_on(wait_any_enabled(&mut None::<Never>, &mut None::<Never>));
++    }
+ }
+```
+
+**File**: `embassy-usb/src/class/midi/host/mod.rs` (modified, +238/-19)
+```diff
+@@ -911,6 +911,9 @@ fn groups(mask: u16) -> impl Iterator<Item = u8> {
+     (0..16).filter(move |group| mask & (1 << group) != 0)
+ }
+ 
++/// Size of a UMP word in bytes.
++const UMP_WORD_BYTES: usize = 4;
++
+ /// Device-to-host half of a [`Midi2Host`].
+ pub struct Midi2Receiver<'d, A: UsbHostAllocator<'d>> {
+     pipe: raw::UmpInputPipe<'d, A>,
+@@ -936,9 +939,16 @@ impl<'d, A: UsbHostAllocator<'d>> Midi2Receiver<'d, A> {
+         self.groups
+     }
+ 
+-    /// Receive one transfer of raw UMP bytes.
++    /// Receive one transfer of raw UMP bytes, preceded by any partial packet [`read_packets`](Self::read_packets) holds.
+     pub async fn read(&mut self, buf: &mut [u8]) -> Result<usize, MidiError> {
+-        self.pipe.read(buf).await
++        if buf.len() < self.carried + UMP_WORD_BYTES {
++            return Err(UmpError::BufferTooSmall.into());
++        }
++        buf[..self.carried].copy_from_slice(&self.carry[..self.carried]);
++        let len = self.pipe.read(&mut buf[self.carried..]).await?;
++        let total = self.carried + len;
++        self.carried = 0;
++        Ok(total)
+     }
+ 
+     /// Receive into `buf` and return the length of the complete UMPs at its start; a packet cut by
+@@ -1071,6 +1081,9 @@ impl<'d, A: UsbHostAllocator<'d>> Midi2Host<'d, A> {
+     }
+ 
+     /// Discover, activate and open the first MIDI 2.0 function, with its topology.
++    ///
++    /// `control_pipe` stays allocated, so a bidirectional function needs three pipes at once; a constrained
++    /// host can call [`MidiInfo::activate`], drop its control pipe, then [`Midi2Host::new`].
+     pub async fn connect<P>(
+         alloc: &A,
+         control_pipe: &mut P,
+@@ -1082,32 +1095,52 @@ impl<'d, A: UsbHostAllocator<'d>> Midi2Host<'d, A> {
+     {
+         let info = MidiInfo::midi2_from_config(config_desc, enum_info)?;
+         let topology = info.activate(control_pipe).await?;
+-        Ok(Self::new(alloc, info, enum_info)?.with_topology(topology))
++        match Self::new(alloc, info, enum_info) {
++            Ok(host) => Ok(host.with_topology(topology)),
++            Err(error) => {
++                // Best effort; the allocation error is the one reported.
++                let _ = info.deactivate(control_pipe).await;
++                Err(error)
++            }
++        }
+     }
+ 
+-    /// Activate the function on a control pipe of its own, then allocate the pipes.
++    /// Activate on a control pipe of its own, free it, then allocate the data pipes, so two free pipes
++    /// suffice. If that fails, a fresh control pipe puts the device back on alternate setting 0.
+     async fn connect_with_own_control_pipe(
+         alloc: &A,
+         info: MidiInfo,
+         enum_info: &EnumerationInfo,
+     ) -> Result<Self, MidiError> {
+-        let mut control = alloc
+-            .alloc_pipe::<pipe::Control, pipe::InOut>(
+-                enum_info.device_address,
+-                &embassy_usb_driver::EndpointInfo {
+-                    addr: 0.into(),
+-                    ep_type: embassy_usb_driver::EndpointType::Control,
+-                    max_packet_size: (enum_info.device_desc.max_packet_size0 as u16)
+-                        .min(enum_info.speed().max_packet_size()),
+-                    interval_ms: 0,
+-                    max_burst: 0,
+-                },
+-                enum_info.split(),
+-            )
+-            .map_err(|_| MidiError::NoPipe)?;
++        let alloc_control = || {
++            alloc
++                .alloc_pipe::<pipe::Control, pipe::InOut>(
++                    enum_info.device_address,
++                    &embassy_usb_driver::EndpointInfo {
++                        addr: 0.into(),
++                        ep_type: embassy_usb_driver::EndpointType::Control,
++                        max_packet_size: (enum_info.device_desc.max_packet_size0 as u16)
++                            .min(enum_info.speed().max_packet_size()),
++                        interval_ms: 0,
++                        max_burst: 0,
++                    },
++                    enum_info.split(),
++                )
++                .map_err(|_| MidiError::NoPipe)
++        };
++        let mut control = alloc_control()?;
+         let topology = info.activate(&mut control).await?;
+         drop(control);
+-        Ok(Self::new(alloc, info, enum_info)?.with_topology(topology))
++        match Self::new(alloc, info, enum_info) {
++            Ok(host) => Ok(host.with_topology(topology)),
++            Err(error) => {
++                // Best effort, on a fresh control pipe.
++                if let Ok(mut control) = alloc_control() {
++                    let _ = info.deactivate(&mut control).await;
++                }
++                Err(error)
++            }
++        }
+     }
+ 
+     /// The function this host was opened from.
+@@ -1851,4 +1884,190 @@ mod tests {
+             assert!(SysexPackets::new(0, bad).is_err());
+         }
+     }
++
++    #[test]
++    fn a_failed_pipe_allocation_puts_the_device_back_on_alternate_setting_0() {
++        use embassy_future
+```
+
+**File**: `embassy-usb/src/class/midi/host/transport.rs` (modified, +35/-6)
+```diff
+@@ -5,7 +5,7 @@
+ //! interrupt IN). The MIDI 1.0 and UMP pipes differ only in their framing checks.
+ 
+ use embassy_usb_driver::host::{UsbHostAllocator, UsbPipe, pipe};
+-use embassy_usb_driver::{EndpointAddress, EndpointInfo, EndpointType};
++use embassy_usb_driver::{EndpointAddress, EndpointInfo, EndpointType, Speed};
+ 
+ use super::{MidiEndpointDescriptor, MidiError};
+ use crate::class::midi::packet::check_transfer_len;
+@@ -22,13 +22,28 @@ fn check_ump_len(len: usize) -> Result<(), MidiPacketError> {
+     Ok(())
+ }
+ 
+-fn endpoint_info(endpoint: &MidiEndpointDescriptor) -> EndpointInfo {
++/// Polling interval in ms for an interrupt endpoint's raw `bInterval`: frames at low and full speed,
++/// `2^(n-4)` ms at high speed (USB 2.0 §9.6.6). Sub-millisecond values round up to 1 ms.
++fn polling_interval_ms(speed: Speed, b_interval: u8) -> u8 {
++    match speed {
++        Speed::Low | Speed::Full => b_interval,
++        Speed::High => 1u32
++            .checked_shl(u32::from(b_interval).saturating_sub(4))
++            .map_or(u8::MAX, |ms| ms.min(255) as u8),
++    }
++}
++
++fn endpoint_info(endpoint: &MidiEndpointDescriptor, speed: Speed) -> EndpointInfo {
+     EndpointInfo {
+         addr: EndpointAddress::from(endpoint.address),
+         ep_type: endpoint.ep_type,
+         max_packet_size: endpoint.max_packet_size,
+-        // Full-speed interrupt `bInterval` is a frame count (Appendix B.8). Bulk leaves it at 0 (§5.3.1).
+-        interval_ms: endpoint.interval,
++        // Bulk has no polling interval (§5.3.1).
++        interval_ms: if endpoint.ep_type == EndpointType::Interrupt {
++            polling_interval_ms(speed, endpoint.interval)
++        } else {
++            0
++        },
+         max_burst: 0,
+     }
+ }
+@@ -48,7 +63,7 @@ impl<'d, A: UsbHostAllocator<'d>> DataIn<'d, A> {
+         if !endpoint.is_in() {
+             return Err(MidiError::WrongDirection);
+         }
+-        let info = endpoint_info(endpoint);
++        let info = endpoint_info(endpoint, enum_info.speed());
+         match endpoint.ep_type {
+             EndpointType::Interrupt => alloc
+                 .alloc_pipe::<pipe::Interrupt, pipe::In>(enum_info.device_address, &info, enum_info.split())
+@@ -75,7 +90,7 @@ impl<'d, A: UsbHostAllocator<'d>> DataOut<'d, A> {
+         if endpoint.is_in() {
+             return Err(MidiError::WrongDirection);
+         }
+-        let info = endpoint_info(endpoint);
++        let info = endpoint_info(endpoint, enum_info.speed());
+         match endpoint.ep_type {
+             EndpointType::Interrupt => alloc
+                 .alloc_pipe::<pipe::Interrupt, pipe::Out>(enum_info.device_address, &info, enum_info.split())
+@@ -304,4 +319,18 @@ mod tests {
+             assert_eq!(check_transfer_len(len), Err(MidiPacketError::InvalidPacketLength));
+         }
+     }
++
++    #[test]
++    fn interrupt_intervals_follow_the_bus_speed() {
++        // Low and full speed: already milliseconds.
++        assert_eq!(
++            (polling_interval_ms(Speed::Full, 1), polling_interval_ms(Speed::Low, 10)),
++            (1, 10)
++        );
++        // High speed: 4 is 1 ms, 7 is 8 ms, and faster than 1 ms rounds up.
++        assert_eq!(
++            [1, 3, 4, 7, 12, 16].map(|n| polling_interval_ms(Speed::High, n)),
++            [1, 1, 1, 8, 255, 255]
++        );
++    }
+ }
 ```
 
 ---
 
-### Incident Patch 3: `78ef53cf` (2026-11-08)
-**Commit Message**: wpan: fix short address saved in the wrong field
+### Incident Patch 2: `ef06e0e9` (2026-11-11)
+**Commit Message**: stm32/flash: fix flakiness caused by the ecc hil test.
 
-**File**: `embassy-stm32-wpan/src/net/control.rs` (modified, +1/-1)
+**File**: `tests/stm32/src/bin/flash.rs` (modified, +10/-0)
 ```diff
-@@ -93,7 +93,7 @@ impl<'a, C: Controller> Control<'a, C> {
-             let resp = self
-                 .send_command_and_get_response(&SetRequest {
-                     pib_attribute_ptr: &short_addr as *const _ as *const u8,
--                    pib_attribute: PibId::ExtendedAddress,
-+                    pib_attribute: PibId::ShortAddress,
-                 })
-                 .await
-                 .unwrap();
+@@ -73,6 +73,16 @@ struct Sector {
+ )]
+ #[cfg_attr(not(feature = "stop"), embassy_executor::main)]
+ async fn main(_spawner: Spawner) {
++    // This image stays in flash after the test. teleprobe power-cycles the board before every
++    // run, so it boots again while teleprobe attaches for the next test. Resetting in the middle
++    // of erases during the attach makes it time out. A power cycle clears C_DEBUGEN, the test's
++    // own resets don't, so park until the debugger takes over.
++    // Cortex-M0+ (G0, U0) software can't read DHCSR.
++    #[cfg(all(ecc_reset, not(any(feature = "stm32g071rb", feature = "stm32u083rc"))))]
++    while !cortex_m::peripheral::DCB::is_debugger_attached() {
++        core::hint::spin_loop();
++    }
++
+     let mut p = init();
+ 
+     info!(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7477** (2026-11-09): usb/hid: notify RequestHandler on bus reset (@leftger)
-- **PR #7476** (2026-11-09): stm32c5: add C5 DAC DMA example (@lennlouisgeek)
-- **PR #7475** (2026-11-09): embassy-usb: implement Bluetooth HCI USB device class (@leftger)
-- **PR #7474** (2026-11-09): embassy-usb: implement CCID smart card device class (@leftger)
-- **PR #7473** (2026-11-09): embassy-usb: add gamepad, consumer control, and composite HID presets (@leftger)
-- **PR #7469** (2026-11-08): wpan: check MAC confirm status in `start_ap` (@OueslatiGhaith)
+- **PR #7510** (2026-11-11): nrf: check pin-peripheral compatibility at compile time for nrf54. (@Dirbaio)
+- **PR #7509** (2026-11-11): nrf: remove Any types on ppi, gpiote. Remove instance generic on ppi. (@Dirbaio)
+- **PR #7508** (2026-11-11): stm32/flash: fix flakiness caused by the ecc hil test. (@Dirbaio)
+- **PR #7507** (2026-11-11): usb: simplify driver alloc methods, add EndpointOptions (@Dirbaio)
+- **PR #7506** (2026-11-11): gpio: remove AnyPin, simplify internals (@Dirbaio)
+- **PR #7505** (2026-11-11): stm32/gpdma: cleanup and use source/destination (@pufmat)
 
 ---
 
@@ -1696,28 +1804,61 @@ usb/hid: notify RequestHandler on bus reset
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7476 from lennlouisgeek/feature/stm32c5-dac-v9
+## X. usb: minor fixes
 
 **RULE**:
-When implementing operations in `embassy-stm32/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-usb/src/class/midi/device/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `135ddb45`: Merge pull request #7476 from lennlouisgeek/feature/stm32c5-dac-v9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `455ca7b9`: usb: minor fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-usb/src/class/midi/device/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- feat: stm32/dac: add DAC v9 (STM32C5) support
+use embassy_futures::select::select;
+
+        wait_any_enabled(&mut self.read_ep, &mut self.write_ep).await;
+/// Wait until either endpoint is enabled; the alternate setting in use may need only one.
+async fn wait_any_enabled<R: Endpoint, W: Endpoint>(read_ep: &mut Option<R>, write_ep: &mut Option<W>) {
+    match (read_ep, write_ep) {
+        (Some(read_ep), Some(write_ep)) => {
+            select(read_ep.wait_enabled(), write_ep.wait_enabled()).await;
+        }
+        (Some(read_ep), None) => read_ep.wait_enabled().await,
+        (None, Some(write_ep)) => write_ep.wait_enabled().await,
+        (None, None) => {}
+    }
+}
+
+
+    #[test]
+    fn wait_connection_ends_when_only_one_of_the_endpoints_is_enabled() {
+        use embassy_futures::block_on;
+        use embassy_usb_driver::{Endpoint, EndpointAddress, EndpointInfo, EndpointType};
+
+        // `Never` is the OUT endpoint after switching to an IN-only setting.
+        struct Never(EndpointInfo);
+        struct Enabled(EndpointInfo);
+        impl Endpoint for Never {
+            fn info(&self) -> &EndpointInfo {
+                &self.0
+            }
+            async fn wait_enabled(&mut self) {
+                core::future::pendin
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- feat: stm32/dac: add DAC v9 (STM32C5) support. DMA, triggered output, and ring-buffered output have not been hardware tested.
+        if let Some(read_ep) = &mut self.read_ep {
+            read_ep.wait_enabled().await;
+        } else if let Some(write_ep) = &mut self.write_ep {
+            write_ep.wait_enabled().await;
+        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `135ddb45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `455ca7b9` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `328d1d31`  
+> **Source Version**: `e62a47c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T00:31:55.932Z  
+> **Timestamp**: 2026-11-12T07:37:57.558Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T00:31:54.628Z  
+> **Harvest Timestamp**: 2026-11-12T07:37:57.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2087 stars
+- **Stars / Engagement**: 2092 stars
 
 ---
 
@@ -1459,17 +1459,14 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5634** (2026-11-09): **feat!: create dedicated sign/verify options types**
-  *Symptoms*: ## Description  We know we want to refactor the signing/verify logic soon after v1. This itself is fine as we intend to put the signing package - as it depends heavily on a third-party dependency - as outside of the core support boundary in the deprecation policy.   So deprecating older logic won't be an issue - but we have embedded fields that tie other operations to the signing package via the embedded options types.   This is a quick spike to look at decoupling package operations from the signing types - reduced to only what the CLI supports.   ## Related Issue   ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 8da43af08a9498d5dd6b13214c8d0f38c500e4af | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af16920365a011110ab97cf |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :x: Patch coverage is `74.07407%` with `28 lines` in your changes missing coverage. Please review.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Patch % | Lines | |---|---|---| | [src/cmd/package.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?src=pr&el=tree&filepath=src%2Fcmd%2Fpackage.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2NtZC9wYWNrYWdlLmdv) | 58.62% | [12 Missing :warning: ](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-
+- **Issue #5657** (2026-11-12): **feat(git): remove external git shell-out fallback (#2772)**
+  *Symptoms*: ## Description Removes the host `git` CLI shell-out fallback across Zarf's Git package as requested in #2772: - Deleted `src/internal/git/fallback.go` (`gitCloneFallback` and `gitFetchCommitFallback`). - Updated `src/internal/git/repository.go` to return errors directly from `go-git` without shelling out to external binaries. - Updated comments in `examples/git-data/zarf.yaml` and `src/test/e2e/07_create_git_test.go`.  ## Related Issue Fixes #2772  ## Testing - Verified compilation with `go test -c ./src/internal/git`. - Ran `go vet ./src/...` (0 errors). - Built CLI binary with `go build -o build/zarf.exe main.go`.
 
-- **Issue #5631** (2026-11-09): **feat!: limit v1beta1 init package values chart inputs**
-  *Symptoms*: ## Description  There was a lot that could be set by the v1beta1 package. Including state values which must be set by the CLI, but also things like service names and port numbers that the CLI hardcodes in it's connections. A good amount of these options can be opened up later with more care and attention, however for now I'm limiting it to only the configuration options that we've already exposed in v1alpha1.   As a plus I think inspecting the package definition does make it a bit easier to see what's going on in terms of what each value does (though we need better inspect commands for values eventually)   ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+- **Issue #5648** (2026-11-11): **chore(main): release 1.0.1**
+  *Symptoms*: :robot: I have created a release *beep* *boop* ---   ## [1.0.1](https://github.com/zarf-dev/zarf/compare/v1.0.0...v1.0.1) (2026-11-11)   ### Bug Fixes  * update agent mutation policy handling helm schema validation ([#5644](https://github.com/zarf-dev/zarf/issues/5644)) ([e445545](https://github.com/zarf-dev/zarf/commit/e4455451cb2ef171b939bfc802c69cc96ac42524))  --- This PR was generated with [Release Please](https://github.com/googleapis/release-please). See [documentation](https://github.com/googleapis/release-please#release-please).
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 7086a69122de8779f5ad3a777690ed95aaad0af4 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af1032377610decf92e588d |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5631?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 53 files with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5631/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 6b74fdb19a5932eac70c0d4ed8f14281625f1bf2 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af4beeb4ab93ee08db42240 |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5648?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 1 file with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5648/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1486,286 +1483,728 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `328d1d31` (2026-11-09)
-**Commit Message**: chore: document deprecation policy and update security.md (#5604)
+### Incident Patch 1: `e4455451` (2026-11-11)
+**Commit Message**: fix: update agent mutation policy handling helm schema validation (#5644)
 
-Signed-off-by: Brandt Keller <[REDACTED_EMAIL]>
+Signed-off-by: dwertent <[REDACTED_EMAIL]>
+Co-authored-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `.github/SECURITY.md` (modified, +29/-17)
+**File**: `src/pkg/cluster/cluster.go` (modified, +6/-2)
 ```diff
-@@ -1,36 +1,48 @@
- # Reporting Security Issues
+@@ -314,8 +314,12 @@ func (c *Cluster) InitState(ctx context.Context, opts InitStateOptions) (*state.
+ 		s.InjectorInfo.Port = opts.InjectorPort
+ 	}
  
--To report a security issue or vulnerability in Zarf, please use the confidential GitHub Security Advisory ["Report a Vulnerability"](https://github.com/zarf-dev/zarf/security/advisories) tab. The Zarf team will send a response indicating the next steps in handling your report. After the initial reply to your report, the team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
-+## Report a Vulnerability
+-	if s.AgentInfo.IsConfigured() && opts.AgentMutationPolicy != "" {
+-		s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
++	if s.AgentInfo.IsConfigured() {
++		if opts.AgentMutationPolicy != "" {
++			s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
++		} else if s.AgentInfo.MutationPolicy == "" {
++			s.AgentInfo.MutationPolicy = state.MutationPolicyAll
++		}
+ 	}
  
--### When Should I Report a Vulnerability?
-+Report a security issue or vulnerability through GitHub Security Advisories using the confidential [Report a Vulnerability](https://github.com/zarf-dev/zarf/security/advisories) workflow. Do not disclose exploit details publicly before the team has coordinated a fix and disclosure with you.
- 
--* You found a vulnerability in the Zarf code.
--* You found a vulnerability in one of the Zarf dependencies that affects the project that has not been patched yet.
-+## What to Include
- 
--### When Should I NOT Report a Vulnerability?
-+Include the affected Zarf version and deployment environment, the affected package create, deploy, runtime, or state-management path, reproduction steps or a proof of concept, the impact and attack preconditions, and a suggested mitigation if known.
- 
--* You found a bug or malfunction in the Zarf code (not security related).
--* You want to add a feature to Zarf.
-+## When to Report a Vulnerability
-+
-+- You found a vulnerability in Zarf code.
-+- You found an unpatched vulnerability in a Zarf dependency that affects the project.
-+
-+## When Not to Report a Vulnerability
-+
-+- You found a bug or malfunction that is not security-related.
-+- You want to add a feature to Zarf.
-+
-+Use the [issue tracker](https://github.com/zarf-dev/zarf/issues) for non-security bugs and feature requests.
- 
- ## Supported Versions
- 
--As Zarf has not yet reached v1.0.0, only the current latest minor release is supported.
-+Security fixes are provided for the latest stable minor release of the current major version. Affected users should upgrade to the current supported release. Maintainers MAY provide a backport when operational impact warrants it.
-+
-+## Disclosure and Remediation Process
-+
-+1. Maintainers acknowledge the report and assess its impact.
-+2. Maintainers coordinate a fix and disclosure with the reporter when appropriate.
-+3. Zarf publishes a fixed release, security advisory, and migration guidance as applicable.
-+4. Zarf pursues CVE assignment when appropriate. A CVE is not required before a fix is released.
- 
- ## Contacting Us
- 
--To discuss security related issues, please email the maintainers at zarf-dev-private@googlegroups.com.
-+For security discussions that cannot use GitHub Security Advisories, email the maintainers at [zarf-dev-private@googlegroups.com](mailto:zarf-dev-private@googlegroups.com).
-+
-+## CVE Posture and VEX
- 
--## CVE Posture & VEX
-+Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document** that records the project's assessment of known dependency findings for that release. It is not a substitute for a security advisory, a list of all vulnerabilities, or a guarantee that a finding is non-exploitable in every deployment.
- 
--Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document**
--that captures accepted, non-exploitable findings with documented justification.
--You can use this file to reproduce Zarf's accepted-CVE posture when scanning with
--[`grype`](https://github.com/anchore/grype):
-+Use the VEX document with [`grype`](https://github.com/anchore/grype):
- 
- ```bash
- grype zarf --vex zarf.cli.openvex.json
- ```
- 
--`zarf.cli.openvex.json` is available as a standalone asset on each
--[GitHub release](https://github.com/zarf-dev/zarf/releases) and is bundled inside the
--init package.
-+`zarf.cli.openvex.json` is available as a standalone asset on each [GitHub release](https://github.com/zarf-dev/zarf/releases) and is bundled inside the init package.
+ 	// Save the state back to K8s
 ```
 
-**File**: `DEPRECATION_POLICY.md` (added, +78/-0)
+**File**: `src/pkg/cluster/cluster_test.go` (modified, +34/-0)
 ```diff
-@@ -0,0 +1,78 @@
-+# Zarf Deprecation and Compatibility Policy
+@@ -1088,3 +1088,37 @@ func TestIgnoreExistingNamespacesForAgent(t *testing.T) {
+ 		require.ErrorContains(t, c.ignoreExistingNamespacesForAgent(ctx), "unable to mark the namespace app as ignored by Zarf Agent")
+ 	})
+ }
 +
-+## Scope
++func TestInitStateAgentMutationPolicy(t *testing.T) {
++	t.Parallel()
++	for _, tt := range []struct {
++		name     string
++		existing state.MutationPolicy
++		option   state.MutationPolicy
++		want     state.MutationPolicy
++	}{
++		{"new agent defaults to all", "", "", state.MutationPolicyAll},
++		{"explicit labeled", "", state.MutationPolicyLabeled, state.MutationPolicyLabeled},
++		{"existing agent without policy defaults to all", "", "", state.MutationPolicyAll},
++		{"preserve labeled", state.MutationPolicyLabeled, "", state.MutationPolicyLabeled},
++		{"explicit all overrides labeled", state.MutationPolicyLabeled, state.MutationPolicyAll, state.MutationPolicyAll},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			existing := &state.State{AgentInfo: state.AgentInfo{MutationPolicy: tt.existing}}
++			if tt.name == "new agent defaults to all" || tt.name == "explicit labeled" {
++				existing = nil
++			} else {
++				certs, err := pki.GeneratePKI(state.ZarfAgentHost)
++				require.NoError(t, err)
++				existing.AgentInfo.TLS = certs
++			}
++			c := newFakeInitStateCluster(t.Context(), t, existing)
++			got, err := c.InitState(t.Context(), InitStateOptions{
++				InternalServices:    state.NewServiceSet(state.AgentKey),
++				AgentMutationPolicy: tt.option,
++			})
++			require.NoError(t, err)
++			require.Equal(t, tt.want, got.AgentInfo.MutationPolicy)
++		})
++	}
++}
+```
+
+**File**: `src/pkg/state/state.go` (modified, +2/-0)
+```diff
+@@ -620,6 +620,8 @@ func Merge(oldState *State, opts MergeOptions) (*State, error) {
+ 		}
+ 		if opts.AgentMutationPolicy != "" {
+ 			agentInfo.MutationPolicy = opts.AgentMutationPolicy
++		} else if agentInfo.MutationPolicy == "" {
++			agentInfo.MutationPolicy = MutationPolicyAll
+ 		}
+ 		newState.AgentInfo = agentInfo
+ 	}
+```
+
+**File**: `src/pkg/state/state_test.go` (modified, +26/-0)
+```diff
+@@ -1182,3 +1182,29 @@ func TestDeployedPackageGetDeployConfigCopiesNestedValues(t *testing.T) {
+ 	require.True(t, ok)
+ 	require.Equal(t, config, laterSnapshot)
+ }
 +
-+Zarf's explicit SemVer compatibility contract is limited to the package lifecycle:
-+
-+1. The package definitions accepted by `zarf package create`.
-+2. The package artifacts produced by supported `zarf package create` workflows.
-+3. The package artifacts accepted by `zarf package deploy`.
-+4. The observable deployment and runtime behavior of those artifacts.
-+5. Zarf-managed in-cluster and deployed-package state for supported package deployments.
-+
-+A later compatible release in the same supported major version MUST preserve or migrate state written by an earlier supported release so that supported package deployments remain manageable.
-+
-+A package artifact includes the metadata, layout, signatures, and OCI representations required for the supported create and deploy workflows to interoperate.
-+
-+The following are outside the explicit SemVer compatibility contract:
-+
-+- Every command, flag, output format, and behavior below `zarf tools`.
-+- Configuration-file keys, environment variables, hidden flags, cache layouts, temporary files, and undocumented behavior.
-+- Logging structure and syntax, including levels, field names, message text, and encoding.
-+- Go packages and exported symbols, including `src/pkg/signing`, `src/pkg/oci`, and `src/pkg/zoci`.
-+- The implementation, command syntax, flags, defaults, and output of standalone signing, verification, publishing, and pulling commands.
-+
-+Code outside this scope remains subject to the project-wide deprecation lifecycle below, but does not receive an independent SemVer support promise from this policy.
-+
-+## Major Release Transition Documents
-+
-+A major release MAY introduce a time-bounded legacy compatibility path. The transition document for that major release MUST identify the stable package schema or schemas, the legacy path's support boundary, the required migration, and whether the legacy path belongs to the new major version's stable contract.
-+
-+## Schema Contract
-+
-+Schema identifiers and Zarf CLI major versions are independent. A schema suffix such as `beta1` does not determine its support level.
-+
-+The applicable major release transition document identifies the generally available package schema or schemas. Within that major version, Zarf MUST NOT remove a stable schema field, kind, enumerated value, or documented core behavior, or change it incompatibly. A future incompatible package schema requires a new schema identity. A subsequent major release that changes a stable schema or documented core behavior incompatibly MUST document the migration in release notes and update compatibility coverage for create, deployment and runtime behavior, and managed state.
-+
-+A new release MAY add backward-compatible schema capabilities. A package using semantics or an artifact format introduced after an older CLI release MUST record the required minimum CLI version in its build metadata. An older CLI MUST fail before deployment with the requirement and its reason, rather than deploy with unknown or changed behavior.
-+
-+## Deprecation Lifecycle
-+
-+The following lifecycle applies to deprecated SDK and CLI logic, including logic outside the explicit SemVer contract above.
-+
-+- **SDK logic** is a Go API or programmatic integration explicitly made available to consumers.
-+- **CLI logic** is a user-invoked command, subcommand, flag, or documented CLI behavior, including `zarf tools`.
-+
-+The project MUST retain deprecated SDK logic through at least three subsequent minor releases and deprecated CLI logic through at least six subsequent minor releases. For an item deprecated in `vM.N.0`, the earliest SDK removal release is `vM.(N+4).0` and the earliest CLI removal release is `vM.(N+7).0`. Maintainers MAY extend either window at their discretion.
-+
-+A deprecation MUST identify the affected logic, its replacement or removal rationale, the announcing release, and the earliest removal release. SDK deprecations MUST use Go's `Deprecated:` documentation convention. CLI deprecations MUST issue an actionable warning when used. Release notes MUST describe the migration required before removal.
-+
-+## Compatibility Directions
-+
-+### Older supported package on a newer CLI
-+
-+A later CLI in the same supported major version MUST create and deploy packages using supported schema capabilities and supported artifact representations from earlier releases in that major version.
-+
-+### Newer package on an older CLI
-+
-+Zarf does not guarantee that an older CLI can deploy every newer package. When a package depends on a later CLI's schema capability, artifact representation, or runtime behavior, package creation MUST record the minimum required Zarf version and the reason. Package deployment MUST validate that requirement before changing cluster state.
-+
-+## Signing and OCI Interoperability
-+
-+Signing and OCI utilities are implementation details, not public Go APIs or stable standalone command interfaces. The artifa
++func TestMergeStateAgentMutationPolicy(t *testing.T) {
++	t.Parallel()
++	for _, tt := range []struct {
++		name     string
++		existing MutationPolicy
++		option   MutationPolicy
++		want     MutationPolicy
++	}{
++		{"new agent defaults to all", "", "", MutationPolicyAll},
++		{"explicit labeled", "", MutationPolicyLabeled, MutationPolicyLabeled},
++		{"preserve labeled", MutationPolicyLabeled, "", MutationPolicyLabeled},
++		{"explicit all overrides labeled", MutationPolicyLabeled, MutationPolicyAll, MutationPolicyAll},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			existing := &State{AgentInfo: AgentInfo{MutationPolicy: tt.existing}}
++			got, err := Merge(existing, MergeOptions{
++				Services:            NewServiceSet(AgentKey),
++				AgentMutationPolicy: tt.option,
++			})
++			require.NoError(t, err)
++			require.Equal(t, tt.want, got.AgentInfo.MutationPolicy)
++			require.Equal(t, tt.existing, existing.AgentInfo.MutationPolicy)
++		})
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `b3ca0ad4` (2026-11-09)
-**Commit Message**: chore(docs): fixed broken links (#5601)
+### Incident Patch 2: `b70ff23c` (2026-11-11)
+**Commit Message**: docs: fixed slugs processing for previous versions (#5642)
 
-Signed-off-by: dwertent <[REDACTED_EMAIL]>
-Signed-off-by: David Wertenteil <[REDACTED_EMAIL]>
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `.github/workflows/test-upgrade.yml` (modified, +1/-1)
 ```diff
-@@ -36,7 +36,7 @@ Zarf eliminates the [complexity of airgap software delivery](https://www.itopsti
- - [Publish](https://docs.zarf.dev/commands/zarf_package_publish), [pull](https://docs.zarf.dev/commands/zarf_package_pull), and [deploy](https://docs.zarf.dev/commands/zarf_package_deploy) packages from an [OCI registry](https://opencontainers.org/)
- - Powerful component lifecycle [actions](https://docs.zarf.dev/ref/actions)
- - Deploy a new cluster while fully disconnected with [K3s](https://k3s.io/) or into any existing cluster using a [kube config](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
--- Built-in Git server with [Gitea](https://gitea.io/en-us/)
-+- Built-in Git server with [Gitea](https://about.gitea.com/)
- - Built-in Docker registry
- - Builtin [K9s Dashboard](https://k9scli.io/) for managing a cluster from the terminal
- - [Mutating Webhook](adr/0005-mutating-webhook.md) to automatically update Kubernetes pod's image path and pull secrets as well as [Flux Git Repository](https://fluxcd.io/docs/components/source/gitrepositories/) URLs and secret references
+@@ -75,7 +75,7 @@ jobs:
+         # NOTE: "PATH=$PATH" preserves the default user $PATH. This is needed to maintain the version of zarf installed
+         #       in a previous step. This test run will the current release to create a K3s cluster.
+         run: |
+-          sudo env "PATH=$PATH" CI=true zarf init --components k3s,git-server --nodeport 31337 --confirm
++          sudo env "PATH=$PATH" CI=true zarf init --components k3s,git-server --registry-port 31337 --confirm
+ 
+       # Before we run the regular tests we need to aggressively cleanup files to reduce disk pressure
+       - name: Cleanup files
 ```
 
-**File**: `SUPPORT.md` (modified, +1/-1)
+**File**: `site/astro.config.ts` (modified, +1/-0)
 ```diff
-@@ -19,7 +19,7 @@ After an issue is made, this issue can be brought into other channels such as th
+@@ -93,6 +93,7 @@ const topicsOption: Record<string, string[]> = {
  
+ // https://astro.build/config
+ export default defineConfig({
++  prerenderConflictBehavior: "error",
+   redirects: {
+     "/docs/zarf-overview": "/",
+   },
+```
+
+**File**: `site/hack/build-versions.mjs` (modified, +2/-2)
+```diff
+@@ -7,6 +7,7 @@ import { promises as fs, existsSync } from "node:fs";
+ import path from "node:path";
+ import { fileURLToPath } from "node:url";
+ import { generateExamples } from "./copy-examples.js";
++import { stageDocs } from "./stage-docs.js";
  
- ## Sensitive Information Process
--For issues from those who are unable to post on Github, you may send an email using the following issue template filled out to [zarf-dev-private@googlegroups.com](zarf-dev-private@googlegroups.com)
-+For issues from those who are unable to post on Github, you may send an email using the following issue template filled out to [zarf-dev-private@googlegroups.com](mailto:zarf-dev-private@googlegroups.com)
+ const siteDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+ const repoDir = path.resolve(siteDir, "..");
+@@ -186,8 +187,7 @@ async function stageVersion({ ref, slug }) {
+   git(["worktree", "add", "--detach", worktree, ref]);
+   try {
+     const dst = path.join(docsDir, slug);
+-    await fs.rm(dst, { recursive: true, force: true });
+-    await fs.cp(path.join(worktree, "site/src/content/docs"), dst, { recursive: true });
++    await stageDocs({ srcDir: path.join(worktree, "site/src/content/docs"), dstDir: dst, slug });
+     await stageVersionedAssets(worktree, slug);
+     // Examples and schema are generated artifacts, absent from the checkout.
+     await generateExamples({
+```
+
+**File**: `site/hack/stage-docs.js` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++import { promises as fs } from "node:fs";
++import path from "node:path";
++import yaml from "yaml";
++
++// Explicit slugs override the directory-based routes, so archived pages must
++// have their slugs scoped to the version just like pages without an override.
++export async function stageDocs({ srcDir, dstDir, slug }) {
++  await fs.rm(dstDir, { recursive: true, force: true });
++  await fs.cp(srcDir, dstDir, { recursive: true });
++
++  for (const entry of await fs.readdir(dstDir, { recursive: true, withFileTypes: true })) {
++    if (!entry.isFile() || !/\.mdx?$/.test(entry.name)) continue;
++    const filename = path.join(entry.parentPath, entry.name);
++    const content = await fs.readFile(filename, "utf8");
++    const frontmatter = content.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
++    if (!frontmatter) continue;
++
++    const doc = yaml.parseDocument(frontmatter[1]);
++    if (doc.errors.length > 0) throw new Error(`Invalid frontmatter in ${filename}`, { cause: doc.errors[0] });
++    const pageSlug = doc.get("slug");
++    if (!pageSlug) continue;
++    doc.set("slug", path.posix.join(slug, String(pageSlug)));
++    await fs.writeFile(filename, `---\n${doc.toString()}---\n${content.slice(frontmatter[0].length)}`);
++  }
++}
+```
+
+**File**: `site/hack/stage-docs.test.js` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++import assert from "node:assert/strict";
++import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import path from "node:path";
++import test from "node:test";
++import yaml from "yaml";
++import { stageDocs } from "./stage-docs.js";
++
++test("stages archived pages with version-scoped explicit slugs", async (t) => {
++  const root = await mkdtemp(path.join(tmpdir(), "zarf-archived-docs-"));
++  t.after(() => rm(root, { recursive: true, force: true }));
++  const srcDir = path.join(root, "source");
++  const dstDir = path.join(root, "v1-0");
++  await mkdir(path.join(srcDir, "nested"), { recursive: true });
++
++  const body = '\nimport Timeline from "@components/Timeline.astro";\n\nRelease notes.\n';
++  const pages = [
++    { filename: "v1.0.mdx", slug: "v1.0", expected: "v1-0/v1.0" },
++    { filename: "nested/custom.md", slug: "/custom/path/", expected: "v1-0/custom/path/" },
++    { filename: "index.mdx", slug: undefined, expected: undefined },
++  ];
++
++  for (const page of pages) {
++    page.content = `---\n${yaml.stringify({ title: "Release", slug: page.slug })}---\n${body}`;
++    await writeFile(path.join(srcDir, page.filename), page.content);
++  }
++
++  await stageDocs({ srcDir, dstDir, slug: "v1-0" });
++
++  for (const page of pages) {
++    const staged = await readFile(path.join(dstDir, page.filename), "utf8");
++    const frontmatter = staged.match(/^---\n([\s\S]*?)\n---\n/);
++    assert.equal(yaml.parse(frontmatter[1]).slug, page.expected);
++    assert.equal(staged.slice(frontmatter[0].length), body);
++    assert.equal(await readFile(path.join(srcDir, page.filename), "utf8"), page.content);
++    if (!page.slug) assert.equal(staged, page.content);
++  }
++});
+```
+
+**File**: `site/package.json` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@
+     "build:versions": "node hack/build-versions.mjs",
+     "preview": "astro preview",
+     "astro": "astro",
+-    "link-check": "linkinator --recurse dist/ --config linkinator.config.json"
++    "link-check": "linkinator --server-root dist/ \"**/*.html\" --retry-errors --config linkinator.config.json"
+   },
+   "dependencies": {
+     "@astrojs/check": "^0.9.9",
+```
+
+**File**: `site/src/content/docs/v1.0.mdx` (modified, +3/-1)
+```diff
+@@ -9,6 +9,8 @@ import Timeline from "@components/Timeline.astro";
  
- The response time to emails may be delayed  as they are not able to receive community help, so we encourage participation into Github Issues as much as possible.
+ Zarf is happy to announce `v1.0.0`. This milestone marks our commitment to stable releases, backward compatibility, and long-term support.
+ 
++Users should expect upgrading to v1.0 to be straightforward. However, v1.0 stores package secrets in a format that earlier CLI versions cannot read. Operators who share a cluster should coordinate their upgrades.
++
+ ## v1beta1 Package Schema
+ 
+ A package schema defines the fields and structure of the `zarf.yaml` package definition. Zarf `v1.0.0` introduces a new version of that format, `v1beta1`. It introduces reusable [published components](/commands/zarf_component_publish/) and a dedicated [templating workflow](/commands/zarf_dev_template/). The new format removes several deprecated features from the existing schema, `v1alpha1`. The `v1beta1` schema provides a migration path for each removed feature, improving usability, security, or performance. The [`v1alpha1` to `v1beta1` migration guide](/best-practices/v1alpha1-to-v1beta1/) provides a detailed list of changes and instructions for updating existing package definitions.
+@@ -29,7 +31,7 @@ With the release of `v1.0.0`, Zarf will log a warning when `v1alpha1` packages a
+   ]}
+ />
+ 
+-Package removal will continue to work without a feature flag until `v1alpha1` is fully unsupported. 
++Package removal will continue to work without a feature flag until `v1alpha1` is fully unsupported.
+ 
+ ## Init Package
  
 ```
 
-**File**: `adr/0005-mutating-webhook.md` (modified, +1/-1)
+**File**: `site/src/plugins/remark-link-rewrite.test.ts` (modified, +36/-1)
 ```diff
-@@ -8,7 +8,7 @@ Accepted
+@@ -1,11 +1,46 @@
+ import { test } from "node:test";
+ import assert from "node:assert/strict";
+ import path from "node:path";
+-import { rewriteUrl, fixEscapingRelative, rewriteVersionedAssetImport } from "./remark-link-rewrite.ts";
++import { createMarkdownProcessor, unified } from "@astrojs/markdown-remark";
++import { remarkLinkRewrite, rewriteUrl, fixEscapingRelative, rewriteVersionedAssetImport } from "./remark-link-rewrite.ts";
  
- ## Context
+ const sections = new Set(["commands", "ref", "tutorials", "getting-started", "faq"]);
+ const prefix = "/v0-76";
  
--Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
-+Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/init/v1alpha1/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/init/v1alpha1/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
- 
- ## Decision
- 
++test("renders archived navigation links alongside shared tutorial recordings", async () => {
++  const processor = await createMarkdownProcessor({
++    syntaxHighlight: false,
++    remarkPlugins: [[remarkLinkRewrite, { srcDir: "/docs", sections: [...sections] }]],
++  });
++  const { code } = await processor.render(`
++[Tutorial](/tutorials/initializing/)
++
++<a href="/tutorials/initializing/">Tutorial</a>
++<iframe src="/tutorials/k3s_init.html" width="100%"></iframe>
++`, { fileURL: new URL("file:///docs/v1-0/tutorials/initializing.md") });
++
++  assert.ok(code.includes('href="/v1-0/tutorials/initializing/"'));
++  assert.ok(code.includes('<a href="/v1-0/tutorials/initializing/">'));
++  assert.ok(code.includes('src="/tutorials/k3s_init.html"'));
++});
++
++test("compiles archived MDX links alongside shared tutorial recordings", async () => {
++  const processor = unified({
++    remarkPlugins: [[remarkLinkRewrite, { srcDir: "/docs", sections: [...sections] }]],
++  });
++  const renderer = await processor.createMdxRenderer!(
++    { syntaxHighlight: false },
++    { optimize: false },
++  );
++  const { code } = await renderer.process(`
++<a href="/tutorials/initializing/">Tutorial</a>
++<iframe src="/tutorials/k3s_init.html" />
++`, "/docs/v1-0/tutorials/initializing.mdx", {});
++
++  assert.ok(code.includes('href: "/v1-0/tutorials/initializing/"'));
++  assert.ok(code.includes('src: "/tutorials/k3s_init.html"'));
++});
++
+ test("prefixes root-absolute links into known sections", () => {
+   assert.equal(rewriteUrl("/commands/zarf", prefix, sections), "/v0-76/commands/zarf");
+   assert.equal(rewriteUrl("/ref/examples/argocd/", prefix, sections), "/v0-76/ref/examples/argocd/");
 ```
 
-**File**: `packages/README.md` (modified, +2/-2)
+---
+
+### Incident Patch 3: `54dd4495` (2026-11-10)
+**Commit Message**: docs: updated examples and reference guide to v1beta1 (#5635)
+
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/publish-application-packages.yml` (modified, +0/-3)
 ```diff
-@@ -8,7 +8,7 @@ The distros package adds optional capabilities for spinning up and tearing down
- 
- - [EKS](https://aws.amazon.com/eks/) - Zarf deploys and tears down using the `eksctl` binary under the hood. See how it's done in the EKS package's [`zarf.yaml`](./distros/eks/zarf.yaml) and checkout the [EKS package's config](./distros/eks/eks.yaml) for more information.
- 
--- [k3s](https://k3s.io/) - Zarf deploys and tears down using the `k3s` service under the hood. See how it's done in the k3s package's [`zarf.yaml`](./distros/k3s/common/zarf.yaml).
-+- [k3s](https://k3s.io/) - Zarf deploys and tears down using the `k3s` service under the hood. See how it's done in the k3s package's [`zarf.yaml`](./distros/k3s/zarf.yaml).
- 
- ### eks (used only for testing, not for production)
- 
-@@ -41,7 +41,7 @@ Run these targets from the repository root. The v1alpha1 component packages and
- 
- ### Gitea
- 
--Users who rely heavily on GitOps find it useful to deploy an internal Git repository.  Zarf uses [Gitea](https://gitea.io/en-us/) to provide this functionality.  The Gitea package deploys a Gitea instance to the cluster and configures it to use the credentials in the `private-git-server` secret in the Zarf namespace.
-+Users who rely heavily on GitOps find it useful to deploy an internal Git repository.  Zarf uses [Gitea](https://about.gitea.com/) to provide this functionality.  The Gitea package deploys a Gitea instance to the cluster and configures it to use the credentials in the `private-git-server` secret in the Zarf namespace.
- 
- ```bash
- zarf init --components=git-server
+@@ -43,6 +43,3 @@ jobs:
+           # Publish a the signed dos-games package
+           zarf package publish ./build/zarf-package-dos-games-amd64-1.3.0.tar.zst oci://ghcr.io/zarf-dev/packages --key=https://zarf.dev/cosign.pub
+           zarf package publish ./build/zarf-package-dos-games-arm64-1.3.0.tar.zst oci://ghcr.io/zarf-dev/packages --key=https://zarf.dev/cosign.pub
+-
+-          # Publish a skeleton of the dos-games package
+-          zarf package publish examples/dos-games oci://ghcr.io/zarf-dev/packages
 ```
 
-**File**: `site/src/content/docs/contribute/nerd-notes.mdx` (modified, +1/-1)
+**File**: `.github/workflows/test-package-create.yml` (modified, +3/-2)
 ```diff
-@@ -6,7 +6,7 @@ title: Nerd Notes
- This page is still being developed. More content will be added soon!
- :::
+@@ -34,11 +34,12 @@ jobs:
  
--Zarf is written entirely in [go](https://go.dev/), except for a single \<1Mib binary for the injector system written in [rust](https://www.rust-lang.org/), so we can fit it in a [configmap](https://kubernetes.io/docs/concepts/configuration/configmap/). All assets are bundled together into a single [zstd](https://facebook.github.io/zstd/) tarball on each `zarf package create` operation. On the airgap / offline side, `zarf package deploy` extracts the various assets and places them on the filesystem or installs them in the cluster, depending on what the zarf package says to do. Some important ideas behind Zarf:
-+Zarf is written entirely in [go](https://go.dev/), except for a single \<1Mib binary for the injector system written in [rust](https://www.rust-lang.org/), so we can fit it in a [configmap](https://kubernetes.io/docs/concepts/configuration/configmap/). All assets are bundled together into a single [zstd](https://github.com/facebook/zstd) tarball on each `zarf package create` operation. On the airgap / offline side, `zarf package deploy` extracts the various assets and places them on the filesystem or installs them in the cluster, depending on what the zarf package says to do. Some important ideas behind Zarf:
- 
- - All workloads are installed in the cluster via the [Helm SDK](https://helm.sh/docs/topics/advanced/#go-sdk)
- - The OCI Registries used are both from [Docker](https://github.com/distribution/distribution)
+           # Any component tar files in a package will have the same permissions as the files included in them
+           # Therefore to before building a package to replace a file in hack/examples-checksums/ checksums you must run `chmod -R g-w in zarf/examples`
++          # SBOM contents vary between builds. Exclude both legacy archives and v1beta1 resources.
+           for f in hack/examples-checksums/*.txt
+           do
+             NAME=$(basename $f .txt)
+-            CHECKSUM=$(tar Oxf build/$NAME.tar.zst checksums.txt | grep -v sboms.tar)
+-            EXPECTED_CHECKSUM=$(cat $f | grep -v sboms.tar)
++            CHECKSUM=$(tar Oxf build/$NAME.tar.zst checksums.txt | awk '$2 != "sboms.tar" && $2 !~ /^sboms\//')
++            EXPECTED_CHECKSUM=$(awk '$2 != "sboms.tar" && $2 !~ /^sboms\//' "$f")
+             if [[ "$CHECKSUM" != "$EXPECTED_CHECKSUM" ]]
+             then
+               echo "Package $f does not have expected checksum."
 ```
 
-**File**: `site/src/content/docs/getting-started/understanding.mdx` (modified, +1/-1)
+**File**: `.pre-commit-config.yaml` (modified, +5/-1)
 ```diff
-@@ -41,7 +41,7 @@ For Zarf-specific concepts, see the following pages:
- ### CLI Basics
- 
- - [List of CLI Commands](https://www.codecademy.com/article/command-line-commands)
--- [How to use the Command Line](https://training.linuxfoundation.org/training/linux-tools-for-software-development-lfd108x/)
-+- [How to use the Command Line](https://training.linuxfoundation.org/training/introduction-to-linux/)
- 
- ## Terms Used
- 
+@@ -9,7 +9,11 @@ repos:
+         args:
+           - "--allow-missing-credentials"
+       - id: detect-private-key
+-        exclude: "src/test/e2e/29_config_file_test.go"
++        exclude: |
++            (?x)^(
++                src/test/e2e/29_config_file_test\.go|
++                examples/longhorn/values\.yaml
++            )$
+       - id: end-of-file-fixer
+         exclude: |
+             (?x)^(
 ```
 
-**File**: `site/src/content/docs/ref/components.mdx` (modified, +2/-2)
+**File**: `examples/argocd/zarf.yaml` (modified, +40/-37)
 ```diff
-@@ -106,7 +106,7 @@ Manifests under the `kustomizations` key can be:
+@@ -1,3 +1,4 @@
++apiVersion: zarf.dev/v1beta1
+ kind: ZarfPackageConfig
+ metadata:
+   name: argocd
+@@ -8,44 +9,44 @@ values:
  
- :::note
+ components:
+   - name: argocd-helm-chart
+-    required: true
+     charts:
+       - name: argo-cd
+-        version: 9.0.5
++        helmRepository:
++          url: https://argoproj.github.io/argo-helm
++          version: 9.0.5
+         namespace: argocd
+-        url: https://argoproj.github.io/argo-helm
+         releaseName: argocd-baseline
+         valuesFiles:
+-          - baseline/values.yaml
++          - path: baseline/values.yaml
+         # Required for 'src/test/external' to validate external git server.
+         values:
+           - sourcePath: ".extraObjects"
+             targetPath: ".extraObjects"
+           - sourcePath: ".repoServer"
+             targetPath: ".repoServer"
+     images:
+-      - docker.io/library/redis:7.2.11-alpine
+-      - quay.io/argoproj/argocd:v3.1.9
++      - name: docker.io/library/redis:7.2.11-alpine
++      - name: quay.io/argoproj/argocd:v3.1.9
+       # Cosign artifacts for images - argocd-helm-chart
+-      - quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.sig
+-      - quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.att
++      - name: quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.sig
++      - name: quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.att
+   - name: argocd-apps
+-    required: true
+     charts:
+       - name: argocd-apps
+-        version: 2.0.4
++        helmRepository:
++          url: https://argoproj.github.io/argo-helm
++          version: 2.0.4
+         namespace: podinfo
+-        url: https://argoproj.github.io/argo-helm
+         releaseName: argocd-apps
+         valuesFiles:
+-          - apps/values.yaml
+-    repos:
+-      - https://github.com/stefanprodan/podinfo.git
++          - path: apps/values.yaml
++    repositories:
++      - url: https://github.com/stefanprodan/podinfo.git
+     images:
+-      - ghcr.io/stefanprodan/podinfo:6.4.0
++      - name: ghcr.io/stefanprodan/podinfo:6.4.0
+     actions:
+       onDeploy:
+-        after:
++        onSuccess:
+           # This will use a wait action to wait for the pods to be ready
+           - description: Podinfo pod to be ready via wait action
+             wait:
+@@ -55,22 +56,24 @@ components:
+                 namespace: podinfo
+                 condition: ready
+   - name: argocd-applicationset
+-    required: true
+     charts:
+       - name: argocd-apps
+-        version: 2.0.4
++        helmRepository:
++          url: https://argoproj.github.io/argo-helm
++          version: 2.0.4
+         namespace: guestbook
+-        url: https://argoproj.github.io/argo-helm
+         releaseName: argocd-apps
+         valuesFiles:
+-          - applicationset/values.yaml
+-    repos:
+-      - https://github.com/argoproj/argocd-example-apps.git@0d521c6e049889134f3122eb32d7ed342f43ca0d
++          - path: applicationset/values.yaml
++    repositories:
++      - url: https://github.com/argoproj/argocd-example-apps.git
++        ref:
++          commit: 0d521c6e049889134f3122eb32d7ed342f43ca0d
+     images:
+-      - gcr.io/google-samples/gb-frontend:v5
++      - name: gcr.io/google-samples/gb-frontend:v5
+     actions:
+       onDeploy:
+-        after:
++        onSuccess:
+           - description: Guestbook UI pod to be ready via wait action
+             wait:
+               cluster:
+@@ -79,31 +82,31 @@ components:
+                 namespace: guestbook
+                 condition: ready
+   - name: oci-helm
+-    required: true
+     charts:
+       - name: argocd-apps
+-        version: 1.6.1
++        helmRepository:
++          url: https://argoproj.github.io/argo-helm
++          version: 1.6.1
+         namespace: podinfo-oci
+-        url: https://argoproj.github.io/argo-helm
+         releaseName: argocd-apps
+         valuesFiles:
+-          - oci-helm/values.yaml
++          - path: oci-helm/values.yaml
+     images:
+-      - ghcr.io/stefanprodan/charts/podinfo:6.9.2
+-      - ghcr.io/stefanprodan/podinfo:6.9.2
++      - name: ghcr.io/stefanprodan/charts/podinfo:6.9.2
++      - name: ghcr.io/stefanprodan/podinfo:6.9.2
+   - name: oci-manifests
+-    required: true
+     charts:
+       - name: argocd-apps
+-        version: 1.6.1
++        helmRepository:
++          url: https://argoproj.github.io/argo-helm
++          version: 1.6.1
+         namespace: oci-manifests
+-        url: https://argoproj.github.io/argo-helm
+         releaseName: argocd-apps
+         valuesFiles:
+-          - oci-manifests/values.yaml
++          - path: oci-manifests/values.yaml
+     images:
+-      - registry-1.docker.io/dhpup/oci-edge:1.0.6
+-      - ghcr.io/dhpup/guestbook:0.1.40
++      - name: registry-1.docker.io/dhpup/oci-edge:1.0.6
++      - name: ghcr.io/dhpup/guestbook:0.1.40
  
--Zarf dynamically generates a Helm Chart from the named manifest entries that you specify. This means that any given set of files under a manifest entry will be applied according to [Helm Chart template and manifest install ordering](https://github.com/helm/helm/blob/main/pkg/releaseutil/manifest_sorter.go#L78) and not necessarily in the order that files are declared. If ordering is important, consider moving each file into its own manifest entry in the `manifests` array.
-+Zarf dynamically generates a Helm Chart from the named manifest entries that you specify. This means that any given set of files under a manifest entry will be applied according to [Helm Chart template and manifest install ordering](https://github.com/helm/helm/blob/main/pkg/release/v1/util/manifest_sorter.go) and not necessarily in the order that files are declared. If ordering is important, consider moving each file into its own manifest entry in the `manifests` array.
- 
- :::
- 
-@@ -151,7 +151,7 @@ Another way to bring OCI images can into the package is via archives of [OCI lay
- 
- An OCI layout can have any number of images, Zarf will pull all images that are listed in the sub-field `imageArchives.images`. If a listed image is not found in the archive then Zarf will error. In order for Zarf to find an image its [descriptor](https://specs.opencontainers.org/image-spec/descriptor/?v=v1.1.1) in the OCI-layout index.json must include the annotation "io.containerd.image.name" or "org.opencontainers.image.ref.name". `docker save` and `podman save` will automatically add at least one of these annotations.
- 
--Locally-built images that are not pulled from a public registry should be referenced under the reserved [`.internal`](https://www.icann.org/en/board-activities-and-meetings/materials/approved-resolutions-special-meeting-of-the-icann-board-24-07-2024-en#section2.b) top-level domain (for example `zarf.internal/my-app:1.0.0`). The `.internal` TLD will never resolve on the public internet, which avoids accidentally pulling an unexpected image if a registry reference is mistyped or rewriting fails. `zarf dev lint` emits a warning when an image archive image does not use a `.internal` domain.
-+Locally-built images that are not pulled from a public registry should be referenced under the reserved [`.internal`](https://www.icann.org/en/board-activities-and-meetings/materials/approved-resolutions-special-meeting-of-the-icann-board-29-07-2024-en#section2.a) top-level domain (for example `zarf.internal/my-app:1.0.0`). The `.internal` TLD will never resolve on the public internet, which avoids accidentally pulling an unexpected image if a registry reference is mistyped or rewriting fails. `zarf dev lint` emits a warning when an image archive image does not use a `.internal` domain.
- 
- 
- ```yaml
+-documentation:
++attachments:
+   readme: readme.md
 ```
 
-**File**: `site/src/content/docs/ref/init-package.mdx` (modified, +1/-1)
+**File**: `examples/component-actions/readme.md` (modified, +0/-6)
 ```diff
-@@ -260,7 +260,7 @@ The Zarf team maintains some optional components in the default 'init' package.
- | Components   | Description                                                                                                                                                       |
- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
- | k3s          | REQUIRES ROOT (not sudo). Installs a lightweight Kubernetes Cluster on the local host [K3s](https://k3s.io/) and configures it to start up on boot.   |
--| git-server   | Adds a [GitOps](https://about.gitlab.com/topics/gitops/)-compatible source control service [Gitea](https://gitea.io/en-us/) into the cluster. |
-+| git-server   | Adds a [GitOps](https://about.gitlab.com/topics/gitops/)-compatible source control service [Gitea](https://about.gitea.com/) into the cluster. |
+@@ -1,9 +1,3 @@
+-:::caution
+-
+-Component Actions have replaced Component Scripts. Zarf will still read `scripts` entries, but will convert them to `actions`. Component Scripts will be removed in a future release. Please update your package configurations to use Component Actions instead.
+-
+-:::
+-
+ This example demonstrates how to define actions within your package that can run either on `zarf package create`, `zarf package deploy` or `zarf package remove`. These actions will be executed with the context that the Zarf binary is executed with.
  
- There are two ways to deploy these optional components. First, you can provide a comma-separated list of components to the `--components` flag, such as `zarf init --components k3s,git-server --confirm`, or, you can choose to exclude the `--components` and `--confirm` flags and respond with a yes (`y`) or no (`n`) for each optional component when interactively prompted.
+ For more details on component actions, see the [component actions](/ref/actions/) documentation.
+```
+
+**File**: `examples/component-actions/zarf.yaml` (modified, +38/-24)
+```diff
+@@ -1,3 +1,4 @@
++apiVersion: zarf.dev/v1beta1
+ kind: ZarfPackageConfig
+ metadata:
+   name: component-actions
+@@ -10,16 +11,17 @@ values:
+ # See the example README.md in this folder or /adrs/0010-scripts-actions.md for more info.
+ components:
+   - name: on-create
++    optional: true
+     actions:
+       # runs during "zarf package create"
+       onCreate:
+         # defaults are applied to all actions in this action set - below are the default defaults
+         defaults:
+           dir: ""
+           env: []
+-          maxRetries: 0
++          retries: 0
+           maxTotalSeconds: 300
+-          mute: false
++          silent: false
+           shell:
+             darwin: sh
+             linux: sh
+@@ -35,17 +37,17 @@ components:
+             # env sets environment variables for this action only
+             env:
+               - thing=stuff
+-            # maxRetries is the number of times to retry the action if it fails
+-            maxRetries: 0
++            # retries is the number of times to retry the action if it fails
++            retries: 0
+             # maxTotalSeconds is the maximum amount of times the action can run before it is killed, over all retries
+             maxTotalSeconds: 30
+-            # mute determine if actions output should be printed to the console
+-            mute: false
++            # silent determine if actions output should be printed to the console
++            silent: false
+             # shell sets the preferred shell across operating systems, in this case "pwsh" instead of "powershell" on Windows
+             shell:
+               windows: pwsh
+         # runs after the component is created
+-        after:
++        onSuccess:
+           # actions in a list run in order
+           - cmd: touch test-create-after.txt
+           - cmd: sleep 0.5
+@@ -63,34 +65,37 @@ components:
+               sleep 0.5
  
+   - name: on-deploy-and-remove
++    optional: true
+     actions:
+       # runs during "zarf package deploy"
+       onDeploy:
+         # runs before the component is deployed
+         before:
+           - cmd: touch test-deploy-before.txt
+         # runs after the component is deployed
+-        after:
++        onSuccess:
+           - cmd: touch test-deploy-after.txt
+       # runs during "zarf package remove"
+       onRemove:
+         # runs before anything else from the component is removed
+         before:
+           - cmd: rm test-deploy-before.txt
+         # runs after everything else from the component is removed
+-        after:
++        onSuccess:
+           - cmd: rm test-deploy-after.txt
+ 
+   - name: on-deploy-with-value
++    optional: true
+     actions:
+       # runs during "zarf package deploy"
+       onDeploy:
+         # runs before the component is deployed
+         before:
+           - cmd: echo "the dog says {{ .Values.sounds.dog }}"
+-            template: true
++            enableTemplating: true
+ 
+   - name: on-deploy-with-dynamic-value
++    optional: true
+     actions:
+       # runs during "zarf package deploy"
+       onDeploy:
+@@ -103,9 +108,10 @@ components:
+               - key: .sounds.cat
+           # this action will have access to the value set in the previous action
+           - cmd: echo "the cat says {{ .Values.sounds.cat }}"
+-            template: true
++            enableTemplating: true
+ 
+   - name: on-deploy-with-multiple-values
++    optional: true
+     actions:
+       # runs during "zarf package deploy"
+       onDeploy:
+@@ -121,24 +127,26 @@ components:
+         onSuccess:
+           # this action will print the cat sound value that was set in a previous component
+           - cmd: echo "the cat says {{ .Values.sounds.cat }}"
+-            template: true
++            enableTemplating: true
+           # this action will print the dog sound value set in values.yaml
+           - cmd: echo "the dog says {{ .Values.sounds.dog }}"
+-            template: true
++            enableTemplating: true
+           # this action will print the snake sound value set within this component
+           - cmd: echo "the snake says {{ .Values.sounds.snake }}"
+-            template: true
++            enableTemplating: true
+ 
+   - name: on-deploy-with-template-use-of-value
++    optional: true
+     files:
+       # this file will be copied to the target location and the cat, dog, and snake sounds will be replaced with their values
+       # requires the on-deploy-with-dynamic-value and on-deploy-with-multiple-values components
+       - source: test.txt
+-        target: test-templated.txt
+-        shasum: d84fa3f5071b5cee0ffb09989c95b0078f4265ed485b314492a19bab2e3f69f3
+-        template: true
++        destination: test-templated.txt
++        checksum: sha256:d84fa3f5071b5cee0ffb09989c95b0078f4265ed485b314492a19bab2e3f69f3
++        enableTemplating: true
+ 
+   - name: on-deploy-with-timeout
++    optional: true
+     description: This component will fail after 1 second
+     actions:
+       # runs during "zarf package deploy"
+@@ -154,6 +162,7 @@ components:
+           - cmd: echo "😭😭
+```
+
+**File**: `examples/composable-packages/components/chart/Chart.yaml` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++apiVersion: v2
++name: web-server
++description: A reusable Nginx web server with configurable content and connection name
++version: 1.0.0
++type: application
+```
+
+**File**: `examples/composable-packages/components/chart/templates/configmap.yaml` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++apiVersion: v1
++kind: ConfigMap
++metadata:
++  name: web-content
++data:
++  index.html: |
++    <!doctype html>
++    <html lang="en">
++      <head>
++        <meta charset="utf-8">
++        <title>Composable Zarf packages</title>
++      </head>
++      <body>
++        <h1>{{ .Values.message | html }}</h1>
++      </body>
++    </html>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5634** (closed): feat!: create dedicated sign/verify options types (@brandtkeller)
-- **PR #5631** (2026-11-09): feat!: limit v1beta1 init package values chart inputs (@AustinAbro321)
-- **PR #5629** (2026-11-08): chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (@dwertent)
-- **PR #5625** (closed): fix: exclude state authoritative values (@brandtkeller)
-- **PR #5624** (2026-11-09): feat(state)!: remove storageclass and distro (@brandtkeller)
-- **PR #5623** (2026-11-08): feat: deprecate v1alpha1 packages (@AustinAbro321)
+- **PR #5657** (closed): feat(git): remove external git shell-out fallback (#2772) (@Amankumar-10012004)
+- **PR #5648** (2026-11-11): chore(main): release 1.0.1 (@zarf-release-please[bot])
+- **PR #5645** (2026-11-11): chore(deps): update Go from 1.26.10 to 1.26.11 (@AustinAbro321)
+- **PR #5644** (2026-11-11): fix: update agent mutation policy handling helm schema validation (@dwertent)
+- **PR #5642** (2026-11-11): docs: fixed slugs processing for previous versions (@AustinAbro321)
+- **PR #5635** (2026-11-10): docs: updated examples and reference guide to v1beta1 (@AustinAbro321)
 
 ---
 
@@ -1785,55 +2224,34 @@ Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. document deprecation policy and update security.md (#5604)
+## X. update agent mutation policy handling helm schema validation (#5644)
 
 **RULE**:
-When implementing operations in `.github/SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/cluster/cluster.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `328d1d31`: document deprecation policy and update security.md (#5604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4455451`: update agent mutation policy handling helm schema validation (#5644). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/SECURITY.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/cluster/cluster.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## Report a Vulnerability
-Report a security issue or vulnerability through GitHub Security Advisories using the confidential [Report a Vulnerability](https://github.com/zarf-dev/zarf/security/advisories) workflow. Do not disclose exploit details publicly before the team has coordinated a fix and disclosure with you.
-## What to Include
-Include the affected Zarf version and deployment environment, the affected package create, deploy, runtime, or state-management path, reproduction steps or a proof of concept, the impact and attack preconditions, and a suggested mitigation if known.
-## When to Report a Vulnerability
-
-- You found a vulnerability in Zarf code.
-- You found an unpatched vulnerability in a Zarf dependency that affects the project.
-
-## When Not to Report a Vulnerability
-
-- You found a bug or malfunction that is not security-related.
-- You want to add a feature to Zarf.
-
-Use the [issue tracker](https://github.com/zarf-dev/zarf/issues) for non-security bugs and feature requests.
-Security fixes are provided for the latest stable minor release of the current major version. Affected users should upgrade to the current supported release. Maintainers MAY provide a backport when op
+	if s.AgentInfo.IsConfigured() {
+		if opts.AgentMutationPolicy != "" {
+			s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
+		} else if s.AgentInfo.MutationPolicy == "" {
+			s.AgentInfo.MutationPolicy = state.MutationPolicyAll
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-To report a security issue or vulnerability in Zarf, please use the confidential GitHub Security Advisory ["Report a Vulnerability"](https://github.com/zarf-dev/zarf/security/advisories) tab. The Zarf team will send a response indicating the next steps in handling your report. After the initial reply to your report, the team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
-### When Should I Report a Vulnerability?
-* You found a vulnerability in the Zarf code.
-* You found a vulnerability in one of the Zarf dependencies that affects the project that has not been patched yet.
-### When Should I NOT Report a Vulnerability?
-* You found a bug or malfunction in the Zarf code (not security related).
-* You want to add a feature to Zarf.
-As Zarf has not yet reached v1.0.0, only the current latest minor release is supported.
-To discuss security related issues, please email the maintainers at zarf-dev-private@googlegroups.com.
-## CVE Posture & VEX
-Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document**
-that captures accepted, non-exploitable findings with documented justification.
-You ca
+	if s.AgentInfo.IsConfigured() && opts.AgentMutationPolicy != "" {
+		s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `328d1d31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4455451` are properly handled with clean fallback behavior.

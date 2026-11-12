@@ -9107,3 +9107,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-12T07:15:23.811Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `766683fe` | Multi-dimensional audit evidence | 2026-11-12T07:15:39.147Z |
 | `learn-dom-d-2efb96c5` | `project://hf-nousresearch-arete-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | 2026-11-12T07:16:00.760Z |
+| `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-12T07:37:46.470Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `90a50e46` | Multi-dimensional audit evidence | 2026-11-12T07:38:00.624Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `e62a47c3` | Multi-dimensional audit evidence | 2026-11-12T07:38:13.650Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `ef4c7459` | Multi-dimensional audit evidence | 2026-11-12T07:38:17.616Z |
+| `learn-dom-d-91eb11da` | `project://hf-prunaai-p-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | 2026-11-12T07:38:38.948Z |

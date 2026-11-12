@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T07:16:00.771Z",
+  "last_updated": "2026-11-12T07:38:38.961Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6399,6 +6399,24 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6D0FCE-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-341EBA",
+      "directive_title": "usb: minor fixes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "embassy-rs-embassy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-341EBA-usb-minor-fixes.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4501E7",
+      "directive_title": "update agent mutation policy handling helm schema validation (#5644)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zarf-dev-zarf",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4501E7-update-agent-mutation-policy-handling-he.md",
       "staged_date": "2026-11-12"
     }
   ]

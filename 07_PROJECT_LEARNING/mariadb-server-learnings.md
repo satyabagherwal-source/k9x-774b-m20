@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `429abfaf`  
+> **Source Version**: `ef4c7459`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T23:07:31.956Z  
+> **Timestamp**: 2026-11-12T07:38:01.591Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T23:07:31.785Z  
+> **Harvest Timestamp**: 2026-11-12T07:38:01.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8558 stars
+- **Stars / Engagement**: 8577 stars
 
 ---
 
@@ -1613,13 +1613,14 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6098** (2026-11-09): **MDEV-35635: correct test failure main.start_slave_until**
-  *Symptoms*: The starting state of this test wasn't reliable, e.g. after main.mysqldump-nl it had residual replication that changed the result of this test.  This is a reliability fix until test cases enforce the pre/post state being identical with respect to replication status.
+- **Issue #6123** (2026-11-11): **Fix mdev_31342 test case by disabling test on protocol tests**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > proper fix per 4690785935cf18e398389559fc40659daf162bb7
+  > [bb-13.2-mdev_31342_kill](https://buildbot.mariadb.org/#/grid?branch=bb-13.2-mdev_31342_kill) as effective too [54d860e94e9](https://github.com/MariaDB/server/commit/54d860e94e9bef188df8de6eab50119217654304))
+  > sorry @janlindstrom , Sanja merge his own fix - 54d860e94e9bef188df8de6eab50119217654304
 
-- **Issue #6097** (2026-11-09): **oqgraph: clang 23 warning unused-but-set-global**
-  *Symptoms*: Removed the oqgraph_init_done and the fini function as setting this variable was the only thing it did.  Resolve complile error:  oqgraph/ha_oqgraph.cc:131:13: error: variable 'oqgraph_init_done' set but not used [-Werror,-Wunused-but-set-global]   131 | static bool oqgraph_init_done= 0;
+- **Issue #6122** (2026-11-11): **MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre…**
+  *Symptoms*: MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unreachable  STOP SLAVE could take up to slave_net_timeout to stop the slave IO thread when the primary accepts the connection but does not answer, e.g. when its host is frozen or its packets are dropped. The IO thread is blocked in mysql_real_connect(), waiting for the server greeting, and THD::awake() could not interrupt it: until the connect succeeds, the vio is not THD::active_vio.  Let the client tell the owner of the connection about its vio. A new MYSQL_OPT_VIO_CALLBACK (and MYSQL_OPT_VIO_CALLBACK_ARG, its first argument) is called with the new vio as soon as it is created, and with NULL right before it is deleted. It is kept in options.extension, so mysql_reconnect() carries it over to its temporary MYSQL object.  The slave IO thread sets it up in connect_to_master(). The callback makes the vio THD::active_vio, so STOP SLAVE shuts the socket down with vio_shutdown(), which wakes up the blocked wait. If STOP SLAVE has already set abort_slave, the vio is shut down right away. This works on all platforms, no signals are needed.  The test does not need SIGSTOP and runs on Windows too. The "primary" is a socket that listens and never accepts or answers. It fails without the fix (STOP SLAVE waits for most of slave_net_timeout), and passes in about a second with it.  The idea of the test, to freeze the primary and check that STOP SLAVE does not wait for slave_net_timeout, is reused f
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1636,129 +1637,37 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a0c0923` (2026-11-06)
-**Commit Message**: MDEV-41810 Atomic CoR: a crash at the end of CREATE OR REPLACE loses both the old and the new table
+### Incident Patch 1: `54d860e9` (2026-11-10)
+**Commit Message**: fix main.mdev_31342_kill with view and cursor protocol
 
-The given test case was already in the test suite, but unfortunately I had
-missed a failing test in the result file.
-
-Fixed by marking the created table complete before removing the
-backup table.
-I also extended create_replace_no_binlog.test with a new crash point to
-ensure state is tested before and after marking table complete.
-
-**File**: `mysql-test/suite/atomic/create_replace_no_binlog.result` (modified, +35/-0)
+**File**: `mysql-test/main/mdev_31342_kill.test` (modified, +4/-0)
 ```diff
-@@ -68,6 +68,13 @@ Table	Create Table
- t2	CREATE TABLE `t2` (
-   `new` int(11) DEFAULT NULL
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-+crash point: ddl_log_create_after_complete
-+t2.frm
-+t2.ibd
-+Table	Create Table
-+t2	CREATE TABLE `t2` (
-+  `new` int(11) DEFAULT NULL
-+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
- crash point: ddl_log_create_after_revert
- t2.frm
- t2.ibd
-@@ -161,6 +168,15 @@ t2	CREATE TABLE `t2` (
-   `new` int(11) DEFAULT NULL,
-   `new2` int(11) DEFAULT NULL
- ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-+crash point: ddl_log_create_after_complete
-+t2.MYD
-+t2.MYI
-+t2.frm
-+Table	Create Table
-+t2	CREATE TABLE `t2` (
-+  `new` int(11) DEFAULT NULL,
-+  `new2` int(11) DEFAULT NULL
-+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
- crash point: ddl_log_create_after_revert
- t2.MYD
- t2.MYI
-@@ -283,7 +299,26 @@ t2	CREATE TABLE `t2` (
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
- count(*)
- 2
-+crash point: ddl_log_create_after_complete
-+t2.frm
-+t2.ibd
-+Table	Create Table
-+t2	CREATE TABLE `t2` (
-+  `new` int(11) DEFAULT NULL,
-+  `new2` int(11) DEFAULT NULL
-+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-+count(*)
-+2
- crash point: ddl_log_create_after_revert
-+t2.frm
-+t2.ibd
-+Table	Create Table
-+t2	CREATE TABLE `t2` (
-+  `new` int(11) DEFAULT NULL,
-+  `new2` int(11) DEFAULT NULL
-+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-+count(*)
-+2
- crash point: ddl_log_create_middle_complete
- t2.frm
- t2.ibd
-```
-
-**File**: `mysql-test/suite/atomic/create_replace_no_binlog.test` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
+@@ -5,6 +5,8 @@
+ --echo # MDEV-41165: KILL / max_statement_time arriving after the WHERE
+ --echo # condition was evaluated must not be lost on the I_S fast path
+ --echo #
++--disable_view_protocol
++--disable_cursor_protocol
+ CREATE TABLE t1 (a INT);
+ let $q= SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='test';
  
- let $engines='innodb';
+@@ -36,5 +38,7 @@ eval SET STATEMENT max_statement_time=0.5 FOR $q;
  
--let $crash_points='ddl_log_create_before_create_frm', 'storage_engine_middle_of_create', 'ddl_log_create_before_create_table', 'ddl_log_create_after_create_table', 'ddl_log_create_after_send_data', 'ddl_log_finalize_create', 'ddl_log_finalize_create_after_link', 'ddl_log_create_before_binlog', 'ddl_log_create_before_prepare_eof','ddl_log_create_after_prepare_eof', 'ddl_log_create_after_binlog', 'ddl_log_create_after_revert', 'ddl_log_create_middle_complete', 'ddl_log_create_complete';
-+let $crash_points='ddl_log_create_before_create_frm', 'storage_engine_middle_of_create', 'ddl_log_create_before_create_table', 'ddl_log_create_after_create_table', 'ddl_log_create_after_send_data', 'ddl_log_finalize_create', 'ddl_log_finalize_create_after_link', 'ddl_log_create_before_binlog', 'ddl_log_create_before_prepare_eof','ddl_log_create_after_prepare_eof', 'ddl_log_create_after_binlog', 'ddl_log_create_after_complete', 'ddl_log_create_after_revert', 'ddl_log_create_middle_complete', 'ddl_log_create_complete';
+ SET debug_sync='RESET';
+ DROP TABLE t1;
++--enable_view_protocol
++--enable_cursor_protocol
  
- let $show_table_t2=1; # All tests are using t2
- 
-```
-
-**File**: `sql/sql_table.cc` (modified, +2/-0)
-```diff
-@@ -4928,6 +4928,8 @@ void Table_specification_st::end_create_table(THD *thd,
-       DBUG_ASSERT(mdl_request.ticket);
-     }
- 
-+    ddl_log_complete(ddl_log_state_create);
-+    debug_crash_here("ddl_log_create_after_complete");
-     ddl_log_revert(thd, ddl_log_state_rm);
-     debug_crash_here("ddl_log_create_after_revert");
-   }
-```
-
----
-
-### Incident Patch 2: `da1642c7` (2026-11-09)
-**Commit Message**: MDEV-38486: post-merge fix: set to empty.
-
-**File**: `sql/semisync_master.cc` (modified, +1/-1)
-```diff
-@@ -1024,7 +1024,7 @@ int Repl_semi_sync_master::report_binlog_update(THD *trans_thd,
-       */
-       if ((log_info= trans_thd->semisync_info))
-       {
--        log_info->log_file[0]= 0;
-+        log_info->log_file= "";
-         log_info->log_pos= 0;
-       }
-       return 0;
+ --echo # End of 13.2 tests
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6098** (closed): MDEV-35635: correct test failure main.start_slave_until (@grooverdan)
-- **PR #6097** (2026-11-09): oqgraph: clang 23 warning unused-but-set-global (@grooverdan)
-- **PR #6096** (2026-11-09): MDEV-41851 register cache manager with SAVEPOINT handler list (@ayurchen)
-- **PR #6095** (closed): MDEV-41851 register cache manager with SAVEPOINT handler list (@ayurchen)
-- **PR #6091** (2026-11-07): MDEV-30836 postfix - MTR hangs on Windows after warnings in the log at shutdown (@vaintroub)
-- **PR #6090** (2026-11-07): MDEV-41158: authenticate the mariabackup SST backup-data stream too (@hemantdangi-gc)
+- **PR #6123** (closed): Fix mdev_31342 test case by disabling test on protocol tests (@janlindstrom)
+- **PR #6122** (closed): MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre… (@andrelkin)
+- **PR #6119** (closed): MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre… (@andrelkin)
+- **PR #6118** (2026-11-11): MDEV-42078:  Map macOS errno 63 in main.create_notembedded (@DaveGosselin-MariaDB)
+- **PR #6117** (2026-11-11): MDEV-42175: use uint128 WolfSSL optimizations where available (@gkodinov)
+- **PR #6113** (2026-11-10): MDEV-41165: use I_S fast path with max_statement_time (@janlindstrom)
 
 ---
 
@@ -1778,55 +1687,24 @@ ensure state is tested before and after marking table complete.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-41810 Atomic CoR: a crash at the end of CREATE OR REPLACE loses both the ol
+## X. main.mdev_31342_kill with view and cursor protocol
 
 **RULE**:
-When implementing operations in `mysql-test/suite/atomic/create_replace_no_binlog.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/main/mdev_31342_kill.test`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a0c0923`: MDEV-41810 Atomic CoR: a crash at the end of CREATE OR REPLACE loses both the old and the new table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54d860e9`: main.mdev_31342_kill with view and cursor protocol. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/atomic/create_replace_no_binlog.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/mdev_31342_kill.test`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-crash point: ddl_log_create_after_complete
-t2.frm
-t2.ibd
-Table	Create Table
-t2	CREATE TABLE `t2` (
-  `new` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-crash point: ddl_log_create_after_complete
-t2.MYD
-t2.MYI
-t2.frm
-Table	Create Table
-t2	CREATE TABLE `t2` (
-  `new` int(11) DEFAULT NULL,
-  `new2` int(11) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-crash point: ddl_log_create_after_complete
-t2.frm
-t2.ibd
-Table	Create Table
-t2	CREATE TABLE `t2` (
-  `new` int(11) DEFAULT NULL,
-  `new2` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-count(*)
-2
-t2.frm
-t2.ibd
-Table	Create Table
-t2	CREATE TABLE `t2` (
-  `new` int(11) DEFAULT NULL,
-  `new2` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
-count(*)
-2
+--disable_view_protocol
+--disable_cursor_protocol
+--enable_view_protocol
+--enable_cursor_protocol
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1836,4 +1714,4 @@ count(*)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a0c0923` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54d860e9` are properly handled with clean fallback behavior.
