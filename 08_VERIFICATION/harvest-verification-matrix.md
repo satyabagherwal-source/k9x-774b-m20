@@ -9164,3 +9164,8 @@
 | `CYCLE-20261112-3AT7` | `2026-11-12T12:32:51.835Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`52beee9c...`) |
 | `CYCLE-20261112-3IT3` | `2026-11-12T12:33:02.199Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ba9b9eac...`) |
 | `CYCLE-20261112-3LEP` | `2026-11-12T12:33:05.569Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b900481f...`) |
+| `CYCLE-20261112-JJO3` | `2026-11-12T12:45:29.811Z` | `touchlab/xcode-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`98cef32d...`) |
+| `CYCLE-20261112-JQYY` | `2026-11-12T12:45:39.274Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9f975bbc...`) |
+| `CYCLE-20261112-Q0WJ` | `2026-11-12T12:50:32.083Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e4e2dc27...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T12:50:51.248Z` | `webpack-webpack` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-EE08D822` [Domain H] | Yes (`c62c37cb...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T12:51:11.112Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B173C8F8` [Domain H] | Yes (`d42b1d92...`) |

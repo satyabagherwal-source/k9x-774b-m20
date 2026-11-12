@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T12:33:11.493Z",
+  "last_updated": "2026-11-12T12:50:51.295Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6869,6 +6869,15 @@
       "source_repo": "nolabs-ai-nono",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-32F9A6-proxy-accept-aws-govcloud-regions-and-s3.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D65899",
+      "directive_title": "Bump version to 2.2.2.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "touchlab-xcode-kotlin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D65899-bump-version-to-2-2-2-.md",
       "staged_date": "2026-11-12"
     }
   ]

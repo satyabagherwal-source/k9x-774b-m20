@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T12:33:11.631Z",
+  "updated_at": "2026-11-12T12:51:11.188Z",
   "stats": {
-    "total_discovered": 1319,
-    "approved_pending_harvest": 1197,
+    "total_discovered": 1332,
+    "approved_pending_harvest": 1210,
     "harvested_count": 0,
     "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1206,
+      "COMMUNITY_AND_EXPERT": 1219,
       "OFFICIAL_DOCUMENTATION": 59,
       "STANDARDS_AND_SPECIFICATIONS": 51,
       "ENGINEERING_BLOGS": 1,
@@ -28181,6 +28181,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
         "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-26BDC348DC94": {
+      "id": "SRC-26BDC348DC94",
+      "url": "https://github.com/webpack/webpack",
+      "title": "https://github.com/webpack/webpack",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+        "fileName": "webpack-webpack-learnings.md"
+      }
+    },
+    "SRC-5A50DDF2CC23": {
+      "id": "SRC-5A50DDF2CC23",
+      "url": "https://github.com/SyMind/webpack-module-collision",
+      "title": "https://github.com/SyMind/webpack-module-collision",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+        "fileName": "webpack-webpack-learnings.md"
+      }
+    },
+    "SRC-B04A2A3AE29B": {
+      "id": "SRC-B04A2A3AE29B",
+      "url": "https://github.com/webpack/webpack/discussions",
+      "title": "https://github.com/webpack/webpack/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.270Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+        "fileName": "webpack-webpack-learnings.md"
+      }
+    },
+    "SRC-56998139EC39": {
+      "id": "SRC-56998139EC39",
+      "url": "https://stackoverflow.com/questions/ask?tags=webpack",
+      "title": "https://stackoverflow.com/questions/ask?tags=webpack",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+        "fileName": "webpack-webpack-learnings.md"
+      }
+    },
+    "SRC-DF01D7E5F47A": {
+      "id": "SRC-DF01D7E5F47A",
+      "url": "https://github.com/prettier-solidity/prettier-plugin-solidity/pull/1236",
+      "title": "https://github.com/prettier-solidity/prettier-plugin-solidity/pull/1236",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+        "fileName": "webpack-webpack-learnings.md"
+      }
+    },
+    "SRC-281DBD9A9837": {
+      "id": "SRC-281DBD9A9837",
+      "url": "https://claude.ai/code/session_013FhutRENJSfqFqSYN8hkt3",
+      "title": "https://claude.ai/code/session_013FhutRENJSfqFqSYN8hkt3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+        "fileName": "webpack-webpack-learnings.md"
+      }
+    },
+    "SRC-A03754CBF8AD": {
+      "id": "SRC-A03754CBF8AD",
+      "url": "https://github.com/touchlab/xcode-kotlin",
+      "title": "https://github.com/touchlab/xcode-kotlin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md",
+        "fileName": "touchlab-xcode-kotlin-learnings.md"
+      }
+    },
+    "SRC-A54DCBC5964E": {
+      "id": "SRC-A54DCBC5964E",
+      "url": "https://api.touchlab.dev/crash/report$tagQuery",
+      "title": "https://api.touchlab.dev/crash/report$tagQuery",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md",
+        "fileName": "touchlab-xcode-kotlin-learnings.md"
+      }
+    },
+    "SRC-B577903837F3": {
+      "id": "SRC-B577903837F3",
+      "url": "https://github.com/touchlab/xcode-kotlin/issues/125",
+      "title": "https://github.com/touchlab/xcode-kotlin/issues/125",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:50:51.318Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md",
+        "fileName": "touchlab-xcode-kotlin-learnings.md"
+      }
+    },
+    "SRC-0B22CA37FD38": {
+      "id": "SRC-0B22CA37FD38",
+      "url": "https://github.com/anthropics/claude-code-action",
+      "title": "https://github.com/anthropics/claude-code-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:51:11.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-DA9FCDD4402C": {
+      "id": "SRC-DA9FCDD4402C",
+      "url": "https://github.com/anthropics/claude-code-action/releases",
+      "title": "https://github.com/anthropics/claude-code-action/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:51:11.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-C6C9DC80BB25": {
+      "id": "SRC-C6C9DC80BB25",
+      "url": "https://github.com/anthropics/claude-code-action/compare/61a9c274fa7110a66dfafc1bbbced03833eb25fe...9eb012b6d0900c2b9eede65ee1758cec4d2973e9",
+      "title": "https://github.com/anthropics/claude-code-action/compare/61a9c274fa7110a66dfafc1bbbced03833eb25fe...9eb012b6d0900c2b9eede65ee1758cec4d2973e9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:51:11.173Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-C5067023EDC5": {
+      "id": "SRC-C5067023EDC5",
+      "url": "https://github.com/anthropics/claude-code.git",
+      "title": "https://github.com/anthropics/claude-code.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:51:11.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

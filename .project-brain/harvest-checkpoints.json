@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T12:33:05.598Z",
+  "last_updated": "2026-11-12T12:50:32.107Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
-      "verified_at": "2026-11-07T20:22:59.512Z",
+      "content_hash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
+      "verified_at": "2026-11-12T12:50:32.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:22:59.512Z"
+      "last_updated": "2026-11-12T12:50:32.106Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
-      "verified_at": "2026-11-12T03:24:03.372Z",
+      "content_hash": "9f975bbcd65027ce7d045b90ae0c2eaced5def6ac5bd7b5cbb00b65ff35bf3cc",
+      "verified_at": "2026-11-12T12:45:39.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:24:03.372Z"
+      "last_updated": "2026-11-12T12:45:39.297Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -12621,14 +12621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-touchlab-xcode-kotlin",
-      "content_hash": "99a16c81b2eb014ebaf47f7c1bd9d0f06aafe4da5acaafebed8501c4fc8572bd",
-      "verified_at": "2026-10-25T21:25:38.045Z",
+      "content_hash": "98cef32dc031a5b576f483ce3235b584953e068498e4cce0c6b517ebd88aeb39",
+      "verified_at": "2026-11-12T12:45:29.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:25:38.045Z"
+      "last_updated": "2026-11-12T12:45:29.827Z"
     },
     "JeffLi1993/seo-audit-skill": {
       "repository": "JeffLi1993/seo-audit-skill",

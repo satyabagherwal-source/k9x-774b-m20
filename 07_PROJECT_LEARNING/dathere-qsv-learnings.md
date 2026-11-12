@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `fcc9870c`  
+> **Source Version**: `58854051`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:23:49.069Z  
+> **Timestamp**: 2026-11-12T12:45:28.731Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:23:49.059Z  
+> **Harvest Timestamp**: 2026-11-12T12:45:28.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3830 stars
+- **Stars / Engagement**: 3835 stars
 
 ---
 
@@ -2201,350 +2201,57 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fcc9870c` (2026-11-12)
-**Commit Message**: fix(luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036)
+### Incident Patch 1: `58854051` (2026-11-12)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037)
 
-* fix(luau): date.lua clobbering, filter-after-error, insertrecord width & more
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.269 to 1.0.270.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/61a9c274fa7110a66dfafc1bbbced03833eb25fe...9eb012b6d0900c2b9eede65ee1758cec4d2973e9)
 
-Fixes from a review of src/cmd/luau.rs, each with a regression test:
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.270
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-- an existing ./date.lua is no longer overwritten then deleted when a
-  script uses require "./date"; the bundled copy is removed on a failed
-  run too (drop guard)
-- filter kept every row after the first error (checked the running
-  error count instead of the current row)
-- qsv_insertrecord() padded/truncated to the input width, off by one;
-  now uses the output row width (map, --remap, filter, --no-headers)
-- after a MAIN qsv_insertrecord(), every later row got a blank row
-- qsv_insertrecord() wrote numbers and booleans as empty fields
-- --remap failed for scalar return values
-- an END script error exited 0
-- END output was dropped with --progressbar
-- "return", "_INDEX" and "_LASTROW" are matched as whole words, so
-  columns like "returns" or "PRICE_INDEX" don't change script handling
-- random-access progress bar length was the start row, not row count
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(luau): headerless insert width, ran
-
-**File**: `CHANGELOG.md` (modified, +11/-0)
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
 ```diff
-@@ -35,6 +35,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+@@ -34,7 +34,7 @@ jobs:
  
- ### Fixed
-+- **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
-+  - **An existing `./date.lua` is no longer overwritten and deleted.** A script using `require "./date"` made qsv write the bundled LuaDate over any `date.lua` in the current directory, then delete it at exit. An existing file is now used as-is and left alone. The bundled copy is also removed when the run fails; before, a failed run left it behind.
-+  - **`luau filter` no longer keeps every row after the first error.** The keep check looked at the running error count, so after one row errored, every later row was kept whatever it returned. An errored row is still kept.
-+  - **`qsv_insertrecord()` rows have the output's width.** It padded and truncated to the input's column count (and let one extra value through), so the inserted row was right only for `map` with exactly one new column. With two new columns, under `filter`, or with too few values, the run failed with `found record with N fields`. With `--no-headers` and unnamed columns, an insert from the MAIN script takes the mapped row's width; one from BEGIN still assumes a single new column, since no row has been mapped yet.
-+  - **After a MAIN-script `qsv_insertrecord()`, later rows no longer each get a blank inserted row.**
-+  - **`qsv_insertrecord()` keeps numbers and booleans.** They were written as empty fields; `qsv_insertrecord("p", 42, true)` now writes `p,42,true`.
-+  - **`luau map --remap` works with a single return value for one new column.** Only table returns dropped the input columns, so `map c --remap 'return a * 2'` failed with a field-count error. (A single value for two or more new columns still fails, with or without `--remap`; return a table.)
-+  - **An END script error now exits with 1**, like BEGIN and MAIN errors. Before, it printed the error and exited 0.
-+  - **The END script's output is printed with `--progressbar`.** It was dropped whenever the progress bar was on.
-+  - **Script keywords are matched as whole words.** A column whose name contains `return` (e.g. `returns`) no longer stops qsv adding the implicit `return` to a one-expression script. A column whose name contains `_INDEX` or `_LASTROW` (e.g. `PRICE_INDEX`) no longer switches on random-access mode, which needs an index.
-+  - The random-access progress bar's length is now the row count; it was the starting row.
- - **`viz`: map panels now load in a sandboxed frame without `allow-same-origin`** ([#5033](https://github.com/dathere/qsv/pull/5033), [#4946](https://github.com/dathere/qsv/issues/4946)), such as the CKAN Webpage view the wiki recommends (`sandbox="allow-scripts allow-popups allow-downloads"`). Before, every MapLibre map (`viz map`, `viz choropleth --map`, and the point and region maps in a Data Schematic) stayed blank there with no error. The MapLibre in plotly.js 3.x drops messages between the page and its web worker when their origins differ, and in such a frame the page reports its URL's origin while the worker reports `"null"`. Each page now carries a small `Worker` wrapper that gives those messages the origin MapLibre already accepts for `file://` pages. It only acts in a sandboxed frame that isn't a `file://` page, so maps elsewhere behave as before. Checked in Chrome, Firefox and Safari, for region and clustered point maps. The note added in [#4947](https://github.com/dathere/qsv/pull/4947) above each map in such a frame is gone, since the maps now render. The wrapper can go once plotly.js bundles MapLibre 6.17 or later ([maplibre-gl-js#8912](https://github.com/maplibre/maplibre-gl-js/pull/8912)).
- - **`validate` is stricter and more correct with jsonschema
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
++        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
 ```
 
-**File**: `docs/help/luau.md` (modified, +6/-3)
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -162,8 +162,8 @@ With "luau map", if the MAIN script is invalid for a row, "<ERROR>" followed by
- detailed error message is returned for that row.
- With "luau filter", if the MAIN script is invalid for a row, that row is not filtered.
+@@ -34,7 +34,7 @@ jobs:
  
--If any row has an invalid result, an exitcode of 1 is returned and an error count
--is logged.
-+If any row has an invalid result, or the END script fails, an exitcode of 1 is
-+returned and an error count is logged.
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
++        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
- SPECIAL VARIABLES:  
- "_IDX" - a READ-only variable that is zero during the BEGIN script and
-@@ -202,6 +202,9 @@ For security and safety reasons as a purpose-built embeddable interpreter,
- Luau's standard library is relatively minimal (<https://luau-lang.org/library>).
- That's why qsv bundles & preloads LuaDate v2.2.1 as date manipulation is a common task.
- See <https://tieske.github.io/date/> on how to use the LuaDate library.
-+To use it, add 'date = require "./date"' to a script. qsv writes the library to
-+date.lua in the current directory for the run, and deletes it afterwards.
-+If a date.lua already exists there, it is used instead and left untouched.
- 
- Additional libraries can be loaded using Luau's "require" function.
- See <https://github.com/LewisJEllis/awesome-lua> for a list of other libraries.
-@@ -283,7 +286,7 @@ qsv luau --help
- | &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to <file> instead of stdout. |  |
- | &nbsp;`‑n,`<br>`‑‑no‑headers`&nbsp; | flag | When set, the first row will not be interpreted as headers. Automatically enables --colindex option. |  |
- | &nbsp;`‑d,`<br>`‑‑delimiter`&nbsp; | string | The field delimiter for reading CSV data. Must be a single character. (default: ,) |  |
--| &nbsp;`‑p,`<br>`‑‑progressbar`&nbsp; | flag | Show progress bars. Not valid for stdin. Ignored in qsvdp. In SEQUENTIAL MODE, the progress bar will show the number of rows processed. In RANDOM ACCESS MODE, the progress bar will show the position of the current row being processed. Enabling this option will also suppress stderr output from the END script. |  |
-+| &nbsp;`‑p,`<br>`‑‑progressbar`&nbsp; | flag | Show progress bars. Not valid for stdin. Ignored in qsvdp. In SEQUENTIAL MODE, the progress bar will show the number of rows processed. In RANDOM ACCESS MODE, the progress bar will show the position of the current row being processed. Output from the END script is printed after the progress bar finishes. |  |
- 
- ---
- **Source:** [`src/cmd/luau.rs`](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs)
-```
-
-**File**: `src/cmd/luau.rs` (modified, +142/-61)
-```diff
-@@ -96,8 +96,8 @@ With "luau map", if the MAIN script is invalid for a row, "<ERROR>" followed by
- detailed error message is returned for that row.
- With "luau filter", if the MAIN script is invalid for a row, that row is not filtered.
- 
--If any row has an invalid result, an exitcode of 1 is returned and an error count
--is logged.
-+If any row has an invalid result, or the END script fails, an exitcode of 1 is
-+returned and an error count is logged.
- 
- SPECIAL VARIABLES:
-   "_IDX" - a READ-only variable that is zero during the BEGIN script and
-@@ -136,6 +136,9 @@ For security and safety reasons as a purpose-built embeddable interpreter,
- Luau's standard library is relatively minimal (https://luau-lang.org/library).
- That's why qsv bundles & preloads LuaDate v2.2.1 as date manipulation is a common task.
- See https://tieske.github.io/date/ on how to use the LuaDate library.
-+To use it, add 'date = require "./date"' to a script. qsv writes the library to
-+date.lua in the current directory for the run, and deletes it afterwards.
-+If a date.lua already exists there, it is used instead and left untouched.
- 
- Additional libraries can be loaded using Luau's "require" function.
- See https://github.com/LewisJEllis/awesome-lua for a list of other libraries.
-@@ -256,8 +259,8 @@ Common options:
-                            number of rows processed.
-                            In RANDOM ACCESS MODE, the progress bar will show
-                            the position of the current row being processed.
--                           Enabling this option will also suppress stderr output
--                           from the END script.
-+                           Output from the END script is printed after the
-+                           progress bar finishes.
- "#;
- 
- use std::{
-@@ -413,8 +416,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     let comment_remover_re = regex::Regex::new(r"(?m)(^\s*?--.*?$)").unwrap();
-     luau_script = comment_remover_re.replace_all(&luau_script, "").to_string();
- 
--    let mut index_file_used =
--        luau_script.contains(QSV_V_INDEX) || luau_script.contains(QSV_V_LASTROW);
-+    // word boundaries, so identifiers that merely contain these names
-+    // (e.g. a PRICE_INDEX column, or a "returns" column) don't trigger them
-+    let index_var_re = regex::Regex::new(r"\b(?:_INDEX|_LASTROW)\b").unwrap();
-+    let return_re = regex::Regex::new(r"\breturn\b").unwrap();
-+
-+    let mut index_file_used = index_var_re.is_match(&luau_script);
- 
-     // check if the main script has BEGIN and END blocks
-     // and if so, extract them and remove them from the main script
-@@ -439,7 +446,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     luau_script = main_script;
- 
-     // if the main script is a single expression, we need to prepend a return statement
--    let mut main_script = if luau_script.contains("return") {
-+    let mut main_script = if return_re.is_match(&luau_script) {
-         String::new()
-     } else {
-         String::from("return ")
-@@ -485,9 +492,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     };
- 
-     // check if the BEGIN script uses _INDEX
--    index_file_used = index_file_used
--        || begin_script.contains(QSV_V_INDEX)
--        || begin_script.contains(QSV_V_LASTROW);
-+    index_file_used = index_file_used || index_var_re.is_match(&begin_script);
- 
-     let qsv_register_lookup_used = begin_script.contains("qsv_register_lookup(");
-     debug!("BEGIN script: {begin_script:?}");
-@@ -520,24 +525,43 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         embedded_end_script.trim().to_string()
-     };
-     // check if the END script uses _INDEX
--    index_file_used =
--        index_file_used || end_script.contains(QSV_V_INDEX) || end_script.contains(QSV_V_LASTROW);
-+    index_file_used = index_file_used || index_var_re.is_match(&end_script);
-     debug!("END script: {end_script:?}");
- 
-     // check if 'require "./date"' was used in the scripts.
-     let require_date_used = main_script.contains(REQUIRE_DATE)
-         || begin_script.contains(REQUIRE_DATE)
-         || end_script.contains(REQUIRE_DATE);
- 
--    let mut luadate_path: Option<PathBuf> = None;
-     // 'require "./date"' was used in the scripts, so we need to prepare luadate library
--    // and write it to the current directory.
--    if require_date_used {
--        // Prepare luadate so users can just use 'date = require "./date"' in their scripts
-+    // and write it to the current directory. An existing ./date.lua is the user's file:
-+    // use it as-is and never overwrite or delete it. The one we write is removed on drop,
-+    // so it doesn't outlive a failed run either.
-+    let _luadate_guard = if require_date_used {
-         let luadate_library = include_bytes!("../../resources/luau/vendor/luadate/date.lua");
--        luadate_path = Some(std::env::current_dir()?.join("date.lua"));
--        fs::write(luadate_path.clone().unwrap(), luadate_library)?;
--    }
-+        let luadate_path = std::env::current_dir()
-```
-
-**File**: `tests/test_luau.rs` (modified, +316/-1)
-```diff
-@@ -1084,7 +1084,8 @@ END {
-         .arg("file:testqsvcmd.luau")
-         .arg("data.csv");
- 
--    let output_stderr = wrk.stderr_on_success(&mut cmd);
-+    // the disallowed command raises an END error, which fails the run
-+    let output_stderr = wrk.stderr_on_error(&mut cmd);
-     assert!(
-         output_stderr.starts_with("<ERROR>")
-             && output_stderr.contains("runtime error: Invalid shell command: \"rm\".")
-@@ -3506,3 +3507,317 @@ fn luau_autoindex_sniff_preamble_does_not_index_the_skipped_view() {
-     wrk.assert_err(&mut cmd);
-     assert!(!wrk.path("p.csv.idx").exists());
- }
-+
-+fn luau_review_data(wrk: &Workdir) {
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["a", "b"],
-+            svec!["1", "x"],
-+            svec!["2", "y"],
-+            svec!["3", "z"],
-+            svec!["4", "w"],
-+        ],
-+    );
-+}
-+
-+#[test]
-+fn luau_filter_error_does_not_keep_later_rows() {
-+    // regression: an error on one row used to make filter keep EVERY later row
-+    let wrk = Workdir::new("luau_filter_error_later_rows");
-+    luau_review_data(&wrk);
-+    let mut cmd = wrk.command("luau");
-+    cmd.arg("filter")
-+        .arg(r#"if a == "1" then error("boom") end; return tonumber(a) > 2"#)
-+        .arg("data.csv");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_error(&mut cmd);
-+    let expected = vec![
-+        svec!["a", "b"],
-+        svec!["1", "x"], // the errored row is kept
-+        svec!["3", "z"],
-+        svec!["4", "w"],
-+    ];
-+    assert_eq!(got, expected);
-+}
-+
-+#[test]
-+fn luau_insertrecord_pads_to_output_width_with_two_new_columns() {
-+    // regression: insertrecord padded to the INPUT width, not the output width
-+    let wrk = Workdir::new("luau_insertrecord_pad_two_cols");
-+    luau_review_data(&wrk);
-+    let mut cmd = wrk.command("luau");
-+    cmd.arg("map")
-+        .arg("c,d")
-+        .arg(r#"if a == "1" then qsv_insertrecord("p") end; return {1, 2}"#)
-+        .arg("data.csv");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let expected = vec![
-+        svec!["a", "b", "c", "d"],
-+        svec!["1", "x", "1", "2"],
-+        svec!["p", "", "", ""],
-+        svec!["2", "y", "1", "2"],
-+        svec!["3", "z", "1", "2"],
-+        svec!["4", "w", "1", "2"],
-+    ];
-+    assert_eq!(got, expected);
-+}
-+
-+#[test]
-+fn luau_insertrecord_truncates_to_output_width() {
-+    // regression: the truncation check let one excess value through
-+    let wrk = Workdir::new("luau_insertrecord_truncate");
-+    luau_review_data(&wrk);
-+    let mut cmd = wrk.command("luau");
-+    cmd.arg("map")
-+        .arg("c,d")
-+        .arg("--begin")
-+        .arg(r#"qsv_insertrecord("p", "q", "r", "s", "t", "u")"#)
-+        .arg("return {1, 2}")
-+        .arg("data.csv");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got[0], svec!["a", "b", "c", "d"]);
-+    assert_eq!(got[1], svec!["p", "q", "r", "s"]);
-+    assert_eq!(got.len(), 6);
-+}
-+
-+#[test]
-+fn luau_filter_begin_insertrecord() {
-+    let wrk = Workdir::new("luau_filter_begin_insertrecord");
-+    luau_review_data(&wrk);
-+    let mut cmd = wrk.command("luau");
-+    cmd.arg("filter")
-+        .arg("--begin")
-+        .arg(r#"qsv_insertrecord("p", "q", "r")"#)
-+        .arg(r#"return a == "4""#)
-+        .arg("data.csv");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let expected = vec![svec!["a", "b"], svec!["p", "q"], svec!["4", "w"]];
-+    assert_eq!(got, expected);
-+}
-+
-+#[test]
-+fn luau_insertrecord_no_headers() {
-+    let wrk = Workdir::new("luau_insertrecord_no_headers");
-+    luau_review_data(&wrk);
-+    let mut cmd = wrk.command("luau");
-+    cmd.arg("map")
-+        .arg("c")
-+        .arg("--no-headers")
-+        .arg("--begin")
-+        .arg(r#"qsv_insertrecord("p")"#)
-+        .arg("return 1")
-+        .arg("data.csv");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got[0], svec!["p", "", ""]);
-+    assert_eq!(got[1], svec!["a", "b", "1"]);
-+}
-+
-+#[test]
-+fn luau_insertrecord_stringifies_numbers_and_booleans() {
-+    // regression: non-string values were inserted as empty fields
-+    let wrk = Workdir::new("luau_insertrecord_stringify");
-+    luau_review_data(&wrk);
-+    let mut cmd = wrk.command("luau");
-+    cmd.arg("map")
-+        .arg("c")
-+        .arg("--end")
-+        .arg("qsv_insertrecord(42, 2.5, true)")
-+        .arg("return 1")
-+        .arg("data.csv");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got.last().unwrap(), &svec!["42", "2.5", "true"]);
-+}
-+
-+#[test]
-+fn luau_map_remap_scalar_return() {
-+    // regression: --remap only dropped the input columns for table returns
-+    let wrk = Workdir::new("luau_map_remap_scalar");
-+    luau_review_data(&wrk);
-+    let mut cmd = wrk.command("luau");
-+    cmd.arg("map")
-+        .arg("c")
-+        .arg("--remap")
-+        .arg("return a * 2")
-+        .arg("data.c
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5037** (2026-11-12): build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (@dependabot[bot])
 - **PR #5036** (2026-11-12): fix(luau): date.lua clobbering, filter-after-error, insertrecord width & more (@jqnatividad)
 - **PR #5035** (2026-11-11): docs(viz): warn that plotly.js 4.x re-blanks sandboxed maps (@jqnatividad)
 - **PR #5034** (2026-11-10): deps: bump Polars to upstream main ff1b37d (@jqnatividad)
 - **PR #5033** (2026-11-10): fix(viz): load map panels in sandboxed frames without allow-same-origin (@jqnatividad)
 - **PR #5032** (2026-11-10): docs(validate): describe SARIF as a general format in the --sarif help (@jqnatividad)
-- **PR #5031** (2026-11-10): feat(validate): add --sarif to write JSON Schema errors as a SARIF 2.1.0 log (@jqnatividad)
 
 ---
 
@@ -2564,32 +2271,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036
+## X. build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fcc9870c`: luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58854051`: build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
-  - **An existing `./date.lua` is no longer overwritten and deleted.** A script using `require "./date"` made qsv write the bundled LuaDate over any `date.lua` in the current directory, then delete it at exit. An existing file is now used as-is and left alone. The bundled copy is also removed when the run fails; before, a failed run left it behind.
-  - **`luau filter` no longer keeps every row after the first error.** The keep check looked at the running error count, so after one row errored, every later row was kept whatever it returned. An errored row is still kept.
-  - **`qsv_insertrecord()` rows have the output's width.** It padded and truncated to the input's column count (and let one extra value through), so the inserted row was right only for `map` with exactly one new column. With two new columns, under `filter`, or with too few values, the run failed with `found record with N fields`. With `--no-headers` and unnamed columns, an insert from the MAIN script takes the mapped row's width; one from BEGIN still assumes a single new column, since no row has been mapped yet.
-  - **A
+        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fcc9870c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58854051` are properly handled with clean fallback behavior.

@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "cd77dba9",
+    "sourceVersion": "39b7c8a8",
     "license": "MIT",
-    "contentHash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
-    "lastHarvestedAt": "2026-11-07T20:22:59.495Z",
+    "contentHash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
+    "lastHarvestedAt": "2026-11-12T12:50:32.086Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "fcc9870c",
+    "sourceVersion": "58854051",
     "license": "NOASSERTION",
-    "contentHash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
-    "lastHarvestedAt": "2026-11-12T03:24:03.363Z",
+    "contentHash": "9f975bbcd65027ce7d045b90ae0c2eaced5def6ac5bd7b5cbb00b65ff35bf3cc",
+    "lastHarvestedAt": "2026-11-12T12:45:39.277Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -8383,10 +8383,10 @@
     "repository": "touchlab/xcode-kotlin",
     "platform": "github",
     "sourceUrl": "https://github.com/touchlab/xcode-kotlin",
-    "sourceVersion": "56560d20",
+    "sourceVersion": "8e9834df",
     "license": "Apache-2.0",
-    "contentHash": "99a16c81b2eb014ebaf47f7c1bd9d0f06aafe4da5acaafebed8501c4fc8572bd",
-    "lastHarvestedAt": "2026-10-25T21:25:38.037Z",
+    "contentHash": "98cef32dc031a5b576f483ce3235b584953e068498e4cce0c6b517ebd88aeb39",
+    "lastHarvestedAt": "2026-11-12T12:45:29.816Z",
     "learningId": "learn-github-touchlab-xcode-kotlin"
   },
   "jeffli1993-seo-audit-skill": {

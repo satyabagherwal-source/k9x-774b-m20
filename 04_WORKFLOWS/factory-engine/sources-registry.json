@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T12:33:11.286Z",
-    "lastVerified": "2026-11-12T12:33:11.286Z",
+    "lastChecked": "2026-11-12T12:50:38.314Z",
+    "lastVerified": "2026-11-12T12:50:38.314Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,22 +249,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T11:37:21.836Z",
-    "lastVerified": "2026-11-12T11:37:21.836Z",
+    "lastChecked": "2026-11-12T12:45:28.725Z",
+    "lastVerified": "2026-11-12T12:45:28.725Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
+    "contentHash": "9f975bbcd65027ce7d045b90ae0c2eaced5def6ac5bd7b5cbb00b65ff35bf3cc",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fcc9870c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -567,8 +566,8 @@
     "officialUrl": "https://github.com/surrealdb/surrealdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T04:59:18.072Z",
-    "lastVerified": "2026-11-10T04:59:18.072Z",
+    "lastChecked": "2026-11-12T12:45:22.579Z",
+    "lastVerified": "2026-11-12T12:45:22.579Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-surrealdb-surrealdb",
@@ -738,9 +737,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-12T05:34:56.120Z",
+    "lastChecked": "2026-11-12T12:45:20.078Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-12T05:34:56.120Z"
+    "lastVerified": "2026-11-12T12:45:20.078Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -6104,8 +6103,8 @@
     "officialUrl": "https://github.com/goss-org/goss",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T06:12:37.841Z",
-    "lastVerified": "2026-11-10T06:12:37.841Z",
+    "lastChecked": "2026-11-12T12:45:17.506Z",
+    "lastVerified": "2026-11-12T12:45:17.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goss-org-goss",
@@ -6430,12 +6429,12 @@
     "revisionIdentifier": "08479aca"
   },
   "dicklesworthstone-destructive_command_guard": {
-    "name": "Dicklesworthstone/destructive_command_guard",
+    "name": "destructive_command_guard",
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T18:11:09.431Z",
-    "lastVerified": "2026-11-09T18:11:09.431Z",
+    "lastChecked": "2026-11-12T12:45:10.025Z",
+    "lastVerified": "2026-11-12T12:45:10.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
@@ -6444,7 +6443,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "acbe0665"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "name": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -10339,11 +10339,21 @@
     "lastVerified": "2026-11-11T09:27:28.682Z"
   },
   "touchlab-xcode-kotlin": {
-    "name": "xcode-kotlin",
+    "name": "touchlab/xcode-kotlin",
     "officialUrl": "https://github.com/touchlab/xcode-kotlin",
-    "lastChecked": "2026-11-08T11:04:06.088Z",
-    "revisionIdentifier": "56560d20",
-    "lastVerified": "2026-11-08T11:04:06.088Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-12T12:45:18.963Z",
+    "lastVerified": "2026-11-12T12:45:18.963Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-touchlab-xcode-kotlin",
+    "contentHash": "98cef32dc031a5b576f483ce3235b584953e068498e4cce0c6b517ebd88aeb39",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
@@ -12184,14 +12194,14 @@
     "officialUrl": "https://github.com/webpack/webpack",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T20:22:57.624Z",
-    "lastVerified": "2026-11-07T20:22:57.624Z",
+    "lastChecked": "2026-11-12T12:45:18.098Z",
+    "lastVerified": "2026-11-12T12:45:18.098Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webpack-webpack",
-    "contentHash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
+    "contentHash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
     "promotedRulesCount": 1,
-    "recentFixesCount": 26,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

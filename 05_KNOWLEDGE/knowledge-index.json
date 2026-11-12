@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T12:33:05.458Z",
+  "last_updated": "2026-11-12T12:50:31.961Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10465,8 +10465,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "fcc9870c",
-      "content_hash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
+      "source_version": "58854051",
+      "content_hash": "9f975bbcd65027ce7d045b90ae0c2eaced5def6ac5bd7b5cbb00b65ff35bf3cc",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10588,6 +10588,11 @@
         {
           "number": null,
           "title": "luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10941,7 +10946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:24:03.166Z",
+      "verified_at": "2026-11-12T12:45:39.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63896,11 +63901,16 @@
       "slug": "touchlab-xcode-kotlin",
       "platform": "github",
       "source_url": "https://github.com/touchlab/xcode-kotlin",
-      "source_version": "56560d20",
-      "content_hash": "99a16c81b2eb014ebaf47f7c1bd9d0f06aafe4da5acaafebed8501c4fc8572bd",
+      "source_version": "8e9834df",
+      "content_hash": "98cef32dc031a5b576f483ce3235b584953e068498e4cce0c6b517ebd88aeb39",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Bump version to 2.2.2.",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2688,
           "title": "crash for Xcode 15.3",
@@ -63917,7 +63927,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T21:25:37.964Z",
+      "verified_at": "2026-11-12T12:45:29.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83956,14 +83966,19 @@
       "slug": "webpack-webpack",
       "platform": "github",
       "source_url": "https://github.com/webpack/webpack",
-      "source_version": "cd77dba9",
-      "content_hash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
+      "source_version": "39b7c8a8",
+      "content_hash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
       "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "html,css): keep minified and built HTML and CSS reading as their source (#23180)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "javascript): call evaluateDefinedIdentifier with the name it is keyed by (#23273",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -84022,7 +84037,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:22:59.383Z",
+      "verified_at": "2026-11-12T12:50:31.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

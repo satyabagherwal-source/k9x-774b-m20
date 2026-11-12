@@ -9173,3 +9173,8 @@ Every entry in this ledger must capture:
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `3e1a86e6` | Multi-dimensional audit evidence | 2026-11-12T12:32:51.840Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `1afb2cc4` | Multi-dimensional audit evidence | 2026-11-12T12:33:02.203Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `0ff3d233` | Multi-dimensional audit evidence | 2026-11-12T12:33:05.573Z |
+| `learn-github-touchlab-xcode-kotlin` | `https://github.com/touchlab/xcode-kotlin` | `8e9834df` | Multi-dimensional audit evidence | 2026-11-12T12:45:29.816Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `58854051` | Multi-dimensional audit evidence | 2026-11-12T12:45:39.277Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `39b7c8a8` | Multi-dimensional audit evidence | 2026-11-12T12:50:32.086Z |
+| `learn-dom-h-ee08d822` | `project://webpack-webpack` | `39b7c8a8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md` | 2026-11-12T12:50:51.248Z |
+| `learn-dom-h-b173c8f8` | `project://dathere-qsv` | `58854051` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-12T12:51:11.112Z |
