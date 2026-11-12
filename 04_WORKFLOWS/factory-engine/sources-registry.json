@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T08:07:22.646Z",
-    "lastVerified": "2026-11-12T08:07:22.646Z",
+    "lastChecked": "2026-11-12T08:19:23.593Z",
+    "lastVerified": "2026-11-12T08:19:23.593Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -365,9 +365,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T07:37:58.251Z",
+    "lastChecked": "2026-11-12T08:14:41.922Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T07:37:58.251Z"
+    "lastVerified": "2026-11-12T08:14:41.922Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1823,8 +1823,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T02:03:38.277Z",
-    "lastVerified": "2026-11-12T02:03:38.277Z",
+    "lastChecked": "2026-11-12T08:14:37.060Z",
+    "lastVerified": "2026-11-12T08:14:37.060Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -5075,9 +5075,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-10T01:41:26.208Z",
+    "lastChecked": "2026-11-12T08:14:34.424Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-10T01:41:26.208Z"
+    "lastVerified": "2026-11-12T08:14:34.424Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -5382,9 +5382,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-09T14:52:53.223Z",
+    "lastChecked": "2026-11-12T08:14:26.937Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-09T14:52:53.223Z"
+    "lastVerified": "2026-11-12T08:14:26.937Z"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -7589,14 +7589,14 @@
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T00:10:20.919Z",
-    "lastVerified": "2026-11-10T00:10:20.919Z",
+    "lastChecked": "2026-11-12T08:14:44.317Z",
+    "lastVerified": "2026-11-12T08:14:44.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "71a906d828d40ab8d38bae761aad27d958055531dc2a98be31f0de0687570566",
+    "contentHash": "4f26d34544aa2dfd14a7c8c179a12a3773dbbb0020caff252b0603e09278f726",
     "promotedRulesCount": 3,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10040,9 +10040,9 @@
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
-    "lastChecked": "2026-11-08T06:32:50.346Z",
+    "lastChecked": "2026-11-12T08:14:31.926Z",
     "revisionIdentifier": "b6cfb6d0",
-    "lastVerified": "2026-11-08T06:32:50.346Z"
+    "lastVerified": "2026-11-12T08:14:31.926Z"
   },
   "yuripinto-xseo": {
     "name": "xseo",
@@ -11879,9 +11879,9 @@
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
     "officialUrl": "https://github.com/jsonld-java/jsonld-java",
-    "lastChecked": "2026-11-07T18:16:58.167Z",
+    "lastChecked": "2026-11-12T08:14:29.445Z",
     "revisionIdentifier": "4a7305f2",
-    "lastVerified": "2026-11-07T18:16:58.167Z"
+    "lastVerified": "2026-11-12T08:14:29.445Z"
   },
   "iplug2-iplug2": {
     "name": "iPlug2/iPlug2",

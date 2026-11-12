@@ -9119,3 +9119,5 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `8edc639f` | Multi-dimensional audit evidence | 2026-11-12T07:54:27.737Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `2e9dbfd6` | Multi-dimensional audit evidence | 2026-11-12T08:07:07.588Z |
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `0fd2f874` | Multi-dimensional audit evidence | 2026-11-12T08:07:15.990Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `a3613276` | Multi-dimensional audit evidence | 2026-11-12T08:19:19.252Z |
+| `learn-dom-j-5650848d` | `project://redisearch-redisearch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | 2026-11-12T08:19:36.667Z |

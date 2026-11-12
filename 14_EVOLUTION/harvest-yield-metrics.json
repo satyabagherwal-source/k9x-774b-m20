@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:07:15.996Z",
-  "total_cycles_completed": 8942,
-  "total_learnings_persisted": 8942,
-  "total_rules_promoted": 8784,
+  "last_updated": "2026-11-12T08:19:19.269Z",
+  "total_cycles_completed": 8943,
+  "total_learnings_persisted": 8943,
+  "total_rules_promoted": 8787,
   "history": [
-    {
-      "timestamp": "2026-11-11T09:29:09.641Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T09:39:45.575Z",
       "repository": "projectdiscovery/nuclei",
@@ -1403,6 +1396,13 @@
       "repository": "modelcontextprotocol/kotlin-sdk",
       "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T08:19:19.269Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

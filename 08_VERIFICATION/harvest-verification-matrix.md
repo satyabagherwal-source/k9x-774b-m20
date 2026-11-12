@@ -9110,3 +9110,5 @@
 | `CYCLE-20261112-59UD` | `2026-11-12T07:54:27.733Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8808a67e...`) |
 | `CYCLE-20261112-LK5B` | `2026-11-12T08:07:07.583Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`85e5a69c...`) |
 | `CYCLE-20261112-LQMR` | `2026-11-12T08:07:15.987Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7f322217...`) |
+| `CYCLE-20261112-18PC` | `2026-11-12T08:19:19.248Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`4f26d345...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T08:19:36.667Z` | `redisearch-redisearch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-5650848D` [Domain J] | Yes (`9f09357d...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T08:07:15.863Z",
+  "last_updated": "2026-11-12T08:19:18.926Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55171,8 +55171,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "b4f97b06",
-      "content_hash": "71a906d828d40ab8d38bae761aad27d958055531dc2a98be31f0de0687570566",
+      "source_version": "a3613276",
+      "content_hash": "4f26d34544aa2dfd14a7c8c179a12a3773dbbb0020caff252b0603e09278f726",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -55199,6 +55199,21 @@
         {
           "number": null,
           "title": "Safe Floating-Point Integral Conversions Without Undefined Behavior",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Guarded Float-to-Integer Round-Trip Saturation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Norm Underflow Clamping in Vector Cosine Similarity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Containerized CI Pre-Phase Execution Isolation",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -55277,7 +55292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:13:46.682Z",
+      "verified_at": "2026-11-12T08:19:18.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

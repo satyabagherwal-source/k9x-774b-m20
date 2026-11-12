@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T07:38:38.946Z",
-  "total_records": 62,
+  "last_updated": "2026-11-12T08:19:36.665Z",
+  "total_records": 63,
   "domains": {
     "A": {
       "total": 1,
@@ -105,10 +105,11 @@
       ]
     },
     "J": {
-      "total": 2,
+      "total": 3,
       "record_ids": [
         "DOM-J-C14FC2D6",
-        "DOM-J-B305372A"
+        "DOM-J-B305372A",
+        "DOM-J-5650848D"
       ]
     },
     "K": {
@@ -2521,6 +2522,40 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T07:38:38.944Z"
+    },
+    "DOM-J-5650848D": {
+      "record_id": "DOM-J-5650848D",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "FLOAT32 COSINE Search Emits Invalid Distance -1 for Subnormal Vectors (BUG-VEC-01)",
+      "content": "High-dimensional vector calculations in single precision must accumulate intermediate vector norms in double precision (`double`), with strict checks for norm underflow before computing normalization reciprocals.",
+      "content_hash": "9f09357daa127b8043e833d9caf56f5aa0bf67b5ddc47d0bad952e7255486e59",
+      "summary": "The distance computation squared each vector element to compute the Euclidean norm $\\|u\\|_2 = \\sqrt{\\sum u_i^2}$. Because the smallest subno -> High-dimensional vector calculations in single precision must accumulate intermediate vector norms in double precision (`double`), with stri",
+      "provenance": {
+        "source_uri": "project://redisearch-redisearch/redisearch-redisearch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:19:23.696Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (redisearch-redisearch)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "GitHub Issue #12186: *\"[BUG] FLOAT32 COSINE search returns distance -1 for an identical nonzero subnormal vector\"*. Reproducible with bit pattern `0x00000001` on index with `DISTANCE_METRIC COSINE`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T08:19:36.663Z"
     }
   }
 }
