@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T08:19:36.665Z",
-  "total_records": 63,
+  "last_updated": "2026-11-12T08:35:03.646Z",
+  "total_records": 65,
   "domains": {
     "A": {
       "total": 1,
@@ -79,7 +79,7 @@
       ]
     },
     "H": {
-      "total": 14,
+      "total": 15,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -94,7 +94,8 @@
         "DOM-H-32FEBC73",
         "DOM-H-57AD88EF",
         "DOM-H-03EB2317",
-        "DOM-H-0AA4F6ED"
+        "DOM-H-0AA4F6ED",
+        "DOM-H-F56DBC84"
       ]
     },
     "I": {
@@ -113,11 +114,12 @@
       ]
     },
     "K": {
-      "total": 3,
+      "total": 4,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
-        "DOM-K-232F5AD4"
+        "DOM-K-232F5AD4",
+        "DOM-K-AE91E0B9"
       ]
     },
     "L": {
@@ -2556,6 +2558,74 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T08:19:36.663Z"
+    },
+    "DOM-K-AE91E0B9": {
+      "record_id": "DOM-K-AE91E0B9",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Flawed CI Dependency Installer Invariant (BUG-SALVO-01)",
+      "content": "Meta-testing CI/CD workflows using an in-repo unit testing harness (`test_workflow_policy.py`) guarantees that dependency updater bots cannot alter workflow invariants, omit mandatory security flags, or introduce duplicate keys.",
+      "content_hash": "4af49fd091eccfe706abfb6c17237f1cbd3c804cddc75c9c919cf8ea3179416b",
+      "summary": "The custom Python policy verification script (`test_workflow_policy.py`) asserts that every step using `taiki-e/install-action@*` must inclu -> Meta-testing CI/CD workflows using an in-repo unit testing harness (`test_workflow_policy.py`) guarantees that dependency updater bots canno",
+      "provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `8adf9959`, PR #1871."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.94,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T08:34:44.455Z"
+    },
+    "DOM-H-F56DBC84": {
+      "record_id": "DOM-H-F56DBC84",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Router Macro & Lifetime Compilation Breakage in Example Code (BUG-SALVO-02)",
+      "content": "Avoid monad-style chaining closures (`.then(|r| ...)`) in Rust builder APIs when simple conditional ownership reassignment (`if cond { router = router.push(...) }`) eliminates lifetime capture hazards entirely.",
+      "content_hash": "313c3abef3637555062703449959250ee31af947fe016c902bd7e6df03372469",
+      "summary": "Macro attributes originally failed to generate proper async trait implementations for function handlers when mixed with combinators that alt -> Avoid monad-style chaining closures (`.then(|r| ...)`) in Rust builder APIs when simple conditional ownership reassignment (`if cond { route",
+      "provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Bug Issue #24 (\"master/examples/routing.rs Compilation fails\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T08:35:03.644Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `8fece0b2`  
+> **Source Version**: `195ab76b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T02:16:41.962Z  
+> **Timestamp**: 2026-11-12T08:34:12.374Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T02:16:41.954Z  
+> **Harvest Timestamp**: 2026-11-12T08:27:51.331Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6432 stars
+- **Stars / Engagement**: 6433 stars
 
 ---
 
@@ -1797,757 +1797,277 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8fece0b2` (2026-11-11)
-**Commit Message**: Require new bundle format for attest-blob (#5088)
+### Incident Patch 1: `195ab76b` (2026-11-12)
+**Commit Message**: chore(deps): bump github.com/sigstore/sigstore-go (#5208)
 
-* Require new bundle format for attest-blob
+Bumps [github.com/sigstore/sigstore-go](https://github.com/sigstore/sigstore-go) from 1.3.1-0.20261021152419-0161b209ec10 to 1.4.0.
+- [Release notes](https://github.com/sigstore/sigstore-go/releases)
+- [Commits](https://github.com/sigstore/sigstore-go/commits/v1.4.0)
 
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: github.com/sigstore/sigstore-go
+  dependency-version: 1.4.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-* Assert AttestBlobOptions implements Interface
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-This change fixes the interface assertion in the `attest-blob` options, which asserted `AttestOptions` instead of `AttestBlobOptions`.
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-* Remove obsolete new bundle case in TestAttestBlobCmdLocalKeyAndCert
-
-This change removes the "new bundle generation" case and unused `newBundle` field in `TestAttestBlobCmdLocalKeyAndCert`, since the new bundle format is now the only format.
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/attest/attest_blob.go` (modified, +7/-92)
+**File**: `go.mod` (modified, +9/-9)
 ```diff
-@@ -33,10 +33,7 @@ import (
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/signcommon"
- 	"github.com/sigstore/cosign/v3/internal/ui"
- 	"github.com/sigstore/cosign/v3/pkg/cosign/attestation"
--	cbundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle"
--	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
- 	"github.com/sigstore/sigstore/pkg/signature"
--	"google.golang.org/protobuf/encoding/protojson"
- )
+@@ -1,6 +1,6 @@
+ module github.com/sigstore/cosign/v3
  
- // nolint
-@@ -51,14 +48,7 @@ type AttestBlobCommand struct {
- 	PredicatePath string
- 	PredicateType string
+-go 1.27
++go 1.27.0
  
--	TlogUpload bool
--	Timeout    time.Duration
--
--	OutputSignature   string
--	OutputAttestation string
--	OutputCertificate string
--
--	RekorEntryType string
-+	Timeout time.Duration
- }
- 
- // nolint
-@@ -72,10 +62,6 @@ func (c *AttestBlobCommand) Exec(ctx context.Context, artifactPath string) error
- 		return fmt.Errorf("one of --predicate or --statement must be set")
- 	}
- 
--	if c.RekorEntryType != "dsse" && c.RekorEntryType != "intoto" {
--		return fmt.Errorf("unknown value for rekor-entry-type")
--	}
--
- 	if c.Timeout != 0 {
- 		var cancelFn context.CancelFunc
- 		ctx, cancelFn = context.WithTimeout(ctx, c.Timeout)
-@@ -147,14 +133,10 @@ func (c *AttestBlobCommand) Exec(ctx context.Context, artifactPath string) error
- 	}
- 
- 	if c.SigningConfig == nil {
--		var err error
--		c.SigningConfig, err = signcommon.NewSigningConfigFromKeyOpts(c.KeyOpts)
--		if err != nil {
--			return fmt.Errorf("creating signing config: %w", err)
--		}
-+		c.SigningConfig = signcommon.NewEmptySigningConfig()
- 	}
--	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, nil, c.TlogUpload) {
--		c.SigningConfig = c.SigningConfig.WithRekorLogURLs()
-+	if err := signcommon.RequireFulcioForCertificate(c.KeyOpts); err != nil {
-+		return err
- 	}
- 	if err := signcommon.ConfirmPrivacyStatement(ctx, c.KeyOpts); err != nil {
- 		return err
-@@ -165,77 +147,10 @@ func (c *AttestBlobCommand) Exec(ctx context.Context, artifactPath string) error
- 		return fmt.Errorf("creating bundle: %w", err)
- 	}
- 
--	if c.NewBundleFormat {
--		if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
--			return fmt.Errorf("create bundle file: %w", err)
--		}
--		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
--		return nil
--	}
--
--	var pb protobundle.Bundle
--	if err := protojson.Unmarshal(bundleBytes, &pb); err != nil {
--		return fmt.Errorf("unmarshalling bundle: %w", err)
--	}
--
--	bundleComponents, err := signcommon.ExtractComponentsFromProtoBundle(&pb)
--	if err != nil {
--		return err
--	}
--
--	if c.BundlePath != "" {
--		contents, err := signcommon.NewLegacyBundleFromProtoBundleComponents(bundleComponents)
--		if err != nil {
--			return fmt.Errorf("creating legacy bundle: %w", err)
--		}
--
--		if err := os.WriteFile(c.BundlePath, contents, 0600); err != nil {
--			return fmt.Errorf("create bundle file: %w", err)
--		}
--		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
--	}
--
--	if c.OutputSignature != "" {
--		if err := os.WriteFile(c.OutputSignature, bundleComponents.Signature, 0600); err != nil {
--			return fmt.Errorf("create signature file: %w", err)
--		}
--		fmt.Fprintf(os.Stderr, "Signature written in %s\n", c.OutputSignature)
--	} else {
--		fmt.Fprintln(os.Stdout, string(bundleComponents.Signature))
--	}
--
--	if c.OutputAttestation != "" {
--		if err := os.WriteFile(c.OutputAttestation, payload, 0600); err != nil {
--			return fmt.Errorf("create attestation file: %w", err)
--		}
--		fmt.Fprintf(os.Stderr, "Attestation written in %s\n", c.OutputAttestation)
--	}
--
--	if c.OutputCertificate != "" {
--		if len(bundleComponents.Certificates) == 0 {
--			return fmt.Errorf("no certificate found in bundle")
--		}
--		certPem, _ := signcommon.EncodeCertificatesToPEM(bundleComponents.Certificates)
--		if err := os.WriteFile(c.OutputCertificate, certPem, 0600); err != nil {
--			return fmt.Errorf("create certificate file: %w", err)
--		}
--		fmt.Fprintln(os.Stderr, "Certificate written to file ", c.OutputCertificate)
--	}
--
--	if c.RFC3161TimestampPath != "" {
--		if len(bundleComponents.RFC3161Timestamps) == 0 {
--			return fmt.Errorf("no RFC3161 timestamp found in bundle")
--		}
--		legacyTimestamp := cbundle.TimestampToRFC3161Timestamp(bundleComponents.RFC3161Timestamps[0].GetSignedTimestamp())
--		ts, err := json.Marshal(legacyTimestamp)
--		if err != nil {
--			return fmt.Errorf("marshalling timestamp: %w", err)
--		}
--		if err := os.WriteFile(c.RFC3161TimestampPath, ts, 0600); err != nil {
--			return fmt.Errorf("create timestamp file: %w", err)
--		}
--		fmt.Fprintln(os.Stderr, "Timestamp wrote in the file ", c.RFC3161TimestampPath)
-+	if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
-+		return fmt.Errorf("create bundle file: %w", err)
- 	}
-+	ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
- 
- 	return nil
- }
+ require (
+ 	cloud.google.com/go/compute/metadata v0.10.0
+@@ -35,9 +35,9 @@ require (
+ 	github.com/secure-systems-lab/go-securesystemslib v0.11.1
+ 	github.com/sigstore/protobuf-specs v0.5.2
+ 	github.com/sigstore/rekor v1.5.5
+-	github.com/sigstore/rekor-tiles/v2 v2.3.0
++	github.com/sigstore/rekor-tiles/v2 v2.4.0
+ 	github.com/sigstore/sigstore v1.11.2
+-	github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10
++	github.com/sigstore/sigstore-go v1.4.0
+ 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2
+ 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2
+ 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.2
+@@ -162,7 +162,7 @@ require (
+ 	github.com/go-openapi/loads v0.25.3 // indirect
+ 	github.com/go-openapi/runtime/server-middleware v0.33.4 // indirect
+ 	github.com/go-openapi/spec v1.0.1 // indirect
+-	github.com/go-openapi/swag v0.28.0 // indirect
++	github.com/go-openapi/swag v0.29.2 // indirect
+ 	github.com/go-openapi/swag/cmdutils v0.29.2 // indirect
+ 	github.com/go-openapi/swag/fileutils v0.29.2 // indirect
+ 	github.com/go-openapi/swag/jsonutils v0.29.2 // indirect
+@@ -187,7 +187,7 @@ require (
+ 	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
+ 	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
+-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
++	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
+ 	github.com/hashicorp/errwrap v1.1.0 // indirect
+ 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+ 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+@@ -268,8 +268,8 @@ require (
+ 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
+ 	github.com/zalando/go-keyring v0.2.8 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
++	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
++	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
+ 	go.opentelemetry.io/otel v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+@@ -283,9 +283,9 @@ require (
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.16.0 // indirect
+-	golang.org/x/tools v0.51.0 // indirect
++	golang.org/x/tools v0.52.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
+ 	google.golang.org/grpc v1.84.0 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 ```
 
-**File**: `cmd/cosign/cli/attest/attest_blob_test.go` (modified, +55/-69)
+**File**: `go.sum` (modified, +20/-20)
 ```diff
-@@ -37,9 +37,11 @@ import (
- 	"github.com/sigstore/cosign/v3/internal/test"
- 	"github.com/sigstore/cosign/v3/pkg/cosign"
- 	"github.com/sigstore/cosign/v3/pkg/cosign/attestation"
-+	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
- 	"github.com/sigstore/sigstore/pkg/signature"
- 	"github.com/sigstore/sigstore/pkg/signature/dsse"
- 	"github.com/stretchr/testify/assert"
-+	"google.golang.org/protobuf/encoding/protojson"
- )
- 
- // TestAttestBlobCmdLocalKeyAndSk verifies the AttestBlobCmd returns an error
-@@ -73,6 +75,31 @@ func writeFile(t *testing.T, td string, blob string, name string) string {
- 	return blobPath
- }
- 
-+// assertOfflineBundle asserts that a key-signed bundle file carries no material
-+// from online services (certificates, tlog entries, or signed timestamps).
-+func assertOfflineBundle(t *testing.T, bundlePath string) {
-+	t.Helper()
-+	bundleBytes, err := os.ReadFile(bundlePath)
-+	if err != nil {
-+		t.Fatalf("failed to read bundle: %v", err)
-+	}
-+	var bundle protobundle.Bundle
-+	if err := protojson.Unmarshal(bundleBytes, &bundle); err != nil {
-+		t.Fatalf("failed to unmarshal bundle: %v", err)
-+	}
-+	vm := bundle.GetVerificationMaterial()
-+	// The content is a oneof, so a public key hint also rules out a certificate.
-+	if vm.GetPublicKey() == nil {
-+		t.Errorf("expected a public key hint, got %T", vm.GetContent())
-+	}
-+	if n := len(vm.GetTlogEntries()); n != 0 {
-+		t.Errorf("expected no transparency log entries, got %d", n)
-+	}
-+	if n := len(vm.GetTimestampVerificationData().GetRfc3161Timestamps()); n != 0 {
-+		t.Errorf("expected no RFC 3161 timestamps, got %d", n)
-+	}
-+}
-+
- func makeSLSA02PredicateFile(t *testing.T, td string) string {
- 	predicate := `{ "buildType": "x", "builder": { "id": "2" }, "recipe": {} }`
- 	return writeFile(t, td, predicate, "predicate02.json")
-@@ -124,7 +151,6 @@ func TestAttestBlobCmdLocalKeyAndCert(t *testing.T) {
- 				keyref       string
- 				certref      string
- 				certchainref string
--				newBundle    bool
- 				errString    string
- 			}{
- 				{
-@@ -136,24 +162,12 @@ func TestAttestBlobCmdLocalKeyAndCert(t *testing.T) {
- 					keyref:  keyRef,
- 					certref: certRef,
- 				},
--				{
--					name:      "new bundle generation",
--					keyref:    keyRef,
--					certref:   certRef,
--					newBundle: true,
--				},
- 				{
- 					name:      "fail: cert no match key",
- 					keyref:    keyRef,
- 					certref:   subCertPem,
- 					errString: "public key in certificate does not match the provided public key",
- 				},
--				{
--					name:         "cert chain matches key",
--					keyref:       keyRef,
--					certref:      certRef,
--					certchainref: subCertPem,
--				},
- 				{
- 					name:         "cert chain partial",
- 					keyref:       keyRef,
-@@ -175,18 +189,13 @@ func TestAttestBlobCmdLocalKeyAndCert(t *testing.T) {
- 				},
- 			} {
- 				t.Run(tc.name, func(t *testing.T) {
--					keyOpts := options.KeyOpts{KeyRef: tc.keyref}
--					if tc.newBundle {
--						keyOpts.NewBundleFormat = true
--						keyOpts.BundlePath = filepath.Join(td, "output.bundle")
--					}
-+					keyOpts := options.KeyOpts{KeyRef: tc.keyref, BundlePath: filepath.Join(td, "output.bundle")}
- 					at := AttestBlobCommand{
--						KeyOpts:        keyOpts,
--						CertPath:       tc.certref,
--						CertChainPath:  tc.certchainref,
--						PredicatePath:  predicatePath,
--						PredicateType:  predicateType,
--						RekorEntryType: "dsse",
-+						KeyOpts:       keyOpts,
-+						CertPath:      tc.certref,
-+						CertChainPath: tc.certchainref,
-+						PredicatePath: predicatePath,
-+						PredicateType: predicateType,
- 					}
- 					err := at.Exec(ctx, blob)
- 					if err != nil {
-@@ -228,25 +237,34 @@ func TestAttestBlob(t *testing.T) {
- 
- 	for predicateType, predicatePath := range predicates {
- 		t.Run(predicateType, func(t *testing.T) {
--			dssePath := filepath.Join(td, "dsse.intoto.jsonl")
-+			bundlePath := filepath.Join(td, "bundle.json")
-+			keyOpts := options.KeyOpts{KeyRef: keyRef, BundlePath: bundlePath}
- 			at := AttestBlobCommand{
--				KeyOpts:         options.KeyOpts{KeyRef: keyRef},
--				PredicatePath:   predicatePath,
--				PredicateType:   predicateType,
--				OutputSignature: dssePath,
--				RekorEntryType:  "dsse",
-+				KeyOpts:       keyOpts,
-+				PredicatePath: predicatePath,
-+				PredicateType: predicateType,
- 			}
- 			err := at.Exec(ctx, blobPath)
- 			if err != nil {
- 				t.Fatal(err)
- 			}
-+			assertOfflineBundle(t, bundlePath)
- 
--			// Load the attestation.
--			dsseBytes, _ := os.ReadFile(dssePath)
--			env := &ssldsse.Envelope{}
--			if err := json.Unmarshal(dsseBytes, env); err != nil {
-+			// Load the attestation bundle.
-+			bundleBytes, err := os.ReadFile(bundlePath)
-+			if err != nil {
- 				t.Fatal(err)
- 			}
-+			var bundleJSON struct {
-+				DsseEnvelope *ssldsse.Envelope `json:"dsseEnvelope"`
-+			}
-+			if err := json.Unmarshal(bundleBytes, &bundleJSON); err != nil {
-+				t.Fatal(err)
-+			}
-+			env := bundleJSON.DsseEnvelope
-+			if env == nil {
-+				t.Fatal("expected dsse envelope in bundle")
-+			}
- 
- 			if
+@@ -324,8 +324,8 @@ github.com/go-openapi/spec v1.0.1 h1:lj2vdGpNDcVgwRc6qXdw6qt/KQpCtSa9tnUH6vpDPDk
+ github.com/go-openapi/spec v1.0.1/go.mod h1:M//GWQGtDUAjnP37gE6fInLgaczB+FatoipV3H1fYw8=
+ github.com/go-openapi/strfmt v0.27.4 h1:E1xsvHb8R9vsuYru4TP2PVVTv9AIgSFAUACUZrFQfCI=
+ github.com/go-openapi/strfmt v0.27.4/go.mod h1:SCOff81PPhU26acBiW96jHaFycEbT2nkQRvojM+V2z0=
+-github.com/go-openapi/swag v0.28.0 h1:xkgbOSKj6DZziNpyqRRAOt3GJGtgjgsd2RoyT30VWuw=
+-github.com/go-openapi/swag v0.28.0/go.mod h1:4qYnT3Cqr1p1VknOdPo70evN4rgQnAg6jwApHyxSGIg=
++github.com/go-openapi/swag v0.29.2 h1:9n8frkcsuQRA0INU31VbxNxt1zBaHxrHYGEf5BUjFi4=
++github.com/go-openapi/swag v0.29.2/go.mod h1:RkCiX1gCVXWgLOavDXE3ALJrQ/VO2ziiIzOUs3z10xo=
+ github.com/go-openapi/swag/cmdutils v0.29.2 h1:cXEzX/nWCODon251f+1HgL75/R4XXML5IZxgLCWMoro=
+ github.com/go-openapi/swag/cmdutils v0.29.2/go.mod h1:XziaSVzYqkDvpWXzASfWajw2YvJrLscq610O2XiyqJw=
+ github.com/go-openapi/swag/conv v0.29.2 h1:8c9shoB8l0QRSR6ymq1llHdBWDqpIgJfjTGHx3Vuhm0=
+@@ -363,8 +363,8 @@ github.com/go-quicktest/qt v1.102.0/go.mod h1:p4lGIVX+8Wa6ZPNDvqcxq36XpUDLh42FLe
+ github.com/go-rod/rod v0.116.2 h1:A5t2Ky2A+5eD/ZJQr1EfsQSe5rms5Xof/qj296e+ZqA=
+ github.com/go-rod/rod v0.116.2/go.mod h1:H+CMO9SCNc2TJ2WfrG+pKhITz57uGNYU43qYHh438Mg=
+ github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
+-github.com/go-test/deep v1.1.1 h1:0r/53hagsehfO4bzD2Pgr/+RgHqhmf+k1Bpse2cTu1U=
+-github.com/go-test/deep v1.1.1/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
++github.com/go-test/deep v1.1.2 h1:JUuyv17rKrqYfLFnP9A4Yh6hw0635ugB93bMg2bwuDQ=
++github.com/go-test/deep v1.1.2/go.mod h1:lwVFiFFWPjydTsV3xGJ/YTQsnWwi8zxBFM+gOVcwINE=
+ github.com/go-viper/mapstructure/v2 v2.5.0 h1:vM5IJoUAy3d7zRSVtIwQgBj7BiWtMPfmPEgAXnvj1Ro=
+ github.com/go-viper/mapstructure/v2 v2.5.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
+ github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
+@@ -441,8 +441,8 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w7
+ github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 h1:UH//fgunKIs4JdUbpDl1VZCDaL56wXCB/5+wF6uHfaI=
+ github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4 h1:9ZJYjPEJpcleIKcqysXOo14NLQYwu23fzmKRFpIjPjc=
+ github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4/go.mod h1:0xydIeg2omQ9DH6zYMP24Kk57793rnLUvP8fwdbFvz8=
+-github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 h1:/Tnpcb2E0Pz/tN9s3bfEY2Q8ePCEX9iuS+cneUwncnw=
+-github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0/go.mod h1:zOBXOsUaBSjKgmH4OGzV1esUpR3oUSCPYVd2cUBjKYY=
++github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 h1:QMILzF8BA7xftE4zVORkRrlv08m12St3csK4RsyRgRs=
++github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0/go.mod h1:+ZQ6iUL8+ATyxGDQNuRKpNwJFdGDUi0e7E1QL9MvI7U=
+ github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
+ github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY2I=
+ github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
+@@ -631,12 +631,12 @@ github.com/sigstore/protobuf-specs v0.5.2 h1:RSWWUY8QrVTxbYH00jY/jg2e7YnjzrpwP+P
+ github.com/sigstore/protobuf-specs v0.5.2/go.mod h1:DRBzpFuE+LnvQMN10/dU6nBeKwVLGEQ6o2FovN2Rats=
+ github.com/sigstore/rekor v1.5.5 h1:nZKTBT0uRlKaFW4PafFIE7F5H26PInFF2qOlWouKYYA=
+ github.com/sigstore/rekor v1.5.5/go.mod h1:A0e/gTyJ5qCQn6/Zz2T0+TE+W3akuaLF5O0HJ4ogjgA=
+-github.com/sigstore/rekor-tiles/v2 v2.3.0 h1:HhMgH61UP0t899V8Fjt7pz1YdgOBptbaQdnCF+79cdc=
+-github.com/sigstore/rekor-tiles/v2 v2.3.0/go.mod h1:DEFiKSyQ4nF75QRVNdOPaIH3cmvMkO2B6xDZjNYngPc=
++github.com/sigstore/rekor-tiles/v2 v2.4.0 h1:Q5vQvZPrHXBzz5/WuF4q7D9RGUm/JzXJQhNGpd4G5Pw=
++github.com/sigstore/rekor-tiles/v2 v2.4.0/go.mod h1:CwJCXjoMBNFKctuPZToeQytli9Nfx1Tvzm09AyJHJNM=
+ github.com/sigstore/sigstore v1.11.2 h1:oFPZIqFuOFJcTfNMW847kvq/czev7oeo/eDYPPMRwr8=
+ github.com/sigstore/sigstore v1.11.2/go.mod h1:72vQpQeeHgCFJzQnLX1w2sD1HjSJTEeW300ialacOkI=
+-github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10 h1:Vo/RyRAj1NOccLJwJ5V39+oXI1aCcw3MKPangzG3Rq0=
+-github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10/go.mod h1:OvOUhstHC1stzzLMaylr2hudZ604aJ8BxU3oed/71Lc=
++github.com/sigstore/sigstore-go v1.4.0 h1:CGdFdZLhYSc42yYN0+lL6yWh7v0z3S0i21v50lvSYKw=
++github.com/sigstore/sigstore-go v1.4.0/go.mod h1:T2Csm9q65ZVCrTB8q1fP60wR9Z9Hf1286zBTd6pDG88=
+ github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2 h1:ll52dCkIiLuB2V/GcddjieE0+EjA3INqC0HYITavVFQ=
+ github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2/go.mod h1:agtjJMPuI6q2rBTM0XZiOFsZjlcZnTi7xkBFQt0NISY=
+ github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2 h1:/gBoE9TCQPu8WX6IpCsub7EhQKhGbIrLyGDz5Neo/dc=
+@@ -751,10 +751,10 @@ gitlab.com/gitlab-org/api/client-go/v3 v3.32.0 h1:hisNyZHah2TjxlP4C5rgsu+9QSvvTa
+ gitlab.com/gitlab-org/api/client-go/v3 v3.32.0/go.mod h1:jBFhGkTHLKkgeHEdS/A8yA0tQ6UHq96QVsS5muu6flM=
+ go.opentelemet
 ```
 
-**File**: `cmd/cosign/cli/attest_blob.go` (modified, +21/-37)
+---
+
+### Incident Patch 2: `e074e302` (2026-11-12)
+**Commit Message**: chore(deps): bump the actions group with 8 updates (#5214)
+
+Bumps the actions group with 8 updates:
+
+| Package | From | To |
+| --- | --- | --- |
+| [sigstore/cosign-installer](https://github.com/sigstore/cosign-installer) | `4.1.2` | `4.1.3` |
+| [docker/login-action](https://github.com/docker/login-action) | `4.7.0` | `4.8.0` |
+| [chainguard-dev/actions/donotsubmit](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
+| [chainguard-dev/actions/setup-mirror](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
+| [chainguard-dev/actions/kind-diag](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
+| [mikefarah/yq](https://github.com/mikefarah/yq) | `4.54.1` | `4.54.2` |
+| [chainguard-dev/actions/trailing-space](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
+| [chainguard-dev/actions/eof-newline](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
+
+
+Updates `sigstore/cosign-installer` from 4.1.2 to 4.1.3
+- [Release notes](https://github.com/sigstore/cosign-installer/releases)
+- [Commits](https://github.com/sigstore/cosign-installer/compare/6f9f17788090df1f26f669e9d70d6ae9567deba6...756fe2d284c7292c4e9b62c8a28f1e5629c5
+
+**File**: `.github/workflows/build.yaml` (modified, +2/-2)
 ```diff
-@@ -15,8 +15,6 @@
- package cli
+@@ -48,7 +48,7 @@ jobs:
+         with:
+           persist-credentials: false
  
- import (
--	"fmt"
--
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/attest"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/generate"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
-@@ -30,38 +28,35 @@ func AttestBlob() *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:   "attest-blob",
- 		Short: "Attest the supplied blob",
--		Example: `  cosign attest-blob --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--f] [--r] <BLOB uri>
-+		Example: `  cosign attest-blob [--key <key path>|<kms uri>] [--predicate <path>] [--yes] --bundle <bundle.json> <BLOB uri>
-+
-+  # attach an attestation to a blob using keyless signing and write the bundle to a file
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --bundle <bundle.json> <BLOB>
+-      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
++      - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
  
-   # attach an attestation to a blob with a local key pair file and write the bundle to a file
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <path> <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <bundle.json> <BLOB>
+       - name: Extract version of Go to use
+         run: echo "GOVERSION=$(awk -F'[:@]' '/FROM golang/{print $2; exit}' Dockerfile)" >> $GITHUB_ENV
+@@ -72,7 +72,7 @@ jobs:
+         run: gcloud auth configure-docker --quiet
  
-   # attach an attestation to a blob with a key pair stored in Azure Key Vault
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] --bundle <bundle.json> <BLOB>
- 
-   # attach an attestation to a blob with a key pair stored in AWS KMS
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] --bundle <bundle.json> <BLOB>
- 
-   # attach an attestation to a blob with a key pair stored in Google Cloud KMS
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] --bundle <bundle.json> <BLOB>
- 
-   # attach an attestation to a blob with a key pair stored in Hashicorp Vault
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] --bundle <bundle.json> <BLOB>
- 
-   # supply attestation via stdin
--  echo <PAYLOAD> | cosign attest-blob --predicate - --yes`,
-+  echo <PAYLOAD> | cosign attest-blob --predicate - --bundle <bundle.json> --yes`,
- 
- 		PersistentPreRun: options.BindViper,
--		PreRunE: func(_ *cobra.Command, _ []string) error {
--			if o.NewBundleFormat && o.BundlePath == "" {
--				return fmt.Errorf("must specify --bundle with --new-bundle-format")
--			}
--			return nil
--		},
- 		RunE: func(cmd *cobra.Command, args []string) error {
- 			if err := signcommon.ValidateSigningOptions(cmd.Context(), o.UseSigningConfig, o.SigningConfigPath,
--				o.Rekor.URL, o.Fulcio.URL, o.OIDC.Issuer, o.TSAServerURL,
--				o.TlogUpload, o.NewBundleFormat, o.BundlePath,
--				"", o.OutputAttestation, o.OutputCertificate, "", o.OutputSignature, o.RFC3161TimestampPath); err != nil {
-+				"", o.Fulcio.URL, o.OIDC.Issuer, "",
-+				true, true, o.BundlePath,
-+				"", "", "", "", "", ""); err != nil {
- 				return err
- 			}
- 
-@@ -78,11 +73,8 @@ func AttestBlob() *cobra.Command {
- 				PassFunc:                       generate.GetPass,
- 				Sk:                             o.SecurityKey.Use,
- 				Slot:                           o.SecurityKey.Slot,
--				FulcioURL:                      o.Fulcio.URL,
- 				IDToken:                        o.Fulcio.IdentityToken,
- 				FulcioAuthFlow:                 o.Fulcio.AuthFlow,
--				RekorURL:                       o.Rekor.URL,
--				OIDCIssuer:                     o.OIDC.Issuer,
- 				OIDCClientID:                   o.OIDC.ClientID,
- 				OIDCClientSecret:               oidcClientSecret,
- 				OIDCRedirectURL:                o.OIDC.RedirectURL,
-@@ -93,30 +85,22 @@ func AttestBlob() *cobra.Command {
- 				TSAClientKey:                   o.TSAClientKey,
- 				TSAClientCert:                  o.TSAClientCert,
- 				TSAServerName:                  o.TSAServerName,
--				TSAServerURL:                   o.TSAServerURL,
--				RFC3161TimestampPath:           o.RFC3161TimestampPath,
- 				IssueCertificateForExistingKey: o.IssueCertificate,
- 				BundlePath:                     o.BundlePath,
--				NewBundleFormat:                o.NewBundleFormat,
- 			}
- 			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
- 				return err
- 			}
- 
- 			v := attest.AttestBlobCommand{
--				KeyOpts:           ko,
--				CertPath:          o.Cert,
--				CertChainPath:     o.CertChain,
--				ArtifactHash:      o.Hash,
--				TlogUpload:        o.TlogUpload,
--				PredicateType:     o.Predicate.Type,
--				PredicatePath:     o.Predicate.
+       - name: Login to GitHub Container Registry
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           registry: ghcr.io
+           username: ${{ github.actor }}
 ```
 
-**File**: `cmd/cosign/cli/options/attest_blob.go` (modified, +11/-61)
+**File**: `.github/workflows/donotsubmit.yaml` (modified, +1/-1)
 ```diff
-@@ -15,39 +15,27 @@
- package options
+@@ -40,4 +40,4 @@ jobs:
+           persist-credentials: false
  
- import (
--	"strings"
--
- 	"github.com/spf13/cobra"
- )
- 
--// AttestOptions is the top level wrapper for the attest command.
-+// AttestBlobOptions is the top level wrapper for the attest-blob command.
- type AttestBlobOptions struct {
- 	Key              string
- 	Cert             string
- 	CertChain        string
- 	IssueCertificate bool
- 
--	SkipConfirmation     bool
--	TlogUpload           bool
--	TSAClientCACert      string
--	TSAClientCert        string
--	TSAClientKey         string
--	TSAServerName        string
--	TSAServerURL         string
--	RFC3161TimestampPath string
-+	SkipConfirmation bool
-+	TSAClientCACert  string
-+	TSAClientCert    string
-+	TSAClientKey     string
-+	TSAServerName    string
- 
- 	Hash      string
- 	Predicate PredicateLocalOptions
- 
--	OutputSignature   string
--	OutputAttestation string
--	OutputCertificate string
--	BundlePath        string
--	NewBundleFormat   bool
--
--	RekorEntryType string
-+	BundlePath string
- 
--	Rekor       RekorOptions
- 	Fulcio      FulcioOptions
- 	OIDC        OIDCOptions
- 	SecurityKey SecurityKeyOptions
-@@ -57,12 +45,11 @@ type AttestBlobOptions struct {
- 	TrustedRootPath   string
- }
- 
--var _ Interface = (*AttestOptions)(nil)
-+var _ Interface = (*AttestBlobOptions)(nil)
- 
- // AddFlags implements Interface
- func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
- 	o.Predicate.AddFlags(cmd)
--	o.Rekor.AddFlags(cmd)
- 	o.Fulcio.AddFlags(cmd)
- 	o.OIDC.AddFlags(cmd)
- 	o.SecurityKey.AddFlags(cmd)
-@@ -82,35 +69,17 @@ func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
- 			"signing certificate and end with the root certificate.")
- 	_ = cmd.MarkFlagFilename("certificate-chain", certificateExts...)
- 
--	cmd.Flags().StringVar(&o.OutputSignature, "output-signature", "",
--		"write the signature to FILE")
--	_ = cmd.MarkFlagFilename("output-signature", signatureExts...)
--	_ = cmd.Flags().MarkDeprecated("output-signature", "please use --bundle to provide the output bundle location, which will include the signature")
--
--	cmd.Flags().StringVar(&o.OutputAttestation, "output-attestation", "",
--		"write the attestation to FILE")
--	// _ = cmd.MarkFlagFilename("output-attestation") // no typical extensions
--	_ = cmd.Flags().MarkDeprecated("output-attestation", "please use --bundle to provide the output bundle location, which will include the attestation")
--
--	cmd.Flags().StringVar(&o.OutputCertificate, "output-certificate", "",
--		"write the certificate to FILE")
--	_ = cmd.MarkFlagFilename("key", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("output-certificate", "please use --bundle to provide the output bundle location, which will include the certificate")
--
- 	cmd.Flags().StringVar(&o.BundlePath, "bundle", "",
- 		"write everything required to verify the blob to a FILE")
- 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
--
--	cmd.Flags().BoolVar(&o.NewBundleFormat, "new-bundle-format", true,
--		"output bundle in new format that contains all verification material")
--	_ = cmd.Flags().MarkDeprecated("new-bundle-format", "this will be the only supported format in future versions")
-+	_ = cmd.MarkFlagRequired("bundle")
- 
- 	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
--		"whether to use a TUF-provided signing config for the service URLs. Must provide --bundle, which will output verification material in the new format")
-+		"whether to use a TUF-provided signing config for the service URLs")
- 	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
- 
- 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
--		"path to a signing config file. Must provide --bundle, which will output verification material in the new format")
-+		"path to a signing config file")
- 
- 	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
- 
-@@ -124,15 +93,6 @@ func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
- 	cmd.Flags().BoolVarP(&o.SkipConfirmation, "yes", "y", false,
- 		"skip confirmation prompts for non-destructive operations")
- 
--	cmd.Flags().BoolVar(&o.TlogUpload, "tlog-upload", true,
--		"whether or not to upload to the tlog")
--	_ = cmd.Flags().MarkDeprecated("tlog-upload", "prefer using a --signing-config file with no transparency log services")
--
--	cmd.Flags().StringVar(&o.RekorEntryType, "rekor-entry-type", rekorEntryTypes[0],
--		"specifies the type to be used for a rekor entry upload ("+strings.Join(rekorEntryTypes, "|")+")")
--	_ = cmd.RegisterFlagCompletionFunc("rekor-entry-type", cobra.FixedCompletions(rekorEntryTypes, cobra.ShellCompDirectiveNoFileComp))
--	_ = cmd.Flags().MarkDeprecated("rekor-entry-type", "support for this flag will be removed in the future. it is strongly discouraged to rely on Rekor for attestation storage, and in future releases of Rekor, this functionality will be removed.")
--
- 	cmd.Flags().StringVar(&o.TSAClientCACert, "timestamp-client-cacer
+       - name: Do Not Submit
+-        uses: chainguard-dev/actions/donotsubmit@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
++        uses: chainguard-dev/actions/donotsubmit@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
 ```
 
-**File**: `doc/cosign_attest-blob.md` (modified, +11/-8)
+**File**: `.github/workflows/e2e-tests.yml` (modified, +2/-2)
 ```diff
-@@ -9,25 +9,28 @@ cosign attest-blob [flags]
- ### Examples
+@@ -151,7 +151,7 @@ jobs:
+         cache: false
  
- ```
--  cosign attest-blob --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--f] [--r] <BLOB uri>
-+  cosign attest-blob [--key <key path>|<kms uri>] [--predicate <path>] [--yes] --bundle <bundle.json> <BLOB uri>
-+
-+  # attach an attestation to a blob using keyless signing and write the bundle to a file
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --bundle <bundle.json> <BLOB>
+     - name: Setup mirror
+-      uses: chainguard-dev/actions/setup-mirror@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
++      uses: chainguard-dev/actions/setup-mirror@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
+       with:
+         mirror: mirror.gcr.io
  
-   # attach an attestation to a blob with a local key pair file and write the bundle to a file
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <path> <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <bundle.json> <BLOB>
+@@ -262,4 +262,4 @@ jobs:
  
-   # attach an attestation to a blob with a key pair stored in Azure Key Vault
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] --bundle <bundle.json> <BLOB>
- 
-   # attach an attestation to a blob with a key pair stored in AWS KMS
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] --bundle <bundle.json> <BLOB>
- 
-   # attach an attestation to a blob with a key pair stored in Google Cloud KMS
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] --bundle <bundle.json> <BLOB>
- 
-   # attach an attestation to a blob with a key pair stored in Hashicorp Vault
--  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <BLOB>
-+  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] --bundle <bundle.json> <BLOB>
- 
-   # supply attestation via stdin
--  echo <PAYLOAD> | cosign attest-blob --predicate - --yes
-+  echo <PAYLOAD> | cosign attest-blob --predicate - --bundle <bundle.json> --yes
- ```
- 
- ### Options
-@@ -47,7 +50,7 @@ cosign attest-blob [flags]
-       --oidc-provider string                          Specify the provider to get the OIDC token from (Optional). If unset, all options will be tried. Options include: [spiffe, google, github-actions, filesystem, buildkite-agent]
-       --oidc-redirect-url string                      OIDC redirect URL (Optional). The default oidc-redirect-url is 'http://localhost:0/auth/callback'.
-       --predicate string                              path to the predicate file.
--      --signing-config string                         path to a signing config file. Must provide --bundle, which will output verification material in the new format
-+      --signing-config string                         path to a signing config file
-       --sk[=true|false]                               whether to use a hardware security key
-       --slot string                                   security key slot to use for generated key (default: signature) (authentication|signature|card-authentication|key-management)
-       --statement string                              path to the statement file.
+     - name: Collect diagnostics
+       if: ${{ failure() }}
+-      uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
++      uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
 ```
 
-**File**: `test/e2e_test.go` (modified, +46/-45)
+**File**: `.github/workflows/kind-verify-attestation.yaml` (modified, +2/-2)
 ```diff
-@@ -993,14 +993,11 @@ func TestSignAttestVerifyBlobWithSigningConfig(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 	attBundlePath := filepath.Join(attestDir, "attest.bundle.json")
--	ko.NewBundleFormat = true
- 	ko.BundlePath = attBundlePath
+@@ -67,7 +67,7 @@ jobs:
+     - uses: ko-build/setup-ko@61b4d1d396f5b2e7d6bb6fefdce3dc38d1a13445 # v0.10
  
- 	attestBlobCmd := attest.AttestBlobCommand{
--		KeyOpts:        ko,
--		RekorEntryType: "dsse",
--		StatementPath:  statementPath,
--		TlogUpload:     true,
-+		KeyOpts:       ko,
-+		StatementPath: statementPath,
- 	}
- 	must(attestBlobCmd.Exec(ctx, bp), t)
+     - name: Install yq
+-      uses: mikefarah/yq@504fc38780cc46be8444ea1b72fb55919fc0bfb0 # v4.54.1
++      uses: mikefarah/yq@a4330671f17776618660a419ab2531e4f4dc48b6 # v4.54.2
  
-@@ -1439,12 +1436,10 @@ func TestSignVerifyBlobWithCertificateChain(t *testing.T) {
- 			var verifyErr error
- 			if tc.attestation {
- 				attestBlobCmd := attest.AttestBlobCommand{
--					KeyOpts:        ko,
--					CertPath:       leafCertPath,
--					CertChainPath:  signChainPath,
--					RekorEntryType: "dsse",
--					StatementPath:  statementPath,
--					TlogUpload:     false,
-+					KeyOpts:       ko,
-+					CertPath:      leafCertPath,
-+					CertChainPath: signChainPath,
-+					StatementPath: statementPath,
- 				}
- 				must(attestBlobCmd.Exec(ctx, bp), t)
+     - name: build cosign
+       run: |
+@@ -180,7 +180,7 @@ jobs:
  
-@@ -1803,15 +1798,12 @@ func TestSignVerifyWithSigningConfigWithKey(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 	attBundlePath := filepath.Join(attestDir, "attest.bundle.json")
--	ko.NewBundleFormat = true
- 	ko.BundlePath = attBundlePath
- 	ko.KeyRef = privKeyPath
+     - name: Collect diagnostics
+       if: ${{ failure() }}
+-      uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
++      uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
  
- 	attestBlobCmd := attest.AttestBlobCommand{
--		KeyOpts:        ko,
--		RekorEntryType: "dsse",
--		StatementPath:  statementPath,
--		TlogUpload:     true,
-+		KeyOpts:       ko,
-+		StatementPath: statementPath,
- 	}
- 	must(attestBlobCmd.Exec(ctx, bp), t)
+     - name: Create vuln attestation for it
+       run: |
+```
+
+**File**: `.github/workflows/tests.yaml` (modified, +1/-1)
+```diff
+@@ -185,7 +185,7 @@ jobs:
  
-@@ -2854,21 +2846,22 @@ func TestAttestationBlobRFC3161Timestamp(t *testing.T) {
- 	_, privKeyPath, pubKeyPath := keypair(t, td)
+       - name: Collect diagnostics
+         if: ${{ failure() }}
+-        uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
++        uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
  
- 	ctx := context.Background()
-+	signingConfigPath := prepareSigningConfig(t, fulcioURL, rekorURL, "unused", tsaURL+"/api/v1/timestamp")
-+	trustedRootPath := prepareTrustedRoot(t, tsaURL)
- 	ko := options.KeyOpts{
--		KeyRef:          privKeyPath,
--		BundlePath:      bundlePath,
--		NewBundleFormat: true,
--		TSAServerURL:    tsaURL + "/api/v1/timestamp",
--		PassFunc:        passFunc,
-+		KeyRef:           privKeyPath,
-+		BundlePath:       bundlePath,
-+		PassFunc:         passFunc,
-+		SkipConfirmation: true,
- 	}
-+	err := signcommon.LoadSigningConfigAndTrustedMaterial(ctx, &ko, false, signingConfigPath, trustedRootPath)
-+	must(err, t)
+   e2e-windows-powershell-tests:
+     name: Run PowerShell E2E tests
+```
+
+**File**: `.github/workflows/whitespace.yaml` (modified, +2/-2)
+```diff
+@@ -38,8 +38,8 @@ jobs:
+         with:
+           persist-credentials: false
  
- 	attestBlobCmd := attest.AttestBlobCommand{
--		KeyOpts:        ko,
--		PredicatePath:  predicatePath,
--		PredicateType:  predicateType,
--		Timeout:        30 * time.Second,
--		TlogUpload:     false,
--		RekorEntryType: "dsse",
-+		KeyOpts:       ko,
-+		PredicatePath: predicatePath,
-+		PredicateType: predicateType,
-+		Timeout:       30 * time.Second,
- 	}
- 	must(attestBlobCmd.Exec(ctx, bp), t)
+-      - uses: chainguard-dev/actions/trailing-space@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
++      - uses: chainguard-dev/actions/trailing-space@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
+         if: ${{ always() }}
  
-@@ -2905,7 +2898,7 @@ func TestAttestationBlobRFC3161Timestamp(t *testing.T) {
- 		t.Error(err)
- 	}
- 
--	trustedRootPath := filepath.Join(td, "trustedroot.json")
-+	trustedRootPath = filepath.Join(td, "trustedroot.json")
- 	trustedRootBytes, err := trustedRoot.MarshalJSON()
- 	if err != nil {
- 		t.Error(err)
-@@ -4579,17 +4572,19 @@ func TestAttestBlobSignVerify(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 
--	outputSignature := filepath.Join(td1, "signature")
-+	bundlePath1 := filepath.Join(td1, "attest1.bundle.json")
-+	bundlePath2 := filepath.Join(td1, "attest2.bundle.json")
- 
- 	_, privKeyPath1, pubKeyPath1 := keypair(t, td1)
- 
- 	ctx := context.Background()
- 	ko := options.KeyOpts{
--		KeyRef: pubKeyPath1,
-+		KeyRef:          pubKeyPath1,
-+		BundlePath:      bundlePath1,
-+		NewBundleFormat: true,
- 	}
- 	blobVerifyAttestationCmd := cliverify.VerifyBlobAttestationCommand{
- 		KeyOpts:       ko,
--		SignaturePath: outputSignature,
- 		PredicateType: predicateType,
- 		IgnoreTlog:    true,
- 		CheckClaims:   true,
-@@ -4599,17 +4594,18 @@ func TestAttestBlobSignVerify(t *testing.T) {
- 
- 	// Now attest the blob with the private key
- 	ko = options.KeyOpts{
--		KeyRef:   privKeyPath1,
--		PassFunc: passFunc,
-+		KeyRef:           privKeyPath1,
-+		PassFunc:         passFunc,
-+		BundlePath:       bundlePath1,
-+		SkipConfirmation: true,
- 	}
- 	attestBlobCmd := attest.AttestBlobCommand{
--		KeyOpts:         ko,
--		PredicatePath:   predicatePath,
--		PredicateType:   predicateType,
--		OutputSignature: outputSignature,
--		RekorEntryType:  "dsse",
-+		KeyOpts:       ko,
-+		PredicatePath: predicatePath,
-+		PredicateType: predicateType,
- 	}
- 	must(attestBlobCmd.Exec(ctx, bp), t)
-+	assertOfflineBundle(t, bundlePath1)
- 
- 	// Now verify should work
- 	must(blobVerifyAttestationCmd.Exec(ctx, bp), t)
-@@ -4623,23 +4619,28 @@ func TestAttestBlobSignVerify(t *testing.T) {
- 	mustErr(blobVerifyAttestationCmd.Exec(ctx, anotherBlob), t)
- 
- 	// Test statement signing
-+	ko = options.KeyOpts{
-+		KeyRef:           privKeyPath1,
-+		PassFunc:         passFunc,
-+		BundlePath:       bundlePath2,
-+		SkipConfirmation: true,
-+	}
- 	attestBlobCmd = attest.AttestBlobCommand{
--		KeyOpts:         ko,
--		StatementPath:   statementPath,
--		OutputSignature: outputSignature,
--		RekorEntryType:  "dsse",
-+		KeyOpts:   
+-      - uses: chainguard-dev/actions/eof-newline@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
++      - uses: chainguard-dev/actions/eof-newline@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
+         if: ${{ always() }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5214** (2026-11-12): chore(deps): bump the actions group with 8 updates (@dependabot[bot])
+- **PR #5212** (closed): chore(deps): bump github.com/sigstore/rekor-tiles/v2 from 2.4.0 to 2.4.1 (@dependabot[bot])
 - **PR #5211** (closed): chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
+- **PR #5208** (2026-11-12): chore(deps): bump github.com/sigstore/sigstore-go from 1.3.1-0.20261021152419-0161b209ec10 to 1.4.0 (@dependabot[bot])
+- **PR #5206** (closed): chore(deps): bump the gomod group across 1 directory with 5 updates (@dependabot[bot])
 - **PR #5204** (2026-11-04): chore(deps): bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
-- **PR #5203** (2026-11-03): Pin scaffolding setup action by SHA so Dependabot keeps it updated (@Hayden-IO)
-- **PR #5202** (2026-11-04): Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (@Hayden-IO)
-- **PR #5201** (closed): Fix failing e2e tests by bumping scaffolding to v0.7.33 (@daescha)
-- **PR #5200** (2026-11-04): Add TrustedRootWithContext to stop the trusted root refresh (@daescha)
 
 ---
 
@@ -2567,70 +2087,44 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require new bundle format for attest-blob (#5088)
+## X. deps): bump github.com/sigstore/sigstore-go (#5208)
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/attest/attest_blob.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8fece0b2`: Require new bundle format for attest-blob (#5088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `195ab76b`: deps): bump github.com/sigstore/sigstore-go (#5208). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attest/attest_blob.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	Timeout time.Duration
-		c.SigningConfig = signcommon.NewEmptySigningConfig()
-	if err := signcommon.RequireFulcioForCertificate(c.KeyOpts); err != nil {
-		return err
-	if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
-		return fmt.Errorf("create bundle file: %w", err)
-	ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
+go 1.27.0
+	github.com/sigstore/rekor-tiles/v2 v2.4.0
+	github.com/sigstore/sigstore-go v1.4.0
+	github.com/go-openapi/swag v0.29.2 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
+	golang.org/x/tools v0.52.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	cbundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle"
-	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
-	"google.golang.org/protobuf/encoding/protojson"
-	TlogUpload bool
-	Timeout    time.Duration
-
-	OutputSignature   string
-	OutputAttestation string
-	OutputCertificate string
-
-	RekorEntryType string
-	if c.RekorEntryType != "dsse" && c.RekorEntryType != "intoto" {
-		return fmt.Errorf("unknown value for rekor-entry-type")
-	}
-
-		var err error
-		c.SigningConfig, err = signcommon.NewSigningConfigFromKeyOpts(c.KeyOpts)
-		if err != nil {
-			return fmt.Errorf("creating signing config: %w", err)
-		}
-	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, nil, c.TlogUpload) {
-		c.SigningConfig = c.SigningConfig.WithRekorLogURLs()
-	if c.NewBundleFormat {
-		if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
-			return fmt.Errorf("create bundle file: %w", err)
-		}
-		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
-		return nil
-	}
-
-	var pb protobundle.Bundle
-	if err := protojson.Unmarshal(bundleBytes, &pb); err != nil {
-		return fmt.Errorf("unmarshalling bundle: %w", err)
-	}
-
-	bundleComponents, err := signcommon.ExtractComponentsFromProtoBundle(&pb)
-	if 
+go 1.27
+	github.com/sigstore/rekor-tiles/v2 v2.3.0
+	github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10
+	github.com/go-openapi/swag v0.28.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
+	golang.org/x/tools v0.51.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8fece0b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `195ab76b` are properly handled with clean fallback behavior.

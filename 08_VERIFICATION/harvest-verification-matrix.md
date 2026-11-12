@@ -9112,3 +9112,10 @@
 | `CYCLE-20261112-LQMR` | `2026-11-12T08:07:15.987Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7f322217...`) |
 | `CYCLE-20261112-18PC` | `2026-11-12T08:19:19.248Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`4f26d345...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T08:19:36.667Z` | `redisearch-redisearch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-5650848D` [Domain J] | Yes (`9f09357d...`) |
+| `CYCLE-20261112-CC5Q` | `2026-11-12T08:27:56.942Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6810c558...`) |
+| `CYCLE-20261112-CTY2` | `2026-11-12T08:28:19.994Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e354c9d4...`) |
+| `CYCLE-20261112-D03T` | `2026-11-12T08:28:27.977Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`50002d74...`) |
+| `CYCLE-20261112-HQAU` | `2026-11-12T08:32:08.550Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`29eef313...`) |
+| `CYCLE-20261112-KO5H` | `2026-11-12T08:34:25.733Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aff8deff...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T08:34:44.459Z` | `salvo-rs-salvo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-AE91E0B9` [Domain K] | Yes (`4af49fd0...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T08:35:03.648Z` | `salvo-rs-salvo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F56DBC84` [Domain H] | Yes (`313c3abe...`) |

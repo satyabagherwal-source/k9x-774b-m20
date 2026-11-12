@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:19:36.884Z",
+  "last_updated": "2026-11-12T08:35:04.001Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T08:19:36.877Z",
@@ -961,9 +961,24 @@
       "processed_at": "2026-11-12T08:19:36.670Z",
       "promoted_canonical": 1,
       "staged_for_review": 1
+    },
+    "salvo-rs-salvo-learnings.md": {
+      "processed_at": "2026-11-12T08:35:03.648Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
+    },
+    "digitalbazaar-pyld-learnings.md": {
+      "processed_at": "2026-11-12T08:35:03.673Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "openyurtio-openyurt-learnings.md": {
+      "processed_at": "2026-11-12T08:35:03.911Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 255,
-  "total_canonical_promoted": 30,
-  "total_staged_for_review": 223
+  "total_dossiers_evaluated": 258,
+  "total_canonical_promoted": 32,
+  "total_staged_for_review": 225
 }

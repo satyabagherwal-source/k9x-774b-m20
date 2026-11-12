@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:19:36.876Z",
+  "last_updated": "2026-11-12T08:35:03.910Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6536,6 +6536,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FB50D3-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F14327",
+      "directive_title": "Bump cachetools from 7.2.5 to 7.2.8",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "digitalbazaar-pyld",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F14327-bump-cachetools-from-7-2-5-to-7-2-8.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EBC88C",
+      "directive_title": "test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "openyurtio-openyurt",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EBC88C-test-yurthub-fix-pool-scope-metadata-key.md",
       "staged_date": "2026-11-12"
     }
   ]

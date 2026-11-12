@@ -9121,3 +9121,10 @@ Every entry in this ledger must capture:
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `0fd2f874` | Multi-dimensional audit evidence | 2026-11-12T08:07:15.990Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `a3613276` | Multi-dimensional audit evidence | 2026-11-12T08:19:19.252Z |
 | `learn-dom-j-5650848d` | `project://redisearch-redisearch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | 2026-11-12T08:19:36.667Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `71b67691` | Multi-dimensional audit evidence | 2026-11-12T08:27:56.945Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `86c191ba` | Multi-dimensional audit evidence | 2026-11-12T08:28:20.012Z |
+| `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `552dac7a` | Multi-dimensional audit evidence | 2026-11-12T08:28:27.981Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `b695140a` | Multi-dimensional audit evidence | 2026-11-12T08:32:08.567Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `195ab76b` | Multi-dimensional audit evidence | 2026-11-12T08:34:25.736Z |
+| `learn-dom-k-ae91e0b9` | `project://salvo-rs-salvo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | 2026-11-12T08:34:44.459Z |
+| `learn-dom-h-f56dbc84` | `project://salvo-rs-salvo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | 2026-11-12T08:35:03.648Z |

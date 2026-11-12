@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T08:19:19.273Z",
+  "last_updated": "2026-11-12T08:34:25.754Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
-      "verified_at": "2026-11-12T02:16:55.311Z",
+      "content_hash": "aff8deff4f3be5920ef997fa235c7da816a8af61b7385d14554d4068c0c886c1",
+      "verified_at": "2026-11-12T08:34:25.753Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:16:55.311Z"
+      "last_updated": "2026-11-12T08:34:25.753Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -6966,14 +6966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openyurtio-openyurt",
-      "content_hash": "4491deafb264fb0fe67524d1beb33e830430d17350c55137dbe6655a078bfecf",
-      "verified_at": "2026-11-10T01:58:33.142Z",
+      "content_hash": "50002d7471fb876dc766417a4578f13681b99ea3d48d7673e26190a2cb5aa499",
+      "verified_at": "2026-11-12T08:28:28.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:58:33.142Z"
+      "last_updated": "2026-11-12T08:28:28.002Z"
     },
     "slatedb/slatedb": {
       "repository": "slatedb/slatedb",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "8669bf52cac49c93fa0c71d5bb73fed220f9872e2986bd5eb25e38e76e2c0ea7",
-      "verified_at": "2026-11-09T15:12:39.578Z",
+      "content_hash": "29eef3136107920eb42cd39f5609682b99121bfe0d2fe542cf46541962533503",
+      "verified_at": "2026-11-12T08:32:08.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T15:12:39.578Z"
+      "last_updated": "2026-11-12T08:32:08.575Z"
     },
     "react/metro": {
       "repository": "react/metro",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "0b5225805030a68d284dcb74196b72fcc80f06f3b7870cd5fd1c53abd68c86c8",
-      "verified_at": "2026-11-10T00:31:59.926Z",
+      "content_hash": "e354c9d4ea476e7d5b918f30b932583474763842e9712254b922db154aff6772",
+      "verified_at": "2026-11-12T08:28:20.020Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T00:31:59.926Z"
+      "last_updated": "2026-11-12T08:28:20.020Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -14736,14 +14736,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-digitalbazaar-pyld",
-      "content_hash": "ffe51820f636e2f1d17f3b01cb8514084a83dd42ae7b7288803883ab85ebc65f",
-      "verified_at": "2026-11-04T01:07:33.333Z",
+      "content_hash": "6810c558f2f5ef27323167fad03fa8492984fe61e578460f95e64206be87aac2",
+      "verified_at": "2026-11-12T08:27:56.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:07:33.333Z"
+      "last_updated": "2026-11-12T08:27:56.963Z"
     },
     "aheze/Popovers": {
       "repository": "aheze/Popovers",

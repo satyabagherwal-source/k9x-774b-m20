@@ -2,15 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T08:19:36.666Z",
+  "updated_at": "2026-11-12T08:35:03.647Z",
   "statistics": {
-    "total_nodes": 15,
+    "total_nodes": 17,
     "total_edges": 5,
     "domain_distribution": {
       "D": 12,
       "M": 1,
-      "H": 1,
-      "J": 1
+      "H": 2,
+      "J": 1,
+      "K": 1
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 5
@@ -342,6 +343,50 @@
       ],
       "created_at": "2026-11-12T08:19:36.666Z",
       "updated_at": "2026-11-12T08:19:36.666Z"
+    },
+    "DOM-K-AE91E0B9": {
+      "id": "DOM-K-AE91E0B9",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Flawed CI Dependency Installer Invariant (BUG-SALVO-01)",
+      "summary": "The custom Python policy verification script (`test_workflow_policy.py`) asserts that every step using `taiki-e/install-action@*` must inclu -> Meta-testing CI/CD workflows using an in-repo unit testing harness (`test_workflow_policy.py`) guarantees that dependency updater bots canno",
+      "confidence": 0.94,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-12T08:34:44.458Z",
+      "updated_at": "2026-11-12T08:34:44.458Z"
+    },
+    "DOM-H-F56DBC84": {
+      "id": "DOM-H-F56DBC84",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Router Macro & Lifetime Compilation Breakage in Example Code (BUG-SALVO-02)",
+      "summary": "Macro attributes originally failed to generate proper async trait implementations for function handlers when mixed with combinators that alt -> Avoid monad-style chaining closures (`.then(|r| ...)`) in Rust builder APIs when simple conditional ownership reassignment (`if cond { route",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T08:35:03.647Z",
+      "updated_at": "2026-11-12T08:35:03.647Z"
     }
   },
   "edges": [

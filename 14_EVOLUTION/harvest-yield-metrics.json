@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:19:19.269Z",
-  "total_cycles_completed": 8943,
-  "total_learnings_persisted": 8943,
-  "total_rules_promoted": 8787,
+  "last_updated": "2026-11-12T08:34:25.750Z",
+  "total_cycles_completed": 8948,
+  "total_learnings_persisted": 8948,
+  "total_rules_promoted": 8794,
   "history": [
-    {
-      "timestamp": "2026-11-11T09:39:45.575Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T09:39:48.860Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T09:40:00.422Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T09:40:54.395Z",
-      "repository": "webAI-Official/TwIL-8B",
-      "learningId": "learn-huggingface-webai-official-twil-8b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T09:49:10.438Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T09:49:13.084Z",
       "repository": "astral-sh/uv",
@@ -1403,6 +1368,41 @@
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T08:27:56.960Z",
+      "repository": "digitalbazaar/pyld",
+      "learningId": "learn-github-digitalbazaar-pyld",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T08:28:20.017Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T08:28:27.999Z",
+      "repository": "openyurtio/openyurt",
+      "learningId": "learn-github-openyurtio-openyurt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T08:32:08.572Z",
+      "repository": "salvo-rs/salvo",
+      "learningId": "learn-github-salvo-rs-salvo",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T08:34:25.750Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T08:19:36.676Z",
+  "updated_at": "2026-11-12T08:35:03.998Z",
   "stats": {
-    "total_discovered": 1025,
-    "approved_pending_harvest": 919,
+    "total_discovered": 1078,
+    "approved_pending_harvest": 969,
     "harvested_count": 0,
-    "rejected_count": 106,
+    "rejected_count": 109,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 949,
+      "COMMUNITY_AND_EXPERT": 1001,
       "OFFICIAL_DOCUMENTATION": 30,
-      "STANDARDS_AND_SPECIFICATIONS": 43,
+      "STANDARDS_AND_SPECIFICATIONS": 44,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
     }
@@ -21825,6 +21825,1151 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
         "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-1C9865BA0FDB": {
+      "id": "SRC-1C9865BA0FDB",
+      "url": "https://github.com/salvo-rs/salvo",
+      "title": "https://github.com/salvo-rs/salvo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-32D6A15030C1": {
+      "id": "SRC-32D6A15030C1",
+      "url": "https://salvo.rs/",
+      "title": "https://salvo.rs/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-394EA6ADFBC8": {
+      "id": "SRC-394EA6ADFBC8",
+      "url": "https://www.rfc-editor.org/rfc/rfc9457",
+      "title": "IETF RFC 9457",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-38B2696281ED": {
+      "id": "SRC-38B2696281ED",
+      "url": "https://github.com/digitalbazaar/pyld",
+      "title": "https://github.com/digitalbazaar/pyld",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-CA3972C9DAE7": {
+      "id": "SRC-CA3972C9DAE7",
+      "url": "http://webpki.org/",
+      "title": "http://webpki.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T08:35:03.682Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-DCACBA7F4BB7": {
+      "id": "SRC-DCACBA7F4BB7",
+      "url": "http://json.org/",
+      "title": "http://json.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T08:35:03.689Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-1FAE65EE0970": {
+      "id": "SRC-1FAE65EE0970",
+      "url": "https://schema.org/SoftwareApplication",
+      "title": "https://schema.org/SoftwareApplication",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.702Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-A801A256F7D1": {
+      "id": "SRC-A801A256F7D1",
+      "url": "https://schema.org/author",
+      "title": "https://schema.org/author",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-34FDA86E04B5": {
+      "id": "SRC-34FDA86E04B5",
+      "url": "https://schema.org/Person",
+      "title": "https://schema.org/Person",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-971257C44E48": {
+      "id": "SRC-971257C44E48",
+      "url": "https://schema.org/givenName",
+      "title": "https://schema.org/givenName",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.719Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-4ADE68A21CE4": {
+      "id": "SRC-4ADE68A21CE4",
+      "url": "https://schema.org/lastName",
+      "title": "https://schema.org/lastName",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-B227B7B242E1": {
+      "id": "SRC-B227B7B242E1",
+      "url": "https://colab.research.google.com/drive/1QoZ4o8DCNpJshR-c8SbaREKnrMg1VAt0",
+      "title": "https://colab.research.google.com/drive/1QoZ4o8DCNpJshR-c8SbaREKnrMg1VAt0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.730Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-FBB1B7EDF785": {
+      "id": "SRC-FBB1B7EDF785",
+      "url": "https://tinyurl.com/2dfr3w27",
+      "title": "https://tinyurl.com/2dfr3w27",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.736Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-5D1F931BC68E": {
+      "id": "SRC-5D1F931BC68E",
+      "url": "https://github.com/tkem/cachetools",
+      "title": "https://github.com/tkem/cachetools",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.741Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-27547625F103": {
+      "id": "SRC-27547625F103",
+      "url": "https://github.com/tkem/cachetools/blob/master/CHANGELOG.rst",
+      "title": "https://github.com/tkem/cachetools/blob/master/CHANGELOG.rst",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-5087866B3EC9": {
+      "id": "SRC-5087866B3EC9",
+      "url": "https://github.com/tkem/cachetools/compare/v7.2.5...v7.2.8",
+      "title": "https://github.com/tkem/cachetools/compare/v7.2.5...v7.2.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-5A06749B2297": {
+      "id": "SRC-5A06749B2297",
+      "url": "https://pypi.org/simple",
+      "title": "https://pypi.org/simple",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.758Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-1B99F0035381": {
+      "id": "SRC-1B99F0035381",
+      "url": "https://files.pythonhosted.org/packages/5a/e5/43f9a3f926cc182a0ee95cfd53ec0b5ac0e2cdafa184af6fc50166fd03fd/cachetools-7.2.5.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/5a/e5/43f9a3f926cc182a0ee95cfd53ec0b5ac0e2cdafa184af6fc50166fd03fd/cachetools-7.2.5.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-2079DCCB6D31": {
+      "id": "SRC-2079DCCB6D31",
+      "url": "https://files.pythonhosted.org/packages/93/6f/faa5e0606769105e70e0478031a8f9a6b729e329f42ce2462585c6d9aa52/cachetools-7.2.8.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/93/6f/faa5e0606769105e70e0478031a8f9a6b729e329f42ce2462585c6d9aa52/cachetools-7.2.8.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.769Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-0BCCC25F44F4": {
+      "id": "SRC-0BCCC25F44F4",
+      "url": "https://files.pythonhosted.org/packages/4f/bd/bd8f45fbdf05ce06dbadda61bf0a09844bb0cf0a048d7f5c4a368d437e24/cachetools-7.2.5-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/4f/bd/bd8f45fbdf05ce06dbadda61bf0a09844bb0cf0a048d7f5c4a368d437e24/cachetools-7.2.5-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-CAE3ED93334D": {
+      "id": "SRC-CAE3ED93334D",
+      "url": "https://files.pythonhosted.org/packages/0c/35/2fb720060bb278759da35f2076fab1af4e9d66e3add080e6b40d6e25ba48/cachetools-7.2.8-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/0c/35/2fb720060bb278759da35f2076fab1af4e9d66e3add080e6b40d6e25ba48/cachetools-7.2.8-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-0535DE9A682A": {
+      "id": "SRC-0535DE9A682A",
+      "url": "https://github.com/Marco-Sulla/python-frozendict",
+      "title": "https://github.com/Marco-Sulla/python-frozendict",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.794Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-214CEB60242E": {
+      "id": "SRC-214CEB60242E",
+      "url": "https://github.com/Marco-Sulla/python-frozendict/releases",
+      "title": "https://github.com/Marco-Sulla/python-frozendict/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-ACF774E0D1D4": {
+      "id": "SRC-ACF774E0D1D4",
+      "url": "https://github.com/Marco-Sulla/python-frozendict/compare/v2.4.7...v2.5.1",
+      "title": "https://github.com/Marco-Sulla/python-frozendict/compare/v2.4.7...v2.5.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.809Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-1171E4D39952": {
+      "id": "SRC-1171E4D39952",
+      "url": "https://files.pythonhosted.org/packages/90/b2/2a3d1374b7780999d3184e171e25439a8358c47b481f68be883c14086b4c/frozendict-2.4.7.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/90/b2/2a3d1374b7780999d3184e171e25439a8358c47b481f68be883c14086b4c/frozendict-2.4.7.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-0E4676B86FD6": {
+      "id": "SRC-0E4676B86FD6",
+      "url": "https://files.pythonhosted.org/packages/d1/bd/920b1c5ff1df427a5fc3fd4c2f13b0b0e720c3d57fafd80557094c1fefe0/frozendict-2.4.7-cp310-cp310-macosx_10_9_universal2.whl",
+      "title": "https://files.pythonhosted.org/packages/d1/bd/920b1c5ff1df427a5fc3fd4c2f13b0b0e720c3d57fafd80557094c1fefe0/frozendict-2.4.7-cp310-cp310-macosx_10_9_universal2.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.821Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-703DCFBDD14E": {
+      "id": "SRC-703DCFBDD14E",
+      "url": "https://files.pythonhosted.org/packages/a6/9c/e3e186925b1d84f816d458be4e2ea785bbeba15fd2e9e85c5ae7e7a90421/frozendict-2.4.7-cp310-cp310-macosx_10_9_x86_64.whl",
+      "title": "https://files.pythonhosted.org/packages/a6/9c/e3e186925b1d84f816d458be4e2ea785bbeba15fd2e9e85c5ae7e7a90421/frozendict-2.4.7-cp310-cp310-macosx_10_9_x86_64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-66715F279E72": {
+      "id": "SRC-66715F279E72",
+      "url": "https://files.pythonhosted.org/packages/10/4c/af931d88c51ee2fcbf8c817557dcb975133a188f1b44bfa82caa940beeab/frozendict-2.4.7-cp310-cp310-macosx_11_0_arm64.whl",
+      "title": "https://files.pythonhosted.org/packages/10/4c/af931d88c51ee2fcbf8c817557dcb975133a188f1b44bfa82caa940beeab/frozendict-2.4.7-cp310-cp310-macosx_11_0_arm64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-28C5569E512A": {
+      "id": "SRC-28C5569E512A",
+      "url": "https://files.pythonhosted.org/packages/ba/7a/c1fd4f736758cf93939cc3b7c8399fe1db0c121881431d41fcdbae344343/frozendict-2.4.7-cp310-cp310-manylinux1_i686.manylinux_2_28_i686.manylinux_2_5_i686.whl",
+      "title": "https://files.pythonhosted.org/packages/ba/7a/c1fd4f736758cf93939cc3b7c8399fe1db0c121881431d41fcdbae344343/frozendict-2.4.7-cp310-cp310-manylinux1_i686.manylinux_2_28_i686.manylinux_2_5_i686.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.838Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-9A0D62152F8B": {
+      "id": "SRC-9A0D62152F8B",
+      "url": "https://files.pythonhosted.org/packages/bd/b0/304294f7cd099582a98d63e7a9cec34a9905d07f7628b42fc3f9c9a9bc94/frozendict-2.4.7-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "title": "https://files.pythonhosted.org/packages/bd/b0/304294f7cd099582a98d63e7a9cec34a9905d07f7628b42fc3f9c9a9bc94/frozendict-2.4.7-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-1CCBF5E83063": {
+      "id": "SRC-1CCBF5E83063",
+      "url": "https://files.pythonhosted.org/packages/7e/61/689212ea4124fcbd097c0ac02c2c6a4e345ccc132d9104d054ff6b43ab64/frozendict-2.4.7-cp310-cp310-manylinux2014_armv7l.manylinux_2_17_armv7l.manylinux_2_31_armv7l.whl",
+      "title": "https://files.pythonhosted.org/packages/7e/61/689212ea4124fcbd097c0ac02c2c6a4e345ccc132d9104d054ff6b43ab64/frozendict-2.4.7-cp310-cp310-manylinux2014_armv7l.manylinux_2_17_armv7l.manylinux_2_31_armv7l.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-1D753607498A": {
+      "id": "SRC-1D753607498A",
+      "url": "https://files.pythonhosted.org/packages/5c/9b/38a762f4e76903efd4340454cac2820f583929457822111ef6a00ff1a3f4/frozendict-2.4.7-cp310-cp310-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl",
+      "title": "https://files.pythonhosted.org/packages/5c/9b/38a762f4e76903efd4340454cac2820f583929457822111ef6a00ff1a3f4/frozendict-2.4.7-cp310-cp310-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.856Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-6690B6FA8057": {
+      "id": "SRC-6690B6FA8057",
+      "url": "https://files.pythonhosted.org/packages/cf/41/9751e9ec1a2e810e8f961aea4f8958953157478daff6b868277ab7c5ef8c/frozendict-2.4.7-cp310-cp310-manylinux2014_s390x.manylinux_2_17_s390x.manylinux_2_28_s390x.whl",
+      "title": "https://files.pythonhosted.org/packages/cf/41/9751e9ec1a2e810e8f961aea4f8958953157478daff6b868277ab7c5ef8c/frozendict-2.4.7-cp310-cp310-manylinux2014_s390x.manylinux_2_17_s390x.manylinux_2_28_s390x.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.861Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-929E11DD41AB": {
+      "id": "SRC-929E11DD41AB",
+      "url": "https://files.pythonhosted.org/packages/71/be/b179b5f200cb0f52debeccc63b786cabcc408c4542f47c4245f978ad36e3/frozendict-2.4.7-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "title": "https://files.pythonhosted.org/packages/71/be/b179b5f200cb0f52debeccc63b786cabcc408c4542f47c4245f978ad36e3/frozendict-2.4.7-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.867Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-B8A159D428B8": {
+      "id": "SRC-B8A159D428B8",
+      "url": "https://files.pythonhosted.org/packages/25/c2/1536bc363dbce414e6b632f496aa8219c0db459a99eeafa02eba380e4cfa/frozendict-2.4.7-cp310-cp310-manylinux_2_31_riscv64.manylinux_2_39_riscv64.whl",
+      "title": "https://files.pythonhosted.org/packages/25/c2/1536bc363dbce414e6b632f496aa8219c0db459a99eeafa02eba380e4cfa/frozendict-2.4.7-cp310-cp310-manylinux_2_31_riscv64.manylinux_2_39_riscv64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.873Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-6021564068E8": {
+      "id": "SRC-6021564068E8",
+      "url": "https://files.pythonhosted.org/packages/29/63/3e9efb490c00a0bf3c7bbf72fc73c90c4a6ebe30595e0fc44f59182b2ae7/frozendict-2.4.7-cp310-cp310-musllinux_1_2_aarch64.whl",
+      "title": "https://files.pythonhosted.org/packages/29/63/3e9efb490c00a0bf3c7bbf72fc73c90c4a6ebe30595e0fc44f59182b2ae7/frozendict-2.4.7-cp310-cp310-musllinux_1_2_aarch64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-AFB74311B905": {
+      "id": "SRC-AFB74311B905",
+      "url": "https://files.pythonhosted.org/packages/5e/66/d25b1e94f9b0e64025d5cadc77b9b857737ebffd8963ee91de7c5a06415a/frozendict-2.4.7-cp310-cp310-musllinux_1_2_armv7l.whl",
+      "title": "https://files.pythonhosted.org/packages/5e/66/d25b1e94f9b0e64025d5cadc77b9b857737ebffd8963ee91de7c5a06415a/frozendict-2.4.7-cp310-cp310-musllinux_1_2_armv7l.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-DFE868F1806A": {
+      "id": "SRC-DFE868F1806A",
+      "url": "https://files.pythonhosted.org/packages/a3/5d/0e7e3294e18bf41d38dbc9ee82539be607c8d26e763ae12d9e41f03f2dae/frozendict-2.4.7-cp310-cp310-musllinux_1_2_i686.whl",
+      "title": "https://files.pythonhosted.org/packages/a3/5d/0e7e3294e18bf41d38dbc9ee82539be607c8d26e763ae12d9e41f03f2dae/frozendict-2.4.7-cp310-cp310-musllinux_1_2_i686.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.898Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-A4EE7955B9EA": {
+      "id": "SRC-A4EE7955B9EA",
+      "url": "https://files.pythonhosted.org/packages/e0/fb/b72c9b261ac7a7803528aa63bba776face8ad8d39cc4ca4825ddaa7777a9/frozendict-2.4.7-cp310-cp310",
+      "title": "https://files.pythonhosted.org/packages/e0/fb/b72c9b261ac7a7803528aa63bba776face8ad8d39cc4ca4825ddaa7777a9/frozendict-2.4.7-cp310-cp310",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-135E284294DA": {
+      "id": "SRC-135E284294DA",
+      "url": "https://github.com/openyurtio/openyurt",
+      "title": "https://github.com/openyurtio/openyurt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-96412978921B": {
+      "id": "SRC-96412978921B",
+      "url": "http://127.0.0.1:10267/",
+      "title": "http://127.0.0.1:10267/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T08:35:03.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-B7F234891B3D": {
+      "id": "SRC-B7F234891B3D",
+      "url": "https://github.com/openyurtio/openyurt/blob/master/CONTRIBUTING.md",
+      "title": "https://github.com/openyurtio/openyurt/blob/master/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-43EDB4546A3D": {
+      "id": "SRC-43EDB4546A3D",
+      "url": "https://github.com/openyurtio/openyurt/actions/runs/42748330255/job/129605691827",
+      "title": "https://github.com/openyurtio/openyurt/actions/runs/42748330255/job/129605691827",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-78BBE4C3CE5A": {
+      "id": "SRC-78BBE4C3CE5A",
+      "url": "https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-passed-20px.png",
+      "title": "https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-passed-20px.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-BB19029A6DF0": {
+      "id": "SRC-BB19029A6DF0",
+      "url": "https://sonarcloud.io/dashboard?id=openyurtio_openyurt&pullRequest=2871",
+      "title": "https://sonarcloud.io/dashboard?id=openyurtio_openyurt&pullRequest=2871",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.944Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-7C9E3AE4EBC6": {
+      "id": "SRC-7C9E3AE4EBC6",
+      "url": "https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png",
+      "title": "https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-421C18F78AB8": {
+      "id": "SRC-421C18F78AB8",
+      "url": "https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN%2CCONFIRMED&sinceLeakPeriod=true",
+      "title": "https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN%2CCONFIRMED&sinceLeakPeriod=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.957Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-45648DE924FB": {
+      "id": "SRC-45648DE924FB",
+      "url": "https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/accepted-16px.png",
+      "title": "https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/accepted-16px.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-3282D284A101": {
+      "id": "SRC-3282D284A101",
+      "url": "https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=ACCEPTED",
+      "title": "https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=ACCEPTED",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.976Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-A5E7F7A4B83B": {
+      "id": "SRC-A5E7F7A4B83B",
+      "url": "https://sonarcloud.io/project/security_hotspots?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN%2CCONFIRMED&sinceLeakPerio=",
+      "title": "https://sonarcloud.io/project/security_hotspots?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN%2CCONFIRMED&sinceLeakPerio=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-531EC9C2ED32": {
+      "id": "SRC-531EC9C2ED32",
+      "url": "https://app.codecov.io/gh/openyurtio/openyurt/pull/2871?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/openyurtio/openyurt/pull/2871?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-94A6228042A7": {
+      "id": "SRC-94A6228042A7",
+      "url": "https://app.codecov.io/gh/openyurtio/openyurt/commit/cdcd71515c046387cfc619f19a00c274d087a787?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/openyurtio/openyurt/commit/cdcd71515c046387cfc619f19a00c274d087a787?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-1997E3D2BAC7": {
+      "id": "SRC-1997E3D2BAC7",
+      "url": "https://app.codecov.io/gh/openyurtio/openyurt/commit/a0d396c3e53901d4c7dab8405a5f5edd2c2b6b56?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/openyurtio/openyurt/commit/a0d396c3e53901d4c7dab8405a5f5edd2c2b6b56?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:35:03.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+        "fileName": "openyurtio-openyurt-learnings.md"
       }
     }
   }
