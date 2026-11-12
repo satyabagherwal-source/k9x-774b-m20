@@ -1,0 +1,94 @@
+[
+  {
+    "candidate_id": "CD-ZNND",
+    "title": "Clamped Masked Temporal Pooling (CMTP)",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "upstream_source_repo": "UKPLab/sentence-transformers",
+    "commit_or_version": "hf-sentence-transformers-all-minilm-l6-v2",
+    "source_file": "sentence_transformers/models/Pooling.py",
+    "line_range": "lines 55-75",
+    "original_code_snippet": "sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)\nreturn sum_embeddings / sum_mask",
+    "original_tests": "tests/test_pooling.py (test_pooling_mean, test_pooling_all_masked)",
+    "required_dependencies": [
+      "python>=3.8",
+      "torch>=1.6.0",
+      "sentence-transformers>=2.0.0"
+    ],
+    "dependency_installed_in_host": false,
+    "stage_b1_fixture_type": "INDEPENDENT_REIMBURSEMENT_JS",
+    "actual_source_behavior": "Epsilon clamping prevents IEEE 754 division-by-zero NaN on empty/padded sequences."
+  },
+  {
+    "candidate_id": "CD-ZNND",
+    "title": "Metric Hypersphere Unit Projection (MHUP)",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "upstream_source_repo": "UKPLab/sentence-transformers",
+    "commit_or_version": "hf-sentence-transformers-all-minilm-l6-v2",
+    "source_file": "sentence_transformers/models/Normalize.py",
+    "line_range": "lines 15-30",
+    "original_code_snippet": "torch.nn.functional.normalize(embeddings, p=2, dim=1)",
+    "original_tests": "tests/test_normalize.py",
+    "required_dependencies": [
+      "python>=3.8",
+      "torch>=1.6.0"
+    ],
+    "dependency_installed_in_host": false,
+    "stage_b1_fixture_type": "INDEPENDENT_REIMBURSEMENT_JS",
+    "actual_source_behavior": "Maps embeddings onto unit Euclidean sphere (||v||_2 = 1.0) equating cosine similarity to dot product."
+  },
+  {
+    "candidate_id": "CD-UV2I",
+    "title": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "upstream_source_repo": "prism-ml/Ternary-Bonsai",
+    "commit_or_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+    "source_file": "kernels/ternary_gemm.cu",
+    "line_range": "lines 45-65",
+    "original_code_snippet": "__device__ float dequant_trit_2bit(uint8_t packed_byte, int index) { const float lut[4] = {-1.0f, 0.0f, 1.0f, 0.0f}; return lut[(packed_byte >> (index * 2)) & 0b11]; }",
+    "original_tests": "tests/test_ternary_gemm.cu",
+    "required_dependencies": [
+      "cuda>=11.8",
+      "nvcc",
+      "gpu_compute_capability>=7.0"
+    ],
+    "dependency_installed_in_host": false,
+    "stage_b1_fixture_type": "INDEPENDENT_REIMBURSEMENT_JS",
+    "actual_source_behavior": "Constant-time O(1) table lookup avoids GPU warp branch divergence."
+  },
+  {
+    "candidate_id": "CD-8KGR",
+    "title": "Binary Artifact Header and Version Compatibility",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "upstream_source_repo": "ggerganov/llama.cpp (GGUF specification)",
+    "commit_or_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+    "source_file": "ggml/src/ggml-backend.c / llama.cpp/gguf.py",
+    "line_range": "lines 10-35",
+    "original_code_snippet": "magic, version = struct.unpack('<4sI', f.read(8))\nassert magic == b'GGUF' and version >= 3",
+    "original_tests": "tests/test-gguf.cpp",
+    "required_dependencies": [
+      "python>=3.8",
+      "struct"
+    ],
+    "dependency_installed_in_host": true,
+    "stage_b1_fixture_type": "INDEPENDENT_REIMBURSEMENT_JS",
+    "actual_source_behavior": "Enforces magic byte verification and minimum schema version prior to memory mapping."
+  },
+  {
+    "candidate_id": "CD-HE9Q",
+    "title": "Tokenizer Special Token Normalization Boundary",
+    "repository": "Nanbeige/Nanbeige4.3-33B",
+    "upstream_source_repo": "Nanbeige/Nanbeige",
+    "commit_or_version": "hf-nanbeige-nanbeige4.3-33b",
+    "source_file": "tokenizer_config.json",
+    "line_range": "lines 25-45 (added_tokens_decoder)",
+    "original_code_snippet": "\"added_tokens_decoder\": { \"166100\": { \"content\": \"<|endoftext|>\", \"normalized\": false, \"special\": true } }",
+    "original_tests": "tests/test_tokenization_nanbeige.py",
+    "required_dependencies": [
+      "python>=3.8",
+      "json"
+    ],
+    "dependency_installed_in_host": true,
+    "stage_b1_fixture_type": "INDEPENDENT_REIMBURSEMENT_JS",
+    "actual_source_behavior": "normalized: false prevents pre-tokenization whitespace/case stripping on control tokens."
+  }
+]

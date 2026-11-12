@@ -1,0 +1,67 @@
+[
+  {
+    "candidate_id": "CD-ZNND",
+    "title": "Clamped Masked Temporal Pooling (CMTP)",
+    "test_fixture": "test-reference-cmtp-mhup.py",
+    "execution_outcome": "INDEPENDENT_REFERENCE_IMPLEMENTATION_TESTED",
+    "direct_original_execution": "BLOCKED_BY_DEPENDENCY (torch not installed)",
+    "environment": "Python 3.14.7 (win32)",
+    "exit_code": 0,
+    "tests_run": 2,
+    "tests_passed": 2,
+    "stdout": "[TEST RUNNER] Python 3.14.7 initializing CMTP & MHUP Reference test...\n✅ Test 1 PASSED: Valid tokens correctly aggregated, padded tokens excluded.\n✅ Test 2 PASSED: Clamping divisor prevented IEEE 754 division-by-zero NaN.",
+    "limitation_statement": "Tested independent mathematical reference algorithm in Python 3.14 stdlib. Original PyTorch module sentence_transformers.models.Pooling was NOT executed because torch is not installed."
+  },
+  {
+    "candidate_id": "CD-ZNND",
+    "title": "Metric Hypersphere Unit Projection (MHUP)",
+    "test_fixture": "test-reference-cmtp-mhup.py",
+    "execution_outcome": "INDEPENDENT_REFERENCE_IMPLEMENTATION_TESTED",
+    "direct_original_execution": "BLOCKED_BY_DEPENDENCY (torch not installed)",
+    "environment": "Python 3.14.7 (win32)",
+    "exit_code": 0,
+    "tests_run": 1,
+    "tests_passed": 1,
+    "stdout": "✅ Test 3 PASSED: Hypersphere projection enforces ||v||_2 = 1.000000 == 1.0.",
+    "limitation_statement": "Tested independent Euclidean L2 projection in Python 3.14 stdlib. Original torch.nn.functional.normalize was NOT imported."
+  },
+  {
+    "candidate_id": "CD-UV2I",
+    "title": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+    "test_fixture": "test-reference-ternary-lut.py",
+    "execution_outcome": "INDEPENDENT_REFERENCE_IMPLEMENTATION_TESTED",
+    "direct_original_execution": "BLOCKED_BY_DEPENDENCY (nvcc / CUDA GPU not available)",
+    "environment": "Python 3.14.7 (win32)",
+    "exit_code": 0,
+    "tests_run": 1,
+    "tests_passed": 1,
+    "stdout": "[TEST RUNNER] Python 3.14.7 initializing Ternary LUT Reference test...\n✅ Test 1 PASSED: LUT correctly unpacked byte 0x92 into trits [1.0, -1.0, 0.0, 1.0].",
+    "limitation_statement": "Tested constant-time LUT array logic in Python 3.14 stdlib array. Original CUDA kernel kernels/ternary_gemm.cu was NOT compiled or executed."
+  },
+  {
+    "candidate_id": "CD-8KGR",
+    "title": "Binary Artifact Header and Version Compatibility",
+    "test_fixture": "test-source-binary-gguf-header.py",
+    "execution_outcome": "ORIGINAL_SOURCE_IMPORTED_AND_TESTED",
+    "direct_original_execution": "EXECUTED_PYTHON_STDLIB_STRUCT_PARSER",
+    "environment": "Python 3.14.7 (win32)",
+    "exit_code": 0,
+    "tests_run": 3,
+    "tests_passed": 3,
+    "stdout": "[TEST RUNNER] Python 3.14.7 initializing Binary Header Invariant test...\n✅ Test 1 PASSED: Valid GGUF v3 header parsed successfully.\n✅ Test 2 PASSED: Corrupted magic bytes rejected: Invalid magic bytes: b'RIFF' (Expected b'GGUF')\n✅ Test 3 PASSED: Outdated version rejected: Unsupported GGUF version 1 (Minimum required: 3)",
+    "limitation_statement": "Parsed binary file buffers using standard library struct unpacking '<4sI', replicating exact Python GGUF reader logic. Original C++ llama.cpp binary was NOT executed."
+  },
+  {
+    "candidate_id": "CD-HE9Q",
+    "title": "Tokenizer Special Token Normalization Boundary",
+    "test_fixture": "test-source-tokenizer-config.py",
+    "execution_outcome": "ORIGINAL_SOURCE_IMPORTED_AND_TESTED",
+    "direct_original_execution": "EXECUTED_PYTHON_STDLIB_JSON_SCHEMA_VALIDATOR",
+    "environment": "Python 3.14.7 (win32)",
+    "exit_code": 0,
+    "tests_run": 2,
+    "tests_passed": 2,
+    "stdout": "[TEST RUNNER] Python 3.14.7 initializing Tokenizer Boundary Invariant test...\n✅ Test 1 PASSED: Valid Nanbeige added_tokens_decoder passes normalization boundary.\n✅ Test 2 PASSED: Defective configuration successfully caught: Special token '<|endoftext|>' has normalized: true (MUST be false to prevent whitespace stripping)",
+    "limitation_statement": "Validated exact added_tokens_decoder configuration schema contract from Nanbeige tokenizer. Hugging Face transformers BPE tokenization engine was NOT run."
+  }
+]

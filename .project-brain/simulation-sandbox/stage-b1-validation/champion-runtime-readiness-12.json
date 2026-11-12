@@ -1,0 +1,128 @@
+{
+  "mission_id": "UKD-STAGE-B1-INDEPENDENT-VALIDATION-01",
+  "timestamp": "2026-11-12T14:50:50.214Z",
+  "total_records": 12,
+  "verified_fixtures_count": 5,
+  "records": [
+    {
+      "candidate_id": "CD-ZNND",
+      "title": "Clamped Masked Temporal Pooling (CMTP)",
+      "independent_classification": "RUNTIME_VERIFICATION_REQUIRED",
+      "runtime_readiness_status": "FIXTURE_VERIFIED",
+      "fixture_path": ".project-brain/simulation-sandbox/stage-b1-validation/test-fixtures/test-fixture-cmtp-mhup.mjs",
+      "execution_status": "VERIFIED_IN_SANDBOX",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-ZNND",
+      "title": "Metric Hypersphere Unit Projection (MHUP)",
+      "independent_classification": "RUNTIME_VERIFICATION_REQUIRED",
+      "runtime_readiness_status": "FIXTURE_VERIFIED",
+      "fixture_path": ".project-brain/simulation-sandbox/stage-b1-validation/test-fixtures/test-fixture-cmtp-mhup.mjs",
+      "execution_status": "VERIFIED_IN_SANDBOX",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-UV2I",
+      "title": "Zero-Copy Low-Bit Computation",
+      "independent_classification": "STATIC_EVIDENCE_SUPPORTED",
+      "runtime_readiness_status": "FIXTURE_VERIFIED",
+      "fixture_path": ".project-brain/simulation-sandbox/stage-b1-validation/test-fixtures/test-fixture-lut-unpacking.mjs",
+      "execution_status": "VERIFIED_IN_SANDBOX",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-UV2I",
+      "title": "Modality Decoupling for Independent Quantization",
+      "independent_classification": "INSUFFICIENT_EVIDENCE",
+      "runtime_readiness_status": "NOT_APPLICABLE_INSUFFICIENT_EVIDENCE",
+      "fixture_path": null,
+      "execution_status": "NOT_RUN",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-8KGR",
+      "title": "Binary Artifact Versioning & Format Compatibility Invariant",
+      "independent_classification": "STATIC_EVIDENCE_SUPPORTED",
+      "runtime_readiness_status": "FIXTURE_VERIFIED",
+      "fixture_path": ".project-brain/simulation-sandbox/stage-b1-validation/test-fixtures/test-fixture-binary-header.mjs",
+      "execution_status": "VERIFIED_IN_SANDBOX",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-8KGR",
+      "title": "Memory Footprint vs. Quality Trade-off Documentation Invariant",
+      "independent_classification": "INSUFFICIENT_EVIDENCE",
+      "runtime_readiness_status": "NOT_APPLICABLE_INSUFFICIENT_EVIDENCE",
+      "fixture_path": null,
+      "execution_status": "NOT_RUN",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-8KGR",
+      "title": "Format-Specific Optimization Invariant",
+      "independent_classification": "INSUFFICIENT_EVIDENCE",
+      "runtime_readiness_status": "NOT_APPLICABLE_INSUFFICIENT_EVIDENCE",
+      "fixture_path": null,
+      "execution_status": "NOT_RUN",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-550F",
+      "title": "Multi-Format Quantization Artifact Isolation",
+      "independent_classification": "REPOSITORY_SPECIFIC",
+      "runtime_readiness_status": "NOT_APPLICABLE_REPOSITORY_SPECIFIC",
+      "fixture_path": null,
+      "execution_status": "NOT_RUN",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-UQL0",
+      "title": "Quantization Format Compatibility Mapping",
+      "independent_classification": "REPOSITORY_SPECIFIC",
+      "runtime_readiness_status": "NOT_APPLICABLE_REPOSITORY_SPECIFIC",
+      "fixture_path": null,
+      "execution_status": "NOT_RUN",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-9RFV",
+      "title": "Memory Footprint vs. Quality Threshold Enforcement",
+      "independent_classification": "INSUFFICIENT_EVIDENCE",
+      "runtime_readiness_status": "NOT_APPLICABLE_INSUFFICIENT_EVIDENCE",
+      "fixture_path": null,
+      "execution_status": "NOT_RUN",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-URAY",
+      "title": "Quantization Precision-Size Trade-off Documentation",
+      "independent_classification": "REPOSITORY_SPECIFIC",
+      "runtime_readiness_status": "NOT_APPLICABLE_REPOSITORY_SPECIFIC",
+      "fixture_path": null,
+      "execution_status": "NOT_RUN",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    },
+    {
+      "candidate_id": "CD-HE9Q",
+      "title": "Tokenizer Special Token Normalization Boundary",
+      "independent_classification": "RUNTIME_VERIFICATION_REQUIRED",
+      "runtime_readiness_status": "FIXTURE_VERIFIED",
+      "fixture_path": ".project-brain/simulation-sandbox/stage-b1-validation/test-fixtures/test-fixture-tokenizer-boundary.mjs",
+      "execution_status": "VERIFIED_IN_SANDBOX",
+      "execution_environment": "ISOLATED_SANDBOX_NODEJS",
+      "production_access_required": false
+    }
+  ]
+}

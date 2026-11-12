@@ -1,0 +1,72 @@
+[
+  {
+    "candidate_id": "CD-ZNND",
+    "concept_title": "Clamped Masked Temporal Pooling (CMTP)",
+    "upstream_repository": "UKPLab/sentence-transformers",
+    "target_source_file": "sentence_transformers/models/Pooling.py",
+    "test_runner_script": ".project-brain/simulation-sandbox/stage-b3-harness/test-cmtp-mhup-pytorch.py",
+    "execution_mode": "ORIGINAL_SOURCE_EXECUTED",
+    "command": ".project-brain/simulation-sandbox/stage-b3-harness/venv/Scripts/python.exe test-cmtp-mhup-pytorch.py",
+    "exit_code": 0,
+    "tests_run": 3,
+    "tests_passed": 3,
+    "raw_log_file": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/cmtp-mhup-pytorch-execution.log",
+    "key_findings": "PyTorch CPU tensor pooling executed directly. Proved that clamping divisor to min 1e-9 eliminates division-by-zero NaN, while unclamped anti-pattern produces NaN."
+  },
+  {
+    "candidate_id": "CD-ZNND",
+    "concept_title": "Metric Hypersphere Unit Projection (MHUP)",
+    "upstream_repository": "UKPLab/sentence-transformers",
+    "target_source_file": "sentence_transformers/models/Normalize.py",
+    "test_runner_script": ".project-brain/simulation-sandbox/stage-b3-harness/test-cmtp-mhup-pytorch.py",
+    "execution_mode": "ORIGINAL_SOURCE_EXECUTED",
+    "command": ".project-brain/simulation-sandbox/stage-b3-harness/venv/Scripts/python.exe test-cmtp-mhup-pytorch.py",
+    "exit_code": 0,
+    "tests_run": 2,
+    "tests_passed": 2,
+    "raw_log_file": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/cmtp-mhup-pytorch-execution.log",
+    "key_findings": "PyTorch F.normalize executed directly. Proved that Euclidean L2 normalization projects vectors to ||v||_2 = 1.0, equating cosine similarity to dot product."
+  },
+  {
+    "candidate_id": "CD-HE9Q",
+    "concept_title": "Tokenizer Special Token Normalization Boundary",
+    "upstream_repository": "Nanbeige/Nanbeige4.3-33B",
+    "target_source_file": "tokenizer_config.json (added_tokens_decoder)",
+    "test_runner_script": ".project-brain/simulation-sandbox/stage-b2-verification/test-fixtures/test-source-tokenizer-config.py",
+    "execution_mode": "CONFIGURATION_CONTRACT_TESTED",
+    "command": ".project-brain/simulation-sandbox/stage-b3-harness/venv/Scripts/python.exe run-and-log-all.py",
+    "exit_code": 0,
+    "tests_run": 2,
+    "tests_passed": 2,
+    "raw_log_file": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/tokenizer-config-execution.log",
+    "key_findings": "Tested against actual Nanbeige configuration schema contract. Proved that special tokens with normalized: false preserve sequence boundaries, while normalized: true triggers boundary defect."
+  },
+  {
+    "candidate_id": "CD-8KGR",
+    "concept_title": "Binary Artifact Header and Version Compatibility",
+    "upstream_repository": "ggerganov/llama.cpp",
+    "target_source_file": "ggml/src/ggml.c (gguf_init_from_file)",
+    "test_runner_script": ".project-brain/simulation-sandbox/stage-b2-verification/test-fixtures/test-source-binary-gguf-header.py",
+    "execution_mode": "STATIC_EVIDENCE_ONLY",
+    "command": ".project-brain/simulation-sandbox/stage-b3-harness/venv/Scripts/python.exe run-and-log-all.py",
+    "exit_code": 0,
+    "tests_run": 3,
+    "tests_passed": 3,
+    "raw_log_file": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/binary-gguf-header-execution.log",
+    "key_findings": "Original C source ggml.c cannot be compiled due to missing C/C++ compiler. Binary layout contract was tested via Python struct parser in sandbox."
+  },
+  {
+    "candidate_id": "CD-UV2I",
+    "concept_title": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+    "upstream_repository": "prism-ml/Ternary-Bonsai",
+    "target_source_file": "kernels/ternary_gemm.cu",
+    "test_runner_script": ".project-brain/simulation-sandbox/stage-b2-verification/test-fixtures/test-reference-ternary-lut.py",
+    "execution_mode": "BLOCKED_BY_DEPENDENCY",
+    "command": ".project-brain/simulation-sandbox/stage-b3-harness/venv/Scripts/python.exe run-and-log-all.py",
+    "exit_code": 0,
+    "tests_run": 1,
+    "tests_passed": 1,
+    "raw_log_file": ".project-brain/simulation-sandbox/stage-b3-harness/actual-execution-logs/ternary-lut-execution.log",
+    "key_findings": "Original CUDA kernel cannot be compiled or executed due to missing nvcc compiler and NVIDIA GPU. Reference 2-bit array lookup tested in Python stdlib."
+  }
+]

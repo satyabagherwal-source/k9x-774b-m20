@@ -1,0 +1,42 @@
+[
+  {
+    "candidate_id": "CD-ZNND",
+    "title": "Clamped Masked Temporal Pooling (CMTP)",
+    "evidence_classification": "ALGORITHM_INDEPENDENTLY_TESTED",
+    "universality_status": "BOUNDED_UNIVERSAL (Applies universally to transformer pooling with variable-length padding)",
+    "confidence": "HIGH",
+    "rationale": "Mathematical invariant verified independently in both Node.js and Python test runners. Original PyTorch source not run due to host dependency absence."
+  },
+  {
+    "candidate_id": "CD-ZNND",
+    "title": "Metric Hypersphere Unit Projection (MHUP)",
+    "evidence_classification": "ALGORITHM_INDEPENDENTLY_TESTED",
+    "universality_status": "BOUNDED_UNIVERSAL (Applies universally to cosine-metric dense embedding retrieval)",
+    "confidence": "HIGH",
+    "rationale": "Euclidean normalization invariant verified independently in both Node.js and Python test runners."
+  },
+  {
+    "candidate_id": "CD-UV2I",
+    "title": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+    "evidence_classification": "ALGORITHM_INDEPENDENTLY_TESTED",
+    "universality_status": "UNIVERSALITY_NOT_ESTABLISHED (Restricted to architectures where constant-memory lookup is faster than instruction decoding)",
+    "confidence": "MEDIUM",
+    "rationale": "Algorithmic LUT unpacking verified in Node.js and Python. GPU warp divergence prevention observed statically in CUDA code."
+  },
+  {
+    "candidate_id": "CD-8KGR",
+    "title": "Binary Artifact Header and Version Compatibility",
+    "evidence_classification": "ALGORITHM_INDEPENDENTLY_TESTED",
+    "universality_status": "BOUNDED_UNIVERSAL (Applies to all binary weight formats requiring magic byte and version validation)",
+    "confidence": "HIGH",
+    "rationale": "Binary struct parser executed directly in Python 3.14 stdlib against synthesized valid and invalid GGUF headers."
+  },
+  {
+    "candidate_id": "CD-HE9Q",
+    "title": "Tokenizer Special Token Normalization Boundary",
+    "evidence_classification": "ORIGINAL_IMPLEMENTATION_TESTED",
+    "universality_status": "BOUNDED_UNIVERSAL (Applies to Hugging Face added_tokens_decoder configurations)",
+    "confidence": "HIGH",
+    "rationale": "Schema contract executed in Python 3.14 stdlib against Nanbeige configuration payload."
+  }
+]

@@ -1,0 +1,171 @@
+{
+  "mission_id": "UKD-STAGE-B3-ORIGINAL-SOURCE-EXECUTION-01",
+  "timestamp": "2026-11-12T15:25:00Z",
+  "test_suites": [
+    {
+      "candidate_id": "CD-ZNND",
+      "concept": "Clamped Masked Temporal Pooling (CMTP)",
+      "target_file": "sentence_transformers/models/Pooling.py",
+      "deterministic_cases": [
+        {
+          "case_id": "CMTP-CASE-01",
+          "description": "Normal multi-sequence batch with variable length padding",
+          "inputs": {
+            "token_embeddings_shape": [2, 3, 2],
+            "tokens": [
+              [[1.0, 2.0], [3.0, 4.0], [0.0, 0.0]],
+              [[5.0, 6.0], [7.0, 8.0], [9.0, 10.0]]
+            ],
+            "attention_mask": [
+              [1, 1, 0],
+              [1, 1, 1]
+            ]
+          },
+          "expected_outputs": [
+            [2.0, 3.0],
+            [7.0, 8.0]
+          ],
+          "tolerance": 1e-6
+        },
+        {
+          "case_id": "CMTP-CASE-02",
+          "description": "Extreme boundary condition: All tokens masked (zero attention mask sum)",
+          "inputs": {
+            "token_embeddings_shape": [1, 2, 2],
+            "tokens": [
+              [[10.0, 20.0], [30.0, 40.0]]
+            ],
+            "attention_mask": [
+              [0, 0]
+            ]
+          },
+          "expected_outputs": [
+            [0.0, 0.0]
+          ],
+          "assertions": [
+            "No NaN in output tensor",
+            "No Inf in output tensor",
+            "Divisor clamped to min 1e-9"
+          ]
+        },
+        {
+          "case_id": "CMTP-CASE-03",
+          "description": "Single-token unpadded sequence",
+          "inputs": {
+            "token_embeddings_shape": [1, 1, 2],
+            "tokens": [
+              [[42.0, -17.5]]
+            ],
+            "attention_mask": [
+              [1]
+            ]
+          },
+          "expected_outputs": [
+            [42.0, -17.5]
+          ],
+          "tolerance": 1e-6
+        }
+      ]
+    },
+    {
+      "candidate_id": "CD-ZNND",
+      "concept": "Metric Hypersphere Unit Projection (MHUP)",
+      "target_file": "sentence_transformers/models/Normalize.py",
+      "deterministic_cases": [
+        {
+          "case_id": "MHUP-CASE-01",
+          "description": "Standard 3D vector Euclidean L2 unit normalization",
+          "inputs": [3.0, 4.0, 0.0],
+          "expected_outputs": [0.6, 0.8, 0.0],
+          "expected_l2_norm": 1.0,
+          "tolerance": 1e-6
+        },
+        {
+          "case_id": "MHUP-CASE-02",
+          "description": "Zero vector boundary condition",
+          "inputs": [0.0, 0.0, 0.0],
+          "expected_outputs": [0.0, 0.0, 0.0],
+          "assertions": [
+            "Output is finite zero vector",
+            "No NaN or Inf generated"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate_id": "CD-UV2I",
+      "concept": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+      "target_file": "kernels/ternary_gemm.cu",
+      "deterministic_cases": [
+        {
+          "case_id": "LUT-CASE-01",
+          "description": "Byte 0x92 with mixed trits: 0b10010010",
+          "inputs": {"packed_byte": 146},
+          "expected_outputs": [1.0, -1.0, 0.0, 1.0]
+        },
+        {
+          "case_id": "LUT-CASE-02",
+          "description": "Byte 0x00: all negative trits (0b00000000)",
+          "inputs": {"packed_byte": 0},
+          "expected_outputs": [-1.0, -1.0, -1.0, -1.0]
+        },
+        {
+          "case_id": "LUT-CASE-03",
+          "description": "Byte 0xFF: all padding trits (0b11111111)",
+          "inputs": {"packed_byte": 255},
+          "expected_outputs": [0.0, 0.0, 0.0, 0.0]
+        }
+      ]
+    },
+    {
+      "candidate_id": "CD-8KGR",
+      "concept": "Binary Artifact Header and Version Compatibility",
+      "target_file": "ggml/src/ggml.c (gguf_init_from_file)",
+      "deterministic_cases": [
+        {
+          "case_id": "GGUF-CASE-01",
+          "description": "Valid GGUF v3 binary header",
+          "inputs": {"magic": "GGUF", "version": 3},
+          "expected_result": "VALID"
+        },
+        {
+          "case_id": "GGUF-CASE-02",
+          "description": "Corrupt magic bytes",
+          "inputs": {"magic": "RIFF", "version": 3},
+          "expected_result": "REJECTED_INVALID_MAGIC"
+        },
+        {
+          "case_id": "GGUF-CASE-03",
+          "description": "Outdated version v1",
+          "inputs": {"magic": "GGUF", "version": 1},
+          "expected_result": "REJECTED_UNSUPPORTED_VERSION"
+        }
+      ]
+    },
+    {
+      "candidate_id": "CD-HE9Q",
+      "concept": "Tokenizer Special Token Normalization Boundary",
+      "target_file": "tokenizer_config.json (added_tokens_decoder)",
+      "deterministic_cases": [
+        {
+          "case_id": "TOK-CASE-01",
+          "description": "Valid Nanbeige configuration pattern",
+          "inputs": {
+            "special_tokens": [{"content": "<|endoftext|>", "special": true, "normalized": false}],
+            "structural_tokens": [{"content": "</think>", "special": false, "normalized": true}]
+          },
+          "expected_result": "VALID"
+        },
+        {
+          "case_id": "TOK-CASE-02",
+          "description": "Defective configuration: special token with normalized: true",
+          "inputs": {
+            "special_tokens": [{"content": "<s>", "special": true, "normalized": true}]
+          },
+          "expected_result": "REJECTED_BOUNDARY_VIOLATION"
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,1380 @@
+{
+  "mission_id": "UKD-STAGE-B1-INDEPENDENT-VALIDATION-01",
+  "timestamp": "2026-11-12T14:49:47.977Z",
+  "total_records": 76,
+  "recoverability_priority_census": {
+    "HIGH": 4,
+    "MEDIUM": 72,
+    "LOW": 0
+  },
+  "records": [
+    {
+      "item_number": 1,
+      "candidate_id": "CD-4YX5",
+      "title": "Frozen Vision Encoder for Zero-Shot Generalization",
+      "repository": "autotrust/JEV-27B-VL",
+      "commit_or_version": "hf-autotrust",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo autotrust/JEV-27B-VL for full git commit and test suite."
+    },
+    {
+      "item_number": 2,
+      "candidate_id": "CD-RABK",
+      "title": "Quantized Tensor Transplant Integrity Rule",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "commit_or_version": "hf-sc117-qwe",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 3,
+      "candidate_id": "CD-RABK",
+      "title": "GGUF Endianness Rule",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "commit_or_version": "hf-sc117-qwe",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 4,
+      "candidate_id": "CD-YOUP",
+      "title": "Distillation is Not Monotonic",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "commit_or_version": "hf-viggle-qw",
+      "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Viggle/Qwen-Image-2.1-viggle-turbo for full git commit and test suite."
+    },
+    {
+      "item_number": 5,
+      "candidate_id": "CD-YOUP",
+      "title": "Quantization is a Quality-Speed Trade-off",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "commit_or_version": "hf-viggle-qw",
+      "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Viggle/Qwen-Image-2.1-viggle-turbo for full git commit and test suite."
+    },
+    {
+      "item_number": 6,
+      "candidate_id": "CD-6PAX",
+      "title": "Per-Granularity Type Resolution",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ista-dasl",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 7,
+      "candidate_id": "CD-6PAY",
+      "title": "Integer-Only Resource Accounting",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ista-dasl",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 8,
+      "candidate_id": "CD-6PAY",
+      "title": "Multimodal Dimensional Compatibility Check",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ista-dasl",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 9,
+      "candidate_id": "CD-PMZ3",
+      "title": "Special Token ID Verification",
+      "repository": "akhilaaa3/Jev-Omni",
+      "commit_or_version": "hf-akhilaaa3",
+      "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo akhilaaa3/Jev-Omni for full git commit and test suite."
+    },
+    {
+      "item_number": 10,
+      "candidate_id": "CD-WXQA",
+      "title": "Prompt Enhancement Layer for Specialized T2I Models",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "commit_or_version": "hf-inclusion",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo inclusionAI/Ming-Image-0.1-Design for full git commit and test suite."
+    },
+    {
+      "item_number": 11,
+      "candidate_id": "CD-8JVT",
+      "title": "Dynamic Precision Allocation for Neural Networks",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "commit_or_version": "hf-unsloth-q",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo unsloth/Qwen-Image-2.1-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 12,
+      "candidate_id": "CD-8JVT",
+      "title": "Pipeline-Wide VRAM Optimization",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "commit_or_version": "hf-unsloth-q",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo unsloth/Qwen-Image-2.1-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 13,
+      "candidate_id": "CD-CM4A",
+      "title": "Hybrid Attention Sink Bias Invariant",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "commit_or_version": "hf-xiaomimim",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo XiaomiMiMo/MiMo-V2.6-Pro-RL for full git commit and test suite."
+    },
+    {
+      "item_number": 14,
+      "candidate_id": "CD-GBD0",
+      "title": "Backend Concurrency & Memory Safety",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "commit_or_version": "hf-orcaroute",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": false,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "HIGH",
+      "required_remote_action": "Inspect remote repo orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 15,
+      "candidate_id": "CD-GBD0",
+      "title": "Memory-Bounded Model Loading",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "commit_or_version": "hf-orcaroute",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": false,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "HIGH",
+      "required_remote_action": "Inspect remote repo orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 16,
+      "candidate_id": "CD-JX3R",
+      "title": "Model-Weight Compatibility Validation",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "commit_or_version": "hf-alissoner",
+      "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Alissonerdx/BFS-Best-Face-Swap for full git commit and test suite."
+    },
+    {
+      "item_number": 17,
+      "candidate_id": "CD-JX3R",
+      "title": "Safe Tensor Serialization",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "commit_or_version": "hf-alissoner",
+      "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Alissonerdx/BFS-Best-Face-Swap for full git commit and test suite."
+    },
+    {
+      "item_number": 18,
+      "candidate_id": "CD-NIGA",
+      "title": "Quantization Fidelity Verification",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ukisai-sw",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 19,
+      "candidate_id": "CD-NIGA",
+      "title": "Runtime Feature Compatibility Check",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ukisai-sw",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 20,
+      "candidate_id": "CD-NIGA",
+      "title": "Total Memory Calculation",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ukisai-sw",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 21,
+      "candidate_id": "CD-30ZM",
+      "title": "Model Artifact Serialization Safety",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "commit_or_version": "hf-compvis-s",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": false,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo CompVis/stable-diffusion-v1-4 for full git commit and test suite."
+    },
+    {
+      "item_number": 22,
+      "candidate_id": "CD-30ZM",
+      "title": "Memory Optimization for Large Models",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "commit_or_version": "hf-compvis-s",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": false,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo CompVis/stable-diffusion-v1-4 for full git commit and test suite."
+    },
+    {
+      "item_number": 23,
+      "candidate_id": "CD-KZ7M",
+      "title": "Weight-Code Separation & Versioning Invariant",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "commit_or_version": "hf-compvis-s",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": false,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo CompVis/stable-diffusion-v1-4 for full git commit and test suite."
+    },
+    {
+      "item_number": 24,
+      "candidate_id": "CD-KZ7M",
+      "title": "Fine-Tuning Lineage & Data Provenance Documentation",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "commit_or_version": "hf-compvis-s",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": false,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo CompVis/stable-diffusion-v1-4 for full git commit and test suite."
+    },
+    {
+      "item_number": 25,
+      "candidate_id": "CD-CKH3",
+      "title": "upload files directly in task artifacts",
+      "repository": "paperclipai/paperclip",
+      "commit_or_version": "fb21a3f3",
+      "dossier_file": "07_PROJECT_LEARNING/paperclipai-paperclip-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo paperclipai/paperclip for full git commit and test suite."
+    },
+    {
+      "item_number": 26,
+      "candidate_id": "CD-4XQI",
+      "title": "Forensic Data Integrity & Null-State Handling",
+      "repository": "facebook/sam3",
+      "commit_or_version": "hf-facebook-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo facebook/sam3 for full git commit and test suite."
+    },
+    {
+      "item_number": 27,
+      "candidate_id": "CD-UZIV",
+      "title": "Tokenizer Special Token Integrity & Chat Template Consistency",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "commit_or_version": "hf-meta-llam",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo meta-llama/Llama-2-7b-chat-hf for full git commit and test suite."
+    },
+    {
+      "item_number": 28,
+      "candidate_id": "CD-HGHV",
+      "title": "Weight Artifact Versioning & Lineage Integrity",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "commit_or_version": "hf-compvis-s",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": false,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo CompVis/stable-diffusion-v1-4 for full git commit and test suite."
+    },
+    {
+      "item_number": 29,
+      "candidate_id": "CD-IAKV",
+      "title": "Quantization Quality Metric Transparency (KLD Reporting)",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ukisai-sw",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 30,
+      "candidate_id": "CD-IAKV",
+      "title": "Mixed-Precision Tensor Allocation Documentation",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "commit_or_version": "hf-ukisai-sw",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 31,
+      "candidate_id": "CD-H7F3",
+      "title": "Merge pull request #1284 from openziti/fall-fixes-208",
+      "repository": "openziti/zrok",
+      "commit_or_version": "09ed814e",
+      "dossier_file": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": false,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "HIGH",
+      "required_remote_action": "Inspect remote repo openziti/zrok for full git commit and test suite."
+    },
+    {
+      "item_number": 32,
+      "candidate_id": "CD-OZ9Y",
+      "title": "equation, data-table): warning `injection \"n-config-provider\" not found` when us",
+      "repository": "tusen-ai/naive-ui",
+      "commit_or_version": "8b249214",
+      "dossier_file": "07_PROJECT_LEARNING/tusen-ai-naive-ui-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo tusen-ai/naive-ui for full git commit and test suite."
+    },
+    {
+      "item_number": 33,
+      "candidate_id": "CD-644A",
+      "title": "resolve compatibility crashes by implementing required adapter methods, fixing t",
+      "repository": "AhmadHassan-BTed/OpenOPC-Shadow-Adapter",
+      "commit_or_version": "f38d1e5c",
+      "dossier_file": "07_PROJECT_LEARNING/ahmadhassan-bted-openopc-shadow-adapter-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo AhmadHassan-BTed/OpenOPC-Shadow-Adapter for full git commit and test suite."
+    },
+    {
+      "item_number": 34,
+      "candidate_id": "CD-W4UM",
+      "title": "Cross-Repository Dependency Version Locking",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "commit_or_version": "hf-openmoss-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo OpenMOSS-Team/MOSS-Image-Base for full git commit and test suite."
+    },
+    {
+      "item_number": 35,
+      "candidate_id": "CD-3VXR",
+      "title": "Empirical Invariant Guard in mod.rs",
+      "repository": "Rigellute/spotify-tui",
+      "commit_or_version": "c4dcf6b9",
+      "dossier_file": "07_PROJECT_LEARNING/rigellute-spotify-tui-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Rigellute/spotify-tui for full git commit and test suite."
+    },
+    {
+      "item_number": 36,
+      "candidate_id": "CD-J5W2",
+      "title": "Empirical Invariant Guard in Cargo.lock",
+      "repository": "timvisee/ffsend",
+      "commit_or_version": "85aae2f3",
+      "dossier_file": "07_PROJECT_LEARNING/timvisee-ffsend-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo timvisee/ffsend for full git commit and test suite."
+    },
+    {
+      "item_number": 37,
+      "candidate_id": "CD-41ZO",
+      "title": "broken Markdown headings",
+      "repository": "fangwei716/30-days-of-react-native",
+      "commit_or_version": "66af6134",
+      "dossier_file": "07_PROJECT_LEARNING/fangwei716-30-days-of-react-native-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo fangwei716/30-days-of-react-native for full git commit and test suite."
+    },
+    {
+      "item_number": 38,
+      "candidate_id": "CD-0OPZ",
+      "title": "docs: Trivy callout and migration guide added",
+      "repository": "aquasecurity/tfsec",
+      "commit_or_version": "b692c20b",
+      "dossier_file": "07_PROJECT_LEARNING/aquasecurity-tfsec-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo aquasecurity/tfsec for full git commit and test suite."
+    },
+    {
+      "item_number": 39,
+      "candidate_id": "CD-3CEI",
+      "title": "Forensic Data Integrity Guard (Null-Repo Detection)",
+      "repository": "facebook/sam3",
+      "commit_or_version": "hf-facebook-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo facebook/sam3 for full git commit and test suite."
+    },
+    {
+      "item_number": 40,
+      "candidate_id": "CD-F2AV",
+      "title": "harden core utilities, add vitest suite, contributing guide",
+      "repository": "manojahi/serpiq",
+      "commit_or_version": "f3330d7e",
+      "dossier_file": "07_PROJECT_LEARNING/manojahi-serpiq-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo manojahi/serpiq for full git commit and test suite."
+    },
+    {
+      "item_number": 41,
+      "candidate_id": "CD-NO7Q",
+      "title": "compiler crash when using Kotlin 2.0.20",
+      "repository": "realm/realm-kotlin",
+      "commit_or_version": "9cdc4556",
+      "dossier_file": "07_PROJECT_LEARNING/realm-realm-kotlin-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": false,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "HIGH",
+      "required_remote_action": "Inspect remote repo realm/realm-kotlin for full git commit and test suite."
+    },
+    {
+      "item_number": 42,
+      "candidate_id": "CD-R0GU",
+      "title": "initial commit — Deep in GSC v3.1",
+      "repository": "melihandic/deep-in-gsc",
+      "commit_or_version": "bf8cb859",
+      "dossier_file": "07_PROJECT_LEARNING/melihandic-deep-in-gsc-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo melihandic/deep-in-gsc for full git commit and test suite."
+    },
+    {
+      "item_number": 43,
+      "candidate_id": "CD-DZIW",
+      "title": "Empirical Invariant Guard in project.pbxproj",
+      "repository": "ming1016/SwiftPamphletApp",
+      "commit_or_version": "0d07d106",
+      "dossier_file": "07_PROJECT_LEARNING/ming1016-swiftpamphletapp-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo ming1016/SwiftPamphletApp for full git commit and test suite."
+    },
+    {
+      "item_number": 44,
+      "candidate_id": "CD-CV0P",
+      "title": "Empirical Invariant Guard in NumberPad.swift",
+      "repository": "rafsoh/dimeApp",
+      "commit_or_version": "0463cb8c",
+      "dossier_file": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo rafsoh/dimeApp for full git commit and test suite."
+    },
+    {
+      "item_number": 45,
+      "candidate_id": "CD-X1A7",
+      "title": "resolve compatibility crashes by implementing required adapter methods, fixing t",
+      "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+      "commit_or_version": "69d27ddc",
+      "dossier_file": "07_PROJECT_LEARNING/ahmadhassan-bted-autoswarm-shadow-adapter-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo AhmadHassan-BTed/AutoSwarm-Shadow-Adapter for full git commit and test suite."
+    },
+    {
+      "item_number": 46,
+      "candidate_id": "CD-ATGN",
+      "title": "Base vs. SFT Model Versioning Invariant",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "commit_or_version": "hf-openmoss-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo OpenMOSS-Team/MOSS-Image-Base for full git commit and test suite."
+    },
+    {
+      "item_number": 47,
+      "candidate_id": "CD-V7GX",
+      "title": "Infinite Loop & Recursion Guards",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "commit_or_version": "hf-deepseek-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo deepseek-ai/DeepSeek-V4.1-Flash for full git commit and test suite."
+    },
+    {
+      "item_number": 48,
+      "candidate_id": "CD-ZG9E",
+      "title": "Merge pull request #775 from Kuddev/fix/windows-update-worker-20261026",
+      "repository": "Kuddev/pebrel",
+      "commit_or_version": "404d9173",
+      "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Kuddev/pebrel for full git commit and test suite."
+    },
+    {
+      "item_number": 49,
+      "candidate_id": "CD-0Y85",
+      "title": "security): validate Host header on /api/* to block DNS rebinding",
+      "repository": "nexu-io/html-anything",
+      "commit_or_version": "975fb3bc",
+      "dossier_file": "07_PROJECT_LEARNING/nexu-io-html-anything-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo nexu-io/html-anything for full git commit and test suite."
+    },
+    {
+      "item_number": 50,
+      "candidate_id": "CD-136O",
+      "title": "apply script bug fixes from PR #1021",
+      "repository": "automazeio/ccpm",
+      "commit_or_version": "3294c85b",
+      "dossier_file": "07_PROJECT_LEARNING/automazeio-ccpm-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo automazeio/ccpm for full git commit and test suite."
+    },
+    {
+      "item_number": 51,
+      "candidate_id": "CD-72V2",
+      "title": "Merge pull request #506 from BlockRunAI/fix/ssrf-dns-resolve",
+      "repository": "BlockRunAI/ClawRouter",
+      "commit_or_version": "d14d145d",
+      "dossier_file": "07_PROJECT_LEARNING/blockrunai-clawrouter-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo BlockRunAI/ClawRouter for full git commit and test suite."
+    },
+    {
+      "item_number": 52,
+      "candidate_id": "CD-6S5Q",
+      "title": "Empirical Invariant Guard in .gitignore",
+      "repository": "internet-development/www-sacred",
+      "commit_or_version": "a4412efd",
+      "dossier_file": "07_PROJECT_LEARNING/internet-development-www-sacred-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo internet-development/www-sacred for full git commit and test suite."
+    },
+    {
+      "item_number": 53,
+      "candidate_id": "CD-FQGE",
+      "title": "Synthesize ARC dataset pairs instead of copying",
+      "repository": "NucleoidAI/Nucleoid",
+      "commit_or_version": "73085699",
+      "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo NucleoidAI/Nucleoid for full git commit and test suite."
+    },
+    {
+      "item_number": 54,
+      "candidate_id": "CD-RZ1V",
+      "title": "Merge pull request #1878 from linkwarden/hot-fix",
+      "repository": "linkwarden/linkwarden",
+      "commit_or_version": "eff7c6b7",
+      "dossier_file": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo linkwarden/linkwarden for full git commit and test suite."
+    },
+    {
+      "item_number": 55,
+      "candidate_id": "CD-C64J",
+      "title": "Documentation-Driven API Contract Enforcement",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "commit_or_version": "hf-alissoner",
+      "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Alissonerdx/BFS-Best-Face-Swap for full git commit and test suite."
+    },
+    {
+      "item_number": 56,
+      "candidate_id": "CD-TCMV",
+      "title": "Model Card & License Compliance Invariant",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "commit_or_version": "hf-compvis-s",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": false,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo CompVis/stable-diffusion-v1-4 for full git commit and test suite."
+    },
+    {
+      "item_number": 57,
+      "candidate_id": "CD-VV0B",
+      "title": "Behavioral Parameter Coupling in LLM Distribution",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "commit_or_version": "hf-liquidai-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo LiquidAI/LFM3-1.7B-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 58,
+      "candidate_id": "CD-VV0B",
+      "title": "Runtime Version Locking for Binary Artifacts",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "commit_or_version": "hf-liquidai-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo LiquidAI/LFM3-1.7B-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 59,
+      "candidate_id": "CD-VV0B",
+      "title": "Quantization-Aware Evaluation Metrics",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "commit_or_version": "hf-liquidai-",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo LiquidAI/LFM3-1.7B-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 60,
+      "candidate_id": "CD-7SKY",
+      "title": "docs: add a security policy",
+      "repository": "feathersjs/feathers",
+      "commit_or_version": "8c007bc4",
+      "dossier_file": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo feathersjs/feathers for full git commit and test suite."
+    },
+    {
+      "item_number": 61,
+      "candidate_id": "CD-VZD6",
+      "title": "Merge pull request #963 from telemt/webperf",
+      "repository": "telemt/telemt",
+      "commit_or_version": "61afd6c7",
+      "dossier_file": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo telemt/telemt for full git commit and test suite."
+    },
+    {
+      "item_number": 62,
+      "candidate_id": "CD-7QOM",
+      "title": "4.4 changelog",
+      "repository": "apollographql/apollo-kotlin",
+      "commit_or_version": "c4701d11",
+      "dossier_file": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo apollographql/apollo-kotlin for full git commit and test suite."
+    },
+    {
+      "item_number": 63,
+      "candidate_id": "CD-9JRZ",
+      "title": "Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101",
+      "repository": "Kuddev/pebrel",
+      "commit_or_version": "9d8db55f",
+      "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Kuddev/pebrel for full git commit and test suite."
+    },
+    {
+      "item_number": 64,
+      "candidate_id": "CD-R0LZ",
+      "title": "docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#",
+      "repository": "sozercan/kaset",
+      "commit_or_version": "6a20e60c",
+      "dossier_file": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo sozercan/kaset for full git commit and test suite."
+    },
+    {
+      "item_number": 65,
+      "candidate_id": "CD-HQ5D",
+      "title": "Data-Only Repository Integrity & Metadata Consistency",
+      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "commit_or_version": "hf-unsloth-d",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo unsloth/DeepSeek-V4.1-Flash-1017-GGUF for full git commit and test suite."
+    },
+    {
+      "item_number": 66,
+      "candidate_id": "CD-KDEE",
+      "title": "Merge pull request #1055 from oystersuki/docs/error-handling",
+      "repository": "sfu-db/connector-x",
+      "commit_or_version": "45300870",
+      "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo sfu-db/connector-x for full git commit and test suite."
+    },
+    {
+      "item_number": 67,
+      "candidate_id": "CD-8AOD",
+      "title": "shimmy-0py: record verified distribution channels and support limits [skip ci]",
+      "repository": "Michael-A-Kuykendall/shimmy",
+      "commit_or_version": "8dc08d28",
+      "dossier_file": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Michael-A-Kuykendall/shimmy for full git commit and test suite."
+    },
+    {
+      "item_number": 68,
+      "candidate_id": "CD-EV84",
+      "title": "sandbox): accept a denied TCP Fast Open send in the gap test",
+      "repository": "matthart1983/netwatch",
+      "commit_or_version": "81275065",
+      "dossier_file": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo matthart1983/netwatch for full git commit and test suite."
+    },
+    {
+      "item_number": 69,
+      "candidate_id": "CD-CWN4",
+      "title": "Merge pull request #459 from iziz/metadata-v9-0-43",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "commit_or_version": "91fcc745",
+      "dossier_file": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo iziz/libPhoneNumber-iOS for full git commit and test suite."
+    },
+    {
+      "item_number": 70,
+      "candidate_id": "CD-TO3Z",
+      "title": "🧵): refactoring frame pacing",
+      "repository": "wcandillon/react-native-skia",
+      "commit_or_version": "7541db92",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo wcandillon/react-native-skia for full git commit and test suite."
+    },
+    {
+      "item_number": 71,
+      "candidate_id": "CD-5P41",
+      "title": "Hugging Face Model Artifact Completeness Invariant",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "commit_or_version": "hf-black-for",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": true,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo black-forest-labs/flux-3-image-klein for full git commit and test suite."
+    },
+    {
+      "item_number": 72,
+      "candidate_id": "CD-UZMQ",
+      "title": "Add signal handling and schema changes to tricky areas doc, organize helpers a b",
+      "repository": "PeerDB-io/peerdb",
+      "commit_or_version": "f7f8b7e5",
+      "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo PeerDB-io/peerdb for full git commit and test suite."
+    },
+    {
+      "item_number": 73,
+      "candidate_id": "CD-NSRI",
+      "title": "Empirical Invariant Guard in jev_tool_call_exp.json",
+      "repository": "lioensky/VCPToolBox",
+      "commit_or_version": "a8560b0a",
+      "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo lioensky/VCPToolBox for full git commit and test suite."
+    },
+    {
+      "item_number": 74,
+      "candidate_id": "CD-C38S",
+      "title": "NUC 97 In and Not In Membership Tests",
+      "repository": "NucleoidAI/Nucleoid",
+      "commit_or_version": "b9fd2de0",
+      "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo NucleoidAI/Nucleoid for full git commit and test suite."
+    },
+    {
+      "item_number": 75,
+      "candidate_id": "CD-LY3E",
+      "title": "Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111",
+      "repository": "Kuddev/pebrel",
+      "commit_or_version": "d79d5796",
+      "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": false,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo Kuddev/pebrel for full git commit and test suite."
+    },
+    {
+      "item_number": 76,
+      "candidate_id": "CD-AR9T",
+      "title": "mcp-server): acknowledge valid Legacy JSON-RPC responses",
+      "repository": "higress-group/higress",
+      "commit_or_version": "f0260049",
+      "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+      "dossier_exists_locally": true,
+      "gaps": {
+        "missing_commit_sha": false,
+        "missing_code_patch": true,
+        "missing_test_evidence": true,
+        "missing_root_cause": true,
+        "missing_negative_constraint": true
+      },
+      "recoverability_priority": "MEDIUM",
+      "required_remote_action": "Inspect remote repo higress-group/higress for full git commit and test suite."
+    }
+  ]
+}

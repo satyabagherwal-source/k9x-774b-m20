@@ -1,0 +1,47 @@
+[
+  {
+    "candidate_id": "CD-ZNND",
+    "concept": "Clamped Masked Temporal Pooling (CMTP)",
+    "knowledge_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+    "target_canonical_folder": "05_KNOWLEDGE",
+    "domain": "H",
+    "transferability_scope": "UNIVERSAL_TO_TRANSFORMER_POOLING",
+    "construction_value": "Crucial numerical stability guard for any AI system implementing custom embedding extraction or vector database ingest pipelines."
+  },
+  {
+    "candidate_id": "CD-ZNND",
+    "concept": "Metric Hypersphere Unit Projection (MHUP)",
+    "knowledge_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+    "target_canonical_folder": "05_KNOWLEDGE",
+    "domain": "H",
+    "transferability_scope": "UNIVERSAL_TO_VECTOR_RETRIEVAL",
+    "construction_value": "Foundational invariant for dense vector search, ensuring dot product strictly evaluates directional cosine affinity."
+  },
+  {
+    "candidate_id": "CD-HE9Q",
+    "concept": "Tokenizer Special Token Normalization Boundary",
+    "knowledge_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+    "target_canonical_folder": "05_KNOWLEDGE",
+    "domain": "H",
+    "transferability_scope": "UNIVERSAL_TO_HUGGINGFACE_TOKENIZERS",
+    "construction_value": "Prevents critical inference failure where whitespace stripping alters sequence-control tokens like BOS/EOS."
+  },
+  {
+    "candidate_id": "CD-8KGR",
+    "concept": "Binary Artifact Header and Version Compatibility",
+    "knowledge_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+    "target_canonical_folder": "05_KNOWLEDGE",
+    "domain": "G",
+    "transferability_scope": "UNIVERSAL_TO_BINARY_WEIGHT_DESERIALIZATION",
+    "construction_value": "Prevents segfaults and buffer overruns by validating magic bytes and schema version before zero-copy memory mapping."
+  },
+  {
+    "candidate_id": "CD-UV2I",
+    "concept": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+    "knowledge_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+    "target_canonical_folder": "05_KNOWLEDGE",
+    "domain": "H",
+    "transferability_scope": "RESTRICTED_TO_SUB_4BIT_INFERENCE_KERNELS",
+    "construction_value": "Demonstrates constant-time LUT unpacking to avoid GPU warp branch divergence during quantized weight matrix multiplications."
+  }
+]

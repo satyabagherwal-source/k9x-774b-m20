@@ -1,0 +1,37 @@
+[
+  {
+    "candidate_id": "CD-ZNND",
+    "concept": "Clamped Masked Temporal Pooling (CMTP)",
+    "upstream_implementation": "Pooling (UKPLab/sentence-transformers)",
+    "implementation_status": "ORIGINAL_SOURCE_EXECUTED",
+    "status_justification": "Executed real PyTorch CPU tensor pooling with exact upstream sentence-transformers clamping logic in isolated venv."
+  },
+  {
+    "candidate_id": "CD-ZNND",
+    "concept": "Metric Hypersphere Unit Projection (MHUP)",
+    "upstream_implementation": "Normalize (UKPLab/sentence-transformers)",
+    "implementation_status": "ORIGINAL_SOURCE_EXECUTED",
+    "status_justification": "Executed real PyTorch F.normalize Euclidean projection in isolated venv."
+  },
+  {
+    "candidate_id": "CD-HE9Q",
+    "concept": "Tokenizer Special Token Normalization Boundary",
+    "upstream_implementation": "added_tokens_decoder (Nanbeige/Nanbeige4.3-33B)",
+    "implementation_status": "CONFIGURATION_CONTRACT_TESTED",
+    "status_justification": "Dossier contains configuration JSON schema rather than custom Python tokenizer code; tested configuration contract directly."
+  },
+  {
+    "candidate_id": "CD-8KGR",
+    "concept": "Binary Artifact Header and Version Compatibility",
+    "upstream_implementation": "gguf_init_from_file (ggerganov/llama.cpp)",
+    "implementation_status": "STATIC_EVIDENCE_ONLY",
+    "status_justification": "Original C parser requires C/C++ compiler which is absent on Windows PATH; binary contract tested via reference parser."
+  },
+  {
+    "candidate_id": "CD-UV2I",
+    "concept": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+    "upstream_implementation": "dequant_trit_2bit (prism-ml/Ternary-Bonsai)",
+    "implementation_status": "BLOCKED_BY_DEPENDENCY",
+    "status_justification": "Original CUDA kernel requires nvcc compiler and NVIDIA GPU; execution is blocked by dependency boundary."
+  }
+]

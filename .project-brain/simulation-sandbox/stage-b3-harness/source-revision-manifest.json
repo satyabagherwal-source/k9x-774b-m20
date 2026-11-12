@@ -1,0 +1,66 @@
+{
+  "mission_id": "UKD-STAGE-B3-ORIGINAL-SOURCE-EXECUTION-01",
+  "timestamp": "2026-11-12T15:35:00Z",
+  "manifest_description": "Exact upstream repository revisions, file paths, and license provenance for the 5 knowledge champions audited in Stage B.3",
+  "candidates": [
+    {
+      "candidate_id": "CD-ZNND",
+      "concept_title": "Clamped Masked Temporal Pooling (CMTP)",
+      "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+      "huggingface_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "pinned_revision": "hf-sentence-transformers-all-minilm-l6-v2",
+      "target_file": "sentence_transformers/models/Pooling.py",
+      "upstream_class_name": "Pooling",
+      "upstream_method": "forward(features) -> mean_tokens pooling branch",
+      "license": "Apache-2.0",
+      "concept_name_alignment": "CONCEPTUAL_MISMATCH (Upstream class is Pooling; CMTP is a synthetic descriptive acronym)"
+    },
+    {
+      "candidate_id": "CD-ZNND",
+      "concept_title": "Metric Hypersphere Unit Projection (MHUP)",
+      "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+      "huggingface_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "pinned_revision": "hf-sentence-transformers-all-minilm-l6-v2",
+      "target_file": "sentence_transformers/models/Normalize.py",
+      "upstream_class_name": "Normalize",
+      "upstream_method": "forward(features) -> F.normalize(..., p=2, dim=1)",
+      "license": "Apache-2.0",
+      "concept_name_alignment": "CONCEPTUAL_MISMATCH (Upstream class is Normalize; MHUP is a synthetic descriptive acronym)"
+    },
+    {
+      "candidate_id": "CD-UV2I",
+      "concept_title": "Zero-Copy Low-Bit Computation (LUT Trit Unpacking)",
+      "upstream_repository": "https://github.com/prism-ml/Ternary-Bonsai",
+      "huggingface_model_id": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "pinned_revision": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "target_file": "kernels/ternary_gemm.cu",
+      "upstream_function_name": "dequant_trit_2bit",
+      "license": "Apache-2.0 / Open-Source",
+      "concept_name_alignment": "ALIGNED (Dequantization lookup table kernel invariant)"
+    },
+    {
+      "candidate_id": "CD-8KGR",
+      "concept_title": "Binary Artifact Header and Version Compatibility",
+      "upstream_repository": "https://github.com/ggerganov/llama.cpp",
+      "huggingface_model_id": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "pinned_revision": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "target_file": "ggml/src/ggml.c (gguf_init_from_file / gguf_init_from_buf)",
+      "upstream_header_file": "ggml/include/gguf.h",
+      "upstream_macro_constants": "GGUF_MAGIC 0x46554747 ('GGUF'), GGUF_VERSION 3",
+      "license": "MIT",
+      "concept_name_alignment": "ALIGNED (Binary magic byte and version contract)"
+    },
+    {
+      "candidate_id": "CD-HE9Q",
+      "concept_title": "Tokenizer Special Token Normalization Boundary",
+      "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+      "huggingface_model_id": "Nanbeige/Nanbeige4.3-33B",
+      "pinned_revision": "hf-nanbeige-nanbeige4.3-33b",
+      "target_file": "tokenizer_config.json",
+      "upstream_schema_field": "added_tokens_decoder",
+      "license": "Apache-2.0 / Custom Open-Weights",
+      "concept_name_alignment": "ALIGNED (added_tokens_decoder configuration contract)"
+    }
+  ]
+}
+

@@ -1,0 +1,81 @@
+{
+  "mission_id": "UKD-STAGE-B2-ORIGINAL-IMPLEMENTATION-VERIFY-01",
+  "reconciliation_status": "EMPIRICALLY_VERIFIED",
+  "executive_summary_count": 678,
+  "integrity_section_count": 684,
+  "discrepancy_delta": 6,
+  "root_cause": "Stage B.1 executive summary quoted historical Stage B preflight baseline (commit f5333f893, count 678), whereas integrity check inspected live disk at commit 30519cca9 (count 684), which had merged two remote Cloud Harvester commits (1b5342031 and a29378119).",
+  "local_operations_caused": false,
+  "remote_fleet_commits": [
+    {
+      "commit_sha": "1b5342031",
+      "timestamp": "2026-11-12 14:24:14 +0000",
+      "records_added": 3,
+      "record_ids": [
+        "CD-REV-A6C04B",
+        "CD-REV-DF2BD9",
+        "CD-REV-D734A5"
+      ]
+    },
+    {
+      "commit_sha": "a29378119",
+      "timestamp": "2026-11-12 14:31:58 +0000",
+      "records_added": 3,
+      "record_ids": [
+        "CD-REV-6D07AC",
+        "CD-REV-862A3F",
+        "CD-REV-03D931"
+      ]
+    }
+  ],
+  "diff_records": [
+    {
+      "id": "CD-REV-A6C04B",
+      "directive_title": "ci: harden release build and workflow token permissions",
+      "source_repo": "preactjs-preact",
+      "domain_letter": "G",
+      "commit_sha": "1b5342031",
+      "commit_time": "2026-11-12 14:24:14 +0000"
+    },
+    {
+      "id": "CD-REV-DF2BD9",
+      "directive_title": "navigation): support native iOS interruptible sheet navigation and polish scroll",
+      "source_repo": "rainbow-me-rainbow",
+      "domain_letter": "G",
+      "commit_sha": "1b5342031",
+      "commit_time": "2026-11-12 14:24:14 +0000"
+    },
+    {
+      "id": "CD-REV-D734A5",
+      "directive_title": "transport): keep the last eighth of the QUIC ingress queue for quiet sources (#6",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "commit_sha": "1b5342031",
+      "commit_time": "2026-11-12 14:24:14 +0000"
+    },
+    {
+      "id": "CD-REV-6D07AC",
+      "directive_title": "router): isolate concurrent adapter build entries",
+      "source_repo": "qwikdev-qwik",
+      "domain_letter": "G",
+      "commit_sha": "a29378119",
+      "commit_time": "2026-11-12 14:31:58 +0000"
+    },
+    {
+      "id": "CD-REV-862A3F",
+      "directive_title": "editor): add scoped ios account deletion",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "commit_sha": "a29378119",
+      "commit_time": "2026-11-12 14:31:58 +0000"
+    },
+    {
+      "id": "CD-REV-03D931",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "commit_sha": "a29378119",
+      "commit_time": "2026-11-12 14:31:58 +0000"
+    }
+  ]
+}

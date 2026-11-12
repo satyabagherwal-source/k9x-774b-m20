@@ -1,0 +1,31 @@
+{
+  "mission_id": "UKD-STAGE-B2-ORIGINAL-IMPLEMENTATION-VERIFY-01",
+  "timestamp": "2026-11-12T15:10:52.398Z",
+  "integrity_status": "VERIFIED_100_PERCENT_READ_ONLY",
+  "git_state": {
+    "branch": "main",
+    "head_commit": "30519cca9a897ef0f2963dfbf1550c3e70d39c41",
+    "tracked_modifications": 0,
+    "untracked_files_count": 4
+  },
+  "system_registries": {
+    "domain_registry_records": 72,
+    "candidate_directives_count": 684,
+    "pending_zod_records_count": 6,
+    "zod_records_intact": true
+  },
+  "production_artifacts": {
+    "retrieval_cache_bytes": 405601926,
+    "retrieval_cache_sha256": "09e91ddf2b4c3174f8f9745e0d5b417d5fef77fec7be0a3723fab03f1d48fdd1",
+    "relationship_graph_bytes": 29982,
+    "relationship_graph_sha256": "0fc17d3251bf3a76ea8c61b66778baaeb499d718200029de8b94039ab25abf78",
+    "canonical_folders_count": 16,
+    "all_16_folders_intact": true
+  },
+  "sandbox_artifacts": {
+    "stage_b2_verification_directory": ".project-brain/simulation-sandbox/stage-b2-verification/",
+    "test_fixtures_count": 4,
+    "all_fixtures_isolated": true,
+    "production_knowledge_mutations": 0
+  }
+}

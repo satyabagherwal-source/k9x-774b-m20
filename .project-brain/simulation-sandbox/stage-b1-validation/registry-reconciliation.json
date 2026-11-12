@@ -1,0 +1,313 @@
+{
+  "mission_id": "UKD-STAGE-B1-INDEPENDENT-VALIDATION-01",
+  "timestamp": "2026-11-12T14:42:48.352Z",
+  "stage_a_commit": "16969f189",
+  "stage_b_commit": "f5333f893",
+  "current_commit": "30519cca9",
+  "reconciliation_status": "EMPIRICALLY_VERIFIED",
+  "explanation": "Differences between Stage A and Stage B baselines were 100% caused by remote Cloud Harvester fleet runs merged into local main via git pull before Stage B preflight. Stage B did not mutate registries during its execution.",
+  "domain_registry": {
+    "stage_a_count": 57,
+    "stage_b_count": 72,
+    "current_count": 72,
+    "added_count_a_to_b": 15,
+    "removed_count_a_to_b": 0,
+    "added_count_b_to_current": 0,
+    "added_record_ids": [
+      "DOM-D-5F13CAC2",
+      "DOM-H-0AA4F6ED",
+      "DOM-D-0C67C5DB",
+      "DOM-D-2EFB96C5",
+      "DOM-D-91EB11DA",
+      "DOM-J-5650848D",
+      "DOM-K-AE91E0B9",
+      "DOM-H-F56DBC84",
+      "DOM-D-78355AEC",
+      "DOM-L-80D1F65C",
+      "DOM-D-E7997468",
+      "DOM-H-7D775901",
+      "DOM-H-EE08D822",
+      "DOM-H-B173C8F8",
+      "DOM-D-A3AABF62"
+    ],
+    "added_records": [
+      {
+        "record_id": "DOM-D-5F13CAC2",
+        "title": "Forensic Learning Record (Deep Inspection): facebook/dinov3-vitl16-pretrain-lvd1689m",
+        "created_at": "2026-11-12T05:13:50.795Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-H-0AA4F6ED",
+        "title": "Install the native Apple Silicon build in init.sh (#1623)",
+        "created_at": "2026-11-12T05:27:35.953Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-D-0C67C5DB",
+        "title": "Forensic Learning Record (Deep Inspection): abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+        "created_at": "2026-11-12T05:47:56.933Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-D-2EFB96C5",
+        "title": "Forensic Learning Record (Deep Inspection): NousResearch/Arete-27B",
+        "created_at": "2026-11-12T07:16:00.745Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-D-91EB11DA",
+        "title": "Forensic Learning Record (Deep Inspection): PrunaAI/P-H3-Image",
+        "created_at": "2026-11-12T07:38:38.944Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-J-5650848D",
+        "title": "FLOAT32 COSINE Search Emits Invalid Distance -1 for Subnormal Vectors (BUG-VEC-01)",
+        "created_at": "2026-11-12T08:19:36.663Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-K-AE91E0B9",
+        "title": "Flawed CI Dependency Installer Invariant (BUG-SALVO-01)",
+        "created_at": "2026-11-12T08:34:44.455Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-H-F56DBC84",
+        "title": "Router Macro & Lifetime Compilation Breakage in Example Code (BUG-SALVO-02)",
+        "created_at": "2026-11-12T08:35:03.644Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-D-78355AEC",
+        "title": "Forensic Learning Record (Deep Inspection): Viggle/Viggle-Remake",
+        "created_at": "2026-11-12T09:55:51.210Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-L-80D1F65C",
+        "title": "Allowed Azure DevOps hosts: devazurecom sshdevazurecom vs-sshvisualstudiocom",
+        "created_at": "2026-11-12T11:01:33.158Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-D-E7997468",
+        "title": "Forensic Learning Record (Deep Inspection): microsoft/Mage-VL-Cowork",
+        "created_at": "2026-11-12T11:19:08.431Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-H-7D775901",
+        "title": "Eliminate avoidable dead work in multi-stage JSCompiler builds.",
+        "created_at": "2026-11-12T11:38:00.741Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-H-EE08D822",
+        "title": "javascript): call evaluateDefinedIdentifier with the name it is keyed by (#23273",
+        "created_at": "2026-11-12T12:50:51.244Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-H-B173C8F8",
+        "title": "build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037)",
+        "created_at": "2026-11-12T12:51:11.108Z",
+        "source_repository": "UNKNOWN"
+      },
+      {
+        "record_id": "DOM-D-A3AABF62",
+        "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-1.7B-GGUF",
+        "created_at": "2026-11-12T13:15:27.329Z",
+        "source_repository": "UNKNOWN"
+      }
+    ]
+  },
+  "candidate_directives_registry": {
+    "stage_a_count": 492,
+    "stage_b_count": 607,
+    "current_count": 613,
+    "added_count_a_to_b": 115,
+    "removed_count_a_to_b": 0,
+    "added_count_b_to_current": 6,
+    "added_directive_ids": [
+      "CD-REV-EFEC88",
+      "CD-REV-DD910F",
+      "CD-REV-0847EF",
+      "CD-REV-297AAE",
+      "CD-REV-AA5E72",
+      "CD-REV-E95373",
+      "CD-REV-D3C420",
+      "CD-REV-02CF89",
+      "CD-REV-C4C7F9",
+      "CD-REV-D5EB60",
+      "CD-REV-F764D5",
+      "CD-REV-0AF7AC",
+      "CD-NG1X",
+      "CD-REV-C68B04",
+      "CD-REV-4A6D33",
+      "CD-REV-7D1DAB",
+      "CD-REV-392BF3",
+      "CD-REV-BB4F45",
+      "CD-REV-39FC47",
+      "CD-REV-B3D88C",
+      "CD-REV-B63120",
+      "CD-REV-296862",
+      "CD-REV-5686BE",
+      "CD-REV-BBA5D2",
+      "CD-REV-565AC5",
+      "CD-REV-BAF4A6",
+      "CD-REV-AB29D4",
+      "CD-REV-9C09F2",
+      "CD-REV-CB82EF",
+      "CD-REV-39B167",
+      "CD-REV-8EBE75",
+      "CD-REV-F72D96",
+      "CD-REV-72E615",
+      "CD-REV-4A698A",
+      "CD-REV-35B8F9",
+      "CD-REV-EAE998",
+      "CD-REV-2EFD1D",
+      "CD-REV-C22949",
+      "CD-REV-2F73AE",
+      "CD-REV-956993",
+      "CD-REV-A03A80",
+      "CD-REV-035CDC",
+      "CD-REV-82B529",
+      "CD-REV-4947B9",
+      "CD-REV-5410CB",
+      "CD-REV-064708",
+      "CD-REV-654A4C",
+      "CD-REV-6D0FCE",
+      "CD-REV-341EBA",
+      "CD-REV-4501E7",
+      "CD-UO4E",
+      "CD-REV-D69F37",
+      "CD-REV-F6007F",
+      "CD-REV-EACDFE",
+      "CD-REV-FC0AC9",
+      "CD-REV-76FC5F",
+      "CD-REV-1C9882",
+      "CD-REV-B179DA",
+      "CD-REV-2B99F6",
+      "CD-REV-7A223B",
+      "CD-REV-2D0C77",
+      "CD-REV-1C7B8B",
+      "CD-REV-FB50D3",
+      "CD-REV-F14327",
+      "CD-REV-EBC88C",
+      "CD-REV-5EC936",
+      "CD-REV-818DB6",
+      "CD-REV-71C192",
+      "CD-REV-B8B431",
+      "CD-REV-3D1E51",
+      "CD-REV-C32D68",
+      "CD-REV-C615FA",
+      "CD-REV-501910",
+      "CD-REV-0D0B0C",
+      "CD-REV-8FB668",
+      "CD-REV-6496A9",
+      "CD-REV-BD4795",
+      "CD-REV-42B4DB",
+      "CD-REV-8309E5",
+      "CD-REV-555E1C",
+      "CD-REV-194312",
+      "CD-REV-091CBC",
+      "CD-REV-B73AA2",
+      "CD-REV-B8D7F3",
+      "CD-REV-9F6F94",
+      "CD-REV-43701A",
+      "CD-REV-BC5399",
+      "CD-REV-3C4886",
+      "CD-REV-41EBAF",
+      "CD-REV-894877",
+      "CD-REV-6751CB",
+      "CD-REV-BA6F6C",
+      "CD-REV-5A3487",
+      "CD-REV-252574",
+      "CD-REV-514F52",
+      "CD-REV-157541",
+      "CD-REV-E8E51A",
+      "CD-REV-FFFBA7",
+      "CD-REV-573FB0",
+      "CD-REV-32F9A6",
+      "CD-REV-D65899",
+      "CD-REV-342C15",
+      "CD-REV-2B0017",
+      "CD-REV-12C225",
+      "CD-REV-504048",
+      "CD-REV-16EA67",
+      "CD-REV-5F843B",
+      "CD-REV-72A12A",
+      "CD-REV-F6E93D",
+      "CD-REV-EB6668",
+      "CD-REV-837046",
+      "CD-REV-0D7050",
+      "CD-REV-783A23",
+      "CD-REV-D06EE0",
+      "CD-REV-D646C7"
+    ],
+    "sample_added_directives": [
+      {
+        "directive_id": "CD-REV-EFEC88",
+        "title": "build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (#5255)",
+        "source_repository": "okteto-okteto",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-DD910F",
+        "title": "Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark",
+        "source_repository": "arangodb-arangodb",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-0847EF",
+        "title": "luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036",
+        "source_repository": "dathere-qsv",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-297AAE",
+        "title": "Enhance multi-platform image preheat and deduplication process (#5112)",
+        "source_repository": "dragonflyoss-dragonfly",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-AA5E72",
+        "title": "short decimal cast overflow when increasing scale",
+        "source_repository": "trinodb-trino",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-E95373",
+        "title": "models): add download User-Agent and IPv4 fallback (#370)",
+        "source_repository": "zvec-ai-zvec-grep",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-D3C420",
+        "title": "snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5",
+        "source_repository": "peerdb-io-peerdb",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-02CF89",
+        "title": "Revert \"ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigExcepti",
+        "source_repository": "apache-zookeeper",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-C4C7F9",
+        "title": "Draft NUC 106 Intersect and Except Reasoning Selections",
+        "source_repository": "nucleoidai-nucleoid",
+        "created_at": "UNKNOWN"
+      },
+      {
+        "directive_id": "CD-REV-D5EB60",
+        "title": "macos): finish the audit wave 5 data items: find and Run All off the main thread",
+        "source_repository": "tableproapp-tablepro",
+        "created_at": "UNKNOWN"
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "candidate_id": "CD-550F",
+    "title": "Multi-Format Quantization Artifact Isolation",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "nature_of_content": "Repository directory and branch organization for GGUF, EXL2, and AWQ files.",
+    "transferable_code_pattern": false,
+    "model_card_or_packaging_convention": true,
+    "promotion_recommendation": "DO_NOT_PROMOTE",
+    "target_destination": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+    "rationale": "Reflects release packaging choice to prevent filename collisions. Useful project note, not a universal code rule."
+  },
+  {
+    "candidate_id": "CD-UQL0",
+    "title": "Quantization Format Compatibility Mapping",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "nature_of_content": "README compatibility table mapping model quants to Ollama, LMStudio, and ComfyUI versions.",
+    "transferable_code_pattern": false,
+    "model_card_or_packaging_convention": true,
+    "promotion_recommendation": "DO_NOT_PROMOTE",
+    "target_destination": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+    "rationale": "Time-bound ecosystem documentation table for end users, not a programmatic Brain invariant."
+  },
+  {
+    "candidate_id": "CD-URAY",
+    "title": "Quantization Precision-Size Trade-off Documentation",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "nature_of_content": "Model card table documenting BPW and byte size per quantization tier.",
+    "transferable_code_pattern": false,
+    "model_card_or_packaging_convention": true,
+    "promotion_recommendation": "DO_NOT_PROMOTE",
+    "target_destination": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+    "rationale": "Factual release statistics for Qwen-Image 2.1 weights. Kept strictly in project learnings."
+  }
+]
