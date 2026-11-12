@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-J0BP",
-    "timestamp": "2026-11-08T22:26:15.781Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "6118b3223b12b5c78c6c1b88687246af4daf45ed43943e47b6d0ec5a07ca7910",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-J3FA",
-    "timestamp": "2026-11-08T22:26:19.798Z",
-    "repository": "StikDebug/StikDebug",
-    "learningId": "learn-github-stikdebug-stikdebug",
-    "contentHash": "9fc771b0c7021e9606927476747c5e65baee4fa4165b473d2ed183d344fac0e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-JAN0",
-    "timestamp": "2026-11-08T22:26:29.148Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-W7D9",
     "timestamp": "2026-11-08T22:36:31.437Z",
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7490,6 +7445,51 @@
     "repository": "etcd-io/etcd",
     "learningId": "learn-github-etcd-io-etcd",
     "contentHash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-OKC2",
+    "timestamp": "2026-11-12T02:33:32.402Z",
+    "repository": "Nasiko-Labs/nasiko",
+    "learningId": "learn-github-nasiko-labs-nasiko",
+    "contentHash": "c46b9aaf60fee835f78b5f389e6bcd2bf6a540244b3d5dc44f28cbb26213e161",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-OLDL",
+    "timestamp": "2026-11-12T02:33:33.753Z",
+    "repository": "fb55/htmlparser2",
+    "learningId": "learn-github-fb55-htmlparser2",
+    "contentHash": "6a16a683cb04cbf87d9a72ab1c490d2ea905b4765821366ca6fb76d826207ca7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-OS4Z",
+    "timestamp": "2026-11-12T02:33:42.515Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

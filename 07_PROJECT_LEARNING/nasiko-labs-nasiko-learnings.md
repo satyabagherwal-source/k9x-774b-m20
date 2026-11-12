@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source**: github ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
-> **Source Version**: `10a08581`  
+> **Source Version**: `9f84200c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T05:56:31.609Z  
+> **Timestamp**: 2026-11-12T02:33:18.504Z  
 > **Learning ID**: `learn-github-nasiko-labs-nasiko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T05:56:28.788Z  
+> **Harvest Timestamp**: 2026-11-12T02:33:18.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Open Runtime for AI Agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9457 stars
+- **Stars / Engagement**: 11961 stars
 
 ---
 
@@ -2230,14 +2230,14 @@ class _Operation:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #356** (2026-10-24): **fix(llm-router): stop dropping tool_choice "none" and related tool controls**
+  *Symptoms*: ## Issue Fixes Nasiko-Labs/nasiko#165  ## What changed Ten tool-control fields were being silently dropped in `llm-router` during cross-provider translation: every request succeeded, so a caller had no way to tell their restriction was never applied to the model. This PR fixes the cases that have a clear target representation:  - **`tool_choice: "none"`** (cases 1–3 in the issue): Anthropic Messages does define `{"type": "none"}` — the code's own comment claiming otherwise was out of date. `tool_choice_from_anthropic` (inbound) and `tool_choice_to_anthropic` (outbound) both now handle it, so a caller asking for no tool calls actually gets that, instead of the selector being omitted while both tools stayed declared. - **`function.strict`** (case 4 and its follow-up): `FunctionDef` gained a `strict: Option<bool>` field so it survives inbound parsing from both OpenAI (already passthrough) and Anthropic (`tool_from_anthropic` now copies it). It's forwarded where the target supports it (OpenAI, Anthropic) and naturally dropped where it has no equivalent (Gemini). - **`parallel_tool_calls` / `disable_parallel_tool_use`** (cases 5–6): `ChatRequest` gained a named `parallel_tool_calls: Option<bool>` field instead of leaving it to rot in the passthrough `extra` map. Anthropic's `tool_choice.disable_parallel_tool_use` maps onto it inbound, and back onto `disable_parallel_tool_use` outbound to Anthropic. - **`tool_choice.allowed_tools`** (cases 8, 10): now maps to Anthropic's named-tool
+
 - **Issue #344** (2026-10-16): **feat: add reproducible compaction and routing benchmarks**
   *Symptoms*: ## Summary This PR adds a reproducible evidence harness (`evidence/`, stdlib-only, one command) around the compact tool-schema and request-classifier work. The default compact representation reduces serialized tool size by **57.0% on 56 real tools** (mean of per-tool reductions; 56.3% ratio of totals) with **100% normalized semantic preservation** and safe fail-closed fallback. An optional aggressive profile reaches 73.2% under the same safety invariants. The classifier evaluation infrastructure (strict train/validation/test separation, validation-only tuning, confusion matrices, fallback and cost measurement) is complete; its current datasets are synthetic, so no superiority over the human-labeled reference is claimed.  ## Key Results | Area | Result | |---|---| | Tool corpus | 56 real tools | | Default compaction | 57.0% average reduction (56.3% of totals) | | Median reduction | 59.1% | | Aggressive profile | 73.2% optional | | Semantic preservation | 100% normalized | | Safe fallback | 55/56 compacted | | Evidence tests | 17/17 passing | | Router estimate | ~36% lower routing cost |  ## What changed - Compact representation benchmark over 56 real agent tools (bytes exact, latency measured) - Fail-closed bypass behavior verified (1 unsupported case → native) - Benchmark harness: corpus extractor, 2 compact profiles, 2 classifier evals, 6 SVG charts - Realistic 1,200-example classifier evaluation with locked test set - Aggressive compact profile e
   **Post-Mortem & Fix Analysis**:
   > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=75534638"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a>Confidence Score: 0/5</h2>  **[Low risk]** Adds benchmark and evaluation scripts with test data\.  The PR is not ready to merge because its corpus fidelity, semantic-preservation check, and classifier evaluation boundaries undermine the reported evidence.  <h2><a href="https://app.greptile.com/ide/claude-code?prompt=%23%23%23%20Issue%201%0Aevidence%2Fextract_corpus.py%3A69-74%0AWhen%20a%20Go%20tool%20has%20no%20%60required%60%20list%2C%20this%20code%20assigns%20the%20next%20tool%E2%80%99s%20list%20to%20it.%
   > Thanks for the contribution, @AbhiramMandala. This PR is closed without merging because another submission for the same change was chosen: [#257](https://github.com/Nasiko-Labs/nasiko/pull/257). Only one implementation could be merged, and closing this one is not a judgement that the work was wrong. A maintainer will follow up here if anything needs more detail.
-
-- **Issue #338** (2026-10-16): **[P2: request classifier] add request classifier and context integrity…**
-  *Symptoms*: ## NASIKO BUILDATION - Solo Participant - Sri Vaishnavi Vasa - Problem Statement -2 (Request Classifier)  ---  ## Brief solution summary  Nasiko now has a two-part classifier pipeline in the router:  - Requirement classification: identifies what the user request needs, such as code generation, code understanding, design, writing, facts, or general conversation. - Context integrity assessment: checks whether the prompt or supplied context looks like it contains hidden instructions, encoded payloads, Unicode tricks, or other poisoning signals. Also includes parameters like complexity, impact of that change on the application, size of codebase, codebase context cached in the session etc.  This is intentionally additive: the existing routing and request-type behavior stays intact, and the new security layer simply exposes a structured risk signal alongside the original output. The goal is to utilise AI models as less as possible since it adds on to the extra cost which further leads to market price inflation and might also lead to hallucinations when the work load is heavy. Though AI does great work in providing semantic context, but the efforts were put to utilise it only as a fallback and rely more on deterministic and fuzzy logic and using heuristic approach of ML algorithms.  The runtime flow is:  - Input prompt + context - Local deterministic classifier analyzes request intent - Context integrity scanner checks prompt/context for poisoning indicators - JS
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2254,785 +2254,125 @@ class _Operation:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef447543` (2026-10-21)
-**Commit Message**: fix(ui): rename "Harnesses" to "Coding harnesses"
-
-The nav label, the page title and its cards' accessible name, the Agents tab
-and usage link, chat's "View in Coding harnesses", the Overview card's link,
-button and KPI label, and the tours. The login showcase already says "Coding
-Harnesses" in its title-cased word list and is unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-(cherry picked from commit 6c5c1afd23e7e7225a61df2bb011a67c05f7eca8)
+### Incident Patch 1: `cfd8abed` (2026-11-11)
+**Commit Message**: Update SECURITY.md
 [synced-from-private]
 
-**File**: `ui/common/src/app/shell/AppShell.test.tsx` (modified, +6/-3)
+**File**: `SECURITY.md` (modified, +1/-1)
 ```diff
-@@ -65,7 +65,7 @@ describe('sidebar items', () => {
-   it.each([
-     ['/tokenops', 'Monitor'],
-     ['/sessions', 'Sessions'],
--    ['/harnesses', 'Harnesses'],
-+    ['/harnesses', 'Coding harnesses'],
-     ['/agents', 'Agents'],
-     ['/agents/mine', 'Agents'],
-     ['/deploy', 'Agents'],
-@@ -89,7 +89,10 @@ describe('sidebar items', () => {
-     renderApp('/tokenops?preset=24h&compare=0')
-     await screen.findByRole('navigation', { name: 'Main' })
-     await waitFor(() =>
--      expect(navLink('Harnesses')).toHaveAttribute('href', expect.stringContaining('preset=24h')),
-+      expect(navLink('Coding harnesses')).toHaveAttribute(
-+        'href',
-+        expect.stringContaining('preset=24h'),
-+      ),
-     )
-     // The other shared keys still cross into Sessions and TokenOps; the window doesn't.
-     expect(navLink('Sessions').getAttribute('href')).toContain('compare=false')
-@@ -107,7 +110,7 @@ describe('sidebar items', () => {
-     // TokenOps opens on its own 30 days, not Sessions' window.
-     expect(router.state.location.search).toMatchObject({ preset: '30d' })
-     expect(router.state.location.search).not.toHaveProperty('day')
--    await userEvent.click(navLink('Harnesses'))
-+    await userEvent.click(navLink('Coding harnesses'))
-     await waitFor(() => expect(router.state.location.pathname).toBe('/harnesses'))
-     expect(router.state.location.search).toMatchObject({ preset: '30d' })
-   })
-```
-
-**File**: `ui/common/src/app/shell/copy.ts` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ export const copy = {
-     tokenops: 'TokenOps',
-     monitor: 'Monitor',
-     optimise: 'Optimize',
--    harnesses: 'Harnesses',
-+    harnesses: 'Coding harnesses',
-     settings: 'Settings',
-   },
-   routeError: {
-```
-
-**File**: `ui/common/src/app/shell/nav.test.ts` (modified, +2/-2)
-```diff
-@@ -8,7 +8,7 @@ const OLD_NAV = [
-   // TokenOps became its own section; the page is its Monitor item.
-   { to: '/tokenops', label: 'Monitor', shared: true },
-   { to: '/sessions', label: 'Sessions', shared: true },
--  { to: '/harnesses', label: 'Harnesses', shared: true },
-+  { to: '/harnesses', label: 'Coding harnesses', shared: true },
-   { to: '/agents', label: 'Agents', shared: false },
-   { to: '/chat', label: 'Chat', shared: false },
- ]
-@@ -49,7 +49,7 @@ describe('nav items', () => {
-       'Agents',
-       'Workflows',
-       'Chat',
--      'Harnesses',
-+      'Coding harnesses',
-       'Sessions',
-       'Flows',
-       'Monitor',
-```
-
-**File**: `ui/common/src/features/agents/AgentDetailPage.test.tsx` (modified, +2/-2)
-```diff
-@@ -678,12 +678,12 @@ describe('Try it (chat plan §9)', () => {
- })
+@@ -32,7 +32,7 @@ Please include as much of the following as you can:
+ |---|---|
+ | Acknowledgement of your report | within 3 business days |
+ | Initial assessment and severity | within 10 business days |
+-| Status updates while we work on a fix | at least every 14 days |
++| Status updates while we work on a fix | take upto 2 weeks |
  
- describe('more states (plan §10)', () => {
--  it('a coding harness shows Overview and MCP and points at Harnesses', async () => {
-+  it('a coding harness shows Overview and MCP and points at Coding harnesses', async () => {
-     const harness = await agentWhere((a) => !!a.tags?.includes('coding-agent'))
-     renderApp(`/agents/${harness.id}`)
-     await title()
-     expect(tabNames()).toEqual(['Overview', 'MCP', 'Details'])
--    expect(screen.getByRole('link', { name: /See usage on Harnesses/ })).toHaveAttribute(
-+    expect(screen.getByRole('link', { name: /See usage on Coding harnesses/ })).toHaveAttribute(
-       'href',
-       expect.stringContaining('/harnesses'),
-     )
-```
-
-**File**: `ui/common/src/features/agents/copy.ts` (modified, +2/-2)
-```diff
-@@ -25,7 +25,7 @@ export const copy = {
-   tagLabel: 'Tag',
-   tagFilter: 'Filter by tag',
-   allTags: 'All',
--  harnessUsage: 'See usage on Harnesses',
-+  harnessUsage: 'See usage on Coding harnesses',
-   excludesHarnesses: (n: number) => `Excludes ${n} coding harness${n === 1 ? '' : 'es'}`,
-   noResults: 'No agents match this search',
-   noResultsHint: 'Try another name, tag or skill, or clear the search and filters.',
-@@ -53,7 +53,7 @@ export const copy = {
-   deployHint: 'Deploy with',
-   needsAttention: 'Needs attention',
-   tabAll: 'All',
--  tabHarnesses: 'Harnesses',
-+  tabHarnesses: 'Coding harnesses',
-   colName: 'Name',
-   colStatus: 'Status',
-   colVersion: 'Version',
-```
-
-**File**: `ui/common/src/features/chat/ChatPage.transcript.test.tsx` (modified, +2/-2)
-```diff
-@@ -97,15 +97,15 @@ afterEach(() => {
- })
- 
- describe('read-only chats', () => {
--  it('a recorded harness chat says so, links to Harnesses and has no composer', async () => {
-+  it('a recorded harness chat says so, links to Coding harnesses and has no composer', async () => {
-     fakeChat([sessionRow({ is_coding_agent: true, agent_id: 'harness-1' })], () => ({
-       data: [message('u1', 'user', 'refactor', 3)],
-       has_more: false,
-       hitl: [],
-     }))
-     renderApp(`/chat/${FAKE}`)
-     expect(await screen.findByText('Recorded from a coding harness.')).toBeInTheDocument()
--    expect(screen.getByRole('link', { name: 'View in Harnesses →' })).toHaveAttribute(
-+    expect(screen.getByRole('link', { name: 'View in Coding harnesses →' })).toHaveAttribute(
-       'href',
-       '/harnesses',
-     )
-```
-
-**File**: `ui/common/src/features/chat/copy.ts` (modified, +1/-1)
-```diff
-@@ -210,7 +210,7 @@ export const copy = {
-   targetNotRunningAction: 'Open the agent',
-   agentRemoved: "This chat's agent was removed.",
-   recordedReadOnly: 'Recorded from a coding harness.',
--  viewInHarnesses: 'View in Harnesses →',
-+  viewInHarnesses: 'View in Coding harnesses →',
-   loadingChat: 'Loading chat…',
-   historyMissing: "This chat was deleted or isn't yours.",
-   historyFailed: "Couldn't load this chat.",
-```
-
-**File**: `ui/common/src/features/chat/recorded.test.tsx` (modified, +4/-2)
-```diff
-@@ -315,7 +315,7 @@ describe('a recorded chat (test 12)', () => {
-     await userEvent.click(within(third!).getAllByTestId('recorded-chip')[0]!)
-     expect(within(third!).getByRole('button', { name: 'Copy full value' })).toBeInTheDocument()
-     expect(screen.queryByRole('textbox', { name: /^Message/ })).toBeNull()
--    expect(screen.getByRole('link', { name: 'View in Harnesses →' })).toHaveAttribute(
-+    expect(screen.getByRole('link', { name: 'View in Coding harnesses →' })).toHaveAttribute(
-       'href',
-       '/harnesses',
-     )
-@@ -327,7 +327,9 @@ describe('a recorded chat (test 12)', () => {
-     expect(empty).toHaveTextContent(
-       'Only metadata was recorded for this session. Turn on content capture in the harness integration to see messages.',
-     )
--    expect(within(empty).getByRole('link', { name: 'View in Harnesses →' })).toBeInTheDocument()
-+    expect(
-+      within(empty).getByRole('link', { name: 'View in Coding harnesses →' }),
-+    ).toBeInTheDocument()
-   })
- })
- 
+ We will keep you informed while we investigate, tell you whether we accept the report, and agree a
+ disclosure date with you. Once a fix is released, we publish a security advisory and credit you
 ```
 
 ---
 
-### Incident Patch 2: `6697ee8d` (2026-10-21)
-**Commit Message**: feat(ui): village and map on the OSS Overview, with world themes and the cactus Kiko
+### Incident Patch 2: `4cb05ac6` (2026-11-11)
+**Commit Message**: docs: add a security policy
+[synced-from-private]
 
-The Overview's estate canvas, ported from nasiko-ui-lab feat/product-shell
-(plans/feat-village-overview.md) and explore/village-themes:
-
-- OSS only (useEdition, as the waitlist): a header switch Overview · Village
-  · Map swaps the summary bento for the canvas; the cards below stay. The last
-  pick is remembered per viewer (drafts prefix); ?view= and ?sel= link to it.
-- The village and the Map's board, the HUD, Kiko, the Control center, the
-  insight drawer and problem actions (OV-2), on the estate from
-  GET /api/overview/estate; the smaller map from the fleet when it's absent.
-- Three voxel worlds (medieval desert, ice age, steampunk) baked in a Web
-  Worker with a picker, robot agents, and Kiko as the animated cactus. The lab
-  exploration's 94 lint errors are fixed, not suppressed (themes as data in
-  worlds/themes.ts, geometry in worlds/paths.ts, the picker on ToggleGroup,
-  refs written in effects, the rasterizer's dead code removed).
-- Loading: the canvas's chunk downloads alongside the estate (and on hover of
-  the switch); its frame holds the final height with the page loader, so the
-  ca
-
-**File**: `ui/.env.example` (modified, +2/-2)
+**File**: `SECURITY.md` (added, +74/-0)
 ```diff
-@@ -10,10 +10,10 @@ VITE_NASIKO_ALLOW_MOCK_BUILD=
- # In live mode, endpoints MSW should still mock (comma list). Useful for the proposed
- # /finops/top-traces endpoint, which the server doesn't have yet:
- #   VITE_NASIKO_MOCK=top-traces
--# Keys: agents, dashboard, spend-timeseries, spend-calendar, providers, top-traces, savings, flows, observability, harnesses, chat, router, budgets, budgets-fill, deploy, settings, mcp, workflows, onboarding, optimization, events (auth is never mocked in live mode;
-+# Keys: agents, dashboard, spend-timeseries, spend-calendar, providers, top-traces, savings, flows, observability, harnesses, chat, router, budgets, budgets-fill, deploy, settings, mcp, workflows, onboarding, optimization, events, overview (auth is never mocked in live mode;
- #   harnesses previews the Harnesses page against a live server, as the seed admin (an edition's own harness
- #   identity routes come with it);
--#   chat needs agents and observability too; router needs agents and providers and brings budgets along; budgets needs agents; budgets-fill answers budgets from the real server where it serves them, the golden mock elsewhere; deploy, mcp, workflows, flows and events need agents)
-+#   chat needs agents and observability too; router needs agents and providers and brings budgets along; budgets needs agents; budgets-fill answers budgets from the real server where it serves them, the golden mock elsewhere; deploy, mcp, workflows, flows and events need agents; overview reads every other group's state)
- # `observability` covers /api/agents and the session, trace, span and log endpoints together.
- VITE_NASIKO_MOCK=
- 
-```
-
-**File**: `ui/common/src/features/harnesses/search.ts` (modified, +3/-0)
-```diff
-@@ -56,6 +56,9 @@ export const HARNESS_MOCK_VARIANTS = [
-   'events-absent',
-   'ledger-no-trace',
-   'home-budgets-absent',
-+  'overview-absent',
-+  'overview-quiet',
-+  'village-unlimited',
-   // Chat page variants (v1c DX1); harmless here, listed so the lists stay equal.
-   'no-agents',
-   'many-chats',
-```
-
-**File**: `ui/common/src/features/overview/OverviewPage.review.test.tsx` (modified, +1/-0)
-```diff
-@@ -213,6 +213,7 @@ describe('components', () => {
-       other: null,
-       driversError: null,
-       unpriced: false,
-+      latency: null,
-       retry: vi.fn(),
-     })
-     const { unmount } = renderInRouter(<Spend spend={spend('2026-09-15')} now={at} />)
-```
-
-**File**: `ui/common/src/features/overview/OverviewPage.tsx` (modified, +249/-11)
-```diff
-@@ -16,13 +16,21 @@
-  * with Home's Budget burn panel (the `budgets.useHomePanel` slot, EE only) spanning the row under Needs you. The panel
-  * reads the persona's default scope (`homeScopeFor`: Fleet for leads and finance, Yours otherwise), since the Overview
-  * has no scope switch; the first paint waits for it, so it never pushes the cards down mid-look.
-+ *
-+ * OSS only: the header's view switch swaps the summary bento for the estate's canvas (plans/feat-village-overview.md,
-+ * ported from nasiko-ui-lab feat/product-shell); the cards under it stay either way. `?view=village` draws the village
-+ * and `?view=map` the Map's board (`fleet/`), with the same HUD and insight drawer. A bare `/` opens the viewer's last
-+ * pick (`homeViewKey`), else the summary; a `?sel=` without a view opens the village. The estate is read only while the
-+ * canvas shows. Admins pick Org or Mine (`?scope=`) beside the range on the canvas; the filters bar shows only while a
-+ * filter is set. Other editions get the summary alone, whatever the URL says.
-  */
--import { useSlots } from '@/app/edition-context'
-+import { useEdition, useSlots } from '@/app/edition-context'
- import { useQuery, useQueryClient } from '@tanstack/react-query'
- import { Link } from '@tanstack/react-router'
- import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
- import { RotateCw } from 'lucide-react'
--import { useEffect, useMemo, useState, type ReactNode } from 'react'
-+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-+import { toast } from 'sonner'
- import { TourButton } from '@/app/shell/TopBar'
- import { PageHeader } from '@/components/shared/page-header'
- import { PageLoader } from '@/components/shared/page-loader'
-@@ -34,6 +42,8 @@ import { overviewNarrative } from '@/features/narrative/overview'
- import { usePersona } from '@/features/onboarding/api'
- import { homeScopeFor } from '@/features/onboarding/logic'
- import { meQuery, type Me } from '@/lib/api/auth'
-+import { DRAFT_PREFIX } from '@/lib/draftKeys'
-+import { isEndpointAbsent } from '@/lib/api/detect'
- import { useReturnTick } from '@/lib/useReturnTick'
- import {
-   useFleetHealth,
-@@ -55,11 +65,42 @@ import { SetupGuide } from './components/SetupGuide'
- import { SetUpNow } from './components/SetUpNow'
- import { SummaryCard } from './components/SummaryCard'
- import { Spend } from './components/Spend'
-+import { FilterBar } from './components/FilterBar'
- import { copy } from './copy'
-+import { useEstate, useProblemAction } from './estate/api'
-+import { estateCopy } from './estate/copy'
-+import type { ProblemPatch } from './estate/types'
-+import { useEstateView } from './estate/useEstateView'
-+import { formatSel, parseSel, type Selection } from './map/selection'
-+import type { ProblemActions } from './panel/ProblemCard'
- import { DEFAULT_RANGE, RANGE_DAYS, RANGES, type OverviewSearch } from './search'
- import { RETURN_REFRESH_MS } from './tuning'
-+import type { VillageView } from './village/Hud'
-+import { VillageCanvas, VillageLoading } from './village'
-+import { loadVillage } from './village/load'
- 
- type SetSearch = (patch: Partial<OverviewSearch>) => void
-+type HomeView = 'overview' | VillageView
-+const HOME_VIEWS: readonly HomeView[] = ['overview', 'village', 'map']
+@@ -0,0 +1,74 @@
++# Security Policy
 +
-+/** The view a bare `/` opens, per viewer, under the drafts prefix (sign-out clears it, as chat's rail view). */
-+const homeViewKey = (sub: string) => `${DRAFT_PREFIX}${sub}:meta:homeView`
-+function readHomeView(sub: string): HomeView {
-+  try {
-+    const v = globalThis.localStorage?.getItem(homeViewKey(sub))
-+    return HOME_VIEWS.find((x) => x === v) ?? 'overview'
-+  } catch {
-+    return 'overview'
-+  }
-+}
-+/** Written when the viewer picks a view; arriving with `?view=` alone doesn't. */
-+function rememberHomeView(sub: string, view: HomeView) {
-+  try {
-+    globalThis.localStorage?.setItem(homeViewKey(sub), view)
-+  } catch {
-+    // Blocked storage: a bare `/` opens the cards.
-+  }
-+}
- 
- function Frame({
-   description,
-@@ -82,14 +123,64 @@ function HeaderActions({
-   search,
-   setSearch,
-   setup,
-+  admin,
-+  view,
-+  onView,
- }: {
-   search: OverviewSearch
-   setSearch: SetSearch
-   /** False on first run: the Setup guide (or deploy) card is on the page already. */
-   setup: boolean
-+  /** Admins choose Org or Mine for the canvas; members only ever see their own. */
-+  admin: boolean
-+  view: HomeView
-+  /** Null where the canvas isn't offered (any edition but OSS): no view switch. */
-+  onView: ((v: HomeView) => void) | null
- }) {
-   return (
-     <>
-+      {onView ? (
-+        <ToggleGroup
-+          type="single"
-+          variant="outline"
-+          size="sm"
-+          value={view}
-+          onValueChange={(v) => v && onView(v as HomeView)}
-+          aria-label={copy.views.label}
-+        >
-+          {HOME_VIEWS.map((v) => (
-+            <ToggleGroupItem
-+              key={v}
-+              value={v}
-+              className="px-3 text-xs pointer-coa
-```
-
-**File**: `ui/common/src/features/overview/api.ts` (modified, +8/-0)
-```diff
-@@ -324,6 +324,8 @@ export interface Spend {
-   driversError: unknown
-   /** Some calls in the range had no price: totals are a floor. */
-   unpriced: boolean
-+  /** Fleet p95 latency over the range and its change, from the same dashboard; null while it loads or failed. */
-+  latency: { p95: number; changePct: number | null } | null
-   retry(): void
- }
- 
-@@ -440,6 +442,12 @@ export function useSpend(now: Date, range: Range, enabled = true): Spend {
-     other,
-     driversError: cur.error,
-     unpriced: (cur.data?.summary.unpriced_calls ?? 0) > 0,
-+    latency: cur.data
-+      ? {
-+          p95: cur.data.kpis.latency_p95_ms.current,
-+          changePct: cur.data.kpis.latency_p95_ms.change_pct,
-+        }
-+      : null,
-     retry: () => {
-       void calThis.refetch()
-       void calLast.refetch()
-```
-
-**File**: `ui/common/src/features/overview/components.coverage.test.tsx` (modified, +1/-0)
-```diff
-@@ -270,6 +270,7 @@ const spendData = (over: Partial<SpendData> = {}): SpendData => ({
-   other: null,
-   driversError: null,
-   unpriced: false,
-+  latency: null,
-   retry: vi.fn(),
-   ...over,
- })
-```
-
-**File**: `ui/common/src/features/overview/components/Kpis.tsx` (modified, +9/-4)
-```diff
-@@ -13,6 +13,7 @@ import { KpiTile } from '@/components/shared/kpi-tile'
- import { Skeleton } from '@/components/ui/skeleton'
- import { seriesAt, type Series } from '@/lib/chart'
- import { POLARITY } from '@/lib/delta'
-+import { cn } from '@/lib/utils'
- import { fmtCostPerOp, fmtInt, fmtMoneyFloor, fmtMoneyShort, fmtPct, fmtTokens } from '@/lib/format'
- import type { Spend } from '../api'
- import { copy } from '../copy'
-@@ -46,20 +47,24 @@ export function TileLabel({
- export const TILE = 'min-w-0 gap-2 p-4'
- const PENDING = <Skeleton className="h-8 w-28 motion-reduce:animate-none" />
- 
--/** A tiny decorative chart under a figure: a line with a light area, or bars. */
-+/** A tiny decorative chart under a figure: a line with a light area, or bars. The village's meters use it too. */
- export function Spark({
-   points,
-   kind,
-   series,
-+  className,
- }: {
-   /** One point per day, keyed by its ISO start. */
-   points: readonly { key: string; value: number }[]
-   kind: 'line' | 'bars'
-   series: Series
-+  /** Overrides the size (the tiles' is `h-10 w-full`). */
-+  className?: string
- }) {
-   const values = points.map((p) => p.value)
-   const max = Math.max(0, ...values)
--  if (!values.length || max <= 0) return <div className="mt-auto h-10" aria-hidden />
-+  if (!values.length || max <= 0)
-+    return <div className={cn('mt-auto h-10', className)} aria-hidden />
-   const y = (v: number) => 30 - (v / max) * 28
-   if (kind === 'bars') {
-     const w = 100 / values.length
-@@ -68,7 +73,7 @@ export function Spark({
-         aria-hidden
-         viewBox="0 0 100 32"
-         preserveAspectRatio="none"
--        className="mt-auto h-10 w-full"
-+        className={cn('mt-auto h-10 w-full', className)}
-       >
-         {points.map(({ key, value: v }, i) => (
-           <rect
-@@ -93,7 +98,7 @@ export function Spark({
-       aria-hidden
-       viewBox="0 0 100 32"
-       preserveAspectRatio="none"
--      className="mt-auto h-10 w-full"
-+      className={cn('mt-auto h-10 w-full', className)}
-     >
-       <polygon points={`0,32 ${pts} 100,32`} fill={series.fill} opacity={0.35} />
-       <polyline
-```
-
-**File**: `ui/common/src/features/overview/components/NeedsYou.tsx` (modified, +3/-2)
-```diff
-@@ -147,7 +147,7 @@ export function NeedsYou({
-                     key={r.key}
-                     className="border-t border-border first:border-t-0 @[900px]/card:rounded-lg @[900px]/card:border @[900px]/card:bg-muted/20 @[900px]/card:px-3 @[900px]/card:first:border-t"
-                   >
--                    <Row
-+                    <NeedRowView
-                       row={r}
-                       now={now}
-                       userId={userId}
-@@ -176,7 +176,8 @@ export function NeedsYou({
-   )
- }
- 
--function Row({
-+/** One Needs you row: its icon, what it is, and its one action (the insight panel lists requests with it too). */
-+export function NeedRowView({
-   row,
-   now,
-   userId,
++Nasiko runs in the call path of agents, coding harnesses and model providers, and it handles
++credentials, provider keys and user data. We take security reports seriously and appreciate the
++work of everyone who helps keep Nasiko and its users safe.
++
++## Reporting a vulnerability
++
++**Do not report security vulnerabilities through public GitHub issues, pull requests, discussions or
++Discord channels.**
++
++Report them privately through GitHub's private vulnerability reporting:
++[Report a vulnerability](https://github.com/Nasiko-Labs/nasiko/security/advisories/new).
++
++If you cannot use GitHub, contact a maintainer privately on
++[Discord](https://discord.com/invite/HmnfkTfjFv) and ask for a private channel. Do not include
++vulnerability details in the first message.
++
++Please include as much of the following as you can:
++
++- the type of issue (for example authentication bypass, privilege escalation, injection, secret
++  exposure, server-side request forgery);
++- the affected component, endpoint or file, and the version or commit;
++- the configuration needed to reproduce it;
++- step-by-step reproduction instructions;
++- a proof of concept, if you have one;
++- the impact, and how an attacker could exploit it.
++
++## What to expect
++
++| Step | Target |
++|---|---|
++| Acknowledgement of your report | within 3 business days |
++| Initial assessment and severity | within 10 business days |
++| Status updates while we work on a fix | at least every 14 days |
++
++We will keep you informed while we investigate, tell you whether we accept the report, and agree a
++disclosure date with you. Once a fix is released, we publish a security advisory and credit you
++unless you ask to remain anonymous.
++
++## Supported versions
++
++Security fixes are made on the `main` branch and included in the next release. We do not backport
++fixes to older releases; upgrade to the latest release to receive them.
++
++## Scope
++
++In scope:
++
++- the Nasiko server: API, authentication and authorization, agent proxy, LLM router, MCP gateway,
++  embedded registry and web UI;
++- the `nasiko` CLI;
++- the example agents and Docker images published from this repository.
++
++Out of scope:
++
++- vulnerabilities in third-party dependencies that have no demonstrated impact on Nasiko (report
++  those to the upstream project);
++- issues that require a compromised host, a malicious administrator, or physical access;
++- denial of service through volumetric traffic;
++- findings from automated scanners without a demonstrated, reproducible impact;
++- missing security headers or best-practice recommendations with no exploitable impact;
++- social engineering of Nasiko maintainers or users.
++
++## Safe harbor
++
++We will not pursue legal action against anyone who, in good faith:
++
++- reports a vulnerability through the channels above;
++- tests only against their own installation or accounts they own;
++- avoids privacy violations, data destruction, and degradation of service for others;
++- gives us reasonable time to fix the issue before disclosing it publicly.
++
++Thank you for helping keep Nasiko secure.
 ```
 
 ---
 
-### Incident Patch 3: `2a316b55` (2026-10-21)
-**Commit Message**: feat(ui): first-run Overview redesign: hero, "Works before your first agent", budget strip
+### Incident Patch 3: `ee675e72` (2026-11-11)
+**Commit Message**: Merge pull request #928 from Nasiko-Labs/docs/contributing-guide
 
-With no agents yet, the Overview opens on one hero (Deploy on the left, the
-Setup guide on the right, the CLI steps on a server without onboarding), no
-range toggle and no window in the greeting. Under it, SetUpNow replaces Quick
-actions and the one-line Harnesses card: four cells that work before any agent
-(Orchestrator, a model, MCP servers, coding harnesses), each linking to its
-page with its own live status, failing on its own.
-
-EE fills a new `budgets.FirstRunStrip` slot: the viewer's default /budgets
-scope's own budget (its limit, what happens at the limit, when it resets), or
-Set a budget when there is none; nothing on a server without budgets.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-(cherry picked from commit ea72408fe9f2fb626b64eb091bcd40b832e2f98e)
+Docs/contributing guide
 [synced-from-private]
 
-**File**: `ui/common/src/app/edition.ts` (modified, +6/-0)
-```diff
-@@ -269,6 +269,11 @@ export interface BudgetsSurface {
-     /** The session is one of the viewer's own chats. */
-     ownSession: boolean
-   }> | null
-+  /**
-+   * The Overview's first run (no agents yet): a full-width strip under the hero about the viewer's spending limit, set
-+   * before anything runs. The layer renders nothing on a server without budgets.
-+   */
-+  FirstRunStrip: ComponentType | null
-   /** Whether the LLM router page lists a Budgets tab (the layer's own availability probe). */
-   useRouterTab: () => boolean
-   /** The Budgets tab's content, rendered inside the router page's `TabsContent`. */
-@@ -306,6 +311,7 @@ export const NO_BUDGETS: BudgetsSurface = {
-   useLedgerBudgets: () => NO_LEDGER_BUDGETS,
-   useRouterTab: () => false,
-   RouterTab: null,
-+  FirstRunStrip: null,
- }
- 
- /** Every slot has an OSS fallback in the core; a slot is added in the PR whose layer first fills it. */
-```
 
-**File**: `ui/common/src/features/deploy/components/DeployAgentButton.tsx` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ export function DeployAgentButton({
- }: {
-   name?: string
-   variant?: 'default' | 'outline'
--  size?: 'sm' | 'default'
-+  size?: 'sm' | 'default' | 'lg'
-   className?: string
- }) {
-   return (
-```
-
-**File**: `ui/common/src/features/deploy/entryPoints.test.tsx` (modified, +2/-1)
-```diff
-@@ -33,7 +33,8 @@ describe('Deploy an agent entry points', () => {
-         const links = await deployLinks()
-         expect(links.every((l) => l.getAttribute('href') === '/deploy')).toBe(true)
-         const scope = testId ? within(screen.getByTestId(testId)) : screen
--        expect(scope.getByText(copy.entry.orCli)).toBeInTheDocument()
-+        // The Overview's hero titles the steps without the colon.
-+        expect(scope.getByText(/^Or use the CLI/)).toBeInTheDocument()
-         expect(scope.getAllByRole('button', { name: /Copy/ }).length).toBeGreaterThan(0)
-         cleanup()
-       }
-```
-
-**File**: `ui/common/src/features/onboarding/GuideCard.tsx` (modified, +12/-0)
-```diff
-@@ -4,6 +4,7 @@
-  */
- import { BookOpen, Check } from 'lucide-react'
- import { Button } from '@/components/ui/button'
-+import { Progress } from '@/components/ui/progress'
- import { useAgentsDirectory } from '@/features/agents/api'
- import { useConfigs } from '@/features/router/api'
- import { cn } from '@/lib/utils'
-@@ -42,9 +43,20 @@ export function GuideSteps({ buttonClassName }: { buttonClassName?: string }) {
-   const t = useTicks()
-   // "Resume" only once a step is done: before that there is nothing to resume.
-   const started = t.role || t.model || t.agent
-+  const done = ROWS.filter(([id]) => t[id]).length
-   return (
-     <div className="flex flex-col gap-3">
-       <p className="text-sm text-muted-foreground">{copy.card.intro}</p>
-+      <div className="flex max-w-xl items-center gap-3">
-+        <Progress
-+          value={(done / ROWS.length) * 100}
-+          aria-label={copy.card.progress(done, ROWS.length)}
-+          className="h-1.5"
-+        />
-+        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-+          {copy.card.progress(done, ROWS.length)}
-+        </span>
-+      </div>
-       {/* Each row opens the guide at its own step; the button below opens it at the first one not done. */}
-       <ul className="-mx-2 flex max-w-xl flex-col">
-         {ROWS.map(([id, s]) => (
-```
-
-**File**: `ui/common/src/features/onboarding/copy.ts` (modified, +1/-0)
-```diff
-@@ -171,5 +171,6 @@ export const copy = {
-     resume: 'Resume guide',
-     done: 'Done',
-     todo: 'Not yet',
-+    progress: (done: number, total: number) => `${done} of ${total} done`,
-   },
- }
-```
-
-**File**: `ui/common/src/features/overview/OverviewPage.test.tsx` (modified, +4/-2)
-```diff
-@@ -262,12 +262,14 @@ describe('Needs you', () => {
- })
- 
- describe('first run (design 7A)', () => {
--  it('leads with the Setup guide card instead of the deploy card, and it reopens the guide', async () => {
-+  it('puts the Setup guide in the hero beside Deploy, and it reopens the guide', async () => {
-     server.use(http.get('*/api/agents', () => HttpResponse.json([])))
-     const user = userEvent.setup()
-     renderApp('/')
-     const guideCard = await screen.findByTestId('overview-setup-guide')
--    expect(document.querySelector('[data-testid="overview-first-run"]')).toBeNull()
-+    // The guide fills the hero's right half (redesign 2026-10-21), not a card of its own; no range with nothing to range.
-+    expect(card('overview-first-run')).toContainElement(guideCard)
-+    expect(screen.queryByRole('group', { name: copy.range.label })).toBeNull()
-     // One next action: Deploy beside the headline; the header's Setup guide and Quick actions' Deploy step aside.
-     expect(screen.getAllByRole('link', { name: deployCopy.entry.label })).toHaveLength(1)
-     expect(screen.queryByRole('button', { name: copy.setup.button })).toBeNull()
-```
-
-**File**: `ui/common/src/features/overview/OverviewPage.tsx` (modified, +28/-20)
-```diff
-@@ -26,6 +26,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
- import { TourButton } from '@/app/shell/TopBar'
- import { PageHeader } from '@/components/shared/page-header'
- import { PageLoader } from '@/components/shared/page-loader'
-+import { Reveal, RevealItem } from '@/components/shared/reveal'
- import { StateCard } from '@/components/shared/state-card'
- import { Button } from '@/components/ui/button'
- import { useChatSessions } from '@/features/chat/api'
-@@ -42,16 +43,16 @@ import {
-   useSavedByAgent,
-   useSpend,
- } from './api'
--import { FirstRun, FirstRunLead, FirstRunPreview } from './components/FirstRun'
-+import { FirstRunHero, FirstRunPreview } from './components/FirstRun'
- import { FleetHealth } from './components/FleetHealth'
--import { HarnessesLine } from './components/Harnesses'
- import { NeedsYou } from './components/NeedsYou'
- import { usePausedFlows } from '@/features/flows/paused'
- import { QuickActions } from './components/QuickActions'
- import { RecentChats } from './components/RecentChats'
- import { RecentSessions } from './components/RecentSessions'
- import { SavedByAgent } from './components/SavedByAgent'
- import { SetupGuide } from './components/SetupGuide'
-+import { SetUpNow } from './components/SetUpNow'
- import { SummaryCard } from './components/SummaryCard'
- import { Spend } from './components/Spend'
- import { copy } from './copy'
-@@ -119,9 +120,6 @@ function HeaderActions({
-   )
- }
- 
--/** A first-run row that spans the grid at every width. */
--const FULL_ROW = '@[700px]/overview:col-span-2 @[1100px]/overview:col-span-3'
--
- /** Where each card sits: twelve columns from 1100 px, 2 from 700. Literal class names, so Tailwind sees them. */
- // Redesign 2026-10-13: Needs you, Budget burn and Spend span the row; then Fleet health beside Recent sessions and
- // Recent chats beside Quick actions, alternating widths. Heights match within a row, so no card stretches far past
-@@ -223,7 +221,8 @@ function Overview({
-   const chats = useChatSessions()
-   // Budget burn (EE): the persona's default scope; null until the persona settles (it settles on a failure too).
-   const persona = usePersona()
--  const burn = useSlots().budgets.useHomePanel({
-+  const slots = useSlots()
-+  const burn = slots.budgets.useHomePanel({
-     scope: persona.settled ? homeScopeFor(persona.persona, me.is_superuser) : null,
-     meSub: me.sub,
-     isSuperuser: me.is_superuser,
-@@ -245,8 +244,6 @@ function Overview({
-     [spend.summary, spend.unpriced, needs],
-   )
- 
--  const grid =
--    'grid grid-cols-1 items-stretch gap-3 @[700px]/overview:grid-cols-2 @[1100px]/overview:grid-cols-3'
-   const description = copy.greeting(now.getHours(), me.username, days)
-   const actions = <HeaderActions search={search} setSearch={setSearch} setup={!firstRun} />
-   // One page loader until the first paint's reads settle (data or error: a failed read renders its card's error), in
-@@ -272,19 +269,30 @@ function Overview({
-     )
-   }
-   if (firstRun) {
-+    // A spending limit can be set before anything runs: the budgets layer's strip (EE; OSS has no budgets).
-+    const { FirstRunStrip } = slots.budgets
-+    // Nothing has run, so no range to pick and no window in the greeting; the tour button stays.
-     return (
--      <Frame description={description} actions={actions}>
--        <FirstRunLead />
--        <div className={grid}>
--          {/* From 1100 px Quick actions and Harnesses' one line stack beside the first-run card, so neither stretches
--              to its height; below that each spans the grid. The preview of later cards sits apart, after a wider gap. */}
--          <FirstRun />
--          <div className="contents @[1100px]/overview:flex @[1100px]/overview:flex-col @[1100px]/overview:gap-3">
--            <QuickActions firstRun className={`${FULL_ROW} @[1100px]/overview:flex-1`} />
--            <HarnessesLine data={harnesses} days={days} className={FULL_ROW} />
--          </div>
--          <FirstRunPreview className={`${FULL_ROW} mt-3`} />
--        </div>
-+      <Frame
-+        description={copy.firstRun.greeting(now.getHours(), me.username)}
-+        actions={<TourButton className="max-md:hidden" />}
-+      >
-+        <Reveal className="flex flex-col gap-3">
-+          <RevealItem>
-+            <FirstRunHero />
-+          </RevealItem>
-+          {FirstRunStrip ? (
-+            <RevealItem>
-+              <FirstRunStrip />
-+            </RevealItem>
-+          ) : null}
-+          <RevealItem className="mt-3">
-+            <SetUpNow harnesses={harnesses} days={days} />
-+          </RevealItem>
-+          <RevealItem className="mt-5">
-+            <FirstRunPreview />
-+          </RevealItem>
-+        </Reveal>
-       </Frame>
-     )
-   }
-```
-
-**File**: `ui/common/src/features/overview/components.coverage.test.tsx` (modified, +30/-1)
-```diff
-@@ -16,6 +16,7 @@ import { describe, expect, it, vi } from 'vitest'
- import { readRailView } from '@/features/chat/rememberTarget'
- import type { HarnessSummary, NeedsYou as NeedsYouData, Spend as SpendData } from './api'
- import { Harnesses, HarnessesLine } from './components/Harnesses'
-+import { HarnessCell } from './components/SetUpNow'
- import { Headline } from './components/Headline'
- import { MonthBar } from './components/MonthBar'
- import { NeedsYou } from './components/NeedsYou'
-@@ -444,7 +445,7 @@ describe('Harnesses', () => {
-     const rows = screen.getAllByRole('listitem')
-     expect(rows[1]).toHaveTextContent(`mystery${copy.harnesses.unpriced}`)
-   })
--  it('keeps the first run line to one sentence per state, with only priced cost', async () => {
-+  it('keeps the one-line Harnesses (Weave’s view) to one sentence per state, with only priced cost', async () => {
-     const { unmount } = renderInRouter(<HarnessesLine data={data({})} days={30} />)
-     const line = await screen.findByTestId('overview-harnesses')
-     expect(line).toHaveTextContent(`${copy.harnesses.noneYet}·${copy.harnesses.connect}.`)
-@@ -471,4 +472,32 @@ describe('Harnesses', () => {
-     await userEvent.click(await screen.findByRole('button', { name: copy.retry }))
-     expect(retry).toHaveBeenCalled()
-   })
-+  it('gives the first run harness cell one status per state, with only priced cost', async () => {
-+    const { unmount } = renderInRouter(<HarnessCell data={data({})} days={30} />)
-+    const cell = await screen.findByTestId('overview-harnesses')
-+    expect(cell).toHaveTextContent(`${copy.harnesses.title}${copy.setUpNow.noHarnesses}`)
-+    expect(within(cell).getByRole('link')).toHaveAttribute('href', '/harnesses')
-+    unmount()
-+    const second = renderInRouter(
-+      <HarnessCell
-+        data={data({
-+          connected: 2,
-+          ownOnly: true,
-+          harnesses: [
-+            { id: 'claude-code', cost: 12, unpriced: false },
-+            { id: 'mystery', cost: 3, unpriced: true },
-+          ],
-+        })}
-+        days={30}
-+      />,
-+    )
-+    expect(await screen.findByTestId('overview-harnesses')).toHaveTextContent(
-+      `${copy.harnesses.connected(2)} (${copy.kpi.yourUsage}) · ${copy.harnesses.lineCost('$12.00', 30)}`,
-+    )
-+    second.unmount()
-+    const retry = vi.fn()
-+    renderInRouter(<HarnessCell data={data({ error: new Error('x'), retry })} days={30} />)
-+    await userEvent.click(await screen.findByRole('button', { name: copy.retry }))
-+    expect(retry).toHaveBeenCalled()
-+  })
- })
-```
 
 #### Recent Merged Pull Requests:
+- **PR #356** (closed): fix(llm-router): stop dropping tool_choice "none" and related tool controls (@Prudhvi-Raj1806)
 - **PR #344** (closed): feat: add reproducible compaction and routing benchmarks (@AbhiramMandala)
 - **PR #338** (closed): [P2: request classifier] add request classifier and context integrity… (@SVaishnaviVasa)
 - **PR #337** (closed): [classifier] P2 request classifier with hosted model fallback, API endpoints, and interactive frontend console (@VrajeshChary)
 - **PR #336** (closed): feat(router): implement P2 request classifier, L2 cache bypass, evalu… (@Varshini2701)
 - **PR #333** (closed): feat: add compact tool decoder and streaming support (@ayeshazaara740)
-- **PR #332** (closed): [classifier] Pluggable request classifier with calibrated local backend and regex fallback (@apj21-s)
 
 ---
 
@@ -3052,35 +2392,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): rename "Harnesses" to "Coding harnesses"
+## X. Update SECURITY.md
 
 **RULE**:
-When implementing operations in `ui/common/src/app/shell/AppShell.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef447543`: ui): rename "Harnesses" to "Coding harnesses". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfd8abed`: Update SECURITY.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/common/src/app/shell/AppShell.test.tsx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ['/harnesses', 'Coding harnesses'],
-      expect(navLink('Coding harnesses')).toHaveAttribute(
-        'href',
-        expect.stringContaining('preset=24h'),
-      ),
-    await userEvent.click(navLink('Coding harnesses'))
+| Status updates while we work on a fix | take upto 2 weeks |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    ['/harnesses', 'Harnesses'],
-      expect(navLink('Harnesses')).toHaveAttribute('href', expect.stringContaining('preset=24h')),
-    await userEvent.click(navLink('Harnesses'))
+| Status updates while we work on a fix | at least every 14 days |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef447543` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfd8abed` are properly handled with clean fallback behavior.

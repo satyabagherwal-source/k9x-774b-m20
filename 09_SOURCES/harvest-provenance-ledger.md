@@ -9049,3 +9049,6 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `8fece0b2` | Multi-dimensional audit evidence | 2026-11-12T02:16:55.300Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `d87ef4ce` | Multi-dimensional audit evidence | 2026-11-12T02:17:03.508Z |
 | `learn-dom-d-1866cc44` | `project://hf-divagr1925-qwen3.5-4b-qwenputer` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | 2026-11-12T02:17:25.219Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `9f84200c` | Multi-dimensional audit evidence | 2026-11-12T02:33:32.408Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `8fe6e970` | Multi-dimensional audit evidence | 2026-11-12T02:33:33.758Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f32bb49a` | Multi-dimensional audit evidence | 2026-11-12T02:33:42.519Z |

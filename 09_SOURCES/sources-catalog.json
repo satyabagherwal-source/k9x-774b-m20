@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "523d26b3",
+    "sourceVersion": "f32bb49a",
     "license": "Apache-2.0",
-    "contentHash": "4d4d8b52e07be09bdd66a42a998265563cf0a75f072b563d8412d7152e94020b",
-    "lastHarvestedAt": "2026-11-11T16:20:44.044Z",
+    "contentHash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
+    "lastHarvestedAt": "2026-11-12T02:33:42.519Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "10a08581",
+    "sourceVersion": "9f84200c",
     "license": "NOASSERTION",
-    "contentHash": "d668d6a9b504220af26a3bc75d6be1802815ca3189eb97e80d74614fc7fab5b5",
-    "lastHarvestedAt": "2026-10-23T05:56:31.845Z",
+    "contentHash": "c46b9aaf60fee835f78b5f389e6bcd2bf6a540244b3d5dc44f28cbb26213e161",
+    "lastHarvestedAt": "2026-11-12T02:33:32.408Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "56968892",
+    "sourceVersion": "8fe6e970",
     "license": "MIT",
-    "contentHash": "21f33a24c4ddf6db145ff84c308e42b5aa85b7589425ebfc92b3d3d8860aa269",
-    "lastHarvestedAt": "2026-11-07T03:56:15.819Z",
+    "contentHash": "6a16a683cb04cbf87d9a72ab1c490d2ea905b4765821366ca6fb76d826207ca7",
+    "lastHarvestedAt": "2026-11-12T02:33:33.758Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {

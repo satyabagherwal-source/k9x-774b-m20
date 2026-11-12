@@ -9040,3 +9040,6 @@
 | `CYCLE-20261112-36YO` | `2026-11-12T02:16:55.296Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`36f9ed2d...`) |
 | `CYCLE-20261112-3DAO` | `2026-11-12T02:17:03.504Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`66fc21e3...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T02:17:25.219Z` | `hf-divagr1925-qwen3.5-4b-qwenputer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1866CC44` [Domain D] | Yes (`d76d0024...`) |
+| `CYCLE-20261112-OKC2` | `2026-11-12T02:33:32.402Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c46b9aaf...`) |
+| `CYCLE-20261112-OLDL` | `2026-11-12T02:33:33.753Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6a16a683...`) |
+| `CYCLE-20261112-OS4Z` | `2026-11-12T02:33:42.515Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8b37cf33...`) |

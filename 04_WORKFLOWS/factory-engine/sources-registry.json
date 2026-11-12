@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T02:17:08.716Z",
-    "lastVerified": "2026-11-12T02:17:08.716Z",
+    "lastChecked": "2026-11-12T02:33:48.911Z",
+    "lastVerified": "2026-11-12T02:33:48.911Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -254,8 +254,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T01:44:30.287Z",
-    "lastVerified": "2026-11-12T01:44:30.287Z",
+    "lastChecked": "2026-11-12T02:33:28.489Z",
+    "lastVerified": "2026-11-12T02:33:28.489Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2009,14 +2009,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T16:20:29.852Z",
-    "lastVerified": "2026-11-11T16:20:29.852Z",
+    "lastChecked": "2026-11-12T02:33:28.884Z",
+    "lastVerified": "2026-11-12T02:33:28.884Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "4d4d8b52e07be09bdd66a42a998265563cf0a75f072b563d8412d7152e94020b",
+    "contentHash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3467,9 +3467,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-09T16:40:21.355Z",
+    "lastChecked": "2026-11-12T02:33:20.865Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-09T16:40:21.355Z"
+    "lastVerified": "2026-11-12T02:33:20.865Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -3819,11 +3819,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nasiko-labs-nasiko": {
-    "name": "nasiko",
+    "name": "Nasiko-Labs/nasiko",
     "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "lastChecked": "2026-11-09T07:31:49.133Z",
-    "revisionIdentifier": "10a08581",
-    "lastVerified": "2026-11-09T07:31:49.133Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-12T02:33:18.260Z",
+    "lastVerified": "2026-11-12T02:33:18.260Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nasiko-labs-nasiko",
+    "contentHash": "c46b9aaf60fee835f78b5f389e6bcd2bf6a540244b3d5dc44f28cbb26213e161",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -5896,9 +5906,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-09T16:04:23.759Z",
+    "lastChecked": "2026-11-12T02:33:26.127Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-09T16:04:23.759Z"
+    "lastVerified": "2026-11-12T02:33:26.127Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -9446,9 +9456,9 @@
   "juanpe-about-swiftui": {
     "name": "About-SwiftUI",
     "officialUrl": "https://github.com/Juanpe/About-SwiftUI",
-    "lastChecked": "2026-11-08T03:14:49.108Z",
+    "lastChecked": "2026-11-12T02:33:18.276Z",
     "revisionIdentifier": "59a740fc",
-    "lastVerified": "2026-11-08T03:14:49.108Z"
+    "lastVerified": "2026-11-12T02:33:18.276Z"
   },
   "hf-openmoss-team-moss-image-sft": {
     "name": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -11316,14 +11326,14 @@
     "officialUrl": "https://github.com/fb55/htmlparser2",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T03:56:13.017Z",
-    "lastVerified": "2026-11-07T03:56:13.017Z",
+    "lastChecked": "2026-11-12T02:33:19.163Z",
+    "lastVerified": "2026-11-12T02:33:19.163Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "21f33a24c4ddf6db145ff84c308e42b5aa85b7589425ebfc92b3d3d8860aa269",
+    "contentHash": "6a16a683cb04cbf87d9a72ab1c490d2ea905b4765821366ca6fb76d826207ca7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

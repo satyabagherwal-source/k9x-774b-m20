@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:17:25.264Z",
+  "last_updated": "2026-11-12T02:33:49.101Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5875,6 +5875,33 @@
       "source_repo": "etcd-io-etcd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C2218C-etcdutl-fix-lint-failure.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9B6133",
+      "directive_title": "Update SECURITY.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nasiko-labs-nasiko",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9B6133-update-security-md.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-A847E3",
+      "directive_title": "build(deps): Bump github/codeql-action from 4.39.2 to 4.39.3 (#2569)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-htmlparser2",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A847E3-build-deps-bump-github-codeql-action-fro.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-07FACC",
+      "directive_title": "deps): update module golang.org/x/crypto to v0.59.0 [security]",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-07FACC-deps-update-module-golang-org-x-crypto-t.md",
       "staged_date": "2026-11-12"
     }
   ]
