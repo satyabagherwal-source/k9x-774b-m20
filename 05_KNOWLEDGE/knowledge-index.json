@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T01:23:37.315Z",
+  "last_updated": "2026-11-12T01:31:23.591Z",
   "total_verified_learnings": 1256,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16841,8 +16841,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "865a2448",
-      "content_hash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
+      "source_version": "d1e064e3",
+      "content_hash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -16859,6 +16859,11 @@
         {
           "number": null,
           "title": "gix-status): read rename candidate metadata from the open file",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "gix-diff): count existing destinations when inferring directory renames",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16927,7 +16932,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T06:38:54.223Z",
+      "verified_at": "2026-11-12T01:31:20.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81701,12 +81706,17 @@
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "ee80665d",
-      "content_hash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
+      "source_version": "2af81b9e",
+      "content_hash": "dd619f037f60ee4a27d6767fe49d315d82f551ada64e9660a40df331f9e9d9b5",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
         "Rule 1629",
+        {
+          "number": null,
+          "title": "Preserve CLI timeout diagnostics and clean up child processes",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2850,
           "title": "Use established isolated browser policy in gallery regression",
@@ -81738,7 +81748,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:28:32.918Z",
+      "verified_at": "2026-11-12T01:31:23.547Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T01:23:37.426Z",
+  "last_updated": "2026-11-12T01:31:23.752Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
-      "verified_at": "2026-11-09T06:38:54.303Z",
+      "content_hash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
+      "verified_at": "2026-11-12T01:31:20.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T06:38:54.303Z"
+      "last_updated": "2026-11-12T01:31:20.929Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
-      "verified_at": "2026-11-03T21:28:33.039Z",
+      "content_hash": "dd619f037f60ee4a27d6767fe49d315d82f551ada64e9660a40df331f9e9d9b5",
+      "verified_at": "2026-11-12T01:31:23.751Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:28:33.039Z"
+      "last_updated": "2026-11-12T01:31:23.751Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",

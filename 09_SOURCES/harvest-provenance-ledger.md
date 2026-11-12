@@ -9039,3 +9039,5 @@ Every entry in this ledger must capture:
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `42846c40` | Multi-dimensional audit evidence | 2026-11-12T01:23:32.213Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `fce8d5b9` | Multi-dimensional audit evidence | 2026-11-12T01:23:37.416Z |
 | `learn-dom-d-66b0e6dd` | `project://hf-liquidai-lfm3-audio-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | 2026-11-12T01:23:57.637Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `d1e064e3` | Multi-dimensional audit evidence | 2026-11-12T01:31:20.902Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `2af81b9e` | Multi-dimensional audit evidence | 2026-11-12T01:31:23.741Z |

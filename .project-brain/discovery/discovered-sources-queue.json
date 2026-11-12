@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T01:23:58.102Z",
+  "updated_at": "2026-11-12T01:31:31.271Z",
   "stats": {
-    "total_discovered": 381,
-    "approved_pending_harvest": 343,
+    "total_discovered": 390,
+    "approved_pending_harvest": 352,
     "harvested_count": 0,
     "rejected_count": 38,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 353,
+      "COMMUNITY_AND_EXPERT": 362,
       "OFFICIAL_DOCUMENTATION": 14,
       "STANDARDS_AND_SPECIFICATIONS": 13,
       "ENGINEERING_BLOGS": 1
@@ -8131,6 +8131,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
         "fileName": "kgateway-dev-kgateway-learnings.md"
+      }
+    },
+    "SRC-FCFB2705BFFA": {
+      "id": "SRC-FCFB2705BFFA",
+      "url": "https://github.com/GitoxideLabs/gitoxide",
+      "title": "https://github.com/GitoxideLabs/gitoxide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:30.932Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-52C6BB2576EA": {
+      "id": "SRC-52C6BB2576EA",
+      "url": "https://github.com/ArchiveBox/ArchiveBox",
+      "title": "https://github.com/ArchiveBox/ArchiveBox",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:30.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-55BBAE7EA0CE": {
+      "id": "SRC-55BBAE7EA0CE",
+      "url": "https://stackoverflow.com/questions/40760880/add-custom-button-to-django-admin-panel",
+      "title": "https://stackoverflow.com/questions/40760880/add-custom-button-to-django-admin-panel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:31.064Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-3B3E508B2E6B": {
+      "id": "SRC-3B3E508B2E6B",
+      "url": "https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1959",
+      "title": "https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1959",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:31.067Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-D950E359D803": {
+      "id": "SRC-D950E359D803",
+      "url": "https://www.cubic.dev/buttons/review-in-cubic-dark.svg",
+      "title": "https://www.cubic.dev/buttons/review-in-cubic-dark.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:31.069Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-DA7B290C3196": {
+      "id": "SRC-DA7B290C3196",
+      "url": "https://www.cubic.dev/buttons/review-in-cubic-light.svg",
+      "title": "https://www.cubic.dev/buttons/review-in-cubic-light.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:31.114Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-3E23F2061450": {
+      "id": "SRC-3E23F2061450",
+      "url": "https://github.com/ArchiveBox/ArchiveBox/discussions/1941",
+      "title": "https://github.com/ArchiveBox/ArchiveBox/discussions/1941",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:31.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-493337E1A616": {
+      "id": "SRC-493337E1A616",
+      "url": "https://github.com/ArchiveBox/ArchiveBox/pull/1957",
+      "title": "https://github.com/ArchiveBox/ArchiveBox/pull/1957",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:31.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-C43633831C52": {
+      "id": "SRC-C43633831C52",
+      "url": "https://example.com/admission/%7Bindex",
+      "title": "https://example.com/admission/%7Bindex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:31:31.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T01:23:58.106Z",
+  "last_updated": "2026-11-12T01:31:31.278Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T00:23:23.329Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-11T18:04:07.390Z",
+      "processed_at": "2026-11-12T01:31:31.275Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -641,9 +641,19 @@
       "processed_at": "2026-11-12T01:23:58.087Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "gitoxidelabs-gitoxide-learnings.md": {
+      "processed_at": "2026-11-12T01:31:30.928Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "archivebox-archivebox-learnings.md": {
+      "processed_at": "2026-11-12T01:31:30.939Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 162,
+  "total_dossiers_evaluated": 165,
   "total_canonical_promoted": 21,
-  "total_staged_for_review": 138
+  "total_staged_for_review": 141
 }

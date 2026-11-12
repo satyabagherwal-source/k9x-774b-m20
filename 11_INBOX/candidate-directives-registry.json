@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T01:23:58.085Z",
+  "last_updated": "2026-11-12T01:31:31.274Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5738,6 +5738,33 @@
       "source_repo": "kgateway-dev-kgateway",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BAAAA2-envoy-modules-build-from-the-dependency-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E1B64C",
+      "directive_title": "gix-diff): count existing destinations when inferring directory renames",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gitoxidelabs-gitoxide",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E1B64C-gix-diff-count-existing-destinations-whe.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-DBD248",
+      "directive_title": "Preserve CLI timeout diagnostics and clean up child processes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "archivebox-archivebox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DBD248-preserve-cli-timeout-diagnostics-and-cle.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FA9848",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FA9848-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T01:23:37.422Z",
-  "total_cycles_completed": 8870,
-  "total_learnings_persisted": 8870,
-  "total_rules_promoted": 8723,
+  "last_updated": "2026-11-12T01:31:23.748Z",
+  "total_cycles_completed": 8872,
+  "total_learnings_persisted": 8872,
+  "total_rules_promoted": 8725,
   "history": [
-    {
-      "timestamp": "2026-11-10T01:19:28.796Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T01:41:37.147Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T01:41:40.046Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T01:23:37.422Z",
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:31:20.926Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:31:23.748Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

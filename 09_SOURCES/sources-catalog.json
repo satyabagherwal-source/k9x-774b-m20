@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "865a2448",
+    "sourceVersion": "d1e064e3",
     "license": "Apache-2.0",
-    "contentHash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
-    "lastHarvestedAt": "2026-11-09T06:38:54.296Z",
+    "contentHash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
+    "lastHarvestedAt": "2026-11-12T01:31:20.902Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -9283,10 +9283,10 @@
     "repository": "ArchiveBox/ArchiveBox",
     "platform": "github",
     "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
-    "sourceVersion": "ee80665d",
+    "sourceVersion": "2af81b9e",
     "license": "MIT",
-    "contentHash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
-    "lastHarvestedAt": "2026-11-03T21:28:33.030Z",
+    "contentHash": "dd619f037f60ee4a27d6767fe49d315d82f551ada64e9660a40df331f9e9d9b5",
+    "lastHarvestedAt": "2026-11-12T01:31:23.741Z",
     "learningId": "learn-github-archivebox-archivebox"
   },
   "buriy-python-readability": {

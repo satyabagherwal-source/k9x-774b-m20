@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-M9YZ",
-    "timestamp": "2026-11-08T22:00:48.635Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-MK5F",
-    "timestamp": "2026-11-08T22:01:01.827Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "30eb9530b11a5cca65c03f262e078d839aa10b47c72eeaade39944a94d457f53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-YYII",
     "timestamp": "2026-11-08T22:10:40.314Z",
     "repository": "tokio-rs/tokio",
@@ -7490,6 +7460,36 @@
     "repository": "gluesql/gluesql",
     "learningId": "learn-github-gluesql-gluesql",
     "contentHash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-GL36",
+    "timestamp": "2026-11-12T01:31:20.898Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-GNA2",
+    "timestamp": "2026-11-12T01:31:23.738Z",
+    "repository": "ArchiveBox/ArchiveBox",
+    "learningId": "learn-github-archivebox-archivebox",
+    "contentHash": "dd619f037f60ee4a27d6767fe49d315d82f551ada64e9660a40df331f9e9d9b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
