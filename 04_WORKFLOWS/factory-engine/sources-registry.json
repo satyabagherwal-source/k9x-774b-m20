@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T15:17:34.535Z",
-    "lastVerified": "2026-11-12T15:17:34.535Z",
+    "lastChecked": "2026-11-12T15:25:36.063Z",
+    "lastVerified": "2026-11-12T15:25:36.063Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -152,8 +152,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T14:31:47.205Z",
-    "lastVerified": "2026-11-12T14:31:47.205Z",
+    "lastChecked": "2026-11-12T15:25:17.059Z",
+    "lastVerified": "2026-11-12T15:25:17.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1577,14 +1577,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T07:27:43.553Z",
-    "lastVerified": "2026-11-11T07:27:43.553Z",
+    "lastChecked": "2026-11-12T15:25:19.460Z",
+    "lastVerified": "2026-11-12T15:25:19.460Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
+    "contentHash": "0a98fb75ad40a75b93957e7b05701ce23381e22c81359f05ace5573a5a24b6d1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1734,9 +1734,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-12T08:04:29.545Z",
+    "lastChecked": "2026-11-12T15:25:12.137Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-12T08:04:29.545Z"
+    "lastVerified": "2026-11-12T15:25:12.137Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -6856,9 +6856,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-11T09:27:33.760Z",
+    "lastChecked": "2026-11-12T15:25:09.605Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-11T09:27:33.760Z"
+    "lastVerified": "2026-11-12T15:25:09.605Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -7099,12 +7099,12 @@
     "lastVerified": "2026-11-12T06:41:34.280Z"
   },
   "dalance-procs": {
-    "name": "dalance/procs",
+    "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:35:32.629Z",
-    "lastVerified": "2026-11-09T23:35:32.629Z",
+    "lastChecked": "2026-11-12T15:25:02.077Z",
+    "lastVerified": "2026-11-12T15:25:02.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
@@ -7113,7 +7113,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7ffb8c4f"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -10584,9 +10585,9 @@
   "rickclephas-kmp-nativecoroutines": {
     "name": "KMP-NativeCoroutines",
     "officialUrl": "https://github.com/rickclephas/KMP-NativeCoroutines",
-    "lastChecked": "2026-11-08T15:01:24.000Z",
+    "lastChecked": "2026-11-12T15:25:07.046Z",
     "revisionIdentifier": "54a45fbb",
-    "lastVerified": "2026-11-08T15:01:24.000Z"
+    "lastVerified": "2026-11-12T15:25:07.046Z"
   },
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",
@@ -12479,22 +12480,21 @@
     "lastVerified": "2026-11-09T03:21:35.792Z"
   },
   "devexpress-testcafe": {
-    "name": "testcafe",
+    "name": "DevExpress/testcafe",
     "officialUrl": "https://github.com/DevExpress/testcafe",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T22:05:08.493Z",
-    "lastVerified": "2026-11-07T22:05:08.493Z",
+    "lastChecked": "2026-11-12T15:25:09.252Z",
+    "lastVerified": "2026-11-12T15:25:09.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-devexpress-testcafe",
-    "contentHash": "b90af2ed2a5983a7baa29bb9a591a3b869da96795cf6270ccfa007ee77edb9a3",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "e775f6056872480cf06555afe9735542eea2e6af8376353e18f53df297760c20",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7245edc4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "planetable-planet": {
     "name": "Planet",

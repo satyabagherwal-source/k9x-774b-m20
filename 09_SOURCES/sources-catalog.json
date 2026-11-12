@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "e91a85c4",
+    "sourceVersion": "04ccf364",
     "license": "Apache-2.0",
-    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
-    "lastHarvestedAt": "2026-11-11T07:27:55.070Z",
+    "contentHash": "0a98fb75ad40a75b93957e7b05701ce23381e22c81359f05ace5573a5a24b6d1",
+    "lastHarvestedAt": "2026-11-12T15:25:30.839Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -10133,10 +10133,10 @@
     "repository": "DevExpress/testcafe",
     "platform": "github",
     "sourceUrl": "https://github.com/DevExpress/testcafe",
-    "sourceVersion": "7245edc4",
+    "sourceVersion": "1870103c",
     "license": "MIT",
-    "contentHash": "b90af2ed2a5983a7baa29bb9a591a3b869da96795cf6270ccfa007ee77edb9a3",
-    "lastHarvestedAt": "2026-10-30T20:36:17.910Z",
+    "contentHash": "e775f6056872480cf06555afe9735542eea2e6af8376353e18f53df297760c20",
+    "lastHarvestedAt": "2026-11-12T15:25:09.789Z",
     "learningId": "learn-github-devexpress-testcafe"
   },
   "planetable-planet": {

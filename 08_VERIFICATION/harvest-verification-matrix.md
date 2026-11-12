@@ -9191,3 +9191,6 @@
 | `CYCLE-20261112-CGAC` | `2026-11-12T14:59:56.916Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c88d5a65...`) |
 | `CYCLE-20261112-IHO6` | `2026-11-12T15:04:38.646Z` | `tonhowtf/omniget` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`23685f9a...`) |
 | `CYCLE-20261112-Z1Q4` | `2026-11-12T15:17:31.132Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f580c772...`) |
+| `CYCLE-20261112-8VMG` | `2026-11-12T15:25:09.784Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md` | Yes (`e775f605...`) |
+| `CYCLE-20261112-9BV7` | `2026-11-12T15:25:30.835Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a98fb75...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T15:25:51.481Z` | `devexpress-testcafe` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2297B13C` [Domain D] | Yes (`5299036d...`) |

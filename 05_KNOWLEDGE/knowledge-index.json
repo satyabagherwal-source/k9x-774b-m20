@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T15:17:31.024Z",
+  "last_updated": "2026-11-12T15:25:30.724Z",
   "total_verified_learnings": 1259,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -61496,8 +61496,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "e91a85c4",
-      "content_hash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
+      "source_version": "04ccf364",
+      "content_hash": "0a98fb75ad40a75b93957e7b05701ce23381e22c81359f05ace5573a5a24b6d1",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -61519,6 +61519,11 @@
         {
           "number": null,
           "title": "iotdb): honor unlimited query timeout across paged fetches",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "query): wait for metadata before batch SQL copy (#14838)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61617,7 +61622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T07:27:54.928Z",
+      "verified_at": "2026-11-12T15:25:30.698Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84744,8 +84749,8 @@
       "slug": "devexpress-testcafe",
       "platform": "github",
       "source_url": "https://github.com/DevExpress/testcafe",
-      "source_version": "7245edc4",
-      "content_hash": "b90af2ed2a5983a7baa29bb9a591a3b869da96795cf6270ccfa007ee77edb9a3",
+      "source_version": "1870103c",
+      "content_hash": "e775f6056872480cf06555afe9735542eea2e6af8376353e18f53df297760c20",
       "dossier_path": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
       "promoted_rules": [
@@ -84770,7 +84775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:36:17.813Z",
+      "verified_at": "2026-11-12T15:25:09.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

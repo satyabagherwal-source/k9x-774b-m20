@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `e91a85c4`  
+> **Source Version**: `04ccf364`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T07:27:43.559Z  
+> **Timestamp**: 2026-11-12T15:25:19.468Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T07:27:43.553Z  
+> **Harvest Timestamp**: 2026-11-12T15:25:19.460Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 29986 stars
+- **Stars / Engagement**: 30178 stars
 
 ---
 
@@ -1991,14 +1991,14 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14709** (2026-11-11): **[Bug] 主键使用触发器实现的自增，无法保存**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  Firebird 0.1.91  ### 问题描述 / Problem description  <img width="1335" height="396" alt="Image" src="https://github.com/user-attachments/assets/40f0e1e9-02b7-428e-b6f2-38b75f03e890" /> 如图，主键是触发器实现的自增保存会提示保存失败`Column "REPORT_DID" does not allow NULL.` ，在dbeaver中是可以正常保存的  ### 支持信息 / Support information  dbx v0.6.68  Windows11  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
+- **Issue #14818** (2026-11-12): **[Bug] 生成表 DDL 时 comment on COLUMN 语句之间存在空行**
+  *Symptoms*: ## 环境 - 操作系统：Windows 7 - DBX 版本：0.6.69 - 数据库：Oracle（具体版本未提供）  ## 问题描述 在 DBX 中连接 Oracle，生成表 DDL 时，列注释 `comment on COLUMN ... is ...;` 语句之间会出现空行。截图中可见连续多条 `comment on COLUMN` 语句之间各有一行空白。  查看 DDL 时显示正常，无空行。  ## 截图信息 截图显示了生成 DDL 的约 80–90 行，包含多条 `comment on COLUMN` 语句，语句之间存在空行；部分对象名和注释内容被遮挡或模糊，未还原。  ## 期望行为 生成表 DDL 时，`comment on COLUMN` 语句之间不插入多余空行，与查看 DDL 时的格式一致。  ## 未提供信息 - Oracle 具体版本 - 完整复现步骤 - 相关日志或错误信息 - 具体表结构及完整 DDL  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/11/fed320ae-c6df-40a0-9d4d-1dd5b3ba663b/1-bb2b1235-e906-4978-8e6a-c3ccdf848e7e.jpg)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
   **Post-Mortem & Fix Analysis**:
+  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #14352  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
   > /claim
-  > ✅ @thailoc-dev 已认领 #14709，开始处理吧！
 
-- **Issue #14698** (2026-11-11): **[Bug] 快捷键中给接受补全设置的是tab，在写SQL时需要敲空格还是自动补全了**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL Server 2019  ### 问题描述 / Problem description  快捷键中给接受补全设置的是tab，在写SQL时需要敲空格还是自动补全了，每次inner join后的条件on想补个空格 自动补全了  <img width="1575" height="967" alt="Image" src="https://github.com/user-attachments/assets/95459018-3c60-40dd-b51e-e0de5cdbe948" />  <img width="1552" height="694" alt="Image" src="https://github.com/user-attachments/assets/fb0aec58-561f-4943-86c8-893c0a52b693" />  ### 支持信息 / Support information  DBX 版本: v0.6.68 (0.6.68-beta.20261107.4) 运行环境: 桌面端 操作系统: Windows 11 (10.0.26200.9168) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 数据库类型: mysql, plugin, sqlserver  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #14803** (2026-11-12): **[Bug] 我只有两个表，搜索出来重复的表了**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL 8.0  ### 问题描述 / Problem description  <img width="460" height="320" alt="image" src="https://github.com/user-attachments/assets/5f834826-5519-4f6e-8472-d1bf345d3a5c" />  ### 支持信息 / Support information  <img width="471" height="300" alt="image" src="https://github.com/user-attachments/assets/7147fcda-a6cf-4bbe-aceb-d4695539f3e4" />  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2015,1623 +2015,454 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b62e570a` (2026-11-10)
-**Commit Message**: fix(iotdb): honor unlimited query timeout across paged fetches
+### Incident Patch 1: `04ccf364` (2026-11-12)
+**Commit Message**: fix(query): wait for metadata before batch SQL copy (#14838)
 
-**File**: `agents/drivers/iotdb/driver.go` (modified, +24/-6)
+Reuse the active result metadata request before building the INSERT mapping so the batch does not fail while the table structure is still loading.
+
+Fixes #14791
+
+Co-authored-by: seaways1015-afk <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts` (modified, +34/-1)
 ```diff
-@@ -22,16 +22,34 @@ type iotdbSession interface {
- 	Close() error
- }
+@@ -5,21 +5,25 @@ import { clearDataGridStructuredFilterStates, loadDataGridStructuredFilterState,
+ import { clearDataGridSortBuilderMemoryCache, useDataGridSortBuilder } from "@/composables/useDataGridSortBuilder";
+ import { resetRowIdLocatorStateForTests, rowIdLocatorUnsupported } from "@/lib/table/tableRowIdSupport";
+ import { canGoNextDataGridPage } from "@/lib/dataGrid/dataGridPagination";
++import type { TableColumnsLoadResult } from "@/lib/metadata/tableMetadataCache";
++import { analyzeEditableQueryEditability } from "@/lib/sql/sqlAnalysis";
  
-+// The narrow surface nativeIoTDBSession needs from the vendored client.
-+// Keeping it an interface lets adapter tests assert that the per-query
-+// timeout reaches the session layer instead of being dropped (#13935).
-+type clientQuerySession interface {
-+	ExecuteQueryStatementWithContext(context.Context, string, *int64) (*client.SessionDataSet, error)
-+	ExecuteStatementWithContext(context.Context, string) (*client.SessionDataSet, error)
-+	Close() error
-+}
-+
- type nativeIoTDBSession struct {
--	session *client.Session
-+	session clientQuerySession
- }
+ const mocks = vi.hoisted(() => ({
++  analyzeEditableQueryEditability: vi.fn(),
+   buildTableSelectSql: vi.fn(),
+   closeClientConnectionSession: vi.fn(),
+   closeQuerySession: vi.fn(),
+   executeMulti: vi.fn(),
+   getConnectionConfig: vi.fn(),
+   saveOpenTabsState: vi.fn(),
++  loadTableColumns: vi.fn(),
+   loadTableMetadata: vi.fn(),
+   prepareQueryPaginationExecutionPlan: vi.fn(),
+   metadataGeneration: 0,
+ }));
  
--func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, _ *int64) (*client.SessionDataSet, error) {
--	return executeIoTDBStatement(ctx, s.session, sql)
-+func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, timeoutMs *int64) (*client.SessionDataSet, error) {
-+	return executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
-+		// #13935: the timeout must ride inside the RPC — an omitted value
-+		// falls back to the server's query_timeout_threshold (60 s default),
-+		// so whatever timeoutMilliseconds produced (the 100-year no-limit
-+		// budget, or a positive bound) reaches the request. The old adapter
-+		// dropped it here.
-+		return s.session.ExecuteQueryStatementWithContext(ctx, sql, timeoutMs)
-+	})
- }
- 
- func (s *nativeIoTDBSession) ExecuteNonQueryStatement(ctx context.Context, sql string) error {
--	dataset, err := executeIoTDBStatement(ctx, s.session, sql)
-+	dataset, err := executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
-+		return s.session.ExecuteStatementWithContext(ctx, sql)
-+	})
- 	if err != nil {
- 		return err
- 	}
-@@ -45,7 +63,7 @@ func (s *nativeIoTDBSession) Close() error {
- 	return s.session.Close()
- }
- 
--func executeIoTDBStatement(ctx context.Context, session *client.Session, sql string) (dataset *client.SessionDataSet, err error) {
-+func executeIoTDBStatement(ctx context.Context, run func() (*client.SessionDataSet, error)) (dataset *client.SessionDataSet, err error) {
- 	defer func() {
- 		if recovered := recover(); recovered != nil {
- 			if ctxErr := ctx.Err(); ctxErr != nil {
-@@ -57,7 +75,7 @@ func executeIoTDBStatement(ctx context.Context, session *client.Session, sql str
- 			err = fmt.Errorf("IoTDB Go client panicked while executing statement: %v", recovered)
- 		}
- 	}()
--	return session.ExecuteStatementWithContext(ctx, sql)
-+	return run()
- }
- 
- type connectionConfig struct {
-```
-
-**File**: `agents/drivers/iotdb/integration_test.go` (modified, +149/-0)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"bufio"
- 	"context"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"os"
- 	"os/exec"
-@@ -13,6 +14,8 @@ import (
- 	"sync"
- 	"testing"
- 	"time"
-+
-+	"github.com/apache/iotdb-client-go/v2/client"
- )
- 
- func TestLiveIoTDBAgentTreeAndTable(t *testing.T) {
-@@ -406,3 +409,149 @@ func (b *synchronizedBuffer) String() string {
- 	defer b.mu.Unlock()
- 	return b.builder.String()
- }
-+
-+// #13935 review round 3: self-contained live verification against IoTDB 1.3.7.
-+//
-+// Preconditions: a real IoTDB server reachable via DBX_IOTDB_HOST/PORT with
-+//   query_timeout_threshold = 1   (1 ms, in conf/iotdb-system.properties)
-+// The test creates its own database/timeseries, asserts the tightened server
-+// timeout is actually in effect (a nil-timeout read must fail with the server
-+// timeout error), then proves that:
-+//   * timeoutSecs=0 (the 100-year no-limit budget) survives every paged fetch
-+//     on the agent's session path (executeQueryPage/fetchQueryPage), and
-+//   * a cancelled context stops a paged read instead of waiting for the
-+//     blocking fetch RPC (client-level NextWithContext).
-+func TestLiveIoTDBNoLimitQueryCarriesBudgetThroughFetchPages(t *testing.T) {
-+	if os.Getenv("DBX_IOTDB_LIVE") != "1" {
-+		t.Skip("set DBX_IOTDB_LIVE=1 to run against a real IoTDB server")
-+	}
-+	database := fmt.Sprintf("root.dbx_timeout_%d", os.Getpid())
-+	device := database + ".d1"
-+	seedRows := 50000
-+
-+	admin := liveIoTDBServer(t, connectParams{})
-+	mustExecuteNonQuery(t, admin, "CREATE DATABASE "+database, "")
-+	defer func() { _ = admin.executeNonQuery("DELETE DATABASE "+database, "", 0) }()
-+	mustExecuteNonQuery(t, admin, "CREATE TIMESERIES "+device+".s0 WITH DATATYPE=INT64, ENCODING=RLE", "")
-+	admin.disconnect()
-+
-+	// Seed 50000 rows through a direct client session so every paged read spans
-+	// fetchSize 1000 → 50 fetch pages.
-+	seedSession := client.NewSession(&client.Config{
-+		Host:      envOr("DBX_IOTDB_HOST", "127.0.0.1"),
-+		Port:      strconv.Itoa(envIntOr("DBX_IOTDB_PORT", defaultIoTDBPort)),
-+		UserName:  envOr("DBX_IOTDB_USER", "root"),
-+		Password:  envOr("DBX_IOTDB_PASSWORD", "root"),
-+		FetchSize: 1000,
-+		TimeZone:  client.DefaultTimeZone,
-+	})
-+	if err := seedSession.Open(false, 10000); err != nil {
-+		t.Fatalf("seed session: %v", err)
-+	}
-+	defer func() { _ = seedSession.Close() }()
-+	tabletRows := 5000
-+	tablet, tabletErr := client.NewTablet(device, []*client.MeasurementSchema{
-+		{Measurement: "s0", DataType: client.INT64},
-+	}, tabletRows)
-+	if tabletErr != nil {
-+		t.Fatalf("seed tablet: %v", tabletErr)
-+	}
-+	for batch := 0; batch < seedRows/tabletRows; batch++ {
-+		for index := 0; index < tabletRows; index++ {
-+			tablet.SetTimestamp(int64(batch)*int64(tabletRows)+int64(index), index)
-+			if err := tablet.SetValueAt(int64(batch*tabletRows+index), 0, index); err != nil {
-+				t.Fatalf("seed value: %v", err)
-+			}
-+		}
-+		tablet.RowSize = tabletRows
-+		if err := seedSession.InsertTablet(tablet, true); err != nil {
-+			t.Fatalf("seed tablet %d: %v", batch, err)
-+		}
-+		tablet.Reset()
-+	}
-+
-+	server := liveIoTDBServer(t, connectParams{Database: database})
-+	defer server.disconnect()
-+
-+	// 1. Precondition check: a nil (absent) timeout falls back to the server's
-+	// query_timeout_threshold. With the documented 1 ms value this paged read
-+	// must be aborted by the server; otherwise the environment is misconfigured
-+	// and the comparison below proves nothing.
-+	started := time.Now()
-+	_, err := server.executeQuery(queryOptions{SQL: "SELECT s0 FROM " + device, MaxRows: seedRows, TimeoutSecs: -1})
-+	elapsed := time.Since(started)
-+	if err == nil {
-+		t.Fatalf("server query_timeout_threshold is not tightened: a nil-timeout %d-row read succeeded in %v; set query_timeout_threshold = 1 in conf/iotdb-system.properties", seedRows, elapsed)
-+	}
-+	lowered := strings.ToLower(err.Error())
-+	if !strings.Contains(lowered, "time out") && !strings.Contains(lowered, "timeout") {
-+		t.Fatalf("expected the server timeout error for a nil-timeout read, got: %v", err)
-+	}
-+	t.Logf("precondition ok: nil-timeout paged read failed after %v with: %v", elapsed, err)
-+
-+	// 2. timeoutSecs=0 maps to the 100-year budget: the same paged read now
-+	// returns every row, and each fetch page carries that budget.
-+	started = time.Now()
-+	result, err := server.executeQuery(queryOptions{SQL: "SELECT s0 FROM " + device, MaxRows: seedRows, TimeoutSecs: 0})
-+	if err != nil {
-+		t.Fatalf("timeoutSecs=0 must carry the budget through every fetch page: %v", err)
-+	}
-+	if len(result.Rows) != seedRows {
-+		t.Fatalf("expected %d rows through all fetch pages, got %d", seedRows, len(result.Rows))
-+	}
-+	t.Logf("queryValues path: %d rows in %v", len(result.Rows), time.Since(started))
-+
-+	// 3. The agent's session pagination path (executeQueryPage/fetchQueryPage)
-+	// must also survive the tightened threshold page after page.
-+	page, err := server.executeQueryPage(queryOptions{SQL: "SELECT s0 FROM " + device, MaxRows: seedRows, TimeoutSec
-```
-
-**File**: `agents/drivers/iotdb/main_test.go` (modified, +101/-0)
-```diff
-@@ -376,3 +376,104 @@ func (s *blockingIoTDBSession) Close() error {
- 	}
- 	return nil
- }
-+
-+func TestTimeoutMillisecondsMapsNoLimitToABoundedHugeBudget(t *testing.T) {
-+	// dbx's "no limit" setting is 0. Probing 1.3.7 shows IoTDB's per-query
-+	// timeout has no wire-level "disable": 0 and negatives fall back to the
-+	// server's query_timeout_threshold (60 s default), so the no-limit setting
-+	// maps to a 100-year budget that can never fire within int64 deadline
-+	// arithmetic (#13935).
-+	noLimit := timeoutMilliseconds(0)
-+	if noLimit == nil || *noLimit != hundredYearsMs {
-+		t.Fatalf("timeoutMilliseconds(0) = %v, want pointer to %d", noLimit, hundredYearsMs)
-+	}
-+	positive := timeoutMilliseconds(90)
-+	if positive == nil || *positive != 90000 {
-+		t.Fatalf("timeoutMilliseconds(90) = %v, want pointer to 90000", positive)
-+	}
-+	if negative := timeoutMilliseconds(-1); negative != nil {
-+		t.Fatalf("timeoutMilliseconds(-1) = %v, want nil", *negative)
-+	}
-+}
-+
-+const hundredYearsMs = 100 * 365 * 24 * int64(time.Hour) / int64(time.Millisecond)
-+
-+type timeoutRecordingSession struct {
-+	received []*int64
-+}
-+
-+func (s *timeoutRecordingSession) ExecuteQueryStatement(_ context.Context, _ string, timeoutMs *int64) (*client.SessionDataSet, error) {
-+	s.received = append(s.received, timeoutMs)
-+	return nil, errors.New("recorded")
-+}
-+
-+func (s *timeoutRecordingSession) ExecuteNonQueryStatement(context.Context, string) error {
-+	return errors.New("not implemented")
-+}
-+
-+func (s *timeoutRecordingSession) Close() error { return nil }
-+
-+func TestQueryValuesSendsHugeBudgetForNoLimit(t *testing.T) {
-+	recording := &timeoutRecordingSession{}
-+	connected := &sessionClient{session: recording, dialect: client.TreeSqlDialect}
-+	server := &server{client: connected}
-+
-+	_, _ = server.queryValues("SELECT value FROM root.dbx_13935.d", "", 10, 0)
-+
-+	if len(recording.received) != 1 {
-+		t.Fatalf("ExecuteQueryStatement calls = %d, want 1", len(recording.received))
-+	}
-+	timeout := recording.received[0]
-+	if timeout == nil || *timeout != hundredYearsMs {
-+		t.Fatalf("query timeout = %v, want the 100-year no-limit budget", timeout)
-+	}
-+}
-+
-+type timeoutCaptureSession struct {
-+	capturedTimeout []*int64
-+	capturedContext []context.Context
-+}
-+
-+func (s *timeoutCaptureSession) ExecuteQueryStatementWithContext(ctx context.Context, _ string, timeoutMs *int64) (*client.SessionDataSet, error) {
-+	s.capturedTimeout = append(s.capturedTimeout, timeoutMs)
-+	s.capturedContext = append(s.capturedContext, ctx)
-+	return nil, errors.New("recorded")
-+}
-+
-+func (s *timeoutCaptureSession) ExecuteStatementWithContext(context.Context, string) (*client.SessionDataSet, error) {
-+	return nil, errors.New("not implemented")
-+}
-+
-+func (s *timeoutCaptureSession) Close() error { return nil }
-+
-+// The production adapter must forward the per-query timeout to the session
-+// layer instead of dropping it: whatever timeoutMilliseconds produced (a
-+// positive budget, or the 100-year no-limit budget) has to reach the session
-+// call untouched, together with the caller's context (#13935).
-+func TestNativeSessionForwardsQueryTimeoutToClient(t *testing.T) {
-+	recording := &timeoutCaptureSession{}
-+	session := &nativeIoTDBSession{session: recording}
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+	zero := int64(0)
-+	for _, timeout := range []*int64{nil, &zero} {
-+		if _, err := session.ExecuteQueryStatement(ctx, "SELECT value FROM root.dbx.d", timeout); err == nil {
-+			t.Fatal("expected the recorded error to surface")
-+		}
-+	}
-+	if len(recording.capturedTimeout) != 2 {
-+		t.Fatalf("ExecuteQueryStatementWithContext calls = %d, want 2", len(recording.capturedTimeout))
-+	}
-+	if recording.capturedTimeout[0] != nil {
-+		t.Fatalf("first call timeout = %v, want nil passthrough", *recording.capturedTimeout[0])
-+	}
-+	if recording.capturedTimeout[1] == nil || *recording.capturedTimeout[1] != 0 {
-+		t.Fatalf("second call timeout = %v, want pointer to 0 (no limit)", recording.capturedTimeout[1])
-+	}
-+	for _, captured := range recording.capturedContext {
-+		if captured != ctx {
-+			t.Fatal("the caller's context must reach the session layer for cancellation")
-+		}
-+	}
-+}
-```
-
-**File**: `agents/drivers/iotdb/query.go` (modified, +16/-4)
-```diff
-@@ -273,7 +273,7 @@ func (s *server) nextDatasetRow(ctx context.Context, state *querySession) ([]any
- 	if err := ctx.Err(); err != nil {
- 		return nil, false, err
- 	}
--	hasNext, err := state.dataset.Next()
-+	hasNext, err := state.dataset.NextWithContext(ctx)
- 	if err != nil || !hasNext {
- 		return nil, false, err
- 	}
-@@ -388,7 +388,7 @@ func readDataset(ctx context.Context, dataset *client.SessionDataSet, connected
- 		if err := ctx.Err(); err != nil {
- 			return nil, false, err
- 		}
--		hasNext, err := dataset.Next()
-+		hasNext, err := dataset.NextWithContext(ctx)
- 		if err != nil {
- 			return nil, false, err
- 		}
-@@ -407,7 +407,7 @@ func readDataset(ctx context.Context, dataset *client.SessionDataSet, connected
- 	if err := ctx.Err(); err != nil {
- 		return nil, false, err
- 	}
--	hasNext, err := dataset.Next()
-+	hasNext, err := dataset.NextWithContext(ctx)
- 	return rows, hasNext, err
- }
- 
-@@ -527,10 +527,22 @@ func isTreeTimeColumn(dialect string, columns []string, index int) bool {
- 	return dialect == client.TreeSqlDialect && index == 0 && len(columns) > 0 && strings.EqualFold(columns[0], "Time")
- }
- 
-+// noLimitTimeoutMs is what dbx's "no limit" setting (timeoutSecs = 0) maps to.
-+// IoTDB's per-query timeout has no true "disable" value on the wire: probing
-+// 1.3.7 shows 0 and negatives both fall back to the server's
-+// query_timeout_threshold (60 s default — the cause of #13935), so a no-limit
-+// run sends a 100-year budget instead, which bounds deadline arithmetic far
-+// below int64 overflow while never firing.
-+const noLimitTimeoutMs = int64(100 * 365 * 24 * time.Hour / time.Millisecond)
-+
- func timeoutMilliseconds(timeoutSecs int) *int64 {
--	if timeoutSecs <= 0 {
-+	if timeoutSecs < 0 {
- 		return nil
- 	}
-+	if timeoutSecs == 0 {
-+		value := noLimitTimeoutMs
-+		return &value
-+	}
- 	value := int64(timeoutSecs) * 1000
- 	return &value
- }
-```
-
-**File**: `agents/drivers/iotdb/query_cancel_socket_test.go` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+package main
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"net"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/apache/thrift/lib/go/thrift"
-+
-+	"github.com/apache/iotdb-client-go/v2/client"
-+	"github.com/apache/iotdb-client-go/v2/common"
-+	"github.com/apache/iotdb-client-go/v2/rpc"
-+)
-+
-+// cancelSocketHandler is a minimal real-socket IoTDB endpoint whose query RPC
-+// never answers, so the client parks in a Thrift socket read. It exists to
-+// prove that the agent's cancel_session path (cancelActiveQuery) can interrupt
-+// that read instead of waiting for the server.
-+type cancelSocketHandler struct {
-+	rpc.IClientRPCService
-+
-+	queryStarted     chan struct{}
-+	queryStartedOnce sync.Once
-+	release          chan struct{}
-+	releaseOnce      sync.Once
-+}
-+
-+func newCancelSocketHandler() *cancelSocketHandler {
-+	return &cancelSocketHandler{queryStarted: make(chan struct{}), release: make(chan struct{})}
-+}
-+
-+func (h *cancelSocketHandler) releaseAll() {
-+	h.releaseOnce.Do(func() { close(h.release) })
-+}
-+
-+func (h *cancelSocketHandler) OpenSession(context.Context, *rpc.TSOpenSessionReq) (*rpc.TSOpenSessionResp, error) {
-+	resp := rpc.NewTSOpenSessionResp()
-+	resp.Status = &common.TSStatus{Code: client.SuccessStatus}
-+	sessionID := int64(5)
-+	resp.SessionId = &sessionID
-+	resp.Configuration = map[string]string{}
-+	return resp, nil
-+}
-+
-+func (h *cancelSocketHandler) RequestStatementId(context.Context, int64) (int64, error) {
-+	return 9, nil
-+}
-+
-+func (h *cancelSocketHandler) CloseSession(context.Context, *rpc.TSCloseSessionReq) (*common.TSStatus, error) {
-+	return &common.TSStatus{Code: client.SuccessStatus}, nil
-+}
-+
-+func (h *cancelSocketHandler) ExecuteQueryStatementV2(context.Context, *rpc.TSExecuteStatementReq) (*rpc.TSExecuteStatementResp, error) {
-+	h.queryStartedOnce.Do(func() { close(h.queryStarted) })
-+	<-h.release
-+	return nil, fmt.Errorf("query was never answered")
-+}
-+
-+func TestCancelActiveQueryInterruptsBlockedSocket(t *testing.T) {
-+	handler := newCancelSocketHandler()
-+	ln, err := net.Listen("tcp", "127.0.0.1:0")
-+	if err != nil {
-+		t.Fatalf("listen: %v", err)
-+	}
-+	processor := rpc.NewIClientRPCServiceProcessor(handler)
-+	serveCtx, stopServing := context.WithCancel(context.Background())
-+	var wg sync.WaitGroup
-+	wg.Add(1)
-+	go func() {
-+		defer wg.Done()
-+		for {
-+			conn, err := ln.Accept()
-+			if err != nil {
-+				return
-+			}
-+			wg.Add(1)
-+			go func(conn net.Conn) {
-+				defer wg.Done()
-+				defer conn.Close()
-+				conf := &thrift.TConfiguration{}
-+				trans := thrift.NewTFramedTransportConf(thrift.NewTSocketFromConnConf(conn, conf), conf)
-+				iprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtocol(trans)
-+				oprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtocol(trans)
-+				for serveCtx.Err() == nil {
-+					if _, err := processor.Process(serveCtx, iprot, oprot); err != nil {
-+						return
-+					}
-+				}
-+			}(conn)
-+		}
-+	}()
-+	t.Cleanup(func() {
-+		handler.releaseAll()
-+		stopServing()
-+		_ = ln.Close()
-+		wg.Wait()
-+	})
-+
-+	addr := ln.Addr().(*net.TCPAddr)
-+	session := client.NewSession(&client.Config{
-+		Host:            addr.IP.String(),
-+		Port:            fmt.Sprintf("%d", addr.Port),
-+		UserName:        "root",
-+		Password:        "root",
-+		FetchSize:       16,
-+		TimeZone:        client.DefaultTimeZone,
-+		ConnectRetryMax: 3,
-+	})
-+	if err := session.Open(false, 2000); err != nil {
-+		t.Fatalf("open session: %v", err)
-+	}
-+	connected := &sessionClient{session: &nativeIoTDBSession{session: &session}, dialect: client.TreeSqlDialect}
-+	server := &server{client: connected}
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		_, err := runCancelable(server, 0, connected, func(ctx context.Context) (struct{}, error) {
-+			_, err := connected.session.ExecuteQueryStatement(ctx, "select v from root.s", nil)
-+			return struct{}{}, err
-+		})
-+		done <- err
-+	}()
-+
-+	select {
-+	case <-handler.queryStarted:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("query RPC was never issued")
-+	}
-+	started := time.Now()
-+	server.cancelActiveQuery()
-+
-+	select {
-+	case err := <-done:
-+		if !errors.Is(err, context.Canceled) {
-+			t.Fatalf("runCancelable() error = %v, want context.Canceled", err)
-+		}
-+		if elapsed := time.Since(started); elapsed > 5*time.Second {
-+			t.Fatalf("cancel_session took %s to interrupt the blocked RPC", elapsed)
-+		}
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("cancel_session did not interrupt the blocked socket read")
-+	}
-+}
-```
-
-**File**: `agents/go-common/iotdb-client-go/client/rpcdataset.go` (modified, +31/-4)
-```diff
-@@ -51,9 +51,15 @@ type IoTDBRpcDataSet struct {
- 	timeFormat    string
- 	timeFactor    int32
- 	timePrecision string
-+
-+	// interrupt closes the owning session's transport so a paged Fetch that is
-+	// blocked in a Thrift socket read returns when its context is cancelled.
-+	interrupt func()
- }
- 
--func NewIoTDBRpcDataSet(sql string, columnNameList []string, columnTypeList []string, columnNameIndex map[string]int32, ignoreTimestamp bool, moreData bool, queryId int64, statementId int64, client *rpc.IClientRPCServiceClient, sessionId int64, queryResult [][]byte, fetchSize int32, timeout *int64, zoneId string, timeFormat string, timeFactor int32, columnIndex2TsBlockColumnIndexList []int32) (rpcDataSet *IoTDBRpcDataSet, err error) {
-+// NewIoTDBRpcDataSet builds a result set. The optional interrupt func is
-+// variadic to keep upstream call sites source-compatible.
-+func NewIoTDBRpcDataSet(sql string, columnNameList []string, columnTypeList []string, columnNameIndex map[string]int32, ignoreTimestamp bool, moreData bool, queryId int64, statementId int64, client *rpc.IClientRPCServiceClient, sessionId int64, queryResult [][]byte, fetchSize int32, timeout *int64, zoneId string, timeFormat string, timeFactor int32, columnIndex2TsBlockColumnIndexList []int32, interrupt ...func()) (rpcDataSet *IoTDBRpcDataSet, err error) {
- 	ds := &IoTDBRpcDataSet{
- 		sessionId:                        sessionId,
- 		statementId:                      statementId,
-@@ -70,6 +76,9 @@ func NewIoTDBRpcDataSet(sql string, columnNameList []string, columnTypeList []st
- 		columnOrdinalMap:                 make(map[string]int32),
- 		columnName2TsBlockColumnIndexMap: make(map[string]int32),
- 	}
-+	if len(interrupt) > 0 {
-+		ds.interrupt = interrupt[0]
-+	}
- 	columnStartIndex := int32(1)
- 	resultSetColumnSize := int32(len(columnNameList))
- 	// newly generated or updated columnIndex2TsBlockColumnIndexList.size() may not be equal to
-@@ -186,6 +195,16 @@ func (s *IoTDBRpcDataSet) Close() (err error) {
- }
- 
- func (s *IoTDBRpcDataSet) Next() (result bool, err error) {
-+	return s.NextWithContext(context.Background())
-+}
-+
-+// NextWithContext reads the next row, driving fetchResults with the caller's
-+// context so a cancelled or timed-out query stops paging instead of waiting
-+// for the blocking Thrift call to return (#13935 review round 3).
-+func (s *IoTDBRpcDataSet) NextWithContext(ctx context.Context) (result bool, err error) {
-+	if err = ctx.Err(); err != nil {
-+		return false, err
-+	}
- 	if s.hasCachedBlock() {
- 		s.lastReadWasNull = false
- 		err = s.constructOneRow()
-@@ -200,7 +219,7 @@ func (s *IoTDBRpcDataSet) Next() (result bool, err error) {
- 	}
- 
- 	if s.moreData {
--		hasResultSet, err := s.fetchResults()
-+		hasResultSet, err := s.fetchResults(ctx)
- 		if err != nil {
- 			return false, err
- 		}
-@@ -219,10 +238,15 @@ func (s *IoTDBRpcDataSet) Next() (result bool, err error) {
- 	return false, nil
- }
- 
--func (s *IoTDBRpcDataSet) fetchResults() (bool, error) {
-+func (s *IoTDBRpcDataSet) fetchResults(ctx context.Context) (bool, error) {
- 	if s.isClosed {
- 		return false, fmt.Errorf("this data set is already closed")
- 	}
-+	// FetchResultsV2 is a blocking Thrift read that does not observe ctx; the
-+	// session watcher closes the transport so cancellation/deadline returns
-+	// instead of waiting for the page (#13935 review round 3).
-+	stop := watchContextDone(ctx, s.interrupt)
-+	defer stop()
- 	req := rpc.TSFetchResultsReq{
- 		SessionId: s.sessionId,
- 		Statement: s.sql,
-@@ -232,8 +256,11 @@ func (s *IoTDBRpcDataSet) fetchResults() (bool, error) {
- 	}
- 	req.Timeout = s.timeout
- 
--	resp, err := s.client.FetchResultsV2(context.Background(), &req)
-+	resp, err := s.client.FetchResultsV2(ctx, &req)
- 
-+	if ctxErr := ctx.Err(); ctxErr != nil {
-+		return false, ctxErr
-+	}
- 	if err != nil {
- 		return false, err
- 	}
-```
-
-**File**: `agents/go-common/iotdb-client-go/client/session.go` (modified, +258/-44)
-```diff
-@@ -29,6 +29,7 @@ import (
- 	"net"
- 	"reflect"
- 	"sort"
-+	"sync"
- 	"time"
- 
- 	"github.com/apache/thrift/lib/go/thrift"
-@@ -74,11 +75,114 @@ type Session struct {
- 	config             *Config
- 	client             *rpc.IClientRPCServiceClient
- 	sessionId          int64
--	trans              thrift.TTransport
- 	requestStatementId int64
- 	protocolFactory    thrift.TProtocolFactory
- 	endPointList       []endPoint
- 	timeFactor         int32
-+
-+	// Session is a value type across the client API, so the mutable transport
-+	// state lives behind a pointer: embedding sync.Mutex directly would make
-+	// every copy a copylocks vet failure. A blocked Thrift RPC cannot be
-+	// stopped through its context (TSocket.Read waits on net.Conn.Read), so
-+	// cancellation closes the socket instead; see Interrupt (#13935 review
-+	// round 3).
-+	transport *sessionTransportState
-+}
-+
-+type sessionTransportState struct {
-+	mu          sync.Mutex
-+	trans       thrift.TTransport
-+	interrupted bool
-+}
-+
-+func (s *Session) transportState() *sessionTransportState {
-+	if s.transport == nil {
-+		s.transport = &sessionTransportState{}
-+	}
-+	return s.transport
-+}
-+
-+// setTransport installs the transport used by the next RPC. If the session was
-+// interrupted while the transport was being dialed, the fresh transport is
-+// closed immediately so a cancellation that raced with reconnect cannot leave
-+// a live socket behind.
-+func (s *Session) setTransport(trans thrift.TTransport) error {
-+	state := s.transportState()
-+	state.mu.Lock()
-+	state.trans = trans
-+	interrupted := state.interrupted
-+	state.mu.Unlock()
-+	if interrupted {
-+		_ = trans.Close()
-+		return fmt.Errorf("IoTDB session was interrupted")
-+	}
-+	return nil
-+}
-+
-+func (s *Session) currentTransport() thrift.TTransport {
-+	if s.transport == nil {
-+		return nil
-+	}
-+	state := s.transportState()
-+	state.mu.Lock()
-+	defer state.mu.Unlock()
-+	return state.trans
-+}
-+
-+func (s *Session) wasInterrupted() bool {
-+	if s.transport == nil {
-+		return false
-+	}
-+	state := s.transportState()
-+	state.mu.Lock()
-+	defer state.mu.Unlock()
-+	return state.interrupted
-+}
-+
-+// Interrupt closes the transport that a blocked RPC is reading from, so the
-+// call returns instead of waiting for a server response that the caller no
-+// longer wants. It permanently disables the session: callers must discard it
-+// afterwards (the agent drops the whole client on cancellation).
-+func (s *Session) Interrupt() {
-+	state := s.transportState()
-+	state.mu.Lock()
-+	state.interrupted = true
-+	trans := state.trans
-+	state.mu.Unlock()
-+	if trans != nil {
-+		_ = trans.Close()
-+	}
-+}
-+
-+// watchContext calls Interrupt when ctx is cancelled or its deadline passes
-+// before stop is called. Thrift's blocking socket read ignores ctx, so closing
-+// the transport is the only way to abort an in-flight RPC. The returned stop
-+// function must be called once the RPC finishes; it waits for the watcher so a
-+// normal completion cannot race with a late interrupt.
-+func (s *Session) watchContext(ctx context.Context) (stop func()) {
-+	return watchContextDone(ctx, s.Interrupt)
-+}
-+
-+// watchContextDone is the transport-independent half of Session.watchContext;
-+// SessionDataSet reuses it for paged Fetch RPCs.
-+func watchContextDone(ctx context.Context, interrupt func()) (stop func()) {
-+	if ctx.Done() == nil || interrupt == nil {
-+		return func() {}
-+	}
-+	done := make(chan struct{})
-+	finished := make(chan struct{})
-+	go func() {
-+		defer close(finished)
-+		select {
-+		case <-ctx.Done():
-+			interrupt()
-+		case <-done:
-+		}
-+	}()
-+	return func() {
-+		close(done)
-+		<-finished
-+	}
- }
- 
- type endPoint struct {
-@@ -100,19 +204,22 @@ func (s *Session) Open(enableRPCCompression bool, connectionTimeoutInMs int) err
- 
- 	var err error
- 
--	s.trans, err = newTransport(s.config.Host, s.config.Port, connectionTimeoutInMs, s.config.TLSConfig)
-+	trans, err := newTransport(s.config.Host, s.config.Port, connectionTimeoutInMs, s.config.TLSConfig)
- 	if err != nil {
- 		return err
- 	}
--	if !s.trans.IsOpen() {
--		err = s.trans.Open()
-+	if err = s.setTransport(trans); err != nil {
-+		return err
-+	}
-+	if !trans.IsOpen() {
-+		err = trans.Open()
- 		if err != nil {
- 			return err
- 		}
- 	}
- 	s.protocolFactory = getProtocolFactory(enableRPCCompression)
--	iprot := s.protocolFactory.GetProtocol(s.trans)
--	oprot := s.protocolFactory.GetProtocol(s.trans)
-+	iprot := s.protocolFactory.GetProtocol(trans)
-+	oprot := s.protocolFactory.GetProtocol(trans)
- 	s.client = rpc.NewIClientRPCServiceClient(thrift.NewTStandardClient(iprot, oprot))
- 	req := rpc.TSOpenSessionReq{
- 		ClientProtocol: rpc.TSProtocolVersion_IOTDB_SERVICE_PROTOCOL_V3, ZoneId: s.config.TimeZone, Username: s.config.UserName,
-@@ -168,9 +275,13 @@ func (s *Session) OpenCluster(enableRPCCompression bool) error {
- 
- 	var err error
- 
-+	trans := s.currentTransport()
-+	if trans == nil {
-+		return fmt.Errorf("IoTDB cluster session has no transport")
-+	}
- 	s.protocolFactory = getProtocolFactory(enableRPCCompression)
-
-```
-
-**File**: `agents/go-common/iotdb-client-go/client/session_interrupt_test.go` (added, +310/-0)
-```diff
-@@ -0,0 +1,310 @@
-+package client
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"net"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/apache/thrift/lib/go/thrift"
-+
-+	"github.com/apache/iotdb-client-go/v2/common"
-+	"github.com/apache/iotdb-client-go/v2/rpc"
-+)
-+
-+// blockingIoTServer is a minimal real-socket IoTDB endpoint. Handlers can block
-+// selected RPCs forever, which reproduces the situation the context cannot fix:
-+// the client is parked inside net.Conn.Read when the query is cancelled.
-+type blockingIoTServer struct {
-+	ln        net.Listener
-+	handler   *blockingIoTDBHandler
-+	processor thrift.TProcessor
-+	cancel    context.CancelFunc
-+	wg        sync.WaitGroup
-+}
-+
-+type blockingIoTDBHandler struct {
-+	rpc.IClientRPCService // embedded nil: unimplemented RPCs panic if called
-+
-+	mu             sync.Mutex
-+	openSessions   int
-+	executeCalls   int
-+	fetchCalls     int
-+	blockOpenAfter int
-+	failFirstQuery bool
-+	blockExecute   bool
-+	blockFetch     bool
-+
-+	release          chan struct{}
-+	releaseOnce      sync.Once
-+	openBlocked      chan struct{}
-+	openBlockedOnce  sync.Once
-+	queryStarted     chan struct{}
-+	queryStartedOnce sync.Once
-+	fetchStarted     chan struct{}
-+	fetchStartedOnce sync.Once
-+}
-+
-+func newBlockingIoTDBHandler() *blockingIoTDBHandler {
-+	return &blockingIoTDBHandler{
-+		release:      make(chan struct{}),
-+		openBlocked:  make(chan struct{}),
-+		queryStarted: make(chan struct{}),
-+		fetchStarted: make(chan struct{}),
-+	}
-+}
-+
-+func (h *blockingIoTDBHandler) releaseAll() {
-+	h.releaseOnce.Do(func() { close(h.release) })
-+}
-+
-+func (h *blockingIoTDBHandler) counts() (opens, executes, fetches int) {
-+	h.mu.Lock()
-+	defer h.mu.Unlock()
-+	return h.openSessions, h.executeCalls, h.fetchCalls
-+}
-+
-+func (h *blockingIoTDBHandler) OpenSession(context.Context, *rpc.TSOpenSessionReq) (*rpc.TSOpenSessionResp, error) {
-+	h.mu.Lock()
-+	h.openSessions++
-+	block := h.blockOpenAfter > 0 && h.openSessions > h.blockOpenAfter
-+	h.mu.Unlock()
-+	if block {
-+		h.openBlockedOnce.Do(func() { close(h.openBlocked) })
-+		<-h.release
-+	}
-+	resp := rpc.NewTSOpenSessionResp()
-+	resp.Status = &common.TSStatus{Code: SuccessStatus}
-+	sessionID := int64(7)
-+	resp.SessionId = &sessionID
-+	resp.Configuration = map[string]string{}
-+	return resp, nil
-+}
-+
-+func (h *blockingIoTDBHandler) RequestStatementId(context.Context, int64) (int64, error) {
-+	return 11, nil
-+}
-+
-+func (h *blockingIoTDBHandler) CloseSession(context.Context, *rpc.TSCloseSessionReq) (*common.TSStatus, error) {
-+	return &common.TSStatus{Code: SuccessStatus}, nil
-+}
-+
-+func (h *blockingIoTDBHandler) ExecuteQueryStatementV2(context.Context, *rpc.TSExecuteStatementReq) (*rpc.TSExecuteStatementResp, error) {
-+	h.mu.Lock()
-+	h.executeCalls++
-+	call := h.executeCalls
-+	block := h.blockExecute
-+	h.mu.Unlock()
-+	if h.failFirstQuery && call == 1 {
-+		// Returning an error makes the test server drop the connection, which
-+		// is what the client sees when a server disappears mid-query.
-+		return nil, fmt.Errorf("simulated connection loss")
-+	}
-+	if block {
-+		h.queryStartedOnce.Do(func() { close(h.queryStarted) })
-+		<-h.release
-+	}
-+	ignoreTimestamp := false
-+	moreData := true
-+	queryID := int64(3)
-+	resp := rpc.NewTSExecuteStatementResp()
-+	resp.Status = &common.TSStatus{Code: SuccessStatus}
-+	resp.QueryId = &queryID
-+	resp.MoreData = &moreData
-+	resp.IgnoreTimeStamp = &ignoreTimestamp
-+	resp.Columns = []string{"v"}
-+	resp.DataTypeList = []string{"INT64"}
-+	return resp, nil
-+}
-+
-+func (h *blockingIoTDBHandler) FetchResultsV2(context.Context, *rpc.TSFetchResultsReq) (*rpc.TSFetchResultsResp, error) {
-+	h.mu.Lock()
-+	h.fetchCalls++
-+	block := h.blockFetch
-+	h.mu.Unlock()
-+	if block {
-+		h.fetchStartedOnce.Do(func() { close(h.fetchStarted) })
-+		<-h.release
-+	}
-+	status := &common.TSStatus{Code: SuccessStatus}
-+	return &rpc.TSFetchResultsResp{Status: status, HasResultSet: false, IsAlign: true}, nil
-+}
-+
-+func startBlockingIoTServer(t *testing.T, handler *blockingIoTDBHandler) (host string, port string) {
-+	t.Helper()
-+	ln, err := net.Listen("tcp", "127.0.0.1:0")
-+	if err != nil {
-+		t.Fatalf("listen: %v", err)
-+	}
-+	ctx, cancel := context.WithCancel(context.Background())
-+	server := &blockingIoTServer{ln: ln, handler: handler, processor: rpc.NewIClientRPCServiceProcessor(handler), cancel: cancel}
-+	go server.serve(ctx)
-+	t.Cleanup(func() {
-+		handler.releaseAll()
-+		server.stop()
-+	})
-+	addr := ln.Addr().(*net.TCPAddr)
-+	return addr.IP.String(), fmt.Sprintf("%d", addr.Port)
-+}
-+
-+func (s *blockingIoTServer) serve(ctx context.Context) {
-+	for {
-+		conn, err := s.ln.Accept()
-+		if err != nil {
-+			return
-+		}
-+		s.wg.Add(1)
-+		go func(conn net.Conn) {
-+			defer s.wg.Done()
-+			defer conn.Close()
-+			conf := &thrift.TConfiguration{}
-+			trans := thrift.NewTFramedTransportConf(thrift.NewTSocketFromConnConf(conn, conf), conf)
-+			iprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtocol(trans)
-+			oprot := thrift.NewTBinaryProtocolFactoryConf(conf).GetProtoco
-```
-
----
-
-### Incident Patch 2: `48f3ed1d` (2026-11-11)
-**Commit Message**: fix(plugin-stats): store the archive as one KV document
-
-The archive kept one KV key per counter and rewrote each touched key on every
-aggregation pass. The free plan caps writes to different keys at 1,000/day, so
-a catch-up window spent the day's allowance, later retries failed mid-pass, and
-the backlog kept growing. A pass now reads, mutates and writes a single
-document, so the number of distinct keys is constant regardless of how many
-plugins exist.
-
-migrate-archive.mjs converts the legacy keys, verifies every value against the
-document, and leaves the old keys in place as a read-only backup.
-
-**File**: `deploy/plugin-stats-worker/README.md` (modified, +41/-27)
-```diff
-@@ -61,35 +61,49 @@ AE retains only three months, so cron triggers aggregate the trailing window
- into the `plugin_stats_archive` KV namespace — the permanent layer future UI
- reads:
- 
--- `total:{kind}:{pluginId}:{version}` — all-time cumulative events
-+- `archive:v2` — **one** JSON document holding every counter:
-+  `{v:2, lastSuccess, total:{"kind:pluginId:version": n}, uniqd:{"kind:pluginId:day": n}}`
-+  (plus `kind:pluginId` rollups inside `total`). A pass reads it once, folds in
-+  the window, writes it back — the number of distinct keys touched per pass is
-+  constant (archive + summary + lock) no matter how many plugins exist.
- - `summary` — one JSON blob `{dl: {pluginId: n}, inst: {...}, updt: {...}}` for
-   single-read display; `inst` carries the pre-2026-09-19 mixed install+update
--  base (the switch to classified kinds), so treat it as the display number
--- `uniqd:{kind}:{pluginId}:{day}` — per-day distinct identities (machines for
--  classified inst/updt events; no longer written for dl)
--- `meta:last-success` — window marker; only advanced after all writes land, so a
--  failed run retries the same window on the next cron
--- `agg:state` / `agg:tuning` / `agg:lock` — resumable-pass cursor, adaptive
--  chunk size, and best-effort mutex (see below)
--
--**Chunked resumable passes** (added 2026-10-20). The original single-shot loop
--needed one KV get+put pair per aggregated key; once a failed window grew the
--retry backlog past the Workers per-invocation subrequest ceiling (1000 paid /
--50 free), every run died mid-loop and the watermark never advanced — the
--aggregation stalled silently for three weeks (2026-09-28 → 2026-10-20) while
--raw AE data kept flowing. Now every invocation processes at most `chunk` keys
--(tuning halves on failure, creeps up on success, 8–400), persists its cursor in
--`agg:state`, and completes the summary write + watermark advance only when the
--pass finishes. Crons: `30 0 * * *` opens the day's window, `0 * * * *`
--resumes any in-flight pass (a normal window finishes in a few ticks ≈ hours;
--the hourly cadence keeps daily KV writes under the free-plan 1000/day alert
--line — freshness is a decorative concern here, raise the frequency only if
--display latency starts to matter). AE row order is normalized with a JS sort because
--the offset cursor must index identically across invocations. Required
--subrequests per invocation: `chunk`-bounded (~2·chunk + 6) — never the whole
--backlog. After deploying schema-affecting changes, or to backfill from scratch,
--pass `x-archive-from: reset` (totals are additive — only safe when the
--archive is known-empty).
-+  base (the switch to classified kinds), so treat it as the display number.
-+- `agg:lock` — best-effort mutex; overlapping crons would otherwise
-+  read-modify-write the same document and lose one side of the update.
-+
-+**Why one document** (2026-11-10). The previous layout used one key per counter
-+(`total:{kind}:{pluginId}:{version}`, `uniqd:{kind}:{pluginId}:{day}`) and
-+rewrote each touched key per pass. The Workers free plan caps writes to
-+*different keys* at 1,000/day, so a catch-up window that touched a few hundred
-+counters consumed the day's allowance; every later retry then failed mid-pass,
-+the resumable cursor could not advance, the window kept growing, and the next
-+day blew the cap earlier still. On 2026-11-10 the 12:00 UTC pass hit the cap
-+after ~800 distinct keys and the archive stalled with a growing backlog. Under
-+the single-document model a pass needs `get` + `put` on one value, so history
-+cannot starve the quota.
-+
-+The remaining ceiling is the value, not the key count: the document is ~450 KiB
-+today (4,279 counters + 7,213 unique-days) and a full read-modify-write costs
-+roughly 4–5 ms of the free plan's 10 ms CPU budget. Past ~1–2 MB (a few thousand
-+plugins) split `archive:v2` by kind into separate documents, and past that move
-+the per-version detail to D1. Pruning `uniqd:` entries older than ~90 days
-+reclaims most of the growth in the meantime.
-+
-+**Migrating the legacy keys.** `migrate-archive.mjs` reads every legacy key
-+(bulk get), builds the document, verifies every value, and — with `--apply` —
-+uploads it and re-reads it to diff. It never deletes the legacy keys, so the old
-+layout stays as a read-only backup:
-+
-+```sh
-+node migrate-archive.mjs              # dry run: verify + dump the document
-+node migrate-archive.mjs --apply      # write archive:v2 and verify read-back
-+```
-+
-+Run the migration *before* deploying a Worker whose aggregation expects
-+`archive:v2`; the new code refuses to aggregate when the document is missing
-+(`{"skipped":"unmigrated"}`) instead of silently starting from zero. Legacy keys
-+can be deleted later at 1,000 deletes/day (free plan) or left in place.
- 
- Required secret (SQL API access; OAuth login does not carry analytics scope):
- 
-```
-
-**File**: `deploy/plugin-stats-worker/migrate-archive.mjs` (added, +300/-0)
-```diff
-@@ -0,0 +1,300 @@
-+#!/usr/bin/env node
-+// One-shot migration: legacy per-counter KV keys -> the single archive document.
-+//
-+// Legacy layout (one KV key per counter, what filled the free-plan
-+// "1,000 different keys per day" quota):
-+//   total:{kind}:{plugin}:{version}  -> cumulative events
-+//   uniqd:{kind}:{plugin}:{day}      -> per-day distinct identities
-+//   meta:last-success                -> window watermark
-+//   summary                          -> public {kind: {plugin: count}} blob
-+//
-+// New layout (read/modified/written by worker.ts as one value):
-+//   archive:v2 = {v:2, lastSuccess, total:{"kind:plugin:version": n},
-+//                 uniqd:{"kind:plugin:day": n}}
-+//
-+// The legacy keys are never deleted here, so a bad run cannot lose history:
-+// the only write is the new document, and --apply re-reads it and compares.
-+//
-+// Usage:
-+//   node migrate-archive.mjs            # dry run: read everything, verify, print
-+//   node migrate-archive.mjs --apply    # write archive:v2, verify read-back
-+//   node migrate-archive.mjs --apply --force   # overwrite an existing archive:v2
-+// Flags: --out=<file> --account=<id> --namespace=<id>
-+// Auth: CLOUDFLARE_API_TOKEN, or the wrangler OAuth refresh token (the script
-+// refreshes it and writes the new tokens back to the wrangler config file).
-+
-+import fs from "node:fs";
-+import os from "node:os";
-+import path from "node:path";
-+import crypto from "node:crypto";
-+import { pathToFileURL } from "node:url";
-+
-+const API = "https://api.cloudflare.com/client/v4";
-+const ARCHIVE_KEY = "archive:v2";
-+const ARCHIVE_VERSION = 2;
-+const SUMMARY_KEY = "summary";
-+const META_KEY = "meta:last-success";
-+const LEGACY_PREFIXES = ["total:", "uniqd:"];
-+const BULK_GET_BATCH = 100;
-+const WRANGLER_CLIENT_ID = "54d11594-84e4-41aa-b438-e81b8fa78ee7";
-+
-+function parseArgs(argv) {
-+  const args = { apply: false, force: false, out: null, account: "7ad3349ede62c17968a90108d39fd4d0", namespace: "0cc9e49a117f4edeb931464fa0256834" };
-+  for (const arg of argv) {
-+    if (arg === "--apply") args.apply = true;
-+    else if (arg === "--force") args.force = true;
-+    else if (arg.startsWith("--out=")) args.out = arg.slice(6);
-+    else if (arg.startsWith("--account=")) args.account = arg.slice(10);
-+    else if (arg.startsWith("--namespace=")) args.namespace = arg.slice(12);
-+    else if (arg === "--help" || arg === "-h") {
-+      console.log(fs.readFileSync(new URL(import.meta.url), "utf8").split("\n").slice(1, 22).join("\n"));
-+      process.exit(0);
-+    } else throw new Error(`unknown argument: ${arg}`);
-+  }
-+  return args;
-+}
-+
-+/** Legacy key -> document key. `total:`/`uniqd:` are both 6 chars. */
-+export function documentKey(legacyKey) {
-+  if (legacyKey.startsWith("total:")) return { section: "total", key: legacyKey.slice("total:".length) };
-+  if (legacyKey.startsWith("uniqd:")) return { section: "uniqd", key: legacyKey.slice("uniqd:".length) };
-+  return null;
-+}
-+
-+/**
-+ * Pure builder: legacy {key: value} entries -> archive document.
-+ * Throws on a malformed legacy key or value instead of skipping it silently.
-+ */
-+export function buildArchive(entries) {
-+  const doc = { v: ARCHIVE_VERSION, lastSuccess: "", total: {}, uniqd: {} };
-+  const problems = [];
-+  for (const [legacyKey, rawValue] of entries) {
-+    if (legacyKey === META_KEY) {
-+      doc.lastSuccess = String(rawValue).trim();
-+      continue;
-+    }
-+    const mapped = documentKey(legacyKey);
-+    if (!mapped) continue; // agg:*, summary, archive:v2 — handled separately
-+    const value = Number.parseInt(String(rawValue), 10);
-+    if (!/^\d+$/.test(String(rawValue).trim()) || !Number.isSafeInteger(value)) {
-+      problems.push(`${legacyKey}: non-integer value ${JSON.stringify(rawValue)}`);
-+      continue;
-+    }
-+    // `total:` holds both shapes written by the old aggregator: the
-+    // per-version counters (`kind:plugin:version`) and the plugin rollups
-+    // (`kind:plugin`). `uniqd:` is always `kind:plugin:day`.
-+    const parts = mapped.key.split(":");
-+    const validLengths = mapped.section === "total" ? [2, 3] : [3];
-+    if (!validLengths.includes(parts.length)) {
-+      problems.push(`${legacyKey}: unexpected shape ${JSON.stringify(mapped.key)}`);
-+      continue;
-+    }
-+    if (mapped.section === "total") doc.total[mapped.key] = value;
-+    else doc.uniqd[mapped.key] = value;
-+  }
-+  if (problems.length) throw new Error(`malformed legacy entries:\n  ${problems.slice(0, 20).join("\n  ")}`);
-+  return doc;
-+}
-+
-+/** Every legacy entry must survive into the document with the same value. */
-+export function verifyArchive(doc, entries) {
-+  const problems = [];
-+  const expected = { total: new Map(), uniqd: new Map() };
-+  for (const [legacyKey, rawValue] of entries) {
-+    const mapped = documentKey(legacyKey);
-+    if (!mapped) {
-+      if (legacyKey === META_KEY && String(rawValue).trim() !== doc.lastSuccess) {
-+        problems.push(`lastSuccess mismatch: legacy ${JSON.stringi
-```
-
-**File**: `deploy/plugin-stats-worker/migrate-archive.test.mjs` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+// Unit tests for the legacy -> single-document archive migration.
-+// Run: node --test deploy/plugin-stats-worker/migrate-archive.test.mjs
-+import assert from "node:assert/strict";
-+import test from "node:test";
-+
-+import { buildArchive, documentKey, verifyArchive } from "./migrate-archive.mjs";
-+
-+const SAMPLE = new Map([
-+  ["total:inst:foo:1.0.0", "12"],
-+  ["total:inst:foo:1.1.0", "37"],
-+  ["total:updt:foo:1.1.0", "4"],
-+  ["total:dl:bar:0.2.0", "1034"],
-+  ["total:dl:bar", "1050"],
-+  ["uniqd:inst:foo:2026-11-09", "5"],
-+  ["uniqd:updt:foo:2026-11-09", "2"],
-+  ["meta:last-success", "2026-11-10 04:00:42"],
-+  ["summary", '{"inst":{"foo":49}}'],
-+  ["agg:tuning", "400"],
-+]);
-+
-+test("documentKey strips the legacy prefix and ignores unrelated keys", () => {
-+  assert.deepEqual(documentKey("total:inst:foo:1.0.0"), { section: "total", key: "inst:foo:1.0.0" });
-+  assert.deepEqual(documentKey("uniqd:updt:foo:2026-11-09"), { section: "uniqd", key: "updt:foo:2026-11-09" });
-+  assert.equal(documentKey("summary"), null);
-+  assert.equal(documentKey("agg:lock"), null);
-+  assert.equal(documentKey("archive:v2"), null);
-+});
-+
-+test("buildArchive copies every counter and the watermark", () => {
-+  const doc = buildArchive(SAMPLE);
-+  assert.equal(doc.v, 2);
-+  assert.equal(doc.lastSuccess, "2026-11-10 04:00:42");
-+  assert.deepEqual(doc.total, {
-+    "inst:foo:1.0.0": 12,
-+    "inst:foo:1.1.0": 37,
-+    "updt:foo:1.1.0": 4,
-+    "dl:bar:0.2.0": 1034,
-+    "dl:bar": 1050,
-+  });
-+  assert.deepEqual(doc.uniqd, { "inst:foo:2026-11-09": 5, "updt:foo:2026-11-09": 2 });
-+});
-+
-+test("buildArchive keeps a missing watermark empty instead of inventing one", () => {
-+  const doc = buildArchive(new Map([["total:inst:foo:1.0.0", "1"]]));
-+  assert.equal(doc.lastSuccess, "");
-+});
-+
-+test("buildArchive rejects a non-integer counter instead of dropping it", () => {
-+  assert.throws(() => buildArchive(new Map([["total:inst:foo:1.0.0", "12x"]])), /non-integer value/);
-+  assert.throws(() => buildArchive(new Map([["total:inst:foo:1.0.0", "-3"]])), /non-integer value/);
-+});
-+
-+test("buildArchive accepts plugin rollups and rejects a key without a plugin", () => {
-+  assert.deepEqual(buildArchive(new Map([["total:inst:foo", "49"]])).total, { "inst:foo": 49 });
-+  assert.throws(() => buildArchive(new Map([["total:inst", "1"]])), /unexpected shape/);
-+});
-+
-+test("verifyArchive accepts a faithful document", () => {
-+  assert.deepEqual(verifyArchive(buildArchive(SAMPLE), SAMPLE), []);
-+});
-+
-+test("verifyArchive reports a missing counter", () => {
-+  const doc = buildArchive(SAMPLE);
-+  delete doc.total["inst:foo:1.1.0"];
-+  const problems = verifyArchive(doc, SAMPLE);
-+  assert.ok(problems.some((problem) => problem.includes("total: doc has")), problems.join("; "));
-+});
-+
-+test("verifyArchive reports a wrong counter value", () => {
-+  const doc = buildArchive(SAMPLE);
-+  doc.uniqd["inst:foo:2026-11-09"] = 6;
-+  const problems = verifyArchive(doc, SAMPLE);
-+  assert.ok(problems.some((problem) => problem.includes("uniqd[inst:foo:2026-11-09]")), problems.join("; "));
-+});
-+
-+test("verifyArchive reports a diverged watermark", () => {
-+  const doc = buildArchive(SAMPLE);
-+  doc.lastSuccess = "2026-11-10 05:00:00";
-+  const problems = verifyArchive(doc, SAMPLE);
-+  assert.ok(problems.some((problem) => problem.includes("lastSuccess mismatch")), problems.join("; "));
-+});
-```
-
-**File**: `deploy/plugin-stats-worker/worker.ts` (modified, +138/-117)
-```diff
-@@ -35,9 +35,11 @@
- //
- // Storage:
- // - Workers Analytics Engine (binding PLUGIN_STATS) — one datapoint per event.
--//   AE only retains three months, so a daily cron aggregates the trailing
--//   window into the `plugin_stats_archive` KV namespace, which holds the
--//   permanent totals. KV is fine here: ~1 write per active key per day.
-+//   AE only retains three months, so cron aggregates the trailing window into
-+//   the `plugin_stats_archive` KV namespace, which holds the permanent totals
-+//   as ONE document (see ARCHIVE_KEY). A pass therefore writes a constant
-+//   number of distinct keys, which keeps it inside the free plan's
-+//   1,000-different-keys/day cap no matter how many plugins exist.
- 
- type AnalyticsEngineBinding = {
-   writeDataPoint(event: { blobs?: string[]; doubles?: number[]; indexes?: string[] }): void;
-@@ -290,133 +292,152 @@ async function fetchWindowCounts(env: Env, from: Date, to: Date): Promise<Window
-     .sort((a, b) => `${a.kind}:${a.plugin}:${a.version}`.localeCompare(`${b.kind}:${b.plugin}:${b.version}`));
- }
- 
--// Aggregates events in (last-success, now] into permanent KV totals, chunked
--// and resumable. The pre-2026-10 unchunked loop died mid-run once the window
--// grew past the Workers per-invocation subrequest ceiling (1000 paid / 50
--// free; every versioned total costs a get+put pair). A single failed run then
--// left the watermark behind, the next window grew larger, and the aggregation
--// stalled permanently (2026-09-28 → 2026-10-20). Now every trigger processes
--// at most `chunk` keys, persists a cursor in `agg:state`, and the next cron
--// (daily start + */10 continue) resumes until the pass completes; only then
--// are the summary written and the watermark advanced. `agg:tuning` carries
--// the chunk size across passes — it halves on failure and creeps up on
--// progress, so the worker adapts to whatever subrequest/KV limits the
--// account has. A crash mid-chunk can double-count that chunk's additive
--// totals; acceptable for decorative stats (same stance as v1).
--type AggPhase = "counts" | "pluginTotals" | "uniques";
--type AggState = { windowFrom: string; windowTo: string; phase: AggPhase; offset: number; chunk: number };
--
--const AGG_STATE_KEY = "agg:state";
-+// ---------------------------------------------------------------------------
-+// Permanent archive: ONE KV value holds every cumulative counter.
-+//
-+// The previous model stored one key per counter (`total:kind:plugin:version`,
-+// `uniqd:kind:plugin:day`). Every aggregation pass then wrote one *different*
-+// key per counter it touched. On the free plan the cap is "writes to different
-+// keys: 1,000/day", so a catch-up window touching a few hundred counters ate
-+// the day's allowance; after that every retry failed mid-pass, the resumable
-+// cursor could not advance, the window kept growing, and the next day blew the
-+// cap earlier still. Now a pass reads one value, mutates it in memory and
-+// writes it back, so the number of distinct keys it touches (archive, summary,
-+// lock) is constant and independent of the plugin count. The remaining ceiling
-+// is value size / JSON CPU cost, not the key count (see README).
-+export const ARCHIVE_KEY = "archive:v2";
-+const ARCHIVE_VERSION = 2;
-+const ARCHIVE_EPOCH = "1970-01-01 00:00:00";
-+
-+export type ArchiveDoc = {
-+  v: number;
-+  /** SQL timestamp of the last completed window; "" until the first pass. */
-+  lastSuccess: string;
-+  /** "kind:plugin:version" -> cumulative events. */
-+  total: Record<string, number>;
-+  /** "kind:plugin:day" -> distinct identities seen that day. */
-+  uniqd: Record<string, number>;
-+};
-+
-+/** `{kind: {plugin: count}}`, exactly what the website reads. */
-+export type Summary = Record<string, Record<string, number>>;
-+
- const AGG_LOCK_KEY = "agg:lock";
--const AGG_TUNING_KEY = "agg:tuning";
--const AGG_MIN_CHUNK = 8; // keeps get+put pairs + AE fetches under the free plan's 50 subrequests
--const AGG_MAX_CHUNK = 400; // 400×2 + fetches + state writes stays under the paid plan's 1000
- const AGG_LOCK_TTL_SECONDS = 300;
- 
--async function readChunkSize(env: Env): Promise<number> {
--  const chunk = Number.parseInt((await env.PLUGIN_ARCHIVE.get(AGG_TUNING_KEY)) ?? "", 10);
--  return Number.isFinite(chunk) && chunk >= AGG_MIN_CHUNK && chunk <= AGG_MAX_CHUNK ? chunk : AGG_MAX_CHUNK;
-+export function emptyArchive(): ArchiveDoc {
-+  return { v: ARCHIVE_VERSION, lastSuccess: "", total: {}, uniqd: {} };
-+}
-+
-+/** Parse a stored archive; an unknown schema throws instead of resetting data. */
-+export function parseArchive(raw: string): ArchiveDoc {
-+  const parsed = JSON.parse(raw) as Partial<ArchiveDoc> | null;
-+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("archive: stored value is not an object");
-+  if (parsed.v !== ARCHIVE_VERSION) throw new Error(`archive: unsupported version ${String(parsed.v)}`);
-+  const total = parsed.total ?? {};
-+  const uniqd = parsed.uniqd ?? {};
-+  if (typeo
-```
-
----
-
-### Incident Patch 3: `e91a85c4` (2026-11-11)
-**Commit Message**: fix(sqlserver): keep stored-procedure header comments in module batches
-
-**File**: `apps/desktop/src/lib/__tests__/sql/executableStatementRangeCache.spec.ts` (modified, +11/-0)
-```diff
-@@ -71,6 +71,17 @@ describe("executableStatementRangeCacheForDoc", () => {
-     expect(executableStatementRangeStartingAt(cache, doc.line(1).from)?.sql).toBe(sql.slice(0, -1));
+ vi.mock("@/lib/backend/api", () => ({
+-  analyzeEditableQueryEditability: vi.fn().mockResolvedValue({ editable: false, reason: "complex-query" }),
++  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
+   buildTableSelectSql: mocks.buildTableSelectSql,
+   closeClientConnectionSession: mocks.closeClientConnectionSession,
+   closeQuerySession: mocks.closeQuerySession,
+@@ -41,6 +45,7 @@ vi.mock("@/lib/metadata/tableMetadataCache", async (importOriginal) => {
+   const actual = await importOriginal<typeof import("@/lib/metadata/tableMetadataCache")>();
+   return {
+     ...actual,
++    loadTableColumns: mocks.loadTableColumns,
+     loadTableMetadata: mocks.loadTableMetadata,
+   };
+ });
+@@ -70,6 +75,7 @@ describe("queryStore table data refresh", () => {
+     resetRowIdLocatorStateForTests();
+     setActivePinia(createPinia());
+     mocks.metadataGeneration = 0;
++    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "complex-query" });
+     mocks.prepareQueryPaginationExecutionPlan.mockResolvedValue({ useAgentResultSession: false });
+     mocks.getConnectionConfig.mockReturnValue({
+       id: "pg-1",
+@@ -400,6 +406,33 @@ describe("queryStore table data refresh", () => {
+     expect(metadata?.querySourceColumns).toEqual(["name"]);
    });
  
-+  it.each(["-- 存储过程说明\n-- 作者 : 张三", "/* 说明 /* 内部说明 */\nGO\n保留完整注释 */"])("includes SQL Server procedure header comments when running from the CREATE line: %s", (header) => {
-+    const procedure = `${header}\nCREATE PROCEDURE dbo.p AS\nBEGIN\n    SELECT 1;\n    SELECT 2;\nEND;`;
-+    const sql = `${procedure}\nGO\nSELECT 3;`;
-+    const doc = Text.of(sql.split("\n"));
-+    const cache = executableStatementRangeCacheForDoc(null, doc, "sqlserver");
++  it("waits for an active query result's table metadata before batch INSERT mapping", async () => {
++    const { useQueryStore } = await import("@/stores/queryStore");
++    mocks.getConnectionConfig.mockReturnValue({ id: "mysql-1", db_type: "mysql", database: "app" });
++    const store = useQueryStore();
++    const tabId = store.createTab("mysql-1", "app", "Query", "query");
++    const tab = store.tabs.find((candidate) => candidate.id === tabId)!;
++    const sourceStatement = "SELECT name AS label FROM users";
++    tab.results = [{ columns: ["label"], rows: [["Ada"]], sourceStatement }];
++    const columns = [{ name: "name", data_type: "varchar", is_nullable: false, column_default: null, is_primary_key: false, extra: null }];
++    const tableMetadata = { columns, tableName: "users", tableType: "TABLE", cachedAt: Date.now() };
++    let resolveColumns!: (metadata: TableColumnsLoadResult) => void;
++    mocks.loadTableColumns.mockReturnValueOnce(new Promise<TableColumnsLoadResult>((resolve) => (resolveColumns = resolve)));
++    mocks.loadTableMetadata.mockResolvedValueOnce({ metadata: { ...tableMetadata, indexes: [], primaryKeys: [] }, cacheStatus: "miss", ageMs: 0 });
++    mocks.analyzeEditableQueryEditability.mockResolvedValueOnce(analyzeEditableQueryEditability(sourceStatement));
 +
-+    expect(executableStatementRangeStartingAt(cache, doc.lineAt(sql.indexOf("CREATE PROCEDURE")).from)?.sql).toBe(procedure);
-+    expect(executableStatementRangeStartingAt(cache, doc.lineAt(sql.indexOf("SELECT 1")).from)).toBeNull();
-+    expect(executableStatementRangeAtCursor(cache, sql.indexOf("SELECT 2"))?.sql).toBe(procedure);
++    store.setActiveResultIndex(tabId, 0);
++    await vi.waitFor(() => expect(mocks.loadTableColumns).toHaveBeenCalled());
++    expect(tab.tableMeta).toBeUndefined();
++    const batchMetadata = store.resolveResultMetadataForBatch(tabId, tab.result!);
++    resolveColumns({ ...tableMetadata, cacheStatus: "miss", ageMs: 0 });
++
++    await expect(batchMetadata).resolves.toMatchObject({
++      tableMeta: { database: "app", tableName: "users", primaryKeys: [] },
++      querySourceColumns: ["name"],
++    });
 +  });
 +
-   it("keeps a valid placeholder-only line executable and respects disabled MyBatis syntax", () => {
-     const sql = ["SELECT *", "FROM t", "#{where_clause};"].join("\n");
-     const doc = Text.of(sql.split("\n"));
+   it("uses JDBC ResultSet offset pagination for Caché data tabs", async () => {
+     mocks.getConnectionConfig.mockReturnValue({
+       id: "cache-1",
 ```
 
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts` (modified, +44/-0)
+**File**: `apps/desktop/src/stores/queryStore.ts` (modified, +31/-13)
 ```diff
-@@ -659,6 +659,50 @@ describe("splitSqlStatementRanges", () => {
-     expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 'GO'\n-- GO\nSELECT 2", "SELECT 3"]);
-   });
- 
-+  it("preserves the SQL Server procedure documentation header in execution ranges", () => {
-+    const procedure = `-- =============================================================
-+-- 存储过程名 : usp_GetUserById
-+-- 功能描述   : 根据用户ID查询单个用户信息
-+-- 参数说明   : @UserId  INT  用户唯一标识
-+-- 返回值     : 结果集(UserId, UserName, Email, CreatedAt)
-+-- 作者       : 张三
-+-- 创建日期   : 2026-11-10
-+-- 修改记录   : 2026-11-10  张三  初始创建
-+-- 备注       : 无
-+-- =============================================================
-+CREATE PROCEDURE usp_GetUserById
-+    @UserId INT
-+AS
-+BEGIN
-+    SET NOCOUNT ON;
-+
-+    -- 查询用户信息
-+    SELECT UserId, UserName, Email, CreatedAt
-+    FROM dbo.Users
-+    WHERE UserId = @UserId;
-+END`;
-+    const sql = `SELECT 0;\nGO\n\n${procedure}\nGO\nSELECT 2;`;
-+    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 0", procedure, "SELECT 2"]);
-+    expect(rangeSqlTexts(executableStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 0", procedure, "SELECT 2"]);
-+    for (const marker of ["CREATE PROCEDURE", "SET NOCOUNT", "WHERE UserId"]) {
-+      const cursor = sql.indexOf(marker);
-+      expect(currentExecutableStatementRange(sql, cursor, "sqlserver")?.sql).toBe(procedure);
-+      expect(buildExecutionCandidates(sql, cursor, "sqlserver")[0]?.sql).toBe(procedure);
-+    }
-+  });
-+
-+  it.each(["CREATE PROCEDURE", "ALTER PROC", "CREATE OR ALTER PROCEDURE"])("keeps header comments and internal semicolons in a SQL Server %s batch", (operation) => {
-+    for (const header of ["-- 作者 : 张三", "/* 根据用户ID查询\nGO\n保留完整注释 */", "/* 说明 /* 内部说明 */\nGO\n保留完整注释 */"]) {
-+      const procedure = `${header}\n${operation} dbo.p AS\nBEGIN\n    SELECT 1;\n    SELECT 2;\nEND;`;
-+      expect(rangeSqlTexts(executableStatementRanges(`${procedure}\nGO\nSELECT 3;`, "sqlserver"))).toEqual([procedure, "SELECT 3"]);
-+    }
-+  });
-+
-+  it("keeps SQL Server nested comment-only batches non-executable", () => {
-+    const sql = "/* 说明 /* CREATE PROCEDURE fake AS SELECT 0; */\nGO\n仍是注释 */\nGO\n-- 普通查询说明\nSELECT 1;";
-+    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["SELECT 1"]);
-+  });
-+
-   it("keeps Oracle PL/SQL blocks together and treats slash lines as delimiters", () => {
-     const ranges = splitSqlStatementRanges(oraclePlSqlFixture, "oracle");
-     expect(rangeSqlTexts(ranges)).toEqual([oraclePlSqlFixture.slice(0, oraclePlSqlFixture.indexOf("\n/")), "SELECT 1"]);
-```
-
-**File**: `apps/desktop/src/lib/sql/executableStatementRangeCache.ts` (modified, +6/-5)
-```diff
-@@ -1,7 +1,7 @@
- import { RangeSet, RangeValue, type ChangeSet, type Text } from "@codemirror/state";
- import type { DatabaseType } from "@/types/database";
- import type { SqlParameterOptions } from "@/lib/sql/sqlParameters";
--import { executableStatementRanges, startsHashLineComment, statementParsingDatabaseType, type SqlTextRange } from "@/lib/sql/sqlStatementRanges";
-+import { executableStatementRanges, findSqlBlockCommentEnd, startsHashLineComment, statementParsingDatabaseType, type SqlTextRange } from "@/lib/sql/sqlStatementRanges";
- import { cursorBelongsToTrailingStatementDelimiter } from "@/lib/sql/statementDelimiter";
- 
- export interface ExecutableStatementRangeCache {
-@@ -87,26 +87,27 @@ export function executableStatementRangeCacheForDoc(
-     if (doc.sliceString(currentLine.from, range.from).trim() === "") {
-       byExecutableLineStart.set(currentLine.from, range);
-     }
--    const executableStart = executableStartAfterLeadingDirective(sql, range, databaseType, parameterOptions);
-+    const executableStart = executableStartAfterLeadingComments(sql, range, databaseType, parameterOptions);
-     if (executableStart !== null) {
-       byExecutableLineStart.set(doc.lineAt(executableStart).from, range);
+@@ -8123,6 +8123,8 @@ export const useQueryStore = defineStore("query", () => {
      }
    }
-   return { doc, databaseType, parameterOptions, parameterSyntaxKey, byStart, byExecutableLineStart, ranges };
- }
  
--function executableStartAfterLeadingDirective(sql: string, range: SqlTextRange, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): number | null {
-+function executableStartAfterLeadingComments(sql: string, range: SqlTextRange, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): number | null {
-   databaseType = statementParsingDatabaseType(databaseType, parameterOptions);
-   const text = range.sql;
-   const hasExecutableDirective = text.startsWith("/*+") || text.startsWith("/*@") || text.startsWith("/*&") || (databaseType === "mysql" && text.startsWith("/*proxy*/"));
--  if (!hasExecutableDirective) return null;
-+  const hasModuleComment = databaseType === "sqlserver" && (text.startsWith("--") || text.startsWith("/*"));
-+  if (!hasExecutableDirective && !hasModuleComment) return null;
- 
-   let offset = 0;
-   while (offset < text.length) {
-     while (/\s/.test(text[offset] ?? "")) offset += 1;
- 
-     if (text.startsWith("/*", offset)) {
--      const close = text.indexOf("*/", offset + 2);
-+      const close = findSqlBlockCommentEnd(text, offset, databaseType);
-       if (close < 0) return null;
-       offset = close + 2;
-       continue;
-```
-
-**File**: `apps/desktop/src/lib/sql/sqlStatementRanges.ts` (modified, +45/-2)
-```diff
-@@ -431,6 +431,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
-   let singleQuoteBackslashEscapes = false;
-   let dollarTag = "";
-   let postgresDollarQuotedRoutine = false;
-+  let sqlServerModuleBatch = false;
-   let oraclePlSqlStatementEnd: number | null | undefined;
-   let i = 0;
- 
-@@ -471,6 +472,12 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
-       // exact /*proxy*/ directive also keeps its historical multiline support.
-       const directiveStart = pendingMysqlDirectiveStart !== -1 && (sql.startsWith("/*proxy*/", pendingMysqlDirectiveStart) || pos < pendingMysqlDirectiveLineEnd) ? pendingMysqlDirectiveStart : -1;
-       statementStart = directiveStart !== -1 ? directiveStart : pendingHintStart === -1 ? pos : pendingHintStart;
-+      sqlServerModuleBatch = databaseType === "sqlserver" && startsWithSqlServerModuleDdl(sql, pos, parameterOptions);
-+      if (sqlServerModuleBatch) {
-+        // SQL Server stores the module's leading comments in its definition.
-+        statementStart = statementHitStart;
-+        while (isWhitespace(sql[statementStart])) statementStart += 1;
-+      }
-       pendingHintStart = -1;
-       pendingMysqlDirectiveStart = -1;
-       pendingMysqlDirectiveLineEnd = -1;
-@@ -485,6 +492,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
-       pendingMysqlDirectiveStart = -1;
-       pendingMysqlDirectiveLineEnd = -1;
-       postgresDollarQuotedRoutine = false;
-+      sqlServerModuleBatch = false;
-       oraclePlSqlStatementEnd = undefined;
-       return;
-     }
-@@ -498,6 +506,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
-     pendingMysqlDirectiveStart = -1;
-     pendingMysqlDirectiveLineEnd = -1;
-     postgresDollarQuotedRoutine = false;
-+    sqlServerModuleBatch = false;
-     oraclePlSqlStatementEnd = undefined;
-     mysqlRoutineScan = null;
-   };
-@@ -622,7 +631,7 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
-     if (ch === "/" && next === "*") {
-       const hintMarker = sql[i + 2];
-       if (statementStart === -1 && pendingHintStart === -1 && (hintMarker === "+" || hintMarker === "@" || hintMarker === "&")) pendingHintStart = i;
--      const close = sql.indexOf("*/", i + 2);
-+      const close = findSqlBlockCommentEnd(sql, i, databaseType);
-       if (statementStart === -1) {
-         if (databaseType === "mysql") {
-           if (pendingMysqlDirectiveStart === -1 || i > pendingMysqlDirectiveLineEnd) {
-@@ -694,6 +703,11 @@ export function splitSqlStatementRanges(sql: string, databaseType?: DatabaseType
-         continue;
-       }
-     } else if (ch === ";" && !isXmlEntityReferenceSemicolon(sql, i)) {
-+      if (sqlServerModuleBatch) {
-+        markContent(i);
-+        i += 1;
-+        continue;
-+      }
-       const routineTokensBeforeSemicolon = isMysqlRoutineBlockDatabase(databaseType) && statementStart !== -1 ? mysqlRoutineTokensUpTo(i) : null;
-       const isMysqlRoutineBlock = routineTokensBeforeSemicolon !== null && isMysqlRoutineDdlStartFromWords(mysqlRoutineDdlStartWords(routineTokensBeforeSemicolon)) && mysqlRoutineTokensContainBegin(routineTokensBeforeSemicolon);
-       if (isMysqlRoutineBlock) {
-@@ -857,6 +871,7 @@ function splitStatementRangeAtSoftStarts(sql: string, statement: RawStatement, d
-   if (isFirebirdRoutineBlockStatement(statement.sql, databaseType)) return [statement];
-   // Routine bodies contain top-level-looking SET/INSERT/SELECT lines that are not independent statements.
-   if (isMysqlRoutineBlockDatabase(databaseType) && startsWithMysqlRoutineBlock(statement.sql, parameterOptions)) return [statement];
-+  if (databaseType === "sqlserver" && startsWithSqlServerModuleDdl(sql, statement.from, parameterOptions)) return [statement];
-   // SQL Server control-flow batches use line-oriented BEGIN/EXEC tokens inside one IF/ELSE statement.
-   if (isSqlServerControlFlowBatch(sql, statement, databaseType, parameterOptions)) return [statement];
- 
-@@ -1056,6 +1071,18 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
-   return { openBlocks, closedAt, wordAfterClose, sawBlockBegin, hasControlFlowElse };
- }
- 
-+function startsWithSqlServerModuleDdl(sql: string, from: number, parameterOptions?: SqlParameterOptions): boolean {
-+  const operation = nextSqlWordToken(sql, from, "sqlserver", parameterOptions);
-+  if (operation?.word !== "CREATE" && operation?.word !== "ALTER") return false;
-+  let kind = nextSqlWordToken(sql, operation.end, "sqlserver", parameterOptions);
-+  if (operation.word === "CREATE" && kind?.word === "OR") {
-+    const alter = nextSqlWordToken(sql, kind.end, "sqlserver", parameterOptions);
-+    if (alter?.word !== "ALTER") return false;
-+    kind = nextSqlWordToken(sql, alter.end, "sqlserver", parameterOptions);
-+  }
-+  return kind != null && ["PROC", "PROCEDURE", "FUNCTION", "TRIGGER", "VIEW"].includes(kind.word);
-+}
++  const pendingQueryMetadata = new WeakMap<QueryResult, Promise<QueryMetadataPatch | undefined>>();
 +
- /**
-  * T
-```
-
-**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +46/-8)
-```diff
-@@ -2002,8 +2002,8 @@ fn split_sql_batch_ranges(sql: &str, profile: SqlDialectProfile) -> Vec<SqlState
- }
- 
- fn push_batch_range(ranges: &mut Vec<SqlStatementRange>, sql: &str, start: usize, end: usize) {
--    let Some((relative_start, relative_end)) = executable_sql_bounds(&sql[start..end], SqlParsingOptions::default())
--    else {
-+    let options = SqlParsingOptions::for_database_type(DatabaseType::SqlServer);
-+    let Some((relative_start, relative_end)) = executable_sql_bounds(&sql[start..end], options) else {
-         return;
-     };
-     let statement_start = start + relative_start;
-@@ -2326,7 +2326,9 @@ fn starts_with_sqlserver_control_flow_batch(sql: &str) -> bool {
- }
- 
- pub fn starts_with_sqlserver_module_ddl(sql: &str) -> bool {
--    let tokens = first_sql_tokens(sql, 4);
-+    let executable =
-+        leading_executable_sql_with_options(sql, SqlParsingOptions::for_database_type(DatabaseType::SqlServer));
-+    let tokens = first_sql_tokens(executable, 4);
-     if tokens.len() >= 4
-         && tokens[0].eq_ignore_ascii_case("CREATE")
-         && tokens[1].eq_ignore_ascii_case("OR")
-@@ -4817,11 +4819,15 @@ fn executable_sql_bounds(statement: &str, options: SqlParsingOptions) -> Option<
-         return None;
-     }
-     let executable_start = trimmed.len() - executable.len();
--    let start = if options.profile.preserves_tdsql_leading_directives {
--        crate::tdsql_mysql::leading_directive_start(trimmed, executable_start).unwrap_or(executable_start)
--    } else {
--        executable_start
--    };
-+    let start =
-+        if options.profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(executable) {
-+            // SQL Server stores a module's leading comments as part of its definition.
-+            trimmed.len() - trimmed.trim_start().len()
-+        } else if options.profile.preserves_tdsql_leading_directives {
-+            crate::tdsql_mysql::leading_directive_start(trimmed, executable_start).unwrap_or(executable_start)
+   function analyzeQueryMetadataInBackground(tabId: string, sql: string, result: QueryResult, executionDatabase: string, traceId: string, elapsed: () => string, databaseType: DatabaseType | undefined, hiddenPrimaryKeys: HiddenPrimaryKeyProjection[] = [], connection?: ConnectionConfig) {
+     void (async () => {
+       const tab = tabs.value.find((t) => t.id === tabId);
+@@ -8137,17 +8139,25 @@ export const useQueryStore = defineStore("query", () => {
+       };
+       // Metadata requests outlive the displayed result when another query starts
+       // or a retained run is selected. Analyze this result, not the live tab.
+-      const patch = await buildQueryMetadataPatch({ ...tab, result }, sql, executionDatabase, traceId, elapsed, hiddenPrimaryKeys, connection, applyDisplayReady);
+-      if (patch?.queryAnalysis && hasHiddenPhysicalRowKey(databaseType, hiddenPrimaryKeys)) {
+-        patch.queryAnalysis = { ...patch.queryAnalysis, allowInsert: false };
+-      }
+-      const current = tabs.value.find((t) => t.id === tabId);
+-      if (patch && current?.result === result) {
+-        applyQueryMetadataPatch(current, patch, databaseType, executionDatabase);
+-        if (activeResultRunOwnsDisplayedResult(current)) syncActiveResultRunFromDisplayed(current);
+-        queryExecutionLog("info", "metadata:done", { traceId, elapsed: elapsed() });
+-      } else {
+-        queryExecutionLog("warn", "metadata:stale", { traceId, elapsed: elapsed() });
++      const pending = buildQueryMetadataPatch({ ...tab, result }, sql, executionDatabase, traceId, elapsed, hiddenPrimaryKeys, connection, applyDisplayReady);
++      pendingQueryMetadata.set(result, pending);
++      try {
++        const patch = await pending;
++        if (patch?.queryAnalysis && hasHiddenPhysicalRowKey(databaseType, hiddenPrimaryKeys)) {
++          patch.queryAnalysis = { ...patch.queryAnalysis, allowInsert: false };
++        }
++        const current = tabs.value.find((t) => t.id === tabId);
++        if (patch && current?.result === result) {
++          applyQueryMetadataPatch(current, patch, databaseType, executionDatabase);
++          if (activeResultRunOwnsDisplayedResult(current)) syncActiveResultRunFromDisplayed(current);
++          queryExecutionLog("info", "metadata:done", { traceId, elapsed: elapsed() });
 +        } else {
-+            executable_start
-+        };
-     Some((start, trimmed_end))
++          queryExecutionLog("warn", "metadata:stale", { traceId, elapsed: elapsed() });
++        }
++      } catch (error) {
++        queryExecutionLog("warn", "metadata:failed", { traceId, elapsed: elapsed(), error });
++      } finally {
++        if (pendingQueryMetadata.get(result) === pending) pendingQueryMetadata.delete(result);
+       }
+     })();
+   }
+@@ -10890,8 +10900,16 @@ export const useQueryStore = defineStore("query", () => {
+     const connection = useConnectionStore().getConfig(location.connectionId);
+     const databaseType = effectiveDatabaseTypeForConnection(connection);
+     if (result === tab.result) {
+-      if (tab.mode === "data" && (tab.tableMetaPending || !tab.tableMeta?.columns.length)) return undefined;
+-      const tableMeta = tab.mode === "data" ? tableMetaForDataTab(tab) : tab.tableMeta;
++      let tableMeta = tab.tableMeta;
++      if (tab.mode === "data") {
++        if (tab.tableMetaPending || !tableMeta?.columns.length) return undefined;
++        tableMeta = tableMetaForDataTab(tab);
++      } else {
++        // The grid can show rows before background metadata is ready. Await
++        // the patch for this result, since the active tab can change meanwhile.
++        const pending = pendingQueryMetadata.get(result);
++        if (pending) tableMeta = (await pending)?.tableMeta;
++      }
+       const structure = analyzeSelectStructureForDisplay(result.sourceStatement);
+       const sameTable = structure?.tableName && tableMeta?.tableName && structure.tableName.toLowerCase() === tableMeta.tableName.toLowerCase() && (!structure.schema || !tableMeta.schema || structure.schema.toLowerCase() === tableMeta.schema.toLowerCase());
+       if (!sameTable || !tableMeta?.tableName || !canInsertTableRows(databaseType) || tableMeta.tableType?.toUpperCase().includes("VIEW")) return undefined;
+```
+
+---
+
+### Incident Patch 2: `dea9faa1` (2026-11-12)
+**Commit Message**: fix(sidebar): apply DDL display preferences to Generate SQL > DDL (#14847)
+
+Generate SQL > DDL only applied the database-name and identifier-quote
+settings, so Oracle DDL kept the blank lines between COMMENT ON
+statements and the storage clauses that View DDL removes through the
+Compact SQL and Storage attributes preferences.
+
+Closes #14818
+
+**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +1/-1)
+```diff
+@@ -2695,7 +2695,7 @@ async function openSidebarMultiTableDdlTab(targets: Array<TreeNode & { connectio
+     async (ddl, target) => {
+       const formatDialect = sqlFormatDialectForDbType(databaseTypeForNode(target));
+       const formatted = await formatSqlForDisplay(ddl, formatDialect, settingsStore.editorSettings.sqlFormatter);
+-      return formatSidebarDdlTemplateForDisplay(formatted, formatDialect, databaseTypeForNode(target), settingsStore.editorSettings.generateSqlIncludeDatabaseName, target.database, settingsStore.editorSettings.generateSqlQuoteIdentifiers, target.catalog);
++      return formatSidebarDdlTemplateForDisplay(formatted, formatDialect, databaseTypeForNode(target), settingsStore.editorSettings.generateSqlIncludeDatabaseName, target.database, settingsStore.editorSettings.generateSqlQuoteIdentifiers, settingsStore.editorSettings, target.catalog);
+     },
+   );
+   connectionStore.activeConnectionId = tabTarget.connectionId;
+```
+
+**File**: `apps/desktop/src/lib/__tests__/sidebar/sidebarDdlTemplate.spec.ts` (modified, +25/-2)
+```diff
+@@ -1,6 +1,19 @@
+ import { describe, expect, it, vi } from "vitest";
+ import { buildSidebarDdlTemplateSql, formatSidebarDdlTemplateForDisplay, sidebarDdlTargetsForExecutionContext } from "@/lib/sidebar/sidebarDdlTemplate";
+ 
++const KEEP_DDL_TEXT = { includeDdlStorage: true, compactDdlSql: false };
++
++// Oracle display DDL as returned for a commented table (statements are separated by blank lines).
++const ORACLE_COMMENTED_TABLE_DDL = [
++  'CREATE TABLE "APP"."ORDERS" ("ID" NUMBER(10, 0), "NOTE" VARCHAR2(100)) SEGMENT CREATION DEFERRED TABLESPACE "USERS";',
++  "",
++  'COMMENT ON TABLE "APP"."ORDERS" IS \'Orders\';',
++  "",
++  'COMMENT ON COLUMN "APP"."ORDERS"."ID" IS \'Id\';',
++  "",
++  'COMMENT ON COLUMN "APP"."ORDERS"."NOTE" IS \'Note\';',
++].join("\n");
++
+ describe("sidebar DDL template", () => {
+   it("preserves the single-target SQL", async () => {
+     const sql = await buildSidebarDdlTemplateSql(
+@@ -30,7 +43,7 @@ describe("sidebar DDL template", () => {
+     const sql = await buildSidebarDdlTemplateSql(
+       [{ databaseType: "oracle" as const, catalog: undefined }],
+       async () => 'CREATE TABLE "SYSTEM"."TEST" ("ID" NUMBER)',
+-      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "oracle", target.databaseType, false, undefined, true, target.catalog),
++      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "oracle", target.databaseType, false, undefined, true, KEEP_DDL_TEXT, target.catalog),
+     );
+ 
+     expect(sql).toBe('CREATE TABLE "TEST" ("ID" NUMBER)');
+@@ -44,12 +57,22 @@ describe("sidebar DDL template", () => {
+     const sql = await buildSidebarDdlTemplateSql(
+       targets,
+       async (target) => `CREATE TABLE \`iceberg\`.\`analytics\`.\`${target.name}\` (\`id\` bigint)`,
+-      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "mysql", "starrocks", false, undefined, false, target.catalog),
++      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "mysql", "starrocks", false, undefined, false, KEEP_DDL_TEXT, target.catalog),
+     );
+ 
+     expect(sql).toBe("CREATE TABLE iceberg.analytics.events (id bigint);\n\nCREATE TABLE iceberg.analytics.sessions (id bigint);\n");
+   });
+ 
++  it("applies the DDL viewer text preferences to Oracle DDL", () => {
++    const sql = formatSidebarDdlTemplateForDisplay(ORACLE_COMMENTED_TABLE_DDL, "oracle", "oracle", true, undefined, true, { includeDdlStorage: false, compactDdlSql: true });
++
++    expect(sql).toBe(['CREATE TABLE "APP"."ORDERS" ("ID" NUMBER(10, 0), "NOTE" VARCHAR2(100));', 'COMMENT ON TABLE "APP"."ORDERS" IS \'Orders\';', 'COMMENT ON COLUMN "APP"."ORDERS"."ID" IS \'Id\';', 'COMMENT ON COLUMN "APP"."ORDERS"."NOTE" IS \'Note\';'].join("\n"));
++  });
++
++  it("keeps Oracle blank lines and storage clauses when the preferences are off", () => {
++    expect(formatSidebarDdlTemplateForDisplay(ORACLE_COMMENTED_TABLE_DDL, "oracle", "oracle", true, undefined, true, KEEP_DDL_TEXT)).toBe(ORACLE_COMMENTED_TABLE_DDL);
++  });
++
+   it("keeps DDL targets in the active SQL execution context", () => {
+     const active = { id: "active", connectionId: "c1", database: "db1", catalog: "catalog1" };
+     const sameContext = { id: "same", connectionId: "c1", database: "db1", catalog: "catalog1" };
+```
+
+**File**: `apps/desktop/src/lib/sidebar/sidebarDdlTemplate.ts` (modified, +13/-2)
+```diff
+@@ -1,5 +1,6 @@
+ import { joinExportedDdls } from "@/lib/export/ddlExport";
+ import { applyDdlDatabaseQualifier, omitDdlIdentifierQuotes } from "@/lib/sql/ddlDisplay";
++import { applyDdlTextPreferences } from "@/lib/sql/ddlPreferences";
+ import type { SqlFormatDialect } from "@/lib/sql/sqlFormatter";
+ import type { DatabaseType } from "@/types/database";
+ 
+@@ -21,7 +22,17 @@ export async function buildSidebarDdlTemplateSql<T>(targets: readonly T[], loadD
+   return parts.length === 1 ? parts[0]! : joinExportedDdls(parts);
  }
  
-@@ -6180,6 +6186,38 @@ mod tests {
-         );
+-export function formatSidebarDdlTemplateForDisplay(sql: string, dialect: SqlFormatDialect, databaseType: DatabaseType | undefined, includeDatabaseName: boolean, database: string | undefined, quoteIdentifiers: boolean, catalog?: string): string {
++// Text preferences run last, in the same order as the DDL viewers, so "Generate SQL > DDL" matches "View DDL".
++export function formatSidebarDdlTemplateForDisplay(
++  sql: string,
++  dialect: SqlFormatDialect,
++  databaseType: DatabaseType | undefined,
++  includeDatabaseName: boolean,
++  database: string | undefined,
++  quoteIdentifiers: boolean,
++  textPreferences: { includeDdlStorage: boolean; compactDdlSql: boolean },
++  catalog?: string,
++): string {
+   const unqualified = applyDdlDatabaseQualifier(sql, dialect, databaseType, includeDatabaseName, database, catalog);
+-  return quoteIdentifiers ? unqualified : omitDdlIdentifierQuotes(unqualified, dialect);
++  return applyDdlTextPreferences(quoteIdentifiers ? unqualified : omitDdlIdentifierQuotes(unqualified, dialect), databaseType, textPreferences);
+ }
+```
+
+---
+
+### Incident Patch 3: `3dc1b8e8` (2026-11-12)
+**Commit Message**: fix(agent): serialize non-finite JDBC floats as strings
+
+**File**: `agents/common/src/main/java/com/dbx/agent/AbstractJdbcAgent.java` (modified, +1/-1)
+```diff
+@@ -766,7 +766,7 @@ protected Object resultValue(ResultSet rs, int index, int sqlType) {
+                     value = rs.getString(index);
+                     break;
+             }
+-            return rs.wasNull() ? null : value;
++            return rs.wasNull() ? null : JdbcExecutor.normalizeNonFiniteValue(value);
+         });
      }
  
-+    #[test]
-+    fn sqlserver_batches_preserve_module_header_comments() {
-+        for header in [
-+            "-- 存储过程名 : usp_GetUserById\n-- 作者 : 张三",
-+            "/* 根据用户ID查询用户信息 */",
-+            "/* 说明 /* 内部说明 */\nGO\n保留完整注释 */",
-+        ] {
-+            for operation in ["CREATE PROCEDURE", "ALTER PROC", "CREATE OR ALTER PROCEDURE"] {
-+                let procedure = format!(
-+                    "{header}\n{operation} dbo.usp_GetUserById @UserId INT AS\nBEGIN\n    SET NOCOUNT ON;\n    -- 查询用户\n    SELECT UserId FROM dbo.Users WHERE UserId = @UserId;\nEND;"
-+                );
-+                let sql = format!("SELECT 0;\nGO\n\n{procedure}\nGO\nSELECT 2;");
+```
+
+**File**: `agents/common/src/main/java/com/dbx/agent/JdbcExecutor.java` (modified, +25/-3)
+```diff
+@@ -852,7 +852,29 @@ public Object defaultResultValue(ResultSet rs, int index, int sqlType) throws SQ
+                 value = normalizeResultValue(rs.getObject(index));
+                 break;
+         }
+-        return rs.wasNull() ? null : value;
++        return rs.wasNull() ? null : normalizeNonFiniteValue(value);
++    }
 +
-+                assert_eq!(super::split_sql_batches(&sql), vec!["SELECT 0;", &procedure, "SELECT 2;"]);
-+                for marker in [header, operation, "WHERE UserId"] {
-+                    let cursor = sql[..sql.find(marker).unwrap()].encode_utf16().count();
-+                    assert_eq!(
-+                        super::find_statement_at_cursor_for_database(&sql, cursor, DatabaseType::SqlServer),
-+                        procedure,
-+                        "{operation}: cursor on {marker}"
-+                    );
-+                }
-+            }
++    /**
++     * JSON has no representation for NaN or infinities. Keep the same text
++     * representation the Oracle Go agent uses ("NaN", "+Inf", "-Inf") so every
++     * agent can return the value instead of failing the whole RPC response.
++     */
++    public static Object normalizeNonFiniteValue(Object value) {
++        if (value instanceof Double number) {
++            return Double.isFinite(number) ? number : nonFiniteText(number);
++        }
++        if (value instanceof Float number) {
++            return Float.isFinite(number) ? number : nonFiniteText(number.doubleValue());
++        }
++        return value;
++    }
++
++    private static String nonFiniteText(double value) {
++        if (Double.isNaN(value)) {
++            return "NaN";
++        }
++        return value > 0 ? "+Inf" : "-Inf";
+     }
+ 
+     public static Object stringResultValue(ResultSet rs, int index, int sqlType) throws SQLException {
+@@ -907,7 +929,7 @@ public static Object normalizeResultValue(Object value) throws SQLException {
+             byte[] bytes = (byte[]) value;
+             return bytesToHex(bytes);
+         }
+-        return value instanceof Number || value instanceof Boolean ? value : value.toString();
++        return value instanceof Number || value instanceof Boolean ? normalizeNonFiniteValue(value) : value.toString();
+     }
+ 
+     public static String bytesToHex(byte[] bytes) {
+@@ -1088,7 +1110,7 @@ private List<Object> rowValues(
+             } else {
+                 value = valueReader.read(rs, i, sqlType);
+             }
+-            row.add(value);
++            row.add(normalizeNonFiniteValue(value));
+         }
+         return row;
+     }
+```
+
+**File**: `agents/common/src/test/java/com/dbx/agent/JdbcExecutorTest.java` (modified, +73/-0)
+```diff
+@@ -6,6 +6,7 @@
+ import java.lang.reflect.Method;
+ import java.lang.reflect.Proxy;
+ import java.sql.Connection;
++import java.sql.DriverManager;
+ import java.sql.ResultSet;
+ import java.sql.ResultSetMetaData;
+ import java.sql.SQLException;
+@@ -16,6 +17,8 @@
+ import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
++import java.util.Set;
++import java.util.UUID;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import javax.sql.rowset.serial.SerialBlob;
+ 
+@@ -162,6 +165,76 @@ void defaultResultValueNormalizesBlobObjectsFromFallbackTypes() throws Exception
+         assertEquals("0x0a0b", JdbcExecutor.INSTANCE.defaultResultValue(rs, 1, Types.OTHER));
+     }
+ 
++    @Test
++    void defaultResultValueReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
++        try (Connection connection = DriverManager.getConnection(
++                 "jdbc:h2:mem:nonfinite_default_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
++             Statement statement = connection.createStatement();
++             ResultSet rs = statement.executeQuery(
++                 "SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL), CAST('-Infinity' AS DOUBLE)")) {
++            assertTrue(rs.next());
++            assertEquals("NaN", JdbcExecutor.INSTANCE.defaultResultValue(rs, 1, Types.DOUBLE));
++            assertEquals("+Inf", JdbcExecutor.INSTANCE.defaultResultValue(rs, 2, Types.REAL));
++            assertEquals("-Inf", JdbcExecutor.INSTANCE.defaultResultValue(rs, 3, Types.DOUBLE));
 +        }
 +    }
 +
-+    #[test]
-+    fn sqlserver_batch_headers_keep_comment_only_batches_non_executable() {
-+        let sql = "-- CREATE PROCEDURE fake AS SELECT 0;\nGO\n/* 说明 /* CREATE PROC fake */ 仍是注释 */\nGO\n-- 普通查询说明\nSELECT 1;";
-+        assert_eq!(super::split_sql_batches(sql), vec!["SELECT 1;"]);
++    @Test
++    void executeReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
++        try (Connection connection = DriverManager.getConnection(
++                 "jdbc:h2:mem:nonfinite_exec_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1")) {
++            QueryResult result = JdbcExecutor.INSTANCE.execute(
++                connection,
++                "SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL), CAST('-Infinity' AS DOUBLE)",
++                "",
++                schema -> ""
++            );
++
++            assertEquals(Arrays.asList("NaN", "+Inf", "-Inf"), result.getRows().get(0));
++        }
 +    }
 +
-     // --- DELIMITER support ---
- 
-     #[test]
++    @Test
++    void rowValuesNormalizesNonFiniteFloatsFromCustomReaders() throws Exception {
++        try (Connection connection = DriverManager.getConnection(
++                 "jdbc:h2:mem:nonfinite_reader_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1")) {
++            QueryResult result = JdbcExecutor.INSTANCE.execute(
++                connection,
++                "SELECT 1",
++                "",
++                schema -> "",
++                10,
++                null,
++                (rs, index, sqlType) -> Double.NaN
++            );
++
++            assertEquals(Collections.singletonList("NaN"), result.getRows().get(0));
++        }
++    }
++
++    @Test
++    void normalizeResultValueReturnsJsonSafeTextForNonFiniteNumbers() throws Exception {
++        assertEquals("NaN", JdbcExecutor.normalizeResultValue(Double.NaN));
++        assertEquals("+Inf", JdbcExecutor.normalizeResultValue(Float.POSITIVE_INFINITY));
++        assertEquals("-Inf", JdbcExecutor.normalizeResultValue(Double.NEGATIVE_INFINITY));
++        assertEquals(Double.valueOf(1.5), JdbcExecutor.normalizeResultValue(1.5));
++    }
++
++    @Test
++    void abstractAgentResultValueReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
++        ConfiguredJdbcAgent agent = new ConfiguredJdbcAgent(
++            new JdbcAgentProfile("org.h2.Driver", "jdbc:h2:mem:abstract_nonfinite", 0, false, Set.of(), List.of("TABLE"))
++        ) {};
++
++        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:abstract_nonfinite");
++             Statement statement = connection.createStatement();
++             ResultSet rs = statement.executeQuery("SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL)")) {
++            assertTrue(rs.next());
++            assertEquals("NaN", agent.resultValue(rs, 1, Types.DOUBLE));
++            assertEquals("+Inf", agent.resultValue(rs, 2, Types.REAL));
++        }
++    }
++
+     @Test
+     void readResultSetCachesColumnTypeMetadataAcrossRows() {
+         CountingResultSetFixture fixture = countingResultSet(new Object[][]{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14734** (2026-11-11): fix(kingbase): return result sets when executing stored procedures (@thailoc-dev)
-- **PR #14731** (2026-11-11): fix(grid): allow Firebird triggers to populate omitted NOT NULL columns on insert (@thailoc-dev)
-- **PR #14730** (2026-11-11): fix(saphana): support view object source lookup and DDL formatting (@thailoc-dev)
-- **PR #14720** (2026-11-11): fix(sqlserver): 保留存储过程头部注释 (@onceMisery)
-- **PR #14719** (2026-11-11): feat(plugin): 支持将插件生成的 PNG 复制到系统剪贴板 (@CSXFanMeng)
-- **PR #14718** (2026-11-11): fix(teradata): keep user queries free of the unsupported LIMIT clause (#14604) (@xiaou61)
+- **PR #14847** (2026-11-12): fix(sidebar): apply DDL display preferences to Generate SQL > DDL (@jeff377)
+- **PR #14841** (2026-11-12): fix(mongodb): 受限账号 listDatabases 回退到已授权数据库列表 (@Lan-zk)
+- **PR #14838** (2026-11-12): fix(query): wait for metadata before batch SQL copy (@seaways1015-afk)
+- **PR #14835** (2026-11-12): fix(dbx-core): 修掉 secret_codec 的 clippy 报错（type_complexity / needless_borrow） (@zipg)
+- **PR #14815** (closed): fix(core): 用类型别名收敛 secret_codec 的 DPAPI 闭包签名，修复 main 的 clippy 红 (@dienaso)
+- **PR #14792** (2026-11-12): fix(agent): serialize non-finite JDBC floats as strings (@knqiufan)
 
 ---
 
@@ -3651,53 +2482,44 @@ document, and leaves the old keys in place as a read-only backup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iotdb): honor unlimited query timeout across paged fetches
+## X. query): wait for metadata before batch SQL copy (#14838)
 
 **RULE**:
-When implementing operations in `agents/drivers/iotdb/driver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b62e570a`: iotdb): honor unlimited query timeout across paged fetches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `04ccf364`: query): wait for metadata before batch SQL copy (#14838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/iotdb/driver.go`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// The narrow surface nativeIoTDBSession needs from the vendored client.
-// Keeping it an interface lets adapter tests assert that the per-query
-// timeout reaches the session layer instead of being dropped (#13935).
-type clientQuerySession interface {
-	ExecuteQueryStatementWithContext(context.Context, string, *int64) (*client.SessionDataSet, error)
-	ExecuteStatementWithContext(context.Context, string) (*client.SessionDataSet, error)
-	Close() error
-}
-
-	session clientQuerySession
-func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, timeoutMs *int64) (*client.SessionDataSet, error) {
-	return executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
-		// #13935: the timeout must ride inside the RPC — an omitted value
-		// falls back to the server's query_timeout_threshold (60 s default),
-		// so whatever timeoutMilliseconds produced (the 100-year no-limit
-		// budget, or a positive bound) reaches the request. The old adapter
-		// dropped it here.
-		return s.session.ExecuteQueryStatementWithContext(ctx, sql, timeoutMs)
-	})
-	dataset, err := executeIoTDBStatement(ctx, func() (*client.SessionDataSet, error) {
-		return s.session.ExecuteStatementWith
+import type { TableColumnsLoadResult } from "@/lib/metadata/tableMetadataCache";
+import { analyzeEditableQueryEditability } from "@/lib/sql/sqlAnalysis";
+  analyzeEditableQueryEditability: vi.fn(),
+  loadTableColumns: vi.fn(),
+  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
+    loadTableColumns: mocks.loadTableColumns,
+    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "complex-query" });
+  it("waits for an active query result's table metadata before batch INSERT mapping", async () => {
+    const { useQueryStore } = await import("@/stores/queryStore");
+    mocks.getConnectionConfig.mockReturnValue({ id: "mysql-1", db_type: "mysql", database: "app" });
+    const store = useQueryStore();
+    const tabId = store.createTab("mysql-1", "app", "Query", "query");
+    const tab = store.tabs.find((candidate) => candidate.id === tabId)!;
+    const sourceStatement = "SELECT name AS label FROM users";
+    tab.results = [{ columns: ["label"], rows: [["Ada"]], sourceStatement }];
+    const columns = [{ name: "name", data_type: "varchar", is_nullable: false, column_default: null, is_primary_key: false, extra: null }];
+    const tableMet
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-	session *client.Session
-func (s *nativeIoTDBSession) ExecuteQueryStatement(ctx context.Context, sql string, _ *int64) (*client.SessionDataSet, error) {
-	return executeIoTDBStatement(ctx, s.session, sql)
-	dataset, err := executeIoTDBStatement(ctx, s.session, sql)
-func executeIoTDBStatement(ctx context.Context, session *client.Session, sql string) (dataset *client.SessionDataSet, err error) {
-	return session.ExecuteStatementWithContext(ctx, sql)
+  analyzeEditableQueryEditability: vi.fn().mockResolvedValue({ editable: false, reason: "complex-query" }),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b62e570a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `04ccf364` are properly handled with clean fallback behavior.

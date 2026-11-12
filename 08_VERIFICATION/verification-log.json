@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-UWD9",
-    "timestamp": "2026-11-09T07:55:22.845Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "b1df17b390757b195bb2ad4c5535d31d99a1e7c6d5d7a581fe2bf36503473570",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-UYRK",
-    "timestamp": "2026-11-09T07:55:25.952Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "f926dad0f6f09f1fc3ad33856b4a318e5fb9b1fa041f8b1663f14324ff6ab5b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-ACPK",
     "timestamp": "2026-11-09T08:07:23.864Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7490,6 +7460,36 @@
     "repository": "webdriverio/webdriverio",
     "learningId": "learn-github-webdriverio-webdriverio",
     "contentHash": "f580c7726cd388db0057b256fcef8d10934726f12af68422a4a76b29ad9b51a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-8VMG",
+    "timestamp": "2026-11-12T15:25:09.784Z",
+    "repository": "DevExpress/testcafe",
+    "learningId": "learn-github-devexpress-testcafe",
+    "contentHash": "e775f6056872480cf06555afe9735542eea2e6af8376353e18f53df297760c20",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-9BV7",
+    "timestamp": "2026-11-12T15:25:30.835Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "0a98fb75ad40a75b93957e7b05701ce23381e22c81359f05ace5573a5a24b6d1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

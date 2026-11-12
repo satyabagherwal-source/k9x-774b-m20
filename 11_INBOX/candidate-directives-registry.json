@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:17:34.723Z",
+  "last_updated": "2026-11-12T15:25:51.643Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7130,6 +7130,24 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-81C555-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9C57D5",
+      "directive_title": "query): wait for metadata before batch SQL copy (#14838)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "t8y2-dbx",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9C57D5-query-wait-for-metadata-before-batch-sql.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-CB0166",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB0166-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-12"
     }
   ]

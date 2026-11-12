@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:17:31.140Z",
-  "total_cycles_completed": 9012,
-  "total_learnings_persisted": 9012,
-  "total_rules_promoted": 8854,
+  "last_updated": "2026-11-12T15:25:30.858Z",
+  "total_cycles_completed": 9014,
+  "total_learnings_persisted": 9014,
+  "total_rules_promoted": 8855,
   "history": [
-    {
-      "timestamp": "2026-11-11T16:06:52.972Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:11:47.634Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T16:20:38.469Z",
       "repository": "emberstack/kubernetes-reflector",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T15:17:31.140Z",
       "repository": "webdriverio/webdriverio",
       "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:25:09.795Z",
+      "repository": "DevExpress/testcafe",
+      "learningId": "learn-github-devexpress-testcafe",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:25:30.858Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

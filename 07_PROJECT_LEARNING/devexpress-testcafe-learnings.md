@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source**: github ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
-> **Source Version**: `7245edc4`  
+> **Source Version**: `1870103c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:36:17.262Z  
+> **Timestamp**: 2026-11-12T15:25:09.440Z  
 > **Learning ID**: `learn-github-devexpress-testcafe`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:36:16.983Z  
+> **Harvest Timestamp**: 2026-11-12T15:25:09.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Node.js tool to automate end-to-end web testing.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9894 stars
+- **Stars / Engagement**: 9892 stars
 
 ---
 
@@ -601,11 +601,11 @@ export function parseConfig (str) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8567** (2026-10-30): **build: updated testcafe-hammerhead**
-  *Symptoms*: <!-- Thank you for your contribution.  Before making a PR, please read our contributing guidelines at https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution  We recommend creating a *draft* PR, so that you can mark it as 'ready for review' when you are done. -->  ## Purpose _Describe the problem you want to address or the feature you want to implement._  ## Approach _Describe how your changes address the issue or implement the desired functionality in as much detail as possible._  ## References _Provide a link to the existing issue(s), if any._  ## Pre-Merge TODO - [ ] Write tests for your proposed changes - [ ] Make sure that existing tests do not fail 
+- **Issue #8572** (2026-11-11): **Remove gulp-ll-next depemdency**
+  *Symptoms*: 
 
-- **Issue #8566** (2026-10-26): **fix: report setNativeDialogHandler(null) without throwing**
-  *Symptoms*: ## Purpose  `t.setNativeDialogHandler(null)` is the documented way to remove a native dialog handler. The command it creates has `dialogHandler: null`. When a reporter implements `reportTestActionDone`, `CommandFormatter._prepareDialogHandler` passes that null to `_prepareClientFunction`, which reads `command.fnCode`. The test then fails with:  ``` TypeError: Cannot read properties of null (reading 'fnCode')     at CommandFormatter._prepareClientFunction (lib/reporter/command/command-formatter.js)     at CommandFormatter._prepareDialogHandler (lib/reporter/command/command-formatter.js)     at CommandFormatter.format (lib/reporter/command/command-formatter.js) ```  Without such a reporter the command runs fine, so the same test passes or fails depending on which reporter is attached.  ## Approach  `_prepareDialogHandler` returns `null` when `command.dialogHandler` is null, so the reporter receives `{ type: 'set-native-dialog-handler', dialogHandler: null }`. Non-null handlers are formatted as before.  ## Tests  `test/server/test-controller-events-test.js`: "Should report setNativeDialogHandler(null)" calls `setNativeDialogHandler(null)` with a reporter that implements `reportTestActionDone` and checks the reported command. Without the fix it fails with the TypeError above.  Verified locally: `npx gulp lint` clean; full server suite (`test/server/*-test.js`) 829 passing, 1 pending, 0 failing.  ## References  No existing issue found.  ## Pre-Merge TODO - [x] Write tests for your
+- **Issue #8571** (2026-11-10): **Inline V8 flags filter dependency**
+  *Symptoms*: Code from https://github.com/DevExpress/bin-v8-flags-filter repository inlined here to get rid of @devexpress/bin-v8-flags-filter npm dependency
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -622,197 +622,370 @@ export function parseConfig (str) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7245edc4` (2026-10-30)
-**Commit Message**: build: updated testcafe-hammerhead (#8567)
+### Incident Patch 1: `1870103c` (2026-11-11)
+**Commit Message**: Remove gulp-ll-next depemdency (#8572)
 
-<!--
-Thank you for your contribution.
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
-Before making a PR, please read our contributing guidelines at
-
-https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution
-
-We recommend creating a *draft* PR, so that you can mark it as 'ready
-for review' when you are done.
--->
-
-## Purpose
-_Describe the problem you want to address or the feature you want to
-implement._
-
-## Approach
-_Describe how your changes address the issue or implement the desired
-functionality in as much detail as possible._
-
-## References
-_Provide a link to the existing issue(s), if any._
-
-## Pre-Merge TODO
-- [ ] Write tests for your proposed changes
-- [ ] Make sure that existing tests do not fail
-
-**File**: `.github/workflows/test-functional.yml` (modified, +2/-1)
+**File**: `Gulpfile.js` (modified, +0/-13)
 ```diff
-@@ -85,7 +85,8 @@ jobs:
-         if: ${{ contains(inputs.os, 'macos') }}
+@@ -5,7 +5,6 @@ const less                          = require('gulp-less');
+ const mustache                      = require('gulp-mustache');
+ const rename                        = require('gulp-rename');
+ const uglify                        = require('gulp-uglify');
+-const ll                            = require('gulp-ll-next');
+ const clone                         = require('gulp-clone');
+ const mergeStreams                  = require('merge-stream');
+ const del                           = require('del');
+@@ -40,18 +39,6 @@ const readFile = promisify(fs.readFile);
  
-       - run: |
--          sudo apt install fluxbox
-+          sudo apt-get update
-+          sudo apt-get install -y fluxbox
-           Xvfb ${{ inputs.display }} -screen 0 1920x1080x24 &
-           sleep 3
-           fluxbox >/dev/null 2>&1 &
+ gulpStep.install();
+ 
+-ll
+-    .install()
+-    .tasks([
+-        'lint',
+-        'check-licenses',
+-    ])
+-    .onlyInDebug([
+-        'styles',
+-        'client-scripts',
+-        'client-scripts-bundle',
+-    ]);
+-
+ const ARGS          = minimist(process.argv.slice(2));
+ const QR_CODE       = 'qr-code' in ARGS;
+ const SKIP_BUILD    = process.env.SKIP_BUILD || 'skip-build' in ARGS;
 ```
 
-**File**: `package-lock.json` (modified, +21/-21)
+**File**: `package-lock.json` (modified, +0/-38)
 ```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "testcafe",
--  "version": "3.7.6",
-+  "version": "3.7.7",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "testcafe",
--      "version": "3.7.6",
-+      "version": "3.7.7",
-       "license": "MIT",
-       "dependencies": {
-         "@babel/core": "^7.23.2",
-@@ -91,7 +91,7 @@
-         "source-map-support": "^0.5.16",
-         "strip-bom": "^2.0.0",
-         "testcafe-browser-tools": "2.0.26",
--        "testcafe-hammerhead": "31.7.8",
-+        "testcafe-hammerhead": "31.7.9",
-         "testcafe-legacy-api": "5.1.8",
-         "testcafe-reporter-json": "^2.1.0",
-         "testcafe-reporter-list": "^2.2.0",
-@@ -4911,9 +4911,9 @@
+@@ -157,7 +157,6 @@
+         "gulp-data": "^1.3.1",
+         "gulp-eslint-new": "^2.6.2",
+         "gulp-less": "^5.0.0",
+-        "gulp-ll-next": "^2.1.0",
+         "gulp-mustache": "^3.0.1",
+         "gulp-rename": "^1.3.0",
+         "gulp-step": "^1.0.1",
+@@ -8193,43 +8192,6 @@
+         "readable-stream": "3"
        }
      },
-     "node_modules/body-parser": {
--      "version": "1.20.8",
--      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
--      "integrity": "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA==",
-+      "version": "1.20.9",
-+      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
-+      "integrity": "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -5898,9 +5898,9 @@
-       "license": "MIT"
-     },
-     "node_modules/deepmerge": {
--      "version": "4.3.1",
--      "resolved": "https://registry.npmjs.org/deepmerge/-/deepmerge-4.3.1.tgz",
--      "integrity": "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==",
-+      "version": "4.1.2",
-+      "resolved": "https://registry.npmjs.org/deepmerge/-/deepmerge-4.1.2.tgz",
-+      "integrity": "sha512-9ZXh/8Fp+ggcscoRg324S1aNdGSCl2X1P8F1FPTHbtq3RAxy9ECbU2Wgy2J12r6x/O0BStDlkzcpKK/HptX+Kg==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-@@ -10389,9 +10389,9 @@
-       "license": "MIT"
-     },
-     "node_modules/multer": {
--      "version": "2.4.0",
--      "resolved": "https://registry.npmjs.org/multer/-/multer-2.4.0.tgz",
--      "integrity": "sha512-7dqa0ZcFfzbefdTuIkzOSMvZWC0J7FLqBOjJUZvDCXShIURWKxAyTT1wHhnE5q19c7jOJf43IYYKjBmZVZmvhg==",
-+      "version": "2.5.0",
-+      "resolved": "https://registry.npmjs.org/multer/-/multer-2.5.0.tgz",
-+      "integrity": "sha512-BsqOzYGVq49JcW2IzoSAxeKYRevb+dGGPPWleOR8Lrlk4igwxu1/9pwSXlByhCb7MVZDrNJFC0IBP5/O5nLYRw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -11457,9 +11457,9 @@
-       }
-     },
-     "node_modules/qs": {
--      "version": "6.16.0",
--      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
--      "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
-+      "version": "6.16.2",
-+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.2.tgz",
-+      "integrity": "sha512-VYdnB5S7/0IeXzBacUtwNAaM6d7Y/PgYnNC7bJCI6meqA/OgnsQbZMtVW8Dt2D1PHgbHGtYmhSoEIgvt7xZ2ZA==",
-       "dev": true,
-       "license": "BSD-3-Clause",
-       "dependencies": {
-@@ -12153,9 +12153,9 @@
-       "license": "MIT"
-     },
-     "node_modules/serialize-javascript": {
--      "version": "7.1.2",
--      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-7.1.2.tgz",
--      "integrity": "sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==",
-+      "version": "7.1.4",
-+      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-7.1.4.tgz",
-+      "integrity": "sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==",
-       "dev": true,
-       "license": "BSD-3-Clause",
-       "engines": {
-@@ -13096,9 +13096,9 @@
-       }
-     },
-     "node_modules/testcafe-hammerhead": {
--      "version": "31.7.8",
--      "resolved": "https://registry.npmjs.org/testcafe-hammerhead/-/testcafe-hammerhead-31.7.8.tgz",
--      "integrity": "sha512-AMLZdS4dbU6M64a/VgBu0O/qlfsv7MWROk91C4jyMmCjkq6FsKfknzqWtlh5w8o8fLJGjyGBDUFaRb/jpIuEoQ==",
-+      "version": "31.7.9",
-+      "resolved": "https://registry.npmjs.org/testcafe-hammerhead/-/testcafe-hammerhead-31.7.9.tgz",
-+      "integrity": "sha512-wgVqOBl0zORvAhvwNOJFFUhgQpD/OMK5QpTcYysqllxUYEjl9eroXT/W9okTAVj1e6Sgu8N2QCGvobGSyrNmIw==",
-       "license": "MIT",
-       "dependencies": {
-         "@adobe/css-tools": "^4.3.0-rc.1",
+-    "node_modules/gulp-ll-next": {
+-      "version": "2.1.0",
+-      "resolved": "https://registry.npmjs.org/gulp-ll-next/-/gulp-ll-next-2.1.0.tgz",
+-      "integrity": "sha512-1tA8aGBSUYzK1ggzNIyBxdziivl7RZ9dvJx8kLPJ6fc4uB5bVBdwFzdvxcbzqvJk0uV0dbTs9i7c2hhjEodELQ==",
+-      "dev": true,
+-      "license": "MIT",
+-      "dependencies": {
+-        "pinkie-promise": "^1.0.0",
+-        "plugin-error": "^1.0.1"
+-      },
+-      "engines": {
+-        "node": ">=6.0.0"
+-      }
+-    },
+-    "node_modules/gulp-ll-next/node_modules/pinkie": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/pinkie/-/pinkie-1.0.0.tgz",
+-      "integrity": "sha512-VFVaU1ysKakao68ktZm76PIdOhvEfoNNRaGkyLln9Os7r0/MCxqHjHyBM7dT3pgTiBybqiPtpqKfpENwdBp50Q==",
+-      "dev": true,
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">=0.10.0"
+-      }
+-    },
+-    "node_modules/gulp-ll-next/node_modules/pinkie-promise": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/pinkie-promise/-/pinkie-promise-1.0.0.tgz",
+-      "integrity": "sha512-5mvtVNse2Ml9zpFKkWBpGsTPwm3DKhs+c95prO/F6E7d6DN0FPqxs6LONpLNpyD7Iheb7QN4BbUoKJgo+DnkQA==",
+-      "dev": true,
+-      "license": "MIT",
+-      "dependencies": {
+-        "pinkie": "^1.0.0"
+-      },
+-      "engines": {
+-        "node": ">=0.10.0"
+-      }
+-    },
+     "node_modules/gulp-mustache": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/gulp-mustache/-/gulp-mustache-3.0.1.tgz",
 ```
 
-**File**: `package.json` (modified, +2/-2)
+**File**: `package.json` (modified, +0/-1)
 ```diff
-@@ -2,7 +2,7 @@
-   "name": "testcafe",
-   "description": "Automated browser testing for the modern web development stack.",
-   "license": "MIT",
--  "version": "3.7.6",
-+  "version": "3.7.7",
-   "author": {
-     "name": "Developer Express Inc.",
-     "url": "https://www.devexpress.com/"
-@@ -140,7 +140,7 @@
-     "source-map-support": "^0.5.16",
-     "strip-bom": "^2.0.0",
-     "testcafe-browser-tools": "2.0.26",
--    "testcafe-hammerhead": "31.7.8",
-+    "testcafe-hammerhead": "31.7.9",
-     "testcafe-legacy-api": "5.1.8",
-     "testcafe-reporter-json": "^2.1.0",
-     "testcafe-reporter-list": "^2.2.0",
+@@ -203,7 +203,6 @@
+     "gulp-data": "^1.3.1",
+     "gulp-eslint-new": "^2.6.2",
+     "gulp-less": "^5.0.0",
+-    "gulp-ll-next": "^2.1.0",
+     "gulp-mustache": "^3.0.1",
+     "gulp-rename": "^1.3.0",
+     "gulp-step": "^1.0.1",
 ```
 
-**File**: `src/browser/provider/built-in/dedicated/firefox/index.js` (modified, +1/-1)
+---
+
+### Incident Patch 2: `9aa493c3` (2026-11-10)
+**Commit Message**: Inline V8 flags filter dependency (#8571)
+
+Code from https://github.com/DevExpress/bin-v8-flags-filter repository
+inlined here to get rid of @devexpress/bin-v8-flags-filter npm
+dependency
+
+---------
+
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+**File**: `bin/testcafe-with-v8-flag-filter.js` (modified, +1/-1)
 ```diff
-@@ -88,7 +88,7 @@ export default {
-             hasTakeScreenshot:              !!marionetteClient,
-             hasChromelessScreenshots:       !!marionetteClient,
-             hasGetVideoFrameData:           !!marionetteClient,
--            hasResizeWindow:                !!marionetteClient && config.headless,
-+            hasResizeWindow:                !!marionetteClient,
-             hasMaximizeWindow:              !!marionetteClient && config.headless,
-             hasCanResizeWindowToDimensions: false,
-         };
+@@ -4,7 +4,7 @@
+ 
+ const path          = require('path');
+ const url           = require('url');
+-const v8FlagsFilter = require('@devexpress/bin-v8-flags-filter');
++const v8FlagsFilter = require('./v8-flags-filter');
+ const semver        = require('semver');
+ 
+ const ESM_OPTION = '--esm';
+```
+
+**File**: `bin/v8-flags-filter.js` (added, +141/-0)
+```diff
+@@ -0,0 +1,141 @@
++'use strict';
++
++/*
++The MIT License (MIT)
++
++Copyright (c) 2016 Ivan Nikulin (ifaaan@gmail.com, https://github.com/inikulin)
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
++*/
++
++const { spawn } = require('child_process');
++
++const FLAGS = [
++    'debug',
++    '--debug',
++    '--debug-brk',
++    '--inspect',
++    '--inspect-brk',
++    '--expose-gc',
++    '--gc-global',
++    '--es_staging',
++    '--no-deprecation',
++    '--prof',
++    '--log-timer-events',
++    '--throw-deprecation',
++    '--trace-deprecation',
++    '--use_strict',
++    '--allow-natives-syntax',
++    '--perf-basic-prof',
++    '--experimental-repl-await',
++    '--experimental-loader',
++    '--no-warnings',
++];
++
++const FLAG_PREFIXES = [
++    '--harmony',
++    '--trace',
++    '--icu-data-dir',
++    '--max-old-space-size',
++    '--preserve-symlinks',
++];
++
++const DEFAULT_FORCED_KILL_DELAY = 30000;
++
++function getChildArgs (cliPath, ignore) {
++    const args = [cliPath];
++
++    process.argv.slice(2).forEach(arg => {
++        const flag = arg.split('=')[0];
++
++        if (ignore.indexOf(flag) > -1) {
++            args.push(arg);
++            return;
++        }
++
++        if (FLAGS.indexOf(flag) > -1) {
++            args.unshift(arg);
++            return;
++        }
++
++        if (FLAG_PREFIXES.some(prefix => arg.indexOf(prefix) === 0)) {
++            args.unshift(arg);
++            return;
++        }
++
++        args.push(arg);
++    });
++
++    return args;
++}
++
++function setupSignalHandler (signal, childProcess, useShutdownMessage, forcedKillDelay) {
++    function forceKill () {
++        childProcess.kill('SIGTERM');
++    }
++
++    function handler () {
++        if (useShutdownMessage)
++            childProcess.send('shutdown');
++        else
++            childProcess.kill(signal);
++
++        setTimeout(forceKill, forcedKillDelay).unref();
++    }
++
++    process.on(signal, handler);
++}
++
++module.exports = function (cliPath, opts) {
++    opts = opts || {};
++
++    const useShutdownMessage = opts.useShutdownMessage;
++    const forcedKillDelay    = opts.forcedKillDelay || DEFAULT_FORCED_KILL_DELAY;
++    const ignore             = opts.ignore || [];
++    const args               = getChildArgs(cliPath, ignore);
++
++    if (opts.forcedArgs && opts.forcedArgs.length > 0)
++        args.unshift(...opts.forcedArgs);
++
++    const cliProc = spawn(process.execPath, args, {
++        stdio: [process.stdin, process.stdout, process.stderr, useShutdownMessage ? 'ipc' : null],
++    });
++
++    cliProc.on('exit', (code, signal) => {
++        if (useShutdownMessage && process.disconnect)
++            process.disconnect();
++
++        process.on('exit', () => {
++            if (signal)
++                process.kill(process.pid, signal);
++            else
++                process.exit(code);
++        });
++    });
++
++    setupSignalHandler('SIGINT', cliProc, useShutdownMessage, forcedKillDelay);
++    setupSignalHandler('SIGBREAK', cliProc, useShutdownMessage, forcedKillDelay);
++
++    if (useShutdownMessage) {
++        process.on('message', message => {
++            if (message === 'shutdown')
++                cliProc.send('shutdown');
++        });
++    }
++};
+```
+
+**File**: `package-lock.json` (modified, +0/-7)
+```diff
+@@ -26,7 +26,6 @@
+         "@babel/preset-flow": "^7.22.15",
+         "@babel/preset-react": "^7.22.15",
+         "@babel/runtime": "^7.23.2",
+-        "@devexpress/bin-v8-flags-filter": "^1.3.0",
+         "@types/node": "20.14.5",
+         "address": "^2.0.2",
+         "async-exit-hook": "^1.1.2",
+@@ -1947,12 +1946,6 @@
+         "node": ">=6.9.0"
+       }
+     },
+-    "node_modules/@devexpress/bin-v8-flags-filter": {
+-      "version": "1.3.0",
+-      "resolved": "https://registry.npmjs.org/@devexpress/bin-v8-flags-filter/-/bin-v8-flags-filter-1.3.0.tgz",
+-      "integrity": "sha512-LWLNfYGwVJKYpmHUDoODltnlqxdEAl5Qmw7ha1+TSpsABeF94NKSWkQTTV1TB4CM02j2pZyqn36nHgaFl8z7qw==",
+-      "license": "MIT"
+-    },
+     "node_modules/@devexpress/gulp-qunit-harness": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/@devexpress/gulp-qunit-harness/-/gulp-qunit-harness-1.1.0.tgz",
+```
+
+**File**: `package.json` (modified, +0/-1)
+```diff
+@@ -75,7 +75,6 @@
+     "@babel/preset-flow": "^7.22.15",
+     "@babel/preset-react": "^7.22.15",
+     "@babel/runtime": "^7.23.2",
+-    "@devexpress/bin-v8-flags-filter": "^1.3.0",
+     "@types/node": "20.14.5",
+     "address": "^2.0.2",
+     "async-exit-hook": "^1.1.2",
+```
+
+**File**: `test/server/v8-flags-filter-test.js` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++'use strict';
++
++const fs            = require('node:fs');
++const os            = require('node:os');
++const path          = require('node:path');
++const { spawnSync } = require('node:child_process');
++const { expect }    = require('chai');
++
++describe('V8 flags filter', function () {
++    it('forwards V8 flags and forced arguments to the child process', function () {
++        const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testcafe-v8-flags-filter-'));
++        const cliPath = path.join(tempDir, 'cli.js');
++
++        try {
++            fs.writeFileSync(cliPath, 'console.log(JSON.stringify({ args: process.argv.slice(2), execArgv: process.execArgv }));');
++
++            const filterPath = path.resolve(__dirname, '../../bin/v8-flags-filter.js');
++            const runner     = `require(${JSON.stringify(filterPath)})(process.argv[1], { forcedArgs: ['--no-deprecation'] });`;
++            const result     = spawnSync(process.execPath, [
++                '-e',
++                runner,
++                cliPath,
++                '--trace-gc',
++                '--allow-natives-syntax',
++                '--test-option',
++            ], { encoding: 'utf8' });
++
++            expect(result.status, result.stderr).to.equal(0);
++
++            const output = JSON.parse(result.stdout.trim().split(/\r?\n/).at(-1));
++
++            expect(output.args).to.deep.equal(['--test-option']);
++            expect(output.execArgv).to.deep.equal(['--no-deprecation', '--allow-natives-syntax', '--trace-gc']);
++        }
++        finally {
++            fs.rmSync(tempDir, { recursive: true, force: true });
++        }
++    });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8572** (2026-11-11): Remove gulp-ll-next depemdency (@aleks-pro)
+- **PR #8571** (2026-11-10): Inline V8 flags filter dependency (@aleks-pro)
+- **PR #8570** (2026-11-09): Inline callsite-record implementation (@aleks-pro)
+- **PR #8568** (closed): Added Qase to Custom Reporters in README.md (@pm-morten)
 - **PR #8567** (2026-10-30): build: updated testcafe-hammerhead (@Aleksey28)
 - **PR #8566** (2026-10-26): fix: report setNativeDialogHandler(null) without throwing (@sam-yh)
-- **PR #8565** (closed): Skip failing client tests on iOS Safari (@Copilot)
-- **PR #8564** (2026-10-07): build: fixed vulnerabilities (@Aleksey28)
-- **PR #8563** (closed): fix: kill a restarting local Chrome instead of closing its window (@sam-yh)
-- **PR #8561** (closed): fix: retry a failed browser relaunch once (@sam-yh)
 
 ---
 
@@ -826,35 +999,3 @@ _Provide a link to the existing issue(s), if any._
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. build: updated testcafe-hammerhead (#8567)
-
-**RULE**:
-When implementing operations in `.github/workflows/test-functional.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DevExpress/testcafe. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `7245edc4`: build: updated testcafe-hammerhead (#8567). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-functional.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```javascript
-// Verified production-grade fix pattern:
-          sudo apt-get update
-          sudo apt-get install -y fluxbox
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-          sudo apt install fluxbox
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7245edc4` are properly handled with clean fallback behavior.
