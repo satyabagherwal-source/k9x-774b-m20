@@ -1,0 +1,56 @@
+{
+  "stage_id": "14_FEEDBACK",
+  "stage_index": 14,
+  "stage_name": "User Feedback & Anomaly Detection Loops",
+  "primary_domain": "M",
+  "generated_at": "2026-11-11T17:47:28.884Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-M-85839FD0",
+      "domain": "M",
+      "title": "Incident-Driven Knowledge Evolution and Parser Memory Regression Quarantine",
+      "invariant": "Performance regressions and memory retention leaks in long-running parsers are often patched informally without preserving the failure mode  -> When memory retention or execution defects are discovered in production, the root cause must be captured as a formal incident dossier and qu",
+      "confidence": 0.54,
+      "source_provenance": "project://colinhacks-zod/colinhacks-zod-learnings.md"
+    },
+    {
+      "record_id": "DOM-D-61BBF9FB",
+      "domain": "M",
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/MiniMax-H3-Image",
+      "invariant": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "confidence": 0.64,
+      "source_provenance": "project://hf-comfy-org-minimax-h3-image/hf-comfy-org-minimax-h3-image-learnings.md"
+    },
+    {
+      "record_id": "DOM-H-0B5C2EE9",
+      "domain": "M",
+      "title": "Forensic Learning Record (Deep Inspection): react-native-webrtc/react-native-webrtc",
+      "invariant": "- **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pi -> - **Issue #1828** (2026-07-30): **android: fix frame leak with multiple video processors**\n  *Symptoms*: This affects the multi-processor pi",
+      "confidence": 1,
+      "source_provenance": "project://react-native-webrtc-react-native-webrtc/react-native-webrtc-react-native-webrtc-learnings.md"
+    },
+    {
+      "record_id": "DOM-D-170AE1CF",
+      "domain": "M",
+      "title": "Forensic Learning Record (Deep Inspection): Cactus-Compute/mirage",
+      "invariant": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "confidence": 0.64,
+      "source_provenance": "project://hf-cactus-compute-mirage/hf-cactus-compute-mirage-learnings.md"
+    },
+    {
+      "record_id": "DOM-H-FF5BE5CE",
+      "domain": "M",
+      "title": "Forensic Learning Record (Deep Inspection): zoontek/react-native-permissions",
+      "invariant": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  \n> **Source**: github ([https://gith -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  \n> **Source**: github ([https://gith",
+      "confidence": 0.68,
+      "source_provenance": "project://zoontek-react-native-permissions/zoontek-react-native-permissions-learnings.md"
+    }
+  ],
+  "feedback_mechanisms": [
+    "Local incident autopsy logging in .project-brain/incidents/",
+    "User issue reproduction script generation"
+  ]
+}

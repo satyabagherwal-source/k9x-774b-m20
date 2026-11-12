@@ -1,0 +1,49 @@
+{
+  "stage_id": "06_ARCHITECT",
+  "stage_index": 6,
+  "stage_name": "System Architecture & Structural Topology",
+  "primary_domain": "G",
+  "generated_at": "2026-11-11T17:47:28.676Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-F-C060CCE1",
+      "domain": "G",
+      "title": "Domain F — Design Intelligence: Tailwind CSS v4 CSS-First Design Token Architecture",
+      "invariant": "Tailwind CSS v4 replaces legacy JavaScript-based tailwind.config.js with pure CSS-first @theme directive in src/styles/global.css. Design tokens (colors, typography, radii, spacing) must use modern OKLCH color spaces and CSS variables for deterministic light/dark mode and zero ru",
+      "confidence": 1,
+      "source_provenance": "05_KNOWLEDGE/engineering-patterns.md"
+    },
+    {
+      "record_id": "DOM-G-D1C40B63",
+      "domain": "G",
+      "title": "Domain G — Architecture Intelligence: Strict Environment vs Product Boundary Separation",
+      "invariant": "Project Factory bootstrap is strictly restricted to initializing the development environment, runtime, Brain OS, and testing infrastructure (Rule 1670). Phase A terminates at ENVIRONMENT READY : CERTIFIED with 0 product code. Product development begins in Phase B upon receiving e",
+      "confidence": 0.68,
+      "source_provenance": "01_CORE/operating-rules.md"
+    },
+    {
+      "record_id": "DOM-D-CB6BA6DF",
+      "domain": "G",
+      "title": "Clean up Hugging Face source logging for per-source debug (#5523)",
+      "invariant": "Prevents defects observed in production commit `5dce9d48`: Clean up Hugging Face source logging for per-source debug (#5523). Unvalidated ex -> When implementing operations in `pkg/sources/huggingface/README.md`, engineers MUST enforce rigorous boundary validation, safe state transit",
+      "confidence": 0.55,
+      "source_provenance": "project://trufflesecurity-trufflehog/trufflesecurity-trufflehog-learnings.md"
+    }
+  ],
+  "architecture_topology": {
+    "model": "CLIENT_AND_EDGE_HYBRID",
+    "state_management": "Uni-directional reactive event flow",
+    "fault_boundaries": [
+      "Input Validation Barrier",
+      "Execution Boundary",
+      "Output Storage Boundary"
+    ]
+  },
+  "invariants": [
+    "State mutations must be atomic and deterministic",
+    "Zero unhandled promise rejections allowed to escape error boundaries"
+  ]
+}

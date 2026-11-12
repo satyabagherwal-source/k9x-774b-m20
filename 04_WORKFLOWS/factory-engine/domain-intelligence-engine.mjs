@@ -362,7 +362,8 @@ export function createDomainIntelligenceRecord(params = {}) {
       related_domains: classification.secondaryDomains.map(d => d.letter),
       applied_in_blueprints: Array.isArray(params.blueprints) ? params.blueprints : ['astro-tailwind-v4', 'universal']
     },
-    confidence: classification.confidence,
+    confidence: typeof params.confidence === 'number' ? params.confidence : classification.confidence,
+    domain_routing_mode: params.domain_routing_mode || (params.forcedDomain ? 'EXPLICIT_OVERRIDE' : 'AUTOMATIC_CLASSIFICATION'),
     created_at: now
   };
 

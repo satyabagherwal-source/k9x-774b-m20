@@ -1,0 +1,71 @@
+{
+  "blueprint_id": "BLUEPRINT-incidentlens-javascript-node",
+  "assembled_at": "2026-11-11T17:47:27.069Z",
+  "total_files": 8,
+  "files": [
+    {
+      "path": "package.json",
+      "size": 631,
+      "hash": "db65ef76f5d53b83739839ca019f25fb3058d042a1bf5ce53a0ec4fffc837887",
+      "domain": "G",
+      "task_id": "STEP-02",
+      "role": "PACKAGE_MANIFEST"
+    },
+    {
+      "path": "README.md",
+      "size": 7011,
+      "hash": "7b85913408bf0b908a7efc59ca36a20f492161229a73d799b41f9dd8b2521def",
+      "domain": "I",
+      "task_id": "STEP-05",
+      "role": "DOCUMENTATION"
+    },
+    {
+      "path": "src/core/brain-knowledge-manifest.json",
+      "size": 7521,
+      "hash": "076eb65c882567b4bb0c8b561309b1011624860929147fb23657357b40a5a258",
+      "domain": "H",
+      "task_id": "STEP-03",
+      "role": "BRAIN_KNOWLEDGE_MANIFEST"
+    },
+    {
+      "path": "src/models/schema.mjs",
+      "size": 816,
+      "hash": "20e3e951ff91fd9c67870c93f7053048ef8bb8b4c5d63ed2947398099dc3b14b",
+      "domain": "G",
+      "task_id": "STEP-04",
+      "role": "DATA_SCHEMA"
+    },
+    {
+      "path": "src/core/engine.mjs",
+      "size": 1165,
+      "hash": "a9982573cad95431228129886df7ea1c153dd6746064888128c7626368e0555d",
+      "domain": "H",
+      "task_id": "STEP-04",
+      "role": "CORE_KERNEL"
+    },
+    {
+      "path": "src/index.mjs",
+      "size": 191,
+      "hash": "56fe9ac8f54af51291ed6baa6f19f6017e23d415f9171918805794b59fccb5b3",
+      "domain": "G",
+      "task_id": "STEP-02",
+      "role": "ENTRY_POINT"
+    },
+    {
+      "path": "tests/application.test.mjs",
+      "size": 812,
+      "hash": "621673f16ea58a1152a480bc72239a972f0f977c7512c614cf8610afe876a7b4",
+      "domain": "K",
+      "task_id": "STEP-06",
+      "role": "AUTOMATED_TESTS"
+    },
+    {
+      "path": "deploy-manifest.json",
+      "size": 566,
+      "hash": "c40d771dd1688967afcd83fbc7b0d38832d10f151ed0579e0e245df70c9795a0",
+      "domain": "L",
+      "task_id": "STEP-07",
+      "role": "DEPLOYMENT_MANIFEST"
+    }
+  ]
+}

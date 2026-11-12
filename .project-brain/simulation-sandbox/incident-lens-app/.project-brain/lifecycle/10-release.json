@@ -1,0 +1,34 @@
+{
+  "stage_id": "10_RELEASE",
+  "stage_index": 10,
+  "stage_name": "Release Packaging & Distribution Strategy",
+  "primary_domain": "J",
+  "generated_at": "2026-11-11T17:47:28.821Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-J-C14FC2D6",
+      "domain": "J",
+      "title": "Domain J — Search & Distribution: Self-Referential Canonical and JSON-LD Structured Data Hierarchy",
+      "invariant": "Every indexable page must emit a self-referential canonical URL tag, OpenGraph image/title metadata, and a Schema.org WebApplication / SoftwareApplication JSON-LD script block before closing </head> to guarantee maximum search discoverability and zero-indexation duplication.",
+      "confidence": 1,
+      "source_provenance": "05_KNOWLEDGE/universal-seo-and-sitemap-governance.md"
+    },
+    {
+      "record_id": "DOM-J-B305372A",
+      "domain": "J",
+      "title": "Zero-Client-JS Default Performance",
+      "invariant": "Architectural design pattern from 11ty-eleventy -> Eleventy generates pure HTML and CSS without bundling a client-side JavaScript framework runtime.\rDelivers perfect 100/100 Core Web Vitals s",
+      "confidence": 1,
+      "source_provenance": "project://11ty-eleventy/11ty-eleventy-learnings.md"
+    }
+  ],
+  "semver": "0.1.0",
+  "distribution_channel": "Git Repository / Standalone Package",
+  "seo_metadata": {
+    "title": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+    "description": "Accessible, evidence-based construction of IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging"
+  }
+}

@@ -439,6 +439,16 @@ export function ingestRegistryIntoKnowledgeGraph(customRoot = null) {
     const domainLetter = record.primary_domain?.letter || record.domain || 'H';
     const nodeId = recordId;
 
+    const rawStatus = String(record.status || record.epistemic_state || record.stage || '').toUpperCase().trim();
+    let resolvedEpistemicState = 'CANONICAL';
+    if (['DEPRECATED', 'SUPERSEDED', 'CONFLICTED', 'REJECTED', 'UNVERIFIED', 'STAGED_FOR_HUMAN_REVIEW', 'ARCHIVED'].includes(rawStatus)) {
+      resolvedEpistemicState = rawStatus;
+    } else if (record.superseded_by || record.supersededBy) {
+      resolvedEpistemicState = 'SUPERSEDED';
+    } else if (record.deprecated === true) {
+      resolvedEpistemicState = 'DEPRECATED';
+    }
+
     const node = upsertGraphNode(graph, {
       id: nodeId,
       domain: domainLetter,
@@ -446,7 +456,7 @@ export function ingestRegistryIntoKnowledgeGraph(customRoot = null) {
       title: record.title || record.invariant || recordId,
       summary: record.causal_explanation || record.universal_invariant || '',
       confidence: record.confidence || 0.95,
-      epistemic_state: 'CANONICAL',
+      epistemic_state: resolvedEpistemicState,
       source_provenance: record.provenance || { source_uri: 'CANONICAL_REGISTRY' },
       tags: [domainLetter, record.primary_domain?.name || '', ...(record.secondary_domains?.map(d => d.letter) || [])]
     });
@@ -523,6 +533,16 @@ export function syncRecordToKnowledgeGraph(record, customRoot = null) {
   const domainLetter = record.domain_letter || record.primary_domain?.letter || record.domain || 'H';
   const nodeId = record.record_id;
 
+  const rawStatus = String(record.status || record.epistemic_state || record.stage || '').toUpperCase().trim();
+  let resolvedEpistemicState = 'CANONICAL';
+  if (['DEPRECATED', 'SUPERSEDED', 'CONFLICTED', 'REJECTED', 'UNVERIFIED', 'STAGED_FOR_HUMAN_REVIEW', 'ARCHIVED'].includes(rawStatus)) {
+    resolvedEpistemicState = rawStatus;
+  } else if (record.superseded_by || record.supersededBy) {
+    resolvedEpistemicState = 'SUPERSEDED';
+  } else if (record.deprecated === true) {
+    resolvedEpistemicState = 'DEPRECATED';
+  }
+
   upsertGraphNode(graph, {
     id: nodeId,
     domain: domainLetter,
@@ -530,10 +550,39 @@ export function syncRecordToKnowledgeGraph(record, customRoot = null) {
     title: record.title || record.invariant || nodeId,
     summary: record.summary || record.causal_explanation || record.content || '',
     confidence: record.confidence || 0.95,
-    epistemic_state: 'CANONICAL',
+    epistemic_state: resolvedEpistemicState,
     source_provenance: record.provenance || { source_uri: 'CANONICAL_REGISTRY' },
     tags: [domainLetter, record.domain_name || '', ...(record.secondary_domains?.map(d => d.letter) || [])]
   });
+
+  // Explicit supersession link if record supersedes or is superseded
+  const supersedingId = record.superseded_by || record.supersededBy;
+  if (supersedingId && graph.nodes[supersedingId]) {
+    addGraphEdge(graph, {
+      sourceId: supersedingId,
+      targetId: nodeId,
+      relationType: 'SUPERSEDES',
+      weight: 1.0,
+      rationale: `Record ${supersedingId} formally supersedes ${nodeId}`
+    });
+  }
+
+  // Explicit conflict/contradiction link if record contradicts another
+  const conflictTargets = record.conflicts_with || record.contradicts;
+  if (conflictTargets) {
+    const conflictList = Array.isArray(conflictTargets) ? conflictTargets : [conflictTargets];
+    for (const cId of conflictList.filter(Boolean)) {
+      if (graph.nodes[cId]) {
+        addGraphEdge(graph, {
+          sourceId: nodeId,
+          targetId: cId,
+          relationType: 'CONFLICTS_WITH',
+          weight: 1.0,
+          rationale: `Record ${nodeId} conflicts with ${cId}`
+        });
+      }
+    }
+  }
 
   // Cross-domain bridge edges
   if (Array.isArray(record.secondary_domains)) {

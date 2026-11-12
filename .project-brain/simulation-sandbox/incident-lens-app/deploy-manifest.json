@@ -1,0 +1,31 @@
+{
+  "deployment_target": "LOCAL_OR_CONTAINER_RUNTIME",
+  "healthcheck_command": "node --test",
+  "zero_outbound_network_required": true,
+  "backup_command": "node scripts/disaster-recovery.mjs",
+  "brain_intelligence_applied": true,
+  "archetype": "HEADLESS_API",
+  "applied_domains": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M"
+  ],
+  "governing_rules": [
+    "Rule 1670",
+    "Rule 1708",
+    "Rule 1713",
+    "Rule 1715",
+    "Rule 1716"
+  ],
+  "generated_at": "2026-11-11T17:47:27.036Z"
+}

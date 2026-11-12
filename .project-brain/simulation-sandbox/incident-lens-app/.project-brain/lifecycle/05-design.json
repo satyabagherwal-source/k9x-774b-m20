@@ -1,0 +1,37 @@
+{
+  "stage_id": "05_DESIGN",
+  "stage_index": 5,
+  "stage_name": "UX/UI & Design System Specifications",
+  "primary_domain": "F",
+  "generated_at": "2026-11-11T17:47:28.667Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-F-C060CCE1",
+      "domain": "F",
+      "title": "Domain F — Design Intelligence: Tailwind CSS v4 CSS-First Design Token Architecture",
+      "invariant": "Tailwind CSS v4 replaces legacy JavaScript-based tailwind.config.js with pure CSS-first @theme directive in src/styles/global.css. Design tokens (colors, typography, radii, spacing) must use modern OKLCH color spaces and CSS variables for deterministic light/dark mode and zero ru",
+      "confidence": 1,
+      "source_provenance": "05_KNOWLEDGE/engineering-patterns.md"
+    },
+    {
+      "record_id": "DOM-F-83D565C2",
+      "domain": "F",
+      "title": "Early Termination & Token Collision Due to Pad/EOS Unification (BUG-GRANITE-EOSPAD-02)",
+      "invariant": "Modern tokenizers omit a distinct `[PAD]` token to minimize vocabulary fragmentation. However, equating `pad_token_id` and `eos_token_id` wi -> When `pad_token_id == eos_token_id`, the attention mask MUST be passed to all downstream operations to prevent masking tokens from triggerin",
+      "confidence": 1,
+      "source_provenance": "project://hf-webai-official-twil-8b/hf-webai-official-twil-8b-learnings.md"
+    }
+  ],
+  "design_tokens": {
+    "color_contrast_ratio": ">= 4.5:1 for normal text (WCAG AA)",
+    "interactive_focus_ring": "2px solid rgba(59, 130, 246, 0.8)",
+    "font_stack": "system-ui, -apple-system, sans-serif"
+  },
+  "accessibility_invariants": [
+    "Every interactive control has an explicit aria-label or visible label",
+    "Full keyboard navigability without trap"
+  ]
+}

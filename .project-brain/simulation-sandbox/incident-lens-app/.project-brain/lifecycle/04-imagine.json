@@ -1,0 +1,26 @@
+{
+  "stage_id": "04_IMAGINE",
+  "stage_index": 4,
+  "stage_name": "Creative Direction & Concept Ideation",
+  "primary_domain": "E",
+  "generated_at": "2026-11-11T17:47:28.657Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-E-D288C96D",
+      "domain": "E",
+      "title": "Accessible Graphic Asset Scaling and Dynamic Semantic Contrast Tokens",
+      "invariant": "Iconography and graphic previews often omit accessible labels, scale inconsistently across viewports, or lack visible high-contrast focus ri -> All graphic elements and visual previews must enforce explicit accessibility attributes (hasA11yProp), standard viewBox coordinate scaling, ",
+      "confidence": 1,
+      "source_provenance": "project://lucide-icons-lucide/lucide-icons-lucide-learnings.md"
+    }
+  ],
+  "creative_tone": "Focused, Clean, Transparent, Resilient",
+  "metaphor": "Precision Swiss Army Knife — zero noise, instant utility",
+  "delight_invariants": [
+    "Instantaneous sub-100ms feedback on all interactive inputs",
+    "Zero surprise network calls or unexplained background spinners"
+  ]
+}

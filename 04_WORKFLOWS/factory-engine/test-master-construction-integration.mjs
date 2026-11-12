@@ -71,6 +71,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 
+// Capture immutable pre-test production baseline
+const preTestProdReg = loadDomainRegistry(BRAIN_ROOT);
+const initialProdRecordCount = preTestProdReg.total_records;
+const initialProdRecordIds = new Set(Object.keys(preTestProdReg.records || {}));
+
 console.log('======================================================================');
 console.log('🚀 MASTER INTEGRATION TEST: COMPLETE FOUR-SYSTEM CIRCULATION LOOP');
 console.log('======================================================================\n');
@@ -154,10 +159,10 @@ try {
   const w3cCit = citations.find(c => c.url.includes('w3.org/TR/WCAG21'));
   assert(w3cCit !== undefined, 'Located W3C WCAG 2.1 specification citation');
 
-  // Ground with domain title and invariant content
-  w3cCit.domain = 'H';
-  w3cCit.title = 'W3C Web Content Accessibility Guidelines (WCAG 2.1)';
-  w3cCit.invariantSummary = 'User interface components must meet WCAG AA minimum 4.5:1 accessibility contrast ratio';
+  // Ground with domain title and invariant content matching Design Intelligence (Domain F)
+  w3cCit.domain = 'F';
+  w3cCit.title = 'W3C Web Content Accessibility Guidelines (WCAG 2.1) Design Tokens and Color Contrast';
+  w3cCit.invariantSummary = 'User interface components and typography design tokens must meet WCAG AA minimum 4.5:1 accessibility contrast ratio layout tokens';
 
   const qRes = queueDynamicDiscoveredSource(w3cCit, { customRoot: sandboxDir });
   assert(qRes.queued === true, 'Enqueued W3C source into dynamic discovery queue');
@@ -319,7 +324,7 @@ try {
   // ---------------------------------------------------------------------------
   console.log('\n[STEP 6: PRODUCTION SAFETY] Verifying Zero Production Registry Contamination...');
   const prodReg = loadDomainRegistry(BRAIN_ROOT);
-  assert(prodReg.total_records === 45, 'Production registry count strictly preserved at 45 records');
+  assert(prodReg.total_records === initialProdRecordCount, `Production registry count strictly unchanged (Baseline: ${initialProdRecordCount}, Current: ${prodReg.total_records})`);
 
   const zodIds = ['DOM-H-94C4B932', 'DOM-H-2007DF83', 'DOM-H-7D0B9F17', 'DOM-H-C2A738D4', 'DOM-H-1B2AC6F8'];
   const zodIntact = zodIds.every(id => prodReg.records[id] !== undefined);
@@ -327,6 +332,8 @@ try {
 
   assert(!prodReg.records[processRes.recordId], 'Zero sandbox test records leaked into production registry');
   assert(!prodReg.records[evoPromotion.record_id], 'Zero evolution test records leaked into production registry');
+  const leakedProdIds = Object.keys(prodReg.records || {}).filter(id => !initialProdRecordIds.has(id));
+  assert(leakedProdIds.length === 0, 'Zero unexpected records added to production registry');
 
 } finally {
   try {

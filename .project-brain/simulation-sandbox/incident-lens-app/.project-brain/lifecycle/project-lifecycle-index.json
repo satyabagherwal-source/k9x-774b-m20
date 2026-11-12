@@ -1,0 +1,153 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-11-11T17:47:28.894Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_analysis": {
+    "rawIntent": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+    "projectName": "IncidentLens",
+    "executionEnvironment": "CLIENT_AND_EDGE_HYBRID",
+    "interactionParadigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+    "persistenceModel": "LOCAL_FIRST_OR_EPHEMERAL",
+    "isHighPrivacy": false,
+    "isHighPerformance": false,
+    "isBusinessCritical": false,
+    "domainAffinities": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0,
+      "E": 0,
+      "F": 3,
+      "G": 0,
+      "H": 0,
+      "I": 0,
+      "J": 0,
+      "K": 3,
+      "L": 0,
+      "M": 4.5
+    },
+    "legacyArchetype": "telemetry-dashboard"
+  },
+  "stages": [
+    {
+      "stageIndex": 1,
+      "id": "01_DISCOVER",
+      "name": "Problem Discovery & Human Need",
+      "primaryDomain": "A",
+      "guidelinesCount": 1,
+      "file": "01-discover.json"
+    },
+    {
+      "stageIndex": 2,
+      "id": "02_DEFINE",
+      "name": "Product Definition & Scope Boundaries",
+      "primaryDomain": "B",
+      "guidelinesCount": 2,
+      "file": "02-define.json"
+    },
+    {
+      "stageIndex": 3,
+      "id": "03_RESEARCH",
+      "name": "Market & Empirical Research",
+      "primaryDomain": "C",
+      "guidelinesCount": 1,
+      "file": "03-research.json"
+    },
+    {
+      "stageIndex": 4,
+      "id": "04_IMAGINE",
+      "name": "Creative Direction & Concept Ideation",
+      "primaryDomain": "E",
+      "guidelinesCount": 1,
+      "file": "04-imagine.json"
+    },
+    {
+      "stageIndex": 5,
+      "id": "05_DESIGN",
+      "name": "UX/UI & Design System Specifications",
+      "primaryDomain": "F",
+      "guidelinesCount": 2,
+      "file": "05-design.json"
+    },
+    {
+      "stageIndex": 6,
+      "id": "06_ARCHITECT",
+      "name": "System Architecture & Structural Topology",
+      "primaryDomain": "G",
+      "guidelinesCount": 3,
+      "file": "06-architect.json"
+    },
+    {
+      "stageIndex": 7,
+      "id": "07_BUILD",
+      "name": "Technical Construction & Implementation",
+      "primaryDomain": "H",
+      "guidelinesCount": 5,
+      "file": "07-build.json"
+    },
+    {
+      "stageIndex": 8,
+      "id": "08_TEST",
+      "name": "Automated Quality & Contract Testing",
+      "primaryDomain": "K",
+      "guidelinesCount": 5,
+      "file": "08-test.json"
+    },
+    {
+      "stageIndex": 9,
+      "id": "09_VERIFY",
+      "name": "Empirical Verification & Security Boundaries",
+      "primaryDomain": "K",
+      "guidelinesCount": 5,
+      "file": "09-verify.json"
+    },
+    {
+      "stageIndex": 10,
+      "id": "10_RELEASE",
+      "name": "Release Packaging & Distribution Strategy",
+      "primaryDomain": "J",
+      "guidelinesCount": 2,
+      "file": "10-release.json"
+    },
+    {
+      "stageIndex": 11,
+      "id": "11_DEPLOY",
+      "name": "Deployment & Infrastructure Configuration",
+      "primaryDomain": "L",
+      "guidelinesCount": 1,
+      "file": "11-deploy.json"
+    },
+    {
+      "stageIndex": 12,
+      "id": "12_OPERATE",
+      "name": "Runtime Operations & Resilience Playbooks",
+      "primaryDomain": "L",
+      "guidelinesCount": 1,
+      "file": "12-operate.json"
+    },
+    {
+      "stageIndex": 13,
+      "id": "13_OBSERVE",
+      "name": "Telemetry, Logging & Observability Budgets",
+      "primaryDomain": "L",
+      "guidelinesCount": 1,
+      "file": "13-observe.json"
+    },
+    {
+      "stageIndex": 14,
+      "id": "14_FEEDBACK",
+      "name": "User Feedback & Anomaly Detection Loops",
+      "primaryDomain": "M",
+      "guidelinesCount": 5,
+      "file": "14-feedback.json"
+    },
+    {
+      "stageIndex": 15,
+      "id": "15_IMPROVE",
+      "name": "Continuous Evolution & Refactoring Horizon",
+      "primaryDomain": "M",
+      "guidelinesCount": 5,
+      "file": "15-improve.json"
+    }
+  ]
+}

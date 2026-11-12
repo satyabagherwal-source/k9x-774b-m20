@@ -1,0 +1,57 @@
+{
+  "stage_id": "07_BUILD",
+  "stage_index": 7,
+  "stage_name": "Technical Construction & Implementation",
+  "primary_domain": "H",
+  "generated_at": "2026-11-11T17:47:28.742Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-H-C4EF28D3",
+      "domain": "H",
+      "title": "Domain H — Technical Construction: Zero-Latency Client-Side Canvas & WebAssembly Ingestion",
+      "invariant": "Client-side file transformation pipelines must ingest files via Blob.arrayBuffer(), parse MIME-types strictly in memory, and transcode using OffscreenCanvas or WebAssembly workers without freezing the main UI thread. All allocations must be revoked via URL.revokeObjectURL().",
+      "confidence": 1,
+      "source_provenance": "05_KNOWLEDGE/engineering-patterns.md"
+    },
+    {
+      "record_id": "DOM-H-83C24083",
+      "domain": "H",
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "invariant": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "confidence": 1,
+      "source_provenance": "project://colinhacks-zod/colinhacks-zod-learnings.md"
+    },
+    {
+      "record_id": "DOM-H-94C4B932",
+      "domain": "H",
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "invariant": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "confidence": 1,
+      "source_provenance": "project://colinhacks-zod/colinhacks-zod-learnings.md"
+    },
+    {
+      "record_id": "DOM-H-2007DF83",
+      "domain": "H",
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "invariant": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "confidence": 1,
+      "source_provenance": "project://colinhacks-zod/colinhacks-zod-learnings.md"
+    },
+    {
+      "record_id": "DOM-I-16F011E5",
+      "domain": "H",
+      "title": "Deterministic SVG Content Sanitization and XML Entity Expansion Defense",
+      "invariant": "User-uploaded SVG markup can harbor embedded script tags, external resource references, or nested XML entity expansions that execute malicio -> All ingested SVG XML strings must be sanitized by stripping script elements, dangerous attributes (onload/onclick/javascript:), and validati",
+      "confidence": 0.9,
+      "source_provenance": "project://lucky-media-astro-seo/lucky-media-astro-seo-learnings.md"
+    }
+  ],
+  "build_specification": {
+    "language": "JavaScript / Node.js (ES Module)",
+    "module_type": "ESM",
+    "dependencies": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "stage_id": "02_DEFINE",
+  "stage_index": 2,
+  "stage_name": "Product Definition & Scope Boundaries",
+  "primary_domain": "B",
+  "generated_at": "2026-11-11T17:47:28.634Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-B-44DC921B",
+      "domain": "B",
+      "title": "Client-Side Drag-and-Drop Ingestion with Immediate In-Memory Preview",
+      "invariant": "File transformation utilities that require server upload queues or complex multi-step wizards create friction and user drop-off. -> Digital utility products must provide a unified single-dropzone ingestion interface supporting drag-and-drop, clipboard paste, and file pick",
+      "confidence": 1,
+      "source_provenance": "project://glincker-thesvg/glincker-thesvg-learnings.md"
+    },
+    {
+      "record_id": "DOM-B-1CC83E41",
+      "domain": "B",
+      "title": "C API & High-Level API Signed Division Panic on CUDA Devices (BUG-TFHE-02)",
+      "invariant": "Radix signed division requires non-trivial signed digit extraction, two's-complement negation, and iterative restoring or non-restoring cond -> Heterogeneous backend feature parity must be validated via unified matrix integration tests (`tests/integrations`) that execute all supporte",
+      "confidence": 1,
+      "source_provenance": "project://zama-ai-tfhe-rs/zama-ai-tfhe-rs-learnings.md"
+    }
+  ],
+  "p0_mvp_scope": [
+    "Core domain logic and robust execution pipeline",
+    "Responsive, accessible user interface adhering to WCAG AA tokens",
+    "Zero-network isolation and client-side data privacy by default"
+  ],
+  "negative_scope_exclusions": [
+    "NO premature third-party cloud analytics or telemetry trackers",
+    "NO speculative remote database dependencies during initial bootstrap",
+    "NO mandatory login walls or user registration barriers for local utility"
+  ]
+}

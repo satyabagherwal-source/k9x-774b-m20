@@ -27,6 +27,7 @@ import { decomposeSemanticRequirements } from './semantic-decomposer.mjs';
 import { validatePlanDAG } from './task-planner.mjs';
 import { validateSubtask } from './task-contract.mjs';
 import { getAllAdapters, getAdapterForFile } from './language-adapters/adapter-registry.mjs';
+import { constructProjectLifecycle, executeStageVerification } from './project-lifecycle-engine.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -2410,6 +2411,19 @@ export function constructUniversalProduct(goal, targetDir, options = {}) {
   const writtenFiles = emitAssembledProduct(targetDir, assemblyResult);
   const verificationResult = executeAndVerifyProduct(targetDir, dynamicBlueprint);
 
+  // 15-Stage Construction Lifecycle Integration (Rule 1670 compliant)
+  let lifecycleResult = null;
+  if (options.generateLifecycle !== false) {
+    try {
+      lifecycleResult = constructProjectLifecycle(goal, targetDir, {
+        ...options,
+        profile
+      });
+    } catch (lifecycleErr) {
+      console.warn(`[WARN] Project lifecycle generation non-fatal error: ${lifecycleErr.message}`);
+    }
+  }
+
   return {
     goal,
     targetDir: path.resolve(targetDir),
@@ -2417,6 +2431,12 @@ export function constructUniversalProduct(goal, targetDir, options = {}) {
     dynamicBlueprint,
     assemblyResult,
     writtenFiles,
-    verificationResult
+    verificationResult,
+    lifecycleResult
   };
 }
+
+export {
+  constructProjectLifecycle,
+  executeStageVerification
+};

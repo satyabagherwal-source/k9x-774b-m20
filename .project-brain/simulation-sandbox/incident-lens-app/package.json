@@ -1,0 +1,19 @@
+{
+  "name": "incidentlens",
+  "version": "1.0.0",
+  "description": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "keywords": [
+    "universal-construction",
+    "ai-builder-brain",
+    "incidentlens",
+    "headless_api"
+  ],
+  "author": "AI-Builder-Brain Universal Assembly Engine",
+  "license": "MIT"
+}

@@ -1,0 +1,57 @@
+{
+  "stage_id": "08_TEST",
+  "stage_index": 8,
+  "stage_name": "Automated Quality & Contract Testing",
+  "primary_domain": "K",
+  "generated_at": "2026-11-11T17:47:28.770Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-A-DD59FA01",
+      "domain": "K",
+      "title": "Domain A — Human Need: Privacy Sovereignty & Client-Side Local Execution Invariant",
+      "invariant": "Users and enterprise professionals handling confidential vector assets, images, or documents require mathematical certainty that their files never transit remote cloud servers. Software handling user data must default to 100% in-browser processing via WebAssembly, Web Workers, or",
+      "confidence": 0.94,
+      "source_provenance": "01_CORE/operating-rules.md"
+    },
+    {
+      "record_id": "DOM-K-353B93D6",
+      "domain": "K",
+      "title": "Domain K — Quality & Verification: Zero-Outbound Network Probe & Assertion Barrier",
+      "invariant": "Verification suites for client-side privacy tools must execute live network inspection probes during transformation workflows. Any outgoing HTTP POST, PUT, or WebSocket connection emitted during file processing constitutes an automatic fatal verification failure.",
+      "confidence": 1,
+      "source_provenance": "08_VERIFICATION/verification-protocol.md"
+    },
+    {
+      "record_id": "DOM-M-85839FD0",
+      "domain": "K",
+      "title": "Incident-Driven Knowledge Evolution and Parser Memory Regression Quarantine",
+      "invariant": "Performance regressions and memory retention leaks in long-running parsers are often patched informally without preserving the failure mode  -> When memory retention or execution defects are discovered in production, the root cause must be captured as a formal incident dossier and qu",
+      "confidence": 0.54,
+      "source_provenance": "project://colinhacks-zod/colinhacks-zod-learnings.md"
+    },
+    {
+      "record_id": "DOM-H-A79F59EB",
+      "domain": "K",
+      "title": "Severed CFG Edge Phi Node Invariant Failure in React Compiler (BUG-OXC-01)",
+      "invariant": "Conflating basic block existence with edge existence. A block can remain in the CFG while a specific outgoing branch is eliminated. -> SSA and CFG mutations must always be parameterized by the local incidence matrix (predecessors/successors), never by global vertex sets.",
+      "confidence": 0.75,
+      "source_provenance": "project://oxc-project-oxc/oxc-project-oxc-learnings.md"
+    },
+    {
+      "record_id": "DOM-K-76C43650",
+      "domain": "K",
+      "title": "Type Stripping Regression in Exported Ambient Declarations (BUG-OXC-02)",
+      "invariant": "Bypassing semantic graph traversal during optimization or \"no-op\" bypass branches. -> Even if an AST node is copied verbatim without mutation, it must traverse the semantic symbol dependency analyzer before codegen.",
+      "confidence": 1,
+      "source_provenance": "project://oxc-project-oxc/oxc-project-oxc-learnings.md"
+    }
+  ],
+  "test_pyramid": {
+    "unit_tests": "Deterministic functional logic and edge cases",
+    "contract_tests": "Schema and input validation assertions",
+    "property_tests": "Boundary condition robustness"
+  }
+}

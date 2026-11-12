@@ -33,13 +33,15 @@ import {
   KNOWLEDGE_STAGE,
   VALIDATION_PILLARS,
   validateProjectLearningCandidate,
+  classifyProjectLearningCandidate,
   checkDuplicatesAndConflicts,
   promoteProjectLearningToMasterBrain
 } from './project-learning-promotion-bridge.mjs';
 
 import {
   searchBrain,
-  searchBrainDetailed
+  searchBrainDetailed,
+  buildSearchIndex
 } from './retrieval-engine.mjs';
 
 import {
@@ -47,9 +49,25 @@ import {
   loadDomainRegistry
 } from './domain-intelligence-engine.mjs';
 
+import {
+  loadKnowledgeGraph,
+  syncRecordToKnowledgeGraph,
+  upsertGraphNode,
+  addGraphEdge,
+  persistKnowledgeGraph
+} from './knowledge-relationship-graph.mjs';
+
+import { executeStageVerification } from './project-lifecycle-engine.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
+
+// Capture immutable pre-test production baseline
+const preTestProdReg = loadDomainRegistry(BRAIN_ROOT);
+const initialProdRecordCount = preTestProdReg.total_records;
+const initialProdRecordIds = new Set(Object.keys(preTestProdReg.records || {}));
+const zodIds = ['DOM-H-94C4B932', 'DOM-H-2007DF83', 'DOM-H-7D0B9F17', 'DOM-H-C2A738D4', 'DOM-H-1B2AC6F8'];
 
 console.log('======================================================================');
 console.log('🛡️ TEST SUITE: ADVERSARIAL NEGATIVE & RECOVERY GATING (SANDBOX ISOLATED)');
@@ -203,6 +221,61 @@ try {
   assert(highImpactRes.stage === KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW, 'Staged for mandatory human review');
   assert(highImpactRes.rejection_reasons.some(r => r.includes('HIGH_IMPACT_DOMAIN_STAGED')), 'Flagged HIGH_IMPACT_DOMAIN_STAGED');
 
+  // 3.7 Artificial Confidence Inflation & Explicit Override Rejection
+  const lowConfCand = {
+    ...baseCand,
+    title: 'Poem on leaves falling',
+    universal_invariant: 'Leaves fall gently from branches in the late autumn chill.',
+    problem_statement: 'Observing nature in quiet solitude.',
+    forcedDomain: 'H'
+  };
+  const classifiedLow = classifyProjectLearningCandidate(lowConfCand);
+  assert(classifiedLow.domain_routing_mode === 'EXPLICIT_OVERRIDE', 'Preserved EXPLICIT_OVERRIDE routing mode');
+  assert(classifiedLow.classification_confidence < 0.60, `Maintained authentic low confidence without artificial inflation (${classifiedLow.classification_confidence})`);
+  const lowConfVal = validateProjectLearningCandidate(classifiedLow, { verified: true, exit_code: 0 }, { brainRoot: sandboxDir });
+  assert(lowConfVal.valid === false, 'Blocked autonomous promotion of low-confidence candidate despite forced domain');
+  assert(lowConfVal.rejection_reasons.some(r => r.includes('LOW_CLASSIFICATION_CONFIDENCE')), 'Flagged LOW_CLASSIFICATION_CONFIDENCE');
+
+  // 3.8 Knowledge Graph Epistemic State Propagation (DEPRECATED & SUPERSEDED)
+  const deprecatedRecord = {
+    record_id: 'DOM-H-DEP-01',
+    domain_letter: 'H',
+    title: 'Deprecated Memory Model Pattern',
+    content: 'Do not use raw memory buffers without guard boundaries.',
+    status: 'DEPRECATED'
+  };
+  syncRecordToKnowledgeGraph(deprecatedRecord, sandboxDir);
+  const sbGraph = loadKnowledgeGraph(sandboxDir);
+  assert(sbGraph.nodes['DOM-H-DEP-01']?.epistemic_state === 'DEPRECATED', 'Propagated DEPRECATED epistemic state to graph node');
+
+  // 3.9 Graph Token Budget Exhaustion Boundary
+  fs.mkdirSync(path.join(sandboxDir, '01_CORE'), { recursive: true });
+  fs.writeFileSync(path.join(sandboxDir, '01_CORE', 'operating-rules.md'), '## Rule 1 — Zero Leakage\nAlways isolate untrusted input.', 'utf-8');
+  const gBudget = loadKnowledgeGraph(sandboxDir);
+  upsertGraphNode(gBudget, { id: 'Core Rule 1', title: 'Rule 1 Zero Leakage', domain: 'H', epistemic_state: 'VALIDATED' });
+  upsertGraphNode(gBudget, { id: 'NODE-EXP-BUDGET-01', title: 'Expanded Memory Model Boundary Specification', domain: 'H', epistemic_state: 'VALIDATED', summary: 'Detailed model specifications for memory isolation in large environments with strict sandbox rules and bounds.' });
+  addGraphEdge(gBudget, {
+    sourceId: 'Core Rule 1',
+    targetId: 'NODE-EXP-BUDGET-01',
+    relationType: 'CONSTRAINED_BY_ARCHITECTURE'
+  });
+  persistKnowledgeGraph(gBudget, sandboxDir);
+
+  buildSearchIndex(true, sandboxDir);
+  const tightBudgetRes = searchBrainDetailed('Zero Leakage', { brainRoot: sandboxDir, maxTokens: 25, expandGraph: true });
+  assert(tightBudgetRes.status === 'FOUND', 'Tight budget search returned status FOUND');
+  assert(tightBudgetRes.graphExpandedContext?.budgetExhausted === true || tightBudgetRes.diagnostics.budgetExhausted === true, 'Flagged budgetExhausted when tokens constrained');
+  assert(tightBudgetRes.graphExpandedContext?.droppedNodesCount > 0, 'Reported dropped graph nodes due to budget limit');
+  assert(tightBudgetRes.diagnostics.tokensUsed <= 35, 'Tokens used strictly bounded by budget');
+
+  // 3.10 Unauthorized Deployment Barrier (Stage 11)
+  const deployMockDir = path.join(sandboxDir, 'deploy-mock');
+  fs.mkdirSync(path.join(deployMockDir, '.project-brain', 'lifecycle'), { recursive: true });
+  fs.writeFileSync(path.join(deployMockDir, '.project-brain', 'lifecycle', '11-deploy.json'), '{}', 'utf-8');
+  const unauthDeployRes = executeStageVerification('11_DEPLOY', deployMockDir, { humanAuthorized: false });
+  assert(unauthDeployRes.requires_human_approval === true, 'Deployment mandates human authorization');
+  assert(unauthDeployRes.external_deployment_blocked === true, 'External deployment strictly blocked without authorization token');
+
   // ---------------------------------------------------------------------------
   // 4. Retrieval Edge Cases & Miss Recovery
   // ---------------------------------------------------------------------------
@@ -224,9 +297,12 @@ try {
   // 5. Strict Production Registry Isolation
   // ---------------------------------------------------------------------------
   console.log('\n--- Phase 5: Production Registry Integrity Check ---');
-  const prodReg = loadDomainRegistry(BRAIN_ROOT);
-  assert(prodReg.total_records === 45, 'Production registry records count is strictly preserved (Count: 45)');
-  assert(!prodReg.records['DISC-MAL-01'], 'Zero adversarial test items in production registry');
+  const postTestProdReg = loadDomainRegistry(BRAIN_ROOT);
+  assert(postTestProdReg.total_records === initialProdRecordCount, `Production registry count strictly unchanged (Baseline: ${initialProdRecordCount}, Current: ${postTestProdReg.total_records})`);
+  assert(zodIds.every(id => postTestProdReg.records[id] !== undefined), 'All five pending Zod records 100% intact');
+  assert(!postTestProdReg.records['DISC-MAL-01'], 'Zero adversarial test items in production registry');
+  const leakedIds = Object.keys(postTestProdReg.records || {}).filter(id => !initialProdRecordIds.has(id));
+  assert(leakedIds.length === 0, 'Zero unexpected records added to production registry');
 
 } finally {
   try {

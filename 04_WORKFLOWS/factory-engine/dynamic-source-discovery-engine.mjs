@@ -542,3 +542,55 @@ export function acquireAndProcessNextDiscoveredSource(options = {}) {
     return { processed: false, sourceId: targetSource.id, reason: err.message };
   }
 }
+
+/**
+ * Processes a bounded, idempotent batch of approved sources from the discovery queue.
+ * Designed as the safe integration boundary for scheduled harvesting.
+ * 
+ * Safety invariants:
+ * - Bounded: limits processing to maxBatch (default 2) per cycle.
+ * - Non-fatal failure isolation: error on one source does not crash the loop.
+ * - Rate-limited: respects cooldown and skips recently attempted sources.
+ * - Inactive by default in live scheduled fleet until human authorization is granted.
+ * 
+ * @param {object} options - { maxBatch: 2, customRoot, verificationProof, domainFilter, humanApprovalToken }
+ * @returns {object} { batchLimit, discoveredInQueue, processedCount, failedCount, results: [] }
+ */
+export function processPendingDiscoveredSourcesBatch(options = {}) {
+  const root = options.customRoot || BRAIN_ROOT;
+  const maxBatch = typeof options.maxBatch === 'number' ? options.maxBatch : 2;
+  const nextSources = getNextSourcesForHarvesting(maxBatch, { ...options, customRoot: root });
+
+  const summary = {
+    batchLimit: maxBatch,
+    discoveredInQueue: nextSources.length,
+    processedCount: 0,
+    failedCount: 0,
+    results: []
+  };
+
+  if (nextSources.length === 0) {
+    return summary;
+  }
+
+  for (const source of nextSources) {
+    try {
+      const outcome = acquireAndProcessNextDiscoveredSource({
+        ...options,
+        customRoot: root,
+        sourceId: source.id
+      });
+      if (outcome.processed) {
+        summary.processedCount++;
+      } else {
+        summary.failedCount++;
+      }
+      summary.results.push(outcome);
+    } catch (itemErr) {
+      summary.failedCount++;
+      summary.results.push({ processed: false, sourceId: source.id, reason: itemErr.message });
+    }
+  }
+
+  return summary;
+}

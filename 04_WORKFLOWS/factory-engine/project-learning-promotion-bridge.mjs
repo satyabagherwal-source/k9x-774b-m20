@@ -336,14 +336,20 @@ export function classifyProjectLearningCandidate(candidate, options = {}) {
   });
 
   const forced = candidate.forcedDomain || options.forcedDomain;
-  const primaryDomain = forced ? (resolveDomain(forced) || classification.primaryDomain) : classification.primaryDomain;
+  const isOverridden = Boolean(forced && resolveDomain(forced));
+  const primaryDomain = isOverridden ? resolveDomain(forced) : classification.primaryDomain;
 
   return {
     ...candidate,
     stage: KNOWLEDGE_STAGE.CANDIDATE,
     primary_domain: primaryDomain,
     secondary_domains: classification.secondaryDomains,
-    classification_confidence: forced ? Math.max(0.95, classification.confidence) : classification.confidence
+    // Preserve authentic classifier confidence without artificial inflation
+    classification_confidence: classification.confidence,
+    domain_routing_mode: isOverridden ? 'EXPLICIT_OVERRIDE' : 'AUTOMATIC_CLASSIFICATION',
+    routing_authority: isOverridden ? (options.routingAuthority || candidate.routingAuthority || 'CALLER_EXPLICIT_ROUTING') : 'HEURISTIC_TAXONOMY',
+    forcedDomain: forced || null,
+    classifier_primary_domain: classification.primaryDomain ? classification.primaryDomain.letter : null
   };
 }
 
@@ -486,9 +492,13 @@ export function validateProjectLearningCandidate(candidate, verificationProof = 
       }
     }
   } else if (confidence < 0.60) {
-    promotionApproved = false;
-    approvalReason = `LOW_CLASSIFICATION_CONFIDENCE: Classification confidence (${confidence}) is below the required 0.60 threshold.`;
-    failures.push(approvalReason);
+    if (!humanToken) {
+      promotionApproved = false;
+      approvalReason = `LOW_CLASSIFICATION_CONFIDENCE: Classification confidence (${confidence}) is below the required 0.60 threshold.${candidate.domain_routing_mode === 'EXPLICIT_OVERRIDE' ? ' Explicit domain override does not bypass classifier confidence without human authorization.' : ''}`;
+      failures.push(approvalReason);
+    } else {
+      approvalReason = `Low classification confidence (${confidence}) explicitly authorized by human operator token.`;
+    }
   } else if (verificationProof.canonical_promotion_approval && verificationProof.canonical_promotion_approval.approved === false) {
     promotionApproved = false;
     approvalReason = verificationProof.canonical_promotion_approval.reason || 'Canonical promotion not approved by review policy.';
@@ -730,6 +740,8 @@ export function promoteProjectLearningToMasterBrain(candidateInput, verification
     evidence_type: validCandidate.verification_evidence?.evidence_type || 'AUTHORITATIVE_SOURCE_SPECIFICATION',
     verification_status: validCandidate.verification_evidence?.verification_status || 'EMPIRICAL_CANONICAL',
     verification_reference: validCandidate.verification_evidence?.test_suite || null,
+    confidence: validCandidate.classification_confidence ?? 0.85,
+    domain_routing_mode: validCandidate.domain_routing_mode || 'AUTOMATIC_CLASSIFICATION',
     blueprints: options.blueprints || ['universal', 'astro-tailwind-v4']
   });
 

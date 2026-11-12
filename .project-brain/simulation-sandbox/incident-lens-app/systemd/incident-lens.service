@@ -1,0 +1,32 @@
+[Unit]
+Description=IncidentLens SRE Workstation & Forensic Incident Service
+After=network.target
+Documentation=https://github.com/incidentlens/docs
+
+[Service]
+Type=simple
+User=sre
+Group=sre
+WorkingDirectory=/opt/incident-lens
+ExecStart=/usr/bin/node /opt/incident-lens/src/server.mjs
+Restart=always
+RestartSec=5s
+
+# Security Hardening & Isolation
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/incident-lens/data
+PrivateTmp=true
+
+# Memory Budget Constraints (Domain L)
+MemoryMax=64M
+MemoryHigh=48M
+
+# Environment
+Environment=NODE_ENV=production
+Environment=PORT=3456
+
+[Install]
+WantedBy=multi-user.target
+

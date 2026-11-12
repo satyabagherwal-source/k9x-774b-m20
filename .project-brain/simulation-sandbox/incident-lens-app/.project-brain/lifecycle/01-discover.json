@@ -1,0 +1,33 @@
+{
+  "stage_id": "01_DISCOVER",
+  "stage_index": 1,
+  "stage_name": "Problem Discovery & Human Need",
+  "primary_domain": "A",
+  "generated_at": "2026-11-11T17:47:28.629Z",
+  "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+  "intent_environment": "CLIENT_AND_EDGE_HYBRID",
+  "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
+  "brain_intelligence_guidelines": [
+    {
+      "record_id": "DOM-A-DD59FA01",
+      "domain": "A",
+      "title": "Domain A — Human Need: Privacy Sovereignty & Client-Side Local Execution Invariant",
+      "invariant": "Users and enterprise professionals handling confidential vector assets, images, or documents require mathematical certainty that their files never transit remote cloud servers. Software handling user data must default to 100% in-browser processing via WebAssembly, Web Workers, or",
+      "confidence": 0.94,
+      "source_provenance": "01_CORE/operating-rules.md"
+    }
+  ],
+  "human_pain_points": [
+    "Friction with complex, non-portable tools for: IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
+    "Uncontrolled network data leaks and loss of data sovereignty",
+    "Slow, bloated multi-step workflows hindering rapid task execution"
+  ],
+  "target_persona": {
+    "role": "Independent Developer / Technical Creator",
+    "technical_proficiency": "Pragmatic Builder",
+    "core_need": "Reliable, zero-friction local execution with uncompromising privacy"
+  },
+  "jobs_to_be_done": [
+    "Enable the user to effortlessly accomplish: IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging"
+  ]
+}

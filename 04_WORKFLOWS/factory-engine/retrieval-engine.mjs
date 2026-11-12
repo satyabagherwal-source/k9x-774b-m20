@@ -2116,14 +2116,95 @@ export function searchBrainDetailed(query, options = {}) {
 
   // Graph-Aware Knowledge Context Enrichment (System B <-> System C Integration)
   let graphContext = null;
+  const primaryTokensUsed = currentTokens;
+  let graphTokensUsed = 0;
+  let graphBudgetExhausted = false;
+
   if (options.expandGraph !== false && budgetedResults.length > 0) {
     try {
       const seedIds = budgetedResults.map(r => r.id).filter(Boolean);
-      graphContext = getExpandedContextForRecords(seedIds, {
+      const rawGraphContext = getExpandedContextForRecords(seedIds, {
         customRoot,
         brainRoot: customRoot,
         maxHops: options.graphMaxHops || 1
       });
+
+      if (rawGraphContext) {
+        const remainingTokens = Math.max(0, maxTokens - currentTokens);
+
+        if (remainingTokens <= 0) {
+          // Budget strictly exhausted by primary results; omit expanded nodes to preserve budget integrity
+          graphBudgetExhausted = true;
+          graphContext = {
+            seedRecordIds: rawGraphContext.seedRecordIds || [],
+            expandedNodes: [],
+            relationshipPaths: rawGraphContext.relationshipPaths || [],
+            categorized: {
+              architectural_constraints: [],
+              verification_tests: [],
+              human_needs: [],
+              design_tokens: [],
+              deployment_ops: [],
+              dependencies: []
+            },
+            budgetExhausted: true,
+            droppedNodesCount: (rawGraphContext.expandedNodes || []).length
+          };
+          limitations.push(`Graph-expanded nodes omitted due to maxTokens budget constraint (${maxTokens})`);
+        } else {
+          // Pack expanded nodes within remaining token budget
+          const budgetedNodes = [];
+          const budgetedCategorized = {
+            architectural_constraints: [],
+            verification_tests: [],
+            human_needs: [],
+            design_tokens: [],
+            deployment_ops: [],
+            dependencies: []
+          };
+
+          for (const node of (rawGraphContext.expandedNodes || [])) {
+            const nodeText = `${node.title || ''} ${node.summary || ''} ${node.domain || ''}`;
+            const estNodeTokens = Math.ceil(nodeText.length / 4);
+            if (currentTokens + estNodeTokens <= maxTokens) {
+              currentTokens += estNodeTokens;
+              graphTokensUsed += estNodeTokens;
+              budgetedNodes.push(node);
+
+              // Maintain categorized references for packed node
+              if (node.connectedVia === 'CONSTRAINED_BY_ARCHITECTURE') {
+                budgetedCategorized.architectural_constraints.push(node);
+              } else if (node.connectedVia === 'VERIFIED_BY_TEST') {
+                budgetedCategorized.verification_tests.push(node);
+              } else if (node.connectedVia === 'SOLVES_PROBLEM') {
+                budgetedCategorized.human_needs.push(node);
+              } else if (node.connectedVia === 'STYLED_BY_DESIGN') {
+                budgetedCategorized.design_tokens.push(node);
+              } else if (node.connectedVia === 'DEPLOYED_BY_OPS') {
+                budgetedCategorized.deployment_ops.push(node);
+              } else if (node.connectedVia === 'DEPENDS_ON') {
+                budgetedCategorized.dependencies.push(node);
+              }
+            } else {
+              graphBudgetExhausted = true;
+              break;
+            }
+          }
+
+          if (graphBudgetExhausted) {
+            limitations.push(`Graph-expanded nodes truncated: ${(rawGraphContext.expandedNodes || []).length - budgetedNodes.length} nodes omitted due to maxTokens budget (${maxTokens})`);
+          }
+
+          graphContext = {
+            seedRecordIds: rawGraphContext.seedRecordIds,
+            expandedNodes: budgetedNodes,
+            relationshipPaths: rawGraphContext.relationshipPaths,
+            categorized: budgetedCategorized,
+            budgetExhausted: graphBudgetExhausted,
+            droppedNodesCount: (rawGraphContext.expandedNodes || []).length - budgetedNodes.length
+          };
+        }
+      }
     } catch (graphErr) { }
   }
 
@@ -2143,7 +2224,9 @@ export function searchBrainDetailed(query, options = {}) {
     diagnostics: {
       expandedQueryTerms: expansionDiagnostics.expansionTerms,
       matchedDomains: expansionDiagnostics.matchedDomains,
-      budgetExhausted,
+      budgetExhausted: budgetExhausted || graphBudgetExhausted,
+      primaryTokensUsed,
+      graphTokensUsed,
       tokensUsed: currentTokens,
       maxTokens
     },

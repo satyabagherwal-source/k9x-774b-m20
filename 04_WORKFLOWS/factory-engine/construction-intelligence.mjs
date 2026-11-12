@@ -41,7 +41,9 @@ import {
   assembleProductCode,
   emitAssembledProduct,
   executeAndVerifyProduct,
-  constructUniversalProduct
+  constructUniversalProduct,
+  constructProjectLifecycle,
+  executeStageVerification
 } from './universal-code-assembler.mjs';
 
 export {
@@ -58,7 +60,9 @@ export {
   assembleProductCode,
   emitAssembledProduct,
   executeAndVerifyProduct,
-  constructUniversalProduct
+  constructUniversalProduct,
+  constructProjectLifecycle,
+  executeStageVerification
 };
 
 const __filename = fileURLToPath(import.meta.url);
