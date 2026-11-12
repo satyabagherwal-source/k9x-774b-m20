@@ -20941,5 +20941,17 @@
     "qualityScore": 7808,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-12T14:55:56.699Z"
+  },
+  {
+    "name": "facebook/sam-3d-body-dinov3",
+    "fullName": "facebook/sam-3d-body-dinov3",
+    "url": "https://huggingface.co/facebook/sam-3d-body-dinov3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: facebook/sam-3d-body-dinov3 (1076 likes, 14473 downloads)",
+    "likes": 1076,
+    "downloads": 14473,
+    "qualityScore": 12760,
+    "discoveredAt": "2026-11-12T20:59:45.525Z"
   }
 ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:34:17.972Z",
+  "last_updated": "2026-11-12T21:02:40.084Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7175,6 +7175,24 @@
       "source_repo": "dathere-qsv",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-108AE9-deps-viz-driver-js-1-12-1-for-the-data-s.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-491E54",
+      "directive_title": "sqldb): refresh offload timestamp on duplicate save (#17471)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "argoproj-argo-workflows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-491E54-sqldb-refresh-offload-timestamp-on-dupli.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-1BBB63",
+      "directive_title": "deps): bump the gomod group across 1 directory with 6 updates (#5217)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sigstore-cosign",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1BBB63-deps-bump-the-gomod-group-across-1-direc.md",
       "staged_date": "2026-11-12"
     }
   ]

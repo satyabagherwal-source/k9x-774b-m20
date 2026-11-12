@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "195ab76b",
+    "sourceVersion": "6181e756",
     "license": "Apache-2.0",
-    "contentHash": "aff8deff4f3be5920ef997fa235c7da816a8af61b7385d14554d4068c0c886c1",
-    "lastHarvestedAt": "2026-11-12T08:34:25.736Z",
+    "contentHash": "570227c119d9b6dbbe72ad2b63d68792ae5b201a4f5f3c0389563d93a305f5e3",
+    "lastHarvestedAt": "2026-11-12T21:02:24.037Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "d48ec29e",
+    "sourceVersion": "3142f33a",
     "license": "Apache-2.0",
-    "contentHash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
-    "lastHarvestedAt": "2026-11-11T09:49:21.206Z",
+    "contentHash": "f9033c9f474bbf8cd407885184c85f9c49ed58075c00a0b4fcdbb50a983b5c8f",
+    "lastHarvestedAt": "2026-11-12T21:02:21.417Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {
@@ -12408,5 +12408,15 @@
     "contentHash": "23685f9a43a5f05e63461fb3c22fb1df800f5904512764274ca4596549a8f31d",
     "lastHarvestedAt": "2026-11-12T15:04:38.650Z",
     "learningId": "learn-github-tonhowtf-omniget"
+  },
+  "hf-facebook-sam-3d-body-dinov3": {
+    "repository": "facebook/sam-3d-body-dinov3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/facebook/sam-3d-body-dinov3",
+    "sourceVersion": "hf-facebook-sam-3d-body-dinov3",
+    "license": "Open-Source",
+    "contentHash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
+    "lastHarvestedAt": "2026-11-12T21:02:16.598Z",
+    "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3"
   }
 }

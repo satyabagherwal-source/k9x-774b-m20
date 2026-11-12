@@ -9206,3 +9206,7 @@ Every entry in this ledger must capture:
 | `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `ec5e8777` | Multi-dimensional audit evidence | 2026-11-12T15:33:58.747Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `0f0b3e7e` | Multi-dimensional audit evidence | 2026-11-12T15:34:10.587Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a90bee6a` | Multi-dimensional audit evidence | 2026-11-12T15:34:12.028Z |
+| `learn-huggingface-facebook-sam-3d-body-dinov3` | `https://huggingface.co/facebook/sam-3d-body-dinov3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-12T21:02:16.598Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `3142f33a` | Multi-dimensional audit evidence | 2026-11-12T21:02:21.417Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `6181e756` | Multi-dimensional audit evidence | 2026-11-12T21:02:24.037Z |
+| `learn-dom-d-3dabaa62` | `project://hf-facebook-sam-3d-body-dinov3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | 2026-11-12T21:02:39.987Z |

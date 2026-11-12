@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:34:12.035Z",
-  "total_cycles_completed": 9017,
-  "total_learnings_persisted": 9017,
-  "total_rules_promoted": 8858,
+  "last_updated": "2026-11-12T21:02:24.057Z",
+  "total_cycles_completed": 9020,
+  "total_learnings_persisted": 9020,
+  "total_rules_promoted": 8860,
   "history": [
-    {
-      "timestamp": "2026-11-11T16:35:58.447Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:35:59.596Z",
-      "repository": "NativeScript/NativeScript",
-      "learningId": "learn-github-nativescript-nativescript",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:36:03.006Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T16:42:55.397Z",
       "repository": "linkwarden/linkwarden",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T15:34:12.035Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:02:16.604Z",
+      "repository": "facebook/sam-3d-body-dinov3",
+      "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:02:21.435Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:02:24.057Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

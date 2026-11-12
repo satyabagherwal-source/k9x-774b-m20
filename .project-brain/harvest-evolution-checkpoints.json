@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:34:18.286Z",
+  "last_updated": "2026-11-12T21:02:40.182Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -98,7 +98,7 @@
       "staged_for_review": 1
     },
     "argoproj-argo-workflows-learnings.md": {
-      "processed_at": "2026-11-11T09:49:26.581Z",
+      "processed_at": "2026-11-12T21:02:40.002Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -678,7 +678,7 @@
       "staged_for_review": 0
     },
     "sigstore-cosign-learnings.md": {
-      "processed_at": "2026-11-12T02:17:25.230Z",
+      "processed_at": "2026-11-12T21:02:40.085Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1221,9 +1221,14 @@
       "processed_at": "2026-11-12T15:34:17.766Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-facebook-sam-3d-body-dinov3-learnings.md": {
+      "processed_at": "2026-11-12T21:02:39.987Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 336,
-  "total_canonical_promoted": 41,
-  "total_staged_for_review": 294
+  "total_dossiers_evaluated": 339,
+  "total_canonical_promoted": 42,
+  "total_staged_for_review": 296
 }

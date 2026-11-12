@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-LBED",
-    "timestamp": "2026-11-09T08:43:54.997Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "15c351be2c01789d3462662b30551656554d5a9c06792e85f3301893321a5008",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-VA21",
-    "timestamp": "2026-11-09T08:51:39.817Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-    "contentHash": "11cc36fba094f6717479a39f6da9f46c5b0d169a074b6ec0e0c3640179746797",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-N4TY",
-    "timestamp": "2026-11-09T09:13:19.414Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "bffc3bcd0c6be4dc8479630d853cb6e5c03e4a8f41ff1170f3dd40fa67115867",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-O8LW",
     "timestamp": "2026-11-09T09:14:10.964Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "8875915d9dc62963da9990b2e926047b7cea90ba32fa0e732a7e8a87fb89d8af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-AEQ9",
+    "timestamp": "2026-11-12T21:02:16.593Z",
+    "repository": "facebook/sam-3d-body-dinov3",
+    "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
+    "contentHash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-AIG5",
+    "timestamp": "2026-11-12T21:02:21.413Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "f9033c9f474bbf8cd407885184c85f9c49ed58075c00a0b4fcdbb50a983b5c8f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-AKGX",
+    "timestamp": "2026-11-12T21:02:24.033Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "570227c119d9b6dbbe72ad2b63d68792ae5b201a4f5f3c0389563d93a305f5e3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

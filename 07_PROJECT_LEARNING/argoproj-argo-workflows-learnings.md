@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `d48ec29e`  
+> **Source Version**: `3142f33a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:49:07.681Z  
+> **Timestamp**: 2026-11-12T21:02:11.440Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:49:07.664Z  
+> **Harvest Timestamp**: 2026-11-12T21:02:11.276Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17088 stars
+- **Stars / Engagement**: 17093 stars
 
 ---
 
@@ -767,11 +767,14 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17484** (2026-11-11): **fix(examples): make the ci WorkflowTemplate example work (cherry-pick #17437 for 4.1)**
-  *Symptoms*: Cherry-picked fix(examples): make the ci WorkflowTemplate example work (#17437)  Signed-off-by: Alan Clucas <alan@clucas.org>
+- **Issue #17494** (2026-11-11): **ci(stale): clear problem/old draft when an item becomes active**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  A draft that gets new activity keeps `problem/old draft`, so it re-enters the stale flow and can close 28 days later even though it is active again. This was raised in [review feedback on #17493](https://github.com/argoproj/argo-workflows/pull/17493#discussion_r4544383489).  ### Modifications  - Add `problem/old draft` to `labels-to-remove-when-unstale` in `.github/workflows/stale.yaml`.  ### Verification  `actionlint` passes. The [actions/stale v11.0.0 action.yml](https://github.com/actions/stale/blob/v11.0.0/action.yml) documents `labels-to-remove-when-unstale` as a comma-delimited list.  ### Documentation  Not needed. This only changes repository automation.  ### AI  Claude Opus 5.5 drafted the change, commit message, and this description. I reviewed the diff. 
 
-- **Issue #17470** (2026-11-07): **feat: add conditional parameter visibility to workflow submissions**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [[pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/)](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [ ] Signed-off commits with [[Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/)](https://www.conventionalcommits.org/en/v1.0.0/) messages - [ ] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [ ] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  Fixes #TODO  ### Motivation  Currently, workflow parameters cannot be conditionally displayed based on the values of other workflow or template parameters. This makes submission forms less flexible, particularly for workflows with multiple deployment modes or configuration options.  This change introduces conditional parameter visibility through a `when` field, allowing workflow authors to control which parameters are displayed based on parameter values while preserving existing submission and validation behavior.  ### Modifications  - Added an optional `when` field to the Go `Parameter` API model and TypeScript parameter model. - Updated protobuf definitions and generated code, Ope
+- **Issue #17493** (2026-11-11): **ci(stale): allow manual runs and process problem/stale items**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  Maintainers can't run the stale workflow on demand. Items labeled `problem/stale` that no longer carry `problem/more information needed` never get processed, so they stay open indefinitely.  ### Modifications  - Add a `workflow_dispatch` trigger. - Replace `only-labels` with `any-of-labels: 'problem/more information needed,problem/stale,problem/old draft,problem/bot-not-ready'`. `only-labels` requires every listed label, so adding `problem/stale` there would stop new items from ever going stale. - Add the missing `>` on `close-pr-message` to match the other messages. - Grant the job `actions: write`. actions/stale needs it to list and replace its state cache, so runs can resume instead of restarting from the first item.  The first run will close two open PRs that carry `problem/stale` and have been idle since
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/argoproj/argo-workflows/pull/17493?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summa
+  > @coderabbitai > Grant `actions: write` so the stale job can read and replace its state cache.  Addressed in https://github.com/argoproj/argo-workflows/pull/17493/commits/eee65a2c4d8ecc03d2bbd6546ec4e6adc2538dd9. The last scheduled run logged "The saved state was not found", so the restore path is broken today. It does no harm yet because the run finishes all 1400 items in 15 of 30 operations. I added the scope anyway so resume works once the backlog outgrows a single run. `actions: read` alone would let the action restore old state while failing to replace it.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,451 +791,584 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e05902b` (2026-11-10)
-**Commit Message**: fix(controller): keep an ended node's message while it holds its lock (#17391)
+### Incident Patch 1: `d20aac05` (2026-11-11)
+**Commit Message**: fix(sqldb): refresh offload timestamp on duplicate save (#17471)
 
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Signed-off-by: somiljain2006 <[REDACTED_EMAIL]>
 
-**File**: `workflow/controller/operator.go` (modified, +6/-2)
+**File**: `persist/sqldb/explosive_offload_node_status_repo.go` (modified, +4/-0)
 ```diff
-@@ -3176,9 +3176,13 @@ func (woc *wfOperationCtx) markNodeWaitingForLock(ctx context.Context, nodeName
- 	}
- 
- 	if lockName == "" {
--		// If we are no longer waiting for a lock, nil out the sync status
-+		// If we are no longer waiting for a lock, nil out the sync status.
-+		// An ended node, re-entered while it holds its lock until its task
-+		// result arrives, keeps its message: it says how the node ended.
- 		node.SynchronizationStatus = nil
--		node.Message = ""
-+		if !node.Phase.Completed() {
-+			node.Message = ""
-+		}
- 	} else {
- 		node.SynchronizationStatus.Waiting = lockName
- 	}
-```
-
-**File**: `workflow/controller/operator_concurrency_test.go` (modified, +48/-0)
-```diff
-@@ -1311,3 +1311,51 @@ func TestSynchronizationFailedFirstChildReleasesLock(t *testing.T) {
- 	assert.True(t, nextHolderFound,
- 		"a sibling must have picked up the lock after the holder failed")
+@@ -34,6 +34,10 @@ func (n *explosiveOffloadNodeStatusRepo) Delete(context.Context, string, string)
+ 	return ErrOffloadNotSupported
  }
-+
-+// TestMutexNodeKeepsItsMessageUntilTaskResult checks that a pod node holding
-+// a mutex, whose pod has failed but whose task result hasn't arrived yet,
-+// keeps the message its pod gave it while it waits: re-entering the node
-+// to check its lock it still holds mustn't clear how it ended.
-+func TestMutexNodeKeepsItsMessageUntilTaskResult(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+	cancel, controller := newController(ctx)
-+	defer cancel()
-+	wf := wfv1.MustUnmarshalWorkflow(`
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: mutex-message
-+  namespace: default
-+spec:
-+  entrypoint: main
-+  templates:
-+  - name: main
-+    synchronization:
-+      mutexes:
-+      - name: test
-+    container:
-+      image: busybox
-+      command: [sh, -c, exit 1]
-+`)
-+	wf, err := controller.wfclientset.ArgoprojV1alpha1().Workflows(wf.Namespace).Create(ctx, wf, metav1.CreateOptions{})
-+	require.NoError(t, err)
-+	woc := newWorkflowOperationCtx(ctx, wf, controller)
-+	woc.operate(ctx)
-+	require.NotNil(t, woc.wf.Status.Synchronization, "the mutex is held")
-+
-+	makePodsPhase(ctx, woc, apiv1.PodFailed)
-+	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
-+	woc.wf.Status.MarkTaskResultIncomplete(ctx, woc.wf.NodeID(wf.Name))
-+	woc.operate(ctx)
-+	node, err := woc.wf.Status.Nodes.Get(woc.wf.NodeID(wf.Name))
-+	require.NoError(t, err)
-+	require.Equal(t, wfv1.NodeFailed, node.Phase)
-+	require.False(t, node.Fulfilled(), "the node waits for its task result")
-+	assert.Equal(t, "Pod failed", node.Message)
-+
-+	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
-+	woc.operate(ctx)
-+	node, err = woc.wf.Status.Nodes.Get(woc.wf.NodeID(wf.Name))
-+	require.NoError(t, err)
-+	assert.Equal(t, "Pod failed", node.Message, "still, on the next reconcile")
-+}
-```
-
----
-
-### Incident Patch 2: `d48ec29e` (2026-11-11)
-**Commit Message**: fix(executor): retry transient failures when saving HTTP and Artifactory artifacts (#17275)
-
-Signed-off-by: ashunimh <[REDACTED_EMAIL]>
-
-**File**: `docs/environment-variables.md` (modified, +3/-0)
-```diff
-@@ -140,6 +140,9 @@ Gains may vary under load: if the workflow informer is behind the controller's l
- | `REMOVE_LOCAL_ART_PATH`                | `bool`          | `false` | Whether to remove local artifacts.                                                                     |
- | `RESOURCE_STATE_CHECK_INTERVAL`        | `time.Duration` | `5s`    | The time interval between resource status checks against the specified success and failure conditions. |
  
-+The `EXECUTOR_RETRY_BACKOFF_*` variables also control how the executor retries transient failures when saving S3, HTTP and Artifactory artifacts, including archived logs.
-+For HTTP and Artifactory, the executor retries network errors, `408`, `429` and `5xx` responses, and errors matching `TRANSIENT_ERROR_PATTERN` set in the executor `env`.
-+
- You can set environment variables for the Executor in your [`workflow-controller-configmap`](workflow-controller-configmap.md) like the following:
- 
- ```yaml
-```
-
-**File**: `workflow/artifacts/http/http.go` (modified, +49/-22)
-```diff
-@@ -10,6 +10,10 @@ import (
- 
- 	"github.com/argoproj/argo-workflows/v4/errors"
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
-+	errutil "github.com/argoproj/argo-workflows/v4/util/errors"
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+	"github.com/argoproj/argo-workflows/v4/util/retry"
-+	waitutil "github.com/argoproj/argo-workflows/v4/util/wait"
- 	"github.com/argoproj/argo-workflows/v4/workflow/artifacts/common"
- )
- 
-@@ -129,41 +133,63 @@ func (h *ArtifactDriver) buildPutRequest(ctx context.Context, body io.Reader, ou
- 
- // doPutRequest sends req and fails on a non-2xx response. what describes the
- // operation in error messages, e.g. "saving file /tmp/x" or "saving stream".
--func (h *ArtifactDriver) doPutRequest(req *http.Request, url, what string) error {
-+// The returned status code is 0 if no response was received.
-+func (h *ArtifactDriver) doPutRequest(req *http.Request, url, what string) (int, error) {
- 	res, err := h.Client.Do(req)
- 	if err != nil {
--		return err
-+		return 0, err
- 	}
- 	defer func() {
- 		_ = res.Body.Close()
- 	}()
- 	if res.StatusCode < 200 || res.StatusCode >= 300 {
--		return errors.InternalErrorf("%s to %s failed with reason: %s", what, url, res.Status)
-+		return res.StatusCode, errors.InternalErrorf("%s to %s failed with reason: %s", what, url, res.Status)
- 	}
--	return nil
-+	return res.StatusCode, nil
++func (n *explosiveOffloadNodeStatusRepo) DeleteIfOld(context.Context, string, string) error {
++	return ErrOffloadNotSupported
 +}
 +
-+// isTransientSaveErr reports whether a failed upload is worth retrying: a 408,
-+// 429 or 5xx response, or an error util/errors classifies as transient (network
-+// errors and TRANSIENT_ERROR_PATTERN matches).
-+func isTransientSaveErr(ctx context.Context, statusCode int, err error) bool {
-+	if statusCode == http.StatusRequestTimeout || statusCode == http.StatusTooManyRequests || (statusCode >= 500 && statusCode < 600) {
-+		logging.RequireLoggerFromContext(ctx).WithError(err).Info(ctx, "Transient error")
-+		return true
+ func (n *explosiveOffloadNodeStatusRepo) ListOldOffloads(context.Context, string) (map[string][]string, error) {
+ 	return nil, ErrOffloadNotSupported
+ }
+```
+
+**File**: `persist/sqldb/mocks/OffloadNodeStatusRepo.go` (modified, +14/-0)
+```diff
+@@ -30,6 +30,20 @@ func (_m *OffloadNodeStatusRepo) Delete(_ context.Context, uid string, version s
+ 	return r0
+ }
+ 
++// DeleteIfOld provides a mock function with given fields: uid, version
++func (_m *OffloadNodeStatusRepo) DeleteIfOld(_ context.Context, uid string, version string) error {
++	ret := _m.Called(uid, version)
++
++	var r0 error
++	if rf, ok := ret.Get(0).(func(string, string) error); ok {
++		r0 = rf(uid, version)
++	} else {
++		r0 = ret.Error(0)
 +	}
-+	return errutil.IsTransientErr(ctx, err)
- }
- 
--// Save writes the artifact to the URL
-+// Save writes the artifact to the URL, retrying transient failures with the
-+// EXECUTOR_RETRY_BACKOFF_* backoff.
- func (h *ArtifactDriver) Save(ctx context.Context, path string, outputArtifact *wfv1.Artifact) error {
- 	cleanPath := filepath.Clean(path)
--	f, err := os.Open(cleanPath)
--	if err != nil {
--		return err
--	}
--	// http.Client.Do closes f once the request is sent; this covers the paths
--	// where it never is. A second Close is harmless.
--	defer func() {
--		_ = f.Close()
--	}()
--	req, url, err := h.buildPutRequest(ctx, f, outputArtifact)
-+	attempts := 0
-+	err := waitutil.Backoff(retry.ExecutorRetry(ctx), func() (bool, error) {
-+		attempts++
-+		f, err := os.Open(cleanPath)
-+		if err != nil {
-+			return true, err
-+		}
-+		// http.Client.Do closes f once the request is sent; this covers the paths
-+		// where it never is. A second Close is harmless.
-+		defer func() {
-+			_ = f.Close()
-+		}()
-+		req, url, err := h.buildPutRequest(ctx, f, outputArtifact)
-+		if err != nil {
-+			return true, err
-+		}
-+		// we set the GetBody func of the request in order to enable following 307 POST/PUT redirects, needed e.g. for webHDFS
-+		req.GetBody = func() (io.ReadCloser, error) {
-+			return os.Open(cleanPath)
-+		}
-+		statusCode, err := h.doPutRequest(req, url, fmt.Sprintf("saving file %s", path))
-+		return err == nil || !isTransientSaveErr(ctx, statusCode, err), err
-+	})
- 	if err != nil {
--		return err
--	}
--	// we set the GetBody func of the request in order to enable following 307 POST/PUT redirects, needed e.g. for webHDFS
--	req.GetBody = func() (io.ReadCloser, error) {
--		return os.Open(cleanPath)
-+		return fmt.Errorf("failed after %d attempt(s): %w", attempts, err)
- 	}
--	return h.doPutRequest(req, url, fmt.Sprintf("saving file %s", path))
-+	return nil
- }
- 
- // SaveStream saves an artifact from an io.Reader to HTTP URL
-@@ -183,7 +209,8 @@ func (h *ArtifactDriver) SaveStream(ctx context.Context, reader io.Reader, outpu
- 	if err != nil {
- 		return err
- 	}
--	return h.doPutRequest(req, url, "saving stream")
-+	_, err = h.doPutRequest(req, url, "saving stream")
-+	return err
- }
- 
- // Delete is unsupported for the http artifacts
++
++	return r0
++}
++
+ // Get provides a mock function with given fields: uid, version
+ func (_m *OffloadNodeStatusRepo) Get(ctx context.Context, uid string, version string) (v1alpha1.Nodes, error) {
+ 	ret := _m.Called(uid, version)
 ```
 
-**File**: `workflow/artifacts/http/http_test.go` (modified, +86/-0)
+**File**: `persist/sqldb/offload_node_status_repo.go` (modified, +77/-6)
 ```diff
-@@ -2,11 +2,13 @@ package http
+@@ -29,6 +29,11 @@ type OffloadNodeStatusRepo interface {
+ 	List(ctx context.Context, namespace string) (map[UUIDVersion]wfv1.Nodes, error)
+ 	ListOldOffloads(ctx context.Context, namespace string) (map[string][]string, error)
+ 	Delete(ctx context.Context, uid, version string) error
++	// DeleteIfOld deletes the offload record only if its updatedat timestamp is
++	// still older than the configured TTL at the time the DELETE executes.  This
++	// prevents GC from removing a record whose timestamp was refreshed by Save()
++	// between ListOldOffloads() and the deletion.
++	DeleteIfOld(ctx context.Context, uid, version string) error
+ 	IsEnabled() bool
+ }
+ 
+@@ -91,13 +96,45 @@ func (wdc *nodeOffloadRepo) Save(ctx context.Context, uid, namespace string, nod
+ 	logCtx.Debug(ctx, "Offloading nodes")
+ 	err = wdc.sessionProxy.With(ctx, func(s db.Session) error {
+ 		_, insertErr := s.Collection(wdc.tableName).Insert(record)
+-		if insertErr != nil {
+-			// if we have a duplicate, then it must have the same clustername+uid+version, which MUST mean that we
+-			// have already written this record
+-			if !isDuplicateKeyError(insertErr) {
+-				return insertErr
++		if insertErr == nil {
++			return nil
++		}
++
++		if !isDuplicateKeyError(insertErr) {
++			return insertErr
++		}
++
++		logCtx.WithField("err", insertErr).Debug(ctx, "Refreshing timestamp for duplicate offload")
++
++		rs, updateErr := s.SQL().
++			Update(wdc.tableName).
++			Set("updatedat", db.Raw("CURRENT_TIMESTAMP")).
++			Where(db.Cond{"clustername": wdc.clusterName}).
++			And(db.Cond{"uid": uid}).
++			And(db.Cond{"version": version}).
++			Exec()
++
++		if updateErr != nil {
++			return fmt.Errorf("failed to refresh timestamp for existing offload: %w", updateErr)
++		}
++		rowsAffected, updateErr := rs.RowsAffected()
++		if updateErr != nil {
++			return fmt.Errorf("failed to get rows affected after timestamp refresh: %w", updateErr)
++		}
++		if rowsAffected == 0 {
++			// In MySQL (without clientFoundRows=true), an UPDATE that writes the exact same
++			// timestamp value within the same second reports 0 changed rows even though the
++			// row matched and exists. Verify whether the row actually exists before concluding
++			// it disappeared concurrently.
++			exists, existsErr := s.Collection(wdc.tableName).
++				Find(db.Cond{"clustername": wdc.clusterName, "uid": uid, "version": version}).
++				Exists()
++			if existsErr != nil {
++				return fmt.Errorf("failed to check offload record existence: %w", existsErr)
++			}
++			if !exists {
++				return fmt.Errorf("offload record (uid=%s, version=%s) disappeared during duplicate-save: concurrent GC may have deleted it", uid, version)
+ 			}
+-			logCtx.WithField("err", insertErr).Debug(ctx, "Ignoring duplicate key error")
+ 		}
+ 		return nil
+ 	})
+@@ -236,6 +273,40 @@ func (wdc *nodeOffloadRepo) Delete(ctx context.Context, uid, version string) err
+ 	})
+ }
+ 
++// DeleteIfOld deletes the offload record only when its updatedat timestamp is
++// still older than the configured TTL at the moment the DELETE executes.  If
++// Save() refreshed the timestamp between ListOldOffloads() and this call, the
++// condition will be false and zero rows will be affected – the record is left
++// intact so that live workflows can still hydrate their node status.
++func (wdc *nodeOffloadRepo) DeleteIfOld(ctx context.Context, uid, version string) error {
++	if uid == "" {
++		return fmt.Errorf("invalid uid")
++	}
++	if version == "" {
++		return fmt.Errorf("invalid version")
++	}
++	logCtx := wdc.log.WithFields(logging.Fields{"uid": uid, "version": version})
++	logCtx.Debug(ctx, "Conditionally deleting old offloaded nodes")
++	return wdc.sessionProxy.With(ctx, func(s db.Session) error {
++		rs, err := s.SQL().
++			DeleteFrom(wdc.tableName).
++			Where(db.Cond{"clustername": wdc.clusterName}).
++			And(db.Cond{"uid": uid}).
++			And(db.Cond{"version": version}).
++			And(wdc.oldOffload()).
++			Exec()
++		if err != nil {
++			return err
++		}
++		rowsAffected, err := rs.RowsAffected()
++		if err != nil {
++			return err
++		}
++		logCtx.WithField("rowsAffected", rowsAffected).Debug(ctx, "Conditionally deleted old offloaded nodes")
++		return nil
++	})
++}
++
+ func (wdc *nodeOffloadRepo) oldOffload() string {
+ 	return fmt.Sprintf("updatedat < current_timestamp - interval '%d' second", int(wdc.ttl.Seconds()))
+ }
+```
+
+**File**: `persist/sqldb/offload_node_status_repo_mysql_test.go` (added, +160/-0)
+```diff
+@@ -0,0 +1,160 @@
++//go:build !windows
++
++package sqldb
++
++import (
++	"context"
++	"strconv"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	testcontainers "github.com/testcontainers/testcontainers-go"
++	testmysql "github.com/testcontainers/testcontainers-go/modules/mysql"
++	"github.com/testcontainers/testcontainers-go/wait"
++
++	"github.com/argoproj/argo-workflows/v4/config"
++	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
++	"github.com/argoproj/argo-workflows/v4/util/logging"
++	usqldb "github.com/argoproj/argo-workflows/v4/util/sqldb"
++)
++
++func setupMySQLOffloadRepo(ctx context.Context, t *testing.T, v usqldb.MySQLVariant) *nodeOffloadRepo {
++	t.Helper()
++
++	c, err := testmysql.Run(ctx,
++		v.Image,
++		testmysql.WithDatabase("argo"),
++		testmysql.WithUsername("argo"),
++		testmysql.WithPassword("argo"),
++		testcontainers.WithWaitStrategy(
++			wait.ForAll(
++				wait.ForLog(v.WaitMessage).WithStartupTimeout(60*time.Second),
++				wait.ForListeningPort("3306/tcp"),
++			)),
++	)
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		if termErr := testcontainers.TerminateContainer(c); termErr != nil {
++			t.Logf("failed to terminate container: %s", termErr)
++		}
++	})
++
++	host, err := c.Host(ctx)
++	require.NoError(t, err)
++	p, err := c.MappedPort(ctx, "3306/tcp")
++	require.NoError(t, err)
++	port, err := strconv.Atoi(p.Port())
++	require.NoError(t, err)
++
++	proxy, err := usqldb.NewSessionProxy(ctx, usqldb.SessionProxyConfig{
++		DBConfig: config.DBConfig{
++			MySQL: &config.MySQLConfig{
++				DatabaseConfig: config.DatabaseConfig{
++					Database: "argo",
++					Host:     host,
++					Port:     port,
++				},
++			},
++		},
++		Username: "argo",
++		Password: "argo",
++	})
++	require.NoError(t, err)
++
++	const (
++		clusterName = "test"
++		tableName   = "argo_workflows"
++	)
++
++	err = Migrate(ctx, proxy.Session(ctx), clusterName, tableName, proxy.DBType())
++	require.NoError(t, err)
++
++	t.Cleanup(func() { proxy.Close() })
++
++	return &nodeOffloadRepo{
++		sessionProxy: proxy,
++		clusterName:  clusterName,
++		tableName:    tableName,
++		ttl:          5 * time.Minute,
++		log:          logging.RequireLoggerFromContext(ctx),
++	}
++}
++
++func TestMySQLOffloadNodeStatusRepo(t *testing.T) {
++	for name, variant := range usqldb.MySQLVariants {
++		t.Run(name, func(t *testing.T) {
++			ctx := logging.TestContext(t.Context())
++			repo := setupMySQLOffloadRepo(ctx, t, variant)
++
++			uid := "mysql-test-wf"
++			namespace := "default"
++			nodes := wfv1.Nodes{"node1": wfv1.NodeStatus{Message: "msg1"}}
++
++			// 1. Initial save
++			v1, err := repo.Save(ctx, uid, namespace, nodes)
++			require.NoError(t, err)
++
++			// 2. Duplicate save in the exact same second:
++			// In MySQL without clientFoundRows, this causes RowsAffected() == 0 because updatedat
++			// was already CURRENT_TIMESTAMP. The implementation must check Exists() and NOT
++			// return a false concurrent deletion error.
++			v1Duplicate, err := repo.Save(ctx, uid, namespace, nodes)
++			require.NoError(t, err, "duplicate Save in the same second must succeed in MySQL")
++			assert.Equal(t, v1, v1Duplicate)
++
++			// 3. DeleteIfOld preserves refreshed record:
++			// Backdate the record past the TTL
++			_, err = repo.sessionProxy.Session(ctx).SQL().Exec(
++				`UPDATE argo_workflows
++				 SET updatedat = CURRENT_TIMESTAMP - INTERVAL 10 MINUTE
++				 WHERE clustername = ? AND uid = ? AND version = ?`,
++				repo.clusterName, uid, v1,
++			)
++			require.NoError(t, err)
++
++			// Verify ListOldOffloads finds it
++			oldOffloads, err := repo.ListOldOffloads(ctx, namespace)
++			require.NoError(t, err)
++			require.Contains(t, oldOffloads[uid], v1)
++
++			// Refresh timestamp with Save()
++			reusedVersion, err := repo.Save(ctx, uid, namespace, nodes)
++			require.NoError(t, err)
++			assert.Equal(t, v1, reusedVersion)
++
++			// DeleteIfOld must NOT delete the refreshed record
++			err = repo.DeleteIfOld(ctx, uid, v1)
++			require.NoError(t, err)
++
++			// Verify still retrievable
++			retrieved, err := repo.Get(ctx, uid, v1)
++			require.NoError(t, err)
++			assert.Equal(t, nodes, retrieved)
++
++			// 4. DeleteIfOld deletes genuinely old record:
++			_, err = repo.sessionProxy.Session(ctx).SQL().Exec(
++				`UPDATE argo_workflows
++				 SET updatedat = CURRENT_TIMESTAMP - INTERVAL 10 MINUTE
++				 WHERE clustername = ? AND uid = ? AND version = ?`,
++				repo.clusterName, uid, v1,
++			)
++			require.NoError(t, err)
++
++			err = repo.DeleteIfOld(ctx, uid, v1)
++			require.NoError(t, err)
++
++			_, err = repo.Get(ctx, uid, v1)
++			require.Error(t, err)
++
++			// 5. Unconditional Delete
++			v2, err := repo.Save(ctx, uid, namespace, wfv1.Nodes{"node2": wfv1.NodeStatus{Message: "msg2"}})
++			require.NoError(t, err)
++			err = repo.Delete(ctx, uid, v2)
++			require.NoError(t, err)
++			_, err = repo.Get(ctx, uid, v2)
++			require.Error(t, err)
++		})
++	}
++}
+```
+
+**File**: `persist/sqldb/offload_node_status_repo_test.go` (modified, +305/-0)
+```diff
+@@ -1,12 +1,22 @@
+ package sqldb
  
  import (
- 	"bytes"
-+	"io"
- 	"net/http"
- 	"net/http/httptest"
- 	"os"
- 	"path/filepath"
- 	"strings"
-+	"sync/atomic"
++	"runtime"
++	"strconv"
  	"testing"
++	"time"
  
  	"github.com/stretchr/testify/assert"
-@@ -262,3 +264,87 @@ func TestSaveInvalidArtifactLocation(t *testing.T) {
- 		assert.Contains(t, err.Error(), "Either Artifactory or HTTP artifact needs to be configured")
+ 	"github.com/stretchr/testify/require"
+ 
++	testcontainers "github.com/testcontainers/testcontainers-go"
++	testpostgres "github.com/testcontainers/testcontainers-go/modules/postgres"
++	"github.com/testcontainers/testcontainers-go/wait"
++
++	"github.com/argoproj/argo-workflows/v4/config"
+ 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
++	"github.com/argoproj/argo-workflows/v4/util/logging"
++	usqldb "github.com/argoproj/argo-workflows/v4/util/sqldb"
+ )
+ 
+ func Test_nodeStatusVersion(t *testing.T) {
+@@ -23,3 +33,298 @@ func Test_nodeStatusVersion(t *testing.T) {
+ 		assert.Equal(t, "fnv:2308444803", version)
  	})
  }
 +
-+// TestSaveRetry checks that Save retries transient upload failures and stops on permanent ones.
-+func TestSaveRetry(t *testing.T) {
-+	t.Setenv("EXECUTOR_RETRY_BACKOFF_DURATION", "1ms")
-+	t.Setenv("EXECUTOR_RETRY_BACKOFF_STEPS", "3")
-+	content := "main container log"
-+	tempFile := filepath.Join(t.TempDir(), "main.log")
-+	require.NoError(t, os.WriteFile(tempFile, []byte(content), 0o600))
++func setupOffloadNodeStatusRepo(t *testing.T) *nodeOffloadRepo {
++	t.Helper()
 +
-+	save := func(t *testing.T, url string) error {
-+		t.Helper()
-+		driver := &ArtifactDriver{Client: &http.Client{}}
-+		art := &wfv1.Artifact{
-+			ArtifactLocation: wfv1.ArtifactLocation{Artifactory: &wfv1.ArtifactoryArtifact{URL: url}},
++	ctx := logging.TestContext(t.Context())
++
++	postgresContainer, err := testpostgres.Run(ctx,
++		"postgres:17.4-alpine",
++		testpostgres.WithDatabase("argo"),
++		testpostgres.WithUsername("argo"),
++		testpostgres.WithPassword("argo"),
++		testcontainers.WithWaitStrategy(
++			wait.ForLog("database system is ready to accept connections").
++				WithOccurrence(2).
++				WithStartupTimeout(60*time.Second),
++		),
++	)
++	require.NoError(t, err)
++
++	t.Cleanup(func() {
++		terminateErr := testcontainers.TerminateContainer(postgresContainer)
++		if terminateErr != nil {
++			t.Logf("failed to terminate postgres container: %s", terminateErr)
 +		}
-+		return driver.Save(logging.TestContext(t.Context()), tempFile, art)
-+	}
-+
-+	tests := []struct {
-+		name             string
-+		statuses         []int // response status per attempt, the last one repeats
-+		transientPattern string
-+		wantAttempts     int32
-+		wantErr          []string
-+	}{
-+		{name: "succeeds after 5xx responses", statuses: []int{http.StatusServiceUnavailable, http.StatusBadGateway, http.StatusCreated}, wantAttempts: 3},
-+		{name: "retries 408 and 429", statuses: []int{http.StatusRequestTimeout, http.StatusTooManyRequests, http.StatusCreated}, wantAttempts: 3},
-+		{name: "gives up after EXECUTOR_RETRY_BACKOFF_STEPS attempts", statuses: []int{http.StatusInternalServerError}, wantAttempts: 3, wantErr: []string{"failed after 3 attempt(s): timed out waiting for the condition: ", "500 Internal Server Error"}},
-+		{name: "does not retry a 4xx", statuses: []int{http.StatusForbidden}, wantAttempts: 1, wantErr: []string{"failed after 1 attempt(s): ", "403 Forbidden"}},
-+		{name: "retries a 4xx matching TRANSIENT_ERROR_PATTERN", statuses: []int{http.StatusUnauthorized, http.StatusCreated}, transientPattern: "401 Unauthorized", wantAttempts: 2},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("TRANSIENT_ERROR_PATTERN", tt.transientPattern)
-+			var attempts atomic.Int32
-+			svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				// every attempt must re-send the whole file
-+				body, err := io.ReadAll(r.Body)
-+				assert.NoError(t, err)
-+				assert.Equal(t, content, string(body))
-+				n := int(attempts.Add(1))
-+				w.WriteHeader(tt.statuses[min(n, len(tt.statuses))-1])
-+			}))
-+			defer svr.Close()
-+
-+			err := save(t, svr.URL)
-+			if len(tt.wantErr) == 0 {
-+				require.NoError(t, err)
-+			} else {
-+				for _, want := range tt.wantErr {
-+					require.ErrorContains(t, err, want)
-+				}
-+			}
-+			assert.Equal(t, tt.wantAttempts, attempts.Load())
-+		})
-+	}
-+
-+	t.Run("retries a dropped connection", func(t *testing.T) {
-+		var attempts atomic.Int32
-+		svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+			if attempts.Add(1) == 1 {
-+				conn, _, err := http.NewResponseController(w).Hijack()
-+				if assert.NoError(t, err) {
-+					_ = conn.Close()
-+				}
-+				return
-+			}
-+			w.WriteHeader(http.StatusCreated)
-+		}))
-+		defer svr.Close()
-+
-+		require.NoError(t, save(t, svr.URL))
-+		assert.Equal(t, int32(2), attempts.Load())
 +	})
 +
-+	t.Run("does not retry when the file cannot be opened", func(t *testing.T) {
-+		driver := &ArtifactDriver{Client: &http.Client{}}
-+		art := &wfv1.Artifact{
-+			ArtifactLocation: wfv1.ArtifactLocation{Artifactory: &wfv1.ArtifactoryArtifact{URL: "http://127.0.0.1:1/missing.log"}},
-+		}
-+		err := driver.Save(logging.TestContext(t.Context()), filepath.Join(t.TempDir(), "missing.log"), art)
-+		require.ErrorIs(t, err, os.ErrNotExist)
++	host, err := postgresContainer.Host(ctx)
++	require.NoError(t, err)
++
++	mappedPort, err := postgresContainer.MappedPort(ctx, "5432/tcp")
++	require.NoError(t, err)
++
++	port, err := strconv.Atoi(mappedPort.Port())
++	require.NoError(t, err)
++
++	sessionProxy, err := usqldb.NewSessionProxy(ctx, usqldb.SessionProxyConfig{
++		DBConfig: config.DBConfig{
++			PostgreSQL: &config.PostgreSQLConfig{
++				DatabaseConfig: config.DatabaseConfig{
++					Database: "argo",
++					Host:     host,
++					Port:     port,
++				},
++			},
++		},
++		Username: "argo",
++		Password: "argo",
 +	})
++	require.NoError(t, err)
++
++	t.Cleanup(func() {
++		closeErr := sessionProxy.Close()
++		if closeErr != nil {
++			t.Logf("failed to close database session: %s", closeErr)
++		}
++	})
++
++	const (
++		clusterName = "test"
++		tableName   = "argo_workflows"
++	)
++
++	err = Migrate(ctx, sessionProxy.Session(ctx), clusterName, tableName, sessionProxy.DBType())
++	require.NoError(t, err)
++
++	return &nodeOffloadRepo{
++		sessionProxy: sessionProxy,
++		clusterName:  clusterName,
++		tableName:    tableName,
++		ttl:          5 * time.Minute,
++		log:          logging.RequireLoggerFromContext(ctx),
++	}
 +}
++
++func TestOffloadNodeStatusRepoSaveRefreshesTimestampOnDuplicate(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("Testcontainers are not supported on Windows")
++	}
++
++	ctx := logging.TestContext(t.Context())
++	repo := setupOffloadNodeStatusRepo(t)
++
++	uid := "test-workflow-uid"
++	namespace := "default"
++
++	nodesA := wfv1.Nodes{
++		"my-node": wfv1.NodeStatus{
++			Message: "ErrImagePull",
++		},
++	}
++
++	nodesB := wfv1.Nodes{
++		"my-node": wfv1.NodeStatus{
++			Message: "ImagePullBackOff",
++		},
++	}
++
++	// Save version A.
++	versionA, err := repo.Save(ctx, uid, namespace, nodesA)
++	require.NoError(t, err)
++
++	// Save version B.
++	versionB, err := repo.Save(ctx, uid, namespace, nodesB)
++	require.NoError(t, err)
++
++	assert.NotEqual(t, versionA, versionB)
++
++	// Make version A old by backdating its updatedat timestamp.
++	_, err = repo.sessionProxy.Session(ctx).SQL().Exec(
++		`UPDATE argo_workflows
++         SET updatedat = CURRENT_TIMESTAMP - INTERVAL '10 minutes'
++         WHERE clustername = ? AND uid = ? AND version = ?`,
++		repo.clusterName,
++		uid,
++		versionA,
++	)
++	require.NoError(t, err)
++
++	// Verify version A is considered old.
++	oldOffloads, err := repo.ListOldOffloads(ctx, namespace)
++	require.NoError(t, err)
++	assert.Contains(t, oldOffloads[uid], versionA)
++
++	// Save version A again. This should refresh updatedat.
++	reusedVersion, err := repo.Save(ctx, uid, namespace, nodesA)
++	require.NoError(t, err)
++
++	assert.Equal(t, versionA, reusedVersion)
++
++	// Verify version A is no longer considered old.
++	oldOffloads, err = repo.ListOldOffloads(ctx, namespace)
++	require.NoError(t, err)
++	assert.NotContains(t, oldOffloads[uid], versionA)
++
++	// Verify the existing offloaded nodes are still retrievable.
++	retrievedNodes, err := repo.Get(ctx, uid, versionA)
++	require.NoError(t, err)
++	assert.Equal(t, nodesA, retrievedNodes)
++}
++
++func TestDeleteIfOldPreservesRefreshedRecord(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("Testcontainers are not supported on Windows")
++	}
++
++	ctx := logging.TestContext(t.Context())
++	repo := setupOffloadNodeStatusRepo(t)
++
++	uid := "test-wf-preserve"
++	namespace := "default"
++	nodes := wfv1.Nodes{"node1": wfv1.NodeStatus{Message: "running"}}
++
++	// Save the record.
++	version, err := repo.Save(ctx, uid, namespace, nodes)
++	require.NoError(t, 
 ```
 
----
-
-### Incident Patch 3: `621e9dd4` (2026-11-10)
-**Commit Message**: fix(examples): make the ci WorkflowTemplate example work (#17437)
-
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `examples/ci-workflowtemplate.yaml` (modified, +23/-18)
+**File**: `workflow/controller/controller.go` (modified, +1/-1)
 ```diff
-@@ -67,19 +67,17 @@ spec:
-         volumeMounts:
-           - mountPath: /go/pkg/mod
-             name: work
--            subPath: mod
-+            subPath: GOMODCACHE
-           - mountPath: /root/.cache/go-build
-             name: work
--            subPath: cache
--        image: golang:1.18
-+            subPath: GOCACHE
-+        image: golang:1.27.3
-         workingDir: /go/src/github.com/golang/example
-         command: [ sh, -euxc ]
-         args:
-           - |
--            mkdir -p $(go env GOMODCACHE)
--            [ -e /mnt/GOMODCACHE ] && cp -Rf /mnt/GOMODCACHE $(go env GOMODCACHE)
--            mkdir -p $(go env GOCACHE)
--            [ -e /mnt/GOCACHE ] &&  cp -Rf /mnt/GOCACHE $(go env GOCACHE)
-+            if [ -d /mnt/GOMODCACHE ]; then cp -R /mnt/GOMODCACHE/. "$(go env GOMODCACHE)"; fi
-+            if [ -d /mnt/GOCACHE ]; then cp -R /mnt/GOCACHE/. "$(go env GOCACHE)"; fi
+@@ -902,7 +902,7 @@ func (wfc *WorkflowController) deleteOffloadedNodesForWorkflow(ctx context.Conte
+ 		if wf != nil && wf.Status.OffloadNodeStatusVersion == version {
+ 			continue
+ 		}
+-		if err := wfc.offloadNodeStatusRepo.Delete(ctx, uid, version); err != nil {
++		if err := wfc.offloadNodeStatusRepo.DeleteIfOld(ctx, uid, version); err != nil {
+ 			return err
+ 		}
+ 	}
+```
+
+**File**: `workflow/controller/controller_test.go` (modified, +42/-0)
+```diff
+@@ -764,6 +764,48 @@ func TestWorkflowController_archivedWorkflowGarbageCollector(t *testing.T) {
+ 	controller.archivedWorkflowGarbageCollector(logging.TestContext(t.Context()))
+ }
  
-     - name: cache-store
-       container:
-@@ -90,17 +88,23 @@ spec:
-           - mountPath: /root/.cache/go-build
-             name: work
-             subPath: GOCACHE
--        image: golang:1.18
--        workingDir: /go/src/github.com/golang/example
-+        image: golang:1.27.3
-+        command: [ sh, -euxc ]
-+        args:
-+          - |
-+            # Artifacts on a volume mount aren't saved, so copy the caches off the volume.
-+            mkdir -p /tmp/cache
-+            cp -R /go/pkg/mod /tmp/cache/GOMODCACHE
-+            cp -R /root/.cache/go-build /tmp/cache/GOCACHE
-       outputs:
-         artifacts:
-           - name: GOMODCACHE
--            path: /go/pkg/mod
-+            path: /tmp/cache/GOMODCACHE
-             optional: true
-             s3:
-               key: "github.com/golang/examples/{{workflow.parameters.branch}}/GOMODCACHE"
-           - name: GOCACHE
--            path: /root/.cache/go-build
-+            path: /tmp/cache/GOCACHE
-             optional: true
-             s3:
-               key: "github.com/golang/examples/{{workflow.parameters.branch}}/GOCACHE"
-@@ -117,7 +121,7 @@ spec:
-           - mountPath: /root/.cache/go-build
-             name: work
-             subPath: GOCACHE
--        image: golang:1.18
-+        image: golang:1.27.3
-         workingDir: /go/src/github.com/golang/example
-         command: [ sh, -euxc ]
-         args:
-@@ -126,7 +130,7 @@ spec:
- 
-     - name: deps
-       container:
--        image: golang:1.18
-+        image: golang:1.27.3
-         volumeMounts:
-           - mountPath: /go/src/github.com/golang/example
-             name: work
-@@ -145,7 +149,7 @@ spec:
- 
-     - name: build
-       container:
--        image: golang:1.18
-+        image: golang:1.27.3
-         volumeMounts:
-           - mountPath: /go/src/github.com/golang/example
-             name: work
-@@ -164,7 +168,7 @@ spec:
- 
-     - name: test
-       container:
--        image: golang:1.18
-+        image: golang:1.27.3
-         volumeMounts:
-           - mountPath: /go/src/github.com/golang/example
-             name: work
-@@ -182,13 +186,14 @@ spec:
-             go install github.com/jstemmer/go-junit-report@latest
-             go install github.com/alexec/junit2html@v0.0.2
- 
--            trap 'cat test.out | go-junit-report | junit2html > test-report.html' EXIT
-+            # Write the report off the work volume: artifacts on a volume mount aren't saved.
-+            trap 'cat test.out; go-junit-report < test.out | junit2html > /tmp/test-report.html' EXIT
- 
--            go test -v ./... 2>&1 > test.out
-+            go test -v ./... > test.out 2>&1
-       outputs:
-         artifacts:
-           - name: test-report
--            path: /go/src/github.com/golang/example/test-report.html
-+            path: /tmp/test-report.html
-             archive:
-               none: { }
-             s3:
++func TestWorkflowController_deleteOffloadedNodesForWorkflow_InvokesDeleteIfOld(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++
++	t.Run("MissingWorkflow", func(t *testing.T) {
++		cancel, controller := newController(ctx)
++		defer cancel()
++
++		mockRepo := &sqldbmocks.OffloadNodeStatusRepo{}
++		mockRepo.On("DeleteIfOld", "missing-uid", "v1").Return(nil)
++		mockRepo.On("DeleteIfOld", "missing-uid", "v2").Return(nil)
++		controller.offloadNodeStatusRepo = mockRepo
++
++		err := controller.deleteOffloadedNodesForWorkflow(ctx, "missing-uid", []string{"v1", "v2"})
++		require.NoError(t, err)
++		mockRepo.AssertExpectations(t)
++	})
++
++	t.Run("LiveWorkflowSkipsCurrentVersion", func(t *testing.T) {
++		wf := &wfv1.Workflow{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      "live-wf",
++				Namespace: "argo",
++				UID:       "live-uid",
++			},
++			Status: wfv1.WorkflowStatus{
++				OffloadNodeStatusVersion: "v2",
++			},
++		}
++		cancel, controller := newController(ctx, wf)
++		defer cancel()
++
++		mockRepo := &sqldbmocks.OffloadNodeStatusRepo{}
++		// v2 is live so it must NOT be deleted. Only v1 (old) should be deleted with DeleteIfOld.
++		mockRepo.On("DeleteIfOld", "live-uid", "v1").Return(nil)
++		controller.offloadNodeStatusRepo = mockRepo
++
++		err := controller.deleteOffloadedNodesForWorkflow(ctx, "live-uid", []string{"v1", "v2"})
++		require.NoError(t, err)
++		mockRepo.AssertExpectations(t)
++	})
++}
++
+ // TestWorkflowController_archiveWorkflowAux_ArchivesOnce pins that a successfully
+ // archived workflow is written to the archive exactly once. archiveWorkflow used
+ // to call archiveWorkflowAux a second time on the success path, archiving every
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17494** (2026-11-11): ci(stale): clear problem/old draft when an item becomes active (@jmeridth)
+- **PR #17493** (2026-11-11): ci(stale): allow manual runs and process problem/stale items (@jmeridth)
+- **PR #17490** (2026-11-11): chore(deps): migrate renovate dependencyDashboard config (@eeran-cs)
 - **PR #17484** (2026-11-11): fix(examples): make the ci WorkflowTemplate example work (cherry-pick #17437 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17471** (2026-11-11): fix(sqldb): refresh offload timestamp on duplicate save (@somiljain2006)
 - **PR #17470** (closed): feat: add conditional parameter visibility to workflow submissions (@somiljain2006)
-- **PR #17468** (2026-11-08): fix(controller): read the deletion timestamp directly in podOrphaned (cherry-pick #17448 for 4.0) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17467** (2026-11-08): fix(controller): read the deletion timestamp directly in podOrphaned (cherry-pick #17448 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17461** (2026-11-10): docs: update sidecar-injection.md following guidelines (cherry-pick #17405 for 4.1) (@Joibel)
-- **PR #17459** (2026-11-06): fix: skip the LogChanges diff unless the patch is logged at debug (cherry-pick #17449 for 4.1) (@argo-cd-cherry-pick-bot[bot])
 
 ---
 
@@ -1252,34 +1388,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. controller): keep an ended node's message while it holds its lock (#17391)
+## X. sqldb): refresh offload timestamp on duplicate save (#17471)
 
 **RULE**:
-When implementing operations in `workflow/controller/operator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `persist/sqldb/explosive_offload_node_status_repo.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e05902b`: controller): keep an ended node's message while it holds its lock (#17391). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d20aac05`: sqldb): refresh offload timestamp on duplicate save (#17471). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/operator.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `persist/sqldb/explosive_offload_node_status_repo.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// If we are no longer waiting for a lock, nil out the sync status.
-		// An ended node, re-entered while it holds its lock until its task
-		// result arrives, keeps its message: it says how the node ended.
-		if !node.Phase.Completed() {
-			node.Message = ""
-		}
+func (n *explosiveOffloadNodeStatusRepo) DeleteIfOld(context.Context, string, string) error {
+	return ErrOffloadNotSupported
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		// If we are no longer waiting for a lock, nil out the sync status
-		node.Message = ""
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e05902b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d20aac05` are properly handled with clean fallback behavior.

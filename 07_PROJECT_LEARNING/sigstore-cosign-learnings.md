@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `195ab76b`  
+> **Source Version**: `6181e756`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:34:12.374Z  
+> **Timestamp**: 2026-11-12T21:02:13.715Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:27:51.331Z  
+> **Harvest Timestamp**: 2026-11-12T21:02:13.709Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6433 stars
+- **Stars / Engagement**: 6435 stars
 
 ---
 
@@ -1797,17 +1797,187 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `195ab76b` (2026-11-12)
-**Commit Message**: chore(deps): bump github.com/sigstore/sigstore-go (#5208)
+### Incident Patch 1: `6181e756` (2026-11-12)
+**Commit Message**: chore(deps): bump the gomod group across 1 directory with 6 updates (#5217)
 
-Bumps [github.com/sigstore/sigstore-go](https://github.com/sigstore/sigstore-go) from 1.3.1-0.20261021152419-0161b209ec10 to 1.4.0.
-- [Release notes](https://github.com/sigstore/sigstore-go/releases)
-- [Commits](https://github.com/sigstore/sigstore-go/commits/v1.4.0)
+Bumps the gomod group with 6 updates in the / directory:
+
+| Package | From | To |
+| --- | --- | --- |
+| [github.com/go-jose/go-jose/v4](https://github.com/go-jose/go-jose) | `4.1.7` | `4.1.9` |
+| [github.com/sigstore/rekor-tiles/v2](https://github.com/sigstore/rekor-tiles) | `2.4.0` | `2.4.1` |
+| [github.com/sigstore/sigstore](https://github.com/sigstore/sigstore) | `1.11.2` | `1.11.3` |
+| [github.com/sigstore/sigstore/pkg/signature/kms/aws](https://github.com/sigstore/sigstore) | `1.11.2` | `1.11.3` |
+| [github.com/sigstore/sigstore/pkg/signature/kms/azure](https://github.com/sigstore/sigstore) | `1.11.2` | `1.11.3` |
+| [github.com/sigstore/sigstore/pkg/signature/kms/hashivault](https://github.com/sigstore/sigstore) | `1.11.2` | `1.11.3` |
+
+
+
+Updates `github.com/go-jose/go-jose/v4` from 4.1.7 to 4.1.9
+- [Release notes](https://github.com/go-jose/go-jose/releases)
+- [Commits](https://github.com/go-jose/go-jose/compare/v4.1.7...v4.1.9)
+
+Updates `github.com/sigstore/rekor-tiles/v2` from 2.4.0 to 2.4.1
+- [Release notes](https://github.com/sigstore/rekor-tiles/releases)
+- [Changelog](https://github.com/sigstor
+
+**File**: `go.mod` (modified, +23/-23)
+```diff
+@@ -12,7 +12,7 @@ require (
+ 	github.com/digitorus/timestamp v0.0.0-20231217203849-220c5c2851b7
+ 	github.com/dustin/go-humanize v1.1.0
+ 	github.com/eclipse-keypont/crypto11 v1.6.8
+-	github.com/go-jose/go-jose/v4 v4.1.7
++	github.com/go-jose/go-jose/v4 v4.1.9
+ 	github.com/go-openapi/runtime v0.33.4
+ 	github.com/go-openapi/strfmt v0.27.4
+ 	github.com/go-openapi/swag/conv v0.29.2
+@@ -35,13 +35,13 @@ require (
+ 	github.com/secure-systems-lab/go-securesystemslib v0.11.1
+ 	github.com/sigstore/protobuf-specs v0.5.2
+ 	github.com/sigstore/rekor v1.5.5
+-	github.com/sigstore/rekor-tiles/v2 v2.4.0
+-	github.com/sigstore/sigstore v1.11.2
++	github.com/sigstore/rekor-tiles/v2 v2.4.1
++	github.com/sigstore/sigstore v1.11.3
+ 	github.com/sigstore/sigstore-go v1.4.0
+-	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2
+-	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2
++	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3
++	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.3
+ 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.2
+-	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.11.2
++	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.11.3
+ 	github.com/sigstore/timestamp-authority/v2 v2.2.0
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/spf13/pflag v1.1.0
+@@ -67,7 +67,7 @@ require (
+ 
+ require (
+ 	cloud.google.com/go v0.123.0 // indirect
+-	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
++	cloud.google.com/go/auth v0.24.1 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
+ 	cloud.google.com/go/iam v1.14.0 // indirect
+ 	cloud.google.com/go/kms v1.35.0 // indirect
+@@ -108,23 +108,23 @@ require (
+ 	github.com/alibabacloud-go/tea-utils/v2 v2.0.9 // indirect
+ 	github.com/aliyun/credentials-go v1.4.7 // indirect
+ 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+-	github.com/aws/aws-sdk-go-v2 v1.47.3 // indirect
+-	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
++	github.com/aws/aws-sdk-go-v2 v1.47.5 // indirect
++	github.com/aws/aws-sdk-go-v2/config v1.33.12 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.20.12 // indirect
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/ecr v1.55.3 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.38.10 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/kms v1.61.4 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
+-	github.com/aws/smithy-go v1.28.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
++	github.com/aws/aws-sdk-go-v2/service/kms v1.62.2 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
++	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
++	github.com/aws/smithy-go v1.28.7 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/buildkite/go-pipeline v0.18.0 // indirect
+ 	github.com/buildkite/interpolate v0.1.5 // indirect
+@@ -231,7 +231,7 @@ require (
+ 	github.com/pkg/errors v0.9.1 // indirect
+ 	github.com/prometheus/client_golang v1.25.0 // indirect
+ 	github.com/prometheus/client_model v0.6.3 // indirect
+-	github.com/prometheus/common v0.72.0 // indirect
++	github.com/prometheus/common v0.72.1 // indirect
+ 	github.com/prometheus/procfs v0.22.0 // indirect
+ 	github.com/protocolbuffers/txtpbfmt v0.0.0-20260420112717-c39628bde8b5 // indirect
+ 	github.com/rogpeppe/go-internal v1.16.0 // indirect
+```
+
+**File**: `go.sum` (modified, +46/-46)
+```diff
+@@ -1,8 +1,8 @@
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
+ cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
+-cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8LOI40z6s+DL1cO/L1KSm9hVGnibn8=
+-cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
++cloud.google.com/go/auth v0.24.1 h1:NTmd2iJb4DsGIav0KiqFMYI88nMshA2wnFMBatRmoCs=
++cloud.google.com/go/auth v0.24.1/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
+ cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
+ cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
+ cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
+@@ -146,40 +146,40 @@ github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0 h1:jfIu9sQUG6Ig
+ github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0/go.mod h1:t2tdKJDJF9BV14lnkjHmOQgcvEKgtqs5a1N3LNdJhGE=
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
+-github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
+-github.com/aws/aws-sdk-go-v2 v1.47.3/go.mod h1:xSl+OSI5ZUw6bSMupWc218zE5Pl+65MCCu3ySWFY99A=
+-github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
+-github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRDNwrZIYy8yMCYa7oK3WKTJ/I1I=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyXwQRJVE+sC4Wm0qBIKHsk=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 h1:CqL8NN3p4I0JTwwV5MEoatIl4Y2amZ2X9dRD+0hbRL0=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6/go.mod h1:exdJ32hMqXl0Wyo6NwqEC5yIhtua3+PDaKE8P29m4qE=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 h1:FpBq24TG6WVSObTNhQOv7Q0088rounUUlwn3zlNItkM=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6/go.mod h1:ONzdPVYC95oBOu0VWNEsKEntcoemP3xVKjT+qWml1s4=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3VvGMOdbGemtUhX4=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
++github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2LnLS4=
++github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
++github.com/aws/aws-sdk-go-v2/config v1.33.12 h1:IV1YARaXahwCqUIyP8IlWsP85Lil+5ozTozDQXPumRk=
++github.com/aws/aws-sdk-go-v2/config v1.33.12/go.mod h1:h51R06bzMVwNBRZOX5ylHhNDnkB/azZeq/LvxM6q2pQ=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.12 h1:6P7Q7yH/GIwHg6MLKv3ySsBqaCoE1z+C0OTzYMenhEY=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.12/go.mod h1:Kw/SaoW/wc7IqJErqXJIzKo8b7Aelxfbuc6XlbrRnsc=
++github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 h1:iXjy2SFhGYNB1jWZBhQqq8HbhsbPF23w+/zbMvPXsTg=
++github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5/go.mod h1:k0RUiBnyXU0AXRJ9tJmY2jQke6XUIX2PNVnWtvgaPtc=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 h1:gzIWc3DTPfPbWKrQnmL6BV6WD7NPD1htxzgdk/bQ/Z4=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8/go.mod h1:vvUA5cDAZWGo4R14FZPZfXfJCmgsafOWEq78Kg0D+ug=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 h1:PWv+vG8aCLS8qd+HPdYhK7Vees90aKHWFFQ1AGYD/8E=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8/go.mod h1:xxPZEpflYHJA12366ZGyq66z9dHPCoeCIu99Jck+MPw=
++github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 h1:WOp5De9iWdEHDPh2Kb0tBP3vGBm/dVAuRGh4a4tqduo=
++github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8/go.mod h1:z8W8YgfhbWl62XqcTtK+CxPrE+iHGRVUOtrrbIOp7ZY=
+ github.com/aws/aws-sdk-go-v2/service/ecr v1.55.3 h1:RtGctYMmkTerGClvdY6bHXdtly4FeYw9wz/NPz62LF8=
+ github.com/aws/aws-sdk-go-v2/service/ecr v1.55.3/go.mod h1:vBfBu24Ka3/5UZtepbTV0gnc9VPLT8ok+0oDDaYAzn4=
+ github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.38.10 h1:1A/sI3LNMi3fhRI5TFLMwwo7ALAALSFVCSGvFlr1Iys=
+ github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.38.10/go.mod h1:Diyyyz0b43X13pdi1mVMqlTwDjOmRbJMvDsqnduUYWM=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 h1:e6YW5uME30TkrElR+4/xcY7NB6CCj2dcv7vtmGXhfhQ=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21/go.mod h1:obpHAMP693+f3/A8PkLhIqfK1C+NWWn8zXzqD3OH520=
+-github.com/aws/aws-sdk-go-v2/service/in
+```
+
+---
+
+### Incident Patch 2: `bc2c3a5c` (2026-11-12)
+**Commit Message**: chore(deps): bump github.com/open-policy-agent/opa from 1.21.4 to 1.22.2 (#5213)
+
+Bumps [github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa) from 1.21.4 to 1.22.2.
+- [Release notes](https://github.com/open-policy-agent/opa/releases)
+- [Changelog](https://github.com/open-policy-agent/opa/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-policy-agent/opa/compare/v1.21.4...v1.22.2)
 
 ---
 updated-dependencies:
-- dependency-name: github.com/sigstore/sigstore-go
-  dependency-version: 1.4.0
+- dependency-name: github.com/open-policy-agent/opa
+  dependency-version: 1.22.2
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
@@ -1815,259 +1985,103 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `go.mod` (modified, +9/-9)
+**File**: `go.mod` (modified, +3/-4)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/sigstore/cosign/v3
- 
--go 1.27
-+go 1.27.0
- 
- require (
- 	cloud.google.com/go/compute/metadata v0.10.0
-@@ -35,9 +35,9 @@ require (
+@@ -30,7 +30,7 @@ require (
+ 	github.com/moby/term v0.5.2
+ 	github.com/mozillazg/docker-credential-acr-helper v0.4.2
+ 	github.com/nozzle/throttler v0.0.0-20180817012639-2ea982251481
+-	github.com/open-policy-agent/opa v1.21.4
++	github.com/open-policy-agent/opa v1.22.2
+ 	github.com/osscontainertools/docker-credential-acr v1.0.1
  	github.com/secure-systems-lab/go-securesystemslib v0.11.1
  	github.com/sigstore/protobuf-specs v0.5.2
- 	github.com/sigstore/rekor v1.5.5
--	github.com/sigstore/rekor-tiles/v2 v2.3.0
-+	github.com/sigstore/rekor-tiles/v2 v2.4.0
- 	github.com/sigstore/sigstore v1.11.2
--	github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10
-+	github.com/sigstore/sigstore-go v1.4.0
- 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2
- 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2
- 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.2
-@@ -162,7 +162,7 @@ require (
- 	github.com/go-openapi/loads v0.25.3 // indirect
- 	github.com/go-openapi/runtime/server-middleware v0.33.4 // indirect
- 	github.com/go-openapi/spec v1.0.1 // indirect
--	github.com/go-openapi/swag v0.28.0 // indirect
-+	github.com/go-openapi/swag v0.29.2 // indirect
- 	github.com/go-openapi/swag/cmdutils v0.29.2 // indirect
- 	github.com/go-openapi/swag/fileutils v0.29.2 // indirect
- 	github.com/go-openapi/swag/jsonutils v0.29.2 // indirect
-@@ -187,7 +187,7 @@ require (
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
- 	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
- 	github.com/hashicorp/errwrap v1.1.0 // indirect
- 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
- 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-@@ -268,8 +268,8 @@ require (
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
- 	github.com/zalando/go-keyring v0.2.8 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0 // indirect
--	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
+@@ -234,7 +234,6 @@ require (
+ 	github.com/prometheus/common v0.72.0 // indirect
+ 	github.com/prometheus/procfs v0.22.0 // indirect
+ 	github.com/protocolbuffers/txtpbfmt v0.0.0-20260420112717-c39628bde8b5 // indirect
+-	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
+ 	github.com/rogpeppe/go-internal v1.16.0 // indirect
+ 	github.com/rs/cors v1.11.1 // indirect
+ 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+@@ -249,7 +248,6 @@ require (
+ 	github.com/spf13/cast v1.10.0 // indirect
+ 	github.com/subosito/gotenv v1.6.0 // indirect
+ 	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d // indirect
+-	github.com/tchap/go-patricia/v2 v2.3.3 // indirect
+ 	github.com/thales-e-security/pool v0.0.2 // indirect
+ 	github.com/theupdateframework/go-tuf v0.7.0 // indirect
+ 	github.com/tink-crypto/tink-go-awskms/v3 v3.0.0 // indirect
+@@ -260,7 +258,7 @@ require (
+ 	github.com/transparency-dev/formats v0.1.1 // indirect
+ 	github.com/urfave/negroni v1.0.0 // indirect
+ 	github.com/valyala/fastjson v1.6.10 // indirect
+-	github.com/vektah/gqlparser/v2 v2.5.37 // indirect
++	github.com/vektah/gqlparser/v2 v2.5.58 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
+ 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+@@ -273,6 +271,7 @@ require (
  	go.opentelemetry.io/otel v1.47.0 // indirect
  	go.opentelemetry.io/otel/log v1.47.0 // indirect
  	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-@@ -283,9 +283,9 @@ require (
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
- 	google.golang.org/grpc v1.84.0 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +20/-20)
+**File**: `go.sum` (modified, +4/-8)
 ```diff
-@@ -324,8 +324,8 @@ github.com/go-openapi/spec v1.0.1 h1:lj2vdGpNDcVgwRc6qXdw6qt/KQpCtSa9tnUH6vpDPDk
- github.com/go-openapi/spec v1.0.1/go.mod h1:M//GWQGtDUAjnP37gE6fInLgaczB+FatoipV3H1fYw8=
- github.com/go-openapi/strfmt v0.27.4 h1:E1xsvHb8R9vsuYru4TP2PVVTv9AIgSFAUACUZrFQfCI=
- github.com/go-openapi/strfmt v0.27.4/go.mod h1:SCOff81PPhU26acBiW96jHaFycEbT2nkQRvojM+V2z0=
--github.com/go-openapi/swag v0.28.0 h1:xkgbOSKj6DZziNpyqRRAOt3GJGtgjgsd2RoyT30VWuw=
--github.com/go-openapi/swag v0.28.0/go.mod h1:4qYnT3Cqr1p1VknOdPo70evN4rgQnAg6jwApHyxSGIg=
-+github.com/go-openapi/swag v0.29.2 h1:9n8frkcsuQRA0INU31VbxNxt1zBaHxrHYGEf5BUjFi4=
-+github.com/go-openapi/swag v0.29.2/go.mod h1:RkCiX1gCVXWgLOavDXE3ALJrQ/VO2ziiIzOUs3z10xo=
- github.com/go-openapi/swag/cmdutils v0.29.2 h1:cXEzX/nWCODon251f+1HgL75/R4XXML5IZxgLCWMoro=
- github.com/go-openapi/swag/cmdutils v0.29.2/go.mod h1:XziaSVzYqkDvpWXzASfWajw2YvJrLscq610O2XiyqJw=
- github.com/go-openapi/swag/conv v0.29.2 h1:8c9shoB8l0QRSR6ymq1llHdBWDqpIgJfjTGHx3Vuhm0=
-@@ -363,8 +363,8 @@ github.com/go-quicktest/qt v1.102.0/go.mod h1:p4lGIVX+8Wa6ZPNDvqcxq36XpUDLh42FLe
- github.com/go-rod/rod v0.116.2 h1:A5t2Ky2A+5eD/ZJQr1EfsQSe5rms5Xof/qj296e+ZqA=
- github.com/go-rod/rod v0.116.2/go.mod h1:H+CMO9SCNc2TJ2WfrG+pKhITz57uGNYU43qYHh438Mg=
- github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
--github.com/go-test/deep v1.1.1 h1:0r/53hagsehfO4bzD2Pgr/+RgHqhmf+k1Bpse2cTu1U=
--github.com/go-test/deep v1.1.1/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
-+github.com/go-test/deep v1.1.2 h1:JUuyv17rKrqYfLFnP9A4Yh6hw0635ugB93bMg2bwuDQ=
-+github.com/go-test/deep v1.1.2/go.mod h1:lwVFiFFWPjydTsV3xGJ/YTQsnWwi8zxBFM+gOVcwINE=
- github.com/go-viper/mapstructure/v2 v2.5.0 h1:vM5IJoUAy3d7zRSVtIwQgBj7BiWtMPfmPEgAXnvj1Ro=
- github.com/go-viper/mapstructure/v2 v2.5.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
- github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
-@@ -441,8 +441,8 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w7
- github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 h1:UH//fgunKIs4JdUbpDl1VZCDaL56wXCB/5+wF6uHfaI=
- github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4 h1:9ZJYjPEJpcleIKcqysXOo14NLQYwu23fzmKRFpIjPjc=
- github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4/go.mod h1:0xydIeg2omQ9DH6zYMP24Kk57793rnLUvP8fwdbFvz8=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 h1:/Tnpcb2E0Pz/tN9s3bfEY2Q8ePCEX9iuS+cneUwncnw=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0/go.mod h1:zOBXOsUaBSjKgmH4OGzV1esUpR3oUSCPYVd2cUBjKYY=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 h1:QMILzF8BA7xftE4zVORkRrlv08m12St3csK4RsyRgRs=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0/go.mod h1:+ZQ6iUL8+ATyxGDQNuRKpNwJFdGDUi0e7E1QL9MvI7U=
- github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
- github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY2I=
- github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
-@@ -631,12 +631,12 @@ github.com/sigstore/protobuf-specs v0.5.2 h1:RSWWUY8QrVTxbYH00jY/jg2e7YnjzrpwP+P
- github.com/sigstore/protobuf-specs v0.5.2/go.mod h1:DRBzpFuE+LnvQMN10/dU6nBeKwVLGEQ6o2FovN2Rats=
- github.com/sigstore/rekor v1.5.5 h1:nZKTBT0uRlKaFW4PafFIE7F5H26PInFF2qOlWouKYYA=
- github.com/sigstore/rekor v1.5.5/go.mod h1:A0e/gTyJ5qCQn6/Zz2T0+TE+W3akuaLF5O0HJ4ogjgA=
--github.com/sigstore/rekor-tiles/v2 v2.3.0 h1:HhMgH61UP0t899V8Fjt7pz1YdgOBptbaQdnCF+79cdc=
--github.com/sigstore/rekor-tiles/v2 v2.3.0/go.mod h1:DEFiKSyQ4nF75QRVNdOPaIH3cmvMkO2B6xDZjNYngPc=
-+github.com/sigstore/rekor-tiles/v2 v2.4.0 h1:Q5vQvZPrHXBzz5/WuF4q7D9RGUm/JzXJQhNGpd4G5Pw=
-+github.com/sigstore/rekor-tiles/v2 v2.4.0/go.mod h1:CwJCXjoMBNFKctuPZToeQytli9Nfx1Tvzm09AyJHJNM=
- github.com/sigstore/sigstore v1.11.2 h1:oFPZIqFuOFJcTfNMW847kvq/czev7oeo/eDYPPMRwr8=
- github.com/sigstore/sigstore v1.11.2/go.mod h1:72vQpQeeHgCFJzQnLX1w2sD1HjSJTEeW300ialacOkI=
--github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10 h1:Vo/RyRAj1NOccLJwJ5V39+oXI1aCcw3MKPangzG3Rq0=
--github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10/go.mod h1:OvOUhstHC1stzzLMaylr2hudZ604aJ8BxU3oed/71Lc=
-+github.com/sigstore/sigstore-go v1.4.0 h1:CGdFdZLhYSc42yYN0+lL6yWh7v0z3S0i21v50lvSYKw=
-+github.com/sigstore/sigstore-go v1.4.0/go.mod h1:T2Csm9q65ZVCrTB8q1fP60wR9Z9Hf1286zBTd6pDG88=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2 h1:ll52dCkIiLuB2V/GcddjieE0+EjA3INqC0HYITavVFQ=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2/go.mod h1:agtjJMPuI6q2rBTM0XZiOFsZjlcZnTi7xkBFQt0NISY=
- github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2 h1:/gBoE9TCQPu8WX6IpCsub7EhQKhGbIrLyGDz5Neo/dc=
-@@ -751,10 +751,10 @@ gitlab.com/gitlab-org/api/client-go/v3 v3.32.0 h1:hisNyZHah2TjxlP4C5rgsu+9QSvvTa
- gitlab.com/gitlab-org/api/client-go/v3 v3.32.0/go.mod h1:jBFhGkTHLKkgeHEdS/A8yA0tQ6UHq96QVsS5muu6flM=
- go.opentelemet
-```
-
----
-
-### Incident Patch 2: `e074e302` (2026-11-12)
-**Commit Message**: chore(deps): bump the actions group with 8 updates (#5214)
-
-Bumps the actions group with 8 updates:
-
-| Package | From | To |
-| --- | --- | --- |
-| [sigstore/cosign-installer](https://github.com/sigstore/cosign-installer) | `4.1.2` | `4.1.3` |
-| [docker/login-action](https://github.com/docker/login-action) | `4.7.0` | `4.8.0` |
-| [chainguard-dev/actions/donotsubmit](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [chainguard-dev/actions/setup-mirror](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [chainguard-dev/actions/kind-diag](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [mikefarah/yq](https://github.com/mikefarah/yq) | `4.54.1` | `4.54.2` |
-| [chainguard-dev/actions/trailing-space](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [chainguard-dev/actions/eof-newline](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-
-
-Updates `sigstore/cosign-installer` from 4.1.2 to 4.1.3
-- [Release notes](https://github.com/sigstore/cosign-installer/releases)
-- [Commits](https://github.com/sigstore/cosign-installer/compare/6f9f17788090df1f26f669e9d70d6ae9567deba6...756fe2d284c7292c4e9b62c8a28f1e5629c5
-
-**File**: `.github/workflows/build.yaml` (modified, +2/-2)
-```diff
-@@ -48,7 +48,7 @@ jobs:
-         with:
-           persist-credentials: false
- 
--      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-+      - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
- 
-       - name: Extract version of Go to use
-         run: echo "GOVERSION=$(awk -F'[:@]' '/FROM golang/{print $2; exit}' Dockerfile)" >> $GITHUB_ENV
-@@ -72,7 +72,7 @@ jobs:
-         run: gcloud auth configure-docker --quiet
- 
-       - name: Login to GitHub Container Registry
--        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-         with:
-           registry: ghcr.io
-           username: ${{ github.actor }}
-```
-
-**File**: `.github/workflows/donotsubmit.yaml` (modified, +1/-1)
-```diff
-@@ -40,4 +40,4 @@ jobs:
-           persist-credentials: false
- 
-       - name: Do Not Submit
--        uses: chainguard-dev/actions/donotsubmit@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+        uses: chainguard-dev/actions/donotsubmit@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-```
-
-**File**: `.github/workflows/e2e-tests.yml` (modified, +2/-2)
-```diff
-@@ -151,7 +151,7 @@ jobs:
-         cache: false
- 
-     - name: Setup mirror
--      uses: chainguard-dev/actions/setup-mirror@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      uses: chainguard-dev/actions/setup-mirror@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-       with:
-         mirror: mirror.gcr.io
- 
-@@ -262,4 +262,4 @@ jobs:
- 
-     - name: Collect diagnostics
-       if: ${{ failure() }}
--      uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-```
-
-**File**: `.github/workflows/kind-verify-attestation.yaml` (modified, +2/-2)
-```diff
-@@ -67,7 +67,7 @@ jobs:
-     - uses: ko-build/setup-ko@61b4d1d396f5b2e7d6bb6fefdce3dc38d1a13445 # v0.10
- 
-     - name: Install yq
--      uses: mikefarah/yq@504fc38780cc46be8444ea1b72fb55919fc0bfb0 # v4.54.1
-+      uses: mikefarah/yq@a4330671f17776618660a419ab2531e4f4dc48b6 # v4.54.2
- 
-     - name: build cosign
-       run: |
-@@ -180,7 +180,7 @@ jobs:
- 
-     - name: Collect diagnostics
-       if: ${{ failure() }}
--      uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
- 
-     - name: Create vuln attestation for it
-       run: |
-```
-
-**File**: `.github/workflows/tests.yaml` (modified, +1/-1)
-```diff
-@@ -185,7 +185,7 @@ jobs:
- 
-       - name: Collect diagnostics
-         if: ${{ failure() }}
--        uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+        uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
- 
-   e2e-windows-powershell-tests:
-     name: Run PowerShell E2E tests
-```
-
-**File**: `.github/workflows/whitespace.yaml` (modified, +2/-2)
-```diff
-@@ -38,8 +38,8 @@ jobs:
-         with:
-           persist-credentials: false
- 
--      - uses: chainguard-dev/actions/trailing-space@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      - uses: chainguard-dev/actions/trailing-space@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-         if: ${{ always() }}
- 
--      - uses: chainguard-dev/actions/eof-newline@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      - uses: chainguard-dev/actions/eof-newline@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-         if: ${{ always() }}
+@@ -570,8 +570,8 @@ github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1y
+ github.com/onsi/gomega v1.17.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAlGdZY=
+ github.com/onsi/gomega v1.19.0 h1:4ieX6qQjPP/BfC3mpsAtIGGlxTWPeA3Inl/7DtXw1tw=
+ github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
+-github.com/open-policy-agent/opa v1.21.4 h1:zTVuy8yd8BM715t8WxMzAIkIX4w1x3MMHEv99IGUY2w=
+-github.com/open-policy-agent/opa v1.21.4/go.mod h1:mHDS61rXyiZ+9bLINSK634BcbPZcsZChPvSwFVMj88g=
++github.com/open-policy-agent/opa v1.22.2 h1:WzqReKk2VjcvBN/NQTlcIxKqFPKpzIdb6KYMHzPEbe0=
++github.com/open-policy-agent/opa v1.22.2/go.mod h1:yspbCEa/ZmNfyZTOpfCwf4lBD08E7CHMe26Ol1FHKRk=
+ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
+ github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
+ github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
+@@ -605,8 +605,6 @@ github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0o
+ github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
+ github.com/protocolbuffers/txtpbfmt v0.0.0-20260420112717-c39628bde8b5 h1:Mckui8l+Wqz2Ve7XQvsE8SbHNmDWu8NA7Xce5NFJ/kM=
+ github.com/protocolbuffers/txtpbfmt v0.0.0-20260420112717-c39628bde8b5/go.mod h1:JSbkp0BviKovYYt9XunS95M3mLPibE9bGg+Y95DsEEY=
+-github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 h1:bsUq1dX0N8AOIL7EB/X911+m4EHsnWEHeJ0c+3TTBrg=
+-github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
+ github.com/rogpeppe/go-internal v1.16.0 h1:O9DK+vNMDVGLr2BeZqmpLeMjiMNkuXfcqntWbZV6S5g=
+ github.com/rogpeppe/go-internal v1.16.0/go.mod h1:DrUVZyrJU+txYW5/1kwtXQSMFio52ZOxX7yM1VHvnxs=
+ github.com/rs/cors v1.11.1 h1:eU3gRzXLRK57F5rKMGMZURNdIG4EoAmX8k94r9wXWHA=
+@@ -688,8 +686,6 @@ github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8
+ github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
+ github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d h1:vfofYNRScrDdvS342BElfbETmL1Aiz3i2t0zfRj16Hs=
+ github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d/go.mod h1:RRCYJbIwD5jmqPI9XoAFR0OcDxqUctll6zUj/+B4S48=
+-github.com/tchap/go-patricia/v2 v2.3.3 h1:xfNEsODumaEcCcY3gI0hYPZ/PcpVv5ju6RMAhgwZDDc=
+-github.com/tchap/go-patricia/v2 v2.3.3/go.mod h1:VZRHKAb53DLaG+nA9EaYYiaEx6YztwDlLElMsnSHD4k=
+ github.com/tetratelabs/wazero v1.12.0 h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=
+ github.com/tetratelabs/wazero v1.12.0/go.mod h1:LvKtzl2RqO4gyF27BiXU+nKAjcV8f38U+kP/q2vgxh0=
+ github.com/thales-e-security/pool v0.0.2 h1:RAPs4q2EbWsTit6tpzuvTFlgFRJ3S8Evf5gtvVDbmPg=
+@@ -717,8 +713,8 @@ github.com/urfave/negroni v1.0.0 h1:kIimOitoypq34K7TG7DUaJ9kq/N4Ofuwi1sjz0KipXc=
+ github.com/urfave/negroni v1.0.0/go.mod h1:Meg73S6kFm/4PpbYdq35yYWoCZ9mS/YSx+lKnmiohz4=
+ github.com/valyala/fastjson v1.6.10 h1:/yjJg8jaVQdYR3arGxPE2X5z89xrlhS0eGXdv+ADTh4=
+ github.com/valyala/fastjson v1.6.10/go.mod h1:e6FubmQouUNP73jtMLmcbxS6ydWIpOfhz34TSfO3JaE=
+-github.com/vektah/gqlparser/v2 v2.5.37 h1:jbb1Ilv+xBklV6653tKb4oVUupPNTLb5LmrnBKVI12Y=
+-github.com/vektah/gqlparser/v2 v2.5.37/go.mod h1:9O4Ox6Ngd3Y12bMD3w6i3CRQXh8W1oC1q0m6olCymDM=
++github.com/vektah/gqlparser/v2 v2.5.58 h1:yHxQ3EjU2OGuDMh6noxxmZova1HkBM3CbdGtL+rvjOc=
++github.com/vektah/gqlparser/v2 v2.5.58/go.mod h1:9O4Ox6Ngd3Y12bMD3w6i3CRQXh8W1oC1q0m6olCymDM=
+ github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1 h1:+dBg5k7nuTE38VVdoroRsT0Z88fmvdYrI2EjzJst35I=
+ github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1/go.mod h1:nmuySobZb4kFgFy6BptpXp/BBw+xFSyvVPP6auoJB4k=
+ github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5217** (2026-11-12): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #5214** (2026-11-12): chore(deps): bump the actions group with 8 updates (@dependabot[bot])
+- **PR #5213** (2026-11-12): chore(deps): bump github.com/open-policy-agent/opa from 1.21.4 to 1.22.2 (@dependabot[bot])
 - **PR #5212** (closed): chore(deps): bump github.com/sigstore/rekor-tiles/v2 from 2.4.0 to 2.4.1 (@dependabot[bot])
 - **PR #5211** (closed): chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
-- **PR #5208** (2026-11-12): chore(deps): bump github.com/sigstore/sigstore-go from 1.3.1-0.20261021152419-0161b209ec10 to 1.4.0 (@dependabot[bot])
-- **PR #5206** (closed): chore(deps): bump the gomod group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #5204** (2026-11-04): chore(deps): bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
+- **PR #5210** (2026-11-12): chore(deps): bump gitlab.com/gitlab-org/api/client-go/v3 from 3.32.0 to 3.46.0 (@dependabot[bot])
 
 ---
 
@@ -2087,13 +2101,13 @@ Updates `sigstore/cosign-installer` from 4.1.2 to 4.1.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump github.com/sigstore/sigstore-go (#5208)
+## X. deps): bump the gomod group across 1 directory with 6 updates (#5217)
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `195ab76b`: deps): bump github.com/sigstore/sigstore-go (#5208). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6181e756`: deps): bump the gomod group across 1 directory with 6 updates (#5217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -2101,30 +2115,52 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-go 1.27.0
-	github.com/sigstore/rekor-tiles/v2 v2.4.0
-	github.com/sigstore/sigstore-go v1.4.0
-	github.com/go-openapi/swag v0.29.2 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
-	golang.org/x/tools v0.52.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.9
+	github.com/sigstore/rekor-tiles/v2 v2.4.1
+	github.com/sigstore/sigstore v1.11.3
+	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3
+	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.3
+	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.11.3
+	cloud.google.com/go/auth v0.24.1 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.47.5 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.33.12 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.20.12 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/kms v1.62.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-go 1.27
-	github.com/sigstore/rekor-tiles/v2 v2.3.0
-	github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10
-	github.com/go-openapi/swag v0.28.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.7
+	github.com/sigstore/rekor-tiles/v2 v2.4.0
+	github.com/sigstore/sigstore v1.11.2
+	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2
+	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2
+	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.11.2
+	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
+	github.com/aws/aws-sdk-go-v2 v1.47.3 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/kms v1.61.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
+	github.com/aws/aws-s
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `195ab76b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6181e756` are properly handled with clean fallback behavior.

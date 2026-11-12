@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T15:34:18.281Z",
+  "updated_at": "2026-11-12T21:02:40.176Z",
   "stats": {
-    "total_discovered": 1518,
-    "approved_pending_harvest": 1387,
+    "total_discovered": 1540,
+    "approved_pending_harvest": 1409,
     "harvested_count": 0,
     "rejected_count": 131,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1400,
-      "OFFICIAL_DOCUMENTATION": 63,
-      "STANDARDS_AND_SPECIFICATIONS": 52,
+      "COMMUNITY_AND_EXPERT": 1420,
+      "OFFICIAL_DOCUMENTATION": 64,
+      "STANDARDS_AND_SPECIFICATIONS": 53,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
     }
@@ -32496,6 +32496,490 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-3C59AB578501": {
+      "id": "SRC-3C59AB578501",
+      "url": "https://huggingface.co/facebook/sam-3d-body-dinov3",
+      "title": "https://huggingface.co/facebook/sam-3d-body-dinov3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:39.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md",
+        "fileName": "hf-facebook-sam-3d-body-dinov3-learnings.md"
+      }
+    },
+    "SRC-A2E1C1F06E74": {
+      "id": "SRC-A2E1C1F06E74",
+      "url": "https://github.com/argoproj/argo-workflows",
+      "title": "https://github.com/argoproj/argo-workflows",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-37020A484A8D": {
+      "id": "SRC-37020A484A8D",
+      "url": "https://argo-workflows.readthedocs.io/en/latest/pull-requests",
+      "title": "https://argo-workflows.readthedocs.io/en/latest/pull-requests",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-DD63E974A8A2": {
+      "id": "SRC-DD63E974A8A2",
+      "url": "https://www.conventionalcommits.org/en/v1.0.0",
+      "title": "https://www.conventionalcommits.org/en/v1.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-B47C65205686": {
+      "id": "SRC-B47C65205686",
+      "url": "https://github.com/argoproj/argo-workflows/pull/17493",
+      "title": "https://github.com/argoproj/argo-workflows/pull/17493",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.037Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-5C48A4C19F67": {
+      "id": "SRC-5C48A4C19F67",
+      "url": "https://github.com/actions/stale/blob/v11.0.0/action.yml",
+      "title": "https://github.com/actions/stale/blob/v11.0.0/action.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-0BD3425F6AF2": {
+      "id": "SRC-0BD3425F6AF2",
+      "url": "https://app.coderabbit.ai/change-stack/argoproj/argo-workflows/pull/17493?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/argoproj/argo-workflows/pull/17493?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-447E3FCE2D46": {
+      "id": "SRC-447E3FCE2D46",
+      "url": "https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg",
+      "title": "https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-453649F89257": {
+      "id": "SRC-453649F89257",
+      "url": "https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg",
+      "title": "https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.064Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-2BADCE5B0F77": {
+      "id": "SRC-2BADCE5B0F77",
+      "url": "https://github.com/argoproj/argo-workflows/pull/17493/commits/eee65a2c4d8ecc03d2bbd6546ec4e6adc2538dd9",
+      "title": "https://github.com/argoproj/argo-workflows/pull/17493/commits/eee65a2c4d8ecc03d2bbd6546ec4e6adc2538dd9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-416B194BDDF0": {
+      "id": "SRC-416B194BDDF0",
+      "url": "https://www.rfc-editor.org/rfc/rfc4122",
+      "title": "IETF RFC 4122",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-BA531F085311": {
+      "id": "SRC-BA531F085311",
+      "url": "https://github.com/go-jose/go-jose",
+      "title": "https://github.com/go-jose/go-jose",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-002602634D1C": {
+      "id": "SRC-002602634D1C",
+      "url": "https://github.com/sigstore/rekor-tiles",
+      "title": "https://github.com/sigstore/rekor-tiles",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.118Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-A149A4C39CD8": {
+      "id": "SRC-A149A4C39CD8",
+      "url": "https://github.com/sigstore/sigstore",
+      "title": "https://github.com/sigstore/sigstore",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-CEA5ADA89C26": {
+      "id": "SRC-CEA5ADA89C26",
+      "url": "https://github.com/go-jose/go-jose/releases",
+      "title": "https://github.com/go-jose/go-jose/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-24B35C063C70": {
+      "id": "SRC-24B35C063C70",
+      "url": "https://github.com/go-jose/go-jose/compare/v4.1.7...v4.1.9",
+      "title": "https://github.com/go-jose/go-jose/compare/v4.1.7...v4.1.9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-FE84B87041F3": {
+      "id": "SRC-FE84B87041F3",
+      "url": "https://github.com/sigstore/rekor-tiles/releases",
+      "title": "https://github.com/sigstore/rekor-tiles/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.147Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-ABE9AD362F88": {
+      "id": "SRC-ABE9AD362F88",
+      "url": "https://github.com/sigstor",
+      "title": "https://github.com/sigstor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.153Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-8AB59E31C99F": {
+      "id": "SRC-8AB59E31C99F",
+      "url": "https://github.com/open-policy-agent/opa",
+      "title": "https://github.com/open-policy-agent/opa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-B29EA1C43B96": {
+      "id": "SRC-B29EA1C43B96",
+      "url": "https://github.com/open-policy-agent/opa/releases",
+      "title": "https://github.com/open-policy-agent/opa/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-CD0A08055CBB": {
+      "id": "SRC-CD0A08055CBB",
+      "url": "https://github.com/open-policy-agent/opa/blob/main/CHANGELOG.md",
+      "title": "https://github.com/open-policy-agent/opa/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.170Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-3071914B8F59": {
+      "id": "SRC-3071914B8F59",
+      "url": "https://github.com/open-policy-agent/opa/compare/v1.21.4...v1.22.2",
+      "title": "https://github.com/open-policy-agent/opa/compare/v1.21.4...v1.22.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:02:40.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
       }
     }
   }

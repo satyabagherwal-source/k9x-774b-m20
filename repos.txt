@@ -5022,3 +5022,7 @@ https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m
 # --- Automatically Discovered by AI Scout Engine [2026-11-12T14:59:15.776Z] ---
 # [AI-AGENTS] tonhowtf/omniget (7808 score) - Free, open source video downloader for Windows, macOS and Linux that AI agents c
 https://github.com/tonhowtf/omniget
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-12T21:01:53.863Z] ---
+# [HUGGINGFACE-AI-MODELS] facebook/sam-3d-body-dinov3 (12760 score) - Verified Hugging Face Model: facebook/sam-3d-body-dinov3 (1076 likes, 14473 down
+https://huggingface.co/facebook/sam-3d-body-dinov3

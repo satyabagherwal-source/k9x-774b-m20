@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T15:25:51.480Z",
+  "updated_at": "2026-11-12T21:02:39.986Z",
   "statistics": {
-    "total_nodes": 27,
+    "total_nodes": 28,
     "total_edges": 9,
     "domain_distribution": {
-      "D": 16,
+      "D": 17,
       "M": 1,
       "H": 6,
       "J": 1,
@@ -604,6 +604,28 @@
       ],
       "created_at": "2026-11-12T15:25:51.480Z",
       "updated_at": "2026-11-12T15:25:51.480Z"
+    },
+    "DOM-D-3DABAA62": {
+      "id": "DOM-D-3DABAA62",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): facebook/sam-3d-body-dinov3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-facebook-sam-3d-body-dinov3/hf-facebook-sam-3d-body-dinov3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T21:02:28.134Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebook-sam-3d-body-dinov3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T21:02:39.986Z",
+      "updated_at": "2026-11-12T21:02:39.986Z"
     }
   },
   "edges": [

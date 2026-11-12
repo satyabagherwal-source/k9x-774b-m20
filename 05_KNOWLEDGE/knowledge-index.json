@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T15:34:11.904Z",
-  "total_verified_learnings": 1259,
+  "last_updated": "2026-11-12T21:02:23.929Z",
+  "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3644,8 +3644,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "d48ec29e",
-      "content_hash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
+      "source_version": "3142f33a",
+      "content_hash": "f9033c9f474bbf8cd407885184c85f9c49ed58075c00a0b4fcdbb50a983b5c8f",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3662,6 +3662,11 @@
         {
           "number": null,
           "title": "controller): keep an ended node's message while it holds its lock (#17391)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sqldb): refresh offload timestamp on duplicate save (#17471)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3730,7 +3735,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:49:21.065Z",
+      "verified_at": "2026-11-12T21:02:21.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58647,8 +58652,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "195ab76b",
-      "content_hash": "aff8deff4f3be5920ef997fa235c7da816a8af61b7385d14554d4068c0c886c1",
+      "source_version": "6181e756",
+      "content_hash": "570227c119d9b6dbbe72ad2b63d68792ae5b201a4f5f3c0389563d93a305f5e3",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -58665,6 +58670,11 @@
         {
           "number": null,
           "title": "deps): bump github.com/sigstore/sigstore-go (#5208)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump the gomod group across 1 directory with 6 updates (#5217)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58748,7 +58758,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T08:34:25.588Z",
+      "verified_at": "2026-11-12T21:02:23.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191871,6 +191881,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-12T15:04:38.501Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-facebook-sam-3d-body-dinov3": {
+      "learning_id": "learn-huggingface-facebook-sam-3d-body-dinov3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "facebook/sam-3d-body-dinov3",
+      "repository": "facebook/sam-3d-body-dinov3",
+      "slug": "hf-facebook-sam-3d-body-dinov3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/facebook/sam-3d-body-dinov3",
+      "source_version": "hf-facebook-sam-3d-body-dinov3",
+      "content_hash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T21:02:16.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

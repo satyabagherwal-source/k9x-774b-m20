@@ -9197,3 +9197,7 @@
 | `CYCLE-20261112-K7QZ` | `2026-11-12T15:33:58.715Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ad88efd...`) |
 | `CYCLE-20261112-KGWN` | `2026-11-12T15:34:10.583Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`236425e8...`) |
 | `CYCLE-20261112-KI0N` | `2026-11-12T15:34:12.023Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8875915d...`) |
+| `CYCLE-20261112-AEQ9` | `2026-11-12T21:02:16.593Z` | `facebook/sam-3d-body-dinov3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | Yes (`cc5aeb88...`) |
+| `CYCLE-20261112-AIG5` | `2026-11-12T21:02:21.413Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f9033c9f...`) |
+| `CYCLE-20261112-AKGX` | `2026-11-12T21:02:24.033Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`570227c1...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T21:02:39.987Z` | `hf-facebook-sam-3d-body-dinov3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3DABAA62` [Domain D] | Yes (`53d78204...`) |
