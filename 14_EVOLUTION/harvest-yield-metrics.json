@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:21:27.754Z",
-  "total_cycles_completed": 9053,
-  "total_learnings_persisted": 9053,
-  "total_rules_promoted": 8891,
+  "last_updated": "2026-11-12T22:33:51.118Z",
+  "total_cycles_completed": 9056,
+  "total_learnings_persisted": 9056,
+  "total_rules_promoted": 8894,
   "history": [
-    {
-      "timestamp": "2026-11-11T20:18:40.331Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T20:23:08.777Z",
-      "repository": "MohamedRejeb/compose-rich-editor",
-      "learningId": "learn-github-mohamedrejeb-compose-rich-editor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T20:23:35.901Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T23:57:06.848Z",
       "repository": "meshtastic/Meshtastic-Android",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T22:21:27.754Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:33:46.031Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:33:49.101Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:33:51.118Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

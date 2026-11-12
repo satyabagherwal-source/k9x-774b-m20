@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T22:21:34.834Z",
+  "updated_at": "2026-11-12T22:33:58.288Z",
   "stats": {
-    "total_discovered": 1712,
-    "approved_pending_harvest": 1573,
+    "total_discovered": 1788,
+    "approved_pending_harvest": 1648,
     "harvested_count": 0,
-    "rejected_count": 139,
+    "rejected_count": 140,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1574,
+      "COMMUNITY_AND_EXPERT": 1650,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -36708,6 +36708,1671 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
         "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-B23F5D8518A2": {
+      "id": "SRC-B23F5D8518A2",
+      "url": "https://github.com/envoyproxy/envoy",
+      "title": "https://github.com/envoyproxy/envoy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-516303EEB565": {
+      "id": "SRC-516303EEB565",
+      "url": "https://github.com/connectrpc/connectrpc.com/pull/130",
+      "title": "https://github.com/connectrpc/connectrpc.com/pull/130",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.874Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-85C798D342D5": {
+      "id": "SRC-85C798D342D5",
+      "url": "https://github.com/google/quiche/compare/35cbd03..9917bea",
+      "title": "https://github.com/google/quiche/compare/35cbd03..9917bea",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-E0B847773CEB": {
+      "id": "SRC-E0B847773CEB",
+      "url": "https://github.com/envoyproxy/bazel-registry/commit/64473c18f651cde49d61788d0357b88b42fc7e52",
+      "title": "https://github.com/envoyproxy/bazel-registry/commit/64473c18f651cde49d61788d0357b88b42fc7e52",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.885Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-99F4630E6385": {
+      "id": "SRC-99F4630E6385",
+      "url": "https://bcr.bazel.build/",
+      "title": "https://bcr.bazel.build/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.890Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-69C0A3F8951C": {
+      "id": "SRC-69C0A3F8951C",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-6BA5EE9780C2": {
+      "id": "SRC-6BA5EE9780C2",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.902Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-E2A0FAED8D59": {
+      "id": "SRC-E2A0FAED8D59",
+      "url": "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-7E56B3A50845": {
+      "id": "SRC-7E56B3A50845",
+      "url": "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.913Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-B367034E0D16": {
+      "id": "SRC-B367034E0D16",
+      "url": "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-4E1BFDAE84A4": {
+      "id": "SRC-4E1BFDAE84A4",
+      "url": "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.925Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-E4B789737969": {
+      "id": "SRC-E4B789737969",
+      "url": "https://bcr.bazel.build/modules/quiche/0.0.0-261111-9917bea.envoy/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/quiche/0.0.0-261111-9917bea.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-9921A3D75B8F": {
+      "id": "SRC-9921A3D75B8F",
+      "url": "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.934Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-21C3EA01C957": {
+      "id": "SRC-21C3EA01C957",
+      "url": "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-308DDF90D514": {
+      "id": "SRC-308DDF90D514",
+      "url": "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json",
+      "title": "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.945Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-9B6059A52C06": {
+      "id": "SRC-9B6059A52C06",
+      "url": "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-FF1A2B13ECF1": {
+      "id": "SRC-FF1A2B13ECF1",
+      "url": "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json",
+      "title": "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.957Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-A3EFA438BDD8": {
+      "id": "SRC-A3EFA438BDD8",
+      "url": "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-56325A0EF1EA": {
+      "id": "SRC-56325A0EF1EA",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-E46D4D0E7735": {
+      "id": "SRC-E46D4D0E7735",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-3F1605785EB6": {
+      "id": "SRC-3F1605785EB6",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-5700767DB4F7": {
+      "id": "SRC-5700767DB4F7",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-423864F39C72": {
+      "id": "SRC-423864F39C72",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-314CE2803BE7": {
+      "id": "SRC-314CE2803BE7",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:57.995Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-81E1151812CE": {
+      "id": "SRC-81E1151812CE",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-F682533E53AB": {
+      "id": "SRC-F682533E53AB",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.005Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-DD10022633D1": {
+      "id": "SRC-DD10022633D1",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-669733EE1589": {
+      "id": "SRC-669733EE1589",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.017Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-1B094CAC5658": {
+      "id": "SRC-1B094CAC5658",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-B5AD24A23ED3": {
+      "id": "SRC-B5AD24A23ED3",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.028Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-CCD1A7E92A8E": {
+      "id": "SRC-CCD1A7E92A8E",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.034Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-45B1D9CE083F": {
+      "id": "SRC-45B1D9CE083F",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.039Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-17C5E48D7833": {
+      "id": "SRC-17C5E48D7833",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-F9B34D544303": {
+      "id": "SRC-F9B34D544303",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-DCE9BA69237B": {
+      "id": "SRC-DCE9BA69237B",
+      "url": "https://raw.githubusercontent.com/",
+      "title": "https://raw.githubusercontent.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-4F87282979BA": {
+      "id": "SRC-4F87282979BA",
+      "url": "https://bcr.bazel.build/modules/zlib/1.3/MODULE.bazel",
+      "title": "https://bcr.bazel.build/modules/zlib/1.3/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-CF8DA0DCC2E4": {
+      "id": "SRC-CF8DA0DCC2E4",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-CAAA674619E2": {
+      "id": "SRC-CAAA674619E2",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-67019D4B26B5": {
+      "id": "SRC-67019D4B26B5",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-B10CA1483FA0": {
+      "id": "SRC-B10CA1483FA0",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.083Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-DA514A37083B": {
+      "id": "SRC-DA514A37083B",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-8E87181EB26C": {
+      "id": "SRC-8E87181EB26C",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.094Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-E2D342BC5594": {
+      "id": "SRC-E2D342BC5594",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.099Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-CFD7EC5A902E": {
+      "id": "SRC-CFD7EC5A902E",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.104Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-7EAAA31E4846": {
+      "id": "SRC-7EAAA31E4846",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-EC3B82F8C207": {
+      "id": "SRC-EC3B82F8C207",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.119Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-5C3B00D969AB": {
+      "id": "SRC-5C3B00D969AB",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-E5FA4EC99FC0": {
+      "id": "SRC-E5FA4EC99FC0",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-0DD075BB5505": {
+      "id": "SRC-0DD075BB5505",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.135Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-4CD304395170": {
+      "id": "SRC-4CD304395170",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-667A4FCAE5E0": {
+      "id": "SRC-667A4FCAE5E0",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-DE32FCDAA37C": {
+      "id": "SRC-DE32FCDAA37C",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-93A31210538C": {
+      "id": "SRC-93A31210538C",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/source.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/source.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-EB5E79A5E286": {
+      "id": "SRC-EB5E79A5E286",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/bazel_registry.json",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/bazel_registry.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-AC52B22B33DE": {
+      "id": "SRC-AC52B22B33DE",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-B84BE74444EB": {
+      "id": "SRC-B84BE74444EB",
+      "url": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7",
+      "title": "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.171Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-92496774F768": {
+      "id": "SRC-92496774F768",
+      "url": "https://facebook.github.io/zstd",
+      "title": "https://facebook.github.io/zstd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.178Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-B3E7F226BD6C": {
+      "id": "SRC-B3E7F226BD6C",
+      "url": "https://github.com/paradedb/paradedb",
+      "title": "https://github.com/paradedb/paradedb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.190Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-9CC553B30AAA": {
+      "id": "SRC-9CC553B30AAA",
+      "url": "http://www.gnu.org/licenses",
+      "title": "http://www.gnu.org/licenses",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T22:33:58.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-9234D16A034D": {
+      "id": "SRC-9234D16A034D",
+      "url": "https://www.postgresql.org/docs/current/custom-scan-plan.html",
+      "title": "https://www.postgresql.org/docs/current/custom-scan-plan.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.203Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-A0961CEDE4CA": {
+      "id": "SRC-A0961CEDE4CA",
+      "url": "https://github.com/paradedb/paradedb/actions/runs/43280487148/job/131400357675",
+      "title": "https://github.com/paradedb/paradedb/actions/runs/43280487148/job/131400357675",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.209Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-AABCC814B2EA": {
+      "id": "SRC-AABCC814B2EA",
+      "url": "https://github.com/paradedb/paradedb/actions/runs/43272838607",
+      "title": "https://github.com/paradedb/paradedb/actions/runs/43272838607",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-FEC74CF1E1C8": {
+      "id": "SRC-FEC74CF1E1C8",
+      "url": "https://github.com/paradedb/paradedb/actions/runs/43267298415",
+      "title": "https://github.com/paradedb/paradedb/actions/runs/43267298415",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.220Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-15EA4BB9850E": {
+      "id": "SRC-15EA4BB9850E",
+      "url": "https://github.com/paradedb/paradedb/actions/runs/43266693756",
+      "title": "https://github.com/paradedb/paradedb/actions/runs/43266693756",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.225Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-22B05DC64208": {
+      "id": "SRC-22B05DC64208",
+      "url": "https://github.com/citu",
+      "title": "https://github.com/citu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-A17FB5E7DF20": {
+      "id": "SRC-A17FB5E7DF20",
+      "url": "https://github.com/paradedb/paradedb/actions/runs/43044680001",
+      "title": "https://github.com/paradedb/paradedb/actions/runs/43044680001",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-9DF1C0D5F4B9": {
+      "id": "SRC-9DF1C0D5F4B9",
+      "url": "https://github.com/paradedb/paradedb/actions/runs/43078291563",
+      "title": "https://github.com/paradedb/paradedb/actions/runs/43078291563",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-3498FF7D7093": {
+      "id": "SRC-3498FF7D7093",
+      "url": "https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d",
+      "title": "https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.246Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-AA4CD0B4EFCC": {
+      "id": "SRC-AA4CD0B4EFCC",
+      "url": "https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f",
+      "title": "https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-3295438A19B7": {
+      "id": "SRC-3295438A19B7",
+      "url": "https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc",
+      "title": "https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-DA047598A58D": {
+      "id": "SRC-DA047598A58D",
+      "url": "https://github.com/paradedb/superkmeans-rs?rev=b605bff02aaf76cd633efe5f4747080b31b21421",
+      "title": "https://github.com/paradedb/superkmeans-rs?rev=b605bff02aaf76cd633efe5f4747080b31b21421",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-F4F5DA82D9E2": {
+      "id": "SRC-F4F5DA82D9E2",
+      "url": "https://github.com/paradedb/tantivy.git",
+      "title": "https://github.com/paradedb/tantivy.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-9214BE7359BB": {
+      "id": "SRC-9214BE7359BB",
+      "url": "https://github.com/paradedb/superkmeans-rs",
+      "title": "https://github.com/paradedb/superkmeans-rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-75D59A2C01F8": {
+      "id": "SRC-75D59A2C01F8",
+      "url": "https://github.com/mm-zacharydavison/parade-db-rank-join-bug/blob/main/REPORT-0.26.6.md",
+      "title": "https://github.com/mm-zacharydavison/parade-db-rank-join-bug/blob/main/REPORT-0.26.6.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.278Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-992174AA7BD4": {
+      "id": "SRC-992174AA7BD4",
+      "url": "https://github.com/paradedb/tantivy.git?rev=98c0f943610",
+      "title": "https://github.com/paradedb/tantivy.git?rev=98c0f943610",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-A2DE34ADB2EE": {
+      "id": "SRC-A2DE34ADB2EE",
+      "url": "https://github.com/paradedb/tantivy.git?rev=c7fcfd70321",
+      "title": "https://github.com/paradedb/tantivy.git?rev=c7fcfd70321",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:33:58.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
       }
     }
   }

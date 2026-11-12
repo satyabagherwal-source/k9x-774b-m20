@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `8085a1d8`  
+> **Source Version**: `1ad62cc8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:10:31.644Z  
+> **Timestamp**: 2026-11-12T22:33:36.341Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:10:31.639Z  
+> **Harvest Timestamp**: 2026-11-12T22:33:36.173Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29221 stars
+- **Stars / Engagement**: 29229 stars
 
 ---
 
@@ -1024,15 +1024,13 @@ public:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49165** (2026-11-12): **compat/openssl: prefixer fails to link on aarch64 hosts (x86_64 libstdc++.a)**
+  *Symptoms*: *Title*: *compat/openssl: prefixer fails to link on aarch64 hosts (x86_64 libstdc++.a)*  *Description*:  `bazel build --config=openssl` cannot build the `compat/openssl` `prefixer` tool on a Linux aarch64 host. The tool is compiled for aarch64 but linked against the **x86_64** `libstdc++.a`:  ``` ld.lld: error: external/envoy_toolshed++gcc_extension+gcc_runtime_linux_x86_64/lib64/libstdc++.a(compatibility.o) is incompatible with elf64-littleaarch64 ld.lld: error: external/envoy_toolshed++gcc_extension+gcc_runtime_linux_x86_64/lib64/libstdc++.a(compatibility-debug_list.o) is incompatible with elf64-littleaarch64 ... (repeated for every object) ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors) Target //compat/openssl/prefixer:prefixer failed to build ```  `//compat/openssl:prefixed_ossl_source` runs the `prefixer`, so this blocks every `--config=openssl` build (including `//source/exe:envoy-static`) on aarch64, although `bazel/SSL.md` lists "Supported architectures: Linux x86_64, aarch64, ppc64le" for OpenSSL.  *Repro steps*:  * Host: Linux aarch64 (I used an NVIDIA BlueField-3 DPU). Build container: the  `docker.io/envoyproxy/envoy-build` image pinned in `.github/config.yml`. Bazel 9.3.2. * Source: `main` at 93aab937d9074b05c1b1d86dcfa85367a4cebf20 (`VERSION.txt` = 1.41.0-dev).  ``` bazel build -c opt --config=openssl //compat/openssl/prefixer:prefixer ```  I only reproduced this on the host above. The cause below is independent of th
+
 - **Issue #49003** (2026-11-07): **`connect_grpc_bridge`: update unary HTTP status code mappings to match current Connect spec**
   *Symptoms*: The `connect_grpc_bridge` filter currently maps gRPC status codes to HTTP status codes using the original Connect protocol specification from when the filter was introduced in #24836  In March 2024, the Connect specification updated the HTTP status mappings for four error codes (https://github.com/connectrpc/connectrpc.com/pull/130):  | Connect Error Code | Current Envoy Mapping | Current Connect Spec | | :--- | :--- | :--- | | `canceled` (1) | `408 Request Timeout` | `499 Client Closed Request` | | `deadline_exceeded` (4) | `408 Request Timeout` | `504 Gateway Timeout` | | `failed_precondition` (9) | `412 Precondition Failed` | `400 Bad Request` | | `unimplemented` (12) | `404 Not Found` | `501 Not Implemented` |  While Connect clients parse the `"code"` field directly from the JSON response body and aren't broken by this, infrastructure and observability tools that rely on raw HTTP status codes (such as access logs, metrics, 5xx alerting rules), and middleware misclassify these responses. Envoy's `connect_grpc_bridge` filter should be updated to match the current specification.  *Repro steps*: 1. Configure an Envoy listener with the `envoy.filters.http.connect_grpc_bridge` HTTP filter enabled in front of an upstream gRPC service. 2. Send a unary Connect request (with header `Connect-Protocol-Version: 1` and `Content-Type: application/proto`). 3. Have the upstream gRPC server respond with `grpc-status: 4` (`DEADLINE_EXCEEDED`), `grpc-status: 1` (`CANCELED`), `grpc-status: 9`
   **Post-Mortem & Fix Analysis**:
   > cc: @jchadwick-buf @mattklein123
-
-- **Issue #48991** (2026-11-05): **http: body_size_limit filter potential excessive logging**
-  *Symptoms*: The HTTP body_size_limit filter currently logs any breach of the limit via the application log at error level. If someone sends HTTP requests with the Content-Length header set to a value larger than the limit, an error-level message is logged. The request can be sent repeatedly, potentially overwhelming the logging infrastructure. 
-  **Post-Mortem & Fix Analysis**:
-  > I think this was just fixed with #48985 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1049,657 +1047,305 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86b4404b` (2026-11-10)
-**Commit Message**: [cache_v2] Fix upstream reset crash and stats (#48814)
+### Incident Patch 1: `0dfc4642` (2026-11-12)
+**Commit Message**: http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#49209)
 
-Commit Message: [cache_v2] Fix upstream reset crash and stats
-Additional Description: Cache filter could crash if an upstream reset
-while more than one downstream was waiting on it (subject to a race
-going the wrong way). This makes it so an upstream reset fails harder,
-preventing the crash, and also fixes that there was previously no path
-to the upstream_reset metric being updated.
-Risk Level: WIP filter
-Testing: Yes
-Docs Changes: Yes
-Release Notes: Yes
-Platform Specific Features: Filter is already disabled for Windows
+The test sets `max_connection_duration` to 1s and then pre-fills the
+downstream outbound queue. The duration timer runs from when the
+connection is made, so it also covers the pre-fill, and the pre-fill
+helper waits to see `http2.outbound_frames_active` at exactly 1000. If
+the timer fires before the test thread has seen that, the GOAWAY
+overflows the queue and the connection closes, which is what the test
+is after, but the gauge drops to 0 and the helper times out with
+"current value 0" and `http2.outbound_flood` already at 1.
 
----------
+This splits sending the pre-fill request out of the helper, and the
+test uses that and waits for the disconnect, without waiting on the
+state of the queue in between. The response and the GOAWAY are one
+frame over the limit together, so nothing has to be seen before the
+timer fires. The other users of the helper do not change.
 
-Signed-off-by: Raven Black <[REDACTED_EMAIL]>
+Additional Description:
+Seen under tsan on IPv4Oghttp2. The test takes about 2s there, so the
+pre-fill normally fits in the second with little to spare. It did not
+reproduce in 1000 runs of the test or 100 runs of the suite under tsan
+on a quiet cluste
 
-**File**: `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst` (added, +4/-0)
+**File**: `test/integration/http2_flood_integration_test.cc` (modified, +15/-3)
 ```diff
-@@ -0,0 +1,4 @@
-+http: fixed a crash in the cache v2 filter when a late callback from a failed cache insertion affected a subsequent
-+  request for the same entry. Aborted insertions now reset waiting requests, and subsequent requests use a new cache session.
-+  Lookups aborted without a response source now increment the cache ``upstream_reset`` event counter.
-+  Upstream resets during cache validation reset waiting lookups while preserving existing cached readers.
-```
-
-**File**: `docs/root/configuration/http/http_filters/cache_v2_filter.rst` (modified, +7/-0)
-```diff
-@@ -52,6 +52,13 @@ persistent caches. They can be fully custom caches, or wrappers/adapters around
- Built-in cache storage backends include :ref:`SimpleHttpCacheV2Config <envoy_v3_api_msg_extensions.http.cache_v2.simple_http_cache.v3.SimpleHttpCacheV2Config>`
- (in-memory) and :ref:`FileSystemHttpCacheV2Config <envoy_v3_api_msg_extensions.http.cache_v2.file_system_http_cache.v3.FileSystemHttpCacheV2Config>` (persistent; LRU).
+@@ -87,6 +87,7 @@ class Http2FloodMitigationTest
+   // Avoid hiding the other form of beginSession.
+   using Http2RawFrameIntegrationTest::beginSession;
+   void beginSession() override;
++  void sendPrefillRequest(uint32_t data_frame_count, uint32_t data_frame_size = 10);
+   void prefillOutboundDownstreamQueue(uint32_t data_frame_count, uint32_t data_frame_size = 10);
+   IntegrationStreamDecoderPtr prefillOutboundUpstreamQueue(uint32_t frame_count);
+   void triggerListenerDrain();
+@@ -217,8 +218,10 @@ void Http2FloodMitigationTest::floodServer(absl::string_view host, absl::string_
+             test_server_->counter("http.config_test.downstream_cx_delayed_close_timeout")->value());
+ }
  
-+If an upstream response resets while it is being inserted into the cache, requests waiting for that insertion
-+are reset. A subsequent request performs a new cache lookup and can start a new upstream fetch. Requests using
-+the aborted response cannot continue by reading from the later fetch. Each lookup aborted without a response
-+source increments the ``cache.event`` counter with ``event_type=upstream_reset``. If an upstream cache validation
-+resets, requests waiting for validation are reset. Existing readers continue using the cached response, and
-+a subsequent request can retry validation.
+-void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
+-                                                              uint32_t data_frame_size) {
++// Starts a session and sends the request that pre-fills the downstream outbound frame queue,
++// without waiting for the queue to fill.
++void Http2FloodMitigationTest::sendPrefillRequest(uint32_t data_frame_count,
++                                                  uint32_t data_frame_size) {
+   // Set large buffer limits so the test is not affected by the flow control.
+   config_helper_.setBufferLimits(1024 * 1024 * 1024, 1024 * 1024 * 1024);
+   autonomous_upstream_ = true;
+@@ -238,6 +241,11 @@ void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_fram
+        Http2Frame::Header("response_size_bytes", absl::StrCat(data_frame_size)),
+        Http2Frame::Header("no_trailers", "0")});
+   sendFrame(request);
++}
 +
- Architecture and extension points
- ---------------------------------
++void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
++                                                              uint32_t data_frame_size) {
++  sendPrefillRequest(data_frame_count, data_frame_size);
  
-```
-
-**File**: `source/extensions/filters/http/cache_v2/cache_filter.cc` (modified, +1/-0)
-```diff
-@@ -188,6 +188,7 @@ void CacheFilter::onLookupResult(ActiveLookupResultPtr lookup_result) {
-   lookup_result_ = std::move(lookup_result);
-   if (!lookup_result_->http_source_) {
-     // Lookup failed, typically implying upstream request was reset.
-+    stats().incForStatus(CacheEntryStatus::UpstreamReset);
-     decoder_callbacks_->streamInfo().setResponseCodeDetails(
-         CacheResponseCodeDetails::CacheFilterAbortedDuringLookup);
-     decoder_callbacks_->resetStream();
-```
-
-**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.cc` (modified, +65/-6)
-```diff
-@@ -94,6 +94,9 @@ void ActiveLookupContext::getHeaders(GetHeadersCallback&& cb) {
-         dispatcher(), lookup().timestamp(),
-         [ranges = std::move(ranges.value()), cl = content_length_,
-          cb = std::move(cb)](Http::ResponseHeaderMapPtr headers, EndStream end_stream) mutable {
-+          if (end_stream == EndStream::Reset) {
-+            return cb(nullptr, EndStream::Reset);
-+          }
-           ASSERT(headers != nullptr, "it should be impossible for headers to be null");
-           // The Range header field is evaluated after evaluating the precondition header
-           // fields defined in Section 13.1, and only if the result in absence of the Range
-@@ -152,12 +155,16 @@ void CacheSession::clearUncacheableState() {
-   state_ = State::New;
- }
+   // Wait for some data to arrive and then wait for the upstream_rq_active to flip to 0 to indicate
+   // that the first request has completed.
+@@ -747,7 +755,11 @@ TEST_P(Http2FloodMitigationTest, DownstreamConnectionDurationTimeoutTriggersFloo
+         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(timeout);
+         max_connection_duration->set_seconds(seconds.count());
+       });
+-  prefillOutboundDownstreamQueue(AllFrameFloodLimit - 1);
++  // The duration timer runs from when the connection is made, so it also covers the pre-fill.
++  // Do not wait to see the queue full: if the timer fires before the test thread has seen it, the
++  // connection is already closed and the queue is empty again. The response and the GOAWAY are
++  // one frame over the limit together, whichever is queued first.
++  sendPrefillRequest(AllFrameFloodLimit - 1);
+   tcp_client_->waitForDisconnect();
  
--void CacheSession::wantHeaders(Event::Dispatcher&, SystemTime lookup_timestamp,
-+void CacheSession::wantHeaders(Event::Dispatcher& dispatcher, SystemTime lookup_timestamp,
-                                GetHeadersCallback&& cb) {
-   Http::ResponseHeaderMapPtr headers;
-   EndStream end_stream_after_headers;
-   {
-     absl::MutexLock lock(mu_);
-+    if (state_ == State::Failed) {
-+      dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
-+      return;
-+    }
-     ASSERT(entry_.response_headers_ != nullptr,
-            "headers should have been initialized during lookup");
-     headers = Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*entry_.response_headers_);
-@@ -172,6 +179,10 @@ void CacheSession::wantHeaders(Event::Dispatcher&, SystemTime lookup_timestamp,
- void CacheSession::wantBodyRange(AdjustedByteRange range, Event::Dispatcher& dispatcher,
-                                  GetBodyCallback&& cb) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
-+    return;
-+  }
-   ASSERT(entry_.response_headers_ != nullptr,
-          "body should not be requested when headers haven't been sent");
-   if (auto cache_sessions = cache_sessions_.lock()) {
-@@ -184,6 +195,10 @@ void CacheSession::wantBodyRange(AdjustedByteRange range, Event::Dispatcher& dis
- 
- void CacheSession::wantTrailers(Event::Dispatcher& dispatcher, GetTrailersCallback&& cb) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
-+    return;
-+  }
-   if (entry_.response_trailers_ != nullptr) {
-     auto trailers = Http::createHeaderMap<Http::ResponseTrailerMapImpl>(*entry_.response_trailers_);
-     dispatcher.post([cb = std::move(cb), trailers = std::move(trailers)]() mutable {
-@@ -202,6 +217,9 @@ void CacheSession::wantTrailers(Event::Dispatcher& dispatcher, GetTrailersCallba
- void CacheSession::onHeadersInserted(CacheReaderPtr cache_reader,
-                                      Http::ResponseHeaderMapPtr headers, bool end_stream) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-   std::shared_ptr<CacheSessionsImpl> cache_sessions = cache_sessions_.lock();
-   if (!cache_sessions) {
-     ENVOY_LOG(error, "cache config was deleted while header-insertion was in flight");
-@@ -286,6 +304,9 @@ void CacheSession::sendSuccessfulLookupResultTo(LookupSubscriber& subscriber,
- 
- void CacheSession::onBodyInserted(AdjustedByteRange range, bool end_stream) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-   body_length_available_ = range.end();
-   if (end_stream) {
-     insertComplete();
-@@ -297,6 +318,9 @@ void CacheSession::onBodyInserted(AdjustedByteRange range, bool end_stream) {
- void CacheSession::onTrailersInserted(Http::ResponseTrailerMapPtr trailers) {
-   ASSERT(trailers);
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-   entry_.response_trailers_ = std::move(trailers);
-   insertComplete();
-   for (TrailerSubscriber& subscriber : trailer_subscribers_) {
-@@ -355,8 +379,14 @@ static void postUpstreamPassThroughWithReset(CacheSession::LookupSubscriber&& su
-   });
- }
- 
--void CacheSession::onCacheError() {
-+void CacheSession::onCacheError(bool reset_lookups) {
-   mu_.AssertHeld();
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-+  // Old readers and insertion callbacks may outlive the failure. Keep them isolated from
-+  // subsequent lookups by retiring this session instead of reusing its state.
-+  state_ = State::Failed;
-   auto cache_sessions = cache_sessions_.lock();
-   if (cache_sessions) {
-     Event::Dispatcher* dispatcher = nullptr;
-@@ -377,7 +407,15 @@ void CacheSession::onCacheError() {
-     cache_sessions->stats().subCacheSessionsSubscribers(lookup_subscribers_.size());
-   }
-   for (LookupSubscriber& sub : lookup_subscribers_) {
--    postUpstreamPassThrough(std::move(sub), CacheEntryStatus::LookupError);
-+    if (reset_lookups) {
-+      sub.dispatcher().post([cb = std::move(sub.callback_)]() mutable {
-+        auto result = std::make_unique<Active
-```
-
-**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.h` (modified, +8/-2)
-```diff
-@@ -123,7 +123,9 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
-     // If the passed-through response turns out to be cacheable (i.e. upstream has changed
-     // cache headers), client should update state to Writing, or, if state is already changed,
-     // client should abort the new upstream request and use the shared one.
--    NotCacheable
-+    NotCacheable,
-+    // Failed sessions remain failed for existing readers. New lookups use a new session.
-+    Failed
-   };
- 
-   EndStream endStreamAfterHeaders() const ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-@@ -214,7 +216,7 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
-   bool canReadBodyRangeFromCacheEntry(BodySubscriber& subscriber);
-   void onBodyChunkFromCache(AdjustedByteRange range, Buffer::InstancePtr buffer,
-                             EndStream end_stream) ABSL_LOCKS_EXCLUDED(mu_);
--  void onCacheError() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-+  void onCacheError(bool reset_lookups = true) ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
- 
-   void doCacheEntryInvalid() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-   void doCacheMiss() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-@@ -259,6 +261,10 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
-     absl::MutexLock lock(mu_);
-     return state_ == State::Inserting;
-   }
-+  bool failed() const {
-+    absl::MutexLock lock(mu_);
-+    return state_ == State::Failed;
-+  }
-   void setExpiry(SystemTime expiry) { expires_at_ = expiry; }
-   bool isExpiredAt(SystemTime t) const { return expires_at_ < t && !inserting(); }
- 
-```
-
-**File**: `test/extensions/filters/http/cache_v2/cache_filter_test.cc` (modified, +16/-9)
-```diff
-@@ -236,15 +236,22 @@ TEST_F(CacheFilterTest, FilterDestroyedBeforeLookupCompletesAbortsTheLookupCallb
-   captured_lookup_callback_(nullptr);
- }
- 
--TEST_F(CacheFilterTest, ResetDuringLookupResetsDownstream) {
--  CacheFilterSharedPtr filter = makeFilter(mock_cache_);
--  EXPECT_CALL(*mock_cache_, lookup);
--  EXPECT_THAT(filter->decodeHeaders(request_headers_, true),
--              Eq(Http::FilterHeadersStatus::StopIteration));
--  EXPECT_CALL(decoder_callbacks_, resetStream);
--  captured_lookup_callback_(std::make_unique<ActiveLookupResult>(
--      ActiveLookupResult{nullptr, CacheEntryStatus::LookupError}));
--  EXPECT_THAT(decoder_callbacks_.details(), Eq("cache.aborted_lookup"));
-+TEST_F(CacheFilterTest, ResetDuringLookupCountsUpstreamResetAndResetsDownstream) {
-+  for (CacheEntryStatus status : {CacheEntryStatus::LookupError, CacheEntryStatus::UpstreamReset}) {
-+    SCOPED_TRACE(cacheEntryStatusString(status));
-+    CacheFilterSharedPtr filter = makeFilter(mock_cache_);
-+    EXPECT_CALL(*mock_cache_, lookup);
-+    EXPECT_THAT(filter->decodeHeaders(request_headers_, true),
-+                Eq(Http::FilterHeadersStatus::StopIteration));
-+    {
-+      testing::InSequence sequence;
-+      EXPECT_CALL(stats(), incForStatus(CacheEntryStatus::UpstreamReset));
-+      EXPECT_CALL(decoder_callbacks_, resetStream);
-+    }
-+    captured_lookup_callback_(
-+        std::make_unique<ActiveLookupResult>(ActiveLookupResult{nullptr, status}));
-+    EXPECT_THAT(decoder_callbacks_.details(), Eq("cache.aborted_lookup"));
-+  }
- }
- 
- TEST_F(CacheFilterTest, ResetDuringGetHeadersResetsDownstream) {
-```
-
-**File**: `test/extensions/filters/http/cache_v2/cache_sessions_test.cc` (modified, +267/-58)
-```diff
-@@ -4,6 +4,7 @@
- 
- #include "source/common/http/headers.h"
- #include "source/extensions/filters/http/cache_v2/cache_sessions.h"
-+#include "source/extensions/filters/http/cache_v2/cache_sessions_impl.h"
- 
- #include "test/extensions/filters/http/cache_v2/mocks.h"
- #include "test/mocks/http/mocks.h"
-@@ -620,83 +621,210 @@ TEST_F(CacheSessionsTest, CacheHitGoesDirectlyToCachedResponses) {
-   pumpDispatcher();
- }
- 
--TEST_F(CacheSessionsTest, CacheInsertFailurePassesThroughLookupsAndWillLookupAgain) {
--  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _));
--  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _)).Times(2);
-+TEST_F(CacheSessionsTest, CacheInsertFailureResetsLookupsAndWillLookupAgain) {
-+  auto second_dispatcher = api_->allocateDispatcher("second_subscriber");
-+  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _)).Times(2);
-+  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _)).Times(3);
-+  EXPECT_CALL(*mock_http_cache_, evict(_, KeyHasPath("/a"))).Times(2);
-   ActiveLookupResultPtr result1, result2, result3;
--  auto response_headers = cacheableResponseHeadersByExpire();
-   cache_sessions_->lookup(testLookupRequest("/a"),
-                           [&result1](ActiveLookupResultPtr r) { result1 = std::move(r); });
--  cache_sessions_->lookup(testLookupRequest("/a"),
-+  cache_sessions_->lookup(testLookupRequest("/a", *second_dispatcher),
-                           [&result2](ActiveLookupResultPtr r) { result2 = std::move(r); });
-   pumpDispatcher();
--  // Cache miss.
-   consumeCallback(captured_lookup_callbacks_[0])(LookupResult{});
-   pumpDispatcher();
--  // Upstream request should have been sent.
--  ASSERT_THAT(fake_upstreams_.size(), Eq(1));
--  EXPECT_THAT(fake_upstream_sent_headers_[0],
--              Pointee(IsSupersetOfHeaders(Http::TestRequestHeaderMapImpl{{":path", "/a"}})));
--  ASSERT_THAT(fake_upstream_get_headers_callbacks_.size(), Eq(1));
-   std::shared_ptr<CacheProgressReceiver> progress;
--  EXPECT_CALL(
--      *mock_http_cache_,
--      insert(_, KeyHasPath("/a"), Pointee(IsSupersetOfHeaders(*response_headers)), _, IsNull(), _))
--      .WillOnce([&](Event::Dispatcher&, Key, Http::ResponseHeaderMapPtr, ResponseMetadata,
--                    HttpSourcePtr,
--                    std::shared_ptr<CacheProgressReceiver> receiver) { progress = receiver; });
--  consumeCallback(fake_upstream_get_headers_callbacks_[0])(
--      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
-+  EXPECT_CALL(*mock_http_cache_, insert)
-+      .WillRepeatedly(
-+          [&](Event::Dispatcher&, Key, Http::ResponseHeaderMapPtr, ResponseMetadata, HttpSourcePtr,
-+              std::shared_ptr<CacheProgressReceiver> receiver) { progress = std::move(receiver); });
-+  consumeCallback(fake_upstream_get_headers_callbacks_[0])(cacheableResponseHeadersByExpire(),
-+                                                           EndStream::End);
-   pumpDispatcher();
--  Mock::VerifyAndClearExpectations(mock_http_cache_);
--  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _));
--  EXPECT_CALL(*mock_http_cache_, evict(_, KeyHasPath("/a")));
--  progress->onInsertFailed(absl::InternalError("test error"));
-+  progress->onInsertFailed(absl::UnavailableError("upstream reset"));
-+  EXPECT_EQ(result1, nullptr);
-+  EXPECT_EQ(result2, nullptr);
-   pumpDispatcher();
--  ASSERT_THAT(result1->http_source_, NotNull());
--  ASSERT_THAT(result2->http_source_, NotNull());
--  MockFunction<void(Http::ResponseHeaderMapPtr, EndStream)> header_callback1, header_callback2;
--  EXPECT_CALL(header_callback1,
--              Call(Pointee(Http::IsSupersetOfHeaders(*response_headers)), EndStream::End));
--  EXPECT_CALL(header_callback2,
--              Call(Pointee(Http::IsSupersetOfHeaders(*response_headers)), EndStream::End));
--  result1->http_source_->getHeaders(header_callback1.AsStdFunction());
--  result2->http_source_->getHeaders(header_callback2.AsStdFunction());
--  // Both requests should have a fresh upstream for pass-through.
--  ASSERT_THAT(fake_upstream_get_headers_callbacks_.size(), Eq(3));
--  consumeCallback(fake_upstream_get_headers_callbacks_[1])(
--      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
--  consumeCallback(fake_upstream_get_headers_callbacks_[2])(
--      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
--  pumpDispatcher();
--  // A new request should provoke a new lookup because the previous insertion failed.
--  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _));
-+  EXPECT_EQ(result2, nullptr);
-+  second_dispatcher->run(Event::Dispatcher::RunType::Block);
-+  ASSERT_NE(result1, nullptr);
-+  ASSERT_NE(result2, nullptr);
-+  EXPECT_EQ(result1->status_, CacheEntryStatus::UpstreamReset);
-+  EXPECT_EQ(result2->status_, CacheEntryStatus::UpstreamReset);
-+  EXPECT_EQ(result1->http_source_, nullptr);
-+  EXPECT_EQ(result2->http_source_, nullptr);
-+  EXPECT_EQ(fake_upstreams_.size(), 1);
-+
-
+   EXPECT_EQ(1, test_server_->counter("http2.outbound_flood")->value());
 ```
 
 ---
 
-### Incident Patch 2: `9d3b9894` (2026-11-10)
-**Commit Message**: ci: Stop caching the build image (#49133)
+### Incident Patch 2: `f8d13779` (2026-11-12)
+**Commit Message**: deps: Update QUICHE to 9917bea (#49197)
 
-Since 2026-11-09T22:58Z restoring the cached build image intermittently
-leaves Docker unable to start on GitHub's hosted runners ("Job for
-docker.service failed"), failing jobs in their first 20s. The cache blob
-(primed 2026-10-21), the runner image (20261101.360 since 2026-11-03)
-and the restore path are unchanged, so this is on the runner side, and
-the restore action discards the journal that would say why.
+Update QUICHE from 35cbd03 to 9917bea
+https://github.com/google/quiche/compare/35cbd03..9917bea
 
-Since #48963 the CI build image is 275 MiB in six layers, pulled in
-seconds, so the cache saves nothing worth stopping Docker and swapping
-/var/lib/docker under sudo on every job. Drop the restore from the run
-workflow and stop priming the cache; the cache-build-image inputs are
-kept so callers need not change.
+Registry:
+https://github.com/envoyproxy/bazel-registry/commit/64473c18f651cde49d61788d0357b88b42fc7e52
+
+```
+$ git log 35cbd03..9917bea --date=short --no-merges --format="%ad %an %s"
+
+2026-11-05 ianswett Coalesce a lower-space PING with the last packet of a handshake flight when the CPLP connection option is sent by the client.
+2026-11-06 ianswett Move PATH_CHALLENGE new-path handling from UpdatePacketContent into OnPathChallengeFrame.
+2026-11-06 vasilvv Limit the amount of buffered QUIC receive timestamps
+2026-11-06 ianswett Batch standalone QUIC ACK-only packets across a receive batch with ScopedAckDeferrer.
+2026-11-06 QUICHE team QBONE Server session: remove set_send_packets_as_datagrams and stream fallback
+2026-11-09 martinduke Replace MoqtSessionParameters::deliver_partial_object with max_undelivered_object.
+2026-11-09 birenroy Fixes a small build breakage in //third_party/quic/core/http:end_to_end_test.
+2026-11-10 QUICHE team Fix OSS QUICHE build breakage in EndToEndTest.CustomTransportParameters.
+2026-11-10 martinduke Implement sending and 
+
+**File**: `.bazelrc` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ common --noincompatible_disallow_ctx_resolve_tools
+ common --legacy_external_runfiles
+ 
+ common --registry=https://bcr.bazel.build/
+-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c
++common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371
+ # common --registry=file:///bazel-registry
+ # this can be useful for dev
+ # common --lockfile_mode=off
+```
+
+**File**: `MODULE.bazel` (modified, +1/-1)
+```diff
+@@ -78,7 +78,7 @@ bazel_dep(name = "proxy-wasm-rust-sdk", version = "0.2.5")
+ bazel_dep(name = "qat-zstd", version = "1.0.0.envoy")
+ bazel_dep(name = "qatlib", version = "26.02.0.envoy")
+ bazel_dep(name = "qatzip", version = "2.0.0.envoy")
+-bazel_dep(name = "quiche", version = "0.0.0-261105-35cbd03.envoy")
++bazel_dep(name = "quiche", version = "0.0.0-261111-9917bea.envoy")
+ bazel_dep(name = "ragel", version = "7.0.4-211228-d4577c9.envoy")
+ bazel_dep(name = "re2", version = "2025-11-05.bcr.1")
+ bazel_dep(name = "rules_apple", version = "5.3.1")
+```
+
+**File**: `MODULE.bazel.lock` (modified, +137/-137)
+```diff
+@@ -461,7 +461,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261111-9917bea.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -775,142 +775,142 @@
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
+     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/MODULE.bazel": "0e1c910a92138c676bb6d800afe89bfc1d0ee52e28ab7269132079c6a0b2c9b1",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/source.json": "bce05c68d40741e7d3ef41318b27720bf43dafcf02e0491e3d1c9ed570637f78",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "7e88398e1054b6d98f8a1c3388537a5dc150290d3f4eb2c0078730dbeda3c791",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/source.json": "0d0c44b9f99dd15d4607e9346ed4e3804daf7eafbc423f75061bc334752aa55c",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
+-    "https://raw.githubusercontent.com
+```
+
+**File**: `api/.bazelrc` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ 
+ common --registry=https://bcr.bazel.build/
+-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c
++common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371
+ 
+ # Build settings
+ build --incompatible_strict_action_env
+```
+
+**File**: `api/MODULE.bazel.lock` (modified, +18/-18)
+```diff
+@@ -525,24 +525,24 @@
+     "https://bcr.bazel.build/modules/zlib/1.3/MODULE.bazel": "6a9c02f19a24dcedb05572b2381446e27c272cd383aed11d41d99da9e3167a72",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel": "5be0b018f959fa4b314ce712f99808d07044272d590316d890c1af8ccc6ad03f",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/source.json": "e6fbcc7d663b82707fdf8268f9104790c9dc0e776841c515c6a6d231977219a8",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/MODULE.bazel": "ef2fd540600d4110f14a07d4a0f2487619233cc0f5e0408ddd249da6d5bf537b",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/source.json": "e13252255c0d9f7f178f62139f573c615faf5966d6bb35b6313a5502ed8f4f89",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/MODULE.bazel": "71ff92df79911a0975a09c1482791fd3983696383d4652277684e67884ac9d40",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/source.json": "39d70fd55602db781fc793f0417b7ecce8f2427e9fdaf6c18938e33acdc4d549",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/MODULE.bazel": "40e1b9b9db52c3238fcc3e85c08ef35eb9157783e620009ed01eeed7631a9f67",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/source.json": "0943a090f19491879321638e307bf6bea1459659fb8de4d85ff7e1eb153f12c9",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/MODULE.bazel": "97206075bc75d7aa4c3d580f488ad19de0f374f192c9e93da9e071b4780d1f23",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/source.json": "1e41359b39620019d80e22316fb8762780330dfbae99ea32e0dd98f3db233e56",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/MODULE.bazel": "bfa220406788d867e7358476be714494f0e7a9a2389fd67e826a04eff6dba4e5",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/source.json": "45bf54e4859f6031318404956ac2933654cc8494899fc84f1d4f5414c0e977ca",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/MODULE.bazel": "63b697734e7cb831eff5970d184518fd614e31b3cb46470ab1555690a2005dc0",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/source.json": "53ddbc94e66efe3b64ffbfd53c493cc757d1c03a3077bd1239e454657cfd1416",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy/MODULE.bazel": "48db25694ec054d0bf9039ce2d51d292daf67b8ff8fc3c4071b43a807f313b41",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/MODULE.bazel": "8090e1bc10a859fe9283c2568db6e6fab1c484173f97d4307de91817576854c9",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/source.json": "ee505052c3c42793598b884a2a01f129d9b4f92067a628dbfeafd9aa73cbec5b"
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel": "5be0b018f959fa4b314ce712f99808d07044272d590316d890c1af8ccc6ad03f",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7
+```
+
+**File**: `bazel/deps.yaml` (modified, +1/-1)
+```diff
+@@ -1437,7 +1437,7 @@ zstd:
+   project_name: "zstd"
+   project_desc: "zstd compression library"
+   project_url: "https://facebook.github.io/zstd"
+-  release_date: "2026-11-05"
++  release_date: "2026-11-11"
+   use_category:
+   - dataplane_ext
+   extensions:
+```
+
+**File**: `bazel/tests/codeql/.bazelrc` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ common --registry=https://bcr.bazel.build/
+-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c
++common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371
+ 
+ common --noincompatible_disallow_empty_glob
+ common --noincompatible_disallow_ctx_resolve_tools
+```
+
+**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +139/-139)
+```diff
+@@ -476,7 +476,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261111-9917bea.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -788,144 +788,144 @@
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
+     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/MODULE.bazel": "0e1c910a92138c676bb6d800afe89bfc1d0ee52e28ab7269132079c6a0b2c9b1",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/source.json": "bce05c68d40741e7d3ef41318b27720bf43dafcf02e0491e3d1c9ed570637f78",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "7e88398e1054b6d98f8a1c3388537a5dc150290d3f4eb2c0078730dbeda3c791",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/source.json": "0d0c44b9f99dd15d4607e9346ed4e3804daf7eafbc423f75061bc334752aa55c",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
+-    "https://raw.githubusercontent.com
+```
+
+---
+
+### Incident Patch 3: `573c0668` (2026-11-11)
+**Commit Message**: test: Fix use-after-free flake in ratelimit integration test cleanup (#49172)
+
+`cleanup()` closed the fake ratelimit connection with `FlushWrite` and
+returned without waiting for the disconnect. The fixture then destroyed
+the `FakeHttpConnection` codec on the main thread while the fake
+upstream thread could still be draining the write buffer, whose drain
+trackers call into the codec's `ProtocolConstraints`.
+
+ASAN caught this as a heap-use-after-free in
+`ProtocolConstraints::releaseOutboundFrame()` in
+`ResponseHeaderHitsAddendOnStreamDone`, which sends the ratelimit
+response immediately before cleanup (5 failures in 1000 runs).
+
+Wait for the disconnect before returning.
 
 Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/_load_env.yml` (modified, +0/-14)
+**File**: `test/extensions/filters/http/ratelimit/ratelimit_integration_test.cc` (modified, +4/-0)
 ```diff
-@@ -15,9 +15,6 @@ on:
-       branch-name:
-         type: string
-         default: main
--      cache-docker:
--        type: boolean
--        default: true
-       config-file:
-         type: string
-         default: ./.github/config.yml
-@@ -100,14 +97,3 @@ jobs:
-         ref: ${{ fromJSON(steps.env.outputs.data).request.ref }}
-         sha: ${{ fromJSON(steps.env.outputs.data).request.sha }}
-         target-branch: ${{ fromJSON(steps.env.outputs.data).request.target-branch }}
--
--  cache:
--    secrets:
--      app-id: ${{ secrets.lock-app-id }}
--      app-key: ${{ secrets.lock-app-key }}
--    uses: ./.github/workflows/_request_cache_docker.yml
--    needs: request
--    if: ${{ inputs.cache-docker }}
--    with:
--      caches: ${{ needs.request.outputs.caches }}
--      image-tag: ${{ fromJSON(needs.request.outputs.build-image).default }}
-```
-
-**File**: `.github/workflows/_request.yml` (modified, +0/-43)
-```diff
-@@ -43,7 +43,6 @@ jobs:
-       pull-requests: read
-     outputs:
-       env: ${{ steps.data.outputs.value }}
--      caches: ${{ steps.caches.outputs.value }}
-       config: ${{ steps.config.outputs.config }}
-     steps:
-     - uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
-@@ -123,48 +122,6 @@ jobs:
-               "linked-title": $linkedTitle}
-           | del(.config.tables)
- 
--    # TODO(phlax): shift this to ci/request action above
--    - name: Check Docker cache (x64)
--      id: cache-exists-docker-x64
--      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
--      with:
--        lookup-only: true
--        path: /tmp/cache
--        key: ${{ fromJSON(steps.data.outputs.value).request.build-image.default }}
--    - name: Check Docker cache (arm64)
--      id: cache-exists-docker-arm64
--      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
--      with:
--        lookup-only: true
--        path: /tmp/cache
--        key: ${{ fromJSON(steps.data.outputs.value).request.build-image.default }}-arm64
--    - name: Caches
--      uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: caches
--      with:
--        input-format: yaml
--        input: |
--          docker:
--            x64: ${{ steps.cache-exists-docker-x64.outputs.cache-hit || 'false' }}
--            arm64: ${{ steps.cache-exists-docker-arm64.outputs.cache-hit || 'false' }}
--        filter: |
--          .
--
--  cache:
--    permissions:
--      actions: write
--      contents: read
--      packages: read
--    if: ${{ github.repository == 'envoyproxy/envoy' || vars.ENVOY_CI }}
--    needs: incoming
--    uses: ./.github/workflows/_request_cache.yml
--    secrets:
--      app-id: ${{ secrets.lock-app-id }}
--      app-key: ${{ secrets.lock-app-key }}
--    with:
--      caches: ${{ needs.incoming.outputs.caches }}
--      env: ${{ needs.incoming.outputs.env }}
--
-   checks:
-     if: ${{ github.repository == 'envoyproxy/envoy' || vars.ENVOY_CI }}
-     needs: incoming
-```
-
-**File**: `.github/workflows/_request_cache.yml` (removed, +0/-45)
-```diff
-@@ -1,45 +0,0 @@
--name: Request/cache
--
--permissions:
--  contents: read
--
--on:
--  workflow_call:
--    secrets:
--      app-id:
--        required: true
--      app-key:
--        required: true
--
--    inputs:
--      env:
--        type: string
--        required: true
--      caches:
--        type: string
--        required: true
--
--
--jobs:
--  docker:
--    secrets:
--      app-id: ${{ secrets.app-id }}
--      app-key: ${{ secrets.app-key }}
--    name: Docker/${{ matrix.arch }}
--    uses: ./.github/workflows/_request_cache_docker.yml
--    with:
--      arch: ${{ matrix.arch }}
--      cache-suffix: ${{ matrix.cache-suffix }}
--      caches: ${{ inputs.caches }}
--      image-tag: ${{ fromJSON(inputs.env).request.build-image.default }}
--      runs-on: ${{ matrix.runs-on }}
--    strategy:
--      fail-fast: false
--      matrix:
--        include:
--        - target: docker-x64
--          arch: x64
--        - target: docker-arm64
--          arch: arm64
--          cache-suffix: -arm64
--          runs-on: ${{ vars.ENVOY_ARM_VM || 'ubuntu-24.04-arm' }}
-```
-
-**File**: `.github/workflows/_request_cache_docker.yml` (removed, +0/-82)
-```diff
-@@ -1,82 +0,0 @@
--name: Request/cache (prime Docker)
--
--permissions:
--  contents: read
--
--on:
--  workflow_call:
--    secrets:
--      app-id:
--        required: true
--      app-key:
--        required: true
--    inputs:
--      caches:
--        type: string
--        required: true
--      image-tag:
--        type: string
--        required: true
--
--      arch:
--        type: string
--        default: x64
--      cache-suffix:
--        type: string
--        default:
--      runs-on:
--        type: string
--        default:
--      lock-repository:
--        type: string
--        default: envoyproxy/ci-mutex
--
--## Docker cache
--#
--# This workflow will only prime the cache, and should be done separately first, prior
--# to any jobs that require it.
--#
--# For a job that does, you can restore with something like:
--#
--#    steps:
--#    - uses: envoyproxy/toolshed/actions/docker/cache/restore@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--#      with:
--#        key: "${{ needs.env.outputs.build-image }}"
--#
--
--
--jobs:
--  docker:
--    runs-on: ${{ inputs.runs-on || 'ubuntu-24.04' }}
--    name: "[${{ inputs.arch }}] Prime Docker cache"
--    if: ${{ ! fromJSON(inputs.caches).docker[inputs.arch] }}
--    steps:
--    - uses: envoyproxy/toolshed/actions/appauth@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: appauth
--      name: Appauth (mutex lock)
--      with:
--        app_id: ${{ secrets.app-id }}
--        key: ${{ secrets.app-key }}
--    - uses: envoyproxy/toolshed/actions/docker/cache/prime@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: docker
--      name: Prime Docker cache (${{ inputs.image-tag }}${{ inputs.cache-suffix }})
--      with:
--        image-tag: ${{ inputs.image-tag }}
--        key-suffix: ${{ inputs.cache-suffix }}
--        lock-token: ${{ steps.appauth.outputs.token }}
--        lock-repository: ${{ inputs.lock-repository }}
--    - uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: data
--      name: Cache data
--      with:
--        input-format: yaml
--        input: |
--          cached: ${{ steps.docker.outputs.cached }}
--          key: ${{ inputs.image-tag }}${{ inputs.cache-suffix }}
--    - uses: envoyproxy/toolshed/actions/json/table@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      name: Summary
--      with:
--        json: ${{ steps.data.outputs.value }}
--        output-path: GITHUB_STEP_SUMMARY
--        title: >-
--          Cache (Docker ${{ inputs.arch }})
-```
-
-**File**: `.github/workflows/_run.yml` (modified, +2/-15)
-```diff
-@@ -40,6 +40,8 @@ on:
-           - src: /mnt/runner
-             target: RUNNER_TEMP/container/bazel_root
-             chown: "runner:runner"
-+      # The build image is no longer cached (it is pulled in seconds); these are accepted so
-+      # callers need not change, and ignored.
-       cache-build-image:
-         type: string
-       cache-build-image-key-suffix:
-@@ -280,21 +282,6 @@ jobs:
-             else . end
-           | "${{ inputs.template-docker-configure }}"
- 
--    # HACK/WORKAROUND for cache scope issue (https://github.com/envoyproxy/envoy/issues/37603)
--    - if: ${{ inputs.cache-build-image }}
--      id: cache-lookup
--      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
--      with:
--        lookup-only: true
--        path: /tmp/cache
--        key: ${{ inputs.cache-build-image }}${{ inputs.cache-build-image-key-suffix }}
--    - if: ${{ inputs.cache-build-image && steps.cache-lookup.outputs.cache-hit == 'true' }}
--      name: Restore Docker cache ${{ inputs.cache-build-image && format('({0})', inputs.cache-build-image) || '' }}
--      uses: envoyproxy/toolshed/actions/docker/cache/restore@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      with:
--        image-tag: ${{ inputs.cache-build-image }}
--        key-suffix: ${{ inputs.cache-build-image-key-suffix }}
--
-     - uses: envoyproxy/toolshed/actions/appauth@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
-       id: appauth
-       name: Appauth
-```
-
----
-
-### Incident Patch 3: `961fd728` (2026-11-10)
-**Commit Message**: typo: fix parse authority comment (#49117)
-
-Commit Message: fix a comment typo.
-Additional Description:
-Risk Level:
-Testing:
-Docs Changes:
-Release Notes:
-Platform Specific Features:
-
-Signed-off-by: Kuat Yessenov <[REDACTED_EMAIL]>
-
-**File**: `source/common/http/utility.h` (modified, +2/-3)
-```diff
-@@ -647,10 +647,9 @@ struct AuthorityAttributes {
- };
- 
- /**
-- * Parse passed authority, and get that is valid FQDN or IPv4/IPv6 address, hostname and port-name.
-+ * Parse passed authority, and get that is valid FQDN or IPv4/IPv6 address, hostname and port value.
-  * @param host host/authority
-- * @param default_port If passed authority does not have port, this value is returned
-- * @return hostname parse result. that includes whether host is IP Address, hostname and port-name
-+ * @return hostname parse result. that includes whether host is IP Address, hostname and port value.
-  */
- AuthorityAttributes parseAuthority(absl::string_view host);
- 
+@@ -184,6 +184,10 @@ class RatelimitIntegrationTest : public Grpc::GrpcClientIntegrationParamTest,
+     if (fake_ratelimit_connection_ != nullptr) {
+       AssertionResult result = fake_ratelimit_connection_->close();
+       RELEASE_ASSERT(result, result.message());
++      // close() only flushes: wait for the disconnect so that the fake upstream thread is not still
++      // draining the write buffer, and releasing outbound frames, when the codec is destroyed.
++      result = fake_ratelimit_connection_->waitForDisconnect();
++      RELEASE_ASSERT(result, result.message());
+     }
+     cleanupUpstreamAndDownstream();
+   }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49162** (closed): [WIP] ci: Name each Check/build job's run flag in the matrix (@phlax)
-- **PR #49155** (2026-11-10): dynamic_modules/bindgen: Stage clang's builtin headers for the bindin… (@phlax)
-- **PR #49150** (2026-11-10): ci/openssl: Leave incompatible targets out of the presubmit selection (@phlax)
-- **PR #49148** (2026-11-10): dynamic_modules: move the cluster writer's queue into a shared writer base (@agrawroh)
-- **PR #49147** (2026-11-11): listener: report an update that replaces a listener before the workers start (@agrawroh)
-- **PR #49145** (2026-11-11): listener: notify update callbacks when a listener fails to listen (@agrawroh)
+- **PR #49215** (2026-11-12): test/ext_proc: Deflake the HTTP client integration tests (@phlax)
+- **PR #49209** (2026-11-12): http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (@phlax)
+- **PR #49208** (closed): windows: enable CEL on windows (@anuraaga)
+- **PR #49207** (2026-11-12): signal: Write fatal signal backtraces with write(2) (@phlax)
+- **PR #49203** (2026-11-12): ci/release: Sign off the dev and sync commits correctly (@phlax)
+- **PR #49202** (2026-11-12): test/network_ecds: Wait for the workers before connecting (@phlax)
 
 ---
 
@@ -1719,31 +1365,44 @@ Signed-off-by: Kuat Yessenov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [cache_v2] Fix upstream reset crash and stats (#48814)
+## X. http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#4920
 
 **RULE**:
-When implementing operations in `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/integration/http2_flood_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86b4404b`: [cache_v2] Fix upstream reset crash and stats (#48814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0dfc4642`: http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#49209). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/http2_flood_integration_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-http: fixed a crash in the cache v2 filter when a late callback from a failed cache insertion affected a subsequent
-  request for the same entry. Aborted insertions now reset waiting requests, and subsequent requests use a new cache session.
-  Lookups aborted without a response source now increment the cache ``upstream_reset`` event counter.
-  Upstream resets during cache validation reset waiting lookups while preserving existing cached readers.
+  void sendPrefillRequest(uint32_t data_frame_count, uint32_t data_frame_size = 10);
+// Starts a session and sends the request that pre-fills the downstream outbound frame queue,
+// without waiting for the queue to fill.
+void Http2FloodMitigationTest::sendPrefillRequest(uint32_t data_frame_count,
+                                                  uint32_t data_frame_size) {
+}
+
+void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
+                                                              uint32_t data_frame_size) {
+  sendPrefillRequest(data_frame_count, data_frame_size);
+  // The duration timer runs from when the connection is made, so it also covers the pre-fill.
+  // Do not wait to see the queue full: if the timer fires before the test thread has seen it, the
+  // connection is already closed and the queue is empty again. The response and the GOAWAY are
+  // one frame over the limit together, whichever is queued first.
+  sendPrefillRequest(AllFrameFloodLimit - 1);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
+                                                              uint32_t data_frame_size) {
+  prefillOutboundDownstreamQueue(AllFrameFloodLimit - 1);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86b4404b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0dfc4642` are properly handled with clean fallback behavior.

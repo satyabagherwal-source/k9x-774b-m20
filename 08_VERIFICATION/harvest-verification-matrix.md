@@ -9236,3 +9236,6 @@
 | `CYCLE-20261112-456R` | `2026-11-12T22:21:23.139Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dccaca49...`) |
 | `CYCLE-20261112-474I` | `2026-11-12T22:21:25.650Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c0a274c3...`) |
 | `CYCLE-20261112-48QK` | `2026-11-12T22:21:27.740Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6120ebb2...`) |
+| `CYCLE-20261112-K2E9` | `2026-11-12T22:33:46.017Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1ef504b5...`) |
+| `CYCLE-20261112-K4RN` | `2026-11-12T22:33:49.091Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`75d4ca47...`) |
+| `CYCLE-20261112-K6BI` | `2026-11-12T22:33:51.102Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bc46a91a...`) |

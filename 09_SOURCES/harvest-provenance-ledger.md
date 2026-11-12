@@ -9245,3 +9245,6 @@ Every entry in this ledger must capture:
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `f16ceaa3` | Multi-dimensional audit evidence | 2026-11-12T22:21:23.144Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `5b68aa9e` | Multi-dimensional audit evidence | 2026-11-12T22:21:25.656Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `c930abe2` | Multi-dimensional audit evidence | 2026-11-12T22:21:27.745Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `1ad62cc8` | Multi-dimensional audit evidence | 2026-11-12T22:33:46.025Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `96bba17f` | Multi-dimensional audit evidence | 2026-11-12T22:33:49.095Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `66059605` | Multi-dimensional audit evidence | 2026-11-12T22:33:51.114Z |

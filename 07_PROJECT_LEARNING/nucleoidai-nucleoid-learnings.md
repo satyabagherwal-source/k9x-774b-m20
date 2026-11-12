@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `bc20ed9c`  
+> **Source Version**: `66059605`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:49:19.747Z  
+> **Timestamp**: 2026-11-12T22:33:39.484Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:49:19.740Z  
+> **Harvest Timestamp**: 2026-11-12T22:33:39.477Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1212,21 +1212,24 @@ export async function instances({
   return { instances: dataset[0].instances };
 }
 
-// Each synthesis turns the extracted instances of a training pair clockwise by
-// its rotation and moves them by its offset, so every training pair gains three
-// synthesized pairs.
+// Each synthesis turns the extracted instances of a training pair by its
+// rotation, clockwise when positive and counterclockwise when negative, and
+// moves them by its offset, so every training pair gains six synthesized pairs.
 const SYNTHESES = [
   { rotation: 90, offset: { x: 1, y: 1 } },
   { rotation: 90, offset: { x: -1, y: 1 } },
   { rotation: 90, offset: { x: -1, y: -1 } },
+  { rotation: -90, offset: { x: 2, y: 2 } },
+  { rotation: -90, offset: { x: -2, y: 2 } },
+  { rotation: -90, offset: { x: -2, y: -2 } },
 ];
 
-// Draws the object of an instance matrix turned clockwise by the rotation about
-// the pivot, the bounding box the instance turns about, which keeps its top-left
-// corner, and moved by the offset, on a canvas of the matrix's size that grows
-// as needed. The gaps between the object's and the pivot's edges turn with
-// them, so the object keeps its place relative to the pivot. An object without
-// cells stays an all-zero canvas.
+// Draws the object of an instance matrix turned by the rotation, clockwise when
+// positive, about the pivot, the bounding box the instance turns about, which
+// keeps its top-left corner, and moved by the offset, on a canvas of the
+// matrix's size that grows as needed. The gaps between the object's and the
+// pivot's edges turn with them, so the object keeps its place relative to the
+// pivot. An object without cells stays an all-zero canvas.
 function turn(matrix, pivot, rotation: number, offset) {
   const object = Matrix.locate(matrix);
   const rows: number = matrix.length;
@@ -1308,7 +1311,7 @@ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
   };
 }
 
-// Synthesizes three training pairs from a training pair's extracted instances,
+// Synthesizes six training pairs from a training pair's extracted instances,
 // one per synthesis, each holding every instance turned and moved by it. A
 // pair without instances synthesizes none.
 export function synthesize({ instances, output_canvas }) {
@@ -1454,17 +1457,7 @@ export async function value({
             "dataset": [{
               "instances": [{
                 "implementation": <IMPLEMENTATION>
-              }]
-            }]
-          }  
-        `,
-      },
-    ],
-  });
-
-  const implementation = dataset[0].instances[0].implementation;
-
-  milestone.evaluating_rules({ instance_name: instance.instance_name }
+              }
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1739,325 +1732,202 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc20ed9c` (2026-11-12)
-**Commit Message**: Update world-model tagline
+### Incident Patch 1: `66059605` (2026-11-12)
+**Commit Message**: Add counterclockwise ARC training synthesis
 
-Remove “Synthesized” from the README tagline.
+Add three counterclockwise rotations with two-cell offsets, bringing synthesis to six pairs per training pair. Update the ARC documentation and debugging guidance.
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +20/-18)
 ```diff
-@@ -8,7 +8,7 @@
- ![Banner](.github/media/banner.gif)
+@@ -80,10 +80,11 @@ between that code and the log. At the time of writing, `start()` writes
+ 3. `analyzer.instances` (LLM, per training pair): each instance's
+    `input_instance_matrix` and `output_instance_matrix`. The extracted
+    instances get their `instance_name`, then `analyzer.synthesize` (no LLM)
+-   creates three synthesized pairs per training pair, one per synthesis:
++   creates six synthesized pairs per training pair, one per synthesis:
+    every extracted instance turned clockwise by 90 degrees and moved by
+-   x+1 y+1, x-1 y+1 or x-1 y-1. They follow the training pairs in
+-   `train_dataset.dataset`, three per training pair in turn, in that order.
++   x+1 y+1, x-1 y+1 or x-1 y-1, or turned counterclockwise by 90 degrees and
++   moved by x+2 y+2, x-2 y+2 or x-2 y-2. They follow the training pairs in
++   `train_dataset.dataset`, six per training pair in turn, in that order.
+    Each holds one instance per extracted instance of its source pair, in
+    source order, with `synthesis` (`source`, `rotation`, `offset`), named
+    after every training pair's instances. Its `input_matrix` merges their
+@@ -147,21 +148,22 @@ Run every check that applies and record each result:
+   instances reproduce the pair's input, and its merged and canvassed output
+   instances reproduce its output, without conflicting overlaps. The test input
+   instances reproduce `test_input_matrix`.
+-- **Synthesis.** Three synthesized pairs per training pair follow the
+-  training pairs, in training pair order, each pair's three in the synthesis
+-  order x+1 y+1, x-1 y+1, x-1 y-1, all with rotation 90. Each holds one
+-  instance per extracted instance of its source pair, in source order, whose
+-  `source` names it. Recompute each instance from its source with the
+-  `Matrix.ts` helpers: turn the input and output crops with `Matrix.rotate`,
+-  place the input crop at the source's located position plus the offset, and
+-  place the output crop so that its gaps to the input object's bounding box
+-  turn with it, its new left gap being the old bottom gap and its new top gap
+-  the old left gap. The output object's box is the pivot when the input is
+-  empty, and an object without cells stays all zeros. Draw both with
+-  `Matrix.draw` on their source matrices' sizes, then draw every drawing of
+-  the pair on one frame that covers them all and starts at its top-left cell,
+-  and compare them with the instances' matrices. The pair's `input_matrix`
+-  equals `Matrix.merge` of its input instance matrices, and its
++- **Synthesis.** Six synthesized pairs per training pair follow the training
++  pairs, in training pair order, each pair's six in the synthesis order
++  +90 x+1 y+1, +90 x-1 y+1, +90 x-1 y-1, -90 x+2 y+2, -90 x-2 y+2,
++  -90 x-2 y-2. Each holds one instance per extracted instance of its source
++  pair, in source order, whose `source` names it. Recompute each instance
++  from its source with the `Matrix.ts` helpers: turn the input and output
++  crops with `Matrix.rotate`, place the input crop at the source's located
++  position plus the offset, and place the output crop so that its gaps to the
++  input object's bounding box turn with it. At +90 its new left gap is the old
++  bottom gap and its new top gap the old left gap; at -90 they are the old
++  top gap and the old right gap. The output object's box is the pivot when
++  the input is empty, and an object without cells stays all zeros. Draw both
++  with `Matrix.draw` on their source matrices' sizes, then draw every drawing
++  of the pair on one frame that covers them all and starts at its top-left
++  cell, and compare them with the instances' matrices. The pair's
++  `input_matrix` equals `Matrix.merge` of its input instance matrices, and its
+   `output_matrix` equals `Matrix.canvas` of the merge of its output instance
+   matrices with `output_canvas`. Turned objects may overlap, the later one
+   winning in the merge, which is intended; count the pairs where they do.
+```
+
+**File**: `arc/README.md` (modified, +10/-6)
+```diff
+@@ -183,7 +183,7 @@ panels keep the same full number. The declarations header includes the
+ output canvas instead of adding a separate milestone. Segmented-object panels
+ use `Input` and `Output` without object-number labels. After each pair's
+ segmentation, a `<count> training objects synthesized` step shows the `Input`
+-and `Output` panels of the three training pairs synthesized from it, titled
++and `Output` panels of the six training pairs synthesized from it, titled
+ with their synthesis, such as `Input · +90° x-1 y+1`. A synthesized
+ instance's construction starts with a `Deriving <instance> from <source>`
+ step. Model
+@@ -2554,13 +2554,16 @@ bounding-box origin nor the corner's 3 by 3 size.
+ ```
  
- <p align="center">
--  <b>Synthesized Logic Language for World Models 🌱🐋🌍</b>
-+  <b>Logic Language for World Models 🌱🐋🌍</b>
- </p>
+ After `analyzer.instances` extracts a pair's instances, `analyzer.synthesize`
+-creates three more training pairs from them, one per synthesis, without an LLM
+-call. Each synthesis turns every instance clockwise by `+90` degrees and moves
+-it by an offset:
++creates six more training pairs from them, one per synthesis, without an LLM
++call. Each synthesis turns every instance by `+90` degrees, clockwise, or by
++`-90` degrees, counterclockwise, and moves it by an offset:
  
- <br/>
+ 1. `+90` degrees, x `+1`, y `+1`
+ 2. `+90` degrees, x `-1`, y `+1`
+ 3. `+90` degrees, x `-1`, y `-1`
++4. `-90` degrees, x `+2`, y `+2`
++5. `-90` degrees, x `-2`, y `+2`
++6. `-90` degrees, x `-2`, y `-2`
+ 
+ An instance's input and output objects turn together about its input object's
+ bounding box, which keeps its top-left corner, so the input object moves to its
+@@ -2650,7 +2653,7 @@ left and one row down:
+ ```
+ 
+ The synthesized pairs follow the training pairs in the training dataset,
+-three for each training pair in turn, in the order above, and every later
++six for each training pair in turn, in the order above, and every later
+ stage treats them as training pairs. Only the analysis synthesizes: the
+ visualization adds no pairs of its own and reads the synthesized pairs from
+ the training dataset as training examples, like the others. Instance names
+@@ -2673,7 +2676,8 @@ argument, such as a color, unchanged. Orientation turns the way the datasets
+ label it by shape: a shape that the turn leaves unchanged, such as a single
+ cell, keeps its orientation, a shape that a half turn leaves unchanged, such
+ as a bar, counts it modulo 180 degrees, and any other shape modulo 360
+-degrees, so a corner at 135 turns to 225 and a bar at 90 to 0. The source's
++degrees. A corner at 135 turns to 225 at `+90` and to 45 at `-90`, and a bar
++at 90 turns to 0 either way. The source's
+ implementation must construct the source by its name and give each of the
+ five arguments once as `name=<integer>`, or the run fails. A list argument
+ carries over unchanged too, so a list of cell positions, such as `points` in
+```
+
+**File**: `arc/src/analyzer.ts` (modified, +18/-15)
+```diff
+@@ -67,21 +67,24 @@ export async function instances({
+   return { instances: dataset[0].instances };
+ }
+ 
+-// Each synthesis turns the extracted instances of a training pair clockwise by
+-// its rotation and moves them by its offset, so every training pair gains three
+-// synthesized pairs.
++// Each synthesis turns the extracted instances of a training pair by its
++// rotation, clockwise when positive and counterclockwise when negative, and
++// moves them by its offset, so every training pair gains six synthesized pairs.
+ const SYNTHESES = [
+   { rotation: 90, offset: { x: 1, y: 1 } },
+   { rotation: 90, offset: { x: -1, y: 1 } },
+   { rotation: 90, offset: { x: -1, y: -1 } },
++  { rotation: -90, offset: { x: 2, y: 2 } },
++  { rotation: -90, offset: { x: -2, y: 2 } },
++  { rotation: -90, offset: { x: -2, y: -2 } },
+ ];
+ 
+-// Draws the object of an instance matrix turned clockwise by the rotation about
+-// the pivot, the bounding box the instance turns about, which keeps its top-left
+-// corner, and moved by the offset, on a canvas of the matrix's size that grows
+-// as needed. The gaps between the object's and the pivot's edges turn with
+-// them, so the object keeps its place relative to the pivot. An object without
+-// cells stays an all-zero canvas.
++// Draws the object of an instance matrix turned by the rotation, clockwise when
++// positive, about the pivot, the bounding box the instance turns about, which
++// keeps its top-left corner, and moved by the offset, on a canvas of the
++// matrix's size that grows as needed. The gaps between the object's and the
++// pivot's edges turn with them, so the object keeps its place relative to the
++// pivot. An object without cells stays an all-zero canvas.
+ function turn(matrix, pivot, rotation: number, offset) {
+   const object = Matrix.locate(matrix);
+   const rows: number = matrix.length;
+@@ -163,7 +166,7 @@ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
+   };
+ }
+ 
+-// Synthesizes three training pairs from a training pair's extracted instances,
++// Synthesizes six training pairs from a training pair's extracted instances,
+ // one per synthesis, each holding every instance turned and moved by it. A
+ // pair without instances synthesizes none.
+ export function synthesize({ instances, output_canvas }) {
+@@ -338,11 +341,11 @@ export async function value({
+   return { implementation, input_value };
+ }
+ 
+-// The orientation of a shape turned clockwise by the rotation, as the datasets
+-// label orientation by shape: a shape that the turn leaves unchanged, such as a
+-// single cell, keeps its orientation, a shape that a half turn leaves
+-// unchanged, such as a bar, counts it modulo 180 degrees, and any other shape
+-// counts it modulo 360 degrees.
++// The orientation of a shape turned by the rotation, clockwise when positive,
++// as the datasets label orientation by shape: a shape that the turn leaves
++// unchanged, such as a single cell, keeps its orientation, a shape that a half
++// turn leaves unchanged, such as a bar, counts it modulo 180 degrees, and any
++// other shape counts it modulo 360 degrees.
+ function turned_orientation(matrix, orientation: number, rotation: number) {
+   const shape = Matrix.crop(matrix);
+   const unchanged = (degrees: number): boolean =>
 ```
 
 ---
 
-### Incident Patch 2: `ea6c4455` (2026-11-12)
-**Commit Message**: Derive synthesized ARC instances without LLM calls
+### Incident Patch 2: `21cf2386` (2026-11-12)
+**Commit Message**: Include declarations in visualizer query
 
-Reuse source implementations, adjusting object geometry and orientation before evaluation. Document the derivation rules and add a progress milestone.
+Pass the training declarations and output canvas to the visualizer alongside the test input matrix.
 
-**File**: `.claude/agents/arc-debug.agent.md` (modified, +14/-4)
+**File**: `arc/src/visualizer.ts` (modified, +2/-0)
 ```diff
-@@ -100,8 +100,11 @@ between that code and the log. At the time of writing, `start()` writes
-    implementation): `implementation`, `input_value`. Every Nucleoid program
-    starts with `canvas_width` and `canvas_height`, the column and row counts
-    of the pair's own `input_matrix`, or of `test_input_matrix` in steps 7
--   and 8. The training pairs' instances are constructed first, then each
--   synthesized pair's.
-+   and 8. The training pairs' instances are constructed first. Each
-+   synthesized pair's instances then come from `analyzer.derive` (no LLM,
-+   then the same Nucleoid run): the source's implementation under the
-+   instance's name, with `x`, `y`, `width` and `height` of its located input
-+   object and `orientation` turned with it, every other argument unchanged.
- 5. `analyzer.state` (Nucleoid on all declarations, implementations and
-    `Obj[:]`, once per pair): each training instance's `output_value`. Every
-    pair, synthesized or not, is one world on its own canvas.
-@@ -169,7 +172,13 @@ Run every check that applies and record each result:
-   `id` is its name, and an `output_value`. The state steps matched every
-   instance; none is missing, unmatched or duplicated. `input_value` agrees with
-   its input instance matrix, for example its `x` and `y` with `Matrix.locate`
--  when the model has those properties.
-+  when the model has those properties. A synthesized instance's
-+  `implementation` equals its source's with the instance's name, and with
-+  `x`, `y`, `width` and `height` set to its located input object. Its
-+  `orientation` is the source's, unchanged when the turn leaves the source's
-+  input crop unchanged, plus the rotation modulo 180 when a half turn does,
-+  and plus the rotation modulo 360 otherwise. Every other argument, lists
-+  included, is unchanged.
- - **Training replay.** Every training instance's rule-derived `output_value`
-   agrees with its actual `output_instance_matrix`: the located position,
-   colors and size. A disagreement means the world model mispredicts its own
-@@ -178,7 +187,8 @@ Run every check that applies and record each result:
-   program per pair, to confirm the state. For a synthesized instance, a
-   disagreement can also mean that a rule does not turn with its object, such
-   as a rim that always grows above its point, or that it reads a canvas that
--  grew to hold the turned objects, or objects that overlap after turning.
-+  grew to hold the turned objects, objects that overlap after turning, or a
-+  list argument, such as cell positions, that carried over unturned.
-   Report those separately from the extracted instances' disagreements, which
-   alone show the world model mispredicting its own training data.
- - **Test composition.** Every test `output_value` has integer `x` and `y`; a
-```
-
-**File**: `arc/README.md` (modified, +20/-4)
-```diff
-@@ -184,7 +184,9 @@ output canvas instead of adding a separate milestone. Segmented-object panels
- use `Input` and `Output` without object-number labels. After each pair's
- segmentation, a `<count> training objects synthesized` step shows the `Input`
- and `Output` panels of the three training pairs synthesized from it, titled
--with their synthesis, such as `Input · +90° x-1 y+1`. Model
-+with their synthesis, such as `Input · +90° x-1 y+1`. A synthesized
-+instance's construction starts with a `Deriving <instance> from <source>`
-+step. Model
- token usage remains
- attached to its active milestone. Instance-specific steps, crop and
- implementation headers, and input- and output-state headers include the
-@@ -2661,9 +2663,23 @@ on its own canvas, so the objects of one synthesis share a world, and a rule
- that relates objects, such as
- `Obj.filter(other => other.height > $Obj.height)` in
- `dataset.9af7a82c.json`, compares them with one another and never with
--objects of another pair. A synthesized instance makes the same two
--`analyzer.value` LLM calls as an extracted one, so the analysis makes four
--times as many.
-+objects of another pair.
-+
-+A synthesized instance makes no LLM call. `analyzer.derive` writes its
-+implementation from its source's: the source's implementation under the
-+instance's name, with `x`, `y`, `width`, and `height` set to the instance's
-+located input object and `orientation` turned with it, and every other
-+argument, such as a color, unchanged. Orientation turns the way the datasets
-+label it by shape: a shape that the turn leaves unchanged, such as a single
-+cell, keeps its orientation, a shape that a half turn leaves unchanged, such
-+as a bar, counts it modulo 180 degrees, and any other shape modulo 360
-+degrees, so a corner at 135 turns to 225 and a bar at 90 to 0. The source's
-+implementation must construct the source by its name and give each of the
-+five arguments once as `name=<integer>`, or the run fails. A list argument
-+carries over unchanged too, so a list of cell positions, such as `points` in
-+`dataset.44f52bb0.json`, still describes the source object. Nucleoid then
-+evaluates the implementation on the synthesized pair's canvas, as
-+`analyzer.value` does.
- 
- ##### 4. Create instances in Nucleoid session
- 
-```
-
-**File**: `arc/src/analyzer.ts` (modified, +136/-8)
-```diff
-@@ -179,6 +179,21 @@ export function synthesize({ instances, output_canvas }) {
-   return { dataset };
- }
- 
-+// Runs an implementation after the world model's class on the pair's canvas
-+// and returns the object it constructs.
-+async function evaluate(train_dataset, input_matrix, implementation: string) {
-+  const canvas_width: number = input_matrix[0].length;
-+  const canvas_height: number = input_matrix.length;
-+  return nucleoid.run(
-+    [
-+      `canvas_width = ${canvas_width}`,
-+      `canvas_height = ${canvas_height}`,
-+      train_dataset.declarations[0],
-+      implementation,
-+    ].join("\n\n")
-+  );
-+}
-+
- export async function value({
-   puzzle_id,
-   only_puzzle_dataset,
-@@ -306,15 +321,128 @@ export async function value({
- 
-   milestone.evaluating_rules({ instance_name: instance.instance_name });
- 
--  const canvas_width: number = input_matrix[0].length;
--  const canvas_height: number = input_matrix.length;
--  const input_value = await nucleoid.run(
--    [
--      `canvas_width = ${canvas_width}`,
--      `canvas_height = ${canvas_height}`,
--      train_dataset.declarations[0],
-+  const input_value = await evaluate(
-+    train_dataset,
-+    input_matrix,
-+    implementation
-+  );
-+
-+  milestone.instance_constructed({
-+    instance_name: instance.instance_name,
-+    input_instance_matrix: instance.input_instance_matrix,
-+    output_instance_matrix: instance.output_instance_matrix,
-+    implementation,
-+    input_value,
-+  });
-+
-+  return { implementation, input_value };
-+}
-+
-+// The orientation of a shape turned clockwise by the rotation, as the datasets
-+// label orientation by shape: a shape that the turn leaves unchanged, such as a
-+// single cell, keeps its orientation, a shape that a half turn leaves
-+// unchanged, such as a bar, counts it modulo 180 degrees, and any other shape
-+// counts it modulo 360 degrees.
-+function turned_orientation(matrix, orientation: number, rotation: number) {
-+  const shape = Matrix.crop(matrix);
-+  const unchanged = (degrees: number): boolean =>
-+    JSON.stringify(Matrix.rotate(shape, degrees)) === JSON.stringify(shape);
-+  if (unchanged(rotation)) {
-+    return orientation;
-+  }
-+
-+  const period: number = unchanged(180) ? 180 : 360;
-+  return (((orientation + rotation) % period) + period) % period;
-+}
-+
-+// Sets the constructor argument that an implementation gives once as an
-+// integer, such as x=5, to the value computed from its old one.
-+function set_argument(
-+  implementation: string,
-+  name: string,
-+  value: (old: number) => number,
-+  instance_name: string
-+): string {
-+  const argument = new RegExp(`\\b${name}\\s*=\\s*(-?\\d+)`, "g");
-+  const count: number = [...implementation.matchAll(argument)].length;
-+  if (count !== 1) {
-+    throw new Error(
-+      `Implementation of ${instance_name} gives ${name} ${count} times, not once`
-+    );
-+  }
-+
-+  return implementation.replace(
-+    argument,
-+    (_, old: string) => `${name}=${value(Number(old))}`
-+  );
-+}
-+
-+// A synthesized instance's implementation, written from its source's without
-+// an LLM call: the source's implementation under the instance's name, with the
-+// position and size of the instance's input object and the source's
-+// orientation turned with it. Every other argument, such as a color, carries
-+// over unchanged.
-+function synthesized_implementation(source, instance): string {
-+  if (!source.implementation.includes(source.instance_name)) {
-+    throw new Error(
-+      `Implementation of ${source.instance_name} does not construct it by name`
-+    );
-+  }
-+
-+  const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
-+  const values = {
-+    x: () => x,
-+    y: () => y,
-+    width: () => width,
-+    height: () => height,
-+    orientation: (orientation: number) =>
-+      turned_orientation(
-+        source.input_instance_matrix,
-+        orientation,
-+        instance.synthesis.rotation
-+      ),
-+  };
-+
-+  let implementation: string = source.implementation
-+    .split(source.instance_name)
-+    .join(instance.instance_name);
-+  for (const [name, value] of Object.entries(values)) {
-+    implementation = set_argument(
-       implementation,
--    ].join("\n\n")
-+      name,
-+      value,
-+      source.instance_name
-+    );
-+  }
-+
-+  return implementation;
-+}
-+
-+// Constructs a synthesized instance from the extracted instance it was
-+// synthesized from, and evaluates it as value() does.
-+export async function derive({ train_dataset, input_matrix, instance }) {
-+  const source = train_dataset.dataset
-+    .flatMap(({ instances }) => instances)
-+    .find(({ instance_name }) => instance_name === instance.synthesis.source);
-+  if (!source) {
-+    throw new Error(
-+      `Source ${instance.synthesis.source} of ${instance.instance_name} is not a training instance`
-+    );
-+  }
-+
-+  milestone.deriving_instance({
-+    instance_name: instance.instance_name,
-+    source: source.instance_name,
-+  });
-+
-+  const implementation = synthesized_implementation(source, instance);
-```
-
-**File**: `arc/src/app.ts` (modified, +6/-6)
-```diff
-@@ -49,9 +49,9 @@ export async function start(
-   train_dataset.declarations = declarations;
-   train_dataset.output_canvas = output_canvas;
- 
--  const construct = async (dataset): Promise<void> => {
-+  const construct = async (dataset, build): Promise<void> => {
-     for (const instance of dataset.instances) {
--      const { implementation, input_value } = await analyzer.value({
-+      const { implementation, input_value } = await build({
-         puzzle_id,
-         only_puzzle_dataset,
-         train_dataset,
-@@ -86,19 +86,19 @@ export async function start(
- 
-     dataset.instances = instances;
- 
--    await construct(dataset);
-+    await construct(dataset, analyzer.value);
-   }
- 
--  // The synthesized pairs follow the training pairs, and each joins the
--  // training dataset when its instances are constructed.
-+  // The synthesized pairs follow the training pairs, and their instances are
-+  // derived from their sources without an LLM call.
-   for (const dataset of synthesized_dataset) {
-     for (const instance of dataset.instances) {
-       instance.instance_name = next_instance_name();
-     }
- 
-     train_dataset.dataset.push(dataset);
- 
--    await construct(dataset);
-+    await construct(dataset, analyzer.derive);
-   }
- 
-   await analyzer.state(train_dataset);
-```
-
-**File**: `arc/src/lib/milestone.ts` (modified, +7/-0)
-```diff
-@@ -94,6 +94,13 @@ export function constructing_instance({ instance_name }) {
-   });
- }
- 
-+export function deriving_instance({ instance_name, source }) {
-+  terminal.step(`Deriving ${instance_name} from ${source}`, {
-+    key: "deriving_instance",
-+    loop: true,
-+  });
-+}
-+
- export function evaluating_rules({ instance_name }) {
-   terminal.step(`Evaluating declarative rules · ${instance_name}`, {
-     key: "evaluating_rules",
+@@ -28,6 +28,8 @@ export async function instances({
+         content: `
+           query:
+           ${JSON.stringify({
++            declarations: train_dataset.declarations,
++            output_canvas: train_dataset.output_canvas,
+             dataset: {
+               input_matrix: test_input_matrix,
+             },
 ```
 
 #### Recent Merged Pull Requests:
@@ -2086,28 +1956,60 @@ Reuse source implementations, adjusting object geometry and orientation before e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update world-model tagline
+## X. Add counterclockwise ARC training synthesis
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-debug.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bc20ed9c`: Update world-model tagline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66059605`: Add counterclockwise ARC training synthesis. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-debug.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  <b>Logic Language for World Models 🌱🐋🌍</b>
+   creates six synthesized pairs per training pair, one per synthesis:
+   x+1 y+1, x-1 y+1 or x-1 y-1, or turned counterclockwise by 90 degrees and
+   moved by x+2 y+2, x-2 y+2 or x-2 y-2. They follow the training pairs in
+   `train_dataset.dataset`, six per training pair in turn, in that order.
+- **Synthesis.** Six synthesized pairs per training pair follow the training
+  pairs, in training pair order, each pair's six in the synthesis order
+  +90 x+1 y+1, +90 x-1 y+1, +90 x-1 y-1, -90 x+2 y+2, -90 x-2 y+2,
+  -90 x-2 y-2. Each holds one instance per extracted instance of its source
+  pair, in source order, whose `source` names it. Recompute each instance
+  from its source with the `Matrix.ts` helpers: turn the input and output
+  crops with `Matrix.rotate`, place the input crop at the source's located
+  position plus the offset, and place the output crop so that its gaps to the
+  input object's bounding box turn with it. At +90 its new left gap is the old
+  bottom gap and its new top gap the old left gap; at -90 they are the old
+  top gap and the old right gap. The output object's box is the pivot when
+  the input is empty, and an object without cells stays all zeros. Draw both
+  wi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  <b>Synthesized Logic Language for World Models 🌱🐋🌍</b>
+   creates three synthesized pairs per training pair, one per synthesis:
+   x+1 y+1, x-1 y+1 or x-1 y-1. They follow the training pairs in
+   `train_dataset.dataset`, three per training pair in turn, in that order.
+- **Synthesis.** Three synthesized pairs per training pair follow the
+  training pairs, in training pair order, each pair's three in the synthesis
+  order x+1 y+1, x-1 y+1, x-1 y-1, all with rotation 90. Each holds one
+  instance per extracted instance of its source pair, in source order, whose
+  `source` names it. Recompute each instance from its source with the
+  `Matrix.ts` helpers: turn the input and output crops with `Matrix.rotate`,
+  place the input crop at the source's located position plus the offset, and
+  place the output crop so that its gaps to the input object's bounding box
+  turn with it, its new left gap being the old bottom gap and its new top gap
+  the old left gap. The output object's box is the pivot when the input is
+  empty, and an object without cells stays all zeros. Draw both with
+  `Matrix.draw` on their source matrices' sizes, then draw every drawing of
+  the pair on one frame that covers them all and starts at its top-left cell,
+  and compare
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc20ed9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66059605` are properly handled with clean fallback behavior.

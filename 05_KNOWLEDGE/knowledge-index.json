@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T22:21:27.573Z",
+  "last_updated": "2026-11-12T22:33:51.008Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13894,8 +13894,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "8085a1d8",
-      "content_hash": "5373e8257a96508da4c2f9313878217ccb18969a66669736b9a255e549c952e1",
+      "source_version": "1ad62cc8",
+      "content_hash": "1ef504b5665d2e52b62841eb08623feecebc61f4cd0e4a360bc0348ed33e97fd",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -13932,6 +13932,11 @@
         {
           "number": null,
           "title": "[cache_v2] Fix upstream reset crash and stats (#48814)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#4920",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14005,7 +14010,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T11:10:40.825Z",
+      "verified_at": "2026-11-12T22:33:45.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48779,8 +48784,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "bc20ed9c",
-      "content_hash": "d74fb9f2111ff7918c159c7884245dc4a8c39d464a57dadfb327b6d959b71664",
+      "source_version": "66059605",
+      "content_hash": "bc46a91a442a11833df32c972446e26e84585f3f31500ed2944fe0dc3edcc7e7",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48962,6 +48967,11 @@
         {
           "number": null,
           "title": "Update world-model tagline",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Add counterclockwise ARC training synthesis",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49255,7 +49265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T21:49:32.504Z",
+      "verified_at": "2026-11-12T22:33:50.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51931,8 +51941,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "781cb511",
-      "content_hash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
+      "source_version": "96bba17f",
+      "content_hash": "75d4ca476417ef039a430a64887bbfe68ccb9d586c55bc3ab54c3fc98acca3cb",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -51949,6 +51959,11 @@
         {
           "number": null,
           "title": "correct Tantivy revision after clustering update (#7365)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "vector): faster IVF builds (#7389)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52027,7 +52042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:17:43.336Z",
+      "verified_at": "2026-11-12T22:33:48.893Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "bc20ed9c",
+    "sourceVersion": "66059605",
     "license": "Apache-2.0",
-    "contentHash": "d74fb9f2111ff7918c159c7884245dc4a8c39d464a57dadfb327b6d959b71664",
-    "lastHarvestedAt": "2026-11-12T21:49:32.690Z",
+    "contentHash": "bc46a91a442a11833df32c972446e26e84585f3f31500ed2944fe0dc3edcc7e7",
+    "lastHarvestedAt": "2026-11-12T22:33:51.114Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "8085a1d8",
+    "sourceVersion": "1ad62cc8",
     "license": "Apache-2.0",
-    "contentHash": "5373e8257a96508da4c2f9313878217ccb18969a66669736b9a255e549c952e1",
-    "lastHarvestedAt": "2026-11-11T11:10:40.940Z",
+    "contentHash": "1ef504b5665d2e52b62841eb08623feecebc61f4cd0e4a360bc0348ed33e97fd",
+    "lastHarvestedAt": "2026-11-12T22:33:46.025Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "781cb511",
+    "sourceVersion": "96bba17f",
     "license": "AGPL-3.0",
-    "contentHash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
-    "lastHarvestedAt": "2026-11-11T10:17:43.506Z",
+    "contentHash": "75d4ca476417ef039a430a64887bbfe68ccb9d586c55bc3ab54c3fc98acca3cb",
+    "lastHarvestedAt": "2026-11-12T22:33:49.095Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

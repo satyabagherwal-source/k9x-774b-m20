@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T22:21:27.760Z",
+  "last_updated": "2026-11-12T22:33:51.121Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d74fb9f2111ff7918c159c7884245dc4a8c39d464a57dadfb327b6d959b71664",
-      "verified_at": "2026-11-12T21:49:32.699Z",
+      "content_hash": "bc46a91a442a11833df32c972446e26e84585f3f31500ed2944fe0dc3edcc7e7",
+      "verified_at": "2026-11-12T22:33:51.121Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:49:32.699Z"
+      "last_updated": "2026-11-12T22:33:51.121Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "5373e8257a96508da4c2f9313878217ccb18969a66669736b9a255e549c952e1",
-      "verified_at": "2026-11-11T11:10:40.962Z",
+      "content_hash": "1ef504b5665d2e52b62841eb08623feecebc61f4cd0e4a360bc0348ed33e97fd",
+      "verified_at": "2026-11-12T22:33:46.035Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T11:10:40.962Z"
+      "last_updated": "2026-11-12T22:33:46.036Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
-      "verified_at": "2026-11-11T10:17:43.517Z",
+      "content_hash": "75d4ca476417ef039a430a64887bbfe68ccb9d586c55bc3ab54c3fc98acca3cb",
+      "verified_at": "2026-11-12T22:33:49.105Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:17:43.517Z"
+      "last_updated": "2026-11-12T22:33:49.105Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",

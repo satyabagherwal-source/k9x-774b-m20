@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:21:34.798Z",
+  "last_updated": "2026-11-12T22:33:58.292Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7391,6 +7391,33 @@
       "source_repo": "temporalio-temporal",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-984D41-flakes-testworkerregistry-countworkers-1.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B7D43C",
+      "directive_title": "http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#4920",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "envoyproxy-envoy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B7D43C-http2-deflake-downstreamconnectiondurati.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-118E93",
+      "directive_title": "vector): faster IVF builds (#7389)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "paradedb-paradedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-118E93-vector-faster-ivf-builds-7389-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-7A9496",
+      "directive_title": "Add counterclockwise ARC training synthesis",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7A9496-add-counterclockwise-arc-training-synthe.md",
       "staged_date": "2026-11-12"
     }
   ]

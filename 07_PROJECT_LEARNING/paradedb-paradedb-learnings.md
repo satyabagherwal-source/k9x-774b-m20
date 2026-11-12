@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `781cb511`  
+> **Source Version**: `96bba17f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:17:26.254Z  
+> **Timestamp**: 2026-11-12T22:33:37.793Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:17:26.242Z  
+> **Harvest Timestamp**: 2026-11-12T22:33:37.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9504 stars
+- **Stars / Engagement**: 9508 stars
 
 ---
 
@@ -2204,11 +2204,11 @@ impl AggregateScanState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7433** (2026-11-12): **CI: Citus 13 build fails on PostgreSQL 15.20 with a redeclared `have_createdb_privilege`**
+  *Symptoms*: # What happens?  Since PostgreSQL 15.20 reached `apt.postgresql.org` on 2026-11-12, the `Build & install Citus 13 (PG 15)` step of `Test pg_search` fails.  ``` citus/src/include/pg_version_compat.h:604:1: error: static declaration of ‘have_createdb_privilege’ follows non-static declaration /usr/include/postgresql/15/server/commands/dbcommands.h:33:13: note: previous declaration of ‘have_createdb_privilege’ with type ‘_Bool(void)’ ```  PostgreSQL 15.20 exports `have_createdb_privilege` from `commands/dbcommands.h` (postgres/postgres@98ec97f673). Citus 13 has a `static inline` copy of it for PostgreSQL versions before 16 in `src/include/pg_version_compat.h`, so the two declarations collide. `v13.4.0` and `v13.5.0` have the same copy, so a newer 13.x tag doesn't help.  The last green run of this job installed `postgresql-server-dev-15` `15.19-1.pgdg26.04+2`. The red runs install `15.20-1.pgdg26.04+1`. PostgreSQL 16 to 18 aren't affected, because those jobs build Citus 14.  These runs fail at the same step.  - https://github.com/paradedb/paradedb/actions/runs/43280487148/job/131400357675 (#7430) - https://github.com/paradedb/paradedb/actions/runs/43272838607 - https://github.com/paradedb/paradedb/actions/runs/43267298415 - https://github.com/paradedb/paradedb/actions/runs/43266693756  ## To Reproduce  Run this on Ubuntu with the PGDG apt repository.  ```bash sudo apt-get install -y postgresql-15 postgresql-server-dev-15 git clone --depth 1 --branch v13.3.0 https://github.com/citu
+
 - **Issue #7313** (2026-11-08): **JoinScan segfaults when a projected expression contains a scalar subquery**
   *Symptoms*: ### What happens?  ParadeDB Join Scan crashes the server (segmentation fault) when an expression in the SELECT list contains a scalar subquery, such as `a.q + (SELECT 1)`. Postgres then restarts all connections. A prepared statement parameter in the same place, with a generic plan, fails with ERROR: no value found for parameter 1.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE a (id int PRIMARY KEY, q int); CREATE TABLE b (id int PRIMARY KEY, a_id int);  INSERT INTO a VALUES (1, 5); INSERT INTO b VALUES (1, 1);  CREATE INDEX a_idx ON a USING paradedb (id, q); CREATE INDEX b_idx ON b USING paradedb (id, a_id);  SELECT a.id, a.q + (SELECT 1) FROM a JOIN b ON b.a_id = a.id WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; ```  The server crashes with "terminated by signal 11: Segmentation fault". Expected 1 | 6. With SET paradedb.enable_join_custom_scan = off; it returns 1 | 6.  The parameter case:  ```sql SET plan_cache_mode = force_generic_plan; PREPARE s(int) AS   SELECT a.id, a.q + $1 FROM a JOIN b ON b.a_id = a.id   WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; EXECUTE s(1); ```  Returns ERROR: no value found for parameter 1. Expected 1 | 6.  ### OS:  macOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  e80cf37  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB pg_search Extension  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant da
-
-- **Issue #7293** (2026-11-10): **Server crashes when a join filter compares an expression over two tables to a scalar subquery**
-  *Symptoms*: ### What happens?  ParadeDB crashes the backend with a segmentation fault when a join query has a filter that uses columns from both tables and an uncorrelated scalar subquery, for example `a.price * b.qty > (SELECT 1)`. Postgres then terminates all active connections and restarts. Plain `EXPLAIN` crashes too, because the fault happens during planning.  Both Aggregate Scan and Join Scan are affected. The same query without aggregates crashes through Join Scan when it has an `ORDER BY` and `LIMIT`.  The crash report shows DataFusion's constant evaluator calling `PgExprUdf`, which faults in `ExecEvalParamExec` on a NULL address:  ``` ExecEvalParamExec        (KERN_INVALID_ADDRESS at 0x0) ExecInterpExpr ExecEvalExpr PgExprUdf                (pg_expr_udf.rs) ScalarUDF::invoke_with_args ConstEvaluator           (datafusion_optimizer expr_simplifier) ```  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE ca (id int PRIMARY KEY, name text, price float8); CREATE TABLE cb (id int PRIMARY KEY, a_id int, qty float8);  INSERT INTO ca VALUES (1, 'x shoes', 1.5), (2, 'y shoes', 2.5); INSERT INTO cb VALUES (1, 1, 1), (2, 2, 2);  CREATE INDEX ca_idx ON ca USING paradedb (id, name, price); CREATE INDEX cb_idx ON cb USING paradedb (id, a_id, qty);  SELECT COUNT(*) FROM ca JOIN cb ON cb.a_id = ca.id WHERE ca.id @@@ pdb.all()   AND ca.price * cb.qty > (SELECT 1); ```  Crashes with `server closed the connection unexpectedly`. The Postgres log shows `terminated by si
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2225,475 +2225,36 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61edff0a` (2026-11-10)
-**Commit Message**: fix: correct Tantivy revision after clustering update (#7365)
+### Incident Patch 1: `a2eac0bb` (2026-11-11)
+**Commit Message**: perf(vector): faster IVF builds (#7389)
 
-## What
+Faster IVF builds: pins the build speedups in paradedb/tantivy#405 and
+paradedb/superkmeans-rs#46.
 
-Restore compilation on main by pinning Tantivy to
-`05b861b5ef138c4f4a3d93544d3b174e1994e207`, the merged revision of
-paradedb/tantivy#392.
+Commits `d1820b571` and `5dfd90fb6`, on #7384 `e5740017b`:
+- tantivy `98c0f9436` (main: merged paradedb/tantivy#405, then the
+router test fix paradedb/tantivy#409): encode cluster blocks on the
+rayon pool; fused multiply-add and round under x86 features; SOAR
+assignment through one prepared assigner.
+- superkmeans-rs `b605bff` (main, merged #46): SOAR secondary from the
+centroid Gram matrix. `index_write`'s superkmeans pin matches tantivy's,
+so the build links one superkmeans-rs.
+- Changelog fragment `vector-build-speedups.performance.mdx`.
 
-## Why
+The cargoHash bot follows with its nix commit.
 
-#7346 pinned the pre-merge branch commit `1c7c2150`, which lacks the
-vector-routing APIs already required by #7295, including
-`VectorSearchBudget`, `AtomicVectorWork`, and
-`TopClustersBySimilarityCollector`. Both
-[HN](https://github.com/paradedb/paradedb/actions/runs/42894121461) and
-[MS
-MARCO](https://github.com/paradedb/paradedb/actions/runs/42894122837)
-pg_vectorsearch runs failed while compiling `pg_search` during cluster
-setup.
+## Cohere CI
 
-## How
+The CI runs below benchmarked `460cf111a`: the same pins before #7384
+and the tantivy stack were restacked onto main and superkmeans #46 was
+merged. The tantivy patches are identical, and the superkmeans tree is
+identical.
 
-Update all four Tantivy dependency/patch pins and the ten Tantivy-family
-lockfile entries. The merged revision retains the geometric
-`target_leaf_size` changes and includes the required routing APIs. No
-other dependency versions change. The existing Nix CI workflow will
-refresh `cargoHash` for the updated lockfile.
-
-## Tests
-
-- `cargo metadata --format-version 1 --locked`: all ten Tantivy-family
-packages resolve to the new revision.
-- `cargo check --workspace --all-targets --locked`: passed locally with
-PostgreSQL 18, including 
-
-**File**: `Cargo.lock` (modified, +10/-10)
-```diff
-@@ -5254,7 +5254,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7513,7 +7513,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7572,15 +7572,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "bitpacking",
- ]
- 
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7595,7 +7595,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7628,7 +7628,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7637,7 +7637,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7649,7 +7649,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7662,7 +7662,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7699,7 +7699,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "serde",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.19.3"
- 
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
- tantivy-jieba = "0.21.0"
- 
- async-trait = "0.1.92"
-@@ -185,8 +185,8 @@ rstest = "0.28.0"
- postgres = "0.19.14"
- 
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
- 
- [workspace.lints.rust]
- unused_crate_dependencies = "warn"
-```
-
----
-
-### Incident Patch 2: `29cca447` (2026-11-09)
-**Commit Message**: fix: bypass planner hooks during mutable sweeps (#7301)
-
-# Ticket(s) Closed
-
-- Addresses #7299
-
-## What
-
-Make mutable-sweep catalog discovery bypass planner hooks, allowing the
-worker to find Citus shard indexes and avoid the Citus crash path during
-concurrent table drops.
-
-## Why
-
-Citus rewrites SQL queries against `pg_class` to hide shard indexes. Its
-visibility check can dereference a null relation name during concurrent
-`DROP TABLE`, crashing the sweeper and causing PostgreSQL to terminate
-other backends.
-
-## How
-
-Read the extension version through `pg_extension_name_index`, avoiding
-an extension syscache that is unavailable on older PostgreSQL minor
-releases.
-
-Scan `pg_class` directly and filter relation kind, persistence, and
-access method before looking up `INDEXRELID` to check index validity and
-readiness. This limits per-pass index syscache probes to ParadeDB
-candidates. Reuse the existing syscache guard and access-method checks,
-preserving the extension-version gate, OID ordering, and nonblocking
-relation locking.
-
-## Tests
-
-- Passed the catalog-discovery regression test on PostgreSQL 17.6 and
-18.3. The test rejects every planner-hook invocation and checks
-filtering of te
-
-**File**: `pg_search/src/postgres/catalog.rs` (modified, +146/-0)
-```diff
-@@ -78,6 +78,87 @@ pub fn lookup_namespace(namespace: &CStr) -> Option<pg_sys::Oid> {
-     }
- }
- 
-+pub fn lookup_extension_version(name: &CStr) -> Option<String> {
-+    unsafe {
-+        let relation =
-+            pg_sys::table_open(pg_sys::ExtensionRelationId, pg_sys::AccessShareLock as _);
-+        let mut key = pg_sys::ScanKeyData::default();
-+        pg_sys::ScanKeyInit(
-+            &mut key,
-+            pg_sys::Anum_pg_extension_extname as _,
-+            pg_sys::BTEqualStrategyNumber as _,
-+            pg_sys::F_NAMEEQ.into(),
-+            pg_sys::Datum::from(name.as_ptr()),
-+        );
-+        let scan = pg_sys::systable_beginscan(
-+            relation,
-+            pg_sys::ExtensionNameIndexId.into(),
-+            true,
-+            std::ptr::null_mut(),
-+            1,
-+            &mut key,
-+        );
-+        let tuple = pg_sys::systable_getnext(scan);
-+        let version = if tuple.is_null() {
-+            None
-+        } else {
-+            let mut is_null = false;
-+            let datum = pg_sys::heap_getattr(
-+                tuple,
-+                pg_sys::Anum_pg_extension_extversion as _,
-+                (*relation).rd_att,
-+                &mut is_null,
-+            );
-+            String::from_datum(datum, is_null)
-+        };
-+        pg_sys::systable_endscan(scan);
-+        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
-+        version
-+    }
-+}
-+
-+pub fn paradedb_index_oids() -> Vec<pg_sys::Oid> {
-+    unsafe {
-+        let relation = pg_sys::table_open(pg_sys::RelationRelationId, pg_sys::AccessShareLock as _);
-+        let scan = pg_sys::systable_beginscan(
-+            relation,
-+            pg_sys::InvalidOid,
-+            false,
-+            std::ptr::null_mut(),
-+            0,
-+            std::ptr::null_mut(),
-+        );
-+        let mut indexes = Vec::new();
-+        loop {
-+            let tuple = pg_sys::systable_getnext(scan);
-+            if tuple.is_null() {
-+                break;
-+            }
-+            let class = &*pg_sys::GETSTRUCT(tuple).cast::<pg_sys::FormData_pg_class>();
-+            if class.relkind as u8 != pg_sys::RELKIND_INDEX
-+                || class.relpersistence as u8 == pg_sys::RELPERSISTENCE_TEMP
-+                || !class.relam.is_paradedb_am()
-+            {
-+                continue;
-+            }
-+            let Some(entry) = SysCacheEntry::search1(
-+                pg_sys::SysCacheIdentifier::INDEXRELID,
-+                class.oid.into_datum().unwrap(),
-+            ) else {
-+                continue;
-+            };
-+            let index = &*pg_sys::GETSTRUCT(entry.tuple).cast::<pg_sys::FormData_pg_index>();
-+            if index.indisvalid && index.indisready {
-+                indexes.push(class.oid);
-+            }
-+        }
-+        pg_sys::systable_endscan(scan);
-+        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
-+        indexes.sort_unstable_by_key(|oid| oid.to_u32());
-+        indexes
-+    }
-+}
-+
- /// Helper function to lookup a type's assigned `typcategory` attribute from `pg_catalog.pg_type`
- pub fn lookup_type_category(typoid: pg_sys::Oid) -> Option<u8> {
-     unsafe {
-@@ -320,3 +401,68 @@ pub fn lookup_collation_locale(collation: pg_sys::Oid) -> Option<CollationLocale
-         })
-     }
- }
-+
-+#[cfg(any(test, feature = "pg_test"))]
-+#[pgrx::pg_schema]
-+mod tests {
-+    use super::*;
-+    use pgrx::{PgTryBuilder, Spi, pg_guard, pg_test};
-+
-+    #[pg_guard]
-+    unsafe extern "C-unwind" fn reject_planning(
-+        _parse: *mut pg_sys::Query,
-+        _query: *const std::ffi::c_char,
-+        _options: std::ffi::c_int,
-+        _params: pg_sys::ParamListInfo,
-+    ) -> *mut pg_sys::PlannedStmt {
-+        pgrx::error!("catalog discovery must not invoke planner hooks");
-+    }
-+
-+    #[pg_test]
-+    fn sweep_catalog_discovery_bypasses_planner_hooks() {
-+        let mut expected = paradedb_index_oids();
-+        Spi::run(
-+            "CREATE TABLE sweep_catalog (id int, body text);
-+             CREATE INDEX sweep_catalog_idx ON sweep_catalog USING paradedb(id, body);
-+             CREATE INDEX sweep_catalog_btree ON sweep_catalog(id);
-+             CREATE TABLE sweep_catalog_invalid_table (id int, body text);
-+             CREATE INDEX sweep_catalog_invalid ON sweep_catalog_invalid_table USING paradedb(id, body);
-+             CREATE TABLE sweep_catalog_unready_table (id int, body text);
-+             CREATE INDEX sweep_catalog_unready ON sweep_catalog_unready_table USING paradedb(id, body);
-+             UPDATE pg_index SET indisvalid = false WHERE indexrelid = 'sweep_catalog_invalid'::regclass;
-+             UPDATE pg_index SET indisready = false WHERE indexrelid = 'sweep_catalog_unready'::regclass;
-+             CREATE TEMP TABLE sweep_catalog_temp (id int, body text);
-+             CREATE INDEX sweep_catalog_temp_idx ON sweep_catalog_temp USING paradedb(id, body);
-+             CREATE UNLOGGED TABLE sweep_catalog_unlogged (id int, body text);
-+             CREATE INDEX sweep_catalog_u
-```
-
-**File**: `pg_search/src/postgres/mutable_sweep.rs` (modified, +28/-27)
-```diff
-@@ -19,7 +19,7 @@ use crate::api::{HashMap, HashSet};
- use crate::index::merge_policy::LayeredMergePolicy;
- use crate::index::mvcc::MvccSatisfies;
- use crate::index::writer::index::SearchIndexMerger;
--use crate::postgres::catalog::OidExt;
-+use crate::postgres::catalog::{OidExt, lookup_extension_version, paradedb_index_oids};
- use crate::postgres::delete::VacuumSignal;
- use crate::postgres::index::free_leaf_partition_indexes;
- use crate::postgres::locks::AdvisoryLock;
-@@ -31,8 +31,8 @@ use crate::postgres::ps_status::{MERGING, set_ps_display_suffix};
- use crate::postgres::storage::metadata::MetaPage;
- use pgrx::bgworkers::{BackgroundWorker, BackgroundWorkerBuilder, SignalWakeFlags};
- use pgrx::{
--    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, Spi,
--    check_for_interrupts, pg_guard, pg_sys,
-+    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, check_for_interrupts,
-+    pg_guard, pg_sys,
- };
- use std::ffi::CStr;
- use std::panic::AssertUnwindSafe;
-@@ -226,25 +226,12 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-         if sweeping {
-             let observed_counts = pass_context.switch_to(|_| {
-                 let indexes = BackgroundWorker::transaction(|| {
--                    let version = Spi::get_one::<String>(
--                        "SELECT max(extversion::text) FROM pg_catalog.pg_extension WHERE extname = 'pg_search'",
--                    )
--                    .expect("should be able to inspect pg_search version");
-+                    let version = lookup_extension_version(c"pg_search");
-                     if version.as_deref() != Some(env!("CARGO_PKG_VERSION")) {
-                         return None;
-                     }
--                    let indexes = Spi::get_one::<Vec<pg_sys::Oid>>(
--                        "SELECT array_agg(i.indexrelid ORDER BY i.indexrelid)
--                         FROM pg_catalog.pg_index i
--                         JOIN pg_catalog.pg_class c ON c.oid = i.indexrelid
--                         JOIN pg_catalog.pg_am am ON am.oid = c.relam
--                         JOIN pg_catalog.pg_proc p ON p.oid = am.amhandler
--                         JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
--                         WHERE n.nspname = 'paradedb' AND p.proname = 'bm25_handler'
--                           AND i.indisvalid AND i.indisready AND c.relkind = 'i' AND c.relpersistence <> 't'",
--                    )
--                    .expect("should be able to discover ParadeDB indexes")
--                    .unwrap_or_default();
-+                    // Planner hooks can hide shard indexes or race with concurrent drops.
-+                    let indexes = paradedb_index_oids();
-                     let mut current_counts = HashMap::default();
-                     let indexes = free_leaf_partition_indexes(&indexes)
-                         .filter_map(|index| {
-@@ -253,7 +240,9 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             }
-                             let mut idle_segments = HashMap::default();
-                             MetaPage::open(&index).segment_metas().for_each(|_, entry| {
--                                if entry.is_mutable() && entry.xmax() == pg_sys::InvalidTransactionId {
-+                                if entry.is_mutable()
-+                                    && entry.xmax() == pg_sys::InvalidTransactionId
-+                                {
-                                     let key = (index.oid(), entry.segment_id());
-                                     let count = entry.num_docs();
-                                     current_counts.insert(key, count);
-@@ -282,7 +271,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             if VacuumSignal::new(index.oid()).wants_cancel() {
-                                 return;
-                             }
--                            let Some(_slot) = MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
-+                            let Some(_slot) =
-+                                MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
-                             else {
-                                 return;
-                             };
-@@ -293,7 +283,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             let merge_lock = metadata.acquire_merge_lock();
-                             PgTryBuilder::new(AssertUnwindSafe(|| {
-                                 let frozen = metadata.freeze_mutable_segments_matching(|entry| {
--                                    idle_segments.get(&entry.segment_id()) == Some(&entry.num_docs())
-+                                    idle_segments.get(&entry.segment_id())
-+                                        == Some(&entry.num_docs())
-                                 });
-                                 if 
-```
-
----
-
-### Incident Patch 3: `781cb511` (2026-11-11)
-**Commit Message**: fix: restore IVF split logic while keeping target_leaf_size (#7377)
-
-## What
-
-Soft-revert geometric clustering while keeping the `target_leaf_size`
-name and default of 200. ParadeDB's source integration, option names,
-and SQL regression fixtures remain identical to the PR base. Update the
-dependency pins and correct two descriptions of the training-leaf cap;
-retain the original option-rename changelog entry.
-
-## Dependencies and scope
-
-- [superkmeans-rs
-#45](https://github.com/paradedb/superkmeans-rs/pull/45),
-`6b0d0bc08e2071220b99222db0c79ad49305f8dc`: restore `ceil(n_sub /
-target_leaf_size)` recursive splitting and enforce the training-leaf cap
-while preserving the API name.
-- [Tantivy #399](https://github.com/paradedb/tantivy/pull/399),
-`98b3d5c1570c912f51f40530ba1645f1695b458b` (merged): use that
-implementation for IVF and stacked routing; preserve
-`with_target_leaf_size` and `DEFAULT_TARGET_LEAF_SIZE`.
-- Preserve donor revival, convergence guards, statistics, and later
-dependency changes. Sampling remains 0.32. Explicit `k` sizing is
-separate. Both dependency PRs are merged; the direct superkmeans pin
-matches the revision used by the merged Tantivy commit.
-
-Updated against cur
-
-**File**: `.github/scripts/docs_snippet_coverage.json` (modified, +4/-4)
-```diff
-@@ -176,13 +176,13 @@
-       ]
-     },
-     {
--      "reason": "Uses the 0.27 target_leaf_size option before the published ORM client packages ship support; the SQL fence runs in the standalone inventory.",
-+      "reason": "The vector index-options CodeGroup contains 0.27 target_leaf_size examples awaiting ORM client support; its SQL fence runs in the standalone inventory.",
-       "fences": [
-         ["reference/indexing/indexing-vectors.mdx::fence-014", "53c92670d4bf64621e64b1db4aa59eb7476bfc799d4ba4134ef9fd8372135c15"],
--        ["reference/indexing/indexing-vectors.mdx::fence-015", "821236f776b5cb115dc2ea7124ab3edd9d7e2fa853164d4f00c2f0a98ad5bcc3"],
-+        ["reference/indexing/indexing-vectors.mdx::fence-015", "5cab4e761805be2b46f77a7b2cc649fe55e0d6c6bdb0a6e327e6fb1246764812"],
-         ["reference/indexing/indexing-vectors.mdx::fence-016", "cd2cc9292117f96cd302bdb88ca5a30074992a9ca9c106eb1d948e99df350d73"],
--        ["reference/indexing/indexing-vectors.mdx::fence-017", "61bbc3322127cc2c471e9e161cafbeae0ef27a0172362974e1fdcdbfd2078388"],
--        ["reference/indexing/indexing-vectors.mdx::fence-018", "e3cd48db5fa758ad4e47dfdf5c3426af64262a260ebdea73337ac4c56ef9bcf4"]
-+        ["reference/indexing/indexing-vectors.mdx::fence-017", "582e688c81c32cf2ef26addb3286c298067a04f5e5250d448e6e8bc3b8aecf5f"],
-+        ["reference/indexing/indexing-vectors.mdx::fence-018", "126340fc1e720d46471e7e7e121434ad4ec13784b130d13ee5b814de15becdee"]
-       ]
-     }
-   ],
-```
+Before: #7384's label run
+[43044680001](https://github.com/paradedb/paradedb/actions/runs/43044680001),
+head `6256ec8e9`. After: run
+[43078291563](https://github.com/paradedb/paradedb/actions/runs/43078291563)
+on `460cf111a`,
 
 **File**: `Cargo.lock` (modified, +11/-11)
 ```diff
@@ -2701,8 +2262,8 @@ Updated against cur
  [[package]]
  name = "ownedbytes"
  version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "stable_deref_trait",
  ]
@@ -2710,8 +2271,8 @@ Updated against cur
  [[package]]
  name = "superkmeans-rs"
  version = "0.4.0"
--source = "git+https://github.com/paradedb/superkmeans-rs?rev=06c8e247a6a0241a996a640080c7245f6c7b5940#06c8e247a6a0241a996a640080c7245f6c7b5940"
-+source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
+-source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
++source = "git+https://github.com/paradedb/superkmeans-rs?rev=b605bff02aaf76cd633efe5f4747080b31b21421#b605bff02aaf76cd633efe5f4747080b31b21421"
  dependencies = [
   "matrixmultiply",
   "pkg-config",
@@ -2719,8 +2280,8 @@ Updated against cur
  [[package]]
  name = "tantivy"
  version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "aho-corasick",
   "arc-swap",
@@ -2728,8 +2289,8 @@ Updated against cur
  [[package]]
  name = "tantivy-bitpacker"
  version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "bitpacking",
  ]
@@ -2737,8 +2298,8 @@ Updated against cur
  [[package]]
  name = "tantivy-columnar"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "downcast-rs",
   "fastdivide",
@@ -2746,8 +2307,8 @@ Updated against cur
  [[package]]
  name = "tantivy-common"
  version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "async-trait",
   "byteorder",
@@ -2755,8 +2316,8 @@ Updated against cur
  [[package]]
  name = "tantivy-quant"
  version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "rand_chacha 0.3.1",
   "rand_core 0.6.4",
@@ -2764,8 +2325,8 @@ Updated against cur
  [[package]]
  name = "tantivy-query-grammar"
  version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "fnv",
   "nom 7.1.3",
@@ -2773,8 +2334,8 @@ Updated against cur
  [[package]]
  name = "tantivy-sstable"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "futures-util",
   "itertools 0.14.0",
@@ -2782,8 +2343,8 @@ Updated against cur
  [[package]]
  name = "tantivy-stacker"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "fixedbitset",
   "murmurhash32",
@@ -2791,8 +2352,8 @@ Updated against cur
  [[package]]
  name = "tantivy-tokenizer-api"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
++source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
  dependencies = [
   "serde",
  ]
@@ -2804,8 +2365,8 @@ Updated against cur
  
  # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
  # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b", features = [
+-tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d", features = [
++tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f", features = [
    "columnar-zstd-compression",
    "lz4-compression",
    "paradedb",
@@ -2813,8 +2374,8 @@ Updated against cur
    "stemmer",
    "stopwords",
  ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f" }
  tantivy-jieba = "0.21.0"
  
  async-trait = "0.1.92"
@@ -2822,42 +2383,23 @@ Updated against cur
  postgres = "0.19.14"
  
  [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d" }
+-tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f" }
++tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f" }
  
  [workspace.lints.rust]
  unused_crate_dependencies = "warn"
 ```
 
-**File**: `docs/project/changelog/unreleased/7346.breaking.mdx` (modified, +1/-1)
+**File**: `docs/project/changelog/unreleased/vector-build-speedups.performance.mdx` (added, +5/-0)
 ```diff
-@@ -2,4 +2,4 @@
- header: breaking
- ---
- 
--Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value is a clustering target rather than a hard cap; actual leaves may be somewhat larger. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
-+Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value caps the number of sampled training vectors per leaf; it does not cap the number of indexed vectors assigned to a cluster. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
-```
-
-**File**: `docs/reference/indexing/indexing-vectors.mdx` (modified, +4/-4)
-```diff
-@@ -254,10 +254,10 @@ modelBuilder.Entity<MockItem>()
- <ParamField body="target_leaf_size" default={200}>
-   The target number of sampled training vectors in a leaf of the hierarchical
-   clustering tree. Must be an integer between `1` and `2147483647`. Smaller
--  values generally produce more centroids and smaller clusters. Actual leaves
--  may be somewhat larger than the target. This setting is independent of
--  `training_sample_ratio` and does not cap the number of indexed vectors
--  assigned to a cluster.
-+  values generally produce more centroids and smaller clusters. Training leaves
-+  are split until they contain at most this many vectors. This setting is
-+  independent of `training_sample_ratio` and does not cap the number of indexed
-+  vectors assigned to a cluster.
- </ParamField>
- <ParamField body="vector_router_quantization" default={true}>
-   Route each query through one-bit codes of the IVF centroids, then rerank the
+@@ -0,0 +1,5 @@
++---
++header: performance
++---
++
++Vector index builds run faster. Each vector's second (replica) cluster comes from the nearest-centroid pass and the centroids' Gram matrix instead of a second pass over every centroid, and a quantized segment encodes its clusters in parallel. On x86 CPUs with AVX2 and FMA, and with SSE4.1, quantized scoring and query preparation use those instructions instead of math-library calls. Quantized encoding and scoring are unchanged bit for bit; replica clusters can differ where two candidates tie to floating-point rounding.
 ```
 
 **File**: `index_write/Cargo.toml` (modified, +2/-2)
@@ -2866,14 +2408,14 @@ Updated against cur
  tantivy.workspace = true
  
  [target.'cfg(target_os = "macos")'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
+-superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
++superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "b605bff02aaf76cd633efe5f4747080b31b21421", features = [
    "accelerate",
  ] }
  
  [target.'cfg(not(target_os = "macos"))'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
+-superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
++superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "b605bff02aaf76cd633efe5f4747080b31b21421", features = [
    "openblas",
  ] }
  
@@ -2885,20 +2427,667 @@ Updated against cur
    # If maintainers forget to do so, Nix will throw an error message that begins
    # like this and then provides the correct new hash:
    # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-4BtZK4+7KXsuqsJODOvlUzTsRXtvx1yTlxFt3ePUHJg=";
-+  cargoHash = "sha256-3VMVjQ0izB1fY6hX9LDapCcUJyiCOFviV4wsj4Dt+vU=";
+-  cargoHash = "sha256-QqyMDAe7/f3gG35rKJbD7Yb/kcGNmGKb6CngL4JcGVE=";
++  cargoHash = "sha256-3ynWDCbl4HzSM9tlZdYkggn7/wPFYmejp69Ol3WHz9A=";
  
    inherit postgresql;
    # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
 ```
 
+---
+
+### Incident Patch 2: `4bc497cb` (2026-11-11)
+**Commit Message**: perf: keep the rank join for row-level security policies of any shape and score them 0.0 in every plan (#7366)
+
+# Ticket(s) Closed
+
+- N/A: reported out of band in
+https://github.com/mm-zacharydavison/parade-db-rank-join-bug/blob/main/REPORT-0.26.6.md
+(problems 1 and 2).
+
+## What
+
+A row-level security policy adds nothing to `pdb.score` in any plan and
+keeps `RankJoinExec`
+whatever its shape. The rank join also admits a `@@@` filter whose score
+is constant
+(`pdb.range`, `pdb.term_set`, `pdb.exists`) and any query at
+`::pdb.const(0)`.
+
+## Why
+
+Since #7298 the rank join applies a pushed filter at `0.0`, but the base
+scan and the hash
+join still add Tantivy's score for it, so a policy made the same
+statement return different
+scores by plan (report case 13). A policy written as a `@@@` query, or
+as an `OR`, was refused
+by the rank join's gate and fell back to a hash join over every
+permitted row (cases 7, 8, 10,
+11, 12).
+
+## How
+
+- PostgreSQL labels every clause with a `security_level`; a policy
+clause is below
+`root->qual_security_level`, a clause the statement wrote is equal to
+it. `extract_quals`
+  marks a clause below that level as `Qual::Security`, which lowers to
+`ConstScore { scor
+
+**File**: `docs/project/changelog/unreleased/7366.breaking.mdx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++header: breaking
++---
++
++A row-level security policy no longer adds a constant to `pdb.score`. Previously a policy added a constant to the score in base scans and hash joins and `0.0` in the rank join, so the same statement returned different scores depending on the plan. Conditions the statement itself writes are unchanged.
+```
+
+**File**: `docs/project/changelog/unreleased/7366.performance.mdx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++header: performance
++---
++
++- Top-K joins ordered by combined search scores keep the rank join when a single-table filter is a row-level security policy of any shape, a `@@@` query whose score is constant (`pdb.range`, `pdb.term_set`, `pdb.exists`), or any query at `::pdb.const(0)`. Such filters previously forced a hash join over every permitted row. As for every filter the rank join admits, it scores them `0.0`.
+```
+
+**File**: `docs/reference/full-text/score.mdx` (modified, +2/-0)
+```diff
+@@ -175,6 +175,8 @@ await dbContext
+ While BM25 scores will be returned as long as `description` is indexed, including `rating` in the ParadeDB index definition will allow results matching
+ `rating < 2` to rank higher than those that do not match.
+ 
++A row-level security policy restricts which rows a user may see and adds nothing to the score. A row scores the same for every user and in every plan, whatever the policy's shape.
++
+ ## Joined Scores
+ 
+ First, let's create a second table called `orders` that can be joined with `mock_items`:
+```
+
+**File**: `index_read/src/index/reader/index.rs` (modified, +9/-8)
+```diff
+@@ -3802,6 +3802,7 @@ mod tests {
+     use crate::index::segment_pruning::{InjectedStatsFailure, STATS_OPENS, inject_stats_failure};
+     use crate::index::stats::SegmentStats;
+     use crate::query::pdb_query::pdb;
++    use crate::query::pdb_query::to_search_query_input;
+     use crate::scan::range_partitioning::RangePartitioning;
+     use pgrx::prelude::*;
+     use std::ops::Bound;
+@@ -3903,9 +3904,9 @@ mod tests {
+             (match_query.clone(), 10),
+             (phrase.clone(), 1),
+             (
+-                SearchQueryInput::FieldedQuery {
+-                    field: "title".into(),
+-                    query: pdb::Query::ScoreAdjusted {
++                to_search_query_input(
++                    "title".into(),
++                    pdb::Query::ScoreAdjusted {
+                         query: Box::new(pdb::Query::ScoreAdjusted {
+                             query: Box::new(pdb::Query::TokenizedPhrase {
+                                 phrase: "silver dragon".into(),
+@@ -3915,7 +3916,7 @@ mod tests {
+                         }),
+                         score: Some(pdb::ScoreAdjustStyle::Const(0.0)),
+                     },
+-                },
++                ),
+                 1,
+             ),
+             (term_query("title", "absent"), 0),
+@@ -4025,15 +4026,15 @@ mod tests {
+                     pattern: "sil.*".into(),
+                 },
+             },
+-            SearchQueryInput::FieldedQuery {
+-                field: "title".into(),
+-                query: pdb::Query::ScoreAdjusted {
++            to_search_query_input(
++                "title".into(),
++                pdb::Query::ScoreAdjusted {
+                     query: Box::new(pdb::Query::Regex {
+                         pattern: "sil.*".into(),
+                     }),
+                     score: Some(pdb::ScoreAdjustStyle::Boost(2.0)),
+                 },
+-            },
++            ),
+         ] {
+             for query in [
+                 unsupported.clone(),
+```
+
+**File**: `index_read/src/postgres/customscan/solve_expr.rs` (modified, +10/-0)
+```diff
+@@ -148,6 +148,16 @@ impl SearchQueryInput {
+         found
+     }
+ 
++    pub fn has_score_filter(&self) -> bool {
++        let mut found = false;
++        self.visit_ref(&mut |sqi| {
++            if let SearchQueryInput::ScoreFilter { .. } = sqi {
++                found = true;
++            }
++        });
++        found
++    }
++
+     pub fn has_postgres_expressions(&self) -> bool {
+         let mut found = false;
+         self.visit_ref(&mut |sqi| {
+```
+
+**File**: `index_read/src/query/mod.rs` (modified, +134/-65)
+```diff
+@@ -367,11 +367,7 @@ impl SearchQueryInput {
+                 conjunction_mode: None,
+             },
+             pdb::Query::ScoreAdjusted { query, score } => {
+-                let query = Box::new(Self::from_unfielded(*query));
+-                match score.expect("score adjustment value should have been set") {
+-                    pdb::ScoreAdjustStyle::Boost(factor) => Self::Boost { query, factor },
+-                    pdb::ScoreAdjustStyle::Const(score) => Self::ConstScore { query, score },
+-                }
++                Self::score_adjusted(Self::from_unfielded(*query), score)
+             }
+             _ => {
+                 ErrorReport::new(
+@@ -386,6 +382,16 @@ impl SearchQueryInput {
+         }
+     }
+ 
++    /// `pdb.boost` and `pdb.const` become [`Self::Boost`] and [`Self::ConstScore`] around the
++    /// lowered query, so a score adjustment never sits inside a [`Self::FieldedQuery`].
++    pub fn score_adjusted(query: Self, score: Option<pdb::ScoreAdjustStyle>) -> Self {
++        let query = Box::new(query);
++        match score.expect("score adjustment value should have been set") {
++            pdb::ScoreAdjustStyle::Boost(factor) => Self::Boost { query, factor },
++            pdb::ScoreAdjustStyle::Const(score) => Self::ConstScore { query, score },
++        }
++    }
++
+     pub fn postgres_expression(node: *mut pg_sys::Node, expr_desc: String) -> Self {
+         SearchQueryInput::PostgresExpression {
+             expr: PostgresExpression {
+@@ -414,10 +420,6 @@ impl SearchQueryInput {
+             | Self::ConstScore { query, .. }
+             | Self::Boost { query, .. } => query.supports_statistics_estimation(),
+             Self::FieldedQuery { query, .. } => {
+-                let mut query = query;
+-                while let pdb::Query::ScoreAdjusted { query: inner, .. } = query {
+-                    query = inner;
+-                }
+                 matches!(
+                     query,
+                     pdb::Query::All
+@@ -501,35 +503,37 @@ impl SearchQueryInput {
+         }
+     }
+ 
+-    /// Whether this is a plain SQL restriction as pushdown lowers it (`=`, `= ANY`, a range,
+-    /// `IS NOT NULL`, `<>`, or an AND of those), which the rank join can keep as a `0.0`-score
+-    /// filter. A term counts only on a field `term_is_filter` accepts. A `PostgresExpression` is
+-    /// accepted for plain `EXPLAIN` (before `solve_postgres_expressions` resolves it at
+-    /// execution). Every explicit `@@@` search (`WithIndex`), any boost or non-zero constant
+-    /// score, an OR, and every other form is refused.
++    /// Whether the rank join can keep this as a `0.0`-score filter: a query that scores every
++    /// row it matches the same, so dropping its score reorders nothing. That is a pushed SQL
++    /// restriction (`=`, `= ANY`, a range, `IS NOT NULL`, `<>`), an explicit `@@@` of a
++    /// constant-score shape (a range, a term set, `exists`), an AND or NOT of those, or a
++    /// `0.0` constant over anything without a score condition, which is how a row-level
++    /// security policy and a `::pdb.const(0)` arrive. An OR is admitted only when every branch
++    /// already scores `0.0`: a row matching two branches of a scored OR outranks a row matching
++    /// one, which the rank join cannot reproduce. A term counts only on a field
++    /// `term_is_filter` accepts. A `PostgresExpression` is accepted for plain `EXPLAIN` (before
++    /// `solve_postgres_expressions` resolves it at execution). A text search, a boost, and a
++    /// non-zero constant score are refused.
+     pub fn is_pushdown_filter(&self, term_is_filter: &dyn Fn(&FieldName) -> bool) -> bool {
+         match self {
+             SearchQueryInput::All
+             | SearchQueryInput::Empty
+             | SearchQueryInput::Null
+             | SearchQueryInput::TermSet { .. }
+             | SearchQueryInput::PostgresExpression { .. } => true,
+-            // The negation of a pushed filter guards NULLs with a `0.0` constant.
+-            SearchQueryInput::ConstScore { query, score } => {
+-                *score == 0.0 && query.is_pushdown_filter(term_is_filter)
+-            }
++            SearchQueryInput::ConstScore { .. } => self.is_zero_constant(),
++            SearchQueryInput::WithIndex { query, .. } => query.is_pushdown_filter(term_is_filter),
+             // An excluded clause adds no score, but deciding what it excludes may need one.
+             SearchQueryInput::Boolean {
+                 must,
+                 should,
+                 must_not,
+                 ..
+             } => {
+-                should.is_empty()
+-                    && must
+-                        .iter()
+-                        .chain(must_not)
+-                        .all(|q| q.is_pushdown_filter(term_is_filter))
++                must.iter()
++                    .chain(must_not)
++                    .all(|q| q.is_pushdown_filter(term_is_filter))
++                    && should.iter().all(Self::is_zero_constant)
+             }
+    
+```
+
+**File**: `index_read/src/query/pdb_query.rs` (modified, +30/-2)
+```diff
+@@ -61,7 +61,12 @@ use tokenizers::SearchTokenizer;
+ use super::dot_path_to_facet;
+ 
+ pub fn to_search_query_input(field: FieldName, query: pdb::Query) -> SearchQueryInput {
+-    SearchQueryInput::FieldedQuery { field, query }
++    match query {
++        pdb::Query::ScoreAdjusted { query, score } => {
++            SearchQueryInput::score_adjusted(to_search_query_input(field, *query), score)
++        }
++        query => SearchQueryInput::FieldedQuery { field, query },
++    }
+ }
+ 
+ pub fn to_search_query_input_unfielded(query: pdb::Query) -> SearchQueryInput {
+@@ -749,7 +754,6 @@ impl pdb::Query {
+     ) -> bool {
+         match self {
+             pdb::Query::Term { .. } => term_is_filter(field),
+-            pdb::Query::ScoreAdjusted { .. } => false,
+             _ => self.is_constant_score(),
+         }
+     }
+@@ -2843,6 +2847,30 @@ mod tests {
+         }
+     }
+ 
++    #[pg_test]
++    fn to_search_query_input_hoists_score_adjustment() {
++        use super::pdb::ScoreAdjustStyle;
++        use crate::query::SearchQueryInput;
++
++        let nested = Query::ScoreAdjusted {
++            query: Box::new(Query::ScoreAdjusted {
++                query: Box::new(match_query("x")),
++                score: Some(ScoreAdjustStyle::Boost(2.0)),
++            }),
++            score: Some(ScoreAdjustStyle::Const(0.0)),
++        };
++        assert_eq!(
++            super::to_search_query_input(crate::api::FieldName::from("field"), nested),
++            SearchQueryInput::ConstScore {
++                query: Box::new(SearchQueryInput::Boost {
++                    query: Box::new(fielded(match_query("x"))),
++                    factor: 2.0,
++                }),
++                score: 0.0,
++            }
++        );
++    }
++
+     #[pg_test]
+     fn term_scoring_does_not_open_positions() {
+         use crate::postgres::pdb_owned_value::PdbOwnedValue;
+```
+
+**File**: `joinscan/src/postgres/customscan/joinscan/predicate.rs` (modified, +1/-9)
+```diff
+@@ -237,21 +237,13 @@ pub unsafe fn extract_single_table_predicate(
+ ) -> Option<crate::postgres::customscan::joinscan::build::JoinLevelSearchPredicate> {
+     let (_, bm25_idx) = rel_get_bm25_index(side.heaprelid)?;
+ 
+-    // Create a RestrictInfo wrapping the expression for extract_quals
+-    let mut ri_list = PgList::<pg_sys::RestrictInfo>::new();
+-    let fake_ri =
+-        pg_sys::palloc0(std::mem::size_of::<pg_sys::RestrictInfo>()) as *mut pg_sys::RestrictInfo;
+-    (*fake_ri).type_ = pg_sys::NodeTag::T_RestrictInfo;
+-    (*fake_ri).clause = expr.cast();
+-    ri_list.push(fake_ri);
+-
+     let context = PlannerContext::from_planner(root);
+     let mut state = QualExtractState::default();
+ 
+     let qual = extract_quals(
+         &context,
+         rti,
+-        ri_list.as_ptr().cast(),
++        expr,
+         RestrictInfoType::BaseRelation,
+         &bm25_idx,
+         false,
+```
+
+---
+
+### Incident Patch 3: `ad1df4ae` (2026-11-12)
+**Commit Message**: fix: estimate range selectivity for vector routing (#7396)
+
+Range filters previously had no statistics estimate, so parallel vector
+routing treated their match fraction as zero and requested excessive
+cluster candidates. This change estimates numeric and timestamp range
+filters from each segment's existing min/max statistics assuming a
+uniform distribution, and defaults unknown match fractions to 1%.
+
+Canonical bounds stay alongside the Tantivy range query and reuse the
+existing Boolean estimator and `.stats` reader. Inclusive/exclusive
+endpoints and constant fields are handled; missing or unsupported
+statistics fall back to 1%. Nullable and multivalued fields remain
+unknown when min/max cannot determine their document counts. Known-empty
+estimates remain zero. The index format is unchanged.
+
+This branch includes the merged per-worker memory fix from #7398. The HN
+benchmark's fractional probe configuration is fixed separately in #7408.
+
+Validation:
+
+- Five focused estimator tests passed, including synonym coverage and
+PostgreSQL tests for numeric/timestamp bounds, floats, constants, large
+integers, nullable fields, Boolean wrappers, missing statistics, and the
+1% fallback.
+- Existi
+
+**File**: `index_read/src/index/reader/index.rs` (modified, +208/-8)
+```diff
+@@ -84,6 +84,8 @@ use tantivy::{
+ /// `SearchIndexReader::search_top_k_in_segments`.
+ pub const MAX_TOPK_FEATURES: usize = 5;
+ 
++const DEFAULT_VECTOR_MATCH_FRACTION: f64 = 0.01;
++
+ #[derive(Debug, Clone, Copy)]
+ pub struct DocsEstimate {
+     pub matching_docs: usize,
+@@ -940,16 +942,14 @@ impl SearchIndexReader {
+     pub fn estimate_vector_match_fraction(&self) -> f64 {
+         let (matches, docs) =
+             self.candidate_segment_readers()
+-                .fold((0u64, 0u64), |(matches, docs), (_, reader)| {
+-                    let estimated = self
+-                        .query
+-                        .estimate_docs(reader)
+-                        .ok()
+-                        .flatten()
+-                        .map_or(0, |estimate| estimate.live_docs(reader));
++                .fold((0.0, 0u64), |(matches, docs), (_, reader)| {
++                    let estimated = self.query.estimate_docs(reader).ok().flatten().map_or(
++                        f64::from(reader.num_docs()) * DEFAULT_VECTOR_MATCH_FRACTION,
++                        |estimate| estimate.live_docs(reader) as f64,
++                    );
+                     (matches + estimated, docs + u64::from(reader.num_docs()))
+                 });
+-        matches as f64 / docs.max(1) as f64
++        matches / docs.max(1) as f64
+     }
+ 
+     pub fn vector_search_budget(&self, name: &FieldName) -> VectorSearchBudget {
+@@ -3862,6 +3862,206 @@ mod tests {
+         }
+     }
+ 
++    #[pg_test]
++    fn vector_match_fraction_uses_range_statistics() {
++        let (index, _) = segmented_index_fixture("vector_range_estimate", 1, false);
++        let range = range_query("id", 9, 10);
++        for query in [
++            range.clone(),
++            SearchQueryInput::Boolean {
++                must: vec![SearchQueryInput::All, range.clone()],
++                should: vec![],
++                must_not: vec![],
++                minimum_should_match: None,
++            },
++            SearchQueryInput::ConstScore {
++                query: Box::new(range),
++                score: 1.0,
++            },
++        ] {
++            let reader = open_snapshot_reader(&index, query, false);
++            assert_eq!(reader.estimate_vector_match_fraction(), 0.2);
++            assert_eq!(reader.search().count(), 2);
++        }
++        for (query, expected) in [
++            (SearchQueryInput::All, 1.0),
++            (SearchQueryInput::Empty, 0.0),
++            (
++                SearchQueryInput::FieldedQuery {
++                    field: "title".into(),
++                    query: pdb::Query::Regex {
++                        pattern: "sil.*".into(),
++                    },
++                },
++                0.01,
++            ),
++        ] {
++            let reader = open_snapshot_reader(&index, query, false);
++            assert_eq!(reader.estimate_vector_match_fraction(), expected);
++        }
++        let (mutable, _) = segmented_index_fixture("vector_range_without_stats", 0, true);
++        unsafe { pg_sys::PushActiveSnapshot(pg_sys::GetTransactionSnapshot()) };
++        let reader = open_snapshot_reader(&mutable, range_query("id", 1, 5), false);
++        assert_eq!(reader.estimate_vector_match_fraction(), 0.01);
++        drop(reader);
++        unsafe { pg_sys::PopActiveSnapshot() };
++
++        Spi::run(
++            "CREATE TABLE vector_date_estimate AS
++             SELECT g AS id, TIMESTAMPTZ '2000-01-01 00:00:00+00' + g * INTERVAL '1 microsecond' AS time
++             FROM generate_series(1, 100) g;
++             ALTER TABLE vector_date_estimate ADD PRIMARY KEY (id);
++             CREATE INDEX vector_date_estimate_idx ON vector_date_estimate
++             USING paradedb (id, time) WITH (target_segment_count = 1);",
++        ).unwrap();
++        let index = open_index("vector_date_estimate_idx");
++        let query = SearchQueryInput::FieldedQuery {
++            field: "time".into(),
++            query: pdb::Query::Range {
++                lower_bound: std::ops::Bound::Included(PdbOwnedValue::Date(
++                    crate::postgres::datetime::PostgresDateTime::try_from_raw(91).unwrap(),
++                )),
++                upper_bound: std::ops::Bound::Unbounded,
++            },
++        };
++        let reader = open_snapshot_reader(&index, query, false);
++        assert_eq!(reader.estimate_vector_match_fraction(), 0.1);
++        assert_eq!(reader.search().count(), 10);
++    }
++
++    #[pg_test]
++    fn uniform_range_estimates_numeric_and_timestamp_bounds() {
++        use crate::postgres::datetime::PostgresDateTime;
++
++        Spi::run(
++            "CREATE TABLE range_bounds_estimate AS
++             SELECT g AS id, g::oid AS unsigned,
++                    TIMESTAMPTZ '2000-01-01 00:00:00+00' + g * INTERVAL '1 microsecond' AS time,
++                    9223372036854775707::bigint + g AS wide
++             FROM generate_series(1, 100) g;
++             ALTER TABLE range_bounds_estimate ADD PRIMARY KEY (id);
++             CREATE INDEX range_bounds_estimate_id
+```
+
+**File**: `index_read/src/query/estimate.rs` (modified, +83/-3)
+```diff
+@@ -15,12 +15,31 @@
+ // You should have received a copy of the GNU Affero General Public License
+ // along with this program. If not, see <http://www.gnu.org/licenses/>.
+ 
++use std::ops::Bound;
++
++use crate::index::stats::SegmentStats;
++use crate::postgres::pdb_owned_value::PdbOwnedValue;
++use crate::schema::SearchField;
+ use tantivy::SegmentReader;
+ use tantivy::query::{
+-    AllQuery, BooleanQuery, BoostQuery, ConstScoreQuery, EmptyQuery, Occur, PhraseQuery, Query,
+-    SynonymQuery, TermQuery,
++    AllQuery, BooleanQuery, BoostQuery, ConstScoreQuery, EmptyQuery, EnableScoring, Occur,
++    PhraseQuery, Query, RangeQuery, SynonymQuery, TermQuery, Weight,
+ };
+ 
++#[derive(Clone, Debug)]
++pub(super) struct RangeQueryWithEstimate {
++    pub query: RangeQuery,
++    pub field: SearchField,
++    pub lower_bound: Bound<PdbOwnedValue>,
++    pub upper_bound: Bound<PdbOwnedValue>,
++}
++
++impl Query for RangeQueryWithEstimate {
++    fn weight(&self, enable_scoring: EnableScoring<'_>) -> tantivy::Result<Box<dyn Weight>> {
++        self.query.weight(enable_scoring)
++    }
++}
++
+ pub trait QueryEstimate {
+     fn is_fast_count(&self) -> bool {
+         false
+@@ -67,7 +86,7 @@ impl QueryEstimate for dyn Query {
+         }
+         estimate_as! {
+             AllQuery, TermQuery, SynonymQuery, PhraseQuery, BooleanQuery, EmptyQuery,
+-            ConstScoreQuery, BoostQuery
++            ConstScoreQuery, BoostQuery, RangeQueryWithEstimate
+         }
+         // SearchQueryInput::All wraps AllQuery directly, without boxing it.
+         if let Some(query) = self.downcast_ref::<ConstScoreQuery<AllQuery>>() {
+@@ -77,6 +96,67 @@ impl QueryEstimate for dyn Query {
+     }
+ }
+ 
++impl QueryEstimate for RangeQueryWithEstimate {
++    fn estimate_docs(&self, reader: &SegmentReader) -> tantivy::Result<Option<Estimate>> {
++        // Assume values are uniformly distributed between the segment's minimum and maximum.
++        // TODO: Keep more granular statistics to estimate nonuniform distributions.
++        let Some(stats) = SegmentStats::of_reader(reader)? else {
++            return Ok(None);
++        };
++        Ok(stats.empirical_for(&self.field)?.and_then(|stats| {
++            let distance = |value: &PdbOwnedValue| {
++                let distance = match (&stats.min, value) {
++                    (PdbOwnedValue::I64(min), PdbOwnedValue::I64(value)) => {
++                        (i128::from(*value) - i128::from(*min)) as f64
++                    }
++                    (PdbOwnedValue::U64(min), PdbOwnedValue::U64(value)) => {
++                        (i128::from(*value) - i128::from(*min)) as f64
++                    }
++                    (PdbOwnedValue::Date(min), PdbOwnedValue::Date(value)) => {
++                        (i128::from(value.into_inner()) - i128::from(min.into_inner())) as f64
++                    }
++                    (PdbOwnedValue::F64(min), PdbOwnedValue::F64(value)) => value - min,
++                    _ => return None,
++                };
++                distance.is_finite().then_some(distance)
++            };
++            let span = distance(&stats.max)?;
++            let step = if matches!(stats.min, PdbOwnedValue::F64(_)) {
++                0.0
++            } else {
++                1.0
++            };
++            let lower_offset = match &self.lower_bound {
++                Bound::Included(value) => distance(value)?,
++                Bound::Excluded(value) => distance(value)? + step,
++                Bound::Unbounded => 0.0,
++            };
++            let upper_offset = match &self.upper_bound {
++                Bound::Included(value) => distance(value)? + step,
++                Bound::Excluded(value) => distance(value)?,
++                Bound::Unbounded => span + step,
++            };
++            let fraction = if !stats.intersects(&self.lower_bound, &self.upper_bound)
++                || lower_offset > upper_offset
++            {
++                0.0
++            } else if stats.nullable {
++                // Nullability also covers multivalued fields; min/max cannot estimate their document counts.
++                return None;
++            } else if span == 0.0 {
++                1.0
++            } else {
++                ((upper_offset.min(span + step) - lower_offset.max(0.0)) / (span + step))
++                    .clamp(0.0, 1.0)
++            };
++            Some(Estimate {
++                matches: fraction * f64::from(reader.max_doc()),
++                cost: u64::from(reader.max_doc()),
++            })
++        }))
++    }
++}
++
+ impl QueryEstimate for AllQuery {
+     fn is_fast_count(&self) -> bool {
+         true
+```
+
+**File**: `index_read/src/query/pdb_query.rs` (modified, +11/-4)
+```diff
+@@ -22,6 +22,7 @@ use crate::index::synonym_index::{expand_with_index, open_synonym_index, rule_to
+ use crate::postgres::datetime::PostgresDateTime;
+ use crate::postgres::pdb_owned_value::PdbOwnedValue;
+ use crate::postgres::types::is_datetime_type;
++use crate::query::estimate::RangeQueryWithEstimate;
+ use crate::query::more_like_this::MoreLikeThisQueryBuilder;
+ use crate::query::numeric::{
+     clamp_int_bounds, convert_value_for_field, convert_value_for_range_field,
+@@ -1752,7 +1753,8 @@ fn range_query_from_bounds(
+     index_created_by_version: Option<Version>,
+     lower_bound: Bound<PdbOwnedValue>,
+     upper_bound: Bound<PdbOwnedValue>,
+-) -> anyhow::Result<RangeQuery> {
++) -> anyhow::Result<RangeQueryWithEstimate> {
++    let bounds = (lower_bound.clone(), upper_bound.clone());
+     let field_type = search_field.field_entry().field_type();
+     let lower_bound = match lower_bound {
+         Bound::Included(value) => Bound::Included(value_to_term(
+@@ -1790,7 +1792,12 @@ fn range_query_from_bounds(
+         Bound::Unbounded => Bound::Unbounded,
+     };
+ 
+-    Ok(RangeQuery::new(lower_bound, upper_bound))
++    Ok(RangeQueryWithEstimate {
++        query: RangeQuery::new(lower_bound, upper_bound),
++        field: search_field.clone(),
++        lower_bound: bounds.0,
++        upper_bound: bounds.1,
++    })
+ }
+ 
+ /// Creates a range query for the given field and bounds.
+@@ -1815,7 +1822,7 @@ fn range(
+     index_created_by_version: Option<Version>,
+     lower_bound: Bound<PdbOwnedValue>,
+     upper_bound: Bound<PdbOwnedValue>,
+-) -> anyhow::Result<RangeQuery> {
++) -> anyhow::Result<RangeQueryWithEstimate> {
+     let search_field = schema
+         .search_field(field.root())
+         .ok_or(QueryError::NonIndexedField(field.clone()))?;
+@@ -1844,7 +1851,7 @@ fn stored_range(
+     index_created_by_version: Option<Version>,
+     lower_bound: Bound<PdbOwnedValue>,
+     upper_bound: Bound<PdbOwnedValue>,
+-) -> anyhow::Result<RangeQuery> {
++) -> anyhow::Result<RangeQueryWithEstimate> {
+     let search_field = schema
+         .search_field(field.root())
+         .ok_or(QueryError::NonIndexedField(field.clone()))?;
+```
+
 #### Recent Merged Pull Requests:
-- **PR #7378** (closed): perf: pin Tantivy with SIMD rotation kernels for vector quantization (@walter-woodall)
-- **PR #7377** (2026-11-11): fix: restore IVF split logic while keeping target_leaf_size (@rebasedming)
-- **PR #7373** (closed): perf(vector): lower default target leaf size to 150 (@rebasedming)
-- **PR #7371** (2026-11-10): chore: Fix docs after vector updates. (@stuhood)
-- **PR #7367** (closed): chore: Ignore (@stuhood)
-- **PR #7365** (2026-11-10): fix: correct Tantivy revision after clustering update (@rebasedming)
+- **PR #7437** (2026-11-12): ci: build Citus 13 against PostgreSQL 15.20 (@paradedb-github-bot[bot])
+- **PR #7435** (2026-11-12): ci: build Citus 13 against PostgreSQL 15.20 (@mdashti)
+- **PR #7434** (2026-11-12): perf: use the selectivity heuristic for fuzzy matches (@mdashti)
+- **PR #7424** (closed): fix: prevent double-lowercasing in lower(text) indexed expressions under C collation (@sachinsharma3191)
+- **PR #7422** (2026-11-12): ci: run Cohere router quality on its own label (@RuchirRaj)
+- **PR #7413** (closed): Check broad range filters on IVF candidate documents (@rebasedming)
 
 ---
 
@@ -2918,13 +3107,13 @@ Updated against cur
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. correct Tantivy revision after clustering update (#7365)
+## X. vector): faster IVF builds (#7389)
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61edff0a`: correct Tantivy revision after clustering update (#7365). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2eac0bb`: vector): faster IVF builds (#7389). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2932,30 +3121,30 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
+source = "git+https://github.com/paradedb/superkmeans-rs?rev=b605bff02aaf76cd633efe5f4747080b31b21421#b605bff02aaf76cd633efe5f4747080b31b21421"
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc0
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
+source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
+source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61edff0a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2eac0bb` are properly handled with clean fallback behavior.
