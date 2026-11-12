@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-H031",
-    "timestamp": "2026-11-08T22:52:41.773Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "0e9f636010421662ec55c9f0956ec02f67bc388a32836c266fb99e94305ad503",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-H0Q7",
-    "timestamp": "2026-11-08T22:52:42.607Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-PQZT",
-    "timestamp": "2026-11-08T22:59:29.897Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "5cbb5fd36808299df369f519b91a808f81fc4da014c4a4d67e66268f705523db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-PZE2",
-    "timestamp": "2026-11-08T22:59:40.778Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "b53c219c69895b740f8c0c7dea7d6c4370cf7ad81a42623294715c048aecc3e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-UZMG",
     "timestamp": "2026-11-08T23:03:34.360Z",
     "repository": "openai/gpt-oss-120b",
@@ -7490,6 +7430,66 @@
     "repository": "apache/shardingsphere",
     "learningId": "learn-github-apache-shardingsphere",
     "contentHash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-HY7L",
+    "timestamp": "2026-11-12T02:56:23.409Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-I435",
+    "timestamp": "2026-11-12T02:56:31.025Z",
+    "repository": "fb55/css-select",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-IBWD",
+    "timestamp": "2026-11-12T02:56:41.149Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-IEJN",
+    "timestamp": "2026-11-12T02:56:44.579Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T02:17:25.217Z",
-  "total_records": 55,
+  "last_updated": "2026-11-12T02:57:07.403Z",
+  "total_records": 56,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 25,
+      "total": 26,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -50,7 +50,8 @@
         "DOM-D-D2E2CA9E",
         "DOM-D-1A1383CC",
         "DOM-D-66B0E6DD",
-        "DOM-D-1866CC44"
+        "DOM-D-1866CC44",
+        "DOM-D-3429AF3D"
       ]
     },
     "E": {
@@ -2222,6 +2223,47 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-12T02:17:25.215Z"
+    },
+    "DOM-D-3429AF3D": {
+      "record_id": "DOM-D-3429AF3D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): kumahq/kuma",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  \n> **Source Version**: `b65a7b2f`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **T",
+      "content_hash": "c8e18f3d0a535058ac48909ffaf0f11e2d27a69894f3dd2fa722557317b457f8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h",
+      "provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:56:50.981Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of kumahq-kuma"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-12T02:57:07.401Z"
     }
   }
 }

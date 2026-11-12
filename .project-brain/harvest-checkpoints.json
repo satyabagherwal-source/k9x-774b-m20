@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T02:48:56.781Z",
+  "last_updated": "2026-11-12T02:56:44.595Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
-      "verified_at": "2026-11-09T17:12:20.697Z",
+      "content_hash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
+      "verified_at": "2026-11-12T02:56:23.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:12:20.697Z"
+      "last_updated": "2026-11-12T02:56:23.423Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
-      "verified_at": "2026-11-11T09:49:10.443Z",
+      "content_hash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
+      "verified_at": "2026-11-12T02:56:41.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:49:10.443Z"
+      "last_updated": "2026-11-12T02:56:41.164Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "47d6ca5e739a8027bb9683646b42ee38fec985728b1ed57bc169c1e616c756ac",
-      "verified_at": "2026-11-09T16:18:36.357Z",
+      "content_hash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
+      "verified_at": "2026-11-12T02:56:44.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:18:36.357Z"
+      "last_updated": "2026-11-12T02:56:44.594Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -14136,14 +14136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-css-select",
-      "content_hash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
-      "verified_at": "2026-11-07T04:10:26.884Z",
+      "content_hash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
+      "verified_at": "2026-11-12T02:56:31.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:10:26.884Z"
+      "last_updated": "2026-11-12T02:56:31.047Z"
     },
     "sindresorhus/KeyboardShortcuts": {
       "repository": "sindresorhus/KeyboardShortcuts",

@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "60b764b8",
+    "sourceVersion": "b65a7b2f",
     "license": "Apache-2.0",
-    "contentHash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
-    "lastHarvestedAt": "2026-11-09T17:12:20.686Z",
+    "contentHash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
+    "lastHarvestedAt": "2026-11-12T02:56:23.413Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "18876676",
+    "sourceVersion": "2c078840",
     "license": "AGPL-3.0",
-    "contentHash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
-    "lastHarvestedAt": "2026-11-11T09:49:10.425Z",
+    "contentHash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
+    "lastHarvestedAt": "2026-11-12T02:56:41.154Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "95a0477a",
+    "sourceVersion": "d904ad91",
     "license": "MIT",
-    "contentHash": "47d6ca5e739a8027bb9683646b42ee38fec985728b1ed57bc169c1e616c756ac",
-    "lastHarvestedAt": "2026-11-09T16:18:36.348Z",
+    "contentHash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
+    "lastHarvestedAt": "2026-11-12T02:56:44.583Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -9393,10 +9393,10 @@
     "repository": "fb55/css-select",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/css-select",
-    "sourceVersion": "3a34d992",
+    "sourceVersion": "17d5d874",
     "license": "BSD-2-Clause",
-    "contentHash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
-    "lastHarvestedAt": "2026-11-07T04:10:26.866Z",
+    "contentHash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
+    "lastHarvestedAt": "2026-11-12T02:56:31.031Z",
     "learningId": "learn-github-fb55-css-select"
   },
   "sindresorhus-keyboardshortcuts": {

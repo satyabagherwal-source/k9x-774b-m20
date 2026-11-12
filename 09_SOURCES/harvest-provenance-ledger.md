@@ -9055,3 +9055,8 @@ Every entry in this ledger must capture:
 | `learn-github-unovue-reka-ui` | `https://github.com/unovue/reka-ui` | `7601c967` | Multi-dimensional audit evidence | 2026-11-12T02:48:40.315Z |
 | `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `48fb1533` | Multi-dimensional audit evidence | 2026-11-12T02:48:47.811Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `7f808225` | Multi-dimensional audit evidence | 2026-11-12T02:48:56.771Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `b65a7b2f` | Multi-dimensional audit evidence | 2026-11-12T02:56:23.413Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `17d5d874` | Multi-dimensional audit evidence | 2026-11-12T02:56:31.031Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `2c078840` | Multi-dimensional audit evidence | 2026-11-12T02:56:41.154Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `d904ad91` | Multi-dimensional audit evidence | 2026-11-12T02:56:44.583Z |
+| `learn-dom-d-3429af3d` | `project://kumahq-kuma` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | 2026-11-12T02:57:07.405Z |

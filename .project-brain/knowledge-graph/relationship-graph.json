@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T02:17:25.219Z",
+  "updated_at": "2026-11-12T02:57:07.405Z",
   "statistics": {
-    "total_nodes": 7,
+    "total_nodes": 8,
     "total_edges": 3,
     "domain_distribution": {
-      "D": 6,
+      "D": 7,
       "M": 1
     },
     "relation_distribution": {
@@ -162,6 +162,28 @@
       ],
       "created_at": "2026-11-12T02:17:25.219Z",
       "updated_at": "2026-11-12T02:17:25.219Z"
+    },
+    "DOM-D-3429AF3D": {
+      "id": "DOM-D-3429AF3D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): kumahq/kuma",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:56:50.981Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T02:57:07.405Z",
+      "updated_at": "2026-11-12T02:57:07.405Z"
     }
   },
   "edges": [

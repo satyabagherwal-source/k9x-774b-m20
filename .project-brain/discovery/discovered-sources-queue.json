@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T02:49:02.534Z",
+  "updated_at": "2026-11-12T02:57:07.561Z",
   "stats": {
-    "total_discovered": 527,
-    "approved_pending_harvest": 476,
+    "total_discovered": 575,
+    "approved_pending_harvest": 523,
     "harvested_count": 0,
-    "rejected_count": 51,
+    "rejected_count": 52,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 489,
-      "OFFICIAL_DOCUMENTATION": 20,
-      "STANDARDS_AND_SPECIFICATIONS": 16,
+      "COMMUNITY_AND_EXPERT": 534,
+      "OFFICIAL_DOCUMENTATION": 21,
+      "STANDARDS_AND_SPECIFICATIONS": 18,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 1
     }
@@ -11254,6 +11254,1055 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
         "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-97C8CCDEF8A1": {
+      "id": "SRC-97C8CCDEF8A1",
+      "url": "https://github.com/fb55/css-select",
+      "title": "https://github.com/fb55/css-select",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-C6DEA9A3F6D3": {
+      "id": "SRC-C6DEA9A3F6D3",
+      "url": "https://github.com/slevithan/xregexp/blob/95eeebeb8fac8754d54eafe2b4743661ac1cf028/src/xregexp.js",
+      "title": "https://github.com/slevithan/xregexp/blob/95eeebeb8fac8754d54eafe2b4743661ac1cf028/src/xregexp.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.942Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-CFA688911CCC": {
+      "id": "SRC-CFA688911CCC",
+      "url": "https://html.spec.whatwg.org/multipage/semantics-other.html",
+      "title": "https://html.spec.whatwg.org/multipage/semantics-other.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.946Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-E768A71358C6": {
+      "id": "SRC-E768A71358C6",
+      "url": "https://www.w3.org/TR/selectors4",
+      "title": "https://www.w3.org/TR/selectors4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-DF81EF94A966": {
+      "id": "SRC-DF81EF94A966",
+      "url": "https://github.com/fb55/css-select/pull/43",
+      "title": "https://github.com/fb55/css-select/pull/43",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-E510F30C84C8": {
+      "id": "SRC-E510F30C84C8",
+      "url": "https://html.spec.whatwg.org/multipage/input.html",
+      "title": "https://html.spec.whatwg.org/multipage/input.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.956Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-E38B2F520B92": {
+      "id": "SRC-E38B2F520B92",
+      "url": "https://html.spec.whatwg.org/multipage/scripting.html",
+      "title": "https://html.spec.whatwg.org/multipage/scripting.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-DE885F82D625": {
+      "id": "SRC-DE885F82D625",
+      "url": "https://html.spec.whatwg.org/multipage/form-elements.html",
+      "title": "https://html.spec.whatwg.org/multipage/form-elements.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-FEA8647FEF4F": {
+      "id": "SRC-FEA8647FEF4F",
+      "url": "https://jsfiddle.net/xzb5qao2/1",
+      "title": "https://jsfiddle.net/xzb5qao2/1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-305BFBE5AD82": {
+      "id": "SRC-305BFBE5AD82",
+      "url": "https://en.wikipedia.org/wiki/Comparison_of_browser_engines_(CSS_support",
+      "title": "https://en.wikipedia.org/wiki/Comparison_of_browser_engines_(CSS_support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:56:50.972Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-6E1D869995AF": {
+      "id": "SRC-6E1D869995AF",
+      "url": "https://github.com/kumahq/kuma",
+      "title": "https://github.com/kumahq/kuma",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.410Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-40C37A914116": {
+      "id": "SRC-40C37A914116",
+      "url": "https://github.com/kubernetes/kubernetes/blob/v1.24.3/pkg/util/procfs/procfs_linux.go",
+      "title": "https://github.com/kubernetes/kubernetes/blob/v1.24.3/pkg/util/procfs/procfs_linux.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-5B021E00E20A": {
+      "id": "SRC-5B021E00E20A",
+      "url": "https://github.com/mswjs/msw",
+      "title": "https://github.com/mswjs/msw",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-06AABE0C157F": {
+      "id": "SRC-06AABE0C157F",
+      "url": "https://redirect.github.com/Kong/ksai-public",
+      "title": "https://redirect.github.com/Kong/ksai-public",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.422Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-0C6021DFEB9A": {
+      "id": "SRC-0C6021DFEB9A",
+      "url": "https://redirect.github.com/Kong/ksai-public/compare/v5.0.1...v5.0.2",
+      "title": "https://redirect.github.com/Kong/ksai-public/compare/v5.0.1...v5.0.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.426Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-B69C4E8168D6": {
+      "id": "SRC-B69C4E8168D6",
+      "url": "https://redirect.github.com/Kong/ksai-public/compare/v5.0.0...v5.0.1",
+      "title": "https://redirect.github.com/Kong/ksai-public/compare/v5.0.0...v5.0.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.429Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-15052E9041C8": {
+      "id": "SRC-15052E9041C8",
+      "url": "https://redirect.github.com/Kong/ksai-public/compare/v3.135.6...v5.0.0",
+      "title": "https://redirect.github.com/Kong/ksai-public/compare/v3.135.6...v5.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.433Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-E5AEB68F68DC": {
+      "id": "SRC-E5AEB68F68DC",
+      "url": "https://redirect.github.com/grafana/dashboard-linter",
+      "title": "https://redirect.github.com/grafana/dashboard-linter",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-E272F559534F": {
+      "id": "SRC-E272F559534F",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.2",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.440Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-F4DA6B6875A7": {
+      "id": "SRC-F4DA6B6875A7",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/compare/v0.5.1...v0.5.2",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/compare/v0.5.1...v0.5.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.443Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-4D9C881C4BD7": {
+      "id": "SRC-4D9C881C4BD7",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/commit/c7d457aca03b773a9353be7e9d53d920b10f646c",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/commit/c7d457aca03b773a9353be7e9d53d920b10f646c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-9D16A796D1AD": {
+      "id": "SRC-9D16A796D1AD",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/issues/307",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/issues/307",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-622C9E0CCBC3": {
+      "id": "SRC-622C9E0CCBC3",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.1",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.454Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-E6A9C47644EE": {
+      "id": "SRC-E6A9C47644EE",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/compare/v0.5.0...v0.5.1",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/compare/v0.5.0...v0.5.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.457Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-F3940704E1FE": {
+      "id": "SRC-F3940704E1FE",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/commit/2580d238c529bed3a2c1773ac98cba296813e977",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/commit/2580d238c529bed3a2c1773ac98cba296813e977",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-16B13AB9ADAF": {
+      "id": "SRC-16B13AB9ADAF",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/issues/306",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/issues/306",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.464Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-A44DC697DF28": {
+      "id": "SRC-A44DC697DF28",
+      "url": "https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.0",
+      "title": "https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.467Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-E1555501AF08": {
+      "id": "SRC-E1555501AF08",
+      "url": "https://redirect.gi/",
+      "title": "https://redirect.gi/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-AA71F814038C": {
+      "id": "SRC-AA71F814038C",
+      "url": "https://api/",
+      "title": "https://api/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-DD47C910E24E": {
+      "id": "SRC-DD47C910E24E",
+      "url": "http://www.w3.org/2000/svg",
+      "title": "http://www.w3.org/2000/svg",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-12T02:57:07.478Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-5450689A9BB8": {
+      "id": "SRC-5450689A9BB8",
+      "url": "https://github.com/trufflesecurity/trufflehog",
+      "title": "https://github.com/trufflesecurity/trufflehog",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.494Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-59C608844F9F": {
+      "id": "SRC-59C608844F9F",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html",
+      "title": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-1C48CE4872FE": {
+      "id": "SRC-1C48CE4872FE",
+      "url": "https://medium.com/@TalBeerySec/a-short-note-on-aws-key-id-f88cc4317489",
+      "title": "https://medium.com/@TalBeerySec/a-short-note-on-aws-key-id-f88cc4317489",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-4D5A020EC737": {
+      "id": "SRC-4D5A020EC737",
+      "url": "https://discord.com/api/webhooks",
+      "title": "https://discord.com/api/webhooks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.506Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-F06B878BF403": {
+      "id": "SRC-F06B878BF403",
+      "url": "https://howtorotate.com/docs/tutorials/microsoftteams",
+      "title": "https://howtorotate.com/docs/tutorials/microsoftteams",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-E23543FB1C3A": {
+      "id": "SRC-E23543FB1C3A",
+      "url": "https://default/",
+      "title": "https://default/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-77E64A71FBE0": {
+      "id": "SRC-77E64A71FBE0",
+      "url": "https://[a-z0-9",
+      "title": "https://[a-z0-9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-B2E8644565C4": {
+      "id": "SRC-B2E8644565C4",
+      "url": "https://api.overloop.com/public/v1/users",
+      "title": "https://api.overloop.com/public/v1/users",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-CA9F8BFB03BE": {
+      "id": "SRC-CA9F8BFB03BE",
+      "url": "https://api.pandascore.co/videogames",
+      "title": "https://api.pandascore.co/videogames",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.525Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-B5E992A3B672": {
+      "id": "SRC-B5E992A3B672",
+      "url": "https://hooks/.slack/.com/services/T[A-Z0-9",
+      "title": "https://hooks/.slack/.com/services/T[A-Z0-9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-17F678E17D55": {
+      "id": "SRC-17F678E17D55",
+      "url": "https://hooks/.slack/.com/workflows/T[A-Z0-9",
+      "title": "https://hooks/.slack/.com/workflows/T[A-Z0-9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.533Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-3E2457B0241E": {
+      "id": "SRC-3E2457B0241E",
+      "url": "https://howtorotate.com/docs/tutorials/slack-webhook",
+      "title": "https://howtorotate.com/docs/tutorials/slack-webhook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.537Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-0D9991861E29": {
+      "id": "SRC-0D9991861E29",
+      "url": "https://[\\w-",
+      "title": "https://[\\w-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-A5544680F911": {
+      "id": "SRC-A5544680F911",
+      "url": "https://transit.walkscore.com/transit/search/stops/?lat=47.6101359&lon=-122.3420567&wsapikey=%25s",
+      "title": "https://transit.walkscore.com/transit/search/stops/?lat=47.6101359&lon=-122.3420567&wsapikey=%25s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.545Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-7984B63A05E8": {
+      "id": "SRC-7984B63A05E8",
+      "url": "https://github.com/trufflesecurity/trufflehog/blob/main/.github/community_note.md",
+      "title": "https://github.com/trufflesecurity/trufflehog/blob/main/.github/community_note.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-E1EF398C422C": {
+      "id": "SRC-E1EF398C422C",
+      "url": "https://gist.github.com/marpulli/40b2d7831a25d6207d053a4465db264a",
+      "title": "https://gist.github.com/marpulli/40b2d7831a25d6207d053a4465db264a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.553Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-0C25ADAED891": {
+      "id": "SRC-0C25ADAED891",
+      "url": "https://github.com/go-git/go-git/issues/1943",
+      "title": "https://github.com/go-git/go-git/issues/1943",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.557Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-4135B3F45B33": {
+      "id": "SRC-4135B3F45B33",
+      "url": "https://gist.github.com/mrstanwell/2da84ad3fe6dcd7a37addea4ae821169",
+      "title": "https://gist.github.com/mrstanwell/2da84ad3fe6dcd7a37addea4ae821169",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:57:07.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
       }
     }
   }

@@ -9046,3 +9046,8 @@
 | `CYCLE-20261112-80VQ` | `2026-11-12T02:48:40.310Z` | `unovue/reka-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6a096eb2...`) |
 | `CYCLE-20261112-86NY` | `2026-11-12T02:48:47.807Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eb97b42b...`) |
 | `CYCLE-20261112-8DKV` | `2026-11-12T02:48:56.767Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cd0b0f3a...`) |
+| `CYCLE-20261112-HY7L` | `2026-11-12T02:56:23.409Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`7a03e93c...`) |
+| `CYCLE-20261112-I435` | `2026-11-12T02:56:31.025Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ffa44b0e...`) |
+| `CYCLE-20261112-IBWD` | `2026-11-12T02:56:41.149Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4bd6b78e...`) |
+| `CYCLE-20261112-IEJN` | `2026-11-12T02:56:44.579Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dbcada57...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T02:57:07.405Z` | `kumahq-kuma` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3429AF3D` [Domain D] | Yes (`c8e18f3d...`) |

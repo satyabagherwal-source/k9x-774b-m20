@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source**: github ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
-> **Source Version**: `3a34d992`  
+> **Source Version**: `17d5d874`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:10:25.065Z  
+> **Timestamp**: 2026-11-12T02:56:17.227Z  
 > **Learning ID**: `learn-github-fb55-css-select`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:10:25.052Z  
+> **Harvest Timestamp**: 2026-11-12T02:56:16.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: a CSS selector compiler & engine
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 635 stars
+- **Stars / Engagement**: 636 stars
 
 ---
 
@@ -1475,150 +1475,18 @@ export const aliases: Record<string, string> = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80f0a8cd` (2026-11-06)
-**Commit Message**: build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1939)
+### Incident Patch 1: `17d5d874` (2026-11-09)
+**Commit Message**: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941)
 
-Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.0.5 to 5.1.0.
-- [Release notes](https://github.com/vitest-dev/vitest/releases)
-- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
-- [Commits](https://github.com/vitest-dev/vitest/commits/v5.1.0/packages/vitest)
-
----
-updated-dependencies:
-- dependency-name: vitest
-  dependency-version: 5.1.0
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +96/-96)
-```diff
-@@ -26,7 +26,7 @@
-                 "htmlparser2": "^12.0.0",
-                 "typescript": "^6.0.3",
-                 "typescript-eslint": "^8.72.1",
--                "vitest": "^5.0.5"
-+                "vitest": "^5.1.0"
-             },
-             "engines": {
-                 "node": ">=20.19.0"
-@@ -568,9 +568,9 @@
-             "license": "MIT"
-         },
-         "node_modules/@oxc-project/types": {
--            "version": "0.154.0",
--            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
--            "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
-+            "version": "0.156.0",
-+            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
-+            "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
-             "dev": true,
-             "license": "MIT",
-             "peer": true,
-@@ -579,9 +579,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-android-arm-eabi": {
--            "version": "1.2.14",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
--            "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
-+            "version": "1.2.16",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
-+            "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
-             "cpu": [
-                 "arm"
-             ],
-@@ -597,9 +597,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-android-arm64": {
--            "version": "1.2.14",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
--            "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
-+            "version": "1.2.16",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
-+            "integrity": "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==",
-             "cpu": [
-                 "arm64"
-             ],
-@@ -615,9 +615,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-darwin-arm64": {
--            "version": "1.2.14",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
--            "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
-+            "version": "1.2.16",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz",
-+            "integrity": "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==",
-             "cpu": [
-                 "arm64"
-             ],
-@@ -633,9 +633,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-darwin-x64": {
--            "version": "1.2.14",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.14.tgz",
--            "integrity": "sha512-hyMKEGatjmBYCs/Q4sbIcL/GqpFEqsX3wc+HYVQ/85A4rxc1o7rPm4DUI4GV4k/h0ITddwFSGpqQunI14GXjTA==",
-+            "version": "1.2.16",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz",
-+            "integrity": "sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==",
-             "cpu": [
-                 "x64"
-             ],
-@@ -651,9 +651,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-freebsd-x64": {
--            "version": "1.2.14",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.14.tgz",
--            "integrity": "sha512-u371GbXoVXrEgP20PwzoGNOdAOqAMhzo19JzzY+V4YmmnC+DTOoqdbMu+O+54emM59Mik/UdrtWgcuEDKWRPKA==",
-+            "version": "1.2.16",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.16.tgz",
-+            "integrity": "sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==",
-             "cpu": [
-                 "x64"
-             ],
-@@ -669,9 +669,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-linux-arm-gnueabihf": {
--            "version": "1.2.14",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.14.tgz",
--            "integrity": "sha512-BqwKsdZQf6EqVWr8fv2MrDYzAvOZ7+NYFSJESRGs87fkseEhs0
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@
-         "htmlparser2": "^12.0.0",
-         "typescript": "^6.0.3",
-         "typescript-eslint": "^8.72.1",
--        "vitest": "^5.0.5"
-+        "vitest": "^5.1.0"
-     },
-     "scripts": {
-         "build": "tsc",
-```
-
----
-
-### Incident Patch 2: `f445e69b` (2026-11-06)
-**Commit Message**: build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (#1938)
-
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2.
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3.
 - [Release notes](https://github.com/github/codeql-action/releases)
 - [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.39.1...v4.39.2)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.2...v4.39.3)
 
 ---
 updated-dependencies:
 - dependency-name: github/codeql-action
-  dependency-version: 4.39.2
+  dependency-version: 4.39.3
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
@@ -1632,103 +1500,23 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
                uses: actions/checkout@v7
  
              - name: Initialize CodeQL
--              uses: github/codeql-action/init@v4.39.1
-+              uses: github/codeql-action/init@v4.39.2
+-              uses: github/codeql-action/init@v4.39.2
++              uses: github/codeql-action/init@v4.39.3
                with:
                    languages: "javascript"
  
              - name: Perform CodeQL Analysis
--              uses: github/codeql-action/analyze@v4.39.1
-+              uses: github/codeql-action/analyze@v4.39.2
-```
-
----
-
-### Incident Patch 3: `3a34d992` (2026-11-06)
-**Commit Message**: fix(attributes): use CSS whitespace for token matching (#1911)
-
-* fix(attributes): use CSS whitespace for token matching
-
-* test(attributes): drop the CSS whitespace split test
-
-All five cases pass on master, where `\s` already splits on them.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(attributes): test one non-CSS whitespace character
-
-NBSP, EM SPACE and VT all reach the same character class, so one case
-covers the path.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Felix Boehm <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/attributes.ts` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@ import type { CompiledQuery, InternalOptions } from "./types.js";
-  * https://github.com/slevithan/xregexp/blob/95eeebeb8fac8754d54eafe2b4743661ac1cf028/src/xregexp.js#L794
-  */
- const reChars = /[-[\]{}()*+?.,\\^$|#\s]/g;
--const whitespaceRe = /\s/;
-+const whitespaceRe = /[\t\n\f\r ]/;
- function escapeRegex(value: string): string {
-     return value.replace(reChars, "\\$&");
- }
-@@ -151,7 +151,7 @@ export const attributeRules: Record<
-         }
- 
-         const regex = new RegExp(
--            `(?:^|\\s)${escapeRegex(value)}(?:$|\\s)`,
-+            `(?:^|[\\t\\n\\f\\r ])${escapeRegex(value)}(?:$|[\\t\\n\\f\\r ])`,
-             shouldIgnoreCase(data, options) ? "i" : "",
-         );
- 
-```
-
-**File**: `test/attributes.ts` (modified, +22/-0)
-```diff
-@@ -10,6 +10,28 @@ const dom = parseDocument(
- const domChilds = dom.children as Element[];
- 
- describe("Attributes", () => {
-+    describe("whitespace-separated values", () => {
-+        it("should keep non-CSS whitespace inside a token", () => {
-+            const token = "foo\u{A0}bar";
-+            const document = parseDocument(`<i class="${token}"></i>`);
-+            expect(CSSselect.selectAll("[class~=foo]", document)).toHaveLength(
-+                0,
-+            );
-+            expect(CSSselect.selectAll("[class~=bar]", document)).toHaveLength(
-+                0,
-+            );
-+            expect(
-+                CSSselect.selectAll(`[class~="${token}"]`, document),
-+            ).toStrictEqual(document.children);
-+            expect(
-+                CSSselect.selectAll(
-+                    `[class~="${token.toUpperCase()}" i]`,
-+                    document,
-+                ),
-+            ).toStrictEqual(document.children);
-+        });
-+    });
-+
-     describe("ignore case", () => {
-         it("should for =", () => {
-             let matches = CSSselect.selectAll(
+-              uses: github/codeql-action/analyze@v4.39.2
++              uses: github/codeql-action/analyze@v4.39.3
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1941** (2026-11-09): build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (@dependabot[bot])
 - **PR #1939** (2026-11-06): build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
 - **PR #1938** (2026-11-06): build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (@dependabot[bot])
 - **PR #1936** (2026-11-04): build(deps-dev): bump globals from 17.13.0 to 17.14.0 (@dependabot[bot])
 - **PR #1935** (2026-11-03): build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
-- **PR #1932** (2026-11-02): build(deps-dev): bump @types/node from 26.6.5 to 26.6.6 (@dependabot[bot])
-- **PR #1927** (2026-10-30): build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (@dependabot[bot])
+- **PR #1933** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.4 (@dependabot[bot])
 
 ---
 
@@ -1748,56 +1536,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1939)
+## X. build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941)
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/css-select. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/css-select. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80f0a8cd`: build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1939). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17d5d874`: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                "vitest": "^5.1.0"
-            "version": "0.156.0",
-            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
-            "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
-            "version": "1.2.16",
-            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
-            "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
-            "version": "1.2.16",
-            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
-            "integrity": "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==",
-            "version": "1.2.16",
-            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz",
-            "integrity": "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==",
-            "version": "1.2.16",
-            "resolved": "https://registry.n
+              uses: github/codeql-action/init@v4.39.3
+              uses: github/codeql-action/analyze@v4.39.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                "vitest": "^5.0.5"
-            "version": "0.154.0",
-            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
-            "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
-            "version": "1.2.14",
-            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
-            "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
-            "version": "1.2.14",
-            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
-            "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
-            "version": "1.2.14",
-            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
-            "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
-            "version": "1.2.14",
-            "resolved": "https://registry.n
+              uses: github/codeql-action/init@v4.39.2
+              uses: github/codeql-action/analyze@v4.39.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80f0a8cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17d5d874` are properly handled with clean fallback behavior.

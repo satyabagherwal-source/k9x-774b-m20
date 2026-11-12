@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T02:48:56.657Z",
+  "last_updated": "2026-11-12T02:56:44.452Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40447,8 +40447,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "60b764b8",
-      "content_hash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
+      "source_version": "b65a7b2f",
+      "content_hash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -40508,7 +40508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:12:20.561Z",
+      "verified_at": "2026-11-12T02:56:23.219Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55926,8 +55926,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "95a0477a",
-      "content_hash": "47d6ca5e739a8027bb9683646b42ee38fec985728b1ed57bc169c1e616c756ac",
+      "source_version": "d904ad91",
+      "content_hash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -55944,6 +55944,11 @@
         {
           "number": null,
           "title": "Merge pull request #3034 from rqlite/raft-dir-readme",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sqlean Docker build",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55982,7 +55987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:18:36.215Z",
+      "verified_at": "2026-11-12T02:56:44.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64069,8 +64074,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "18876676",
-      "content_hash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
+      "source_version": "2c078840",
+      "content_hash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -64082,6 +64087,11 @@
         {
           "number": null,
           "title": "Update github-actions (#5533)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update module golang.org/x/crypto to v0.59.0 [SECURITY] (#5544)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64190,7 +64200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:49:10.145Z",
+      "verified_at": "2026-11-12T02:56:41.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82122,14 +82132,19 @@
       "slug": "fb55-css-select",
       "platform": "github",
       "source_url": "https://github.com/fb55/css-select",
-      "source_version": "3a34d992",
-      "content_hash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
+      "source_version": "17d5d874",
+      "content_hash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
       "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1939)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -82158,7 +82173,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:10:26.751Z",
+      "verified_at": "2026-11-12T02:56:30.787Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:48:56.777Z",
-  "total_cycles_completed": 8885,
-  "total_learnings_persisted": 8885,
-  "total_rules_promoted": 8736,
+  "last_updated": "2026-11-12T02:56:44.590Z",
+  "total_cycles_completed": 8889,
+  "total_learnings_persisted": 8889,
+  "total_rules_promoted": 8739,
   "history": [
-    {
-      "timestamp": "2026-11-10T02:24:10.889Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T02:31:50.165Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T02:31:50.768Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T02:31:50.777Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T02:31:53.310Z",
       "repository": "volcengine/OpenViking",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T02:48:56.777Z",
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T02:56:23.419Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T02:56:31.041Z",
+      "repository": "fb55/css-select",
+      "learningId": "learn-github-fb55-css-select",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T02:56:41.160Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T02:56:44.590Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

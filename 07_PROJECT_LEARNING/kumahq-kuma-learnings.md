@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `60b764b8`  
+> **Source Version**: `b65a7b2f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T17:12:19.327Z  
+> **Timestamp**: 2026-11-12T02:56:22.987Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T17:12:18.338Z  
+> **Harvest Timestamp**: 2026-11-12T02:56:22.979Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4017 stars
+- **Stars / Engagement**: 4019 stars
 
 ---
 
@@ -998,11 +998,11 @@ var DefaultEnabled = []string{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #19386** (2026-11-09): **chore(deps/dev): bump npm:@redocly/cli from 2.66.1 to 2.71.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [npm:@redocly/cli](https://redirect.github.com/Redocly/redocly-cli) | `2.66.1` → `2.71.2` | ![age](https://developer.mend.io/api/mc/badges/age/npm/@redocly%2fcli/2.71.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@redocly%2fcli/2.66.1/2.71.2?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>Redocly/redocly-cli (npm:@&#8203;redocly/cli)</summary>  ### [`v2.71.2`](https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.71.2)  [Compare Source](https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.71.1...@redocly/cli@2.71.2)  ##### Patch Changes  - Fixed an issue where the `no-unresolved-refs` rule reported discriminator mapping values that are schema names (for example, `dog: Dog`) as unresolved references.   The rule still reports schema names that do not match a schema in `components.schemas`. - Fixed an issue where the `drift` and `generate-spec` commands crashed with a stack trace when the traffic file or folder didn't exist, and the `generate-spec` command when the traffic had no matching HTTP exchanges. - Fixed an issue where the `bundle` command didn't resol
+- **Issue #19388** (2026-11-10): **chore(deps): bump Kong/ksai-public from 3.135.6 to 5.0.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [Kong/ksai-public](https://redirect.github.com/Kong/ksai-public) | workflow | major | `v3.135.6` → `v5.0.2` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>Kong/ksai-public</summary>  ### [`v5.0.2`](https://redirect.github.com/Kong/ksai-public/compare/v5.0.1...v5.0.2)  [Compare Source](https://redirect.github.com/Kong/ksai-public/compare/v5.0.1...v5.0.2)  ### [`v5.0.1`](https://redirect.github.com/Kong/ksai-public/compare/v5.0.0...v5.0.1)  [Compare Source](https://redirect.github.com/Kong/ksai-public/compare/v5.0.0...v5.0.1)  ### [`v5.0.0`](https://redirect.github.com/Kong/ksai-public/compare/v3.135.6...v5.0.0)  [Compare Source](https://redirect.github.com/Kong/ksai-public/compare/v3.135.6...v5.0.0)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - Between 12:00 AM and 03:59 AM, only on Monday (`* 0-3 * * 1`) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  > Changelog: s
 
-- **Issue #19377** (2026-11-09): **chore(deps): bump jdx/mise-action from 5.2.1 to 5.2.4**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | |---|---|---|---|---| | [jdx/mise-action](https://redirect.github.com/jdx/mise-action) | action | patch | `v5.2.1` → `v5.2.4` | `v5.2.7` (+2) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>jdx/mise-action</summary>  ### [`v5.2.4`](https://redirect.github.com/jdx/mise-action/releases/tag/v5.2.4): : Reuse cached signed checksums when restoring mise  [Compare Source](https://redirect.github.com/jdx/mise-action/compare/v5.2.3...v5.2.4)  Jobs that restore mise from the cache no longer have to download its signed checksums from GitHub on every run, so a network failure at that step no longer fails a job that otherwise restored correctly.  ##### Fixed  - **Restoring a cached mise no longer needs a network download of the checksums.** The action checks the cached mise binary against the signed `SHASUMS256.txt` and its `.minisig`. Before this release it downloaded both files from GitHub on every run, even when the cache restored correctly. When that download failed, for example after repeated curl errors, the job failed. Now, once the signature checks out, the action saves both files as `SHASUMS256-<version>.txt` and `.minisig` in `<mise_dir>/bin`, which is part of the mise cache. On later runs it reads them from the restored cache and checks the minisign signature a
+- **Issue #19387** (2026-11-10): **chore(deps/dev): bump ubi:grafana/dashboard-linter from 0.4.0 to 0.5.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [ubi:grafana/dashboard-linter](https://redirect.github.com/grafana/dashboard-linter) | tools | minor | `v0.4.0` → `v0.5.2` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>grafana/dashboard-linter (ubi:grafana/dashboard-linter)</summary>  ### [`v0.5.2`](https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.2)  [Compare Source](https://redirect.github.com/grafana/dashboard-linter/compare/v0.5.1...v0.5.2)  #### Changelog  ##### Others  - [`c7d457a`](https://redirect.github.com/grafana/dashboard-linter/commit/c7d457aca03b773a9353be7e9d53d920b10f646c) fix: version detection failing downstream ([#&#8203;307](https://redirect.github.com/grafana/dashboard-linter/issues/307))  ### [`v0.5.1`](https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.1)  [Compare Source](https://redirect.github.com/grafana/dashboard-linter/compare/v0.5.0...v0.5.1)  #### Changelog  ##### Others  - [`2580d23`](https://redirect.github.com/grafana/dashboard-linter/commit/2580d238c529bed3a2c1773ac98cba296813e977) feat(github-action): infer version ([#&#8203;306](https://redirect.github.com/grafana/dashboard-linter/issues/306))  ### [`v0.5.0`](https://redirect.github.com/grafana/dashboard-linter/releases/tag/v0.5.0)  [Compare Source](https://redirect.gi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1019,193 +1019,87 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60b764b8` (2026-11-09)
-**Commit Message**: chore(deps): bump ubuntu from 24.04 to 26.04 (#18827)
+### Incident Patch 1: `eb9ba9db` (2026-11-10)
+**Commit Message**: chore(deps): bump kumahq/kuma-gui to e902358dcc9537bde8fb65be8b8990bb4dd95e76 (#19363)
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: GitHub <[REDACTED_EMAIL]>
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/pr-comments.yaml` (modified, +1/-1)
+**File**: `app/kuma-ui/pkg/resources/data/assets/App-4JzqxwiO.js` (renamed, +1/-1)
 ```diff
-@@ -14,7 +14,7 @@ jobs:
-     if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/format') || contains(github.event.comment.body, '/golden_files') || contains(github.event.comment.body, '/golden_files_e2e') || contains(github.event.comment.body, '/tproxy_golden_files'))
-     # Runs make against the PR head while a write-capable App token is in the job, so fork
-     # PRs are rejected before checkout.
--    runs-on: ubuntu-24.04
-+    runs-on: ubuntu-26.04
-     steps:
-       # Commands are additive: one comment can request multiple actions, and all
-       # matching steps below will run in order.
+@@ -1,4 +1,4 @@
+-import{d as B,r as m,o as k,c as X,a as A,b as u,w as d,e as l,t as w,n as oe,_ as O,u as ae,f as re,g as ne,h as ie,i as le,j as f,k as v,l as T,m as C,p as se,q as ce,s as q,v as de,x as ue,y as S,z as pe}from"./index-DWdyVVHy.js";const fe=""+new URL("product-logo-CDoXkXpC.png",import.meta.url).href,ve={class:"app-navigator"},ge=B({__name:"AppNavigator",props:{active:{type:Boolean,default:!1},label:{default:""},to:{default:()=>({})}},setup(e){const o=e;return(r,a)=>{const i=m("XAction");return k(),X("li",ve,[A(r.$slots,"default",{},()=>[u(i,{class:oe({"is-active":o.active}),to:o.to},{default:d(()=>[l(w(o.label),1)]),_:1},8,["class","to"])],!0)])}}}),L=O(ge,[["__scopeId","data-v-b1ed9f4d"]]);var H=window.document,N=window.Math,z=window.HTMLElement,D=window.XMLHttpRequest,U=function(e,o){for(var r=0,a=e.length;r<a;r++)o(e[r])},K=function(e){return function(o,r,a){var i=e.createElement(o);if(r!=null)for(var n in r){var t=r[n];t!=null&&(i[n]!=null?i[n]=t:i.setAttribute(n,t))}return a!=null&&U(a,function(c){i.appendChild(typeof c=="string"?e.createTextNode(c):c)}),i}},j=K(H),he=function(e){var o;return function(){o||(o=1,e.apply(this,arguments))}},V=function(e,o){return{}.hasOwnProperty.call(e,o)},I=function(e){return(""+e).toLowerCase()},me="github-buttons",be="2.33.1",we="https://"+("unpkg.com/"+me+"@"+be+"/dist")+"/buttons.html",_="github.com",ke="https://api."+_,ee=D&&"prototype"in D&&"withCredentials"in D.prototype,_e=ee&&z&&"attachShadow"in z.prototype&&!("prototype"in z.prototype.attachShadow),y=function(e,o,r){e.addEventListener?e.addEventListener(o,r,!1):e.attachEvent("on"+o,r)},P=function(e,o,r){e.removeEventListener?e.removeEventListener(o,r,!1):e.detachEvent("on"+o,r)},ye=function(e,o,r){var a=function(){return P(e,o,a),r.apply(this,arguments)};y(e,o,a)},xe=function(e,o,r){if(e.readyState!=null){var a="readystatechange",i=function(){if(o.test(e.readyState))return P(e,a,i),r.apply(this,arguments)};y(e,a,i)}},Ae=function(e){var o={href:e.href,title:e.title,"aria-label":e.getAttribute("aria-label")};return U(["icon","color-scheme","text","size","show-count"],function(r){var a="data-"+r;o[a]=e.getAttribute(a)}),o["data-text"]==null&&(o["data-text"]=e.textContent||e.innerText),o},Me="body{margin:0}a{text-decoration:none;outline:0}.widget{display:inline-block;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;font-size:0;line-height:0;white-space:nowrap}.btn,.social-count{position:relative;display:inline-block;display:inline-flex;height:14px;padding:2px 5px;font-size:11px;font-weight:600;line-height:14px;vertical-align:bottom;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-repeat:repeat-x;background-position:-1px -1px;background-size:110% 110%;border:1px solid}.btn{border-radius:.25em}.btn:not(:last-child){border-radius:.25em 0 0 .25em}.social-count{border-left:0;border-radius:0 .25em .25em 0}.widget-lg .btn,.widget-lg .social-count{height:16px;padding:5px 10px;font-size:12px;line-height:16px}.octicon{display:inline-block;vertical-align:text-top;fill:currentColor;overflow:visible}",Ce=`.btn:focus-visible,.social-count:focus-visible{outline:2px solid #0969da;outline-offset:-2px}.btn{color:#25292e;background-color:#ebf0f4;border-color:#d1d9e0;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg'%3e%3clinearGradient id='o' x2='0' y2='1'%3e%3cstop stop-color='%23f6f8fa'/%3e%3cstop offset='90%25' stop-color='%23ebf0f4'/%3e%3c/linearGradient%3e%3crect width='100%25' height='100%25' fill='url(%23o)'/%3e%3c/svg%3e");background-image:-moz-linear-gradient(top, #f6f8fa, #ebf0f4 90%);background-image:linear-gradient(180deg, #f6f8fa, #ebf0f4 90%);filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#FFF6F8FA', endColorstr='#FFEAEFF3')}:root .btn{filter:none}.btn:hover,.btn:focus{background-color:#e5eaee;background-position:0 -0.5em;border-color:#d1d9e0;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg'%3e%3clinearGradient id='o' x2='0' y2='1'%3e%3cstop stop-color='%23eff2f5'/%3e%3cstop offset='90%25' stop-color='%23e5eaee'/%3e%3c/linearGradient%3e%3crect width='100%25' height='100%25' fill='url(%23o)'/%3e%3c/svg%3e");background-image:-moz-linear-gradient(top, #eff2f5, #e5eaee 90%);background-image:linear-gradient(180deg, #eff2f5, #e5eaee 90%);filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#FFEFF2F5', endColorstr='#FFE4E9ED')}:root .btn:hover,:root .btn:focus{filter:none}.btn:active{background-color:#e6eaef;border-color:#d1d9e0;background-image:none;filter:none}.social-count{color:#25292e;background-color:#fff;border-color:#d1d9e0}.social-count:hover,.social-count:focus{color:#0969da}.octicon-heart{color:#bf3989}`,Ee=".btn:focus-visible,.social-count:focus-visible{outline:2px solid #0349b4;outline-offset:-2px}.btn{color:#25292e;background-color:#e0e6eb;border-color:#454c54;background-image:none;filter:non
 ```
 
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConfigurationDetailView-BdT8WfPj.js` (renamed, +1/-1)
 ```diff
-@@ -17,7 +17,7 @@ jobs:
-     # Must be a literal Ubuntu label; the scorecard-action publish step
-     # rejects expression-based runs-on values during workflow verification.
-     # See https://github.com/ossf/scorecard-action#workflow-restrictions
--    runs-on: ubuntu-24.04
-+    runs-on: ubuntu-26.04
-     permissions:
-       # Needed to upload the results to code-scanning dashboard.
-       security-events: write
+@@ -1 +1 @@
+-import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-DWdyVVHy.js";const y=_({__name:"ConfigurationDetailView",setup(R){return(V,r)=>{const i=o("RouteTitle"),s=o("XCodeBlock"),d=o("DataLoader"),l=o("XCard"),u=o("AppView"),p=o("RouteView");return f(),C(p,{name:"configuration-view",params:{codeSearch:"",codeFilter:!1,codeRegExp:!1}},{default:t(({route:e,t:c,uri:m})=>[n(u,{breadcrumbs:[{to:{name:"configuration-view"},text:c("configuration.routes.item.breadcrumbs")}]},{title:t(()=>[w("h1",null,[n(i,{title:c("configuration.routes.item.title")},null,8,["title"])])]),default:t(()=>[r[0]||(r[0]=x()),n(l,null,{default:t(()=>[n(d,{src:m(h(b),"/config",{})},{default:t(({data:[g]})=>[n(s,{"data-testid":"code-block-configuration",language:"json",code:JSON.stringify(g,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},null,8,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1024)]),_:2},1032,["breadcrumbs"])]),_:1})}}});export{y as default};
++import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-vYZHtAvq.js";const y=_({__name:"ConfigurationDetailView",setup(R){return(V,r)=>{const i=o("RouteTitle"),s=o("XCodeBlock"),d=o("DataLoader"),l=o("XCard"),u=o("AppView"),p=o("RouteView");return f(),C(p,{name:"configuration-view",params:{codeSearch:"",codeFilter:!1,codeRegExp:!1}},{default:t(({route:e,t:c,uri:m})=>[n(u,{breadcrumbs:[{to:{name:"configuration-view"},text:c("configuration.routes.item.breadcrumbs")}]},{title:t(()=>[w("h1",null,[n(i,{title:c("configuration.routes.item.title")},null,8,["title"])])]),default:t(()=>[r[0]||(r[0]=x()),n(l,null,{default:t(()=>[n(d,{src:m(h(b),"/config",{})},{default:t(({data:[g]})=>[n(s,{"data-testid":"code-block-configuration",language:"json",code:JSON.stringify(g,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},null,8,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1024)]),_:2},1032,["breadcrumbs"])]),_:1})}}});export{y as default};
 ```
 
----
-
-### Incident Patch 2: `2f6a6557` (2026-11-09)
-**Commit Message**: chore(deps): bump jdx/mise-action from 5.2.1 to 5.2.4 (#19377)
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `.github/actions/run-e2e/action.yml` (modified, +1/-1)
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryClustersView-DE3n5YaD.js` (renamed, +1/-1)
 ```diff
-@@ -26,7 +26,7 @@ runs:
-         remove_android: true
-         remove_dotnet: true
-         remove_haskell: true
--    - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+    - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-       with:
-         version: 2026.10.21
-       env:
+@@ -1,4 +1,4 @@
+-import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-DWdyVVHy.js";const D=T({__name:"ConnectionInboundSummaryClustersView",props:{routeName:{},data:{},overview:{}},setup(u){const n=u;return(B,r)=>{const _=o("RouteTitle"),f=o("XAction"),g=o("XCodeBlock"),y=o("DataCollection"),d=o("DataLoader"),C=o("AppView"),x=o("RouteView");return i(),l(x,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:n.routeName},{default:t(({route:e,uri:h})=>[s(_,{render:!1,title:"Clusters"}),r[1]||(r[1]=m()),s(C,null,{default:t(()=>[s(d,{data:[n.overview]},{default:t(({data:[R]})=>[s(d,{src:h(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:t(({data:[k],refresh:w})=>[(i(!0),F(N,null,v(["stat_prefix"in n.data?n.data.stat_prefix:("clusterName"in n.data?n.data.clusterName:e.params.connection).replace("_",":")],c=>(i(),l(y,{key:typeof c,items:k.split(`
++import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-vYZHtAvq.js";const D=T({__name:"ConnectionInboundSummaryClustersView",props:{routeName:{},data:{},overview:{}},setup(u){const n=u;return(B,r)=>{const _=o("RouteTitle"),f=o("XAction"),g=o("XCodeBlock"),y=o("DataCollection"),d=o("DataLoader"),C=o("AppView"),x=o("RouteView");return i(),l(x,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:n.routeName},{default:t(({route:e,uri:h})=>[s(_,{render:!1,title:"Clusters"}),r[1]||(r[1]=m()),s(C,null,{default:t(()=>[s(d,{data:[n.overview]},{default:t(({data:[R]})=>[s(d,{src:h(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:t(({data:[k],refresh:w})=>[(i(!0),F(N,null,v(["stat_prefix"in n.data?n.data.stat_prefix:("clusterName"in n.data?n.data.clusterName:e.params.connection).replace("_",":")],c=>(i(),l(y,{key:typeof c,items:k.split(`
+ `),predicate:p=>p.startsWith(`${c}`)},{default:t(({items:p})=>[s(g,{language:"json",code:p.map(a=>a.replace(`${c}::`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},{"primary-actions":t(()=>[s(f,{action:"refresh",appearance:"primary",onClick:w},{default:t(()=>[...r[0]||(r[0]=[m(`
+                     Refresh
 ```
 
-**File**: `.github/workflows/_build_publish.yaml` (modified, +4/-4)
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryStatsView-DPfnmkwA.js` (renamed, +1/-1)
 ```diff
-@@ -90,7 +90,7 @@ jobs:
-           restore-keys: |
-             go-build-dist-${{ runner.os }}-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('**/go.sum') }}-
-             go-build-dist-${{ runner.os }}-${{ matrix.os }}-${{ matrix.arch }}-
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-       # Resolve through make so per-combo ENVOY_VERSION_<os>_<arch> overrides
-@@ -175,7 +175,7 @@ jobs:
-         with:
-           persist-credentials: false
-           fetch-depth: 0
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-@@ -309,7 +309,7 @@ jobs:
-       # Registry layer cache (DOCKER_BUILDX_OPTS in mk/docker.mk) needs the
-       # container driver; the default docker driver cannot export cache.
-       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-       # Login must precede the build for the cache push; anonymous pulls of the
-@@ -471,7 +471,7 @@ jobs:
-         if: ${{ fromJSON(inputs.FULL_MATRIX) }}
-         run: |
-           sudo apt-get update; sudo apt-get install -y qemu-user-static binfmt-support
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-       - name: package-helm-chart
+@@ -1,4 +1,4 @@
+-import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,a8 as k}from"./index-DWdyVVHy.js";const V=R({__name:"ConnectionInboundSummaryStatsView",props:{data:{},networking:{},routeName:{},overview:{}},setup(i){const a=i,e=k(()=>({...a.data,proxyResourceName:"stat_prefix"in a.data?a.data.stat_prefix:"",listenerAddress:"listenerAddress"in a.data?a.data.listenerAddress:"",clusterName:"clusterName"in a.data?a.data.clusterName:"",port:"port"in a.data?a.data.port.toString():"",servicePort:"servicePort"in a.data?a.data.servicePort:"",name:"name"in a.data?a.data.name:""}));return(S,l)=>{const u=o("RouteTitle"),m=o("XAction"),v=o("XCodeBlock"),g=o("DataCollection"),d=o("DataLoader"),x=o("AppView"),_=o("RouteView");return $(),C(_,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:a.routeName},{default:r(({route:t,uri:y})=>[n(u,{render:!1,title:"Stats"}),l[1]||(l[1]=p()),n(x,null,{default:r(()=>[n(d,{data:[a.overview]},{default:r(({data:[h]})=>[n(d,{src:y(A(w),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[t.params.proxyType]??"dataplane",name:h.id,mesh:t.params.mesh||"*",socketAddress:a.networking.inboundAddress})},{default:r(({data:[f],refresh:N})=>[n(g,{items:f.raw.split(`
++import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,aa as k}from"./index-vYZHtAvq.js";const V=R({__name:"ConnectionInboundSummaryStatsView",props:{data:{},networking:{},routeName:{},overview:{}},setup(i){const a=i,e=k(()=>({...a.data,proxyResourceName:"stat_prefix"in a.data?a.data.stat_prefix:"",listenerAddress:"listenerAddress"in a.data?a.data.listenerAddress:"",clusterName:"clusterName"in a.data?a.data.clusterName:"",port:"port"in a.data?a.data.port.toString():"",servicePort:"servicePort"in a.data?a.data.servicePort:"",name:"name"in a.data?a.data.name:""}));return(S,l)=>{const u=o("RouteTitle"),m=o("XAction"),v=o("XCodeBlock"),g=o("DataCollection"),d=o("DataLoader"),x=o("AppView"),_=o("RouteView");return $(),C(_,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:a.routeName},{default:r(({route:t,uri:y})=>[n(u,{render:!1,title:"Stats"}),l[1]||(l[1]=p()),n(x,null,{default:r(()=>[n(d,{data:[a.overview]},{default:r(({data:[h]})=>[n(d,{src:y(A(w),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[t.params.proxyType]??"dataplane",name:h.id,mesh:t.params.mesh||"*",socketAddress:a.networking.inboundAddress})},{default:r(({data:[f],refresh:N})=>[n(g,{items:f.raw.split(`
+ `),predicate:c=>[`listener.${e.value.listenerAddress?.length>0?e.value.listenerAddress:t.params.connection}`,`cluster.${e.value.name}.`,`cluster.${e.value.clusterName}.`,`http.${e.value.name}.`,`http.${e.value.clusterName}.`,`tcp.${e.value.name}.`,`cluster.${e.value.proxyResourceName}.`,`listener.${e.value.proxyResourceName}`,`cluster.${e.value.proxyResourceName}.`,`http.${e.value.proxyResourceName}.`,`http.${e.value.proxyResourceName}.`,`tcp.${e.value.proxyResourceName}.`].some(s=>c.startsWith(s))&&(!c.includes(".rds.")||c.includes(`_${e.value.port}`)||c.includes(`${e.value.servicePort}`))},{default:r(({items:c})=>[n(v,{language:"json",code:c.map(s=>s.replace(`${e.value.listenerAddress?.length>0?e.value.listenerAddress:e.value.proxyResourceName.length?e.value.proxyResourceName:t.params.connection}.`,"").replace(e.value.name.length?`${e.value.name}.`:"","").replace(e.value.clusterName.length?`${e.value.clusterName}.`:"","")).join(`
+ `),"is-searchable":"",query:t.params.codeSearch,"is-filter-mode":t.params.codeFilter,"is-reg-exp-mode":t.params.codeRegExp,onQueryChange:s=>t.update({codeSearch:s}),onFilterModeChange:s=>t.update({codeFilter:s}),onRegExpModeChange:s=>t.update({codeRegExp:s})},{"primary-actions":r(()=>[n(m,{action:"refresh",appearance:"primary",onClick:N},{default:r(()=>[...l[0]||(l[0]=[p(`
+                   Refresh
 ```
 
-**File**: `.github/workflows/_test.yaml` (modified, +1/-1)
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryView-Dzpbb_OS.js` (renamed, +1/-1)
 ```diff
-@@ -41,7 +41,7 @@ jobs:
-         with:
-           persist-credentials: false
-           fetch-depth: 0
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-         env:
+@@ -1,2 +1,2 @@
+-import{d as C,r as n,o as l,l as m,w as t,b as s,e as c,K as X,J as x,t as d,x as b,j as B,m as N}from"./index-DWdyVVHy.js";const T=C({__name:"ConnectionInboundSummaryView",props:{data:{},overview:{},networking:{},routeName:{}},setup(u){const r=u;return($,o)=>{const _=n("XBadge"),w=n("XLayout"),v=n("XAction"),f=n("XTabs"),y=n("RouterView"),g=n("AppView"),V=n("DataCollection"),k=n("RouteView");return l(),m(k,{name:r.routeName,params:{inactive:Boolean,proxyType:"",connection:""}},{default:t(({route:a,t:p})=>[s(V,{items:r.data,predicate:r.networking.type==="gateway"?e=>!0:a.params.proxyType===""?e=>`${e.name}`===a.params.connection:e=>`${e.socketAddress.replace(":","_")}`===a.params.connection,find:!0},{default:t(({items:e})=>[s(g,null,{title:t(()=>[s(w,{variant:"y-stack",size:"small"},{default:t(()=>[B("h2",null,`
++import{d as C,r as n,o as l,l as m,w as t,b as s,e as c,K as X,J as x,t as d,x as b,j as B,m as N}from"./index-vYZHtAvq.js";const T=C({__name:"ConnectionInboundSummaryView",props:{data:{},overview:{},networking:{},routeName:{}},setup(u){const r=u;return($,o)=>{const _=n("XBadge"),w=n("XLayout"),v=n("XAction"),f=n("XTabs"),y=n("RouterView"),g=n("AppView"),V=n("DataCollection"),k=n("RouteView");return l(),m(k,{name:r.routeName,params:{inactive:Boolean,proxyType:"",connection:""}},{default:t(({route:a,t:p})=>[s(V,{items:r.data,predicate:r.networking.type==="gateway"?e=>!0:a.params.proxyType===""?e=>`${e.name}`===a.params.connection:e=>`${e.socketAddress.replace(":","_")}`===a.params.connection,find:!0},{default:t(({items:e})=>[s(g,null,{title:t(()=>[s(w,{variant:"y-stack",size:"small"},{default:t(()=>[B("h2",null,`
+               Inbound `+d(a.params.connection.replace("localhost","").replace("_",":")),1),o[0]||(o[0]=c()),e[0]?.state?(l(),m(_,{key:0,appearance:p(`common.status.appearance.${e[0].state}`,void 0,{defaultMessage:"neutral"})},{default:t(()=>[c(d(p(`http.api.value.${e[0].state}`)),1)]),_:2},1032,["appearance"])):N("",!0)]),_:2},1024)]),default:t(()=>[o[1]||(o[1]=c()),s(f,{selected:a.child()?.name},X({_:2},[x(a.children,({name:i})=>({name:`${i}-tab`,fn:t(()=>[s(v,{to:{name:i,query:{inactive:a.params.inactive}}},{default:t(()=>[c(d(p(`connections.routes.item.navigation.${i.split("-")[5]}`)),1)]),_:2},1032,["to"])])}))]),1032,["selected"]),o[2]||(o[2]=c()),s(y,null,{default:t(i=>[(l(),m(b(i.Component),{data:e[0],overview:r.overview,networking:r.networking},null,8,["data","overview","networking"]))]),_:2},1024)]),_:2},1024)]),_:2},1032,["items","predicate"])]),_:1},8,["name"])}}});export{T as default};
 ```
 
-**File**: `.github/workflows/bom.yaml` (modified, +1/-1)
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryXdsConfigView-D4sY1DJd.js` (renamed, +1/-1)
 ```diff
-@@ -17,7 +17,7 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-         env:
+@@ -1 +1 @@
+-import{d as C,r as o,o as w,l as R,w as a,b as n,e as d,k,P as T,t as V}from"./index-DWdyVVHy.js";const S=C({__name:"ConnectionInboundSummaryXdsConfigView",props:{data:{},routeName:{},overview:{}},setup(p){const t=p;return(b,r)=>{const m=o("RouteTitle"),l=o("XAction"),u=o("XCodeBlock"),i=o("DataLoader"),_=o("AppView"),g=o("RouteView");return w(),R(g,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:t.routeName},{default:a(({t:c,route:e,uri:f})=>[n(m,{render:!1,title:c("connections.routes.item.navigation.xds")},null,8,["title"]),r[0]||(r[0]=d()),n(_,null,{default:a(()=>[n(i,{data:[t.overview]},{default:a(({data:[x]})=>[n(i,{src:f(k(T),"/connections/xds/for/:proxyType/:name/:mesh/inbound/:inbound",{mesh:e.params.mesh||"*",name:x.id,inbound:"stat_prefix"in t.data?t.data.stat_prefix:`${t.data.port}`,proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane"})},{default:a(({data:[y],refresh:h})=>[n(u,{language:"json",code:JSON.stringify(y,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:s=>e.update({codeSearch:s}),onFilterModeChange:s=>e.update({codeFilter:s}),onRegExpModeChange:s=>e.update({codeRegExp:s})},{"primary-actions":a(()=>[n(l,{action:"refresh",appearance:"primary",onClick:h},{default:a(()=>[d(V(c("common.refresh")),1)]),_:2},1032,["onClick"])]),_:2},1032,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1032,["data"])]),_:2},1024)]),_:1},8,["name"])}}});export{S as default};
++import{d as C,r as o,o as w,l as R,w as a,b as n,e as d,k,P as T,t as V}from"./index-vYZHtAvq.js";const S=C({__name:"ConnectionInboundSummaryXdsConfigView",props:{data:{},routeName:{},overview:{}},setup(p){const t=p;return(b,r)=>{const m=o("RouteTitle"),l=o("XAction"),u=o("XCodeBlock"),i=o("DataLoader"),_=o("AppView"),g=o("RouteView");return w(),R(g,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:t.routeName},{default:a(({t:c,route:e,uri:f})=>[n(m,{render:!1,title:c("connections.routes.item.navigation.xds")},null,8,["title"]),r[0]||(r[0]=d()),n(_,null,{default:a(()=>[n(i,{data:[t.overview]},{default:a(({data:[x]})=>[n(i,{src:f(k(T),"/connections/xds/for/:proxyType/:name/:mesh/inbound/:inbound",{mesh:e.params.mesh||"*",name:x.id,inbound:"stat_prefix"in t.data?t.data.stat_prefix:`${t.data.port}`,proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane"})},{default:a(({data:[y],refresh:h})=>[n(u,{language:"json",code:JSON.stringify(y,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:s=>e.update({codeSearch:s}),onFilterModeChange:s=>e.update({codeFilter:s}),onRegExpModeChange:s=>e.update({codeRegExp:s})},{"primary-actions":a(()=>[n(l,{action:"refresh",appearance:"primary",onClick:h},{default:a(()=>[d(V(c("common.refresh")),1)]),_:2},1032,["onClick"])]),_:2},1032,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1032,["data"])]),_:2},1024)]),_:1},8,["name"])}}});export{S as default};
 ```
 
-**File**: `.github/workflows/build-test-distribute.yaml` (modified, +2/-2)
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionOutboundSummaryClustersView-8JWW9lKa.js` (renamed, +1/-1)
 ```diff
-@@ -171,7 +171,7 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-         env:
-@@ -305,7 +305,7 @@ jobs:
-           restore-keys: |
-             go-build-${{ runner.os }}-${{ hashFiles('**/go.sum') }}-
-             go-build-${{ runner.os }}-
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-         env:
+@@ -1,4 +1,4 @@
+-import{d as T,r as a,o as p,l,w as n,b as t,e as m,k as V,P as E,c as F,I as v,J as B}from"./index-DWdyVVHy.js";const M=T({__name:"ConnectionOutboundSummaryClustersView",props:{routeName:{},overview:{}},setup(u){const i=u;return(A,s)=>{const _=a("RouteTitle"),g=a("XAction"),f=a("XCodeBlock"),y=a("DataCollection"),d=a("DataLoader"),C=a("AppView"),h=a("RouteView");return p(),l(h,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:i.routeName},{default:n(({route:e,uri:x})=>[t(_,{render:!1,title:"Clusters"}),s[1]||(s[1]=m()),t(C,null,{default:n(()=>[t(d,{data:[i.overview]},{default:n(({data:[R]})=>[t(d,{src:x(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:n(({data:[k],refresh:w})=>[(p(!0),F(v,null,B([e.params.connection],r=>(p(),l(y,{key:typeof r,items:k.split(`
++import{d as T,r as a,o as p,l,w as n,b as t,e as m,k as V,P as E,c as F,I as v,J as B}from"./index-vYZHtAvq.js";const M=T({__name:"ConnectionOutboundSummaryClustersView",props:{routeName:{},overview:{}},setup(u){const i=u;return(A,s)=>{const _=a("RouteTitle"),g=a("XAction"),f=a("XCodeBlock"),y=a("DataCollection"),d=a("DataLoader"),C=a("AppView"),h=a("RouteView");return p(),l(h,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:i.routeName},{default:n(({route:e,uri:x})=>[t(_,{render:!1,title:"Clusters"}),s[1]||(s[1]=m()),t(C,null,{default:n(()=>[t(d,{data:[i.overview]},{default:n(({data:[R]})=>[t(d,{src:x(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:n(({data:[k],refresh:w})=>[(p(!0),F(v,null,B([e.params.connection],r=>(p(),l(y,{key:typeof r,items:k.split(`
+ `),predicate:c=>c.startsWith(`${r}::`)},{default:n(({items:c})=>[t(f,{language:"json",code:c.map(o=>o.replace(`${r}::`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:o=>e.update({codeSearch:o}),onFilterModeChange:o=>e.update({codeFilter:o}),onRegExpModeChange:o=>e.update({codeRegExp:o})},{"primary-actions":n(()=>[t(g,{action:"refresh",appearance:"primary",onClick:w},{default:n(()=>[...s[0]||(s[0]=[m(`
+                     Refresh
 ```
 
-**File**: `.github/workflows/codeql.yaml` (modified, +1/-1)
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionOutboundSummaryStatsView-CKY8vacv.js` (renamed, +1/-1)
 ```diff
-@@ -29,7 +29,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-         env:
-```
-
-**File**: `.github/workflows/merge-release-to-master.yaml` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ jobs:
-             echo "::error::Please re-run this workflow from the latest release branch"
-             exit 1
-           fi
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-         env:
-```
-
-**File**: `.github/workflows/pr-comments.yaml` (modified, +1/-1)
-```diff
-@@ -109,7 +109,7 @@ jobs:
-           repository: ${{ env.REPO }}
-           ref: ${{ env.BRANCH_NAME }}
-           persist-credentials: false
--      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           version: 2026.10.21
-         if: steps.parse-commands.outputs.has_command == 'true'
+@@ -1,4 +1,4 @@
+-import{d as w,r as a,o as k,l as R,w as n,b as t,e as d,k as A,P as T}from"./index-DWdyVVHy.js";const v=w({__name:"ConnectionOutboundSummaryStatsView",props:{networking:{},routeName:{},overview:{}},setup(i){const r=i;return(V,s)=>{const m=a("RouteTitle"),l=a("XAction"),u=a("XCodeBlock"),_=a("DataCollection"),p=a("DataLoader"),g=a("AppView"),f=a("RouteView");return k(),R(f,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:r.routeName},{default:n(({route:e,uri:x})=>[t(m,{render:!1,title:"Stats"}),s[1]||(s[1]=d()),t(g,null,{default:n(()=>[t(p,{data:[r.overview]},{default:n(({data:[y]})=>[t(p,{src:x(A(T),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:y.id,mesh:e.params.mesh||"*",socketAddress:r.networking.inboundAddress})},{default:n(({data:[C],refresh:h})=>[t(_,{items:C.raw.split(`
++import{d as w,r as a,o as k,l as R,w as n,b as t,e as d,k as A,P as T}from"./index-vYZHtAvq.js";const v=w({__name:"ConnectionOutboundSummaryStatsView",props:{networking:{},routeName:{},overview:{}},setup(i){const r=i;return(V,s)=>{const m=a("RouteTitle"),l=a("XAction"),u=a("XCodeBlock"),_=a("DataCollection"),p=a("DataLoader"),g=a("AppView"),f=a("RouteView");return k(),R(f,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:r.routeName},{default:n(({route:e,uri:x})=>[t(m,{render:!1,title:"Stats"}),s[1]||(s[1]=d()),t(g,null,{default:n(()=>[t(p,{data:[r.overview]},{default:n(({data:[y]})=>[t(p,{src:x(A(T),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:y.id,mesh:e.params.mesh||"*",socketAddress:r.networking.inboundAddress})},{default:n(({data:[C],refresh:h})=>[t(_,{items:C.raw.split(`
+ `),predicate:c=>c.includes(`.${e.params.connection}.`)},{default:n(({items:c})=>[t(u,{language:"json",code:c.map(o=>o.replace(`${e.params.connection}.`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:o=>e.update({codeSearch:o}),onFilterModeChange:o=>e.update({codeFilter:o}),onRegExpModeChange:o=>e.update({codeRegExp:o})},{"primary-actions":n(()=>[t(l,{action:"refresh",appearance:"primary",onClick:h},{default:n(()=>[...s[0]||(s[0]=[d(`
+                   Refresh
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19388** (2026-11-10): chore(deps): bump Kong/ksai-public from 3.135.6 to 5.0.2 (@renovate[bot])
+- **PR #19387** (2026-11-10): chore(deps/dev): bump ubi:grafana/dashboard-linter from 0.4.0 to 0.5.2 (@renovate[bot])
 - **PR #19386** (2026-11-09): chore(deps/dev): bump npm:@redocly/cli from 2.66.1 to 2.71.2 (@renovate[bot])
-- **PR #19377** (2026-11-09): chore(deps): bump jdx/mise-action from 5.2.1 to 5.2.4 (@renovate[bot])
-- **PR #19376** (2026-11-09): chore(deps): bump jdx/mise from 2026.10.17 to 2026.10.21 (@renovate[bot])
-- **PR #19368** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
-- **PR #19367** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
-- **PR #19366** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
+- **PR #19385** (2026-11-10): chore(deps): bump spire from 1.15.5 to 1.16.0 (@renovate[bot])
+- **PR #19384** (2026-11-10): chore(deps): bump reviewdog/action-shellcheck from 1.34.1 to 1.35.0 (@renovate[bot])
+- **PR #19383** (2026-11-10): chore(deps): bump reviewdog/action-actionlint from 1.81.1 to 1.83.0 (@renovate[bot])
 
 ---
 
@@ -1219,34 +1113,3 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. deps): bump ubuntu from 24.04 to 26.04 (#18827)
-
-**RULE**:
-When implementing operations in `.github/workflows/pr-comments.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `60b764b8`: deps): bump ubuntu from 24.04 to 26.04 (#18827). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pr-comments.yaml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-    runs-on: ubuntu-26.04
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-    runs-on: ubuntu-24.04
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60b764b8` are properly handled with clean fallback behavior.
