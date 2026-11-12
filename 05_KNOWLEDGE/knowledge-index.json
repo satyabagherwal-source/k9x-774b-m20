@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T21:56:46.004Z",
+  "last_updated": "2026-11-12T22:05:32.911Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49644,11 +49644,16 @@
       "slug": "oceanbase-oceanbase",
       "platform": "github",
       "source_url": "https://github.com/oceanbase/oceanbase",
-      "source_version": "5e8a63d2",
-      "content_hash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
+      "source_version": "d375c6d7",
+      "content_hash": "4fecfa7ceb81f8afe74db21d16d1d4b36a32bcf35b95c94a980f8263e2758e05",
       "dossier_path": "07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[master] fix(restore): preserve real error code before errsim injection in resto",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2467,
           "title": "[to #2026072900117849658]fix backup clean blocked by un-deletable archive piece",
@@ -49660,7 +49665,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:19:17.784Z",
+      "verified_at": "2026-11-12T22:05:32.882Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50938,8 +50943,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "0fb8b8f8",
-      "content_hash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
+      "source_version": "3967c693",
+      "content_hash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -50956,6 +50961,11 @@
         {
           "number": null,
           "title": "Update dependencies to fix high severity security issues (#4828)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tofu2024: Include \"destroy\" setting in object metadata",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51029,7 +51039,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:52:26.409Z",
+      "verified_at": "2026-11-12T22:05:24.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56777,8 +56787,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "970b4474",
-      "content_hash": "11e4d485f61841a281b14a07ca5518946433f6add2308035775253e1ba557de4",
+      "source_version": "2cd8d27a",
+      "content_hash": "3b8c4938b35a155d5d741f6c20d611d633b9022e74608b0908dbe48f15429159",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -56810,6 +56820,11 @@
         {
           "number": null,
           "title": "Test `Display` for remaining error variants",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Prepare 0.24.0-dev.3",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56918,7 +56933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T10:52:54.053Z",
+      "verified_at": "2026-11-12T22:05:29.232Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

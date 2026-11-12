@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:56:52.160Z",
+  "last_updated": "2026-11-12T22:05:39.902Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7337,6 +7337,33 @@
       "source_repo": "aleo-labs-protocol-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B19403-merge-pull-request-4663-from-aleo-labs-p.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F97386",
+      "directive_title": "tofu2024: Include \"destroy\" setting in object metadata",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "opentofu-opentofu",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F97386-tofu2024-include-destroy-setting-in-obje.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FF273A",
+      "directive_title": "Prepare 0.24.0-dev.3",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustls-rustls",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FF273A-prepare-0-24-0-dev-3.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C79E61",
+      "directive_title": "[master] fix(restore): preserve real error code before errsim injection in resto",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "oceanbase-oceanbase",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C79E61--master-fix-restore-preserve-real-error-.md",
       "staged_date": "2026-11-12"
     }
   ]

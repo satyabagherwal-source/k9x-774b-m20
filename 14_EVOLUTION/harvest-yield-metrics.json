@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:56:46.130Z",
-  "total_cycles_completed": 9045,
-  "total_learnings_persisted": 9045,
-  "total_rules_promoted": 8883,
+  "last_updated": "2026-11-12T22:05:33.062Z",
+  "total_cycles_completed": 9048,
+  "total_learnings_persisted": 9048,
+  "total_rules_promoted": 8886,
   "history": [
-    {
-      "timestamp": "2026-11-11T19:15:32.236Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T19:28:34.388Z",
-      "repository": "scrapy/scrapy",
-      "learningId": "learn-github-scrapy-scrapy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T19:28:42.124Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T19:28:45.063Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T21:56:46.130Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:05:24.932Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:05:29.510Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:05:33.062Z",
+      "repository": "oceanbase/oceanbase",
+      "learningId": "learn-github-oceanbase-oceanbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

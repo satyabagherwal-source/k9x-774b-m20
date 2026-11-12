@@ -9228,3 +9228,6 @@
 | `CYCLE-20261112-8AE5` | `2026-11-12T21:56:36.893Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9e6dba94...`) |
 | `CYCLE-20261112-8CDM` | `2026-11-12T21:56:39.466Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`580fe0ff...`) |
 | `CYCLE-20261112-8HI4` | `2026-11-12T21:56:46.108Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a828e68b...`) |
+| `CYCLE-20261112-JLSW` | `2026-11-12T22:05:24.896Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7d8f2fb...`) |
+| `CYCLE-20261112-JPC3` | `2026-11-12T22:05:29.475Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3b8c4938...`) |
+| `CYCLE-20261112-JS2Y` | `2026-11-12T22:05:33.034Z` | `oceanbase/oceanbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4fecfa7c...`) |

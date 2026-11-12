@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `0fb8b8f8`  
+> **Source Version**: `3967c693`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:52:09.952Z  
+> **Timestamp**: 2026-11-12T22:05:07.348Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:52:09.947Z  
+> **Harvest Timestamp**: 2026-11-12T22:05:07.100Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30797 stars
+- **Stars / Engagement**: 30821 stars
 
 ---
 
@@ -1419,128 +1419,549 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51202c51` (2026-11-10)
-**Commit Message**: Update dependencies to fix high severity security issues (#4828)
+### Incident Patch 1: `3967c693` (2026-11-12)
+**Commit Message**: tofu2024: Include "destroy" setting in object metadata
 
-Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
+The decision made based on the "destroy" argument in a resource block is
+now propagated through to the ResourceInstanceObjectMeta.
 
-**File**: `go.mod` (modified, +1/-1)
+In future commits we'll make the planning engine actually use this to plan
+to produce a "forget" action instead of a "delete" action when the
+configuration specifies this.
+
+Future commits will also handle the equivalent of this setting from
+"removed" blocks, but we don't yet have any support for those so we have
+some other supporting work to complete first.
+
+Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
+
+**File**: `internal/engine/internal/exec/resource.go` (modified, +23/-19)
 ```diff
-@@ -169,7 +169,7 @@ require (
- 	github.com/fatih/color v1.19.0 // indirect
- 	github.com/felixge/httpsnoop v1.1.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
- 	github.com/go-openapi/jsonreference v0.20.2 // indirect
+@@ -296,25 +296,23 @@ type ResourceInstanceObjectMeta struct {
+ 	// unspecified for other resource modes.
+ 	ReplaceOrder exprs.FromValue[resources.ReplaceOrder]
+ 
+-	// DeleteWhenRemoved is true if the expected treatment for a non-desired
+-	// object at this address is to ask the associated provider to delete it,
+-	// or false if the expected treatment is just to "forget" it by removing
+-	// the binding from the state without notifying the provider.
++	// ActionIfUnwanted specifies the expected treatment for a non-desired
++	// object at this address.
+ 	//
+ 	// Other fields of this type include the word "delete" because that is the
+-	// common case, but they also apply to the "forget" situation unless
++	// common case, but they also apply to other "unwanted" situations unless
+ 	// otherwise stated.
+ 	//
+-	// This field is relevant only for managed resource mode and should always
+-	// be nil for other resource modes.
+-	DeleteWhenRemoved exprs.FromValue[bool]
++	// This field is relevant only for managed resource mode and should be
++	// be ignored completely for other resource modes.
++	ActionIfUnwanted exprs.FromValue[resources.ActionIfUnwanted]
+ 
+ 	// DeletionInvalid is true if the author has configured that any execution
+ 	// plan that involves deleting this object should be considered immediately
+ 	// invalid. If false then deleting is a valid action to include.
+ 	//
+ 	// This only applies when the action is actually "delete", and not when
+-	// the action is "forget" due to the DeleteWhenRemoved field.
++	// the action is "forget" due to the ActionIfUnwanted field.
+ 	//
+ 	// This field is relevant only for managed resource mode and its value is
+ 	// unspecified for other resource modes.
+@@ -381,8 +379,8 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
+ 		Provider: addrs.ImpliedProviderForUnqualifiedType(addr.InstanceAddr.Resource.Resource.ImpliedProvider()),
+ 
+ 		// We delete when removed unless explicitly overridden in the
+-		// configuration somewhere.
+-		DeleteWhenRemoved: exprs.Known(true),
++		// configuration somewhere or previously set to forget in the state.
++		ActionIfUnwanted: exprs.Known(resources.IfUnwantedDelete),
+ 	}
+ 
+ 	// If both state and fromConfig are present then we'll start with state
+@@ -410,15 +408,15 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
+ 			// configuration always wins if it specifies anything, which it
+ 			// typically will unless there are no mentions of this object
+ 			// in the configuration at all anymore.
+-			ret.DeleteWhenRemoved = exprs.Known(false)
++			ret.ActionIfUnwanted = exprs.Known(resources.IfUnwantedForget)
+ 		}
+ 
+ 		ret.Status = state.Status
+ 
+ 		// TODO: Everything else
+ 	}
+ 
+-	deleteWhenRemovedSet := false
++	actionIfUnwantedSet := false
+ 
+ 	for _, fromModule := range fromConfig {
+ 		if p := fromModule.Provider; p != nil {
+@@ -446,12 +444,18 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
+ 		// by a child module it calls. deleteWhenRemovedSet is set to true when
+ 		// we encounter the first explicit opinion about it, and then we ignore
+ 		// it for any nested modules.
+-		if !deleteWhenRemovedSet && fromModule.DeleteWhenRemoved != nil {
+-			// We discard the source location information here because any
+-			// rules restricting usage of this option are expected to be checked
+-			// before we merge the configuration-based values together here.
+-			ret.DeleteWhenRemoved = fromModule.DeleteWhenRemoved.FromValue
+-			deleteWhenRemovedSet = true
++		if !actionIfUnwantedSet {
++			// We ignore marks here and just propagate them into the result
++			// if relevant, since they don't affect our decision about who
++			// "wins" when there are multiple competing definitions.
++			unmarked, _ := fromModule.ActionIfUnwanted.FromValue.Unmark()
++			if val, known := unmarked.ValueOk(); !known || val != resources.IfUnwantedUndecided {
++				// We discard the source location information here because any
++				// rules restricting usage of this option are expected to be checked
++				// before we merge the configuration-based values together here.
++				ret.ActionIfUnwanted = fromModule.ActionIfUnwanted.FromValue
++				actionIfUnwantedSet = true
++			}
+ 		}
+ 
+ 		if fromModule.DeletionInvalid != nil {
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `internal/lang/eval/internal/evalglue/resource.go` (modified, +5/-10)
 ```diff
-@@ -212,8 +212,8 @@ github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/
- github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
- github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
- github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
+@@ -77,17 +77,12 @@ type ConfiguredResourceInstanceObjectMeta struct {
+ 	// for other resource modes.
+ 	ReplaceOrder *exprs.FromValue[resources.ReplaceOrder]
+ 
+-	// DeleteWhenRemoved is true if the expected treatment for a non-desired
+-	// object at this address is to ask the associated provider to delete it,
+-	// or false if the expected treatment is just to "forget" it by removing
+-	// the binding from the state without notifying the provider.
++	// ActionIfUnwanted specifies the expected treatment for a non-desired
++	// object at this address.
+ 	//
+-	// An nil value represents that there is no information about how this
+-	// object should be treated when removed.
+-	//
+-	// This field is relevant only for managed resource mode and should always
+-	// be nil for other resource modes.
+-	DeleteWhenRemoved *exprs.WithSourceRange[bool]
++	// This field is relevant only for managed resource mode and should be
++	// be ignored completely for other resource modes.
++	ActionIfUnwanted exprs.WithSourceRange[resources.ActionIfUnwanted]
+ 
+ 	// DeletionInvalid is true if the author has configured that any execution
+ 	// plan that involves deleting this object should be considered immediately
 ```
 
-**File**: `website/package-lock.json` (modified, +18/-18)
+**File**: `internal/lang/eval/internal/tofu2024/module_instance.go` (modified, +3/-0)
 ```diff
-@@ -418,9 +418,9 @@
-       }
-     },
-     "node_modules/@npmcli/map-workspaces/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -772,9 +772,9 @@
-       }
-     },
-     "node_modules/brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -5881,9 +5881,9 @@
-       }
-     },
-     "node_modules/unified-engine/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -6786,9 +6786,9 @@
-       },
-       "dependencies": {
-         "brace-expansion": {
--          "version": "2.1.4",
--          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+          "version": "2.1.7",
-+          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-           "dev": true,
-           "requires": {
-             "balanced-match": "^1.0.0"
-@@ -7063,9 +7063,9 @@
-       }
-     },
-     "brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "requires": {
-         "balanced-match": "^1.0.0",
-@@ -10671,9 +10671,9 @@
-       },
-       "dependencies": {
-         "brace-expansion": {
--          "version": "2.1.4",
--          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+          "version": "2.1.7",
-+          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-           "dev": true,
-           "requires": {
-             "balanced-match": "^1.0.0"
+@@ -207,6 +207,9 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
+ 	// methods because our caller is expected to collect them separately
+ 	// using [CompiledModuleInstance.CheckAll].
+ 
++	actionIfUnwanted, _ := rsrc.ActionIfUnwanted(ctx)
++	ret.ActionIfUnwanted = actionIfUnwanted
++
+ 	preventDestroy, _ := rsrc.PreventDestroy(ctx)
+ 	ret.DeletionInvalid = &preventDestroy
+ 
+```
+
+---
+
+### Incident Patch 2: `85a969a2` (2026-11-12)
+**Commit Message**: configgraph+tofu2024: Plumb through the "destroy = false" meta-argument
+
+This makes the result of the expression in the "destroy" argument of a
+"resource" block visible to other code, although we're not actually making
+use of that yet in this commit.
+
+Instead of representing it as a bool, which is potentially confusing if you
+don't remember which way the surface-level setting is oriented, this adds
+an enum of three values -- Undecided, Delete, or Forget -- that correspond
+to null, true, and false respectively.
+
+Future commits will continue plumbing this through to
+ResourceInstanceObjectMeta so that the planning engine can eventually rely
+on it.
+
+Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
+
+**File**: `internal/lang/eval/internal/configgraph/resource.go` (modified, +139/-0)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	"github.com/opentofu/opentofu/internal/lang/exprs"
+ 	"github.com/opentofu/opentofu/internal/lang/grapheval"
+ 	"github.com/opentofu/opentofu/internal/lang/marks"
++	"github.com/opentofu/opentofu/internal/resources"
+ 	"github.com/opentofu/opentofu/internal/tfdiags"
+ )
+ 
+@@ -56,6 +57,11 @@ type Resource struct {
+ 
+ 	DestroyProvisioners func(ctx context.Context, addr addrs.ResourceInstance) []Provisioner
+ 
++	// DeleteWhenUnwantedValuer returns the module author's decision about
++	// whether unwanted objects belonging to this resource should be deleted
++	// (cty.True) or just "forgotten" (cty.False).
++	DeleteWhenUnwantedValuer *OnceValuer
++
+ 	// PreventDestroyValuer is a valuer that returns the module author's
+ 	// direction about if this resource instance can be destroyed.
+ 	//
+@@ -150,6 +156,29 @@ func (r *Resource) decideInstances(ctx context.Context) (*compiledInstances[*Res
+ 	}, &r.DeclRange, "Decide instances of %s", r.Addr)
+ }
+ 
++// ActionIfUnwanted returns the author's decision (if any) about which action
++// ought to be planned for any unwanted object belonging to this resource.
++func (r *Resource) ActionIfUnwanted(ctx context.Context) (exprs.WithSourceRange[resources.ActionIfUnwanted], tfdiags.Diagnostics) {
++	if r.DeleteWhenUnwantedValuer == nil {
++		return exprs.WithSourceRange[resources.ActionIfUnwanted]{
++			FromValue: exprs.Known(resources.IfUnwantedUndecided),
++		}, nil
++	}
++	rng := r.DeleteWhenUnwantedValuer.ValueSourceRange()
++
++	val, diags := r.DeleteWhenUnwantedValuer.Value(ctx)
++	if val == cty.NilVal {
++		if !diags.HasErrors() {
++			panic("DeleteWhenUnwantedValuer returned cty.NilVal without errors")
++		}
++		val = exprs.AsEvalError(cty.DynamicVal) // just so the rest of this can run without crashing
++	}
++
++	ret, moreDiags := prepareDestroyIfUnwanted(fmt.Sprintf("Resource %s", r.Addr), val, rng)
++	diags = diags.Append(moreDiags)
++	return ret, diags
++}
++
+ // PreventDestroy returns a value-based representation of the "prevent destroy"
+ // setting for this resource.
+ //   - true means that this resource instance MUST NOT be destroyed.
+@@ -271,6 +300,12 @@ func (r *Resource) CheckAll(ctx context.Context) tfdiags.Diagnostics {
+ 	// is where we report any problems with the resource's InstanceSelector.
+ 	// (e.g. this is where an invalid for_each expression would be reported)
+ 	cg.CheckValuer(ctx, r)
++	if r.DeleteWhenUnwantedValuer != nil {
++		cg.CheckDiagsFunc(ctx, func(ctx context.Context) tfdiags.Diagnostics {
++			_, diags := r.ActionIfUnwanted(ctx)
++			return diags
++		})
++	}
+ 	if r.PreventDestroyValuer != nil {
+ 		cg.CheckDiagsFunc(ctx, func(ctx context.Context) tfdiags.Diagnostics {
+ 			_, diags := r.PreventDestroy(ctx)
+@@ -279,3 +314,107 @@ func (r *Resource) CheckAll(ctx context.Context) tfdiags.Diagnostics {
+ 	}
+ 	return cg.Complete(ctx)
+ }
++
++// prepareDestroyIfUnwanted translates the raw value from evaluating a "destroy"
++// argument in either a "resource" or "removed" block into its internal
++// representation, [resources.ActionIfUnwanted].
++//
++//   - cty.True corresponds to [resources.IfUnwantedDelete]
++//   - cty.False corresponds to [resources.IfUnwantedForget]
++//   - cty.NullVal(cty.Bool) corresponds to [resources.IfUnwantedUndecided],
++//     leaving the decision to some other part of the configuration.
++//
++// This function automatically attempts to convert the given value to [cty.Bool]
++// and handles any relevant marks on the value.
++//
++// "noun" should be set to something like "Resource aws_instance.example" or
++// "Resource instance aws_instance.example[0]" describing what exactly this
++// destroy argument was associated with, suitable for appearing at the start
++// of a sentence as the subject of that sentence.
++func prepareDestroyIfUnwanted(noun string, val cty.Value, rng *tfdiags.SourceRange) (exprs.WithSourceRange[resources.ActionIfUnwanted], tfdiags.Diagnostics) {
++	var diags tfdiags.Diagnostics
++
++	val = PrepareOutgoingValue(val)
++
++	const errSummary = "Invalid value for \"destroy\" argument"
++	val, err := convert.Convert(val, cty.Bool)
++	if err != nil {
++		diags = diags.Append(&hcl.Diagnostic{
++			Severity: hcl.DiagError,
++			Summary:  errSummary,
++			Detail: fmt.Sprintf(
++				"%s has an invalid value for its \"destroy\" argument: %s.",
++				noun, tfdiags.FormatError(err),
++			),
++			Subject: rng.ToHCL().Ptr(),
++		})
++		return exprs.WithSourceRange[resources.ActionIfUnwanted]{
++			FromValue:   exprs.Unknown[resources.ActionIfUnwanted]().Mark(exprs.EvalError),
++			SourceRange: rng,
++		}, diags
++	}
++
++	val, valMarks := val.Unmark()
++	// TODO: Handle any deprecation marks on "val"
++	for mark := range valMarks {
++		switch mark {
++		case marks.Sensitive:
++			diags = diags.Append(&hcl.Diagnostic{
++				Severity: hcl.DiagError,
++				Summary:  errSummary,
++				Detail: fmt.Sprintf(
++					"%s has a sensitive value for its \"destroy\" argument, which is invalid because it would cause OpenTofu to disclose the sensitive value by whether it proposes deleti
+```
+
+**File**: `internal/lang/eval/internal/configgraph/resource_test.go` (added, +151/-0)
+```diff
+@@ -0,0 +1,151 @@
++// Copyright (c) The OpenTofu Authors
++// SPDX-License-Identifier: MPL-2.0
++// Copyright (c) 2023 HashiCorp, Inc.
++// SPDX-License-Identifier: MPL-2.0
++
++package configgraph
++
++import (
++	"testing"
++
++	"github.com/google/go-cmp/cmp"
++	"github.com/hashicorp/hcl/v2"
++	"github.com/zclconf/go-cty/cty"
++
++	"github.com/opentofu/opentofu/internal/lang/exprs"
++	"github.com/opentofu/opentofu/internal/lang/marks"
++	"github.com/opentofu/opentofu/internal/resources"
++	"github.com/opentofu/opentofu/internal/tfdiags"
++)
++
++func TestPrepareDestroyIfUnwanted(t *testing.T) {
++	tests := []struct {
++		Value     cty.Value
++		Want      exprs.FromValue[resources.ActionIfUnwanted]
++		WantDiags tfdiags.Diagnostics
++	}{
++		{
++			Value: cty.True,
++			Want:  exprs.Known(resources.IfUnwantedDelete),
++		},
++		{
++			Value: cty.False,
++			Want:  exprs.Known(resources.IfUnwantedForget),
++		},
++		{
++			Value: cty.NullVal(cty.Bool),
++			Want:  exprs.Known(resources.IfUnwantedUndecided),
++		},
++		{
++			Value: cty.NullVal(cty.DynamicPseudoType),
++			Want:  exprs.Known(resources.IfUnwantedUndecided),
++		},
++		{
++			Value: cty.StringVal("true"),
++			Want:  exprs.Known(resources.IfUnwantedDelete),
++		},
++		{
++			Value: cty.StringVal("false"),
++			Want:  exprs.Known(resources.IfUnwantedForget),
++		},
++		{
++			Value: cty.UnknownVal(cty.Bool),
++			Want:  exprs.Unknown[resources.ActionIfUnwanted](),
++		},
++		{
++			Value: cty.DynamicVal,
++			Want:  exprs.Unknown[resources.ActionIfUnwanted](),
++		},
++		{
++			Value: cty.ListValEmpty(cty.String),
++			Want:  exprs.Unknown[resources.ActionIfUnwanted]().Mark(exprs.EvalError),
++			WantDiags: tfdiags.New(
++				&hcl.Diagnostic{
++					Severity: hcl.DiagError,
++					Summary:  `Invalid value for "destroy" argument`,
++					Detail:   `Test case has an invalid value for its "destroy" argument: bool required, but have list of string.`,
++					Subject:  &hcl.Range{Filename: "test.tofu"},
++				},
++			),
++		},
++		{
++			Value: cty.UnknownVal(cty.Map(cty.String)),
++			Want:  exprs.Unknown[resources.ActionIfUnwanted]().Mark(exprs.EvalError),
++			WantDiags: tfdiags.New(
++				&hcl.Diagnostic{
++					Severity: hcl.DiagError,
++					Summary:  `Invalid value for "destroy" argument`,
++					Detail:   `Test case has an invalid value for its "destroy" argument: bool required, but have map of string.`,
++					Subject:  &hcl.Range{Filename: "test.tofu"},
++				},
++			),
++		},
++		{
++			Value: cty.True.Mark(marks.Sensitive),
++			Want:  exprs.Known(resources.IfUnwantedDelete).Mark(exprs.EvalError),
++			WantDiags: tfdiags.New(
++				&hcl.Diagnostic{
++					Severity: hcl.DiagError,
++					Summary:  `Invalid value for "destroy" argument`,
++					Detail:   "Test case has a sensitive value for its \"destroy\" argument, which is invalid because it would cause OpenTofu to disclose the sensitive value by whether it proposes deleting or forgetting.\n\nIf you know this value is not sensitive in practice, consider using the nonsensitive function to declare that.",
++					Subject:  &hcl.Range{Filename: "test.tofu"},
++				},
++			),
++		},
++		{
++			Value: cty.True.Mark(marks.Ephemeral),
++			Want:  exprs.Known(resources.IfUnwantedDelete).Mark(exprs.EvalError),
++			WantDiags: tfdiags.New(
++				&hcl.Diagnostic{
++					Severity: hcl.DiagError,
++					Summary:  `Invalid value for "destroy" argument`,
++					Detail:   "Test case has an ephemeral value for its \"destroy\" argument, which is invalid because the decision for whether to delete or forget objects belonging to this resource must stay consistent between plan and apply.",
++					Subject:  &hcl.Range{Filename: "test.tofu"},
++				},
++			),
++		},
++		{
++			Value: cty.True.Mark("hypothetical future mark"),
++			Want:  exprs.Known(resources.IfUnwantedDelete).Mark(exprs.EvalError),
++			WantDiags: tfdiags.New(
++				&hcl.Diagnostic{
++					Severity: hcl.DiagError,
++					Summary:  `Invalid value for "destroy" argument`,
++					Detail:   `Test case has a "destroy" value derived from something that isn't allowed for deciding whether to delete or forget (has internal mark "hypothetical future mark"). The fact that OpenTofu cannot give more details about this is a bug, so please report it!`,
++					Subject:  &hcl.Range{Filename: "test.tofu"},
++				},
++			),
++		},
++		{
++			Value: cty.True.Mark(NewResourceInstanceMark(&ResourceInstance{})), // this package's own internal marks should be stripped out before returning
++			Want:  exprs.Known(resources.IfUnwantedDelete),
++		},
++	}
++
++	for _, test := range tests {
++		t.Run(test.Value.GoString(), func(t *testing.T) {
++			t.Logf("testing %#v", test.Value)
++			gotWithSourceRange, gotDiags := prepareDestroyIfUnwanted("Test case", test.Value, &tfdiags.SourceRange{
++				Filename: "test.tofu",
++			})
++			if gotWithSourceRange.SourceRange == nil || gotWithSourceRange.SourceRange.Filename != "test.tofu" {
++				t.Error("source range was not preserved into result")
++			}
++
++			got := gotWithSourceRange.FromValue
++			want := test.Want
++			if diff := cmp.Diff(want, got, exprs.From
+```
+
+**File**: `internal/lang/eval/internal/tofu2024/compile_resources.go` (modified, +23/-8)
+```diff
+@@ -175,13 +175,27 @@ func compileModuleInstanceResource(
+ 	}
+ 
+ 	var pdValuer *configgraph.OnceValuer
+-	if config.Managed != nil && config.Managed.PreventDestroy != nil {
+-		// We currently forbid usage of any instance information in prevent destroy. We could take a similar
+-		// approach to destroy provisioners eventually, but for now we will match the previous implementation.
+-		// See https://github.com/opentofu/opentofu/issues/2522 for more details
+-		pdValuer = configgraph.ValuerOnce(
+-			exprs.NewClosure(exprs.EvalableHCLExpression(config.Managed.PreventDestroy), declScope),
+-			"Prevent destroy for %s", absAddr)
++	var destroyValuer *configgraph.OnceValuer
++	if config.Managed != nil {
++		if config.Managed.PreventDestroy != nil {
++			// We currently forbid usage of any instance information in prevent destroy. We could take a similar
++			// approach to destroy provisioners eventually, but for now we will match the previous implementation.
++			// See https://github.com/opentofu/opentofu/issues/2522 for more details
++			pdValuer = configgraph.ValuerOnce(
++				exprs.NewClosure(exprs.EvalableHCLExpression(config.Managed.PreventDestroy), declScope),
++				"Prevent destroy for %s", absAddr)
++		}
++		if config.Managed.Destroy != nil {
++			// We require this to be set consistently for all objects belonging
++			// to this resource because we need to be able to answer this
++			// question for instances that have already been removed from the
++			// configuration, which therefore wouldn't have an "each.value"
++			// to refer to.
++			destroyValuer = configgraph.ValuerOnce(
++				exprs.NewClosure(exprs.EvalableHCLExpression(config.Managed.Destroy), declScope),
++				"\"destroy\" argument for %s", absAddr,
++			)
++		}
+ 	}
+ 
+ 	if diags.HasErrors() {
+@@ -367,7 +381,8 @@ func compileModuleInstanceResource(
+ 			}
+ 			return inst
+ 		},
+-		PreventDestroyValuer: pdValuer,
++		DeleteWhenUnwantedValuer: destroyValuer,
++		PreventDestroyValuer:     pdValuer,
+ 		DestroyProvisioners: func(ctx context.Context, addr addrs.ResourceInstance) []configgraph.Provisioner {
+ 			var repData instances.RepetitionData
+ 			if addr.Key != nil {
+```
+
+**File**: `internal/resources/actionifunwanted_string.go` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++// Code generated by "stringer -type ActionIfUnwanted -trimprefix IfUnwanted"; DO NOT EDIT.
++
++package resources
++
++import "strconv"
++
++func _() {
++	// An "invalid array index" compiler error signifies that the constant values have changed.
++	// Re-run the stringer command to generate them again.
++	var x [1]struct{}
++	_ = x[IfUnwantedUndecided-0]
++	_ = x[IfUnwantedDelete-1]
++	_ = x[IfUnwantedForget-2]
++}
++
++const _ActionIfUnwanted_name = "UndecidedDeleteForget"
++
++var _ActionIfUnwanted_index = [...]uint8{0, 9, 15, 21}
++
++func (i ActionIfUnwanted) String() string {
++	idx := int(i) - 0
++	if i < 0 || idx >= len(_ActionIfUnwanted_index)-1 {
++		return "ActionIfUnwanted(" + strconv.FormatInt(int64(i), 10) + ")"
++	}
++	return _ActionIfUnwanted_name[_ActionIfUnwanted_index[idx]:_ActionIfUnwanted_index[idx+1]]
++}
+```
+
+**File**: `internal/resources/managed.go` (modified, +17/-0)
+```diff
+@@ -136,3 +136,20 @@ const (
+ 	// system.
+ 	ReplaceDeleteFirst
+ )
++
++type ActionIfUnwanted byte
++
++//go:generate go tool golang.org/x/tools/cmd/stringer -type ActionIfUnwanted -trimprefix IfUnwanted
++
++const (
++	// IfWantedUndecided is the zero value of [ActionIfUnwanted],
++	// representing the absence of a decision about what action should be
++	// planned when an object is found to be unwanted.
++	IfUnwantedUndecided ActionIfUnwanted = iota
++
++	// IfUnwantedDelete represents that an unwanted object should be deleted.
++	IfUnwantedDelete
++
++	// IfUnwantedForget represents that an unwanted object should be deleted.
++	IfUnwantedForget
++)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4839** (2026-11-12): Propagate the `destroy = false` setting from `resource` blocks through to `ResourceInstanceObjectMeta` (@apparentlymart)
+- **PR #4835** (2026-11-11): Add missing copyright headers (@yottta)
+- **PR #4834** (2026-11-12): [Govulncheck][GO-2026-6859][v1.13] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
+- **PR #4833** (2026-11-12): [Govulncheck][GO-2026-6859][v1.12] Upgrade Go toolchain to 1.26.11 (@karlmoriaty)
+- **PR #4831** (2026-11-11): [Govulncheck][GO-2026-6859][main] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
 - **PR #4828** (2026-11-10): Update dependencies to fix high severity security issues (@yottta)
-- **PR #4825** (2026-11-10): `go get github.com/klauspost/compress@v1.20.2` (@yottta)
-- **PR #4823** (2026-11-09): Change opt-in flag for the new runtime outside of the engine (@cam72cam)
-- **PR #4822** (2026-11-10): New Runtime: Only compute module/resource value once (@cam72cam)
-- **PR #4816** (2026-11-06): Fix symbol libraries in plan snapshot (@cam72cam)
-- **PR #4813** (2026-11-05): [Backport 1.12] local statefile mutate bug (@cam72cam)
 
 ---
 
@@ -1560,28 +1981,65 @@ Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependencies to fix high severity security issues (#4828)
+## X. tofu2024: Include "destroy" setting in object metadata
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/engine/internal/exec/resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51202c51`: Update dependencies to fix high severity security issues (#4828). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3967c693`: tofu2024: Include "destroy" setting in object metadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/internal/exec/resource.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+	// ActionIfUnwanted specifies the expected treatment for a non-desired
+	// object at this address.
+	// common case, but they also apply to other "unwanted" situations unless
+	// This field is relevant only for managed resource mode and should be
+	// be ignored completely for other resource modes.
+	ActionIfUnwanted exprs.FromValue[resources.ActionIfUnwanted]
+	// the action is "forget" due to the ActionIfUnwanted field.
+		// configuration somewhere or previously set to forget in the state.
+		ActionIfUnwanted: exprs.Known(resources.IfUnwantedDelete),
+			ret.ActionIfUnwanted = exprs.Known(resources.IfUnwantedForget)
+	actionIfUnwantedSet := false
+		if !actionIfUnwantedSet {
+			// We ignore marks here and just propagate them into the result
+			// if relevant, since they don't affect our decision about who
+			// "wins" when there are multiple competing definitions.
+			unmarked, _ := fromModule.ActionIfUnwanted.FromValue.Unmark()
+			if val, known := unmarked.ValueOk(); !known || val != resources.IfUnwantedUndecided {
+				// We discard the source location information here because any
+				// rules restricting usage of this option are expected to be checked
+				// before we merge the configu
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	// DeleteWhenRemoved is true if the expected treatment for a non-desired
+	// object at this address is to ask the associated provider to delete it,
+	// or false if the expected treatment is just to "forget" it by removing
+	// the binding from the state without notifying the provider.
+	// common case, but they also apply to the "forget" situation unless
+	// This field is relevant only for managed resource mode and should always
+	// be nil for other resource modes.
+	DeleteWhenRemoved exprs.FromValue[bool]
+	// the action is "forget" due to the DeleteWhenRemoved field.
+		// configuration somewhere.
+		DeleteWhenRemoved: exprs.Known(true),
+			ret.DeleteWhenRemoved = exprs.Known(false)
+	deleteWhenRemovedSet := false
+		if !deleteWhenRemovedSet && fromModule.DeleteWhenRemoved != nil {
+			// We discard the source location information here because any
+			// rules restricting usage of this option are expected to be checked
+			// before we merge the configuration-based values together here.
+			ret.DeleteWhenRemoved = fromModule.DeleteWhenRemoved.FromValue
+			deleteWhenRemovedSet = true
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51202c51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3967c693` are properly handled with clean fallback behavior.

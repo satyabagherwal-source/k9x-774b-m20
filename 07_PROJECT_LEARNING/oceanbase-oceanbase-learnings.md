@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md`  
 > **Source**: github ([https://github.com/oceanbase/oceanbase](https://github.com/oceanbase/oceanbase))  
-> **Source Version**: `5e8a63d2`  
+> **Source Version**: `d375c6d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:19:17.599Z  
+> **Timestamp**: 2026-11-12T22:05:14.265Z  
 > **Learning ID**: `learn-github-oceanbase-oceanbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oceanbase/oceanbase](https://github.com/oceanbase/oceanbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:19:17.473Z  
+> **Harvest Timestamp**: 2026-11-12T22:05:14.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OceanBase is the unified distributed database for the AI era — open-source, multi-model, one engine for your most demanding workloads.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10341 stars
+- **Stars / Engagement**: 10400 stars
 
 ---
 
@@ -1478,11 +1478,11 @@ EASY_CPP_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2490** (2026-10-20): **docs: add full architecture evolution video to README**
+  *Symptoms*: ### Task Description  Add a visual history to the system architecture sections of the English and Chinese READMEs.  ### Solution Description  Embed the complete 2:29 architecture animation in both READMEs using a GitHub-hosted H.264 MP4 attachment. Each section contains only a heading and the video player. No video binary or supplementary document is added to the source tree.  ### Passed Regressions  - GitHub-rendered README players recognize the full 149-second duration. Playback, pause, and seeking were checked in the browser. - Full-file decoding reported no errors; the exported video contains 4,470 frames at 30 fps. - Both README changes preserve the original content outside the added sections; `git diff --check` passes.  ### Upgrade Compatibility  Documentation only; no database code, configuration, dependencies, or upgrade behavior changes.  ### Other Information  The animation uses English text and has no audio. The GitHub playback version is 720p and retains the complete duration and all scenes.  https://github.com/user-attachments/assets/21a0f985-ee00-49f8-b8c7-a35f0c3f4397  ### Release Note  Add a complete visual history of OceanBase architecture from 2010 to 2026 to the English and Chinese READMEs. 
+
 - **Issue #2398** (2026-05-08): **[Docs] Fix question issue template metadata**
   *Symptoms*: <!-- Thank you for contributing to **OceanBase**!  Please read the [How to Contribute](https://github.com/oceanbase/oceanbase/wiki/how_to_contribute) document **BEFORE** filling this PR.  **If this pull request have a significant impact, please make sure you have discussed with OceanBase group.** -->  ### Task Description  <!-- The problem you resolved by this pull request. You can link the issue via the "close #xxx" or "ref #xxx". -->  ### Solution Description  <!-- Please clearly and consice descipt the solution. -->  ### Passed Regressions  <!-- Unittest, mysql test or test it manually? -->  ### Upgrade Compatibility  <!-- Please make sure this is compatible with old version or you should give us upgrading solution. -->  ### Other Information  <!-- Any information helping to review this pull request. -->  ### Release Note <!-- A concise release note can help users to understand how your pull request makes difference. --> 
-
-- **Issue #2392** (2026-05-14): **build ocenabase error, missing devdeps-vsag-1.1.0-1702026040114.el8.x86_64.rpm**
-  *Symptoms*: ### Self Checks  - [x] I have read the [Contributing Guide](https://github.com/oceanbase/oceanbase/blob/develop/CONTRIBUTING.md). - [x] This is only for bug report, if you would like to ask a question, please head to [Discussions](https://github.com/oceanbase/oceanbase/discussions/categories/general). - [x] I have searched for existing issues [search for existing issues](https://github.com/oceanbase/oceanbase/issues), including closed ones. - [x] I confirm that I am using English to submit this report, otherwise it will be closed. - [x] 【中文用户 & Non English User】请使用英语提交，否则会被关闭 ：） - [x] Please do not modify this template :) and fill in all the required fields.  ### OceanBase version  4.3.5.6  ### Self Hosted  Self Hosted (Source)  ### Environment  centos7 x86  ### Steps to reproduce  1. cd /oceanbase/rpm && sh ./oceanbase-ce-build.sh /oceanbase oceanbase 4.3.5.6 106000012026040916  ### ✔️ Expected Behavior  build successfully  ### ❌ Actual Behavior  build error  <img width="1112" height="176" alt="Image" src="https://github.com/user-attachments/assets/50cdb3ae-1348-4878-9352-b9743a9a471e" />
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1499,578 +1499,632 @@ EASY_CPP_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `131fdbaf` (2026-09-30)
-**Commit Message**: [to #2026072900117849658]fix backup clean blocked by un-deletable archive piece
+### Incident Patch 1: `fea3457f` (2026-11-11)
+**Commit Message**: [master] fix(restore): preserve real error code before errsim injection in restore_init_ls
 
-**File**: `src/rootserver/backup/ob_backup_clean_selector.cpp` (modified, +728/-85)
+**File**: `src/rootserver/restore/ob_restore_scheduler.cpp` (modified, +3/-1)
 ```diff
-@@ -18,6 +18,7 @@
- #include "share/backup/ob_backup_clean_operator.h"
- #include "storage/tx/ob_ts_mgr.h"
- #include "storage/backup/ob_backup_utils.h"
-+#include "storage/backup/ob_backup_data_store.h"
- namespace oceanbase
- {
- using namespace share;
-@@ -867,6 +868,50 @@ int ObBackupDataProvider::load_piece_info_desc(
-   return ret;
- }
+@@ -1143,7 +1143,9 @@ int ObRestoreScheduler::restore_init_ls(const share::ObPhysicalRestoreJob &job_i
+   }
  
-+int ObBackupDataProvider::get_backup_set_ls_restore_start_lsn(
-+    const uint64_t tenant_id,
-+    const ObBackupSetFileDesc &backup_set_desc,
-+    ObIArray<ObLSRestoreStartLSN> &ls_start_lsn_array)
-+{
-+  int ret = OB_SUCCESS;
-+  ObBackupDest backup_dest;
-+  ObBackupSetDesc set_desc;
-+  storage::ObBackupDataStore store;
-+  storage::ObBackupLSMetaInfosDesc ls_meta_infos;
-+  ls_start_lsn_array.reset();
-+  if (IS_NOT_INIT) {
-+    ret = OB_NOT_INIT;
-+    LOG_WARN("ObBackupDataProvider not inited", K(ret));
-+  } else if (!backup_set_desc.is_valid()) {
-+    ret = OB_INVALID_ARGUMENT;
-+    LOG_WARN("invalid backup set desc", K(ret), K(backup_set_desc));
-+  } else if (OB_FAIL(ObBackupStorageInfoOperator::get_backup_dest(*sql_proxy_, tenant_id,
-+      backup_set_desc.backup_path_, backup_dest))) {
-+    LOG_WARN("failed to get backup dest with storage info", K(ret), K(tenant_id), K(backup_set_desc));
-+  } else if (OB_FALSE_IT(set_desc.backup_set_id_ = backup_set_desc.backup_set_id_)) {
-+  } else if (OB_FALSE_IT(set_desc.backup_type_ = backup_set_desc.backup_type_)) {
-+  } else if (OB_FAIL(store.init(backup_dest, set_desc))) {
-+    LOG_WARN("failed to init backup data store", K(ret), K(backup_set_desc));
-+  } else if (OB_FAIL(store.read_ls_meta_infos(ls_meta_infos))) {
-+    LOG_WARN("failed to read ls meta infos", K(ret), K(backup_set_desc));
-+  } else {
-+    for (int64_t i = 0; OB_SUCC(ret) && i < ls_meta_infos.ls_meta_packages_.count(); ++i) {
-+      const storage::ObLSMetaPackage &ls_meta_package = ls_meta_infos.ls_meta_packages_.at(i);
-+      ObLSRestoreStartLSN ls_start_lsn;
-+      ls_start_lsn.ls_id_ = ls_meta_package.ls_meta_.ls_id_;
-+      ls_start_lsn.start_lsn_ = ls_meta_package.palf_meta_.curr_lsn_;
-+      if (!ls_start_lsn.is_valid()) {
-+        ret = OB_ERR_UNEXPECTED;
-+        LOG_WARN("invalid ls restore start lsn", K(ret), K(ls_start_lsn), K(ls_meta_package));
-+      } else if (OB_FAIL(ls_start_lsn_array.push_back(ls_start_lsn))) {
-+        LOG_WARN("failed to push back ls restore start lsn", K(ret), K(ls_start_lsn));
-+      }
+ #ifdef ERRSIM
+-    ret = OB_E(EventTable::EN_RESTORE_CREATE_LS_FAILED) OB_SUCCESS;
++    if (OB_SUCC(ret)) {
++      ret = OB_E(EventTable::EN_RESTORE_CREATE_LS_FAILED) OB_SUCCESS;
 +    }
-+    LOG_INFO("[BACKUP_CLEAN]get backup set ls restore start lsn", K(ret), K(backup_set_desc),
-+        K(ls_start_lsn_array));
-+  }
-+  return ret;
-+}
+ #endif
  
- // Apply retention policy for current active backup path: keep pieces that are needed for the latest full backup
- // 1. if now db only do archive, then not allow to delete any piece on the current active backup path
-@@ -1452,10 +1497,18 @@ int ObBackupDeleteSelector::get_all_dest_backup_piece_infos_(
-         LOG_WARN("fail to set backup dest", K(ret), K(backup_dest_str));
-       } else if (OB_FAIL(backup_dest.get_backup_path_str(backup_path_str.ptr(), backup_path_str.capacity()))) {
-         LOG_WARN("fail to get backup path str", K(ret), K(backup_dest));
-+      } else if (!is_log_only) {
-+        // delete obsolete: only pick the pieces whose log is really not needed by the retained
-+        // backup set chain any more, an un-deletable piece is skipped instead of failing the job.
-+        if (OB_FAIL(get_one_dest_deletable_backup_piece_infos_(clog_data_clean_point, backup_path_str.ptr(),
-+            archive_dest.second/*dest_id*/, archive_table_op, backup_piece_infos))) {
-+          LOG_WARN("failed to get deletable backup piece infos of one dest", K(ret),
-+              K(clog_data_clean_point), K(backup_path_str));
+   TenantRestoreStatus tenant_restore_status;
+```
+
+---
+
+### Incident Patch 2: `42ef6b31` (2026-11-11)
+**Commit Message**: [to #2025082600110659551]fix: pl exception and sqlcode adapt oracle error code
+
+**File**: `src/pl/ob_pl.cpp` (modified, +7/-1)
+```diff
+@@ -5727,7 +5727,13 @@ int ObPL::simple_execute(ObPLExecCtx *ctx)
+ 
+  #ifdef OB_BUILD_ORACLE_PL
+       if (OB_NOT_NULL(ctx->pl_ctx_)) {
+-        ObPLEH::eh_adjust_call_stack(ctx->pl_ctx_, sql_info.loc_, ret);
++        const bool errno_compatible_oracle =
++            ctx->exec_ctx_->get_my_session()->get_plsql_errno_compatible_oracle();
++        const int tmp_ret = ObPLEH::eh_adjust_call_stack(ctx->pl_ctx_, sql_info.loc_, ret,
++            errno_compatible_oracle ? -ob_oracle_errno_with_check(ret) : ret);
++        if (OB_SUCCESS != tmp_ret) {
++          LOG_WARN("failed to adjust PL call stack", K(ret), K(tmp_ret), K(sql_info.loc_));
 +        }
-       } else if (OB_FAIL(archive_table_op.get_candidate_obsolete_backup_pieces(
-                 *sql_proxy_, clog_data_clean_point, backup_path_str.ptr(), backup_piece_infos))) {
-         LOG_WARN("failed to get candidate obsolete backup sets", K(ret));
--      } else if (is_log_only && backup_piece_infos.count() > 0) {
-+      } else if (backup_piece_infos.count() > 0) {
-         // get the about to expire piece,
-         ObTenantArchivePieceAttr about_to_expire_piece;
-         int64_t about_to_expire_piece_id = backup_piece_infos.at(backup_piece_infos.count() - 1).key_.piece_id_ + 1;
-@@ -1477,6 +1530,580 @@ int ObBackupDeleteSelector::get_all_dest_backup_piece_infos_(
+       }
+  #endif
+ 
+```
+
+**File**: `src/pl/ob_pl.h` (modified, +15/-8)
+```diff
+@@ -664,20 +664,22 @@ struct ObPLExecRecursionCtx
+ struct ObPLSqlCodeInfo
+ {
+ public:
+-  ObPLSqlCodeInfo(ObIAllocator &alloc) : alloc_(alloc), sqlcode_(OB_SUCCESS), sqlmsg_buf_(NULL), sqlmsg_(), stakced_warning_buff_(nullptr) {}
++  ObPLSqlCodeInfo(ObIAllocator &alloc) : alloc_(alloc), ob_error_code_(OB_SUCCESS), sqlcode_(OB_SUCCESS), sqlmsg_buf_(NULL), sqlmsg_(), stakced_warning_buff_(nullptr) {}
+   ~ObPLSqlCodeInfo()
+   {
+     if (OB_NOT_NULL(stakced_warning_buff_)) {
+       stakced_warning_buff_->~ObSEArray<ObWarningBuffer, 4>();
+       stakced_warning_buff_ = nullptr;
+     }
+   }
+-  inline void set_sqlcode(int sqlcode, const ObString &sqlmsg = ObString(""))
++  inline void set_error_codes(int ob_error_code, int sqlcode)
+   {
++    ob_error_code_ = ob_error_code;
+     sqlcode_ = sqlcode;
+   }
+   inline void reset()
+   {
++    ob_error_code_ = OB_SUCCESS;
+     sqlcode_ = OB_SUCCESS;
+     sqlmsg_buf_ = NULL;
+     sqlmsg_ = ObString("");
+@@ -695,6 +697,7 @@ struct ObPLSqlCodeInfo
+       sqlmsg_ = ObString("");
+     }
+   }
++  inline int get_ob_error_code() const { return ob_error_code_; }
+   inline int get_sqlcode() const { return sqlcode_; }
+   inline const ObString& get_sqlmsg() const { return sqlmsg_; }
+   int get_stack_warning_buf(common::ObIArray<ObWarningBuffer> *&stack_warning_buff);
+@@ -703,6 +706,7 @@ struct ObPLSqlCodeInfo
+ 
+ private:
+   ObIAllocator &alloc_;
++  int ob_error_code_;
+   int sqlcode_;
+   char* sqlmsg_buf_;
+   ObString sqlmsg_;
+@@ -825,7 +829,8 @@ struct ObPLExecCtx : public ObPLINS
+       nocopy_params_(nocopy_params), guard_(guard),
+       local_expr_alloc_(pl_level_alloc),
+       tmp_alloc_for_copy_param_("PLTmpAlloc", OB_MALLOC_NORMAL_BLOCK_SIZE, MTL_ID()),
+-      save_ret_code_(OB_SUCCESS),
++      saved_ob_error_code_(OB_SUCCESS),
++      saved_sqlcode_(OB_SUCCESS),
+       param_store_for_sql_(nullptr),
+       mem_context_(nullptr),
+       calc_once_results_(nullptr),
+@@ -876,8 +881,9 @@ struct ObPLExecCtx : public ObPLINS
+       && OB_NOT_NULL(exec_ctx_->get_my_session())
+       && OB_NOT_NULL(exec_ctx_->get_my_session()->get_pl_sqlcode_info())) {
+       ObPLSqlCodeInfo *cur_sql_code_info = exec_ctx_->get_my_session()->get_pl_sqlcode_info();
+-      save_ret_code_ = cur_sql_code_info->get_sqlcode();
+-      cur_sql_code_info->set_sqlcode(OB_SUCCESS);
++      saved_ob_error_code_ = cur_sql_code_info->get_ob_error_code();
++      saved_sqlcode_ = cur_sql_code_info->get_sqlcode();
++      cur_sql_code_info->set_error_codes(OB_SUCCESS, OB_SUCCESS);
+     }
+   }
+   void restore_sql_code_info()
+@@ -886,8 +892,8 @@ struct ObPLExecCtx : public ObPLINS
+       && OB_NOT_NULL(exec_ctx_->get_my_session())
+       && OB_NOT_NULL(exec_ctx_->get_my_session()->get_pl_sqlcode_info())) {
+       ObPLSqlCodeInfo *cur_sql_code_info = exec_ctx_->get_my_session()->get_pl_sqlcode_info();
+-      if (cur_sql_code_info->get_sqlcode() == OB_SUCCESS) {
+-        cur_sql_code_info->set_sqlcode(save_ret_code_);
++      if (cur_sql_code_info->get_ob_error_code() == OB_SUCCESS) {
++        cur_sql_code_info->set_error_codes(saved_ob_error_code_, saved_sqlcode_);
+       }
+     }
+   }
+@@ -915,7 +921,8 @@ struct ObPLExecCtx : public ObPLINS
+   ObPLPackageGuard *guard_; //对应该次执行的package_guard
+   ObIAllocator &local_expr_alloc_;
+   ObArenaAllocator tmp_alloc_for_copy_param_;
+-  int64_t save_ret_code_;
++  int64_t saved_ob_error_code_;
++  int64_t saved_sqlcode_;
+   ParamStore *param_store_for_sql_;
+   lib::MemoryContext mem_context_;
+   // 懒加载: 第一次调用 set_calc_once_result 时才会真正分配并 create
+```
+
+**File**: `src/pl/ob_pl_code_generator.cpp` (modified, +114/-63)
+```diff
+@@ -2408,7 +2408,7 @@ int ObPLCodeGenerateVisitor::visit(const ObPLDeclareHandlerStmt &s)
+     // 2.1 collect conditions and precedences
+     for (int64_t i = 0; OB_SUCC(ret) && i < s.get_handlers().count(); ++i) {
+       ObSqlString const_name;
+-      ObSEArray<ObLLVMValue, 8> condition_elements;
++      ObSEArray<ObLLVMValue, 7> condition_elements;
+       const ObPLDeclareHandlerStmt::DeclareHandler::HandlerDesc *handler_desc =
+           s.get_handler(i).get_desc();
+ 
+@@ -2437,7 +2437,8 @@ int ObPLCodeGenerateVisitor::visit(const ObPLDeclareHandlerStmt &s)
+         } else if (OB_FAIL(condition_elements.push_back(int_value))) {
+           LOG_WARN("push_back error", K(ret));
+         } else if (OB_FAIL(const_name.append_fmt(
+-                       "%ld%ld", s.get_handler(i).get_level(), cond_val.error_code_))) {
++                       "_%ld_%ld_%ld", s.get_handler(i).get_level(),
++                       cond_val.ob_error_code_, cond_val.error_code_))) {
+           LOG_WARN("append_fmt error", K(ret));
+         } else {
+           ObLLVMValue elem_value;
+@@ -2479,7 +2480,7 @@ int ObPLCodeGenerateVisitor::visit(const ObPLDeclareHandlerStmt &s)
+             LOG_WARN("failed to get_llvm_type", K(ret));
+           } else if (OB_FAIL(condition_elements.push_back(elem_value))) {
+             LOG_WARN("push_back error", K(ret));
+-          }  else if (OB_FAIL(generator_.get_helper().get_int64(s.get_handler(i).get_desc()->get_condition(j).ob_error_code_, elem_value))) {
++          } else if (OB_FAIL(generator_.get_helper().get_int64(cond_val.ob_error_code_, elem_value))) {  // ob_error_code
+             LOG_WARN("failed to get int64", K(ret));
+           } else if (OB_FAIL(condition_elements.push_back(elem_value))) {
+             LOG_WARN("push_back error", K(ret));
+@@ -2548,12 +2549,13 @@ int ObPLCodeGenerateVisitor::visit(const ObPLDeclareHandlerStmt &s)
+   ObLLVMType int8_type;
+ 
+   ObLLVMValue type;
+-  ObLLVMValue code;
++  ObLLVMValue ob_error_code;
+   ObLLVMValue name;
+   ObLLVMValue stmt_id;
+   ObLLVMValue signal;
++  ObLLVMValue error_code;
+   ObLLVMType char_type;
+-  ObLLVMValue p_cur_sqlcode;
++  ObLLVMValue p_cur_ob_error_code, p_cur_error_code;
+   ObPLCGBufferGuard buffer_guard(generator_);
+ 
+   if (OB_FAIL(ret)) {
+@@ -2584,12 +2586,12 @@ int ObPLCodeGenerateVisitor::visit(const ObPLDeclareHandlerStmt &s)
+   } else if (FALSE_IT(condition.set_t(condition_type))) {
+   } else if (OB_FAIL(generator_.extract_type_from_condition_value(condition, type))) {
+     LOG_WARN("failed to extract_type_from_condition_value", K(ret));
+-  } else if (OB_FAIL(generator_.extract_code_from_condition_value(condition, code))) {
+-    LOG_WARN("failed to extract_code_from_condition_value", K(ret));
+-  } else if (OB_FAIL(buffer_guard.get_int_buffer(p_cur_sqlcode))) {
++  } else if (OB_FAIL(generator_.extract_ob_error_code_from_condition_value(condition, ob_error_code))) {
++    LOG_WARN("failed to extract_ob_error_code_from_condition_value", K(ret));
++  } else if (OB_FAIL(buffer_guard.get_int_buffer(p_cur_ob_error_code))) {
+     LOG_WARN("failed to get_int_buffer", K(ret));
+-  } else if (OB_FAIL(generator_.get_helper().create_store(code, p_cur_sqlcode))) {
+-    // walk around `code` usage domination issue
++  } else if (OB_FAIL(generator_.get_helper().create_store(ob_error_code, p_cur_ob_error_code))) {
++    // walk around `ob_error_code` usage domination issue
+     LOG_WARN("failed to create_store", K(ret));
+   } else if (OB_FAIL(generator_.extract_name_from_condition_value(condition, name))) {
+     LOG_WARN("failed to extract_name_from_condition_value", K(ret));
+@@ -2601,14 +2603,21 @@ int ObPLCodeGenerateVisitor::visit(const ObPLDeclareHandlerStmt &s)
+     LOG_WARN("failed to extract_stmt_from_condition_value", K(ret));
+   } else if (OB_FAIL(generator_.extract_signal_from_condition_value(condition, signal))) {
+     LOG_WARN("failed to extract_signal_from_condition_value", K(ret));
++  } else if (OB_FAIL(generator_.extract_error_code_from_condition_value(condition, error_code))) {
++    LOG_WARN("failed to extract_error_code_from_condition_value", K(ret));
++  } else if (OB_FAIL(buffer_guard.get_int_buffer(p_cur_error_code))) {
++    LOG_WARN("failed to get_int_buffer", K(ret));
++  } else if (OB_FAIL(generator_.get_helper().create_store(error_code, p_cur_error_code))) {
++    // Preserve the error code across handler branches, just like ob_error_code.
++    LOG_WARN("failed to create_store", K(ret));
+ #ifndef NDEBUG
+   } else if (OB_FAIL(generator_.generate_debug(ObString("debug"), unwindException))) {
+     LOG_WARN("failed to create_call", K(ret));
+   } else if (OB_FAIL(generator_.generate_debug(ObString("debug"), retTypeInfoIndex))) {
+     LOG_WARN("failed to create_call", K(ret));
+   } else if (OB_FAIL(generator_.generate_debug(ObString("debug"), type))) {
+     LOG_WARN("failed to create_call", K(ret));
+-  } else if (OB_FAIL(generator_.generate_debug(ObString("debug"), code))) {
++  } else if (OB_FAIL(generator_.generate_debug(ObString
+```
+
+**File**: `src/pl/ob_pl_code_generator.h` (modified, +5/-3)
+```diff
+@@ -266,7 +266,8 @@ friend class ObPLCGBufferGuard;
+   int generate_into_restore(const ObIArray<int64_t> &into, const common::ObIArray<sql::ObRawExpr*> *exprs, const ObPLSymbolTable *symbol_table);
+   int generate_close_loop_cursor(bool is_from_exception, int64_t dest_level);
+ #ifdef OB_BUILD_ORACLE_PL
+-  int generate_eh_adjust_call_stack(jit::ObLLVMValue &loc, jit::ObLLVMValue &error_code);
++  int generate_eh_adjust_call_stack(jit::ObLLVMValue &loc, jit::ObLLVMValue &ob_error_code,
++                                  jit::ObLLVMValue &error_code);
+ #endif
+   int generate_declare_cursor(const ObPLStmt &s, const int64_t  &cursor_index);
+   int generate_cursor_scope_push_close_only(const ObPLStmt &s,
+@@ -354,6 +355,7 @@ friend class ObPLCGBufferGuard;
+   int raise_mysql_ob_fail_exception(jit::ObLLVMValue &error_code,
+                                     jit::ObLLVMValue &sql_state);
+   int generate_exception(jit::ObLLVMValue &type,
++                         jit::ObLLVMValue &err_status,
+                          jit::ObLLVMValue &ob_error_code,
+                          jit::ObLLVMValue &error_code,
+                          jit::ObLLVMValue &sql_state,
+@@ -644,14 +646,14 @@ friend class ObPLCGBufferGuard;
+   int extract_datum_from_argv(jit::ObLLVMValue &p_argv, const int64_t idx, common::ObObjType type, jit::ObLLVMValue &result);
+   int extract_value_from_argv(jit::ObLLVMValue &p_argv, const int64_t idx, common::ObObjType type, jit::ObLLVMValue &result);
+   int extract_type_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+-  int extract_code_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
++  int extract_error_code_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_name_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_len_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_stmt_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_signal_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_ob_error_code_ptr_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_type_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+-  int extract_code_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
++  int extract_error_code_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_name_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_len_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+   int extract_stmt_from_condition_value(jit::ObLLVMValue &p_condition_value, jit::ObLLVMValue &result);
+```
+
+**File**: `src/pl/ob_pl_di_adt_service.cpp` (modified, +5/-0)
+```diff
+@@ -457,6 +457,11 @@ int ObPLDIADTService::get_pl_cond_value(ObLLVMDIType &type)
+       LOG_WARN("failed to create member type", K(ret));
+     } else if (OB_FAIL(member_types.push_back(member_type))) {
+       LOG_WARN("failed to push back member type", K(ret));
++    } else if (OB_FAIL(helper_.create_member_type("ob_error_code_", ObPLConditionValue::ob_error_code_offset_bits(),
++                                                  0, int64_type, member_type))) {
++      LOG_WARN("failed to create member type", K(ret));
++    } else if (OB_FAIL(member_types.push_back(member_type))) {
++      LOG_WARN("failed to push back member type", K(ret));
+     } else if (OB_FAIL(helper_.create_struct_type("pl_condition_value", 0/*line*/,
+                                                   sizeof(ObPLConditionValue) * 8, 32,
+                                                   member_types, pl_cond_value_))) {
+```
+
+**File**: `src/pl/ob_pl_exception_handling.cpp` (modified, +38/-13)
+```diff
+@@ -60,18 +60,43 @@ void ObPLEH::eh_debug_objparam(const char *name_ptr, int64_t name_len, const ObO
+   LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(*object));
+ }
+ 
+-int ObPLEH::eh_convert_exception(bool oracle_mode, int oberr, ObPLConditionType *type, int64_t *error_code, const char **sql_state, int64_t *str_len)
++int ObPLEH::eh_convert_exception(int64_t pl_context, bool oracle_mode, bool errno_compatible_oracle, int oberr, ObPLConditionType *type, int64_t *ob_error_code, int64_t *error_code, const char **sql_state, int64_t *str_len)
+ {
+-  UNUSED(oracle_mode);
+   int ret = OB_SUCCESS;
+-  if (OB_ISNULL(type) || OB_ISNULL(error_code) || OB_ISNULL(sql_state)) {
++#ifndef OB_BUILD_ORACLE_PL
++  UNUSED(pl_context);
++#endif
++  if (OB_ISNULL(type) || OB_ISNULL(ob_error_code) || OB_ISNULL(sql_state)
++      || OB_ISNULL(error_code) || OB_ISNULL(str_len)) {
+     ret = OB_ERR_UNEXPECTED;
+-    LOG_WARN("Invalid Argument", K(oberr), K(type), K(error_code), K(sql_state), K(ret));
++    LOG_WARN("Invalid Argument", K(oberr), K(type), K(ob_error_code), K(sql_state), K(error_code), K(ret));
+   } else {
++    *ob_error_code = oberr;
++    *error_code = oberr;
+     *sql_state = ob_sqlstate(oberr);
+     *str_len = STRLEN(*sql_state);
+     if (oracle_mode) {
+-      *error_code = oberr;
++      *error_code = errno_compatible_oracle ? -ob_oracle_errno_with_check(oberr) : oberr;
++#ifdef OB_BUILD_ORACLE_PL
++      ObPLContext *pl_ctx = reinterpret_cast<ObPLContext *>(pl_context);
++      ObPLTopContext *top_ctx = nullptr;
++      ObPLCallStackTrace *trace = nullptr;
++      if (OB_ERR_UDE_ERROR_CODE == oberr
++          && OB_NOT_NULL(pl_ctx)
++          && OB_NOT_NULL(pl_ctx->get_session_info())
++          && OB_NOT_NULL(top_ctx = pl_ctx->get_session_info()->get_pl_top_context())
++          && OB_NOT_NULL(trace = top_ctx->get_call_stack_trace_directly())) {
++        // The unhandled exception stack survives PL-to-SQL returns and is cleared
++        // on handler entry. Its original code cannot be recovered from oberr alone.
++        int exception_ob_error_code = OB_SUCCESS;
++        int64_t exception_error_code = OB_SUCCESS;
++        trace->get_last_error_codes(exception_ob_error_code, exception_error_code,
++                                   true /* from_exception_stack */);
++        if (exception_ob_error_code == oberr) {
++          *error_code = exception_error_code;
++        }
++      }
++#endif
+       *type = ERROR_CODE;
+     } else {
+       if (OB_SP_RAISE_APPLICATION_ERROR == oberr) {
+@@ -95,7 +120,6 @@ int ObPLEH::eh_convert_exception(bool oracle_mode, int oberr, ObPLConditionType
+             *type = ERROR_CODE;
+           }
+         } else {
+-          *error_code = oberr;
+           *type = SQL_STATE;
+         }
+       }
+@@ -114,7 +138,7 @@ ObPLException::ObPLException(int64_t error_code)
+ }
+ 
+ #ifdef OB_BUILD_ORACLE_PL
+-int ObPLEH::eh_adjust_call_stack(ObPLContext *pl_ctx, uint64_t location, int err_code)
++int ObPLEH::eh_adjust_call_stack(ObPLContext *pl_ctx, uint64_t location, int err_code, int64_t error_code)
+ {
+   int ret = OB_SUCCESS;
+   int64_t stack_depth = 0;
+@@ -128,7 +152,7 @@ int ObPLEH::eh_adjust_call_stack(ObPLContext *pl_ctx, uint64_t location, int err
+     CK (OB_NOT_NULL(exec_stack->at(stack_depth - 1)));
+     OX (exec_stack->at(stack_depth - 1)->set_loc(location));
+     CK (OB_NOT_NULL(call_stack_trace = pl_top_context->get_call_stack_trace()));
+-    OZ (call_stack_trace->format_exception_stack(err_code, *exec_stack));
++    OZ (call_stack_trace->format_exception_stack(err_code, error_code, *exec_stack));
+   }
    return ret;
  }
- 
-+// Pick the deletable pieces of one archive dest. Pieces are checked in ascending order of piece id,
-+// and once a piece can not be deleted, all the pieces after it are kept too, so that the remaining
-+// pieces are always a continuous suffix which covers the log from start_replay_scn onwards.
-+// Note that an un-deletable piece only means "nothing more can be reclaimed for this dest in this
-+// round", it MUST NOT fail the whole backup clean job, otherwise the obsolete backup sets which have
-+// already been figured out can not be deleted either, and the job would keep faili
+@@ -160,7 +184,7 @@ ObUnwindException *ObPLEH::eh_create_exception(int64_t pl_context,
+     CK (frame->is_top_call());
+     CK (OB_NOT_NULL(pl_allocator = frame->get_exec_ctx().get_top_expr_allocator()));
+     if (OB_FAIL(ret)) {
+-    } else if (OB_ALLOCATE_MEMORY_FAILED == value->error_code_) {
++    } else if (OB_ALLOCATE_MEMORY_FAILED == value->ob_error_code_) {
+       unwind = &pre_reserved_e.body_;
+     } else {
+       ObPLException *exception
+@@ -171,8 +195,8 @@ ObUnwindException *ObPLEH::eh_create_exception(int64_t pl_context,
+         unwind->exception_class = ObPLEHService::get_exception_class();
+         unwind->exception_cleanup = NULL;
+         exception->type_.type_ = value->type_;
+-        exception->type_.error_code_ = value->error_code_;
+         exception->type_.ob_error_code_ = value->ob_error_code_;
++        exception->type_.error_code_ = value->error_code_;
+         if (NULL == value->sql_state_ || 0 == value->str_len_) {
+           exception->type_.sql_state_ = value->sql_state_;
+         } else {
+@@ -197,9 +221,10 @@ ObUnwindException *ObPLEH::eh_create_exception(int64_t pl_context,
+ #ifdef OB_BUILD_ORACLE_PL
+     CK (OB_NOT_NULL(pl_ctx));
+     OZ (eh_adjust_call_stack(pl_ctx, loc,
+-      value->error_code_ < 0
+-        ? value->error_code_
+-        :(value->error_code_ & ~(UINT64_MAX << OB_PACKAGE_ID_SHIFT))));
++      value->ob_error_code_ < 0
++        ? va
 ```
 
-**File**: `src/rootserver/backup/ob_backup_clean_selector.h` (modified, +83/-4)
+**File**: `src/pl/ob_pl_exception_handling.h` (modified, +2/-2)
 ```diff
-@@ -13,6 +13,7 @@
- #include "lib/utility/ob_print_utils.h"
- #include "share/backup/ob_backup_store.h"
- #include "share/backup/ob_archive_store.h"
-+#include "logservice/palf/lsn.h"
+@@ -59,10 +59,10 @@ class ObPLEH
+                                                     _Unwind_Exception_Class exceptionClass,
+                                                     ObUnwindException *exceptionObject,
+                                                     struct _Unwind_Context *context);
+-  static int eh_convert_exception(bool oracle_mode, int oberr, ObPLConditionType *type, int64_t *error_code, const char **sql_state, int64_t *str_len);
++  static int eh_convert_exception(int64_t pl_context, bool oracle_mode, bool errno_compatible_oracle, int oberr, ObPLConditionType *type, int64_t *ob_error_code, int64_t *error_code, const char **sql_state, int64_t *str_len);
+   static ObPLConditionType eh_classify_exception(const char *sql_state);
+ #ifdef OB_BUILD_ORACLE_PL
+-  static int eh_adjust_call_stack(ObPLContext *pl_ctx, uint64_t location, int err_code);
++  static int eh_adjust_call_stack(ObPLContext *pl_ctx, uint64_t location, int err_code, int64_t error_code);
+ #endif
  
- namespace oceanbase
- {
-@@ -21,6 +22,30 @@ namespace rootserver
- 
- class ObUserTenantBackupDeleteMgr;
- 
-+// The LSN from which ONE log stream still needs its archive log, i.e. the lsn a restore of that log
-+// stream would start to fetch the archive log at. Every piece which holds log at or after this lsn has
-+// to be kept.
-+//
-+// It is always the start of a 64M palf block, because palf can only be advanced to a block boundary:
-+// whoever reads the archive advances palf to a block boundary first(ObLSService::restore_update_ls_ ->
-+// advance_base_info) and then asks the archive for the log from exactly that lsn
-+// (ObLogRestoreArchiveDriver::get_palf_base_lsn_scn_). Hence it can be much smaller than the lsn of the
-+// log at the SCN the caller has in mind. Where the block boundary comes from depends on the policy:
-+//   - default : the palf base lsn recorded in the retained backup set
-+//               (ObLSMetaPackage::palf_meta_.curr_lsn_), which ObLogHandler::get_palf_base_info has
-+//               already rounded DOWN to a block boundary;
-+//   - log_only: no backup set exists, so it is the start of the block the oldest kept piece begins in,
-+//               see ObBackupDeleteSelector::get_anchor_piece_ls_need_lsn_.
-+struct ObLSRestoreStartLSN final
-+{
-+  ObLSRestoreStartLSN() : ls_id_(), start_lsn_() {}
-+  ~ObLSRestoreStartLSN() = default;
-+  bool is_valid() const { return ls_id_.is_valid() && start_lsn_.is_valid(); }
-+  TO_STRING_KV(K_(ls_id), K_(start_lsn));
-+
-+  share::ObLSID ls_id_;
-+  palf::LSN start_lsn_;
-+};
- 
- // Abstracting static functions into the IObBackupDataProvider interface, allowing us to isolate the component
- // under test by replacing real database calls with mock objects.
-@@ -81,6 +106,13 @@ class IObBackupDataProvider {
-       const uint64_t tenant_id,
-       const share::ObTenantArchivePieceAttr &piece_attr,
-       share::ObPieceInfoDesc &piece_info_desc) = 0;
-+
-+  // Read the ls meta of `backup_set_desc` from the backup set dir, and return the lsn every log
-+  // stream of it starts to fetch the archive log from when it is restored, see ObLSRestoreStartLSN.
-+  virtual int get_backup_set_ls_restore_start_lsn(
-+      const uint64_t tenant_id,
-+      const share::ObBackupSetFileDesc &backup_set_desc,
-+      common::ObIArray<ObLSRestoreStartLSN> &ls_start_lsn_array) = 0;
- };
- 
- class ObBackupDataProvider final : public IObBackupDataProvider {
-@@ -139,6 +171,11 @@ class ObBackupDataProvider final : public IObBackupDataProvider {
-       const share::ObTenantArchivePieceAttr &piece_attr,
-       share::ObPieceInfoDesc &piece_info_desc) override;
- 
-+  int get_backup_set_ls_restore_start_lsn(
-+      const uint64_t tenant_id,
-+      const share::ObBackupSetFileDesc &backup_set_desc,
-+      common::ObIArray<ObLSRestoreStartLSN> &ls_start_lsn_array) override;
-+
- private:
-   common::ObISQLClient *sql_proxy_;
-   bool is_inited_;
-@@ -312,12 +349,54 @@ class ObBackupDeleteSelector final {
-                                             ObIArray<share::ObBackupSetFileDesc> &set_list);
-   int get_delete_obsolete_backup_piece_infos_(const share::ObBackupSetFileDesc &clog_data_clean_point,
-                                               ObIArray<share::ObTenantArchivePieceAttr> &piece_list);
-+  int get_one_dest_deletable_backup_piece_infos_(const share::SCN &start_replay_scn,
-+                                              const char *backup_path_str,
-+                                              const int64_t dest_id,
-+                                              const share::ObArchivePersistHelper &archive_table_op,
-+                                              ObIArray<share::ObTenantArchivePieceAttr> &backup_piece_infos);
-+  // `sorted_all_piece_infos` is all the pieces of the dest, sorted in ascending order of piece id.
-+  int check_piece_can_be_deleted_(const share::ObTenantArchivePieceAttr &backup_piece_info,
-+                                              const share::SCN &start_replay_scn,
-+                                              const ObIArray<share::ObTenantArchivePieceAttr> &sorted_all_piece_infos,
-+                                              bool &can_be_deleted);
-+  int check_scn_covered_by_other_piece_(const share::ObTenantArchivePieceAttr &piece_to_delete,
-+                                              const share::SCN &scn,
-+                                              const ObIArray<share::ObTenantArchivePieceAttr> &sorted_all_piece_infos,
-+                                              bool &is_scn_covered_by_other_kept_piece);
-+  // ----------------------------Pieces still needed by a restore(LSN based)----------------------------
-+  // The two delete obsolete policies protect the same thing - the archive log is read from the start of a
-+  // 64M palf block and the archive may have split th
+ public:
 ```
 
-**File**: `src/share/backup/ob_archive_persist_helper.cpp` (modified, +4/-2)
+**File**: `src/pl/ob_pl_resolver.cpp` (modified, +95/-81)
 ```diff
-@@ -931,18 +931,20 @@ int ObArchivePersistHelper::get_frozen_pieces(
- }
- 
- int ObArchivePersistHelper::get_candidate_obsolete_backup_pieces(common::ObISQLClient &proxy, const SCN &end_scn,
--    const char *backup_dest_str, ObIArray<ObTenantArchivePieceAttr> &pieces) const
-+    const char *backup_dest_str, ObIArray<ObTenantArchivePieceAttr> &pieces,
-+    const bool use_checkpoint_scn) const
- {
-   int ret = OB_SUCCESS;
-   ObSqlString sql;
-+  const char *upper_bound_column = use_checkpoint_scn ? OB_STR_CHECKPOINT_SCN : OB_STR_END_SCN;
-   if (IS_NOT_INIT) {
-     ret = OB_NOT_INIT;
-     LOG_WARN("ObArchivePersistHelper not init", K(ret));
-   } else if (OB_ISNULL(backup_dest_str)) {
-     ret = OB_INVALID_ARGUMENT;
-     LOG_WARN("invalid backup_dest_str", K(ret), K(backup_dest_str));
-   } else if (OB_FAIL(sql.assign_fmt("select * from %s where %s=%lu and %s<=%lu and %s='%s' and %s!='%s'",
--      OB_ALL_LOG_ARCHIVE_PIECE_FILES_TNAME, OB_STR_TENANT_ID, tenant_id_, OB_STR_END_SCN,
-+      OB_ALL_LOG_ARCHIVE_PIECE_FILES_TNAME, OB_STR_TENANT_ID, tenant_id_, upper_bound_column,
-       end_scn.get_val_for_inner_table_field(), OB_STR_PATH, backup_dest_str, OB_STR_FILE_STATUS, OB_STR_DELETED))) {
-     LOG_WARN("failed to append fmt", K(ret));
-   } else {
-```
-
-**File**: `src/share/backup/ob_archive_persist_helper.h` (modified, +12/-1)
-```diff
-@@ -137,8 +137,19 @@ class ObArchivePersistHelper : public ObIExecTenantIdProvider
-   // Get all frozen pieces whose piece ids are smaller than `upper_piece_id`.
-   int get_frozen_pieces(common::ObISQLClient &proxy, const int64_t dest_id, const int64_t upper_piece_id, 
-       common::ObIArray<ObTenantArchivePieceAttr> &piece_list) const;
-+  // Get the pieces which may be obsolete, i.e. the log they contain is not after `end_scn`.
-+  // `use_checkpoint_scn` decides which column is taken as the upper bound of the log a piece contains:
-+  //   false: piece.end_scn, which is only a nominal boundary calculated by
-+  //          "round.start_scn + N * piece_switch_interval"(see ObTenantArchiveMgr::decide_piece_end_scn).
-+  //          It is decided when the piece is created and never shrinks, even if archive is stopped in
-+  //          the middle of the piece. So a frozen piece may be filtered out although all the log it
-+  //          really contains is before `end_scn`;
-+  //   true:  piece.checkpoint_scn, the real upper bound of the log a frozen piece contains. The caller
-+  //          MUST check the deletability of every returned piece by itself, because a piece whose
-+  //          nominal range still covers `end_scn` may be returned.
-   int get_candidate_obsolete_backup_pieces(common::ObISQLClient &proxy, const SCN &end_scn,
--      const char *backup_dest_str, ObIArray<ObTenantArchivePieceAttr> &pieces) const;
-+      const char *backup_dest_str, ObIArray<ObTenantArchivePieceAttr> &pieces,
-+      const bool use_checkpoint_scn = false) const;
-   int insert_or_update_piece(common::ObISQLClient &proxy, const ObTenantArchivePieceAttr &piece) const;
-   // Usually, we need do it in a transaction.
-   int batch_update_pieces(common::ObISQLClient &proxy, const common::ObIArray<ObTenantArchivePieceAttr> &pieces_array) const;
-```
-
-**File**: `unittest/storage/backup/test_backup_clean_piece_clog_block_dependency.cpp` (modified, +159/-163)
-```diff
-@@ -29,10 +29,8 @@ namespace backup {
- struct LSFileInfo {
-   ObLSID ls_id;
-   std::vector<int64_t> file_ids;
--  bool deleted;  // ObSingleLSInfoDesc::deleted_, marked on the last piece of a deleted ls
- 
--  LSFileInfo(ObLSID id, std::vector<int64_t> files, bool is_deleted = false)
--    : ls_id(id), file_ids(files), deleted(is_deleted) {}
-+  LSFileInfo(ObLSID id, std::vector<int64_t> files) : ls_id(id), file_ids(files) {}
- };
- 
- struct PieceInfo {
-@@ -47,6 +45,9 @@ struct PieceInfo {
- 
- class TestBackupCleanPieceClogBlockDependency : public ::testing::Test {
- protected:
-+  // Must be a user tenant id, otherwise ObTenantArchivePieceAttr::Key::is_pkey_valid() is false.
-+  static const uint64_t TEST_TENANT_ID = 1002;
-+
-   void SetUp() override {
-     ASSERT_EQ(OB_SUCCESS, mock_sql_proxy_.init(nullptr));
-     mock_schema_service_ = std::make_unique<MockObMultiVersionSchemaService>();
-@@ -66,6 +67,15 @@ class TestBackupCleanPieceClogBlockDependency : public ::testing::Test {
-     piece_desc.piece_id_ = piece_id;
-   }
- 
-+  // The archive file id of a log stream is a pure function of the lsn("lsn / PALF_BLOCK_SIZE + 1",
-+  // archive::cal_archive_file_id with MAX_ARCHIVE_FILE_SIZE == palf::PALF_BLOCK_SIZE), so a file id is
-+  // just the id of the palf block the log lives in. The lsn range a piece holds is derived from its file
-+  // id list below: it starts at the beginning of the first block and ends in the middle of the last one,
-+  // which is what a piece switch in the middle of a block looks like.
-+  static uint64_t block_start_lsn(const int64_t file_id) {
-+    return static_cast<uint64_t>(file_id - 1) * static_cast<uint64_t>(palf::PALF_BLOCK_SIZE);
-+  }
-+
-   // Helper function to create a single LS info desc
-   void create_single_ls_info_desc(ObSingleLSInfoDesc &ls_desc,
-                                   int64_t dest_id,
-@@ -91,6 +101,48 @@ class TestBackupCleanPieceClogBlockDependency : public ::testing::Test {
-     file.file_id_ = file_id;
-     file.size_bytes_ = size_bytes;
-     ASSERT_EQ(OB_SUCCESS, ls_desc.filelist_.push_back(file));
-+    // Keep the archived lsn range consistent with the file list: [start of the first block, somewhere
-+    // inside the last block).
-+    if (1 == ls_desc.filelist_.count()) {
-+      ls_desc.min_lsn_ = block_start_lsn(file_id);
-+    }
-+    ls_desc.max_lsn_ = block_start_lsn(file_id) + static_cast<uint64_t>(palf::PALF_BLOCK_SIZE) / 2;
-+  }
-+
-+  // Add one log stream entry to `piece` with an EXPLICIT archived lsn range, which is what the piece
-+  // info file really records(ObSingleLSInfoDesc::min_lsn_/max_lsn_). `file_ids` may be empty, which is
-+  // exactly how an IDLE log stream looks: it archived nothing into the piece, so it has no file at all
-+  // while min_lsn_ == max_lsn_ == the lsn it stands at(see record_piece_info and
-+  // ObLSArchiveTask::ArchiveDest::compensate_piece). The file id based helpers above always derive the
-+  // range from the file list, so they can not express that state.
-+  void add_ls_to_piece_with_range(ObPieceInfoDesc &piece,
-+                                  const ObLSID &ls_id,
-+                                  const uint64_t min_lsn,
-+                                  const uint64_t max_lsn,
-+                                  const std::vector<int64_t> &file_ids) {
-+    ObSingleLSInfoDesc ls_desc;
-+    create_single_ls_info_desc(ls_desc, piece.dest_id_, piece.round_id_, piece.piece_id_, ls_id);
-+    for (int64_t file_id : file_ids) {
-+      ObSingleLSInfoDesc::OneFile file;
-+      file.file_id_ = file_id;
-+      file.size_bytes_ = 1024;
-+      ASSERT_EQ(OB_SUCCESS, ls_desc.filelist_.push_back(file));
-+    }
-+    ls_desc.min_lsn_ = min_lsn;
-+    ls_desc.max_lsn_ = max_lsn;
-+    ASSERT_EQ(OB_SUCCESS, piece.filelist_.push_back(ls_desc));
-+  }
-+
-+  // Build the candidate piece attr array which matches `pieces` one by one.
-+  void create_candidate_piece_attrs(const ObArray<ObPieceInfoDesc> &pieces,
-+                                    ObArray<ObTenantArchivePieceAttr> &candidate_piece_infos) {
-+    candidate_piece_infos.reset();
-+    for (int64_t i = 0; i < pieces.count(); ++i) {
-+      ObTenantArchivePieceAttr piece_attr;
-+      create_candidate_piece_attr(piece_attr, pieces.at(i).dest_id_, pieces.at(i).round_id_,
-+          pieces.at(i).piece_id_);
-+      ASSERT_EQ(OB_SUCCESS, candidate_piece_infos.push_back(piece_attr));
-+    }
-   }
- 
-   // Create a piece and add it to pieces array
-@@ -106,30 +158,64 @@ class TestBackupCleanPieceClogBlockDependency : public ::testing::Test {
-       for (int64_t file_id : ls_file.file_ids) {
-         add_file_to_ls_desc(ls_desc, file_id);
+@@ -742,8 +742,9 @@ int ObPLResolver::resolve(const ObStmtNodeTree *parse_tree, ObPLFunctionAST &fun
+           } else {
+             signal_stmt->set_cond_type(ERROR_CODE);
+           }
+-          signal_stmt->set_error_code(ob_errpkt_errno(save_ret, lib::is_oracle_mode()));
+           signal_stmt->set_ob_error_code(save_ret);
++          signal_stmt->set_error_code(ob_errpkt_errno(save_ret, lib::is_oracle_mode()));
++          signal_stmt->set_stmt_ob_error_code(save_ret);
+           signal_stmt->set_sql_state(ob_sqlstate(save_ret));
+           signal_stmt->set_str_len(STRLEN(ob_sqlstate(save_ret)));
+           func.set_has_incomplete_rt_dep_error(true);
+@@ -4846,11 +4847,14 @@ int ObPLResolver::resolve_case(const ObStmtNodeTree *parse_tree, ObPLCaseStmt *s
+             signal_stmt->set_sql_state("20000");
+             signal_stmt->set_str_len(5);
+             if (lib::is_oracle_mode()) {
+-              signal_stmt->set_error_code(OB_ER_SP_CASE_NOT_FOUND); // ORACLE模式使用OB的错误码
++              bool enable_plsql_errno_compatible_oracle = resolve_ctx_.session_info_.get_plsql_errno_compatible_oracle();
++              signal_stmt->set_ob_error_code(OB_ER_SP_CASE_NOT_FOUND);
++              signal_stmt->set_error_code(enable_plsql_errno_compatible_oracle ? -ob_oracle_errno_with_check(OB_ER_SP_CASE_NOT_FOUND) : OB_ER_SP_CASE_NOT_FOUND);
+             } else {
+-              signal_stmt->set_error_code(ER_SP_CASE_NOT_FOUND); // MySQL模式使用Mysql错误码
++              signal_stmt->set_ob_error_code(OB_ER_SP_CASE_NOT_FOUND);
++              signal_stmt->set_error_code(ER_SP_CASE_NOT_FOUND);
+             }
+-            signal_stmt->set_ob_error_code(OB_ER_SP_CASE_NOT_FOUND);
++            signal_stmt->set_stmt_ob_error_code(OB_ER_SP_CASE_NOT_FOUND);
+             if (OB_FAIL(else_block->add_stmt(signal_stmt))) {
+               LOG_WARN("failed to add stmt", K(stmt), K(ret));
+             }
+@@ -7629,12 +7633,14 @@ int ObPLResolver::resolve_declare_cond(const ObStmtNodeTree *parse_tree,
+         if (OB_FAIL(ret)) {
+         } else if (func.is_package()) {
+           ObPLPackageAST &pack = static_cast<ObPLPackageAST&>(func);
+-          OX (value.error_code_
++          OX (value.ob_error_code_
+             = (next_user_defined_exception_id_++) | (pack.get_id() << OB_PACKAGE_ID_SHIFT));
++          OX (value.error_code_ = value.ob_error_code_);
+         } else {
+-          OX (value.error_code_ = next_user_defined_exception_id_++);
++          OX (value.ob_error_code_ = next_user_defined_exception_id_++);
++          OX (value.error_code_ = value.ob_error_code_);
+         }
+-        OX (value.sql_state_ = ob_sqlstate(static_cast<int>(value.error_code_)));
++        OX (value.sql_state_ = ob_sqlstate(static_cast<int>(value.ob_error_code_)));
+         OX (value.str_len_ = STRLEN(value.sql_state_));
+         OZ (current_block_->get_namespace().add_condition(name, value));
        }
--      ls_desc.deleted_ = ls_file.deleted;
- 
-       ASSERT_EQ(OB_SUCCESS, piece.filelist_.push_back(ls_desc));
-     }
- 
-     ASSERT_EQ(OB_SUCCESS, pieces.push_back(piece));
-   }
- 
--  // Create candidate piece info array
--  void create_candidate_piece_infos(ObArray<ObTenantArchivePieceAttr> &candidate_piece_infos,
--                                   int64_t coun
+@@ -7863,34 +7869,29 @@ int ObPLResolver::resolve_signal(const ObStmtNodeTree *parse_tree, ObPLSignalStm
+       }
+     } else if (T_IDENT == value_node->type_ // for mysql mode
+                || T_SP_ACCESS_NAME == value_node->type_) { // for oracle mode
+-      const ObPLConditionValue *value = NULL;
++      ObPLConditionValue value;
+       CK (OB_NOT_NULL(current_block_));
+       OZ (resolve_condition(value_node,
+                             current_block_->get_namespace(),
+-                            &value,
++                            value,
+                             func));
+-      if (OB_SUCC(ret) && OB_ISNULL(value)) {
+-        ret = OB_ERR_SP_COND_MISMATCH;
+-        LOG_USER_ERROR(OB_ERR_SP_COND_MISMATCH, static_cast<int>(value_node->str_len_), value_node->str_value_);
+-        LOG_WARN("Undefined CONDITION: condition value is NULL", K(value), K(value_node->str_value_), K(ret));
+-      }
+       if (OB_SUCC(ret)) {
+         /*
+          * Mysql不允许signal语句的condition是error code类型，只能是sqlstate类型，所以这里禁止掉。
+          * If SIGNAL refers to a named condition that is defined with a MySQL error number rather than an SQLSTATE value,
+          * a SIGNAL/RESIGNAL can only use a CONDITION defined with SQLSTATE error occurs.
+          * */
+-        if (!lib::is_oracle_mode() && SQL_STATE != value->type_) {
++        if (!lib::is_oracle_mode() && SQL_STATE != value.type_) {
+           ret = OB_ERR_SP_BAD_CONDITION_TYPE;
+-          LOG_WARN("SIGNAL/RESIGNAL can only use a CONDITION defined with SQLSTATE", K(value->type_), K(ret));
+-        } else if (!is_sqlstate_valid(value->sql_state_, value->str_len_)
+-            || is_sqlstate_completion(value->sql_state_)) {
++          LOG_WARN("SIGNAL/RESIGNAL can only use a CONDITION defined with SQLSTATE", K(value.type_), K(ret));
++        } else if (!is_sqlstate_valid(value.sql_state_, value.str_len_)
++            || is_sqlstate_completion(value.sql_state_)) {
+           ret = OB_ER_SP_BAD_SQLSTATE;
+-          LOG_USER_ERROR(OB_ER_SP_BAD_SQLSTATE, static_cast<int>(value->str_len_), value->sql_state_);
++          LOG_USER_ERROR(OB_E
 ```
 
-**File**: `unittest/storage/backup/test_backup_clean_piece_selector.cpp` (modified, +851/-0)
+---
+
+### Incident Patch 3: `b2b5e419` (2026-11-11)
+**Commit Message**: [CP] fix transfer clean function(abort->fail) not idempotency
+
+**File**: `src/share/ob_debug_sync_point.h` (modified, +1/-0)
 ```diff
-@@ -71,6 +71,34 @@ class TestBackupCleanPieceSelectorBase : public ::testing::Test {
-         piece.path_.assign(path);
-     }
- 
-+    // Create a piece with FULL control over its four SCN fields, so that the cross-boundary log
-+    // group scenario(start_scn_ > scn while the piece still really covers scn) can be expressed.
-+    void create_piece_with_scns(share::ObTenantArchivePieceAttr &piece, int64_t piece_id, int64_t dest_id,
-+                      const char* path, int64_t start_scn, int64_t checkpoint_scn, int64_t end_scn,
-+                      share::ObArchivePieceStatus::Status status = share::ObArchivePieceStatus::Status::FROZEN,
-+                      share::ObBackupFileStatus::STATUS file_status = share::ObBackupFileStatus::BACKUP_FILE_AVAILABLE) {
-+        piece.reset();
-+        piece.key_.tenant_id_ = 1002;
-+        piece.key_.dest_id_ = dest_id;
-+        piece.key_.round_id_ = 1;
-+        piece.key_.piece_id_ = piece_id;
-+        piece.incarnation_ = 1;
-+        piece.dest_no_ = 1;
-+        piece.file_count_ = 10;
-+        piece.start_scn_.convert_for_gts(start_scn);
-+        piece.checkpoint_scn_.convert_for_gts(checkpoint_scn);
-+        piece.max_scn_.convert_for_gts(checkpoint_scn);
-+        piece.end_scn_.convert_for_gts(end_scn);
-+        piece.compatible_.version_ = ObArchiveCompatible::Compatible::COMPATIBLE_VERSION_1;
-+        piece.input_bytes_ = 1024;
-+        piece.output_bytes_ = 1024;
-+        piece.status_.status_ = status;
-+        piece.file_status_ = file_status;
-+        piece.cp_file_id_ = 0;
-+        piece.cp_file_offset_ = 0;
-+        piece.path_.assign(path);
-+    }
-+
-     void create_backup_set(share::ObBackupSetFileDesc &desc, int64_t id, share::ObBackupType::BackupType type,
-                            int64_t prev_full, int64_t prev_inc, int64_t dest_id, const char* path,
-                            int64_t expired_time,
-@@ -799,6 +827,829 @@ TEST_F(TestBackupCleanPieceSelector_NoBackupCases, FailWhenNoBackupDestExists2)
-                     test_sets_, test_current_path_, test_pieces_, test_dest_pairs_, false);
- }
- 
-+// =================================================================================
-+// Fixture 8: clean point coverage in check_piece_can_be_deleted_
-+// =================================================================================
-+// A piece whose nominal range [start_scn_, end_scn_) covers the clean point(start_replay_scn) is
-+// required by the restore path even when all the log it really contains is before the clean point:
-+// ObArchiveStore::get_piece_paths_in_range accepts a piece list only if the FIRST piece satisfies
-+// "start_scn_ <= clean point < end_scn_", and check_piece_continuity_between_two_scn requires a
-+// not-deleted floor piece with "start_scn <= clean point". So such a piece can be reclaimed only if
-+// ANOTHER kept AVAILABLE piece also nominally covers the clean point(possible when the scn ranges of
-+// two rounds overlap), see check_scn_covered_by_other_piece_.
-+//
-+// This fixture directly drives ObBackupDeleteSelector::check_piece_can_be_deleted_(), which is the
-+// path that get_one_dest_deletable_backup_piece_infos_() takes for every candidate piece.
-+class TestBackupCleanPieceSelector_CrossBoundaryCoverage : public TestBackupCleanPieceSelectorBase {
-+protected:
-+    // Init a selector, ready to call check_piece_can_be_deleted_ / check_scn_covered_by_other_piece_.
-+    void build_selector(ObBackupDeleteSelector &selector) {
-+        job_attr_.reset();
-+        job_attr_.job_id_ = 1001;
-+        job_attr_.tenant_id_ = 1002;
-+        job_attr_.incarnation_id_ = 1;
-+        job_attr_.clean_type_ = ObNewBackupCleanType::DELETE_OBSOLETE_BACKUP;
-+        ASSERT_EQ(OB_SUCCESS, selector.init(mock_sql_proxy_, *mock_schema_service_, job_attr_,
-+                                            *mock_rpc_proxy_, *mock_delete_mgr_));
-+    }
-+
-+    // Sort the pieces in ascending order of piece id, the same as get_one_dest_deletable_backup_piece_infos_
-+    // does before passing the pieces down to check_piece_can_be_deleted_.
-+    void sort_pieces(ObArray<share::ObTenantArchivePieceAttr> &pieces) {
-+        ObBackupDeleteSelector::CompareBackupPieceInfo cmp;
-+        lib::ob_sort(pieces.begin(), pieces.end(), cmp);
-+    }
-+
-+    ObBackupCleanJobAttr job_attr_;
-+};
-+
-+// The old piece(#1) is judged deletable via the nominal boundary shortcut: its whole nominal range is
-+// before the clean point.
-+TEST_F(TestBackupCleanPieceSelector_CrossBoundaryCoverage, DeletableWhenWholeNominalRangeBeforeCleanPoint) {
-+    ObArray<share::ObTenantArchivePieceAttr> pieces;
-+    share::ObTenantArchivePieceAttr p1, p2;
-+    // p1: [100, 200, 300]; p2: [300, 500, 600]. clean point = 400.
-+    create_piece_with_scns(p1, 1, 1, "file:///path", 100, 200, 300);
-+    create_piece_with_scns(p2, 2, 1, "file:///path", 300, 500, 600);
-+    ASSERT_EQ(OB_SUCCESS, pieces.push_back(p1));
-+    ASSERT_EQ(OB_SUCCESS, pieces.push_back(p2));
-+    sort_pieces(pieces);
-+
-+   
+@@ -885,6 +885,7 @@ class ObString;
+     ACT(BEFORE_CREATE_GTT_INDEX_SESSION_TABLET_FOR_STATS,)\
+     ACT(AFTER_FILL_AUTO_SPLIT_PARAMS,)\
+     ACT(BEFORE_DDL_SERVICE_TRANS_END,)\
++    ACT(BEFORE_TRANSFER_ABORT_REGISTER_MDS,)\
+     ACT(BEFORE_DDL_TASK_QUEUE_PUSH,)\
+     ACT(AFTER_DDL_TASK_QUEUE_PUSH,)\
+     ACT(MAX_DEBUG_SYNC_POINT,)
 ```
 
-**File**: `unittest/storage/backup/test_backup_clean_selector_include.h` (modified, +41/-0)
+**File**: `src/storage/high_availability/ob_transfer_handler.cpp` (modified, +29/-7)
 ```diff
-@@ -130,12 +130,32 @@ class MockBackupDataProvider : public rootserver::IObBackupDataProvider {
-       const share::ObTenantArchivePieceAttr &piece_attr,
-       share::ObPieceInfoDesc &piece_info_desc) override;
+@@ -491,6 +491,7 @@ int ObTransferHandler::do_with_start_status_(const share::ObTransferTaskInfo &ta
+   common::ObMemberList member_list;
+   common::GlobalLearnerList learner_list;
+   ObArray<ObAddr> addr_list;
++  share::ObTransferTaskInfo unused_table_task_info;
  
-+  void set_ls_restore_start_lsns(const ObIArray<rootserver::ObLSRestoreStartLSN> &ls_start_lsn_array) {
-+    ls_start_lsn_array_.reset();
-+    for (int64_t i = 0; i < ls_start_lsn_array.count(); ++i) {
-+      ls_start_lsn_array_.push_back(ls_start_lsn_array.at(i));
-+    }
-+  }
-+  // Inject a failure of reading the ls meta of the backup set.
-+  void set_ls_restore_start_lsn_ret(const int ret_code) { ls_start_lsn_ret_ = ret_code; }
-+  // How many times the piece info file has been read, used to check that the caller does not read the
-+  // piece info of every candidate piece when it does not have to.
-+  int64_t get_load_piece_info_desc_count() const { return load_piece_info_desc_count_; }
-+
-+  int get_backup_set_ls_restore_start_lsn(
-+      const uint64_t tenant_id,
-+      const share::ObBackupSetFileDesc &backup_set_desc,
-+      ObIArray<rootserver::ObLSRestoreStartLSN> &ls_start_lsn_array) override;
-+
- private:
-   bool policy_exist_ = false;
-   ObArray<share::ObBackupSetFileDesc> backup_sets_;
-   share::ObBackupPathString current_path_;
-   ObArray<MockDestInfo> dest_infos_;
-   ObArray<ObPieceInfoDesc> piece_info_descs_;
-+  ObArray<rootserver::ObLSRestoreStartLSN> ls_start_lsn_array_;
-+  int ls_start_lsn_ret_ = OB_SUCCESS;
-+  int64_t load_piece_info_desc_count_ = 0;
-   DISALLOW_COPY_AND_ASSIGN(MockBackupDataProvider);
- };
+   if (!is_inited_) {
+     ret = OB_NOT_INIT;
+@@ -521,7 +522,7 @@ int ObTransferHandler::do_with_start_status_(const share::ObTransferTaskInfo &ta
+       }
+     }
+ #endif
+-    if (FAILEDx(lock_transfer_task_(task_info, trans))) {
++    if (FAILEDx(lock_transfer_task_(task_info, unused_table_task_info, trans))) {
+       LOG_WARN("failed to lock transfer task", K(ret), K(task_info));
+     } else {
+ #ifdef ERRSIM
+@@ -1393,11 +1394,11 @@ int ObTransferHandler::get_abort_trans_timeout_(
  
-@@ -379,6 +399,7 @@ int MockBackupDataProvider::load_piece_info_desc(const uint64_t tenant_id,
-   UNUSED(tenant_id);
+ int ObTransferHandler::lock_transfer_task_(
+     const share::ObTransferTaskInfo &task_info,
++    share::ObTransferTaskInfo &table_task_info,
+     common::ObISQLClient &trans)
+ {
    int ret = OB_SUCCESS;
-   bool match_flag = false;
-+  ++load_piece_info_desc_count_;
-   for (int64_t i = 0; i < piece_info_descs_.count(); ++i) {
-     printf("piece_id: %ld,: %ld\n", piece_info_descs_.at(i).piece_id_, piece_attr.key_.piece_id_);
-     if (piece_info_descs_.at(i).piece_id_ == piece_attr.key_.piece_id_) {
-@@ -392,6 +413,26 @@ int MockBackupDataProvider::load_piece_info_desc(const uint64_t tenant_id,
-   return OB_SUCCESS;
- }
+   const bool for_update = true;
+-  ObTransferTaskInfo table_task_info;
  
-+// Mock implementation of get_backup_set_ls_restore_start_lsn
-+int MockBackupDataProvider::get_backup_set_ls_restore_start_lsn(
-+    const uint64_t tenant_id,
-+    const share::ObBackupSetFileDesc &backup_set_desc,
-+    ObIArray<rootserver::ObLSRestoreStartLSN> &ls_start_lsn_array) {
-+  UNUSED(tenant_id);
-+  UNUSED(backup_set_desc);
-+  int ret = OB_SUCCESS;
-+  ls_start_lsn_array.reset();
-+  if (OB_SUCCESS != ls_start_lsn_ret_) {
-+    ret = ls_start_lsn_ret_;
-+  } else {
-+    for (int64_t i = 0; OB_SUCC(ret) && i < ls_start_lsn_array_.count(); ++i) {
-+      if (OB_FAIL(ls_start_lsn_array.push_back(ls_start_lsn_array_.at(i)))) {
-+        break;
+   if (!is_inited_) {
+     ret = OB_NOT_INIT;
+@@ -2092,6 +2093,7 @@ int ObTransferHandler::update_transfer_status_aborted_(
+   bool is_leader = true;
+   const int64_t stmt_timeout = 10_s;
+   const int32_t group_id = share::OBCG_STORAGE;
++  share::ObTransferTaskInfo unused_table_task_info;
+ 
+   if (!is_inited_) {
+     ret = OB_NOT_INIT;
+@@ -2103,7 +2105,7 @@ int ObTransferHandler::update_transfer_status_aborted_(
+     LOG_WARN("failed to start trans", K(ret), K(task_info));
+   } else {
+     const SCN scn = task_info.start_scn_;
+-    if (OB_FAIL(lock_transfer_task_(task_info, trans))) {
++    if (OB_FAIL(lock_transfer_task_(task_info, unused_table_task_info, trans))) {
+       LOG_WARN("failed to lock transfer task", K(ret), K(task_info));
+     }
+     // There is still a possibility of the old leader change task status to ABORT
+@@ -3091,6 +3093,10 @@ int ObTransferHandler::do_trans_transfer_aborted_(
+     ret = OB_ERR_UNEXPECTED;
+     LOG_WARN("conn_ is NULL", KR(ret));
+   } else {
++#ifdef ERRSIM
++    // Pause with the task row locked, before enlisting the destination LS.
++    DEBUG_SYNC(BEFORE_TRANSFER_ABORT_REGISTER_MDS);
++#endif
+     transfer_in_aborted_info.dest_ls_id_ = task_info.dest_ls_id_;
+     transfer_in_aborted_info.data_version_ = task_info.data_version_;
+     if (OB_FAIL(transfer_in_aborted_info.tablet_list_.assign(task_info.tablet_list_))) {
+@@ -3432,6 +3438,7 @@ int ObTransferHandler::inner_do_with_abort_status_(
+   const SCN scn = task_info.start_scn_;
+   const int32_t result = task_info.result_;
+   const ObTransferLockStatus status(ObTransferLockStatus::ABORTED);
++  share::ObTransferTaskInfo table_task_info;
+   diag_ctx_.set_cost_item(ObStorageHACostItemName::TRANSFER_ABORT_BEGIN);
+   if (!is_inited_) {
+     ret = OB_NOT_INIT;
+@@ -3449,8 +3456,15 @@ int ObTransferHandler::inner_do_with_abort_status_(
+   } else {
+     // lock transfer task first to avoid failing to unlock member list during re-entrant situation
+     // only one tx can lock the transfer task and then lock member list
+-    if (OB_FAIL(lock_transfer_task_(task_info, trans))) {
+-      LOG_WARN("failed to lock transfer task", K(ret), K(task_info));
++    if (OB_FAIL(lock_transfer_task_(task_info, table_task_info, trans))) {
++      if (table_task_info.status_ == next_status) {
++        // Another trans has handled the task and set the status to failed.
++        // just skip for idempotency.
++        ret = OB_SUCCESS;
++        LOG_INFO("transfer abort already finished", K(task_info), K(table_task_info));
++      } else {
++        LOG_WARN("failed to lock transfer task", K(ret), K(task_info));
 +      }
-+    }
-+  }
-+  return ret;
-+}
- 
- } // namespace rootserver
- } // namespace oceanbase
+     } else if (OB_FAIL(get_local_ls_member_list_and_learner_list_(member_list, learner_list))) {
+       LOG_WARN("failed to get ls member list", K(ret), K(task_info));
+     } else if (OB_FAIL(do_trans_transfer_aborted_(task_info, timeout_ctx, trans))) {
+@@ -3529,6 +3543,7 @@ int ObTransferHandler::inner_do_with_abort_status_before_4230_(
+   ObTimeoutCtx timeout_ctx;
+   ObMySQLTransaction trans;
+   const int64_t tmp_round = round_;
++  share::ObTransferTaskInfo table_task_info;
+   diag_ctx_.set_cost_item(ObStorageHACostItemName::TRANSFER_ABORT_BEGIN);
+   const int32_t group_id = share::OBCG_STORAGE;
+   int64_t stmt_timeout = 10_s;
+@@ -3546,8 +3561,15 @@ int ObTransferHandler::inner_do_with_abort_status_before_4230_(
+     } else {
+       const SCN scn = task_info.start_scn_;
+       const int32_t result = task_info.result_;
+-      if (OB_FAIL(lock_transfer_task_(task_info, trans))) {
+-        LOG_WARN("failed to lock transfer task", K(ret), K(task_info));
++      if (OB_FAIL(lock_transfer_task_(task_info, table_task_info, trans))) {
++        if (table_task_info.status_ == next_status) {
++          // Another trans has handled the task and set the status to failed.
++          // just skip for idempotency.
++          ret = OB_SUCCESS;
++          LOG_INFO("transfer abort already finished", K(task_info), K(table_task_info));
++        }
 ```
 
----
-
-### Incident Patch 2: `cdd735e0` (2026-09-24)
-**Commit Message**: Fix constraint task self-lock in combined auto-increment ALTER
-
-**File**: `src/rootserver/ddl_task/ob_constraint_task.cpp` (modified, +7/-0)
+**File**: `src/storage/high_availability/ob_transfer_handler.h` (modified, +1/-0)
 ```diff
-@@ -1308,6 +1308,10 @@ int ObConstraintTask::set_check_constraint_validated()
-     } else if (OB_FAIL(deep_copy_table_arg(allocator, alter_table_arg_, alter_table_arg))) {
-       LOG_WARN("deep copy table arg failed", K(ret));
-     } else {
-+      // Table options were handled by the original ALTER. Replaying them while holding the
-+      // constraint task's RX lock can request an incompatible table X lock.
-+      alter_table_arg.alter_table_schema_.alter_option_bitset_.reset();
-+      alter_table_arg.is_alter_options_ = false;
-       ObTableSchema::const_constraint_iterator iter = alter_table_arg.alter_table_schema_.constraint_begin();
-       if (obrpc::ObAlterTableArg::ADD_CONSTRAINT == alter_table_arg.alter_constraint_type_) {
-         (*iter)->set_constraint_id(target_object_id_);
-@@ -1535,6 +1539,9 @@ int ObConstraintTask::rollback_failed_check_constraint()
-     } else if (OB_FAIL(deep_copy_table_arg(allocator, alter_table_arg_, alter_table_arg))) {
-       LOG_WARN("fail to deep copy table arg", K(ret));
-     } else {
-+      // Rollback must only undo the constraint change, not repeat the original table options.
-+      alter_table_arg.alter_table_schema_.alter_option_bitset_.reset();
-+      alter_table_arg.is_alter_options_ = false;
-       alter_table_arg.based_schema_object_infos_.reset();
-       ObTableSchema::const_constraint_iterator iter = alter_table_arg.alter_table_schema_.constraint_begin();
-       if (obrpc::ObAlterTableArg::ADD_CONSTRAINT == alter_table_arg.alter_constraint_type_) {
-```
-
----
-
-### Incident Patch 3: `e2b8d6e5` (2026-09-24)
-**Commit Message**: [CP] fix greatest/least with enum/set and decimal int args failing with -4016
-
-**File**: `src/sql/engine/expr/ob_expr_relational_result_type.map` (modified, +2/-2)
-```diff
-@@ -936,7 +936,7 @@ static constexpr ObObjType RELATIONAL_RESULT_TYPE[ObMaxType][ObMaxType] =
-     ObDoubleType,      /* ObJsonType     */
-     ObMaxType,         /* ObGeometryType */
-     ObMaxType,         /* ObUserDefinedSQLType */
--    ObDecimalIntType,     /* ObDecimalIntType  */
-+    ObNumberType,        /* ObDecimalIntType  */
-     ObMaxType,         /*  ObCollectionSQLType*/
-     ObNumberType,         /* ObMySQLDateType */
-     ObNumberType,         /* ObMySQLDateTimeType */
-@@ -2944,7 +2944,7 @@ static constexpr ObObjType RELATIONAL_RESULT_TYPE[ObMaxType][ObMaxType] =
-     ObDoubleType,     /* DoubleType  */
-     ObDoubleType,     /* UFloatType  */
-     ObDoubleType,     /* UDoubleType  */
--    ObDecimalIntType,     /* NumberType  */
-+    ObNumberType,        /* NumberType  */
-     ObDecimalIntType,     /* UNumberType  */
-     ObDecimalIntType,     /* DateTimeType  */
-     ObDecimalIntType,     /* TimestampType  */
+@@ -194,6 +194,7 @@ class ObTransferHandler : public ObIHAHandler,
+       ObIArray<transaction::ObTransID> *move_tx_ids);
+   int lock_transfer_task_(
+       const share::ObTransferTaskInfo &task_info,
++      share::ObTransferTaskInfo &table_task_info,
+       common::ObISQLClient &trans);
+   int get_start_transfer_out_scn_(
+       const share::ObTransferTaskInfo &task_info,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2490** (closed): docs: add full architecture evolution video to README (@liboyang0730)
 - **PR #2398** (closed): [Docs] Fix question issue template metadata (@Wenjun7J)
 - **PR #2389** (closed): oceanbase ci (@guoyan1996)
 - **PR #2388** (closed): Dev oceanbase ci (@guoyan1996)
 - **PR #2379** (closed): fix: use KP() for binary buffer pointers in PALF log statements (@crawfordxx)
 - **PR #2378** (closed): fix: correct typo 'initilize' to 'initialize' in ob_spi.cpp (@crawfordxx)
-- **PR #2364** (2026-01-04): docs: fix typos and rename file - Coding Convensions to Conventions, … (@weiii668)
 
 ---
 
@@ -2090,52 +2144,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [to #2026072900117849658]fix backup clean blocked by un-deletable archive piece
+## X. [master] fix(restore): preserve real error code before errsim injection in resto
 
 **RULE**:
-When implementing operations in `src/rootserver/backup/ob_backup_clean_selector.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oceanbase/oceanbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/rootserver/restore/ob_restore_scheduler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oceanbase/oceanbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `131fdbaf`: [to #2026072900117849658]fix backup clean blocked by un-deletable archive piece. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fea3457f`: [master] fix(restore): preserve real error code before errsim injection in restore_init_ls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/rootserver/backup/ob_backup_clean_selector.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/rootserver/restore/ob_restore_scheduler.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "storage/backup/ob_backup_data_store.h"
-int ObBackupDataProvider::get_backup_set_ls_restore_start_lsn(
-    const uint64_t tenant_id,
-    const ObBackupSetFileDesc &backup_set_desc,
-    ObIArray<ObLSRestoreStartLSN> &ls_start_lsn_array)
-{
-  int ret = OB_SUCCESS;
-  ObBackupDest backup_dest;
-  ObBackupSetDesc set_desc;
-  storage::ObBackupDataStore store;
-  storage::ObBackupLSMetaInfosDesc ls_meta_infos;
-  ls_start_lsn_array.reset();
-  if (IS_NOT_INIT) {
-    ret = OB_NOT_INIT;
-    LOG_WARN("ObBackupDataProvider not inited", K(ret));
-  } else if (!backup_set_desc.is_valid()) {
-    ret = OB_INVALID_ARGUMENT;
-    LOG_WARN("invalid backup set desc", K(ret), K(backup_set_desc));
-  } else if (OB_FAIL(ObBackupStorageInfoOperator::get_backup_dest(*sql_proxy_, tenant_id,
-      backup_set_desc.backup_path_, backup_dest))) {
-    LOG_WARN("failed to get backup dest with storage info", K(ret), K(tenant_id), K(backup_set_desc));
-  } else if (OB_FALSE_IT(set_desc.backup_set_id_ = backup_set_desc.backup_set_id_)) {
-  } else if (OB_FALSE_IT(set_desc.backup_type_ = backup_set_desc.backup_type_)) {
-  } else if (OB_FAIL(store.init(backup_dest, set_desc))) {
-    LOG_WARN("failed to init backup dat
+    if (OB_SUCC(ret)) {
+      ret = OB_E(EventTable::EN_RESTORE_CREATE_LS_FAILED) OB_SUCCESS;
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-      } else if (is_log_only && backup_piece_infos.count() > 0) {
+    ret = OB_E(EventTable::EN_RESTORE_CREATE_LS_FAILED) OB_SUCCESS;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `131fdbaf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fea3457f` are properly handled with clean fallback behavior.

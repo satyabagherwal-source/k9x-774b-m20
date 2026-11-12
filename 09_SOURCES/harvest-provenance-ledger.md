@@ -9237,3 +9237,6 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `b8c2a10f` | Multi-dimensional audit evidence | 2026-11-12T21:56:36.897Z |
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `98cf746f` | Multi-dimensional audit evidence | 2026-11-12T21:56:39.469Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `56afe28f` | Multi-dimensional audit evidence | 2026-11-12T21:56:46.111Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `3967c693` | Multi-dimensional audit evidence | 2026-11-12T22:05:24.900Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `2cd8d27a` | Multi-dimensional audit evidence | 2026-11-12T22:05:29.481Z |
+| `learn-github-oceanbase-oceanbase` | `https://github.com/oceanbase/oceanbase` | `d375c6d7` | Multi-dimensional audit evidence | 2026-11-12T22:05:33.038Z |

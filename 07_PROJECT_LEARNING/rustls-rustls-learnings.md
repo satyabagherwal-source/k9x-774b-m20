@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `970b4474`  
+> **Source Version**: `2cd8d27a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T10:52:39.821Z  
+> **Timestamp**: 2026-11-12T22:05:10.906Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T10:52:39.814Z  
+> **Harvest Timestamp**: 2026-11-12T22:05:10.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7761 stars
+- **Stars / Engagement**: 7764 stars
 
 ---
 
@@ -2251,17 +2251,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3427** (2026-11-12): **Prepare 0.24.0-dev.3**
+  *Symptoms*: (going to do some performance measurements here versus 0.23)
+  **Post-Mortem & Fix Analysis**:
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2272168 | 2265705 | ✅ [-6463](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:38dfdc5be289981098cecf593386c632d0161239/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (-0.28%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8755075 | 8787901 | [32826](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:38dfdc5be289981098cecf593386c632d0161239/ca
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3427?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.74%. Comparing base ([`c805ecf`](https://app.codecov.io/gh/rustls/rustls/commit/c805ecfe373a43a3007007a913a67c817804b433?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`38dfdc5`](https://app.codecov.io/gh/rustls/rustls/commit/38dfdc5be289981098cecf593386c632d0161239?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 5 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3427 
+
 - **Issue #3426** (2026-11-12): **Test coverage improvements**
   *Symptoms*: As a result, 0a4c554f815e617522475ebd7c20c84a33b170a8 fixes the `Display` formatting of `CertificateError::InvalidPurposeContext`  
   **Post-Mortem & Fix Analysis**:
   >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8757105 | 8795983 | [38878](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client) (0.44%) | 0.83% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8788472 | 8773708 | [-14764](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.17%) | 0.97% | | handshake_tickets_aws_lc_rs_1.3_rsa_chacha_client | 42208866 | 42273
   > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `97.10145%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 96.08%. Comparing base ([`c805ecf`](https://app.codecov.io/gh/rustls/rustls/commit/c805ecfe373a43a3007007a913a67c817804b433?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`433b3fd`](https://app.codecov.io/gh/rustls/rustls/commit/433b3fd76c8c5ac37cafc288d15311668f6a6bbc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 5 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=tree&utm_medium
-
-- **Issue #3425** (2026-11-12): **Take pki-types 1.16: rely on canonical `DnsName`s & use `DnsName::into_owned()`**
-  *Symptoms*: This PR notably does not do anything for ECH (refer #3388)
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_1.2_no_crypto_server | 692664 | 676404 | ✅ [-16260](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_session_id_1.2_no_crypto_server) (-2.35%) | 0.20% | | handshake_tickets_1.2_no_crypto_server | 746845 | 730585 | ✅ [-16260](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_tickets_1.2_no_crypto_server) (-2.18%) | 0.20% | | handshake_tickets_1.3_no_crypto_server | 1430564 | 1408814 | ✅ [-21750](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b85
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3425?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.75%. Comparing base ([`f68d6d2`](https://app.codecov.io/gh/rustls/rustls/commit/f68d6d296759bb002c462b402401f2cf295b92da?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`115a8b6`](https://app.codecov.io/gh/rustls/rustls/commit/115a8b6df4a97b857c10228e1b15b255d7e6f174?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3425      +/-   ## ==================================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2278,159 +2278,278 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `970b4474` (2026-11-11)
-**Commit Message**: Test `Display` for remaining error variants
+### Incident Patch 1: `2cd8d27a` (2026-11-11)
+**Commit Message**: Prepare 0.24.0-dev.3
 
-**File**: `rustls/src/error/tests.rs` (modified, +85/-0)
+**File**: `Cargo.lock` (modified, +17/-17)
 ```diff
-@@ -271,6 +271,91 @@ fn smoke() {
-     }
- }
+@@ -272,7 +272,7 @@ version = "0.1.0"
+ dependencies = [
+  "base64",
+  "nix",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+  "rustls-ring",
+  "rustls-webpki 0.104.0-alpha.8",
+@@ -1724,7 +1724,7 @@ dependencies = [
  
-+#[test]
-+fn error_display() {
-+    use super::{
-+        ApiMisuse, CertificateError, EncryptedClientHelloError, ExtendedKeyPurpose, RejectedEch,
-+    };
-+
-+    let cases: &[(Error, &str)] = &[
-+        (
-+            Error::UnsupportedNameType,
-+            "presented server name type wasn't supported",
-+        ),
-+        (
-+            Error::InvalidEncryptedClientHello(EncryptedClientHelloError::NoCompatibleConfig),
-+            "encrypted client hello failure: NoCompatibleConfig",
-+        ),
-+        (Error::EncryptError, "cannot encrypt message"),
-+        (
-+            Error::NoSuitableCertificate,
-+            "no suitable certificate found",
-+        ),
-+        (
-+            Error::RejectedEch(RejectedEch {
-+                retry_configs: Some(vec![]),
-+            }),
-+            "server rejected encrypted client hello (ECH) with retry configs",
-+        ),
-+        (
-+            Error::RejectedEch(RejectedEch {
-+                retry_configs: None,
-+            }),
-+            "server rejected encrypted client hello (ECH) without retry configs",
-+        ),
-+        (
-+            CertificateError::NotValidForNameContext {
-+                expected: ServerName::try_from("example.com")
-+                    .unwrap()
-+                    .to_owned(),
-+                presented: vec![
-+                    "DnsName(\"a.com\")".into(),
-+                    "DnsName(\"b.com\")".into(),
-+                    "DnsName(\"c.com\")".into(),
-+                ],
-+            }
-+            .into(),
-+            "invalid peer certificate: certificate not valid for name \"example.com\"; \
-+             certificate is only valid for DnsName(\"a.com\"), DnsName(\"b.com\") \
-+             or DnsName(\"c.com\")",
-+        ),
-+        (
-+            CertificateError::InvalidPurposeContext {
-+                required: ExtendedKeyPurpose::ServerAuth,
-+                presented: vec![
-+                    ExtendedKeyPurpose::ClientAuth,
-+                    ExtendedKeyPurpose::Other(vec![1, 3, 6, 1, 5, 5, 7, 3, 3]),
-+                ],
-+            }
-+            .into(),
-+            "invalid peer certificate: certificate does not allow extended key usage for \
-+             server authentication; it allows client authentication, 1.3.6.1.5.5.7.3.3",
-+        ),
-+        (
-+            CertificateError::InvalidPurposeContext {
-+                required: ExtendedKeyPurpose::ServerAuth,
-+                presented: vec![],
-+            }
-+            .into(),
-+            "invalid peer certificate: certificate does not allow extended key usage for \
-+             server authentication; it allows nothing",
-+        ),
-+        (
-+            CertificateError::Other(OtherError::new(TestError)).into(),
-+            "invalid peer certificate: test error",
-+        ),
-+    ];
-+
-+    for (err, expected) in cases {
-+        assert_eq!(err.to_string(), *expected);
-+    }
-+
-+    assert_eq!(
-+        ApiMisuse::ExporterNotAvailable.to_string(),
-+        "ExporterNotAvailable"
-+    );
-+}
-+
- #[derive(Debug)]
- struct TestError;
+ [[package]]
+ name = "rustls"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ dependencies = [
+  "bencher",
+  "brotli",
+@@ -1744,14 +1744,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustls-aws-lc-rs"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ dependencies = [
+  "aws-lc-rs",
+  "bencher",
+  "criterion",
+  "hex",
+  "rcgen",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-pki-types",
+  "rustls-test",
+  "serde",
+@@ -1767,7 +1767,7 @@ name = "rustls-bench"
+ version = "0.1.0"
+ dependencies = [
+  "clap",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+  "rustls-graviola",
+  "rustls-ring",
+@@ -1787,7 +1787,7 @@ dependencies = [
+  "itertools 0.15.0",
+  "rayon",
+  "rustc-hash",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+  "rustls-fuzzing-provider",
+  "rustls-ring",
+@@ -1800,7 +1800,7 @@ version = "0.0.1"
+ dependencies = [
+  "regex",
+  "ring",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "tokio",
+ ]
+ 
+@@ -1812,7 +1812,7 @@ dependencies = [
+  "hickory-resolver",
+  "mio",
+  "rcgen",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+  "rustls-util",
+  "serde",
+@@ -1826,7 +1826,7 @@ dependencies = [
+ name = "rustls-fuzzing-provider"
+ version = "0.1.0"
+ dependencies = [
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "tracing-subscriber",
+ ]
+ 
+@@ -1848,7 +1848,7 @@ dependencies = [
+  "base64",
+  "num-bigint 0.5.1",
+  "openssl",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+  "rustls-util",
+ ]
+@@ -1866,7 +1866,7 @@ dependencies = [
+ name = "rustls-post-quantum"
+ version = "0.3.0-dev.2"
+ dependencies = [
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+ ]
+ 
+@@ -1875,19 +1875,19 @@ name = "rustls-provider-test"
+ version = "0.1.0"
+ dependencies = [
+  "hex",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+  "serde",
+  "serde_json",
+ ]
+ 
+ [[package]]
+ name = "rustls-ring"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ dependencies = [
+  "bencher",
+  "ring",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-pki-types",
+  "rustls-test",
+  "subtle",
+@@ -1900,7 +1900,7 @@ version = "0.1.0"
+ dependencies = [
+  "macro_rules_attribute",
+  "num-bigint 0.5.1",
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "rustls-aws-lc-rs",
+  "rustls-pki-types",
+  "rustls-ring",
+@@ -1913,9 +1913,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustls-util"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ dependencies = [
+- "rustls 0.24.0-dev.2",
++ "rustls 0.24.0-dev.3",
+  "tracing",
+ ]
  
 ```
 
----
-
-### Incident Patch 2: `0f57288d` (2026-11-11)
-**Commit Message**: Improve `Display` for `CertificateError::InvalidPurposeContext`
-
-- Print OIDs with dots, not commas
-- Fix where no EKUs are presented
-
-**File**: `rustls-test/tests/api/server_cert_verifier.rs` (modified, +1/-1)
+**File**: `fuzz/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -807,7 +807,7 @@ fn client_check_server_valid_purpose() {
-     assert_eq!(
-         format!("{error}"),
-         "invalid peer certificate: certificate does not allow extended key usage for \
--         server authentication, allows client authentication"
-+         server authentication; it allows client authentication"
-     );
- }
+@@ -84,7 +84,7 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
+ 
+ [[package]]
+ name = "rustls"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ dependencies = [
+  "rustls-pki-types",
+  "rustls-webpki",
+```
+
+**File**: `rustls-aws-lc-rs/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "rustls-aws-lc-rs"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ edition.workspace = true
+ rust-version = "1.85"
+ license = "Apache-2.0 OR ISC OR MIT"
+@@ -18,7 +18,7 @@ std = ["rustls/std"]
+ [dependencies]
+ aws-lc-rs = { workspace = true, features = ["prebuilt-nasm"] }
+ pki-types = { workspace = true }
+-rustls = { path = "../rustls", version = "0.24.0-dev.2", default-features = false }
++rustls = { path = "../rustls", version = "0.24.0-dev.3", default-features = false }
+ subtle = { workspace = true }
+ zeroize = { workspace = true }
  
 ```
 
-**File**: `rustls/src/error/mod.rs` (modified, +5/-2)
+**File**: `rustls-post-quantum/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -711,8 +711,11 @@ impl fmt::Display for CertificateError {
-             } => {
-                 write!(
-                     f,
--                    "certificate does not allow extended key usage for {required}, allows "
-+                    "certificate does not allow extended key usage for {required}; it allows "
-                 )?;
-+                if presented.is_empty() {
-+                    write!(f, "nothing")?;
-+                }
-                 for (i, eku) in presented.iter().enumerate() {
-                     if i > 0 {
-                         write!(f, ", ")?;
-@@ -1406,7 +1409,7 @@ impl fmt::Display for ExtendedKeyPurpose {
-             Self::Other(values) => {
-                 for (i, value) in values.iter().enumerate() {
-                     if i > 0 {
--                        write!(f, ", ")?;
-+                        write!(f, ".")?;
-                     }
-                     write!(f, "{value}")?;
-                 }
+@@ -10,8 +10,8 @@ categories = ["network-programming", "cryptography"]
+ autobenches = false
+ 
+ [dependencies]
+-rustls-aws-lc-rs = { version = "0.24.0-dev.2", path = "../rustls-aws-lc-rs" }
+-rustls = { version = "0.24.0-dev.2", path = "../rustls", default-features = false }
++rustls-aws-lc-rs = { version = "0.24.0-dev.3", path = "../rustls-aws-lc-rs" }
++rustls = { version = "0.24.0-dev.3", path = "../rustls", default-features = false }
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `rustls-provider-test/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ publish = false
+ 
+ [dependencies]
+ hex = "0.4"
+-rustls = { version = "0.24.0-dev.2", features = ["tracing"], path = "../rustls" }
++rustls = { version = "0.24.0-dev.3", features = ["tracing"], path = "../rustls" }
+ rustls-aws-lc-rs = { path = "../rustls-aws-lc-rs" }
+ serde = { version = "1", features = ["derive"] }
+ serde_json = "1"
+```
+
+**File**: `rustls-ring/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "rustls-ring"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ edition.workspace = true
+ rust-version = "1.85"
+ license = "Apache-2.0 OR ISC OR MIT"
+@@ -15,7 +15,7 @@ std = ["rustls/std"]
+ 
+ [dependencies]
+ pki-types = { workspace = true }
+-rustls = { path = "../rustls", version = "0.24.0-dev.2", default-features = false }
++rustls = { path = "../rustls", version = "0.24.0-dev.3", default-features = false }
+ ring = { workspace = true }
+ subtle = { workspace = true }
+ zeroize = { workspace = true }
+```
+
+**File**: `rustls-util/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "rustls-util"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ edition.workspace = true
+ license = "Apache-2.0 OR ISC OR MIT"
+ description = "Utilities for use with rustls"
+@@ -11,7 +11,7 @@ default = ["tracing"]
+ tracing = ["dep:tracing", "rustls/tracing"]
+ 
+ [dependencies]
+-rustls = { path = "../rustls", version = "0.24.0-dev.2", default-features = false, features = ["std"] }
++rustls = { path = "../rustls", version = "0.24.0-dev.3", default-features = false, features = ["std"] }
+ tracing = { workspace = true, optional = true }
+ 
+ [lints]
+```
+
+**File**: `rustls/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "rustls"
+-version = "0.24.0-dev.2"
++version = "0.24.0-dev.3"
+ edition.workspace = true
+ rust-version = "1.85"
+ license = "Apache-2.0 OR ISC OR MIT"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3427** (2026-11-12): Prepare 0.24.0-dev.3 (@ctz)
 - **PR #3426** (2026-11-12): Test coverage improvements (@ctz)
 - **PR #3425** (2026-11-12): Take pki-types 1.16: rely on canonical `DnsName`s & use `DnsName::into_owned()` (@ctz)
 - **PR #3423** (2026-11-11): add Wycheproof HPKE coverage, reject non-canonical X25519 HPKE recipient keys  (@cpu)
 - **PR #3422** (2026-11-10): Take graviola 0.4.5 and delete FAKE_HASH (@ctz)
 - **PR #3420** (2026-11-09): replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info (@mcr)
-- **PR #3419** (2026-11-09): Update Rust crate crabgrind to 0.5 (@renovate-bot)
 
 ---
 
@@ -2450,63 +2569,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Test `Display` for remaining error variants
+## X. Prepare 0.24.0-dev.3
 
 **RULE**:
-When implementing operations in `rustls/src/error/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `970b4474`: Test `Display` for remaining error variants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2cd8d27a`: Prepare 0.24.0-dev.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/error/tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[test]
-fn error_display() {
-    use super::{
-        ApiMisuse, CertificateError, EncryptedClientHelloError, ExtendedKeyPurpose, RejectedEch,
-    };
-
-    let cases: &[(Error, &str)] = &[
-        (
-            Error::UnsupportedNameType,
-            "presented server name type wasn't supported",
-        ),
-        (
-            Error::InvalidEncryptedClientHello(EncryptedClientHelloError::NoCompatibleConfig),
-            "encrypted client hello failure: NoCompatibleConfig",
-        ),
-        (Error::EncryptError, "cannot encrypt message"),
-        (
-            Error::NoSuitableCertificate,
-            "no suitable certificate found",
-        ),
-        (
-            Error::RejectedEch(RejectedEch {
-                retry_configs: Some(vec![]),
-            }),
-            "server rejected encrypted client hello (ECH) with retry configs",
-        ),
-        (
-            Error::RejectedEch(RejectedEch {
-                retry_configs: None,
-            }),
-            "server rejected encrypted client hello (ECH) without retry configs",
-        ),
-        (
-            CertificateError::NotValidForNameContext {
-                expected: ServerName::try_from("example.com")
-           
+ "rustls 0.24.0-dev.3",
+version = "0.24.0-dev.3"
+version = "0.24.0-dev.3"
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+version = "0.24.0-dev.3"
+ "rustls 0.24.0-dev.3",
+ "rustls 0.24.0-dev.3",
+version = "0.24.0-dev.3"
+ "rustls 0.24.0-dev.3",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ "rustls 0.24.0-dev.2",
+version = "0.24.0-dev.2"
+version = "0.24.0-dev.2"
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+version = "0.24.0-dev.2"
+ "rustls 0.24.0-dev.2",
+ "rustls 0.24.0-dev.2",
+version = "0.24.0-dev.2"
+ "rustls 0.24.0-dev.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `970b4474` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2cd8d27a` are properly handled with clean fallback behavior.

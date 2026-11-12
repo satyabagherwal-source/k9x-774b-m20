@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T21:56:46.133Z",
+  "last_updated": "2026-11-12T22:05:33.067Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "11e4d485f61841a281b14a07ca5518946433f6add2308035775253e1ba557de4",
-      "verified_at": "2026-11-12T10:52:54.211Z",
+      "content_hash": "3b8c4938b35a155d5d741f6c20d611d633b9022e74608b0908dbe48f15429159",
+      "verified_at": "2026-11-12T22:05:29.515Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T10:52:54.211Z"
+      "last_updated": "2026-11-12T22:05:29.515Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
-      "verified_at": "2026-11-11T10:52:26.691Z",
+      "content_hash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
+      "verified_at": "2026-11-12T22:05:24.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:52:26.691Z"
+      "last_updated": "2026-11-12T22:05:24.936Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",
@@ -11331,14 +11331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oceanbase-oceanbase",
-      "content_hash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
-      "verified_at": "2026-10-19T09:19:17.856Z",
+      "content_hash": "4fecfa7ceb81f8afe74db21d16d1d4b36a32bcf35b95c94a980f8263e2758e05",
+      "verified_at": "2026-11-12T22:05:33.066Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:19:17.856Z"
+      "last_updated": "2026-11-12T22:05:33.066Z"
     },
     "microsoft/react-native-windows": {
       "repository": "microsoft/react-native-windows",

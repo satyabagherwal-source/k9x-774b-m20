@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-2CWV",
-    "timestamp": "2026-11-09T12:13:07.423Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "b2efe3dcf41daf37e981320624af828ec596da799516d1713d330e3460f15b23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-2HO1",
-    "timestamp": "2026-11-09T12:13:13.585Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "7235e3911b35fce84a78fdceef4e712091bf521fc6daf0f87445722b79da2d86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-6DBA",
-    "timestamp": "2026-11-09T12:16:14.566Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "6c78f38e77fc62c6bd2c099d8eb53f4d8ad6778c18c6aa97c4da482853263fd5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-8026",
     "timestamp": "2026-11-09T12:17:30.702Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7490,6 +7445,51 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "a828e68bdd75eb287c250672b9d3dcac96a00ff2c82fd528ad7d211a2cdb9bb1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JLSW",
+    "timestamp": "2026-11-12T22:05:24.896Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JPC3",
+    "timestamp": "2026-11-12T22:05:29.475Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "3b8c4938b35a155d5d741f6c20d611d633b9022e74608b0908dbe48f15429159",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JS2Y",
+    "timestamp": "2026-11-12T22:05:33.034Z",
+    "repository": "oceanbase/oceanbase",
+    "learningId": "learn-github-oceanbase-oceanbase",
+    "contentHash": "4fecfa7ceb81f8afe74db21d16d1d4b36a32bcf35b95c94a980f8263e2758e05",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

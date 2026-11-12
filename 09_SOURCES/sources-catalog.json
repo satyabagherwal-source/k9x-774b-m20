@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "970b4474",
+    "sourceVersion": "2cd8d27a",
     "license": "NOASSERTION",
-    "contentHash": "11e4d485f61841a281b14a07ca5518946433f6add2308035775253e1ba557de4",
-    "lastHarvestedAt": "2026-11-12T10:52:54.199Z",
+    "contentHash": "3b8c4938b35a155d5d741f6c20d611d633b9022e74608b0908dbe48f15429159",
+    "lastHarvestedAt": "2026-11-12T22:05:29.481Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "0fb8b8f8",
+    "sourceVersion": "3967c693",
     "license": "MPL-2.0",
-    "contentHash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
-    "lastHarvestedAt": "2026-11-11T10:52:26.678Z",
+    "contentHash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
+    "lastHarvestedAt": "2026-11-12T22:05:24.900Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -7523,10 +7523,10 @@
     "repository": "oceanbase/oceanbase",
     "platform": "github",
     "sourceUrl": "https://github.com/oceanbase/oceanbase",
-    "sourceVersion": "5e8a63d2",
+    "sourceVersion": "d375c6d7",
     "license": "Apache-2.0",
-    "contentHash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
-    "lastHarvestedAt": "2026-10-19T09:19:17.850Z",
+    "contentHash": "4fecfa7ceb81f8afe74db21d16d1d4b36a32bcf35b95c94a980f8263e2758e05",
+    "lastHarvestedAt": "2026-11-12T22:05:33.038Z",
     "learningId": "learn-github-oceanbase-oceanbase"
   },
   "microsoft-react-native-windows": {

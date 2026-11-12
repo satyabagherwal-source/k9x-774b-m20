@@ -4,12 +4,12 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T10:52:39.814Z",
-    "lastVerified": "2026-11-12T10:52:39.814Z",
+    "lastChecked": "2026-11-12T22:05:10.900Z",
+    "lastVerified": "2026-11-12T22:05:10.900Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "11e4d485f61841a281b14a07ca5518946433f6add2308035775253e1ba557de4",
+    "contentHash": "3b8c4938b35a155d5d741f6c20d611d633b9022e74608b0908dbe48f15429159",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T21:56:51.821Z",
-    "lastVerified": "2026-11-12T21:56:51.821Z",
+    "lastChecked": "2026-11-12T22:05:39.563Z",
+    "lastVerified": "2026-11-12T22:05:39.563Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,12 +249,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T21:30:50.847Z",
-    "lastVerified": "2026-11-12T21:30:50.847Z",
+    "lastChecked": "2026-11-12T22:05:10.851Z",
+    "lastVerified": "2026-11-12T22:05:10.851Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -263,7 +263,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b20fce7c"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2408,11 +2409,21 @@
     "revisionIdentifier": "af5d1570"
   },
   "oceanbase-oceanbase": {
-    "name": "oceanbase",
+    "name": "oceanbase/oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-11T10:00:01.467Z",
-    "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-11-11T10:00:01.467Z"
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-12T22:05:14.253Z",
+    "lastVerified": "2026-11-12T22:05:14.253Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-oceanbase-oceanbase",
+    "contentHash": "4fecfa7ceb81f8afe74db21d16d1d4b36a32bcf35b95c94a980f8263e2758e05",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 20,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "flox-flox": {
     "name": "flox/flox",
@@ -7510,14 +7521,14 @@
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T10:52:09.947Z",
-    "lastVerified": "2026-11-11T10:52:09.947Z",
+    "lastChecked": "2026-11-12T22:05:07.100Z",
+    "lastVerified": "2026-11-12T22:05:07.100Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "9159e5174a98476900c5462dd31e696645f052a13582ebcbaaedf6ccf73fa784",
+    "contentHash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7700,12 +7711,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jhspetersson-fselect": {
-    "name": "jhspetersson/fselect",
+    "name": "fselect",
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T01:58:20.334Z",
-    "lastVerified": "2026-11-10T01:58:20.334Z",
+    "lastChecked": "2026-11-12T22:04:55.791Z",
+    "lastVerified": "2026-11-12T22:04:55.792Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
@@ -7714,7 +7725,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fea3c1b1"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
@@ -10786,9 +10798,9 @@
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",
     "officialUrl": "https://github.com/SEAbdulbasit/MusicApp-KMP",
-    "lastChecked": "2026-11-08T16:14:17.427Z",
+    "lastChecked": "2026-11-12T22:05:00.787Z",
     "revisionIdentifier": "3048f024",
-    "lastVerified": "2026-11-08T16:14:17.427Z"
+    "lastVerified": "2026-11-12T22:05:00.787Z"
   },
   "ugolbck-seofordev": {
     "name": "seofordev",
@@ -12723,12 +12735,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "faker-js-faker": {
-    "name": "faker-js/faker",
+    "name": "faker",
     "officialUrl": "https://github.com/faker-js/faker",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T23:47:02.271Z",
-    "lastVerified": "2026-11-07T23:47:02.271Z",
+    "lastChecked": "2026-11-12T22:04:58.313Z",
+    "lastVerified": "2026-11-12T22:04:58.313Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-faker-js-faker",
@@ -12737,7 +12749,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5415aecc"
   },
   "electron-electron": {
     "name": "electron/electron",

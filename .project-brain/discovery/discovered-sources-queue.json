@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T21:56:52.212Z",
+  "updated_at": "2026-11-12T22:05:39.933Z",
   "stats": {
-    "total_discovered": 1678,
-    "approved_pending_harvest": 1539,
+    "total_discovered": 1694,
+    "approved_pending_harvest": 1555,
     "harvested_count": 0,
     "rejected_count": 139,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1540,
+      "COMMUNITY_AND_EXPERT": 1556,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -35960,6 +35960,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-A2B374FDDF2F": {
+      "id": "SRC-A2B374FDDF2F",
+      "url": "https://github.com/opentofu/opentofu",
+      "title": "https://github.com/opentofu/opentofu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-B5BB8806C3EF": {
+      "id": "SRC-B5BB8806C3EF",
+      "url": "https://github.com/manicminer/hamilton/blob/v0.44.0/environments/environments.go",
+      "title": "https://github.com/manicminer/hamilton/blob/v0.44.0/environments/environments.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.720Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-BF6D1127EC1E": {
+      "id": "SRC-BF6D1127EC1E",
+      "url": "https://management.azure.com/metadata/endpoints?api-version=2023-11-01",
+      "title": "https://management.azure.com/metadata/endpoints?api-version=2023-11-01",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.731Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-C39EE80E74C4": {
+      "id": "SRC-C39EE80E74C4",
+      "url": "https://%s/metadata/endpoints?api-version=2023-11-01",
+      "title": "https://%s/metadata/endpoints?api-version=2023-11-01",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.741Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-2419480AC7F6": {
+      "id": "SRC-2419480AC7F6",
+      "url": "https://%s.blob.%s/%s",
+      "title": "https://%s.blob.%s/%s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-C3C90961AC39": {
+      "id": "SRC-C3C90961AC39",
+      "url": "https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity",
+      "title": "https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-83AD8D8B70F9": {
+      "id": "SRC-83AD8D8B70F9",
+      "url": "https://github.com/jmuleiro/opentofu-symbols-bug",
+      "title": "https://github.com/jmuleiro/opentofu-symbols-bug",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.777Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-2891149FF8E2": {
+      "id": "SRC-2891149FF8E2",
+      "url": "https://gist.github.com/jmuleiro/67d8ec15f242d7fa204246abcd301f95",
+      "title": "https://gist.github.com/jmuleiro/67d8ec15f242d7fa204246abcd301f95",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-3B9E80A2C3BF": {
+      "id": "SRC-3B9E80A2C3BF",
+      "url": "https://github.com/opentofu/opentofu/issues/2522",
+      "title": "https://github.com/opentofu/opentofu/issues/2522",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-6251679BF86A": {
+      "id": "SRC-6251679BF86A",
+      "url": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:38dfdc5be289981098cecf593386c632d0161239/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server",
+      "title": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:38dfdc5be289981098cecf593386c632d0161239/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-683EDD3802BC": {
+      "id": "SRC-683EDD3802BC",
+      "url": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:38dfdc5be289981098cecf593386c632d0161239/ca",
+      "title": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:38dfdc5be289981098cecf593386c632d0161239/ca",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-753D0B320072": {
+      "id": "SRC-753D0B320072",
+      "url": "https://app.codecov.io/gh/rustls/rustls/pull/3427?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/rustls/rustls/pull/3427?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.854Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-FC719A76C707": {
+      "id": "SRC-FC719A76C707",
+      "url": "https://app.codecov.io/gh/rustls/rustls/commit/38dfdc5be289981098cecf593386c632d0161239?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/rustls/rustls/commit/38dfdc5be289981098cecf593386c632d0161239?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.869Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-AF7D7B4BEC08": {
+      "id": "SRC-AF7D7B4BEC08",
+      "url": "https://github.com/oceanbase/oceanbase",
+      "title": "https://github.com/oceanbase/oceanbase",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.910Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
+        "fileName": "oceanbase-oceanbase-learnings.md"
+      }
+    },
+    "SRC-3068FEFBA0EF": {
+      "id": "SRC-3068FEFBA0EF",
+      "url": "https://github.com/user-attachments/assets/21a0f985-ee00-49f8-b8c7-a35f0c3f4397",
+      "title": "https://github.com/user-attachments/assets/21a0f985-ee00-49f8-b8c7-a35f0c3f4397",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
+        "fileName": "oceanbase-oceanbase-learnings.md"
+      }
+    },
+    "SRC-1A351A77A4A7": {
+      "id": "SRC-1A351A77A4A7",
+      "url": "https://github.com/oceanbase/oceanbase/wiki/how_to_contribute",
+      "title": "https://github.com/oceanbase/oceanbase/wiki/how_to_contribute",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:05:39.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
+        "fileName": "oceanbase-oceanbase-learnings.md"
       }
     }
   }
