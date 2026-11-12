@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:08:44.147Z",
-  "total_cycles_completed": 9062,
-  "total_learnings_persisted": 9062,
-  "total_rules_promoted": 8898,
+  "last_updated": "2026-11-12T23:17:01.239Z",
+  "total_cycles_completed": 9064,
+  "total_learnings_persisted": 9064,
+  "total_rules_promoted": 8900,
   "history": [
-    {
-      "timestamp": "2026-11-12T01:11:42.003Z",
-      "repository": "Zyphra/ZONOS3-Mini",
-      "learningId": "learn-huggingface-zyphra-zonos3-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T01:12:03.332Z",
-      "repository": "webrecorder/browsertrix-crawler",
-      "learningId": "learn-github-webrecorder-browsertrix-crawler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T01:12:06.374Z",
       "repository": "darrylmorley/whatcable",
@@ -1403,6 +1389,20 @@
       "repository": "speridlabs/idol",
       "learningId": "learn-huggingface-speridlabs-idol",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T23:16:53.681Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T23:17:01.239Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

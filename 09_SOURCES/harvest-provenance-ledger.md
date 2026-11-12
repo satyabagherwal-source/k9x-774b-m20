@@ -9255,3 +9255,5 @@ Every entry in this ledger must capture:
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `e02e0d7e` | Multi-dimensional audit evidence | 2026-11-12T22:48:49.947Z |
 | `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-12T23:08:44.142Z |
 | `learn-dom-d-cdb84b7d` | `project://hf-speridlabs-idol` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | 2026-11-12T23:08:56.567Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `b684174b` | Multi-dimensional audit evidence | 2026-11-12T23:16:53.674Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `203f88d7` | Multi-dimensional audit evidence | 2026-11-12T23:17:01.232Z |

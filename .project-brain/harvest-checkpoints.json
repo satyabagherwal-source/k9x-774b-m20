@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T23:08:44.152Z",
+  "last_updated": "2026-11-12T23:17:01.243Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
-      "verified_at": "2026-11-11T10:52:32.770Z",
+      "content_hash": "f65937a30f1db18983b9f090a3944ff9e9383e3ce209562027f185416bcfdccd",
+      "verified_at": "2026-11-12T23:17:01.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:52:32.770Z"
+      "last_updated": "2026-11-12T23:17:01.243Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -13356,14 +13356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chrisbanes-skills",
-      "content_hash": "acbde89916fcc54d3900962e4c615714e30c9c84e0ad40be3a4db14c5b030d1e",
-      "verified_at": "2026-11-05T11:30:50.813Z",
+      "content_hash": "7734d4299176c5b0ff424df0c61d8e9685fa2ac33516b3e5c0d241f31e458b47",
+      "verified_at": "2026-11-12T23:16:53.685Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:30:50.813Z"
+      "last_updated": "2026-11-12T23:16:53.685Z"
     },
     "joreilly/Confetti": {
       "repository": "joreilly/Confetti",

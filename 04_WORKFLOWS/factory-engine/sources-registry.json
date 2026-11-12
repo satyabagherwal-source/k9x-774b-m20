@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T23:08:46.683Z",
-    "lastVerified": "2026-11-12T23:08:46.683Z",
+    "lastChecked": "2026-11-12T23:17:07.727Z",
+    "lastVerified": "2026-11-12T23:17:07.727Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -212,8 +212,8 @@
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T12:41:17.858Z",
-    "lastVerified": "2026-11-11T12:41:17.858Z",
+    "lastChecked": "2026-11-12T23:16:39.063Z",
+    "lastVerified": "2026-11-12T23:16:39.063Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitnami-sealed-secrets",
@@ -462,12 +462,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T22:33:39.477Z",
-    "lastVerified": "2026-11-12T22:33:39.477Z",
+    "lastChecked": "2026-11-12T23:16:46.523Z",
+    "lastVerified": "2026-11-12T23:16:46.523Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -476,7 +476,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "66059605"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -643,12 +644,12 @@
     "revisionIdentifier": "763f4021"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T12:32:45.838Z",
-    "lastVerified": "2026-11-12T12:32:45.838Z",
+    "lastChecked": "2026-11-12T23:16:41.559Z",
+    "lastVerified": "2026-11-12T23:16:41.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -657,7 +658,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1afb2cc4"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -2878,14 +2880,14 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-11T10:52:14.422Z",
-    "lastVerified": "2026-11-11T10:52:14.422Z",
+    "lastChecked": "2026-11-12T23:16:47.535Z",
+    "lastVerified": "2026-11-12T23:16:47.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
-    "contentHash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
+    "contentHash": "f65937a30f1db18983b9f090a3944ff9e9383e3ce209562027f185416bcfdccd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8055,9 +8057,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-10T04:36:43.028Z",
+    "lastChecked": "2026-11-12T23:16:31.463Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-10T04:36:43.028Z"
+    "lastVerified": "2026-11-12T23:16:31.463Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",
@@ -10904,22 +10906,21 @@
     "lastVerified": "2026-11-11T16:55:46.472Z"
   },
   "chrisbanes-skills": {
-    "name": "skills",
+    "name": "chrisbanes/skills",
     "officialUrl": "https://github.com/chrisbanes/skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T17:13:16.272Z",
-    "lastVerified": "2026-11-08T17:13:16.272Z",
+    "lastChecked": "2026-11-12T23:16:40.613Z",
+    "lastVerified": "2026-11-12T23:16:40.613Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chrisbanes-skills",
-    "contentHash": "acbde89916fcc54d3900962e4c615714e30c9c84e0ad40be3a4db14c5b030d1e",
+    "contentHash": "7734d4299176c5b0ff424df0c61d8e9685fa2ac33516b3e5c0d241f31e458b47",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "72628aea"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "melihandic-deep-in-gsc": {
     "name": "deep-in-gsc",
@@ -12895,9 +12896,9 @@
   "syntax-tree-mdast": {
     "name": "mdast",
     "officialUrl": "https://github.com/syntax-tree/mdast",
-    "lastChecked": "2026-11-08T00:41:37.601Z",
+    "lastChecked": "2026-11-12T23:16:34.020Z",
     "revisionIdentifier": "c034ec9d",
-    "lastVerified": "2026-11-08T00:41:37.601Z"
+    "lastVerified": "2026-11-12T23:16:34.020Z"
   },
   "shiguangschedule-shiguangschedule": {
     "name": "shiguangschedule",

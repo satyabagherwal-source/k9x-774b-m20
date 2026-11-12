@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T23:08:44.005Z",
+  "last_updated": "2026-11-12T23:17:01.082Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7643,11 +7643,16 @@
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "72628aea",
-      "content_hash": "acbde89916fcc54d3900962e4c615714e30c9c84e0ad40be3a4db14c5b030d1e",
+      "source_version": "b684174b",
+      "content_hash": "7734d4299176c5b0ff424df0c61d8e9685fa2ac33516b3e5c0d241f31e458b47",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "OpenCode plugin installation from git (#145)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2784,
           "title": "Improve affected-test discovery and fixture calibration (#121)",
@@ -7684,7 +7689,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T11:30:50.672Z",
+      "verified_at": "2026-11-12T23:16:53.435Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9476,14 +9481,19 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "f7d204bd",
-      "content_hash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
+      "source_version": "203f88d7",
+      "content_hash": "f65937a30f1db18983b9f090a3944ff9e9383e3ce209562027f185416bcfdccd",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add release note entries for released security fixes",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "replicated data loss when dropping subscription before checkpoints catch up",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9557,7 +9567,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:52:32.441Z",
+      "verified_at": "2026-11-12T23:17:01.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

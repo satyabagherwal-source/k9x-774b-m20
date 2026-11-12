@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T23:08:56.583Z",
+  "updated_at": "2026-11-12T23:17:07.907Z",
   "stats": {
-    "total_discovered": 1819,
-    "approved_pending_harvest": 1677,
+    "total_discovered": 1823,
+    "approved_pending_harvest": 1681,
     "harvested_count": 0,
     "rejected_count": 142,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1681,
+      "COMMUNITY_AND_EXPERT": 1685,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -39041,6 +39041,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
         "fileName": "hf-speridlabs-idol-learnings.md"
+      }
+    },
+    "SRC-D85C2BD70973": {
+      "id": "SRC-D85C2BD70973",
+      "url": "https://github.com/chrisbanes/skills",
+      "title": "https://github.com/chrisbanes/skills",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:17:07.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-6D32C6450E41": {
+      "id": "SRC-6D32C6450E41",
+      "url": "https://claude.dev/blog/which-claude-model-should-you-build-with",
+      "title": "https://claude.dev/blog/which-claude-model-should-you-build-with",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:17:07.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-3276BE361A2F": {
+      "id": "SRC-3276BE361A2F",
+      "url": "https://github.com/crate/crate",
+      "title": "https://github.com/crate/crate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:17:07.893Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-D5594EE4E39B": {
+      "id": "SRC-D5594EE4E39B",
+      "url": "https://cratedb.com/docs/crate/reference/en/latest",
+      "title": "https://cratedb.com/docs/crate/reference/en/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:17:07.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
       }
     }
   }

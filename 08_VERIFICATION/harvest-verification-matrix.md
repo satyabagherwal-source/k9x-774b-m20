@@ -9246,3 +9246,5 @@
 | `CYCLE-20261112-3FVA` | `2026-11-12T22:48:49.942Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`00d9c630...`) |
 | `CYCLE-20261112-T1BE` | `2026-11-12T23:08:44.138Z` | `speridlabs/idol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | Yes (`47b0e840...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T23:08:56.567Z` | `hf-speridlabs-idol` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CDB84B7D` [Domain D] | Yes (`a3042da6...`) |
+| `CYCLE-20261112-3J1I` | `2026-11-12T23:16:53.670Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7734d429...`) |
+| `CYCLE-20261112-3OVG` | `2026-11-12T23:17:01.228Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f65937a3...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:08:56.632Z",
+  "last_updated": "2026-11-12T23:17:07.919Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7508,6 +7508,33 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-00C26F-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D74140",
+      "directive_title": "OpenCode plugin installation from git (#145)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "chrisbanes-skills",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D74140-opencode-plugin-installation-from-git-14.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FE79B0",
+      "directive_title": "replicated data loss when dropping subscription before checkpoints catch up",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crate-crate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FE79B0-replicated-data-loss-when-dropping-subsc.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-00D772",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00D772-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-12"
     }
   ]

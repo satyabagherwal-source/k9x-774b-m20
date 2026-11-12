@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "f7d204bd",
+    "sourceVersion": "203f88d7",
     "license": "Apache-2.0",
-    "contentHash": "79f885598352fee27a0ef3d5611c8ffec47131667ba61b72b2f21d1bce136c20",
-    "lastHarvestedAt": "2026-11-11T10:52:32.664Z",
+    "contentHash": "f65937a30f1db18983b9f090a3944ff9e9383e3ce209562027f185416bcfdccd",
+    "lastHarvestedAt": "2026-11-12T23:17:01.232Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "72628aea",
+    "sourceVersion": "b684174b",
     "license": "Apache-2.0",
-    "contentHash": "acbde89916fcc54d3900962e4c615714e30c9c84e0ad40be3a4db14c5b030d1e",
-    "lastHarvestedAt": "2026-11-05T11:30:50.793Z",
+    "contentHash": "7734d4299176c5b0ff424df0c61d8e9685fa2ac33516b3e5c0d241f31e458b47",
+    "lastHarvestedAt": "2026-11-12T23:16:53.674Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {

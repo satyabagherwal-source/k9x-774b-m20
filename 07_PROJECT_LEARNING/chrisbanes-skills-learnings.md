@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source**: github ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
-> **Source Version**: `72628aea`  
+> **Source Version**: `b684174b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:30:49.994Z  
+> **Timestamp**: 2026-11-12T23:16:40.805Z  
 > **Learning ID**: `learn-github-chrisbanes-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:30:49.987Z  
+> **Harvest Timestamp**: 2026-11-12T23:16:40.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Skills for Kotlin, Jetpack Compose, and Android development
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1139 stars
+- **Stars / Engagement**: 1154 stars
 
 ---
 
@@ -224,14 +224,11 @@ class ProfileModel {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #143** (2026-11-05): **Remove CLAUDE.md symlink**
-  *Symptoms*: This repo has an `AGENTS.md` file with a `CLAUDE.md` symlink pointing at it because Claude Code previously didn't support `AGENTS.md`. That causes issues with some tools like Microsoft's [APM](https://github.com/microsoft/apm), which sometimes throws an error when a repo contains a symlink: https://github.com/microsoft/apm/issues/3110  Since version v2.1.277, Claude Code natively supports `AGENTS.md`: https://code.claude.com/docs/en/memory#agents-md. The documentation says [the symlink workaround can be deleted](https://code.claude.com/docs/en/memory#remove-an-earlier-agents-md-workaround).  This PR removes the symlink since it doesn't seem like it's necessary anymore and it restricts these skills in APM.
+- **Issue #145** (2026-11-11): **Fix OpenCode plugin installation from git**
+  *Symptoms*: ## Summary  ```diff - npm run build + npm run references:check ```  Rename the reference check so npm does not trigger git dependency preparation, and update CI and documentation to use the new name.  ## Evidence  - **Before:** Installing the public git dependency triggered a nested npm install and failed with `EALLOWSCRIPTS`. - **After:** Installing an isolated git snapshot with the changed manifest succeeded without a nested install. `npm run references:check` and the four reference sync tests passed. The package and plugin manifests contain no git preparation trigger scripts. - Local lint could not run because `remark` was not installed. OpenCode loading was not tested end to end.  ## Merge Danger  **Door:** Two-way  **Blast Radius:** Low. Callers of `npm run build` must use `npm run references:check`.
 
-- **Issue #142** (2026-11-03): **Restore tier-calibration rules in subagent-delegation**
-  *Symptoms*: Follow-up to #141, which merged before its review repairs landed.  ## Summary  - Restores tier-calibration rules from the earlier user-level policy in `SKILL.md` step 5: keep the lead's model unchanged; file count, component count, or a sensitive area alone does not raise a tier; prefer a stronger model at lower effort when judgment matters; at opus, Sol, or an equivalent tier with high effort or above, make the investigation question or review checks concrete. - Marks the Claude ordinary-implementation row as the default. - `claude-code.md`: a required setting the runtime does not expose is reported to the lead before dispatch rather than omitted. - Step 8: proportional audits defer to a review the calling workflow requires. - Two `deliver-spec` nested rubrics now match the headless-session notification rule instead of claiming subagents never receive notifications. - Migration record: marks superseded statements, records the restored rules, and records the user-confirmed relaxation of the shared background-writer permission rule (merged in #141).  ## Validation  Independent read-only review: `ship` after two rounds.  - `npm run lint` - `npm run build` (references in sync) - `npm run evals:validate` (244 cases) - `npm test` (7 Node, 275 script, 416 evaluation-harness tests) - `git diff --check`  No live model evaluations; no version changes. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"883884b3f8f53a2dbf36a1a1ba1fe73ab056a9cb","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-03T19:31:15.694208Z">2026-11-03T19:31:15.694208Z</relative-time> | `883884b` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=94776886"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=banes&amp;next=%2Fchrisbanes%2Fskills%2Fpull%2F142&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2"><img alt="View in Greptile" src="https
+- **Issue #144** (2026-11-10): **Route Claude computer use to opus and conflicting evidence to fable/high**
+  *Symptoms*: Updates the Claude Code routing table in `subagent-delegation` to follow Anthropic's model-selection guidance. Codex routing and every other Claude row are unchanged.  ## Evidence  Source: "Which Claude model should you build with? Fable, Opus, Sonnet, or Haiku" (Addy Osmani, Anthropic developer blog, 2026-11-09).  | Finding | Source URL | Checked | Change made | |---|---|---|---| | The post maps "computer use and vision-heavy workflows" to Opus 5.5 at `medium`, because they are long agentic loops over many screenshots and images | https://claude.dev/blog/which-claude-model-should-you-build-with/ | 2026-11-10 | `claude-code.md`: the computer use / visual interpretation row moves from `sonnet / medium` to `opus / medium` | | "Before you raise Opus 5.5 past `high` on a hard task, test Fable 5.2." Fable 5.2 at `high` scores about the same as Opus 5.5 at `max` on FrontierCode 2.0 (45.3% vs 45.5%) for roughly half the cost per task | https://claude.dev/blog/which-claude-model-should-you-build-with/ | 2026-11-10 | `claude-code.md`: the conflicting-evidence row moves from `opus / xhigh` to `fable / high`. Step 4 now names `fable / high` as the top routine row and reserves `max` and Fable above `high` for justified exceptions. The existing exclusions stay. If Fable is unavailable, the subagent uses `opus / xhigh` and reports the substitution to the lead. `SKILL.md`: the concreteness requirement for high-tier briefs now applies to fable as well as opus. Eval `subagent-delegation-claud
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -248,78 +245,96 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72628aea` (2026-11-05)
-**Commit Message**: Remove CLAUDE.md symlink (#143)
+### Incident Patch 1: `50d54366` (2026-11-11)
+**Commit Message**: Fix OpenCode plugin installation from git (#145)
 
-**File**: `CLAUDE.md` (removed, +0/-1)
+## Summary
+
 ```diff
-@@ -1 +0,0 @@
--AGENTS.md
-\ No newline at end of file
+- npm run build
++ npm run references:check
 ```
 
----
+Rename the reference check so npm does not trigger git dependency
+preparation, and update CI and documentation to use the new name.
 
-### Incident Patch 2: `8df9735a` (2026-11-03)
-**Commit Message**: Bump version to 2026.11.3
+## Evidence
 
-**File**: `.claude-plugin/plugin.json` (modified, +1/-1)
+- **Before:** Installing the public git dependency triggered a nested
+npm install and failed with `EALLOWSCRIPTS`.
+- **After:** Installing an isolated git snapshot with the changed
+manifest succeeded without a nested install. `npm run references:check`
+and the four reference sync tests passed. The package and plugin
+manifests contain no git preparation trigger scripts.
+- Local lint could not run because `remark` was not installed. OpenCode
+loading was not tested end to end.
+
+## Merge Danger
+
+**Door:** Two-way
+
+**Blast Radius:** Low. Callers of `npm run build` must use `npm run
+references:check`.
+
+**File**: `.github/workflows/lint.yml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "chrisbanes-skills",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
-   "author": {
-     "name": "Chris Banes",
-     "url": "https://github.com/chrisbanes"
+@@ -19,7 +19,7 @@ jobs:
+ 
+       - run: npm ci
+ 
+-      - run: npm run build
++      - run: npm run references:check
+ 
+       - run: npm run lint
+ 
 ```
 
-**File**: `.codex-plugin/plugin.json` (modified, +1/-1)
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "chrisbanes-skills",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "author": {
-     "name": "Chris Banes",
+@@ -128,7 +128,7 @@ jobs:
+           python3 scripts/release.py validate-manifests "$VERSION"
+ 
+       - name: Check bundled references
+-        run: npm run build
++        run: npm run references:check
+ 
+       - name: Lint skills
+         run: npm run lint
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -155,7 +155,7 @@ resource grants and final integrated validation still apply.
+ 
+ Edit `references/subagent-selection.md`, then run
+ `npm run references:sync` and include the updated bundled copies in the change.
+-Run `npm run build` to check that all copies are regular files matching their
++Run `npm run references:check` to check that all copies are regular files matching their
+ sources; it fails on drift without rewriting files.
+ `.gitattributes` marks every copy as generated so GitHub collapses it in pull
+ request diffs; a test keeps that list in step with the sync script.
 ```
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "chrisbanes-skills",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "type": "module",
-   "main": ".opencode/plugins/chrisbanes-skills.js",
-```
-
-**File**: `plugin.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-   "name": "chrisbanes-skills",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "author": {
-     "name": "Chris Banes",
+@@ -7,7 +7,7 @@
+   "repository": "https://github.com/chrisbanes/skills",
+   "license": "Apache-2.0",
+   "scripts": {
+-    "build": "python3 scripts/sync_references.py --check",
++    "references:check": "python3 scripts/sync_references.py --check",
+     "references:sync": "python3 scripts/sync_references.py",
+     "lint": "remark --frail skills/ README.md evals/README.md",
+     "test": "node --test .opencode/tests/*.test.js && python3 -m unittest scripts/test_release.py scripts/test_sync_references.py skills/run-github-project/scripts/test_rank_tickets.py skills/run-github-project/scripts/test_watch_project.py skills/gradle-run/scripts/test_gradle_run.py skills/release-kotlin-library/scripts/test_release.py && python3 -m unittest discover -s evals/tests -p 'test_*.py'",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #145** (2026-11-11): Fix OpenCode plugin installation from git (@chrisbanes)
+- **PR #144** (2026-11-10): Route Claude computer use to opus and conflicting evidence to fable/high (@chrisbanes)
 - **PR #143** (2026-11-05): Remove CLAUDE.md symlink (@VirtualParticle)
 - **PR #142** (2026-11-03): Restore tier-calibration rules in subagent-delegation (@chrisbanes)
 - **PR #141** (2026-11-03): Add opt-in provider-aware subagent delegation skill (@chrisbanes)
-- **PR #139** (2026-11-03): Harden run-github-project drain admission and recovery (@chrisbanes)
-- **PR #138** (2026-11-02): Drop the ready-for-agent label requirement from to-plan (@chrisbanes)
-- **PR #137** (2026-11-01): Include a plan overview in deliver-spec approval requests (@chrisbanes)
+- **PR #140** (closed): Add explicit provider-aware subagent delegation skill (@chrisbanes)
 
 ---
 
@@ -339,28 +354,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version to 2026.11.3
+## X. OpenCode plugin installation from git (#145)
 
 **RULE**:
-When implementing operations in `.claude-plugin/plugin.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8df9735a`: Bump version to 2026.11.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50d54366`: OpenCode plugin installation from git (#145). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/plugin.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  "version": "2026.11.3",
+      - run: npm run references:check
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-  "version": "2026.11.2",
+      - run: npm run build
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8df9735a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50d54366` are properly handled with clean fallback behavior.
