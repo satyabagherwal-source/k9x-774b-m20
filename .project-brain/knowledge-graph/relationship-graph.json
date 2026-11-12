@@ -2,13 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T05:13:50.798Z",
+  "updated_at": "2026-11-12T05:27:35.956Z",
   "statistics": {
-    "total_nodes": 10,
+    "total_nodes": 11,
     "total_edges": 3,
     "domain_distribution": {
       "D": 9,
-      "M": 1
+      "M": 1,
+      "H": 1
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 3
@@ -228,6 +229,28 @@
       ],
       "created_at": "2026-11-12T05:13:50.798Z",
       "updated_at": "2026-11-12T05:13:50.798Z"
+    },
+    "DOM-H-0AA4F6ED": {
+      "id": "DOM-H-0AA4F6ED",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Install the native Apple Silicon build in init.sh (#1623)",
+      "summary": "Prevents defects observed in production commit `c262c330`: Install the native Apple Silicon build in init.sh (#1623). Unvalidated execution  -> When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/conc",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://wasm-bindgen-wasm-pack/wasm-bindgen-wasm-pack-learnings.md",
+        "source_version": "c262c330",
+        "observed_at": "2026-11-12T05:26:51.829Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wasm-bindgen-wasm-pack)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T05:27:35.956Z",
+      "updated_at": "2026-11-12T05:27:35.956Z"
     }
   },
   "edges": [

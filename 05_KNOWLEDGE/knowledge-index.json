@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T05:13:31.858Z",
+  "last_updated": "2026-11-12T05:27:16.444Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18375,8 +18375,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "8da533c3",
-      "content_hash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
+      "source_version": "f8d8fe10",
+      "content_hash": "66775b3009776caebd919003873c234b50d7764be90b55457162069910c8539f",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -18388,6 +18388,11 @@
         {
           "number": null,
           "title": "mito2): publish manifest deltas by conditional create under a lease (#10234)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "log-store): close raft-engine engines on shutdown (#9518)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18471,7 +18476,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T21:06:02.914Z",
+      "verified_at": "2026-11-12T05:27:16.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66420,11 +66425,16 @@
       "slug": "wasm-bindgen-wasm-pack",
       "platform": "github",
       "source_url": "https://github.com/wasm-bindgen/wasm-pack",
-      "source_version": "b4586ca5",
-      "content_hash": "cad842dd19948f15a62fa6a08c79fdcbc2fac298344d1aff564684f1536f64ee",
+      "source_version": "c262c330",
+      "content_hash": "3c0a9e088ed9a5519f168579e337cc367e4db523ecb55147696df5b4599bc524",
       "dossier_path": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Install the native Apple Silicon build in init.sh (#1623)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2005,
           "title": "npm): replace deprecated binary-install and add release auto-publish (#1579)",
@@ -66471,7 +66481,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:36:02.061Z",
+      "verified_at": "2026-11-12T05:27:03.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82688,14 +82698,19 @@
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "a81d62a2",
-      "content_hash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
+      "source_version": "4ee8d46f",
+      "content_hash": "0211fbae1cecfa5f63610e69e1a9ab1b4c5ccbdc039a4dad9862ca6b8b5e2333",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "test: cover cancellation lifecycle and timeout precedence (#11376)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "fetch): close source streams after size-limit errors (#11239)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -82739,7 +82754,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:44:19.352Z",
+      "verified_at": "2026-11-12T05:27:07.604Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

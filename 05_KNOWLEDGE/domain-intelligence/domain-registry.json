@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T05:13:50.796Z",
-  "total_records": 58,
+  "last_updated": "2026-11-12T05:27:35.955Z",
+  "total_records": 59,
   "domains": {
     "A": {
       "total": 1,
@@ -76,7 +76,7 @@
       ]
     },
     "H": {
-      "total": 13,
+      "total": 14,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -90,7 +90,8 @@
         "DOM-H-A79F59EB",
         "DOM-H-32FEBC73",
         "DOM-H-57AD88EF",
-        "DOM-H-03EB2317"
+        "DOM-H-03EB2317",
+        "DOM-H-0AA4F6ED"
       ]
     },
     "I": {
@@ -2349,6 +2350,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T05:13:50.795Z"
+    },
+    "DOM-H-0AA4F6ED": {
+      "record_id": "DOM-H-0AA4F6ED",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Install the native Apple Silicon build in init.sh (#1623)",
+      "content": "When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wasm-bindgen/wasm-pack. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "a7342d587c925b4064ce85d1e15f9ffe3b5627eabc9970f71819c5e889817fa2",
+      "summary": "Prevents defects observed in production commit `c262c330`: Install the native Apple Silicon build in init.sh (#1623). Unvalidated execution  -> When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/conc",
+      "provenance": {
+        "source_uri": "project://wasm-bindgen-wasm-pack/wasm-bindgen-wasm-pack-learnings.md",
+        "source_version": "c262c330",
+        "observed_at": "2026-11-12T05:26:51.829Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wasm-bindgen-wasm-pack)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of wasm-bindgen-wasm-pack"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T05:27:35.953Z"
     }
   }
 }

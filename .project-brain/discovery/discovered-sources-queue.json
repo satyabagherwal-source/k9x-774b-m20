@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T05:13:50.938Z",
+  "updated_at": "2026-11-12T05:27:36.124Z",
   "stats": {
-    "total_discovered": 806,
-    "approved_pending_harvest": 730,
+    "total_discovered": 842,
+    "approved_pending_harvest": 764,
     "harvested_count": 0,
-    "rejected_count": 76,
+    "rejected_count": 78,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 754,
+      "COMMUNITY_AND_EXPERT": 790,
       "OFFICIAL_DOCUMENTATION": 22,
       "STANDARDS_AND_SPECIFICATIONS": 28,
       "ENGINEERING_BLOGS": 1,
@@ -17217,6 +17217,784 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
         "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-D7702FD56BE4": {
+      "id": "SRC-D7702FD56BE4",
+      "url": "https://github.com/wasm-bindgen/wasm-pack",
+      "title": "https://github.com/wasm-bindgen/wasm-pack",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-9E267BFE019D": {
+      "id": "SRC-9E267BFE019D",
+      "url": "https://github.com/rustwasm/console_error_panic_hook",
+      "title": "https://github.com/rustwasm/console_error_panic_hook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-3495178E7B6E": {
+      "id": "SRC-3495178E7B6E",
+      "url": "https://github.com/nodejs/node/blob/c3664227a83cf009e9a2e1ddeadbd09c14ae466f/deps/uv/src/win/util.c",
+      "title": "https://github.com/nodejs/node/blob/c3664227a83cf009e9a2e1ddeadbd09c14ae466f/deps/uv/src/win/util.c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-5D12E9A34018": {
+      "id": "SRC-5D12E9A34018",
+      "url": "https://github.com/wasm-bindgen/wasm-pack/releases/download/v$%7Bversion",
+      "title": "https://github.com/wasm-bindgen/wasm-pack/releases/download/v$%7Bversion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-5BDC29E753D0": {
+      "id": "SRC-5BDC29E753D0",
+      "url": "https://github.com/WebAssembly/binaryen/releases",
+      "title": "https://github.com/WebAssembly/binaryen/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-EBBB2DE9E69A": {
+      "id": "SRC-EBBB2DE9E69A",
+      "url": "https://github.com/wasm-bindgen/wasm-pack/issues/1442",
+      "title": "https://github.com/wasm-bindgen/wasm-pack/issues/1442",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-5BAE42F3028A": {
+      "id": "SRC-5BAE42F3028A",
+      "url": "https://github.com/wasm-bindgen/wasm-pack/pull/1623",
+      "title": "https://github.com/wasm-bindgen/wasm-pack/pull/1623",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-8E8B4871E967": {
+      "id": "SRC-8E8B4871E967",
+      "url": "https://github.com/MattiasBuelens",
+      "title": "https://github.com/MattiasBuelens",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-7BD50A766425": {
+      "id": "SRC-7BD50A766425",
+      "url": "https://github.com/wasm-bindgen/wasm-pack/pull/1088",
+      "title": "https://github.com/wasm-bindgen/wasm-pack/pull/1088",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:35.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
+        "fileName": "wasm-bindgen-wasm-pack-learnings.md"
+      }
+    },
+    "SRC-EE40D88EA29E": {
+      "id": "SRC-EE40D88EA29E",
+      "url": "https://github.com/axios/axios",
+      "title": "https://github.com/axios/axios",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-3222A96D05D9": {
+      "id": "SRC-3222A96D05D9",
+      "url": "https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser",
+      "title": "https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-24D7C4005508": {
+      "id": "SRC-24D7C4005508",
+      "url": "https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser-playwright",
+      "title": "https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser-playwright",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-1CE554B31982": {
+      "id": "SRC-1CE554B31982",
+      "url": "https://github.com/eslint/eslint",
+      "title": "https://github.com/eslint/eslint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.019Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-4394D3A06F0E": {
+      "id": "SRC-4394D3A06F0E",
+      "url": "https://github.com/sindresorhus/globals",
+      "title": "https://github.com/sindresorhus/globals",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-CA3952BCC2CC": {
+      "id": "SRC-CA3952BCC2CC",
+      "url": "https://github.com/rollup/rollup",
+      "title": "https://github.com/rollup/rollup",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.027Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-AD464B1F7225": {
+      "id": "SRC-AD464B1F7225",
+      "url": "https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest",
+      "title": "https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.030Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-A63CEA453171": {
+      "id": "SRC-A63CEA453171",
+      "url": "https://github.com/vitest-dev/vitest/releases",
+      "title": "https://github.com/vitest-dev/vitest/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.034Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-0F4C9B9C3B17": {
+      "id": "SRC-0F4C9B9C3B17",
+      "url": "https://github.com/sheremet-va",
+      "title": "https://github.com/sheremet-va",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-4524F1773AA5": {
+      "id": "SRC-4524F1773AA5",
+      "url": "https://redirect.github.com/vitest-dev/vitest/issues/11558",
+      "title": "https://redirect.github.com/vitest-dev/vitest/issues/11558",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.042Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-6F0F356DBDE2": {
+      "id": "SRC-6F0F356DBDE2",
+      "url": "https://github.com/vitest-dev/vitest/commit/82f634220",
+      "title": "https://github.com/vitest-dev/vitest/commit/82f634220",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.052Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-121454236D1C": {
+      "id": "SRC-121454236D1C",
+      "url": "https://github.com/Prajwal2246",
+      "title": "https://github.com/Prajwal2246",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-F69DE128A397": {
+      "id": "SRC-F69DE128A397",
+      "url": "https://github.com/axios/axios/pull/11239",
+      "title": "https://github.com/axios/axios/pull/11239",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-76AE621EF698": {
+      "id": "SRC-76AE621EF698",
+      "url": "https://github.com/axios/axios/pull/11237",
+      "title": "https://github.com/axios/axios/pull/11237",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.063Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-D0B4B3533BCE": {
+      "id": "SRC-D0B4B3533BCE",
+      "url": "https://github.com/axios/axios/issues/11160",
+      "title": "https://github.com/axios/axios/issues/11160",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.067Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-0B65C196DD27": {
+      "id": "SRC-0B65C196DD27",
+      "url": "https://github.com/axios/axios/issues/11407",
+      "title": "https://github.com/axios/axios/issues/11407",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-5918D8D76248": {
+      "id": "SRC-5918D8D76248",
+      "url": "https://github.com/axios/axios/issues/11403",
+      "title": "https://github.com/axios/axios/issues/11403",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-368833B45C49": {
+      "id": "SRC-368833B45C49",
+      "url": "https://github.com/axios/axios/pull/11404",
+      "title": "https://github.com/axios/axios/pull/11404",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-32FBC8FA6D35": {
+      "id": "SRC-32FBC8FA6D35",
+      "url": "http://localhost/upload",
+      "title": "http://localhost/upload",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T05:27:36.085Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-473AB38EEA9B": {
+      "id": "SRC-473AB38EEA9B",
+      "url": "http://localhost/download",
+      "title": "http://localhost/download",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T05:27:36.090Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-F1B4E16C02DF": {
+      "id": "SRC-F1B4E16C02DF",
+      "url": "https://github.com/axios/axios/issues/11432",
+      "title": "https://github.com/axios/axios/issues/11432",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.094Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-04113E50E206": {
+      "id": "SRC-04113E50E206",
+      "url": "https://github.com/axios/axios/pull/11390",
+      "title": "https://github.com/axios/axios/pull/11390",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-465BE18EDFC7": {
+      "id": "SRC-465BE18EDFC7",
+      "url": "https://github.com/GreptimeTeam/greptimedb",
+      "title": "https://github.com/GreptimeTeam/greptimedb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-B71EEDF827ED": {
+      "id": "SRC-B71EEDF827ED",
+      "url": "https://github.com/GreptimeTeam/.github/blob/main/CLA.md",
+      "title": "https://github.com/GreptimeTeam/.github/blob/main/CLA.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-96B5C020B2CF": {
+      "id": "SRC-96B5C020B2CF",
+      "url": "https://github.com/GreptimeTeam/jsonb?rev=dd1e2341e3df35e9de38959328caa7628e81b6b1",
+      "title": "https://github.com/GreptimeTeam/jsonb?rev=dd1e2341e3df35e9de38959328caa7628e81b6b1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.116Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-D1CC6A11AC76": {
+      "id": "SRC-D1CC6A11AC76",
+      "url": "https://github.com/GreptimeTeam/jsonb?rev=5a6472858d860ac034075c17253f41617bdfa956",
+      "title": "https://github.com/GreptimeTeam/jsonb?rev=5a6472858d860ac034075c17253f41617bdfa956",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-11A79BD63DA2": {
+      "id": "SRC-11A79BD63DA2",
+      "url": "https://github.com/GreptimeTeam/jsonb",
+      "title": "https://github.com/GreptimeTeam/jsonb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:27:36.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
       }
     }
   }

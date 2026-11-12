@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T05:13:38.459Z",
-    "lastVerified": "2026-11-12T05:13:38.459Z",
+    "lastChecked": "2026-11-12T05:27:23.067Z",
+    "lastVerified": "2026-11-12T05:27:23.067Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,8 +255,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T04:23:58.821Z",
-    "lastVerified": "2026-11-12T04:23:58.821Z",
+    "lastChecked": "2026-11-12T05:27:04.191Z",
+    "lastVerified": "2026-11-12T05:27:04.191Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -636,12 +636,12 @@
     "revisionIdentifier": "763f4021"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T19:28:27.377Z",
-    "lastVerified": "2026-11-11T19:28:27.377Z",
+    "lastChecked": "2026-11-12T05:26:59.291Z",
+    "lastVerified": "2026-11-12T05:26:59.291Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -650,7 +650,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cecd9f55"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -4200,9 +4201,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-09T22:34:11.858Z",
+    "lastChecked": "2026-11-12T05:26:56.609Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-09T22:34:11.858Z"
+    "lastVerified": "2026-11-12T05:26:56.609Z"
   },
   "llphant-llphant": {
     "name": "LLPhant/LLPhant",
@@ -4496,22 +4497,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wasm-bindgen-wasm-pack": {
-    "name": "wasm-pack",
+    "name": "wasm-bindgen/wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T11:30:55.946Z",
-    "lastVerified": "2026-11-09T11:30:55.946Z",
+    "lastChecked": "2026-11-12T05:26:51.649Z",
+    "lastVerified": "2026-11-12T05:26:51.649Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wasm-bindgen-wasm-pack",
-    "contentHash": "cad842dd19948f15a62fa6a08c79fdcbc2fac298344d1aff564684f1536f64ee",
+    "contentHash": "3c0a9e088ed9a5519f168579e337cc367e4db523ecb55147696df5b4599bc524",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b4586ca5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-hexgrad-kokoro-82m": {
     "name": "hexgrad/Kokoro-82M",
@@ -6696,14 +6696,14 @@
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T21:06:01.345Z",
-    "lastVerified": "2026-11-09T21:06:01.345Z",
+    "lastChecked": "2026-11-12T05:27:05.466Z",
+    "lastVerified": "2026-11-12T05:27:05.466Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
+    "contentHash": "66775b3009776caebd919003873c234b50d7764be90b55457162069910c8539f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9702,9 +9702,9 @@
   "amosgyamfi-open-swiftui-animations": {
     "name": "open-swiftui-animations",
     "officialUrl": "https://github.com/amosgyamfi/open-swiftui-animations",
-    "lastChecked": "2026-11-08T04:54:45.948Z",
+    "lastChecked": "2026-11-12T05:26:54.061Z",
     "revisionIdentifier": "abc1d4ce",
-    "lastVerified": "2026-11-08T04:54:45.948Z"
+    "lastVerified": "2026-11-12T05:26:54.061Z"
   },
   "fabio-rovai-open-ontologies": {
     "name": "fabio-rovai/open-ontologies",
@@ -11634,14 +11634,14 @@
     "officialUrl": "https://github.com/axios/axios",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T05:44:16.757Z",
-    "lastVerified": "2026-11-07T05:44:16.757Z",
+    "lastChecked": "2026-11-12T05:26:55.146Z",
+    "lastVerified": "2026-11-12T05:26:55.146Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-axios-axios",
-    "contentHash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
+    "contentHash": "0211fbae1cecfa5f63610e69e1a9ab1b4c5ccbdc039a4dad9862ca6b8b5e2333",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

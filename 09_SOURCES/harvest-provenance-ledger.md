@@ -9086,3 +9086,7 @@ Every entry in this ledger must capture:
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `09ed1694` | Multi-dimensional audit evidence | 2026-11-12T05:13:21.207Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `43410e87` | Multi-dimensional audit evidence | 2026-11-12T05:13:31.982Z |
 | `learn-dom-d-5f13cac2` | `project://hf-facebook-dinov3-vitl16-pretrain-lvd1689m` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | 2026-11-12T05:13:50.798Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `c262c330` | Multi-dimensional audit evidence | 2026-11-12T05:27:03.232Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `4ee8d46f` | Multi-dimensional audit evidence | 2026-11-12T05:27:07.800Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `f8d8fe10` | Multi-dimensional audit evidence | 2026-11-12T05:27:16.546Z |
+| `learn-dom-h-0aa4f6ed` | `project://wasm-bindgen-wasm-pack` | `c262c330` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md` | 2026-11-12T05:27:35.956Z |

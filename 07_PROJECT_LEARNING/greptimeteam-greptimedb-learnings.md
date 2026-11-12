@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `8da533c3`  
+> **Source Version**: `f8d8fe10`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T21:06:01.806Z  
+> **Timestamp**: 2026-11-12T05:27:05.473Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T21:06:01.345Z  
+> **Harvest Timestamp**: 2026-11-12T05:27:05.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6797 stars
+- **Stars / Engagement**: 6804 stars
 
 ---
 
@@ -1715,11 +1715,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10299** (2026-11-09): **fix(time): avoid i32 overflow when converting an out-of-range date**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  None. Same shape as the "large offsets could overflow before validation" part of #10091, noticed while reading the rest of `common-time`.  ## What's changed and what's your intention?  `Date` keeps days since the Unix epoch in an `i32`. Both `to_chrono_date` and the `Display` impl add `UNIX_EPOCH_FROM_CE` before calling `from_num_days_from_ce_opt`, so a value within 719163 of `i32::MAX` overflows the add instead of returning the `None` its signature promises. `Date::from(i32)` range-checks nothing and the MySQL writer calls `to_chrono_date` on every Date32 column. Switch to `checked_add` and let `Display` reuse `to_chrono_date`.  Release builds leave `overflow-checks` off and the wrapped sum lands outside chrono's range, so the panic only shows up where overflow checks are on: dev, test and the `ci` profile.  Validation: - `cargo nextest run -p common-time`: 90 passed, 0 failed (89 before this change). - `cargo clippy -p common-time --all-targets -- -D warnings` and `cargo fmt -p common-time -- --check`: clean. - Full workspace tests were not run.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API c
+- **Issue #10335** (2026-11-11): **fix(promql): resolve the OR right operand's time-index column from its schema**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Reported by a user running a service error-rate dashboard (Grafana-style PromQL) on v1.3/main. No issue link.  ## What's changed and what's your intention?  ### Summary  `or` resolved its operand's time-index column by reusing the qualifier of that operand plan's **first** field (`schema.qualified_field(0)`). A binary operation with an explicit matching modifier does not qualify all of its output columns the same way, so the prefixed reference could address a column that does not exist and the whole query failed at plan build time:  ``` PlanQuery: Internal error during building DataFusion plan: No field named lhs.greptime_timestamp. Did you mean 'rhs.greptime_timestamp'? Valid fields are lhs.wm_peer_app, rhs.greptime_timestamp, "lhs.sum(tracestore.wotelc_smc_calls:sum_rate2m.greptime_value) / rhs.sum(...)". ```  Minimal failing shape — an `or on (...)` whose right operand is a binary expression with a matching modifier:  ```promql sum by (service_name) (m{status_code="STATUS_CODE_ERROR"}) / ignoring (status_code) group_left() sum by (service_name) (m) or on (service_name) sum by (service_name) (m{status_code="STATUS_CODE_ERROR"}) / ignoring (status_code) sum by (service_name) (m) ```  The second branch (reduced label set without a group modifier) fails as well, so this is not specific to `group_left`.  ### Why it ha
 
-- **Issue #10272** (2026-11-09): **fix(promql): bound scatter time filter expression depth**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Fixes #10257.  ## What's changed and what's your intention?  A 30-day PromQL range query with a 2-hour step generates 361 scatter windows. Combining these with a left-nested OR tree exceeds the expression-depth limit of 128, even for a simple query such as `sum(increase(metric[1h]))`.  Merge overlapping or touching windows into one time filter, ending at the last actual evaluation point when the requested end is off-grid. Combine separated windows with a balanced OR tree. Existing broad-scan thresholds, timestamp conversion, offset handling, and the expression-depth guard remain unchanged.  The planner regression reproduced the exact depth-limit error before the fix and passes afterward. It covers `increase` and `sum_over_time` with separated, touching, and overlapping windows. A sparse-data SQL regression checks boundary samples and gaps across 361 evaluation points.  Validation: - Query-crate nextest: 850 passed, 2 skipped. - SQL regression: passed in standalone and distributed modes; generated results reviewed. - Query-crate Clippy with all targets and `-D warnings`: passed. - `cargo fmt --all` and `git diff --check`: passed. - Full workspace tests, workspace Clippy, and unused-dependency checks were not run.  Local macOS ARM64 validation required LLVM's linker and merging `__TEXT,__text_startup` into `__TEXT,__t
+- **Issue #10330** (2026-11-12): **fix(mito2): identify series by their exact sparse key, not by tsid**
+  *Symptoms*: ## What this changes  `(table_id, tsid)` is a hash, and the native series artifacts treated it as identity:  - the columnar series writer **silently merged** two series that share a tsid (first label set kept, row counts added); - the samples writer either reported `time_regressed` or, with increasing timestamps, attached one series' samples to the other's labels; - prepared reads deduplicated candidates, attributed samples and built merge keys on the same hash.  The SST already stores the exact sparse primary key, so nothing on the storage side moves: `tsid`, the hash function and the key layout are untouched. What changes is that the artifacts, their readers and the prepared read path decide identity on the **canonical sparse key bytes**, and `(table_id, tsid)` becomes the coarse, order-preserving prefix used for ordering, pruning and bucketing.  ## How  - **`ExactSeriesKey`** — equality, ordering and hashing on the key bytes only; `id()` is a derived prefix and is never compared. The whole key is validated (framing, label walk), and there is no length cap: a single 8 KiB label already encodes to a larger sparse key, and long labels are real data. Length is bounded by what stores a key (one per block, plus descriptor/page/column limits). - **Series artifact** — one row per exact key; coarse page/block/part bounds may now touch, so pruning is conservative (`<=`, non-decreasing tsids) and the `rows - 1 <= last - first` assumption is gone. - **Samples artifact** — every block 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1736,1133 +1736,1009 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50a2c4d3` (2026-11-09)
-**Commit Message**: fix(mito2): publish manifest deltas by conditional create under a lease (#10234)
+### Incident Patch 1: `6dbff8a0` (2026-11-12)
+**Commit Message**: fix(log-store): close raft-engine engines on shutdown (#9518)
 
-* fix(mito2): publish manifest deltas by conditional create under a lease
+* fix(log-store): close raft-engine engines on shutdown
 
-A late old leader and the region's new holder can commit the same manifest
-version. For a region whose writes require a lease and whose WAL is the object
-store WAL, the manifest now behaves as follows. Every other region keeps its
-behaviour and issues no extra request.
+raft-engine preallocates the active log file and only trims that tail when the
+Engine is dropped. GreptimeDB never dropped its engines before exiting, so every
+start after a clean shutdown truncated the tail as a broken batch and logged
+"Truncating log file due to broken batch".
 
-- Each delta has one fixed name, `{version:020}.json.gz`, written by a
-  conditional create. Without `compress_manifest` the delta is written at gzip
-  level 0, so that all writers share the name.
-- On an existing object, the writer reads it from storage: identical content is
-  a retry of a write that landed, anything else is a retryable
-  `ManifestVersionConflict` that keeps the output files.
-- The version advances only after a successful save.
-- Recovery loads the highest checkpoint found by LIST and uses the checkpoint
-  pointer only for its checksum, because a stale writer's checkpoint task can
-  leave the pointer at an older version.
-- Checkpoint cleanup frees names, so a late create can still succeed on a
-  deleted name. A commit whose save returns after t
+RaftEngineBackend::close and RaftEngineLogStore::stop now release the engine;
+standalone closes the metadata backend last, and the datanode stops the
+raft-engine WAL after the region server.
 
-**File**: `src/common/datasource/src/compression.rs` (modified, +10/-0)
+Signed-off-by: Silvio <[REDACTED_EMAIL]>
+
+* refactor: address review on raft-engine shutdown
+
+- Add ClosableKvBackend to common-meta; the standalone metadata backend creator
+  returns one and Instance closes it explicitly instead of downcasting to
+  RaftEngineBackend, so wrappers forward the close.
+- Record a failed metadata backend close as a shutdown error.
+- Sync and drop the engine on a blocking thread.
+- Only check tail trimming when raft-engine preallocated, and check reopening
+  after close/stop on every platform.
+
+Signed-off-by: Silvio <[REDACTED_EMAIL]>
+
+* fix: release raft-engine engines on
+
+**File**: `src/cmd/src/error.rs` (modified, +8/-0)
 ```diff
-@@ -16,6 +16,7 @@ use std::fmt::Display;
- use std::io;
- use std::str::FromStr;
- 
-+use async_compression::Level;
- use async_compression::tokio::bufread::{BzDecoder, GzipDecoder, XzDecoder, ZstdDecoder};
- use async_compression::tokio::write;
- use bytes::Bytes;
-@@ -88,6 +89,15 @@ impl CompressionType {
-             Self::Uncompressed => "",
-         }
-     }
-+
-+    /// Encodes `content` as a gzip stream at level 0, which stores it without compression.
-+    pub async fn encode_gzip_stored(content: &[u8]) -> io::Result<Vec<u8>> {
-+        let mut buffer = Vec::with_capacity(content.len());
-+        let mut encoder = write::GzipEncoder::with_quality(&mut buffer, Level::Precise(0));
-+        encoder.write_all(content).await?;
-+        encoder.shutdown().await?;
-+        Ok(buffer)
-+    }
- }
- 
- macro_rules! impl_compression_type {
-```
-
-**File**: `src/mito2/AGENTS.md` (modified, +3/-0)
-```diff
-@@ -103,6 +103,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
- - Sequence numbers are strictly increasing per region; dedup and snapshot reads
-   depend on this. Do not change assignment lightly.
- - Manifest version is monotonic — never reset or skip it.
-+- In regions whose writes require a lease and whose WAL is the object store WAL,
-+  each manifest version has one fixed object name and only one writer can create
-+  it (`manifest/storage.rs`).
- - Lock ordering: take the manifest lock before updating `version_control`; the
-   reverse deadlocks against concurrent flush/compaction.
- - All region I/O runs on tokio workers; never `block_on` inside a worker.
-```
-
-**File**: `src/mito2/src/compaction/compactor.rs` (modified, +1/-0)
-```diff
-@@ -292,6 +292,7 @@ impl CompactionRegionOpener {
-             manifest_manager,
-             RegionRoleState::Leader(RegionLeaderState::Writable),
-             hook,
-+            Default::default(),
-         ));
- 
-         let file_purger = {
-```
-
-**File**: `src/mito2/src/compaction/scheduler_test.rs` (modified, +2/-0)
-```diff
-@@ -2334,6 +2334,7 @@ async fn test_compaction_bypass_in_staging_mode() {
-                 checkpoint_distance: 10,
-                 remove_file_options: Default::default(),
-                 manifest_cache: None,
-+                conditional_publication: false,
-             },
-             FormatType::PrimaryKey,
-             false,
-@@ -2345,6 +2346,7 @@ async fn test_compaction_bypass_in_staging_mode() {
-             manager,
-             RegionRoleState::Leader(RegionLeaderState::Staging),
-             None,
-+            Default::default(),
-         ))
-     };
- 
-```
-
-**File**: `src/mito2/src/engine/object_store_wal_test.rs` (modified, +197/-5)
-```diff
-@@ -17,28 +17,36 @@
- use std::collections::HashMap;
- use std::sync::Arc;
- use std::sync::atomic::Ordering;
-+use std::time::{Duration, Instant};
- 
--use api::v1::Rows;
-+use api::v1::region::{StrictWindow, compact_request};
-+use api::v1::{ColumnSchema, Rows};
-+use common_datasource::compression::CompressionType;
- use common_error::ext::ErrorExt;
- use common_error::status_code::StatusCode;
- use common_recordbatch::RecordBatches;
- use common_wal::config::object_store::{ObjectStoreWalConfig, STANDALONE_GENERATION};
- use common_wal::options::{ObjectStoreWalOptions, WAL_OPTIONS_KEY, WalOptions};
- use futures::TryStreamExt;
- use log_store::ObjectStoreLogStore;
-+use object_store::ObjectStore;
-+use rstest::rstest;
- use store_api::logstore::LogStore;
- use store_api::logstore::provider::Provider;
--use store_api::region_engine::RegionEngine;
-+use store_api::region_engine::{RegionEngine, RegionRole};
- use store_api::region_request::{
--    PathType, RegionCleanUpRequest, RegionCloseRequest, RegionDropRequest, RegionOpenRequest,
--    RegionRequest,
-+    PathType, RegionCleanUpRequest, RegionCloseRequest, RegionCompactRequest, RegionDropRequest,
-+    RegionFlushRequest, RegionOpenRequest, RegionRequest, RegionTruncateRequest,
- };
- use store_api::storage::{RegionId, ScanRequest};
- 
- use crate::config::MitoConfig;
- use crate::engine::MitoEngine;
-+use crate::manifest::storage::{delta_file, gen_path, manifest_dir};
-+use crate::sst::location::region_dir_from_table_dir;
- use crate::test_util::{
--    CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows, reopen_region, rows_schema,
-+    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, flush_region, nop_action,
-+    put_rows, reopen_region, rows_schema,
- };
- use crate::wal::EntryId;
- 
-@@ -377,3 +385,187 @@ async fn test_object_store_wal_options_reject_raft_engine_log_store() {
-         .unwrap_err();
-     assert_eq!(StatusCode::InvalidArguments, err.status_code());
- }
-+
-+/// Returns a config that starts a checkpoint on every commit.
-+fn checkpoint_every_commit_config() -> MitoConfig {
-+    MitoConfig {
-+        manifest_checkpoint_distance: 1,
-+        ..Default::default()
-+    }
-+}
-+
-+/// Creates a region whose writes require a lease. Returns the lease deadline, which the frozen
-+/// clock of the lease checks has not reached.
-+async fn create_leased_region(
-+    env: &mut TestEnv,
-+    region_id: RegionId,
-+) -> (
-+    MitoEngine,
-+    Arc<ObjectStoreLogStore>,
-+    String,
-+    Vec<ColumnSchema>,
-+    Instant,
-+) {
-+    let (engine, log_store) = env
-+        .create_engine_with_object_store_wal(checkpoint_every_commit_config(), &wal_config())
-+        .await;
-+    engine.require_write_lease();
-+    engine.freeze_lease_clock(Instant::now());
-+    let (table_dir, schema) = create_region(&engine, region_id).await;
-+    let deadline = Instant::now() + Duration::from_secs(10);
-+    engine
-+        .set_region_role_with_lease(region_id, RegionRole::Leader, Instant::now(), deadline)
-+        .unwrap();
-+    (engine, log_store, table_dir, schema, deadline)
-+}
-+
-+async fn count_ssts(store: &ObjectStore, region_dir: &str) -> usize {
-+    let entries = store.list(region_dir).await.unwrap();
-+    entries
-+        .iter()
-+        .filter(|e| e.name().ends_with(".parquet"))
-+        .count()
-+}
-+
-+#[rstest]
-+#[case::flush(RegionRequest::Flush(RegionFlushRequest::default()), 1)]
-+#[case::compaction(
-+    RegionRequest::Compact(RegionCompactRequest {
-+        options: compact_request::Options::StrictWindow(StrictWindow { window_seconds: 3600 }),
-+        ..Default::default()
-+    }),
-+    1
-+)]
-+#[case::truncate(RegionRequest::Truncate(RegionTruncateRequest::All), 0)]
-+#[tokio::test]
-+async fn test_stale_commit_on_deleted_delta_name_conflicts(
-+    #[case] commit: RegionRequest,
-+    #[case] new_ssts: usize,
-+) {
-+    common_telemetry::init_default_ut_logging();
-+    // The creation is version 0 and the flushes below are versions 1 and 2.
-+    const VERSION: u64 = 3;
-+    let (blocker, layer) = CheckpointTaskBlocker::block_delta_write(VERSION);
-+    let mut env = TestEnv::with_prefix("stale-manifest-commit")
-+        .await
-+        .with_mock_layer(layer);
-+    let region_id = RegionId::new(1, 1);
-+    let (old_leader, log_store, table_dir, schema, deadline) =
-+        create_leased_region(&mut env, region_id).await;
-+    let rows = |start| Rows {
-+        schema: schema.clone(),
-+        rows: build_rows(start, start + 3),
-+    };
-+    for start in [0, 3] {
-+        put_rows(&old_leader, region_id, rows(start)).await;
-+        flush_region(&old_leader, region_id, None).await;
-+    }
-+    put_rows(&old_leader, region_id, rows(6)).await;
-+
-+    let region = old_leader.get_region(region_id).unwrap();
-+    let (manifest, checkpoint) = {
-+        let mut manager = region.manifest_ctx.manifest_manager.write().await;
-+        manager.wait_for_pending_checkpoint().await;
-+        (
-+            manager.manifest(),
-+            manager.checkpointer().last_checkpoint_version
-```
-
-**File**: `src/mito2/src/engine/region_hook.rs` (modified, +3/-3)
-```diff
-@@ -120,8 +120,8 @@
- //! immediately after SST files are written but **before** the manifest is committed.
- //!
- //! `on_manifest_updated` is funneled through [`ManifestContext::update_locked`],
--//! the sole caller of the low-level [`RegionManifestManager::update`], which
--//! packages each successful write into a [`PendingManifestHook`]. The caller
-+//! which calls the low-level [`RegionManifestManager::update_with_verification`]
-+//! and packages each successful write into a [`PendingManifestHook`]. The caller
- //! owns the write lock, drops it, and *then* fires the receipt — the hook must
- //! never run under the lock. [`ManifestContext::update_manifest`] is the common
- //! case: it acquires the lock, delegates to `update_locked`, and fires the
-@@ -148,7 +148,7 @@
- //! [`on_region_dropped`]: RegionHook::on_region_dropped
- //! [`on_region_files_removed`]: RegionHook::on_region_files_removed
- //! [`on_region_gc`]: RegionHook::on_region_gc
--//! [`RegionManifestManager::update`]: crate::manifest::manager::RegionManifestManager::update
-+//! [`RegionManifestManager::update_with_verification`]: crate::manifest::manager::RegionManifestManager::update_with_verification
- //! [`ManifestContext::update_locked`]: crate::region::ManifestContext::update_locked
- //! [`ManifestContext::update_manifest`]: crate::region::ManifestContext::update_manifest
- 
-```
-
-**File**: `src/mito2/src/error.rs` (modified, +36/-4)
-```diff
-@@ -147,6 +147,25 @@ pub enum Error {
-         location: Location,
+@@ -85,6 +85,13 @@ pub enum Error {
+         source: datanode::error::Error,
      },
  
-+    #[snafu(display("Manifest version {version} conflicts in {manifest_dir}: {reason}"))]
-+    ManifestVersionConflict {
-+        version: ManifestVersion,
-+        manifest_dir: String,
-+        reason: String,
++    #[snafu(display("Failed to close the metadata kv backend"))]
++    CloseMetadataKvBackend {
 +        #[snafu(implicit)]
 +        location: Location,
++        source: common_meta::error::Error,
 +    },
 +
-+    #[snafu(display(
-+        "Manifest checkpoint {version} in {manifest_dir} was removed after it was listed"
-+    ))]
-+    ManifestCheckpointVanished {
-+        version: ManifestVersion,
-+        manifest_dir: String,
-+        #[snafu(implicit)]
-+        location: Location,
-+    },
-+
-     #[snafu(display("Failed to serialize manifest, region_id: {}", region_id))]
-     SerializeManifest {
-         region_id: RegionId,
-@@ -1561,9 +1580,11 @@ impl ErrorExt for Error {
-             MultiRegionCompactionResource { .. } => StatusCode::RuntimeResourcesExhausted,
-             SstWriteMemoryExceeded { .. } => StatusCode::RuntimeResourcesExhausted,
-             DataTypeMismatch { source, .. } => source.status_code(),
--            OpenDal { .. } | ManifestDeltaNotFound { .. } | ReadParquet { .. } => {
--                StatusCode::StorageUnavailable
--            }
-+            OpenDal { .. }
-+            | ManifestDeltaNotFound { .. }
-+            | ManifestVersionConflict { .. }
-+            | ManifestCheckpointVanished { .. }
-+            | ReadParquet { .. } => StatusCode::StorageUnavailable,
-             WriteWal { source, .. }
-             | ReadWal { source, .. }
-             | DeleteWal { source, .. }
-@@ -1784,7 +1805,9 @@ impl ErrorExt for Error {
-             | RegionBusy { .. }
-             | ManualCompactionAlreadyRunning { .. }
-             | FlushableRegionState { .. }
--            | ManifestDeltaNotFound { .. } => RetryHint::Retryable,
-+            | ManifestDeltaNotFound { .. }
-+            | ManifestVersionConflict { .. }
-+            | ManifestCheckpointVanished { .. } => RetryHint::Retryable,
- 
-             OpenDal { error, .. }
-             | DeleteSsts { error, .. }
-@@ -2002,5 +2025,14 @@ mod tests {
-         // This can be raised while applying an edit after its manifest file was saved.
-         let error = RegionMetadataNotFoundSnafu {}.build();
-         assert!(error.may_have_persisted_manifest_update());
-+
-+        let error = ManifestVersionConflictSnafu {
-+            version: 1u64,
-+            manifest_dir: "manifest/",
-+            reason: "test",
-+        }
-+        .build();
-+        assert!(error.may_have_persisted_manifest_update());
-+        assert!(error.retry_hint().is_retryable());
-     }
- }
+     #[snafu(display("Failed to start flownode"))]
+     StartFlownode {
+         #[snafu(implicit)]
+@@ -333,6 +340,7 @@ impl ErrorExt for Error {
+             Error::StartDatanode { source, .. } => source.status_code(),
+             Error::StartFrontend { source, .. } => source.status_code(),
+             Error::ShutdownDatanode { source, .. } => source.status_code(),
++            Error::CloseMetadataKvBackend { source, .. } => source.status_code(),
+             Error::ShutdownFrontend { source, .. } => source.status_code(),
+             Error::StartMetaServer { source, .. } => source.status_code(),
+             Error::ShutdownMetaServer { source, .. } => source.status_code(),
 ```
 
-**File**: `src/mito2/src/manifest/manager.rs` (modified, +40/-17)
+**File**: `src/cmd/src/standalone.rs` (modified, +38/-10)
 ```diff
-@@ -55,6 +55,9 @@ pub struct RegionManifestOptions {
-     pub remove_file_options: RemoveFileOptions,
-     /// Optional cache for manifest files.
-     pub manifest_cache: Option<ManifestCache>,
-+    /// Whether two writers can race for a version, so that deltas are published by conditional
-+    /// create under a fixed name and recovery starts from the highest listed checkpoint.
-+    pub(crate) conditional_publication: bool,
+@@ -39,7 +39,7 @@ use common_meta::ddl::{DdlContext, NoopRegionFailureDetectorControl};
+ use common_meta::ddl_manager::{DdlManager, DdlManagerConfiguratorRef, DdlManagerRef};
+ use common_meta::key::flow::FlowMetadataManager;
+ use common_meta::key::{TableMetadataManager, TableMetadataManagerRef};
+-use common_meta::kv_backend::KvBackendRef;
++use common_meta::kv_backend::{ClosableKvBackendRef, KvBackendRef};
+ use common_meta::node_manager::{FlownodeRef, NodeManagerRef};
+ use common_meta::procedure_executor::{LocalProcedureExecutor, ProcedureExecutorRef};
+ use common_meta::region_keeper::MemoryRegionKeeper;
+@@ -225,6 +225,8 @@ pub struct Instance {
+     procedure_manager: ProcedureManagerRef,
+     leader_services_controller: Box<dyn StandaloneLeaderServicesController>,
+     leader_services_context: LeaderServicesContext,
++    /// Closed last on shutdown, see [ClosableKvBackend](common_meta::kv_backend::ClosableKvBackend).
++    metadata_kv_backend: ClosableKvBackendRef,
+     // Keep the logging guard to prevent the worker from being dropped.
+     _guard: Vec<WorkerGuard>,
  }
- 
- impl RegionManifestOptions {
-@@ -71,8 +74,16 @@ impl RegionManifestOptions {
-                 enable_gc: config.gc.enable,
-             },
-             manifest_cache: None,
-+            conditional_publication: false,
-         }
-     }
-+
-+    /// Sets whether deltas are published by conditional create and recovery starts from the
-+    /// highest listed checkpoint.
-+    pub(crate) fn with_conditional_publication(mut self, enabled: bool) -> Self {
-+        self.conditional_publication = enabled;
-+        self
-+    }
- }
- 
- /// Options for updating `removed_files` field in [RegionManifest].
-@@ -181,7 +192,8 @@ impl RegionManifestManager {
-             stats.total_manifest_size.clone(),
-             stats.metric().cloned(),
-             options.manifest_cache.clone(),
--        );
-+        )
-+        .with_conditional_publication(options.conditional_publication)?;
-         let manifest_version = stats.manifest_version.clone();
- 
-         info!(
-@@ -269,7 +281,8 @@ impl RegionManifestManager {
-             stats.total_manifest_size.clone(),
-             stats.metric().cloned(),
-             options.manifest_cache.clone(),
--        );
-+        )
-+        .with_conditional_publication(options.conditional_publication)?;
-         let manifest_version = stats.manifest_version.clone();
- 
-         // recover from storage
-@@ -556,32 +569,30 @@ impl RegionManifestManager {
-     }
- 
-     /// Updates the manifest. Returns the current manifest version number.
-+    ///
-+    /// The caller has no Leader deadline to show that its commit returned in time, so a normal
-+    /// commit under conditional publication is always verified and starts no checkpoint.
-     pub async fn update(
-         &mut self,
-         action_list: RegionMetaActionList,
-         is_staging: bool,
-     ) -> Result<ManifestVersion> {
--        self.update_inner(action_list, is_staging, !is_staging)
-+        self.update_with_verification(action_list, is_staging, !is_staging, || true)
-             .await
-     }
- 
--    /// Updates the normal manifest without starting a checkpoint.
-+    /// Updates the manifest. Returns the current manifest version number.
-     ///
--    /// This is only used while a leader is downgrading. The final flush still
--    /// publishes its manifest edit, but must not start cleanup after the
--    /// downgrade checkpoint barrier.
--    pub(crate) async fn update_normal_without_checkpoint(
--        &mut self,
--        action_list: RegionMetaActionList,
--    ) -> Result<ManifestVersion> {
--        self.update_inner(action_list, false, false).await
--    }
--
--    async fn update_inner(
-+    /// `allow_checkpoint` tells whether a normal commit may start a checkpoint. `must_verify` is
-+    /// evaluated after the save returns, for a normal commit under conditional publication. If it
-+    /// returns true, the commit may have landed on a name that checkpoint cleanup freed, so it
-+    /// only applies when LIST finds no checkpoint that covers it, and it starts no checkpoint.
-+    pub(crate) async fn update_with_verification(
-         &mut self,
-         action_list: RegionMetaActionList,
-         is_staging: bool,
--        allow_checkpoint: bool,
-+        mut allow_checkpoint: bool,
-+        must_verify: impl FnOnce() -> bool,
-     ) -> Result<ManifestVersion> {
-         let _t = MANIFEST_OP_ELAPSED
-             .with_label_values(&["update"])
-@@ -594,10 +605,22 @@ impl RegionManifestManager {
+@@ -279,7 +281,7 @@ impl App for Instance {
+     /// ones; the first error is returned and the rest are logged.
+     async fn stop(&mut self) -> Result<()> {
+         let mut first_error = None;
+-        let mut record = |result: Result<()>| {
++        let mut record_shutdown_error = |result: Result<()>| {
+             if let Err(err) = result {
+                 if first_error.is_none() {
+                     first_error = Some(err);
+@@ -289,14 +291,14 @@ impl App for Instance {
              }
+         };
+ 
+-        record(
++        record_shutdown_error(
+             self.frontend
+                 .shutdown()
+                 .await
+                 .context(error::ShutdownFrontendSnafu),
          );
  
--        let version = self.increase_version();
-+        let conditional = self.store.is_conditional_publication();
-+        let version = if conditional {
-+            self.last_version() + 1
-+        } else {
-+            self.increase_version()
-+        };
-         self.store
-             .save(version, &action_list.encode()?, is_staging)
-             .await?;
-+        if conditional {
-+            if !is_staging && must_verify() {
-+                self.store.ensure_version_not_checkpointed(version).await?;
-+                allow_checkpoint = false;
-+            }
-+            self.set_version(version);
-+        }
+-        record(
++        record_shutdown_error(
+             self.leader_services_controller
+                 .stop(
+                     self.procedure_manager.clone(),
+@@ -305,20 +307,28 @@ impl App for Instance {
+                 .await,
+         );
  
-         // For a staging region, the manifest is initially inherited from the previous manifest(i.e., `self.manifest`).
-         // When the staging manifest becomes available, it will be used to construct the new manifest.
-```
-
----
-
-### Incident Patch 2: `402e4a97` (2026-11-09)
-**Commit Message**: fix(time): avoid i32 overflow when converting an out-of-range date (#10299)
-
-Signed-off-by: Arpit Jain <[REDACTED_EMAIL]>
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `src/common/time/src/date.rs` (modified, +10/-2)
-```diff
-@@ -55,7 +55,7 @@ impl From<NaiveDate> for Date {
- impl Display for Date {
-     /// [Date] is formatted according to ISO-8601 standard.
-     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
--        if let Some(abs_date) = NaiveDate::from_num_days_from_ce_opt(UNIX_EPOCH_FROM_CE + self.0) {
-+        if let Some(abs_date) = self.to_chrono_date() {
-             write!(f, "{}", abs_date.format("%F"))
-         } else {
-             write!(f, "Date({})", self.0)
-@@ -93,7 +93,9 @@ impl Date {
-     }
+-        record(
++        record_shutdown_error(
+             self.datanode
+                 .shutdown()
+                 .await
+                 .context(error::ShutdownDatanodeSnafu),
+         );
  
-     pub fn to_chrono_date(&self) -> Option<NaiveDate> {
--        NaiveDate::from_num_days_from_ce_opt(UNIX_EPOCH_FROM_CE + self.0)
-+        UNIX_EPOCH_FROM_CE
-+            .checked_add(self.0)
-+            .and_then(NaiveDate::from_num_days_from_ce_opt)
-     }
+-        record(
++        record_shutdown_error(
+             self.flownode
+                 .shutdown()
+                 .await
+                 .context(error::ShutdownFlownodeSnafu),
+         );
  
-     /// Format Date for given format and timezone.
-@@ -217,6 +219,12 @@ mod tests {
-         assert_eq!("1970-02-12", Date::new(42).to_string());
-     }
- 
-+    #[test]
-+    fn test_to_chrono_date_out_of_range() {
-+        assert_eq!(None, Date::new(i32::MAX).to_chrono_date());
-+        assert_eq!("Date(2147483647)", Date::new(i32::MAX).to_string());
-+    }
++        // Close the metadata after attempting to stop all components.
++        record_shutdown_error(
++            self.metadata_kv_backend
++                .close()
++                .await
++                .context(error::CloseMetadataKvBackendSnafu),
++        );
 +
-     #[test]
-     pub fn test_date_parse() {
-         assert_eq!(
-```
-
----
-
-### Incident Patch 3: `8da533c3` (2026-11-09)
-**Commit Message**: fix(mito2): keep rows written during staging in the WAL (#10253)
-
-* fix(mito2): keep rows written during staging in the WAL
-
-A flush during staging committed its SSTs to the staging manifest, then
-dropped the memtable and released the WAL. If staging did not end
-successfully those rows were gone. A flush that committed after staging
-had ended lost its rows even though staging succeeded.
-
-Staging regions no longer flush. They are skipped by memory-pressure,
-periodic and region-limit flushes, and their writes are rejected instead
-of queued at twice the region limit or when the node's staging memtables
-reach half of the engine's flush limit. A manual or repartition flush on
-a staging region with data gets a retryable error; the migration
-pre-flush and the WAL prune flush reply success without flushing. Closing
-a staging region leaves staging first, so skip-WAL rows are flushed to
-the normal manifest.
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-* fix(mito2): keep accounting and closing staging regions during staged edits
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-* fix(mito2): track staged edits without relying on the partition info
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-* tes
-
-**File**: `src/mito2/AGENTS.md` (modified, +3/-0)
-```diff
-@@ -126,6 +126,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
- - In flat batches, equal `__primary_key` dictionary keys imply the same series, but
-   not the reverse: `wrap_pk_binary_to_dict` gives every row its own key. Compare key
-   bytes when grouping rows by series.
-+- Staging regions never flush: a flush would move rows into the staging manifest and
-+  release their WAL, losing them if staging does not end successfully. Every flush
-+  trigger in `worker/handle_flush.rs` must skip them, and `handle_close` leaves staging first.
+         info!("Datanode instance stopped.");
  
- ## Maintenance contract
+         first_error.map_or(Ok(()), Err)
+@@ -543,10 +553,11 @@ impl StartCommand {
+             .context(OtherSnafu)?;
  
-```
-
-**File**: `src/mito2/src/engine/partition_filter_test.rs` (modified, +42/-31)
-```diff
-@@ -20,13 +20,15 @@ use datatypes::arrow::array::AsArray;
- use datatypes::value::Value;
- use partition::expr::{Operand, col};
- use partition::function::IcebergHash;
--use store_api::region_engine::RegionEngine;
-+use store_api::region_engine::{RegionEngine, RemapManifestsRequest};
- use store_api::region_request::{
--    EnterStagingRequest, RegionFlushRequest, RegionRequest, StagingPartitionDirective,
-+    ApplyStagingManifestRequest, EnterStagingRequest, RegionFlushRequest, RegionRequest,
-+    StagingPartitionDirective,
- };
- use store_api::storage::{RegionId, ScanRequest};
+         let metadata_dir = metadata_store_dir(data_home);
+-        let kv_backend = creator
++        let metadata_kv_backend = creator
+             .metadata_kv_backend_creator
+             .create(metadata_dir, &opts)
+             .await?;
++        let kv_backend: KvBackendRef = metadata_kv_backend.clone();
+         let (procedure_manager, event_recorder_handle) =
+             standalone::build_procedure_manager(kv_backend.clone(), opts.procedure);
  
- use crate::config::MitoConfig;
-+use crate::engine::MitoEngine;
- use crate::test_util::{CreateRequestBuilder, TestEnv, build_rows, put_rows, rows_schema};
- 
- /// Helper to create a partition expression for testing.
-@@ -39,6 +41,30 @@ fn range_expr_string(col_name: &str, start: f64, end: f64) -> String {
-         .unwrap()
+@@ -790,6 +801,7 @@ impl StartCommand {
+             procedure_manager,
+             leader_services_controller: creator.leader_services_controller,
+             leader_services_context,
++            metadata_kv_backend,
+             _guard: vec![],
+         };
+         let result = InstanceCreatorResult {
+@@ -848,15 +860,25 @@ impl NodeManagerCreator for DefaultNodeManagerCreator {
+ /// configuration types.
+ #[async_trait]
+ pub trait MetadataKvBackendCreator: Send + Sync {
+-    async fn create(&self, metadata_dir: String, opts: &StandaloneOptions) -> Result<KvBackendRef>;
++    /// Standalone closes the backend on shutdown, so wrappers must forward
++    /// [close](common_meta::kv_backend::ClosableKvBackend::close) to the backend they wrap.
++    async fn create(
++        &self,
++        metadata_dir: String,
++        opts: &StandaloneOptions,
++    ) -> Result<ClosableKvBackendRef>;
  }
  
-+/// Ends staging the way repartition does, importing the region's own files.
-+async fn apply_staging(engine: &MitoEngine, region_id: RegionId, partition_expr: String) {
-+    let result = engine
-+        .remap_manifests(RemapManifestsRequest {
-+            region_id,
-+            input_regions: vec![region_id],
-+            region_mapping: [(region_id, vec![region_id])].into_iter().collect(),
-+            new_partition_exprs: [(region_id, partition_expr.clone())].into_iter().collect(),
-+        })
-+        .await
-+        .unwrap();
-+    engine
-+        .handle_request(
-+            region_id,
-+            RegionRequest::ApplyStagingManifest(ApplyStagingManifestRequest {
-+                partition_expr,
-+                central_region_id: region_id,
-+                manifest_path: result.manifest_paths[&region_id].clone(),
-+            }),
-+        )
-+        .await
-+        .unwrap();
+ pub struct DefaultMetadataKvBackendCreator;
+ 
+ #[async_trait]
+ impl MetadataKvBackendCreator for DefaultMetadataKvBackendCreator {
+-    async fn create(&self, metadata_dir: String, opts: &StandaloneOptions) -> Result<KvBackendRef> {
+-        standalone::build_metadata_kvbackend(metadata_dir, opts.metadata_store)
++    async fn create(
++        &self,
++        metadata_dir: String,
++        opts: &StandaloneOptions,
++    ) -> Result<ClosableKvBackendRef> {
++        standalone::open_metadata_kvbackend(metadata_dir, opts.metadata_store)
+             .context(error::BuildMetadataKvbackendSnafu)
+     }
+ }
+@@ -1161,6 +1183,7 @@ mod tests {
+         opts.storage.data_home = data_home.path().to_str().unwrap().to_string();
+         let creator = In
+```
+
+**File**: `src/common/meta/src/kv_backend.rs` (modified, +12/-0)
+```diff
+@@ -41,6 +41,18 @@ pub mod txn;
+ pub mod util;
+ pub type KvBackendRef<E = Error> = Arc<dyn KvBackend<Error = E> + Send + Sync>;
+ 
++/// A [KvBackend] holding resources that must be released explicitly on shutdown, because
++/// components sharing it may keep it alive until the process exits.
++///
++/// Wrappers of a closable backend must forward [ClosableKvBackend::close] to it.
++#[async_trait]
++pub trait ClosableKvBackend: KvBackend<Error = Error> {
++    /// Releases the backend's resources; any later use fails.
++    async fn close(&self) -> Result<(), Error>;
 +}
 +
- #[tokio::test]
- async fn test_partition_filter_basic() {
-     test_partition_filter_basic_with_format(false).await;
-@@ -51,7 +77,7 @@ async fn test_partition_filter_basic() {
- /// 1. Creates a region with partition expr `tag_0 >= "0"` (covers all data)
- /// 2. Writes data (tag_0 = "0"..="9") and flushes - SST has old partition expr
- /// 3. Enters staging mode with partition expr `tag_0 >= "5"` (narrower)
--/// 4. Writes more data and flushes in staging mode
-+/// 4. Writes more data in staging mode
- /// 5. Exits staging mode - region now has new partition expr
- /// 6. Scans all data - old SST data not matching new expr should be filtered
- async fn test_partition_filter_basic_with_format(flat_format: bool) {
-@@ -118,16 +144,7 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
-     };
-     put_rows(&engine, region_id, rows_data).await;
- 
--    // Flush in staging mode
--    engine
--        .handle_request(
--            region_id,
--            RegionRequest::Flush(RegionFlushRequest::default()),
--        )
--        .await
--        .unwrap();
--
--    // Scan data in staging mode - should only see initial 5 rows (staging SST not visible)
-+    // Scan data in staging mode - rows written in staging stay readable in the memtable
-     let projection = Some(vec![1]);
-     let request = ScanRequest {
-         projection,
-@@ -138,20 +155,16 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
-     let batches = RecordBatches::try_collect(stream).await.unwrap();
-     let total_rows: usize = batches.iter().map(|rb| rb.num_rows()).sum();
-     assert_eq!(
--        total_rows, 5,
--        "Should see 5 rows before exiting staging mode"
-+        total_rows, 11,
-+        "Should see 11 rows before exiting staging mode"
-     );
- 
-     // Exit staging mode
--    use store_api::region_engine::SettableRegionRoleState;
--    engine
--        .set_region_role_state_gracefully(region_id, SettableRegionRoleState::Leader)
--        .await
--        .unwrap();
-+    apply_staging(&engine, region_id, new_partition_expr).await;
- 
-     // Scan after exiting staging - the old SST (tag_0 = "0".."4") should have
-     // rows filtered by partition expr (tag_0 >= "5"), which means none of them pass.
--    // But the staging SST (tag_0 = "5".."10") satisfies the partition expr.
-+    // But the memtable rows (tag_0 = "5".."10") satisfy the partition expr.
-     let projection = Some(vec![1]);
-     let request = ScanRequest {
-         projection,
-@@ -163,10 +176,10 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
-     let total_rows: usize = batches.iter().map(|rb| rb.num_rows()).sum();
-     // After exit:
-     // - Old SST (rows 0-4): partition expr is "tag_0 >= 5", so these are filtered out
--    // - Staging SST (rows 5-10): These satisfy partition expr, so they're visible
-+    // - Memtable (rows 5-10): These satisfy partition expr, so they're visible
-     assert_eq!(
-         total_rows, 6,
--        "Should see 6 rows after exiting staging (rows 5-10 from staging SST), flat_format: {}",
-+        "Should see 6 rows after exiting staging (rows 5-10 from the memtable), flat_format: {}",
-         flat_format
-     )
++pub type ClosableKvBackendRef = Arc<dyn ClosableKvBackend + Send + Sync>;
++
+ #[cfg(any(feature = "pg_kvbackend", feature = "mysql_kvbackend"))]
+ // The default meta table name, default is "greptime_metakv".
+ pub const DEFAULT_META_TABLE_NAME: &str = "greptime_metakv";
 ```
 
-**File**: `src/mito2/src/engine/staging_test.rs` (modified, +1014/-91)
+**File**: `src/datanode/src/datanode.rs` (modified, +144/-6)
 ```diff
-@@ -14,16 +14,20 @@
+@@ -102,6 +102,8 @@ pub struct Datanode {
+     leases_notifier: Option<Arc<Notify>>,
+     plugins: Plugins,
+     object_store_log_store: Option<Arc<ObjectStoreLogStore>>,
++    /// The raft-engine WAL, if any. Stopped after the region server, see [Datanode::shutdown].
++    raft_engine_log_store: Option<Arc<RaftEngineLogStore>>,
+ }
  
- //! Integration tests for staging state functionality.
+ impl Datanode {
+@@ -184,6 +186,13 @@ impl Datanode {
+             );
+         }
+         record_shutdown_error(&mut first_error, self.region_server.stop().await);
++        // The stopped engines no longer hold the raft-engine WAL, so it can be closed.
++        if let Some(log_store) = self.raft_engine_log_store.take() {
++            record_shutdown_error(
++                &mut first_error,
++                close_raft_engine_log_store(log_store).await,
++            );
++        }
+         first_error.map_or(Ok(()), Err)
+     }
  
-+use std::collections::HashMap;
- use std::sync::Arc;
-+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
- use std::time::Duration;
- use std::{assert_matches, fs};
+@@ -213,10 +222,15 @@ pub struct DatanodeBuilder {
+     topic_stats_reporter: Option<Box<dyn TopicStatsReporter>>,
+     open_regions_writable_override: Option<bool>,
+     local_file_access: LocalFileAccess,
++    /// Set as soon as the raft-engine log store exists so that a failed build can close it.
++    raft_engine_log_store: Option<Arc<RaftEngineLogStore>>,
+     #[cfg(feature = "enterprise")]
+     extension_range_provider_factory: Option<mito2::extension::BoxedExtensionRangeProviderFactory>,
+     /// Set as soon as the object store log store exists so that a failed build can stop it.
+     object_store_log_store: Option<Arc<ObjectStoreLogStore>>,
++    /// Set as soon as the region server exists so that a failed build can stop its engines,
++    /// which hold the log stores.
++    region_server: Option<RegionServer>,
+ }
  
--use api::v1::{ArrowIpc, Rows};
-+use api::v1::{ArrowIpc, ColumnSchema, Rows};
-+use async_trait::async_trait;
- use common_error::ext::{ErrorExt, RetryHint};
- use common_error::status_code::StatusCode;
- use common_function::utils::partition_expr_version;
- use common_grpc::flight;
- use common_recordbatch::RecordBatches;
-+use common_time::util::current_time_millis;
- use datatypes::arrow::array::{ArrayRef, Float64Array, StringArray, TimestampMillisecondArray};
- use datatypes::arrow::record_batch::RecordBatch;
- use datatypes::value::Value;
-@@ -33,28 +37,36 @@ use object_store::layers::mock::{
-     MockLayerBuilder, OpDelete, Result as MockResult, Write, Writer,
- };
- use partition::expr::{PartitionExpr, col};
-+use store_api::mito_engine_options::WRITE_BUFFER_SIZE_KEY;
- use store_api::region_engine::{
--    RegionEngine, RemapManifestsRequest, SetRegionRoleStateResponse, SettableRegionRoleState,
-+    RegionEngine, RegionRole, RemapManifestsRequest, SetRegionRoleStateResponse,
-+    SettableRegionRoleState,
- };
- use store_api::region_request::{
-     ApplyStagingManifestRequest, EnterStagingRequest, RegionAlterRequest, RegionBulkInsertsRequest,
--    RegionFlushRequest, RegionPutRequest, RegionRequest, RegionTruncateRequest,
--    StagingPartitionDirective,
-+    RegionCloseRequest, RegionFlushReason, RegionFlushRequest, RegionPutRequest, RegionRequest,
-+    RegionTruncateRequest, StagingPartitionDirective,
- };
--use store_api::storage::{RegionId, ScanRequest};
-+use store_api::storage::{FileId, RegionId, ScanRequest};
+ impl DatanodeBuilder {
+@@ -230,6 +244,8 @@ impl DatanodeBuilder {
+             cache_registry: None,
+             open_regions_writable_override: None,
+             local_file_access: LocalFileAccess::Disabled,
++            raft_engine_log_store: None,
++            region_server: None,
+             #[cfg(feature = "enterprise")]
+             extension_range_provider_factory: None,
+             topic_stats_reporter: None,
+@@ -304,14 +320,26 @@ impl DatanodeBuilder {
+         self.try_build().await
+     }
  
- use crate::config::MitoConfig;
--use crate::engine::listener::NotifyEnterStagingResultListener;
-+use crate::engine::MitoEngine;
-+use crate::engine::listener::{EventListener, FlushListener, NotifyEnterStagingResultListener};
- use crate::error::Error;
-+use crate::flush::WriteBufferManager;
- use crate::manifest::action::{
-     RegionChange, RegionEdit, RegionMetaAction, RegionMetaActionList, RegionPartitionExprChange,
- };
--use crate::region::{RegionLeaderState, RegionRoleState, parse_partition_expr};
--use crate::request::WorkerRequest;
-+use crate::region::{MitoRegionRef, RegionLeaderState, RegionRoleState};
-+use crate::request::{RegionEditRequest, WorkerRequest};
- use crate::sst::FormatType;
-+use crate::sst::file::FileMeta;
- use crate::test_util::{
--    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, put_rows, rows_schema,
-+    CheckpointTaskBlocker, CreateRequestBuilder, MockWriteBufferManager, TestEnv, build_rows,
-+    flush_region, put_rows, reopen_region, rows_schema,
- };
-+use crate::time_provider::mock::MockTimeProvider;
-+use crate::worker::MAX_INITIAL_CHECK_DELAY_SECS;
- 
- fn range_expr(col_name: &str, start: i64, end: i64) -> PartitionExpr {
-     col(col_name)
-@@ -436,13 +448,6 @@ async fn test_staging_write_partition_expr_version_with_format(flat_format: bool
-         .await
-         .unwrap();
-     assert_eq!(result.affected_rows, 3);
--    engine
--        .handle_request(
--            region_id,
--            RegionRequest::Flush(RegionFlushRequest::default()),
--        )
--        .await
--        .unwrap();
- 
-     let result = engine
-         .remap_manifests(RemapManifestsRequest {
-@@ -551,9 +556,6 @@ async fn test_staging_manifest_directory_with_format(flat_format: bool) {
-     let region_id = RegionId::new(1024, 0);
-     let request = CreateRequestBuilder::new().build();
- 
--    // Get column schemas before consuming the request
--    let column_schemas = rows_schema(&request);
--
-     // Check manifest files after region creation (before staging mode)
-     // Create region
-     engine
-@@ -637,22 +639,6 @@ async fn test_staging_manifest_directory_with_format(flat_format: bool) {
-         Error::StagingPartitionExprMismatch { .. }
-     );
- 
--    // Put some data and flush in staging mode
--    let rows_data = Rows {
--        schema: column_schemas.clone(),
--        rows: build_rows(0, 3),
--    };
--    put_rows(&engine, region_id, rows_data).await;
--
--    // Force flush to generate manifest files in staging mode
--    engine
--        .handle_request(
--            region_id,
--            RegionRequest::Flush(RegionFlushRequest::default()),
--        )
--        .await
--        .unwrap();
--
-     // Check that manifest files are in staging directory
-     let staging_manifest_dir = format!("{}/staging/manifest", region_dir);
-     assert!(
-@@ -708,7 +694,7 @@ async fn test_staging_exit_success_with_manifests_with_format(flat_format: bool)
-         .await
-         .unwrap();
- 
--    // Add some data and flush in staging mode to generate staging manifests
-+    // This data is flushed when entering staging mode.
-     let rows_data = Rows {
-         schema: column_schemas.clone(),
-         rows: build_rows(0, 3),
-@@ -728,55 +714,55 @@ async fn test_sta
-```
-
-**File**: `src/mito2/src/flush.rs` (modified, +12/-23)
-```diff
-@@ -60,7 +60,7 @@ use crate::read::flat_dedup::{FlatDedupIterator, FlatLastNonNull, FlatLastRow};
- use crate::read::flat_merge::FlatMergeIterator;
- use crate::region::options::{IndexOptions, MergeMode, RegionOptions};
- use crate::region::version::{VersionControlData, VersionControlRef, VersionRef};
--use crate::region::{ManifestContextRef, RegionLeaderState, RegionRoleState, parse_partition_expr};
-+use crate::region::{ManifestContextRef, RegionLeaderState, parse_partition_expr};
- use crate::request::{
-     BackgroundNotify, DdlRequest, FlushFailed, FlushFinished, OnFailure, OptionOutputTx, OutputTx,
-     SenderBulkRequest, SenderDdlRequest, SenderWriteRequest, WorkerRequest, WorkerRequestWithTime,
-@@ -281,8 +281,6 @@ pub(crate) struct RegionFlushTask {
-     pub(crate) index_options: IndexOptions,
-     /// Semaphore to control flush concurrency.
-     pub(crate) flush_semaphore: Arc<Semaphore>,
--    /// Whether the region is in staging mode.
--    pub(crate) is_staging: bool,
-     /// Partition expression of the region.
-     ///
-     /// This is used to generate the file meta.
-@@ -412,7 +410,6 @@ impl RegionFlushTask {
-                     _timer: timer,
-                     edit,
-                     memtables_to_remove,
--                    is_staging: self.is_staging,
-                 };
-                 WorkerRequest::Background {
-                     region_id: self.region_id,
-@@ -537,10 +534,7 @@ impl RegionFlushTask {
-             flushed_sequence: Some(version_data.committed_sequence),
-             committed_sequence: None,
+-    /// Builds the datanode and stops the object store log store if a later step fails.
++    /// Builds the datanode and, if a later step fails, stops the engines and the log stores it
++    /// opened.
+     async fn try_build(&mut self) -> Result<Datanode> {
+         let result = self.build_inner().await;
+-        if result.is_err()
+-            && let Some(log_store) = &self.object_store_log_store
+-            && let Err(err) = log_store.stop().await
+-        {
+-            warn!(err; "Failed to stop the object store log store after a failed build");
++        if result.is_err() {
++            if let Some(log_store) = &self.object_store_log_store
++                && let Err(err) = log_store.stop().await
++            {
++                warn!(err; "Failed to stop the object store log store after a failed build");
++            }
++            if let Some(region_server) = self.region_server.take()
++                && let Err(err) = region_server.stop().await
++            {
++                warn!(err; "Failed to stop the region server after a failed build");
++            }
++            if let Some(log_store) = self.raft_engine_log_store.take()
++                && let Err(err) = close_raft_engine_log_store(log_store).await
++            {
++                warn!(err; "Failed to close the raft-engine log store after a failed build");
++            }
+         }
+         result
+     }
+@@ -372,6 +400,7 @@ impl DatanodeBuilder {
+                 cache_registry.clone(),
+             )
+             .await?;
++        self.region_server = Some(region_server.clone());
+         // A region acknowledges only writes whose WAL append completed within its lease from
+         // the metasrv.
+         if controlled_by_metasrv && let Some(mito) = region_server.mito_engine() {
+@@ -447,6 +476,7 @@ impl DatanodeBuilder {
+             None
          };
--        info!(
--            "Applying {edit:?} to region {}, is_staging: {}",
--            self.region_id, self.is_staging
--        );
-+        info!("Applying {edit:?} to region {}", self.region_id);
  
-         let action_list = RegionMetaActionList::with_action(RegionMetaAction::Edit(edit.clone()));
- 
-@@ -553,17 +547,11 @@ impl RegionFlushTask {
-         let expected_state = if matches!(self.reason, FlushReason::Downgrading) {
-             RegionLeaderState::Downgrading
-         } else {
--            // Check if region is in staging mode
--            let current_state = self.manifest_ctx.current_state();
--            if current_state == RegionRoleState::Leader(RegionLeaderState::Staging) {
--                RegionLeaderState::Staging
--            } else {
--                RegionLeaderState::Writable
--            }
-+            RegionLeaderState::Writable
-         };
-         let manifest_version = match self
-             .manifest_ctx
--            .update_manifest(expected_state, action_list, self.is_staging)
-+            .update_manifest(expected_state, action_list, false)
-             .await
-         {
-             Ok(manifest_version) => {
-@@ -584,9 +572,8 @@ impl RegionFlushTask {
-             }
-         };
-         info!(
--            "Successfully update manifest version to {manifest_version}, region: {}, is_staging: {}, reason: {}",
-+            "Successfully update manifest version to {manifest_version}, region: {}, reason: {}",
-             self.region_id,
--            self.is_staging,
-             self.reason.as_str()
-         );
- 
-@@ -1507,6 +1494,13 @@ impl FlushScheduler {
++        self.region_server = None;
+         Ok(Datanode {
+             services: ServerHandlers::default(),
+             heartbeat_task,
+@@ -456,6 +486,7 @@ impl DatanodeBuilder {
+             leases_notifier,
+             plugins: self.plugins.clone(),
+             object_store_log_store: self.object_store_log_store.take(),
++            raft_engine_log_store: self.raft_engine_log_store.take(),
          })
      }
  
-+    /// Returns true if the region has a close-time flush.
-+    pub(crate) fn has_close_time_flush(&self, region_id: RegionId) -> bool {
-+        self.region_status
-+            .get(&region_id)
-+            .is_some_and(|status| status.closing)
-+    }
-+
-     /// Returns true if the region has pending DDLs or a close-time flush.
-     pub(crate) fn has_pending_ddls(&self, region_id: RegionId) -> bool {
-         self.region_status
-@@ -1713,7 +1707,6 @@ mod tests {
-             manifest_ctx,
-             index_options: IndexOptions::default(),
-             flush_semaphore: Arc::new(Semaphore::new(2)),
--            is_staging: false,
-             partition_expr: None,
-             durability_barrier: DurabilityBarrier::noop(),
-         }
-@@ -1864,7 +1857,6 @@ mod tests {
-                 .await,
-             index_options: IndexOptions::default(),
-             flush_semaphore: Arc::new(Semaphore::new(2)),
--            is_staging: false,
-             partition_expr: None,
-             durability_barrier: DurabilityBarrier::noop(),
-         };
-@@ -1950,7 +1942,6 @@ mod tests {
-                     committed_sequence: None,
-                 },
-                 memtables_to_remove: smallvec![],
--                is_staging: false,
-             }),
-         };
+@@ -759,6 +790,7 @@ impl DatanodeBuilder {
+                 let log_store =
+                     Self::build_raft_engine_log_store(&opts.storage.data_home, raft_engine_config)
+                         .await?;
++                self.raft_engine_log_store = Some(log_store.clone());
  
-@@ -2166,7 +2157,6 @@ mod tests {
-                 manifest_ctx: manifest_ctx.clone(),
-                 index_options: IndexOptions::default(),
-                 flush_semaphore: Arc::new(Semaphore::new(2)),
--                is_staging: false,
-                 partition_expr: None,
-                 durability_barrier: DurabilityBarrier::noop(),
-             })
-@@ -2473,7 +2463,6 @@ mod tests {
-                 manifest_ctx: manifest_ctx.clone(),
-                 index_options: IndexOptions::default(),
-                 f
+                 let builder = MitoEngineBuilder::new(
+                     &opts.storage.data_home,
+@@ -919,6 +951,25 @@ pub(crate) fn record_shutdown_error(first_error: &mut Option<error::Error>, resu
+     }
+ }
+ 
++/// Closes th
 ```
 
-**File**: `src/mito2/src/region.rs` (modified, +35/-25)
+**File**: `src/log-store/src/error.rs` (modified, +9/-0)
 ```diff
-@@ -96,7 +96,7 @@ impl RegionUsage {
- pub enum RegionLeaderState {
-     /// The region is opened and is writable.
-     Writable,
--    /// The region is in staging mode - writable but no checkpoint/compaction.
-+    /// The region is in staging mode - writable but no checkpoint/compaction/flush.
-     Staging,
-     /// The region is entering staging mode. - write requests will be stalled.
-     EnteringStaging,
-@@ -407,6 +407,17 @@ impl MitoRegion {
-         self.manifest_ctx.state.load() == RegionRoleState::Leader(RegionLeaderState::Staging)
-     }
+@@ -85,6 +85,14 @@ pub enum Error {
+         location: Location,
+     },
  
-+    /// Returns whether the region is in staging mode, counting a staged edit in progress.
-+    pub(crate) fn is_staging_or_staged_edit(&self) -> bool {
-+        match self.manifest_ctx.state.load() {
-+            RegionRoleState::Leader(RegionLeaderState::Staging) => true,
-+            RegionRoleState::Leader(RegionLeaderState::Editing) => {
-+                self.manifest_ctx.staging_partition_info().is_some()
-+            }
-+            _ => false,
-+        }
-+    }
++    #[snafu(display("Failed to join a blocking task of the log store"))]
++    Join {
++        #[snafu(source)]
++        error: tokio::task::JoinError,
++        #[snafu(implicit)]
++        location: Location,
++    },
 +
-     /// Returns whether the region is entering staging mode.
-     pub(crate) fn is_enter_staging(&self) -> bool {
-         self.manifest_ctx.state.load()
-@@ -527,6 +538,29 @@ impl MitoRegion {
-         )
-     }
+     #[snafu(display("Log store not started yet"))]
+     IllegalState {
+         #[snafu(implicit)]
+@@ -529,6 +537,7 @@ impl ErrorExt for Error {
+             | InvalidWalEntryRange { .. } => StatusCode::InvalidArguments,
+             StartWalTask { .. }
+             | StopWalTask { .. }
++            | Join { .. }
+             | IllegalState { .. }
+             | NoMaxValue { .. }
+             | Cast { .. }
+```
+
+**File**: `src/log-store/src/raft_engine.rs` (modified, +38/-2)
+```diff
+@@ -12,22 +12,38 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
-+    /// Leaves staging without committing it, abandoning a staged edit in progress.
-+    ///
-+    /// You should call this method in the worker loop, which is what restores the state of an
-+    /// edit, and only when [Self::is_staging_or_staged_edit] holds.
-+    pub(crate) fn abort_staging(&self) {
-+        let aborted = self
-+            .manifest_ctx
-+            .state
-+            .fetch_update(|state| {
-+                matches!(
-+                    state,
-+                    RegionRoleState::Leader(
-+                        RegionLeaderState::Staging | RegionLeaderState::Editing
-+                    )
-+                )
-+                .then_some(RegionRoleState::Leader(RegionLeaderState::Writable))
-+            })
-+            .is_ok();
-+        if aborted {
-+            self.manifest_ctx.clear_staging_partition_info();
-+        }
-+    }
-+
-     /// Sets the region role state gracefully. This acquires the manifest write lock.
-     pub(crate) async fn set_role_state_gracefully(
-         &self,
-@@ -1142,30 +1176,6 @@ impl MitoRegion {
-         Ok(Some(pending))
-     }
- 
--    /// Returns the partition expression string for this region.
--    ///
--    /// If the region is currently in staging state, this returns the partition expression held in
--    /// the staging partition field. Otherwise, it returns the partition expression from the primary
--    /// region metadata (current committed version).
--    pub fn maybe_staging_partition_expr_str(&self) -> Option<String> {
--        let is_staging = self.is_staging();
--        if is_staging {
--            let staging_partition_info = self.manifest_ctx.staging_partition_info();
--            if staging_partition_info.is_none() {
--                warn!(
--                    "Staging partition expr is none for region {} in staging state",
--                    self.region_id
--                );
--            }
--            staging_partition_info
--                .as_ref()
--                .and_then(|info| info.partition_expr().map(ToString::to_string))
--        } else {
--            let version = self.version();
--            version.metadata.partition_expr.clone()
--        }
--    }
+-use crate::raft_engine::protos::logstore::EntryImpl;
 -
-     pub fn expected_partition_expr_version(&self) -> u64 {
-         if self.is_staging() {
-             self.manifest_ctx
+ mod backend;
+ pub mod log_store;
+ 
++use std::sync::Arc;
++
+ pub use backend::RaftEngineBackend;
+ pub use raft_engine::Config;
++use raft_engine::Engine;
++use snafu::ResultExt;
+ use store_api::logstore::entry::{Entry, NaiveEntry};
+ use store_api::logstore::provider::Provider;
+ use store_api::storage::RegionId;
+ 
++use crate::error::{JoinSnafu, Result};
++use crate::raft_engine::protos::logstore::EntryImpl;
++
+ #[allow(renamed_and_removed_lints, mismatched_lifetime_syntaxes, unused_parens)]
+ pub mod protos {
+     include!(concat!(env!("OUT_DIR"), concat!("/", "protos/", "mod.rs")));
+ }
+ 
++/// Drops `engine` on a blocking thread, as that blocks: dropping the last reference joins the
++/// engine's threads and trims and syncs the active log file, which is what closes it.
++///
++/// No `Engine::sync` before: on raft-engine 0.4.2 it writes an empty batch, which returns before
++/// the fsync (see `durable_sync`).
++pub(crate) async fn close_engine(engine: Arc<Engine>) -> Result<()> {
++    common_runtime::spawn_blocking_global(move || drop(engine))
++        .await
++        .context(JoinSnafu)
++}
++
+ impl EntryImpl {
+     pub fn create(id: u64, ns: u64, data: Vec<u8>) -> Self {
+         Self {
+@@ -56,3 +72,23 @@ impl From<EntryImpl> for Entry {
+         })
+     }
+ }
++
++/// Total size of the raft-engine log files in `dir`.
++///
++/// raft-engine preallocates the active log file ahead of the writes, where the platform and
++/// file system support it, and only trims that tail when the engine is closed.
++#[cfg(test)]
++pub(crate) fn log_files_size(dir: &std::path::Path) -> u64 {
++    std::fs::read_dir(dir)
++        .unwrap()
++        .map(|entry| entry.unwrap().path())
++        .filter(|path| path.extension().is_some_and(|ext| ext == "raftlog"))
++        .map(|path| std::fs::metadata(path).unwrap().len())
++        .sum()
++}
++
++/// Size above which the log files are taken to still hold the tail raft-engine preallocates
++/// for the active file. This is a detection threshold, below the 2 MiB raft-engine actually
++/// allocates, not that allocation size.
++#[cfg(test)]
++pub(crate) const PREALLOCATION_THRESHOLD: u64 = 1024 * 1024;
 ```
 
-**File**: `src/mito2/src/request.rs` (modified, +10/-2)
+**File**: `src/log-store/src/raft_engine/backend.rs` (modified, +130/-30)
 ```diff
-@@ -1152,8 +1152,6 @@ pub(crate) struct FlushFinished {
-     pub(crate) edit: RegionEdit,
-     /// Memtables to remove.
-     pub(crate) memtables_to_remove: SmallVec<[MemtableId; 2]>,
--    /// Whether the region is in staging mode.
--    pub(crate) is_staging: bool,
+@@ -23,7 +23,7 @@ use common_config::KvBackendConfig;
+ use common_error::ext::BoxedError;
+ use common_meta::error as meta_error;
+ use common_meta::kv_backend::txn::{Txn, TxnOp, TxnOpResponse, TxnRequest, TxnResponse};
+-use common_meta::kv_backend::{KvBackend, TxnService};
++use common_meta::kv_backend::{ClosableKvBackend, KvBackend, TxnService};
+ use common_meta::rpc::KeyValue;
+ use common_meta::rpc::store::{
+     BatchDeleteRequest, BatchDeleteResponse, BatchGetRequest, BatchGetResponse, BatchPutRequest,
+@@ -33,17 +33,19 @@ use common_meta::rpc::store::{
+ use common_meta::util::get_next_prefix_key;
+ use common_runtime::RepeatedTask;
+ use raft_engine::{Config, Engine, LogBatch, ReadableSize, RecoveryMode};
+-use snafu::{IntoError, ResultExt};
++use snafu::{IntoError, OptionExt, ResultExt};
+ 
+-use crate::error::{self, Error, IoSnafu, RaftEngineSnafu, StartWalTaskSnafu};
++use crate::error::{self, Error, IoSnafu, RaftEngineSnafu, StartWalTaskSnafu, StopWalTaskSnafu};
++use crate::raft_engine::close_engine;
+ use crate::raft_engine::log_store::PurgeExpiredFilesFunction;
+ 
+ pub(crate) const SYSTEM_NAMESPACE: u64 = 0;
+ 
+ /// RaftEngine based [KvBackend] implementation.
+ pub struct RaftEngineBackend {
+-    engine: RwLock<Arc<Engine>>,
+-    _gc_task: RepeatedTask<Error>,
++    /// `None` once the backend is closed, see [ClosableKvBackend::close].
++    engine: RwLock<Option<Arc<Engine>>>,
++    gc_task: RepeatedTask<Error>,
  }
  
- impl FlushFinished {
-@@ -1372,6 +1370,9 @@ pub(crate) struct RegionEditRequest {
-     pub(crate) preload_sst_cache: bool,
-     /// The waiters that are waiting for this region edit's result.
-     pub(crate) waiters: Waiters,
-+    /// The partition expression of the staging this edit belongs to, if any.
-+    /// The edit must not run unless the region is staging for that expression.
-+    pub(crate) staging_partition_expr: Option<String>,
+ fn ensure_dir(dir: &str) -> error::Result<()> {
+@@ -88,20 +90,45 @@ impl RaftEngineBackend {
+         let gc_task = RepeatedTask::new(
+             config.purge_interval,
+             Box::new(PurgeExpiredFilesFunction {
+-                engine: engine.clone(),
++                engine: Arc::downgrade(&engine),
+             }),
+         );
+         gc_task
+             .start(common_runtime::global_runtime())
+             .context(StartWalTaskSnafu { name: "gc_task" })?;
+ 
+         Ok(Self {
+-            engine: RwLock::new(engine),
+-            _gc_task: gc_task,
++            engine: RwLock::new(Some(engine)),
++            gc_task,
+         })
+     }
  }
  
- impl RegionEditRequest {
-@@ -1386,8 +1387,15 @@ impl RegionEditRequest {
-             edit,
-             preload_sst_cache,
-             waiters: Waiters::one(waiter),
-+            staging_partition_expr: None,
++/// raft-engine only trims the space it preallocated at the tail of the active log file when
++/// the [Engine] is dropped. This backend is shared by many components, some of which live in
++/// background tasks until the process exits, so without an explicit close the next start
++/// finds that tail and truncates it as a broken batch.
++#[async_trait::async_trait]
++impl ClosableKvBackend for RaftEngineBackend {
++    /// Stops the purge task and closes the engine.
++    async fn close(&self) -> meta_error::Result<()> {
++        self.gc_task
++            .stop()
++            .await
++            .context(StopWalTaskSnafu { name: "gc_task" })
++            .map_err(BoxedError::new)
++            .context(meta_error::ExternalSnafu)?;
++        let engine = self.engine.write().unwrap().take();
++        match engine {
++            Some(engine) => close_engine(engine)
++                .await
++                .map_err(BoxedError::new)
++                .context(meta_error::ExternalSnafu),
++            None => Ok(()),
++        }
++    }
++}
++
+ #[async_trait::async_trait]
+ impl TxnService for RaftEngineBackend {
+     type Error = meta_error::Error;
+@@ -119,10 +146,11 @@ impl TxnService for RaftEngineBackend {
+         // outside "get" or "put" etc. It doesn't serve the purpose of mutating some Rust data, so
+         // the variable is not "mut". Suppress the clippy warning because of this.
+         #[allow(clippy::readonly_write_lock)]
+-        let engine = self.engine.write().unwrap();
++        let guard = self.engine.write().unwrap();
++        let engine = get_open_engine(&guard)?;
+ 
+         for cmp in compare {
+-            let existing_value = engine_get(&engine, &cmp.key)?.map(|kv| kv.value);
++            let existing_value = engine_get(engine, &cmp.key)?.map(|kv| kv.value);
+             if !cmp.compare_value(existing_value.as_ref()) {
+                 succeeded = false;
+                 break;
+@@ -141,7 +169,7 @@ impl TxnService for RaftEngineBackend {
+             }
+ 
+             TxnOp::Get(key) => {
+-                let value = engine_get(&engine, &key)?.map(|kv| kv.value);
++                let value = engine_get(engine, &key)?.map(|kv| kv.value);
+                 let kvs = value
+                     .map(|value| KeyValue { key, value })
+                     .into_iter()
+@@ -153,7 +181,7 @@ impl TxnService for RaftEngineBackend {
+             }
+ 
+             TxnOp::Delete(key) => {
+-                let prev = engine_get(&engine, &key)?;
++                let prev = engine_get(engine, &key)?;
+                 batch.delete(SYSTEM_NAMESPACE, key);
+                 let deleted = if prev.is_some() { 1 } else { 0 };
+                 Ok(TxnOpResponse::ResponseDelete(DeleteRangeResponse {
+@@ -212,9 +240,7 @@ impl KvBackend for RaftEngineBackend {
+         let mut more = false;
+         let mut iter = 0;
+ 
+-        self.engine
+-            .read()
+-            .un
+```
+
+**File**: `src/log-store/src/raft_engine/log_store.rs` (modified, +181/-20)
+```diff
+@@ -14,7 +14,8 @@
+ 
+ use std::collections::{HashMap, hash_map};
+ use std::fmt::{Debug, Formatter};
+-use std::sync::Arc;
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::sync::{Arc, Weak};
+ use std::time::Duration;
+ 
+ use async_stream::stream;
+@@ -27,6 +28,8 @@ use store_api::logstore::entry::{Entry, Id as EntryId, NaiveEntry};
+ use store_api::logstore::provider::{Provider, RaftEngineProvider};
+ use store_api::logstore::{AppendBatchResponse, LogStore, SendableEntryStream};
+ use store_api::storage::RegionId;
++use tokio_util::sync::CancellationToken;
++use tokio_util::task::TaskTracker;
+ 
+ use crate::error::{
+     AddEntryLogBatchSnafu, DiscontinuousLogIndexSnafu, Error, FetchEntrySnafu,
+@@ -35,6 +38,7 @@ use crate::error::{
+ };
+ use crate::metrics;
+ use crate::raft_engine::backend::SYSTEM_NAMESPACE;
++use crate::raft_engine::close_engine;
+ use crate::raft_engine::protos::logstore::{EntryImpl, NamespaceImpl};
+ 
+ const NAMESPACE_PREFIX: &str = "$sys/";
+@@ -44,12 +48,21 @@ pub struct RaftEngineLogStore {
+     sync_period: Option<Duration>,
+     read_batch_size: usize,
+     engine: Arc<Engine>,
++    /// Tasks feeding the streams returned by [LogStore::read]. Each holds the engine until its
++    /// stream is drained, so `stop` cancels them and waits for them before [Self::close] can
++    /// release it.
++    readers: TaskTracker,
++    readers_cancel: CancellationToken,
+     gc_task: RepeatedTask<Error>,
+     sync_task: RepeatedTask<Error>,
+ }
+ 
++/// Purges expired log files periodically.
++///
++/// Holds the engine weakly: the task runs on the global runtime, which outlives its owner, and
++/// a strong reference there would keep the engine (and its active log file) open until exit.
+ pub struct PurgeExpiredFilesFunction {
+-    pub engine: Arc<Engine>,
++    pub engine: Weak<Engine>,
+ }
+ 
+ #[async_trait::async_trait]
+@@ -59,7 +72,10 @@ impl TaskFunction<Error> for PurgeExpiredFilesFunction {
+     }
+ 
+     async fn call(&mut self) -> Result<()> {
+-        match self.engine.purge_expired_files().context(RaftEngineSnafu) {
++        let Some(engine) = self.engine.upgrade() else {
++            return Ok(());
++        };
++        match engine.purge_expired_files().context(RaftEngineSnafu) {
+             Ok(res) => {
+                 // TODO(hl): the retval of purge_expired_files indicates the namespaces need to be compact,
+                 // which is useful when monitoring regions failed to flush it's memtable to SSTs.
+@@ -106,8 +122,9 @@ fn durable_sync(engine: &Engine, batch: &mut LogBatch) -> raft_engine::Result<us
+     engine.write(batch, true)
+ }
+ 
++/// Syncs the log files periodically. Holds the engine weakly, see [PurgeExpiredFilesFunction].
+ pub struct SyncWalTaskFunction {
+-    engine: Arc<Engine>,
++    engine: Weak<Engine>,
+     /// Batch reused across ticks to avoid allocating a new one each period.
+     /// `None` after a failed sync; a fresh batch is created on the next tick.
+     batch: Option<LogBatch>,
+@@ -116,7 +133,9 @@ pub struct SyncWalTaskFunction {
+ #[async_trait::async_trait]
+ impl TaskFunction<Error> for SyncWalTaskFunction {
+     async fn call(&mut self) -> std::result::Result<(), Error> {
+-        let engine = self.engine.clone();
++        let Some(engine) = self.engine.upgrade() else {
++            return Ok(());
++        };
+         let mut batch = self
+             .batch
+             .take()
+@@ -145,9 +164,9 @@ impl TaskFunction<Error> for SyncWalTaskFunction {
+ }
+ 
+ impl SyncWalTaskFunction {
+-    pub fn new(engine: Arc<Engine>) -> Self {
++    pub fn new(engine: &Arc<Engine>) -> Self {
+         Self {
+-            engine,
++            engine: Arc::downgrade(engine),
+             batch: None,
          }
      }
-+
-+    /// Binds the edit to the staging for `partition_expr`.
-+    pub(crate) fn for_staging(mut self, partition_expr: String) -> Self {
-+        self.staging_partition_expr = Some(partition_expr);
-+        self
-+    }
- }
+@@ -170,20 +189,22 @@ impl RaftEngineLogStore {
+         let gc_task = RepeatedTask::new(
+             config.purge_interval,
+             Box::new(PurgeExpiredFilesFunction {
+-                engine: engine.clone(),
++                engine: Arc::downgrade(&engine),
+             }),
+         );
  
- /// Notifies the regin the result of editing region.
-```
-
-**File**: `src/mito2/src/worker.rs` (modified, +9/-0)
-```diff
-@@ -93,6 +93,7 @@ use crate::sst::index::puffin_manager::PuffinManagerFactory;
- use crate::temp_file_sweeper;
- use crate::time_provider::{StdTimeProvider, TimeProviderRef};
- use crate::wal::Wal;
-+use crate::worker::handle_flush::StagingRegionsRef;
- use crate::worker::handle_manifest::RegionEditQueues;
+         let sync_task = RepeatedTask::new(
+             config.sync_period.unwrap_or(Duration::from_secs(5)),
+-            Box::new(SyncWalTaskFunction::new(engine.clone())),
++            Box::new(SyncWalTaskFunction::new(&engine)),
+         );
  
- /// Identifier for a worker.
-@@ -258,6 +259,7 @@ impl WorkerGroup {
-         let sweep_limiter = (config.gc.max_concurrent_gc_job > 0)
-             .then(|| Arc::new(Semaphore::new(config.gc.max_concurrent_gc_job)));
-         let node_lease = Arc::new(NodeLease::default());
-+        let staging_regions = StagingRegionsRef::default();
- 
-         let workers = (0..config.num_workers)
-             .map(|id| {
-@@ -290,6 +292,7 @@ impl WorkerGroup {
-                     #[cfg(feature = "hdfs-object-store")]
-                     sweep_limiter: sweep_limiter.clone(),
-                     node_lease: node_lease.clone(),
-+                    staging_regions: staging_regions.clone(),
-                 }
-                 .start()
-             })
-@@ -529,6 +532,7 @@ impl WorkerGroup {
-         let sweep_limiter = (config.gc.max_concurrent_gc_job > 0)
-             .then(|| Arc::new(Semaphore::new(config.gc.max_concurrent_gc_job)));
-         let node_lease = Arc::new(NodeLease::default());
-+        let staging_regions = StagingRegionsRef::default();
-         let workers = (0..config.num_workers)
-             .map(|id| {
-                 WorkerStarter {
-@@ -560,6 +564,7 @@ impl WorkerGroup {
-                     #[cfg(feature = "hdfs-object-store")]
-                     sweep_limiter: sweep_limiter.clone(),
-                     node_lease: node_lease.clone(),
-+                    staging_regions: staging_regions.clone(),
-                 }
-                 .start()
-             })
-@@ -677,6 +682,7 @@ struct WorkerStarter<S> {
-     /// no concurrent GC job.
-     sweep_limiter: Option<Arc<Semaphore>>,
-     node_lease: Arc<NodeLease>,
-+    staging_regions: StagingRegionsRef,
- }
- 
- impl<S: LogStore> WorkerStarter<S> {
-@@ -782,6 +788,7 @@ impl<S: LogStore> WorkerStarter<S> {
-             #[cfg(feature = "hdfs-object-store")]
-             sweep_limiter: self.sweep_limiter,
-             node_lease: self.node_lease,
-+            staging_regions: self.staging_regions,
+         let log_store = Self {
+             sync_write: config.sync_write,
+             sync_period: config.sync_period,
+             read_batch_size: config.read_batch_size,
+             engine,
++            readers: TaskTracker::new(),
++            readers_cancel: CancellationToken::new(),
+             gc_task,
+             sync_task,
          };
-         let handle = common_runtime::spawn_global(async move {
-             worker_thread.run().await;
-@@ -1122,6 +1129,8 @@ struct RegionWorkerLoop<S> {
-     /// no concurrent GC job.
-     sweep_limiter: Option<Arc<Semaphore>>,
-     node_lease: Arc<NodeLease>,
-+    /// Staging regions of this node that have received writes.
-+    staging_regions: StagingRegionsRef,
- }
+@@ -195,6 +216,17 @@ impl RaftEngineLogStore {
+         self.gc_task.started()
+     }
  
- impl<S: LogStore> RegionWorkerLoop<S> {
++    /// Stops the log store and closes the engine.
++    ///
++    /// raft-engine only trims the space it preallocated at the tail of the active log file when
++    /// the [Engine] is dropped. Consuming the log store makes this the last reference, so the
++    /// file is closed here instead of whenever the engine
 ```
 
-**File**: `src/mito2/src/worker/handle_apply_staging.rs` (modified, +2/-1)
+---
+
+### Incident Patch 2: `ddc16baf` (2026-11-11)
+**Commit Message**: fix(datatypes): render jsonb stored as JSON text without panics or wrong values (#10197)
+
+* fix(datatypes): decode jsonb before rendering it as text
+
+jsonb_to_string serialized the bytes through RawJsonb's Serialize impl,
+which panics with an out-of-range slice index on JSON text such as
+"hello world" or "        null" (stored by COPY FROM and MySQL text
+parameters) and on truncated jsonb. Its text fallback was also stricter than
+the extended parser reads used before.
+
+Decode with jsonb::from_slice, as reads did before #10112, then write the
+value out with serde_json escaping for keys and strings.
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* perf(datatypes): keep streaming jsonb serialization in jsonb_to_string
+
+Decoding into a jsonb::Value tree allocates per array, object and key on
+every JSON cell returned over PostgreSQL and MySQL. Go back to serializing
+the raw bytes with RawJsonb's Serialize impl, and bump jsonb to a rev whose
+Serialize returns an error instead of panicking on out-of-range payloads
+(GreptimeTeam/jsonb#2). Bytes that fail to serialize are parsed as JSON
+text with the extended parser, as jsonb::from_slice does.
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMA
+
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -140,7 +140,8 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-                         region_id, edit,
-                         // we don't need to preload sst cache during repartition, as it may cause extra network overhead.
-                         false, tx,
--                    ),
-+                    )
-+                    .for_staging(request.partition_expr),
-                 )))
-                 .await;
+@@ -7584,7 +7584,7 @@ dependencies = [
+ [[package]]
+ name = "jsonb"
+ version = "0.5.6"
+-source = "git+https://github.com/GreptimeTeam/jsonb?rev=dd1e2341e3df35e9de38959328caa7628e81b6b1#dd1e2341e3df35e9de38959328caa7628e81b6b1"
++source = "git+https://github.com/GreptimeTeam/jsonb?rev=5a6472858d860ac034075c17253f41617bdfa956#5a6472858d860ac034075c17253f41617bdfa956"
+ dependencies = [
+  "byteorder",
+  "ethnum",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -176,7 +176,7 @@ hyper-util = "0.1"
+ icu_properties = "2.0.1"
+ indicatif = "0.17"
+ itertools = "0.14"
+-jsonb = { git = "https://github.com/GreptimeTeam/jsonb", rev = "dd1e2341e3df35e9de38959328caa7628e81b6b1", default-features = false, features = [
++jsonb = { git = "https://github.com/GreptimeTeam/jsonb", rev = "5a6472858d860ac034075c17253f41617bdfa956", default-features = false, features = [
+     "databend",
+ ] }
+ lazy_static = "1.4"
+```
+
+**File**: `src/datatypes/src/types/json_type.rs` (modified, +49/-17)
+```diff
+@@ -389,34 +389,33 @@ impl Display for JsonType {
  
+ /// Converts a json type value to string
+ ///
+-/// The binary jsonb is serialized directly with `serde_json`, so both object keys and
+-/// string values are escaped by `serde_json`. `RawJsonb::to_string()` is deliberately
+-/// avoided, since it falls back to the lossy raw bytes when serialization fails.
++/// The binary jsonb is serialized directly with `serde_json`, so object keys and string
++/// values are escaped by `serde_json`. `RawJsonb::to_string()` is avoided, since it falls
++/// back to the lossy raw bytes when serialization fails.
+ ///
+-/// Some write paths (e.g. `COPY FROM` csv/json/parquet files, or a JSON parameter bound
+-/// as text through the MySQL protocol) currently store the JSON *text* as the column
+-/// bytes instead of binary jsonb, and such data may already be persisted. When the bytes
+-/// are not valid jsonb but are valid JSON text, they are re-encoded as jsonb and then
+-/// serialized the same way, so the output is still escaped by `serde_json`. Anything else
+-/// is reported as an error.
++/// Some write paths (e.g. `COPY FROM` files, or a JSON parameter bound as text through
++/// the MySQL protocol) store JSON text in place of binary jsonb. Bytes that fail to
++/// serialize are parsed as text with the extended parser, as `jsonb::from_slice` does.
+ pub fn jsonb_to_string(val: &[u8]) -> Result<String> {
+     if val.is_empty() {
+         return Ok("".to_string());
+     }
+     match serde_json::to_string(&jsonb::RawJsonb::new(val)) {
+         Ok(s) => Ok(s),
+-        Err(e) => match jsonb::parse_value_standard_mode(val) {
+-            Ok(json) => serde_json::to_string(&jsonb::RawJsonb::new(&json.to_vec())).map_err(|e| {
++        Err(jsonb_err) => {
++            let value = jsonb::parse_value(val).map_err(|text_err| {
++                InvalidJsonSnafu {
++                    value: format!("neither jsonb ({jsonb_err}) nor JSON text ({text_err})"),
++                }
++                .build()
++            })?;
++            serde_json::to_string(&jsonb::RawJsonb::new(&value.to_vec())).map_err(|e| {
+                 InvalidJsonSnafu {
+                     value: e.to_string(),
+                 }
+                 .build()
+-            }),
+-            Err(_) => InvalidJsonSnafu {
+-                value: e.to_string(),
+-            }
+-            .fail(),
+-        },
++            })
++        }
+     }
+ }
+ 
+@@ -453,6 +452,21 @@ mod tests {
+         Ok(())
+     }
+ 
++    #[test]
++    fn test_jsonb_to_serde_json_scalars() {
++        for input in [r#""2026-11-05""#, "1730800000000", "false", "null"] {
++            let expected: serde_json::Value = serde_json::from_str(input).unwrap();
++            let jsonb = parse_string_to_jsonb(input).unwrap();
++            assert_eq!(jsonb_to_serde_json(&jsonb).unwrap(), expected, "{input}");
++            // Stored as JSON text, the first two used to decode as `false`.
++            assert_eq!(
++                jsonb_to_serde_json(input.as_bytes()).unwrap(),
++                expected,
++                "{input}"
++            );
++        }
++    }
++
+     #[test]
+     fn test_jsonb_to_string_escapes_object_keys()
+     -> std::result::Result<(), Box<dyn std::error::Error>> {
+@@ -514,6 +528,10 @@ mod tests {
+     fn test_jsonb_to_string_rejects_invalid_jsonb() {
+         assert!(jsonb_to_string(&[1, 2, 3, 4]).is_err());
+         assert_eq!(jsonb_to_string(&[]).unwrap(), "");
++
++        let mut truncated = parse_string_to_jsonb(r#"{"k":"value"}"#).unwrap();
++        truncated.pop();
++        assert!(jsonb_to_string(&truncated).is_err());
+     }
+ 
+     #[test]
+@@ -532,6 +550,20 @@ mod tests {
+             jsonb_to_string(br#"{"a\"b":"c\u0000d"}"#).unwrap(),
+             r#"{"a\"b":"c\u0000d"}"#
+         );
++        // These start with bytes that also read as a jsonb scalar header.
++        assert_eq!(
++            jsonb_to_string(br#""hello world""#).unwrap(),
++            r#""hello world""#
++        );
++        assert_eq!(jsonb_to_string(b"        null").unwrap(), "null");
++        // Without the bounds check, these read back as `false`.
++        assert_eq!(
++            jsonb_to_string(br#""2026-11-05""#).unwrap(),
++            r#""2026-11-05""#
++        );
++        assert_eq!(jsonb_to_string(b"1730800000000").unwrap(), "1730800000000");
++        // Extended syntax is accepted, as text was read before.
++        assert_eq!(jsonb_to_string(b"[+1,,2]").unwrap(), "[1,null,2]");
+         assert!(jsonb_to_string(b"{not json").is_err());
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `90d0c00a` (2026-11-11)
+**Commit Message**: fix(promql): resolve the OR right operand's time-index column from its schema (#10335)
+
+`or` inferred the qualifier of an operand plan from its first field
+(`schema.qualified_field(0)`). A binary operation with an explicit matching
+modifier derives its result labels from the left operand when the match
+reduces the label set, so its projected plan carries two qualifiers: the
+labels are `lhs.<label>` while the time index keeps the context table's
+qualifier (`rhs.<greptime_timestamp>`). Prefixing the time index with the
+first field's qualifier then referenced a column that does not exist, and
+planning failed with
+
+  Internal error during building DataFusion plan: No field named
+  lhs.greptime_timestamp. Did you mean 'rhs.greptime_timestamp'?
+
+for e.g. `sum by (l) (f(a) / ignoring(x) group_left() f(b))` used as the
+right operand of `or on (l)`. `f(a) / ignoring(x) f(b)` triggers it as
+well, so this is not specific to a group modifier. Without a matching
+modifier every projected column takes the right operand's qualifier, which
+is why plain `a / b` never hit this.
+
+Resolve the time index against the actual operand schema: keep the
+preferred qualifier when it really holds the column (uni
+
+**File**: `src/query/src/promql/planner/set_operator.rs` (modified, +37/-4)
+```diff
+@@ -20,7 +20,7 @@ use std::sync::Arc;
+ use datafusion::logical_expr::{Cast, Extension, LogicalPlan, LogicalPlanBuilder};
+ use datafusion::prelude::{Column, Expr as DfExpr, JoinType};
+ use datafusion::scalar::ScalarValue;
+-use datafusion_common::{NullEquality, TableReference};
++use datafusion_common::{DFSchema, NullEquality, TableReference};
+ use datatypes::arrow::datatypes::DataType as ArrowDataType;
+ use promql::extension_plan::UnionDistinctOn;
+ use promql_parser::parser::token::{self, TokenType};
+@@ -404,10 +404,17 @@ impl PromPlanner {
+                 DfExpr::Column(Column::new(None::<String>, col))
+             }
+         });
+-        let right_time_index_expr = DfExpr::Column(Column::new(
++        // The right operand does not necessarily qualify every column with the qualifier of its
++        // first field: a binary operation with a matching modifier (`on`, `ignoring`, `group_left`,
++        // `group_right`) derives its result labels from the left operand and projects them under
++        // that side's qualifier (`lhs.<label>`), while its time index keeps the qualifier of the
++        // context's table. Resolve the time index against the actual schema so the reference
++        // cannot miss.
++        let right_time_index_expr = DfExpr::Column(Self::resolved_column(
++            right.schema(),
+             right_qualifier.clone(),
+-            right_time_index_column,
+-        ))
++            &right_time_index_column,
++        )?)
+         .alias(left_time_index_column.clone());
+         // The field column in right side may not have qualifier (it may be removed by join operation),
+         // so we need to find it from the schema.
+@@ -633,6 +640,32 @@ impl PromPlanner {
+         Ok(result)
+     }
+ 
++    /// Resolves the column `name` of `schema`, preferring `preferred_qualifier`.
++    ///
++    /// A single operand plan can mix qualifiers, so the qualifier of its first field is not a
++    /// reliable prefix for every column of that plan. When `preferred_qualifier` does not hold the
++    /// column, the fallback is `qualified_field_with_unqualified_name`: it resolves a unique name
++    /// match, or a single unqualified candidate next to qualified ones, and reports
++    /// `AmbiguousReference` otherwise. This mirrors how the planner already resolves derived
++    /// columns against a join output.
++    fn resolved_column(
++        schema: &DFSchema,
++        preferred_qualifier: Option<TableReference>,
++        name: &str,
++    ) -> Result<Column> {
++        let qualifier = match &preferred_qualifier {
++            Some(qualifier) if schema.field_with_name(Some(qualifier), name).is_ok() => {
++                preferred_qualifier.clone()
++            }
++            _ => schema
++                .qualified_field_with_unqualified_name(name)
++                .context(DataFusionPlanningSnafu)?
++                .0
++                .cloned(),
++        };
++        Ok(Column::new(qualifier, name))
++    }
++
+     /// Build a set operator (AND/OR/UNLESS)
+     pub(super) fn set_op_on_non_field_columns(
+         &mut self,
+```
+
+**File**: `src/query/src/promql/planner/test.rs` (modified, +40/-0)
+```diff
+@@ -3188,6 +3188,46 @@ async fn ignoring_absent_label_keeps_tsid_binary_join() {
+     assert!(!plan_str.contains("tag_1 ="), "{plan_str}");
+ }
+ 
++#[tokio::test]
++async fn or_on_operand_with_matching_modifier_keeps_resolvable_time_index() {
++    // An operand of `or` derives its result labels from a matching modifier (`on(...)`,
++    // `ignoring(...)`, `group_left`/`group_right`), so the projected plan mixes qualifiers: the
++    // labels are `lhs.<label>` while the time index keeps the right operand's qualifier
++    // (`rhs.<time index>`). `or` must resolve that time index against the operand schema instead
++    // of reusing the qualifier of its first field.
++    for expr in [
++        "sum by (tag_0) (some_metric) or on (tag_0) \
++         sum by (tag_0) (some_metric) / ignoring(tag_1) group_left() sum by (tag_0) (some_metric)",
++        "sum by (tag_0) (some_metric) or on (tag_0) \
++         sum by (tag_0) (some_metric) / ignoring(tag_2) sum by (tag_0) (some_metric)",
++    ] {
++        let eval_stmt = build_eval_stmt(expr);
++        let table_provider = build_test_table_provider_with_tsid(
++            &[(DEFAULT_SCHEMA_NAME.to_string(), "some_metric".to_string())],
++            3,
++            1,
++        )
++        .await;
++        let plan =
++            PromPlanner::stmt_to_plan(table_provider, &eval_stmt, &build_query_engine_state())
++                .await
++                .unwrap_or_else(|err| panic!("{expr}: {err}"));
++
++        let schema = plan.schema();
++        // The test table's time index column; the plan must carry it exactly once.
++        let time_index_columns = schema
++            .fields()
++            .iter()
++            .filter(|field| field.name() == "timestamp")
++            .count();
++        assert_eq!(1, time_index_columns, "{expr}: {schema:?}");
++        assert!(
++            schema.fields().iter().any(|field| field.name() == "tag_0"),
++            "{expr}: {schema:?}"
++        );
++    }
++}
++
+ #[tokio::test]
+ async fn range_function_keeps_tsid_for_absent_ignoring_binary_join() {
+     let eval_stmt = build_eval_stmt("rate(some_metric[5m]) / ignoring(missing) some_alt_metric");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10299** (2026-11-09): fix(time): avoid i32 overflow when converting an out-of-range date (@arpitjain099)
-- **PR #10272** (2026-11-09): fix(promql): bound scatter time filter expression depth (@evenyag)
-- **PR #10270** (2026-11-09): feat: update dashboard to v0.14.5 (@sunchanglong)
-- **PR #10269** (2026-11-09): feat(log-store): add a read-only object store WAL reader (@WenyXu)
-- **PR #10261** (closed): fix(query): keep PromQL scatter time filters within expression depth (@ump45nose)
-- **PR #10260** (closed): docs(query): state the real reason a CTE does not offer the native PromQL route (@discord9)
+- **PR #10335** (2026-11-11): fix(promql): resolve the OR right operand's time-index column from its schema (@discord9)
+- **PR #10330** (2026-11-12): fix(mito2): identify series by their exact sparse key, not by tsid (@discord9)
+- **PR #10324** (2026-11-10): chore(deps): bump datafusion to 70f84c5b on release/v1.3 (@discord9)
+- **PR #10323** (closed): feat(otlp): include trace_id in new log table primary key (@discord9)
+- **PR #10320** (2026-11-10): chore(deps): bump datafusion to ae04160b (@discord9)
+- **PR #10319** (closed): fix(mito): enforce explicit flush-on-close (@WenyXu)
 
 ---
 
@@ -2882,30 +2758,28 @@ Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): publish manifest deltas by conditional create under a lease (#10234)
+## X. log-store): close raft-engine engines on shutdown (#9518)
 
 **RULE**:
-When implementing operations in `src/common/datasource/src/compression.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/src/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50a2c4d3`: mito2): publish manifest deltas by conditional create under a lease (#10234). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6dbff8a0`: log-store): close raft-engine engines on shutdown (#9518). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/datasource/src/compression.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/src/error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use async_compression::Level;
+    #[snafu(display("Failed to close the metadata kv backend"))]
+    CloseMetadataKvBackend {
+        #[snafu(implicit)]
+        location: Location,
+        source: common_meta::error::Error,
+    },
 
-    /// Encodes `content` as a gzip stream at level 0, which stores it without compression.
-    pub async fn encode_gzip_stored(content: &[u8]) -> io::Result<Vec<u8>> {
-        let mut buffer = Vec::with_capacity(content.len());
-        let mut encoder = write::GzipEncoder::with_quality(&mut buffer, Level::Precise(0));
-        encoder.write_all(content).await?;
-        encoder.shutdown().await?;
-        Ok(buffer)
-    }
+            Error::CloseMetadataKvBackend { source, .. } => source.status_code(),
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2915,4 +2789,4 @@ use async_compression::Level;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50a2c4d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6dbff8a0` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:13:50.882Z",
+  "last_updated": "2026-11-12T05:27:36.103Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6183,6 +6183,24 @@
       "source_repo": "yugabyte-yugabyte-db",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BBA5D2--35476-36130-ysql-fix-single-row-update-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-565AC5",
+      "directive_title": "fetch): close source streams after size-limit errors (#11239)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "axios-axios",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-565AC5-fetch-close-source-streams-after-size-li.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BAF4A6",
+      "directive_title": "log-store): close raft-engine engines on shutdown (#9518)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "greptimeteam-greptimedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BAF4A6-log-store-close-raft-engine-engines-on-s.md",
       "staged_date": "2026-11-12"
     }
   ]

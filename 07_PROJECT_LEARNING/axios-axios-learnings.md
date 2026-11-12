@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source**: github ([https://github.com/axios/axios](https://github.com/axios/axios))  
-> **Source Version**: `a81d62a2`  
+> **Source Version**: `4ee8d46f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:44:17.913Z  
+> **Timestamp**: 2026-11-12T05:26:55.152Z  
 > **Learning ID**: `learn-github-axios-axios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/axios/axios](https://github.com/axios/axios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:44:16.757Z  
+> **Harvest Timestamp**: 2026-11-12T05:26:55.146Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Promise based HTTP client for the browser and node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 109310 stars
+- **Stars / Engagement**: 109394 stars
 
 ---
 
@@ -1367,6 +1367,7 @@ import isCancel from '../cancel/isCancel.js';
 import defaults from '../defaults/index.js';
 import CanceledError from '../cancel/CanceledError.js';
 import AxiosHeaders from '../core/AxiosHeaders.js';
+import AxiosError from '../core/AxiosError.js';
 import adapters from '../adapters/adapters.js';
 import utils from '../utils.js';
 
@@ -1385,6 +1386,56 @@ function throwIfCancellationRequested(config) {
   if (config.signal && config.signal.aborted) {
     throw new CanceledError(null, config);
   }
+}
+
+/**
+ * Reject a request with a `null` or `undefined` url before a built-in adapter
+ * sends it somewhere the caller did not choose.
+ *
+ * With params, the nullish url becomes a query-only url such as `?foo=bar`,
+ * which a browser resolves against the current page. Without params, XHR
+ * requests `./null` or `./undefined` and the Node adapter throws a native
+ * `TypeError`.
+ *
+ * The request still has a destination when `baseURL` is set, or when the Node
+ * HTTP adapter is given a `socketPath`. A caller-supplied adapter handles its
+ * own destination and is not checked.
+ *
+ * `buildURL` is not the place for this check: `axios.getUri()` shares it and
+ * must keep returning query-only urls.
+ *
+ * @param {Object} config The config that is to be used for the request
+ * @param {Function} adapter The adapter resolved by `getAdapter`
+ *
+ * @returns {void}
+ */
+function assertValidRequestUrl(config, adapter) {
+  const url = utils.getSafeProp(config, 'url');
+
+  if (url !== null && url !== undefined) {
+    return;
+  }
+
+  if (utils.getSafeProp(config, 'baseURL')) {
+    return;
+  }
+
+  // Only the Node HTTP adapter reads socketPath; XHR and fetch ignore it.
+  const httpAdapter = adapters.adapters.http;
+
+  if (httpAdapter && adapter === httpAdapter && utils.getSafeProp(config, 'socketPath')) {
+    return;
+  }
+
+  if (!adapters.isBuiltinAdapter(adapter)) {
+    return;
+  }
+
+  throw new AxiosError(
+    `Invalid URL: url cannot be ${url === null ? 'null' : 'undefined'} for a dispatched request`,
+    AxiosError.ERR_INVALID_URL,
+    config
+  );
 }
 
 /**
@@ -1443,6 +1494,9 @@ export default function dispatchRequest(_config) {
   }
 
   const adapter = adapters.getAdapter(config.adapter || defaults.adapter, config);
+
+  // Runs after resolution so a custom adapter is recognized in any form.
+  assertValidRequestUrl(config, adapter);
 
   const now = resolveClock();
   const start = now();
@@ -1797,11 +1851,11 @@ export default function setFormDataHeaders(headers, formHeaders, policy) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11429** (2026-11-06): **docs: add missing error codes to the error tables**
-  *Symptoms*: ## Summary  The error code tables are missing two codes that axios can produce:  - `ECONNREFUSED` has been a public constant on `AxiosError` (`lib/core/AxiosError.js`, `index.d.ts`, `index.d.cts`), and `tests/unit/adapters/errorDetails.test.js` asserts it on a refused connection, but it isn't in the README table or in any of the error-handling guides. - `ERR_FORM_DATA_DEPTH_EXCEEDED` is in all four guides but not in the README table.  ## Linked issue  None. Docs-only gap found by comparing the codes in `lib/core/AxiosError.js` with the tables.  ## Changes  - Added an `ECONNREFUSED` row to the README and the English, Spanish, French and Chinese error-handling guides. - Added an `ERR_FORM_DATA_DEPTH_EXCEEDED` row to the README, using the wording from the English guide. - Added a `PRE_RELEASE_CHANGELOG.md` entry under Documentation.  The new row says the code is adapter-specific, based on the source and tests: the Node `http` adapter passes the system code through `AxiosError.from` (`lib/adapters/http.js`) and keeps the original error on `error.cause`, while `xhr` and `fetch` use `ERR_NETWORK` (`lib/adapters/xhr.js`, `lib/adapters/fetch.js`, and the `fetch.test.js` case where an underlying `ECONNREFUSED` surfaces as `ERR_NETWORK`).  ## Validation  No commands were run. This is a docs-only change, so per `AGENTS.md` I did not run runtime checks. The claims were checked by reading the source and tests listed above. The docs site build was not run either, so CI is the first render 
+- **Issue #11439** (2026-11-10): **docs(agents): narrow the validator rule to option type and shape checks**
+  *Symptoms*: ## Summary  Narrows the contributor rule "Validate config options through the `validator` helper; do not invent ad-hoc validation paths" so that it covers what the helper can actually check.  `validator.assertOptions` runs in `Axios#request` before request interceptors, checks only the options listed in each schema, and skips options whose value is `undefined`. So it cannot express a check that needs:  - the final config after request interceptors, which can set or change the url; - an option that may be `undefined`, such as a missing `url`; - the adapter chosen for the request.  Code review bots read the rule as applying to such checks too. On #11237, a review asked for the nullish-url guard in `dispatchRequest` to move into `validator`. That would have rejected urls supplied by interceptors, missed `undefined` urls, and changed the error code from `ERR_INVALID_URL` to `ERR_BAD_OPTION_VALUE`. Existing checks such as `buildFullPath` (`ERR_INVALID_URL`), `fromDataURI` and `assertParamsAcyclic` already live outside `validator`.  ## Linked issue  No issue. Follow-up to the review discussion on #11237.  ## Changes  - `AGENTS.md`: the ban on ad-hoc checks now applies to type and shape checks on config options in `Axios#request`. The rule says why the helper cannot cover other checks, and says they belong on the request path, such as `dispatchRequest` or the adapter, throwing `AxiosError` with a specific code. It also says to keep request-only checks out of `buildURL` and `buildFul
 
-- **Issue #11427** (2026-11-05): **fix(deps): bump follow-redirects and form-data, refresh dev dependencies (v0.x)**
-  *Symptoms*: ### Summary  Manual pass over every `v0.x` dependency to bring it up to date where that is safe. Every new version was published at least seven days ago (`npm install --before=2026-10-29`).  The main fix is in the runtime dependencies. `v0.x` still allowed `follow-redirects ^1.15.4` and locked 1.15.6, which is affected by CVE-2026-116689 ([GHSA-mrwp-f3q8-3g9p](https://github.com/advisories/GHSA-mrwp-f3q8-3g9p)). That was fixed on `v1.x` in #11410. The locked `form-data` 4.0.4 is also flagged by `npm audit`. After this PR, `npm audit --omit=dev` goes from 2 vulnerabilities to 0.  **Runtime dependencies:** - `follow-redirects` `^1.15.4` → `^1.16.2` - `form-data` `^4.0.4` → `^4.0.6` - `proxy-from-env` stays on `^1.1.0`. Version 2.x drops support for the `npm_config_*_proxy` and `npm_config_no_proxy` variables, which is a behaviour change, so it is not adopted on the maintenance line.  **Dev dependencies, latest same-major release that still runs on Node 12:** - `abortcontroller-polyfill` ^1.7.8 - `body-parser` ^1.20.9 - `express` ^4.22.3 - `grunt-cli` ^1.5.0 - `grunt-eslint` ^24.3.0 - `karma` ^6.4.4 - `karma-chrome-launcher` ^3.2.0 - `karma-sourcemap-loader` ^0.4.0 - `minimist` ^1.2.8 - `rollup` ^2.80.0 - `typescript` ^4.9.5 - `webpack` ^4.47.0  **Capped because newer releases break the Node 12 CI leg:** - `grunt` `~1.5.3`: 1.6.x needs Node ≥16. - `formidable` pinned to `2.1.2`: 2.1.3+ depends on `@paralleldrive/cuid2` → `@noble/hashes`, which uses `require('node:crypto')`. Node
+- **Issue #11438** (2026-11-10): **chore(deps-dev): bump the development_dependencies group with 6 updates**
+  *Symptoms*: Bumps the development_dependencies group with 6 updates:  | Package | From | To | | --- | --- | --- | | [@vitest/browser](https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser) | `5.0.5` | `5.1.0` | | [@vitest/browser-playwright](https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser-playwright) | `5.0.5` | `5.1.0` | | [eslint](https://github.com/eslint/eslint) | `10.13.0` | `10.14.0` | | [globals](https://github.com/sindresorhus/globals) | `17.13.0` | `17.14.0` | | [rollup](https://github.com/rollup/rollup) | `4.66.0` | `4.67.4` | | [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) | `5.0.5` | `5.1.0` |  Updates `@vitest/browser` from 5.0.5 to 5.1.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/vitest-dev/vitest/releases">@​vitest/browser's releases</a>.</em></p> <blockquote> <h2>v5.1.0</h2> <h3>   🚀 Features</h3> <ul> <li>Add <code>--last-failed</code> to run only failed tests  -  by <a href="https://github.com/sheremet-va"><code>@​sheremet-va</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/11558">vitest-dev/vitest#11558</a> <a href="https://github.com/vitest-dev/vitest/commit/82f634220"><!-- raw HTML omitted -->(82f63)<!-- raw HTML omitted --></a></li> <li>Support <code>Temporal.Instant</code> and <code>Temporal.ZonedDateTime</code> in <code>vi.setSystemTime()</code>  -  by <a href="https://github.com/Prajwal2246"><code>@​Prajwal2246</code></a>, <strong>Prajw
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1818,252 +1872,892 @@ export default function setFormDataHeaders(headers, formHeaders, policy) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a81d62a2` (2026-11-06)
-**Commit Message**: test: cover cancellation lifecycle and timeout precedence (#11376)
+### Incident Patch 1: `4ee8d46f` (2026-11-11)
+**Commit Message**: fix(fetch): close source streams after size-limit errors (#11239)
 
-**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +2/-0)
+Co-authored-by: jasonsaayman <[REDACTED_EMAIL]>
+Co-authored-by: cubic-dev-ai[bot] <191113872+cubic-dev-ai[bot]@users.noreply.github.com>
+
+**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,8 @@
+@@ -6,6 +6,7 @@
  
- ## Maintenance
+ ## Bug Fixes
  
-+- **Cancellation lifecycle regression coverage:** Added Node HTTP/Fetch and browser XHR tests for cancellation inside asynchronous request interceptors and successful reuse of an Axios instance after an in-flight cancellation, using AbortSignal, CancelToken, and both together. Added deterministic signal-composition tests for timeout/cancellation precedence and subscription cleanup. Runtime behavior, public APIs, and types are unchanged.
-+
- <!-- Record test-only changes, internal refactors, tooling, dependency updates, and CI changes without a user-visible behavior change here. -->
- 
- - **Development dependency refresh:** Raised the `package.json` ranges for the development dependencies to the versions in the lockfile, and refreshed the lockfile using only releases at least seven days old, matching the Dependabot cooldown. Vitest and its browser packages move from 4.1 to 5.0, and TypeScript from 5.9 to 7.0. TypeScript 7 at the root is only used by editors; the module type tests keep their pinned TypeScript 4.9 and 5.9. Babel 8 is not adopted because `@rollup/plugin-babel` still requires `@babel/core` 7. `https-proxy-agent` stays on 5.x because later majors need Node.js 20 or newer and the CJS smoke tests still run on Node.js 12. The runtime dependency ranges are unchanged: `follow-redirects`, `form-data`, and `proxy-from-env` are already on their latest versions. The browser UMD bundle (`dist/axios.js` and `dist/axios.min.js`) changes only in Babel's `_toPrimitive` helper, which now checks that `Symbol` exists before using it; the ESM, CJS, and Node.js bundles are byte-identical. No runtime, public API, or type compatibility changes. ([#11426](https://github.com/axios/axios/pull/11426))
++- **Fetch stream cleanup:** When the fetch adapter rejects a streamed upload for exceeding `maxBodyLength`, or a streamed response for exceeding `maxContentLength`, it now cancels the source stream instead of leaving it open. Previously the size-limit error left the source paused mid-read, so its `cancel` hook never ran and the underlying connection or user-supplied `ReadableStream` stayed open until garbage collection. Cancellation is started without waiting for it, so a slow or failing cancel does not delay or replace the size-limit error. No public API or type changes. ([#11239](https://github.com/axios/axios/pull/11239))
+ - **Nullish request url:** A request with a `null` or `undefined` url on a built-in adapter, whether selected by name or passed as a function such as `axios.getAdapter('fetch')`, now rejects with `AxiosError` and `ERR_INVALID_URL` before anything is sent. Since v1.18.1, adding `params` turned such a url into a query-only url like `?foo=bar`, which browsers resolve against the current page, so `axios.get(null, { params })` sent a request to the page itself. Without params, XHR requested `./null` or `./undefined`, and the Node HTTP adapter threw a native `TypeError`; both now reject with the same `AxiosError`. A `baseURL`, or a `socketPath` on the Node HTTP adapter, still supplies the destination; an empty-string url is still a valid relative url; custom adapters are not checked; and `axios.getUri()` still returns query-only urls. No public API or type changes. (**[#11237](https://github.com/axios/axios/pull/11237)**, closes **[#11160](https://github.com/axios/axios/issues/11160)**)
+ - **Response duration clock:** `response.duration` is now measured with the monotonic `performance.now()` instead of `Date.now()`, falling back to `Date.now()` only in runtimes without `performance.now()`. Since v1.21.0, axios read `Date.now()` on every request, which broke Next.js production builds that use Cache Components (`cacheComponents: true`) because Next.js rejects reading the current time while prerendering; `performance.now()` is the timing API Next.js allows for this. The monotonic clock also stops system clock adjustments from skewing the value. `duration` is rounded to whole milliseconds, so it stays an integer as in v1.21.0, and it is still clamped at `0`. No public API or type changes; the `duration` declaration comments in `index.d.ts` and `index.d.cts` now name the clock. ([#11407](https://github.com/axios/axios/issues/11407))
+ - **`getAdapter` typings:** `getAdapter(adapters, config?)` in `index.d.ts` and `index.d.cts` now accepts the optional request config that the runtime already forwards to adapter getters, so `getAdapter('fetch', { env: { fetch } })` type-checks without a cast. A JSDoc comment on the parameter notes that the built-in `fetch` adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and that other fields are not applied. Type-only; additive and backwards compatible, no runtime change. ([#11403](https://github.com/axios/axios/issues/11403), [#11404](https://github.com/axios/axios/pull/11404))
 ```
 
-**File**: `tests/browser/cancel.browser.test.js` (modified, +55/-0)
+**File**: `lib/helpers/trackStream.js` (modified, +5/-0)
 ```diff
-@@ -216,4 +216,59 @@ describe('cancel (vitest browser)', () => {
-       expect(listenerCount).toBe(0);
-     });
-   });
+@@ -73,6 +73,11 @@ export const trackStream = (stream, chunkSize, onProgress, onFinish) => {
+           }
+           controller.enqueue(new Uint8Array(value));
+         } catch (err) {
++          // A progress callback can fail while the source iterator is suspended at
++          // a yield. Close it without delaying or replacing the original error.
++          // This return() call has no cancellation reason, so the source's cancel()
++          // receives undefined, as it does from the cancel() hook below.
++          iterator.return().catch(() => {});
+           _onFinish(err);
+           throw err;
+         }
+```
+
+**File**: `tests/unit/adapters/fetchStreamCleanup.test.js` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++import { describe, it, expect, vi } from 'vitest';
++import axios from '../../../index.js';
 +
-+  describe.each(['signal', 'cancelToken', 'both'])('request isolation with %s', (kind) => {
-+    const cancellation = () => {
-+      const controller = new AbortController();
-+      const source = axios.CancelToken.source();
-+
-+      return {
-+        config: {
-+          ...(kind !== 'cancelToken' ? { signal: controller.signal } : {}),
-+          ...(kind !== 'signal' ? { cancelToken: source.token } : {}),
++describe('fetch adapter stream cleanup', () => {
++  for (const RequestClass of [Request, null]) {
++    it(`cancels an oversized upload with ${RequestClass ? 'native' : 'no'} Request`, async () => {
++      const cancel = vi.fn();
++      const source = new ReadableStream({
++        start(controller) {
++          controller.enqueue(new Uint8Array(16));
 +        },
-+        cancel() {
-+          if (kind !== 'cancelToken') controller.abort();
-+          if (kind !== 'signal') source.cancel('canceled');
-+        },
-+      };
-+    };
-+
-+    it('does not dispatch after cancellation inside an async interceptor', async () => {
-+      const instance = axios.create({ adapter: 'xhr' });
-+      const { config, cancel } = cancellation();
-+      const interceptor = instance.interceptors.request.use(async (requestConfig) => {
-+        await Promise.resolve();
-+        cancel();
-+        return requestConfig;
++        cancel,
 +      });
 +
-+      try {
-+        const error = await instance.get('/canceled', config).catch((reason) => reason);
-+        expect(error.code).toBe('ERR_CANCELED');
-+        expect(axios.isCancel(error)).toBe(true);
-+        expect(requests).toHaveLength(0);
-+      } finally {
-+        instance.interceptors.request.eject(interceptor);
-+      }
++      await expect(
++        axios.post('http://localhost/upload', source, {
++          adapter: 'fetch',
++          maxBodyLength: 8,
++          env: {
++            Request: RequestClass,
++            async fetch(input, init) {
++              const body = RequestClass ? input.body : init.body;
++              await new Response(body).arrayBuffer();
++              return new Response('ok');
++            },
++          },
++        })
++      ).rejects.toMatchObject({ code: 'ERR_BAD_REQUEST' });
++      await vi.waitFor(() => expect(cancel).toHaveBeenCalledTimes(1));
 +    });
++  }
 +
-+    it('allows a new request on the same instance without reusing canceled controls', async () => {
-+      const instance = axios.create({ adapter: 'xhr' });
-+      const { config, cancel } = cancellation();
-+      const first = instance.get('/canceled', config).catch((reason) => reason);
-+      await waitForRequest();
-+      cancel();
-+      expect((await first).code).toBe('ERR_CANCELED');
-+
-+      // Discard the first mock so waitForRequest observes only the next dispatch.
-+      requests = [];
-+      const second = instance.get('/next', { signal: new AbortController().signal });
-+      const request = await waitForRequest();
-+      request.respondWith({ responseText: 'OK' });
-+
-+      expect((await second).data).toBe('OK');
-+      expect(requests).toHaveLength(1);
++  for (const responseType of ['text', 'stream']) {
++    it(`cancels an oversized ${responseType} download`, async () => {
++      const cancel = vi.fn();
++      const source = new ReadableStream({
++        start(controller) {
++          controller.enqueue(new Uint8Array(16));
++        },
++        cancel,
++      });
++      const request = axios.get('http://localhost/download', {
++        adapter: 'fetch',
++        maxContentLength: 8,
++        responseType,
++        env: { fetch: async () => new Response(source) },
++      });
++      const consume = async () => {
++        const response = await request;
++        if (responseType === 'stream') {
++          await new Response(response.data).arrayBuffer();
++        }
++      };
++      await expect(consume()).rejects.toMatchObject({ code: 'ERR_BAD_RESPONSE' });
++      await vi.waitFor(() => expect(cancel).toHaveBeenCalledTimes(1));
 +    });
-+  });
- });
++  }
++});
 ```
 
-**File**: `tests/unit/adapters/cancellationLifecycle.test.js` (added, +89/-0)
+**File**: `tests/unit/helpers/trackStream.test.js` (added, +83/-0)
 ```diff
-@@ -0,0 +1,89 @@
-+import { describe, it } from 'vitest';
-+import assert from 'assert';
-+import axios from '../../../index.js';
-+import { startHTTPServer, stopHTTPServer } from '../../setup/server.js';
+@@ -0,0 +1,83 @@
++import { describe, it, expect, vi } from 'vitest';
++import { trackStream } from '../../../lib/helpers/trackStream.js';
 +
-+for (const adapter of ['http', 'fetch']) {
-+  describe.skipIf(adapter === 'fetch' && typeof fetch !== 'function')(
-+    `${adapter} cancellation request isolation`,
-+    () => {
-+      for (const kind of ['signal', 'cancelToken', 'both']) {
-+        it(`does not send a request canceled in an async interceptor (${kind})`, async () => {
-+          let hits = 0;
-+          const server = await startHTTPServer((req, res) => {
-+            hits++;
-+            res.end('OK');
-+          });
-+          const instance = axios.create({ adapter, proxy: false });
-+          const controller = new AbortController();
-+          const source = axios.CancelToken.source();
-+          instance.interceptors.request.use(async (config) => {
-+            await Promise.resolve();
-+            if (kind !== 'cancelToken') controller.abort();
-+            if (kind !== 'signal') source.cancel('canceled');
-+            return config;
-+          });
-+
-+          try {
-+            await assert.rejects(
-+              instance.get(`http://127.0.0.1:${server.address().port}/`, {
-+                ...(kind !== 'cancelToken' ? { signal: controller.signal } : {}),
-+                ...(kind !== 'signal' ? { cancelToken: source.token } : {}),
-+              }),
-+              (error) => error.code === 'ERR_CANCELED' && axios.isCancel(error)
-+            );
-+            assert.strictEqual(hits, 0);
-+          } finally {
-+            await stopHTTPServer(server);
++describe('helpers::trackStream', () => {
++  for (const useAsyncIterator of [true, false]) {
++    for (const rejectCancel of [true, false]) {
++      it(`closes the source after progress fails (async iterator: ${useAsyncIterator}, cancel rejects: ${rejectCancel})`, async () => {
++        const error = new Error('progress failed');
++        const cancel = vi.fn(() => {
++          if (rejectCancel) {
++            throw new Error('cancel failed');
 +          }
 +        });
-+
-+        it(`allows another request after an in-flight cancellation (${kind})`, async () => {
-+          let received;
-+          const firstReceived = new Promise((resolve) => {
-+            received = resolve;
-+          });
-+          const server = await startHTTPServer((req, res) => {
-+            if (req.url === '/cancel') {
-+              received();
-+              return;
-+            }
-+            res.end('OK');
-+          });
-+          const instance = axios.create({ adapter, proxy: false, timeout: 2000 });
-+          const controller = new AbortController();
-+          const source = axios.CancelToken.source();
-+          const baseURL = `http://127.0.0.1:${server.address().port}`;
-+
-+          try {
-+            const pending = instance
-+              .get(`${baseURL}/cancel`, {
-+                ...(kind !== 'cancelToken' ? { signal: controller.signal } : {}),
-+                ...(kind !== 'signal' ? { cancelToken: source.token } : {}),
-+              })
-+              .catch((error) => error);
-+
-+            await Promise.race([
-+              firstReceived,
-+              pending.then((error) => {
-+                throw error;
-+              }),
-+            ]);
-+            if (kind !== 'cancelToken') controller.abort();
-+            if (kind !== 'signal') source.cancel('canceled');
-+            const error = await pending;
-+            assert.strictEqual(error.code, 'ERR_CANCELED');
-+            assert.ok(axios.isCancel(error));
-+
-+            const response = await instance.get(`${baseURL}/next`, {
-+              signal: new AbortController().signal,
-+            });
-+            assert.strictEqual(response.data, 'OK');
-+          } finally {
-+            await stopHTTPServer(server);
-+          }
++        const source = new ReadableStream({
++          start(controller) {
++            controller.enqueue(new Uint8Array([1, 2, 3, 4]));
++          },
++          cancel,
 +        });
-+      }
++        if (!useAsyncIterator) {
++          source[Symbol.asyncIterator] = undefined;
++        }
++        const onFinish = vi.fn();
++        const reader = trackStream(
++          source,
++          2,
++          () => {
++            throw error;
++          },
++          onFinish
++        ).getReader();
++
++        try {
++          await expect(reader.read()).rejects.toBe(error);
++          await vi.waitFor(() => expect(cancel).toHaveBeenCalledTimes(1));
++          expect(onFinish).toHaveBeenCalledExactlyOnceWith(error);
++          await expect(reader.read()).rejects.toBe(error);
++        } finally {
++          reader.releaseLock();
++        }
++      });
 +    }
++  }
++
++  it('rejects promptly even if source cancellation never settles', async () => {
++    const error = new Error('progress failed');
++    const cancel = vi.fn(() => new Promise(() => {}));
++    const source = new ReadableStream({
++      start(controller) {
++        controller.enqueue(new Uint8Array([1]));
++      },
++      cancel,
++    });
++    const reader = trackStream(source, 2, () => {
++      throw error;
++    }).getReader();
++    try {
++      await expect(reader.read()).rejects.toBe(error);
++      await vi.waitFor(() => expect(cancel).toHaveBeenCalledTimes(1));
++    } finally {
++      reader.releaseLock();
++    }
++  });
++
++  it('preserves chunks and progress on normal completion', async () => {
++    const source = new ReadableStream({
++      start(controller) {
++        controller.enqueue(new Uint8Array([1, 2, 3]));
++        controller.enqueue(new Uint8Array([4]));
++        controller.close();
++      },
++    });
++    const onProgress = vi.fn();
++    const onFinish = vi.fn();
++    const chunks = [];
++    for await (const chunk of trackStream(source, 2, onProgress, onFinish)) {
++      chunks.push([...chunk]);
++    }
++    expect(chunks).toEqual([[1, 2], [3], [4]]);
++    expect(onProgress.mock.calls).toEqual([[2], [3], [4]]);
++    expect(onFinish).toHaveBeenCalledExactlyOnceWith(undefined);
++  });
++});
+```
+
+---
+
+### Incident Patch 2: `bd3401f1` (2026-11-10)
+**Commit Message**: fix(core): reject nullish url for dispatched requests (#11237)
+
+Co-authored-by: jasonsaayman <[REDACTED_EMAIL]>
+
+**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@
+ 
+ ## Bug Fixes
+ 
++- **Nullish request url:** A request with a `null` or `undefined` url on a built-in adapter, whether selected by name or passed as a function such as `axios.getAdapter('fetch')`, now rejects with `AxiosError` and `ERR_INVALID_URL` before anything is sent. Since v1.18.1, adding `params` turned such a url into a query-only url like `?foo=bar`, which browsers resolve against the current page, so `axios.get(null, { params })` sent a request to the page itself. Without params, XHR requested `./null` or `./undefined`, and the Node HTTP adapter threw a native `TypeError`; both now reject with the same `AxiosError`. A `baseURL`, or a `socketPath` on the Node HTTP adapter, still supplies the destination; an empty-string url is still a valid relative url; custom adapters are not checked; and `axios.getUri()` still returns query-only urls. No public API or type changes. (**[#11237](https://github.com/axios/axios/pull/11237)**, closes **[#11160](https://github.com/axios/axios/issues/11160)**)
+ - **Response duration clock:** `response.duration` is now measured with the monotonic `performance.now()` instead of `Date.now()`, falling back to `Date.now()` only in runtimes without `performance.now()`. Since v1.21.0, axios read `Date.now()` on every request, which broke Next.js production builds that use Cache Components (`cacheComponents: true`) because Next.js rejects reading the current time while prerendering; `performance.now()` is the timing API Next.js allows for this. The monotonic clock also stops system clock adjustments from skewing the value. `duration` is rounded to whole milliseconds, so it stays an integer as in v1.21.0, and it is still clamped at `0`. No public API or type changes; the `duration` declaration comments in `index.d.ts` and `index.d.cts` now name the clock. ([#11407](https://github.com/axios/axios/issues/11407))
+ - **`getAdapter` typings:** `getAdapter(adapters, config?)` in `index.d.ts` and `index.d.cts` now accepts the optional request config that the runtime already forwards to adapter getters, so `getAdapter('fetch', { env: { fetch } })` type-checks without a cast. A JSDoc comment on the parameter notes that the built-in `fetch` adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and that other fields are not applied. Type-only; additive and backwards compatible, no runtime change. ([#11403](https://github.com/axios/axios/issues/11403), [#11404](https://github.com/axios/axios/pull/11404))
+ - **Header encoding shortcuts:** The documented `Content-Encoding` shortcuts (`setContentEncoding`, `getContentEncoding`, `hasContentEncoding`) now exist at runtime; previously `getContentEncoding()` threw `TypeError` because `AxiosHeaders` only registered the `Accept-Encoding` accessor. The `Accept-Encoding` trio that the runtime already provided is now declared in `index.d.ts` and `index.d.cts`. `getContentEncoding` and `getAcceptEncoding` are typed to match `AxiosHeaders#get`: `AxiosHeaders.parseParameters` returns `AxiosHeaderParameters`, a `RegExp` returns `RegExpExecArray | null`, and no argument, `true`, or another parser function returns `AxiosHeaderValue`. The type changes are compile-time corrections, not purely additive: `getContentEncoding()` was previously declared to return `RegExpExecArray | null` and to accept string matchers, which throw `parser must be boolean|regexp|function` at runtime, and `getAcceptEncoding()` previously resolved to `any` through the `AxiosHeaders` index signature. TypeScript callers that relied on those declarations may need to narrow the result or pass a supported parser. No change to how existing headers are read or written at runtime; the matching README and docs-site shortcut-list updates are recorded in `PRE_RELEASE_DOCS.md` for release preparation. ([#11432](https://github.com/axios/axios/issues/11432))
+```
+
+**File**: `lib/adapters/adapters.js` (modified, +21/-0)
+```diff
+@@ -114,6 +114,21 @@ function getAdapter(adapters, config) {
+   return adapter;
+ }
+ 
++/**
++ * Check whether a resolved adapter function is one of the built-in adapters.
++ *
++ * @param {Function} adapter The adapter resolved by `getAdapter`
++ * @returns {boolean} `true` for the built-in `xhr`, `http` or `fetch` adapter
++ */
++function isBuiltinAdapter(adapter) {
++  return (
++    !!adapter &&
++    (adapter === knownAdapters.xhr ||
++      adapter === knownAdapters.http ||
++      fetchAdapter.isFetchAdapter(adapter))
 +  );
 +}
++
+ /**
+  * Exports Axios adapters and utility to resolve an adapter
+  */
+@@ -124,6 +139,12 @@ export default {
+    */
+   getAdapter,
+ 
++  /**
++   * Check whether a resolved adapter is a built-in one.
++   * @type {Function}
++   */
++  isBuiltinAdapter,
++
+   /**
+    * Exposes all known adapters
+    * @type {Object<string, Function|Object>}
 ```
 
-**File**: `tests/unit/composeSignals.test.js` (modified, +51/-1)
+**File**: `lib/adapters/fetch.js` (modified, +23/-1)
 ```diff
-@@ -1,4 +1,4 @@
--import { describe, it } from 'vitest';
-+import { describe, it, vi } from 'vitest';
- import assert from 'assert';
- import composeSignals from '../../lib/helpers/composeSignals.js';
+@@ -715,6 +715,28 @@ const factory = (env) => {
  
-@@ -53,4 +53,54 @@ describe('helpers::composeSignals', () => {
+ const seedCache = new Map();
  
-     assert.strictEqual(signal, undefined);
-   });
++// Every adapter the factory has created. The adapter is cached per
++// environment, so one created for another environment, such as by
++// `axios.getAdapter('fetch')` without a config, is still recognized.
++const createdAdapters = new WeakSet();
 +
-+  describe('timeout and manual cancellation precedence', () => {
-+    it('keeps the first cancellation reason and clears the pending timeout', async () => {
-+      vi.useFakeTimers();
-+      const first = new AbortController();
-+      const second = new AbortController();
-+      const removeFirst = vi.spyOn(first.signal, 'removeEventListener');
-+      const removeSecond = vi.spyOn(second.signal, 'removeEventListener');
++const createAdapter = (env) => {
++  const adapter = factory(env);
 +
-+      try {
-+        const signal = composeSignals([first.signal, second.signal], 100);
-+        first.abort(new Error('manual cancellation'));
-+        const reason = signal.reason;
++  adapter && createdAdapters.add(adapter);
 +
-+        assert.strictEqual(reason.code, 'ERR_CANCELED');
-+        assert.strictEqual(reason.message, 'manual cancellation');
-+        assert.strictEqual(vi.getTimerCount(), 0);
-+        assert.strictEqual(removeFirst.mock.calls.length, 1);
-+        assert.strictEqual(removeSecond.mock.calls.length, 1);
++  return adapter;
++};
 +
-+        second.abort(new Error('later cancellation'));
-+        await vi.advanceTimersByTimeAsync(200);
-+        assert.strictEqual(signal.reason, reason);
-+      } finally {
-+        vi.useRealTimers();
-+        vi.restoreAllMocks();
++/**
++ * Check whether a function was created by the fetch adapter factory.
++ *
++ * @param {*} adapter The value to check
++ *
++ * @returns {boolean} `true` for a built-in fetch adapter
++ */
++export const isFetchAdapter = (adapter) => createdAdapters.has(adapter);
++
+ export const getFetch = (config) => {
+   const env = Object.create(null);
+   const configuredEnv = config && utils.hasOwnProp(config, 'env') && config.env;
+@@ -736,7 +758,7 @@ export const getFetch = (config) => {
+     seed = seeds[i];
+     target = map.get(seed);
+ 
+-    target === undefined && map.set(seed, (target = i ? new Map() : factory(env)));
++    target === undefined && map.set(seed, (target = i ? new Map() : createAdapter(env)));
+ 
+     map = target;
+   }
+```
+
+**File**: `lib/core/dispatchRequest.js` (modified, +54/-0)
+```diff
+@@ -5,6 +5,7 @@ import isCancel from '../cancel/isCancel.js';
+ import defaults from '../defaults/index.js';
+ import CanceledError from '../cancel/CanceledError.js';
+ import AxiosHeaders from '../core/AxiosHeaders.js';
++import AxiosError from '../core/AxiosError.js';
+ import adapters from '../adapters/adapters.js';
+ import utils from '../utils.js';
+ 
+@@ -25,6 +26,56 @@ function throwIfCancellationRequested(config) {
+   }
+ }
+ 
++/**
++ * Reject a request with a `null` or `undefined` url before a built-in adapter
++ * sends it somewhere the caller did not choose.
++ *
++ * With params, the nullish url becomes a query-only url such as `?foo=bar`,
++ * which a browser resolves against the current page. Without params, XHR
++ * requests `./null` or `./undefined` and the Node adapter throws a native
++ * `TypeError`.
++ *
++ * The request still has a destination when `baseURL` is set, or when the Node
++ * HTTP adapter is given a `socketPath`. A caller-supplied adapter handles its
++ * own destination and is not checked.
++ *
++ * `buildURL` is not the place for this check: `axios.getUri()` shares it and
++ * must keep returning query-only urls.
++ *
++ * @param {Object} config The config that is to be used for the request
++ * @param {Function} adapter The adapter resolved by `getAdapter`
++ *
++ * @returns {void}
++ */
++function assertValidRequestUrl(config, adapter) {
++  const url = utils.getSafeProp(config, 'url');
++
++  if (url !== null && url !== undefined) {
++    return;
++  }
++
++  if (utils.getSafeProp(config, 'baseURL')) {
++    return;
++  }
++
++  // Only the Node HTTP adapter reads socketPath; XHR and fetch ignore it.
++  const httpAdapter = adapters.adapters.http;
++
++  if (httpAdapter && adapter === httpAdapter && utils.getSafeProp(config, 'socketPath')) {
++    return;
++  }
++
++  if (!adapters.isBuiltinAdapter(adapter)) {
++    return;
++  }
++
++  throw new AxiosError(
++    `Invalid URL: url cannot be ${url === null ? 'null' : 'undefined'} for a dispatched request`,
++    AxiosError.ERR_INVALID_URL,
++    config
++  );
++}
++
+ /**
+  * Resolve the clock used to time adapter execution.
+  *
+@@ -82,6 +133,9 @@ export default function dispatchRequest(_config) {
+ 
+   const adapter = adapters.getAdapter(config.adapter || defaults.adapter, config);
+ 
++  // Runs after resolution so a custom adapter is recognized in any form.
++  assertValidRequestUrl(config, adapter);
++
+   const now = resolveClock();
+   const start = now();
+ 
+```
+
+**File**: `tests/browser/requestUrl.browser.test.js` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++
++import axios from '../../index.js';
++
++// Records every XHR the adapter opens and answers it with an empty 200.
++class RecordingXMLHttpRequest {
++  constructor() {
++    this.readyState = 0;
++    this.status = 0;
++    this.statusText = '';
++    this.responseText = '';
++    this.response = null;
++    this.onloadend = null;
++    this.upload = { addEventListener() {} };
++  }
++
++  open(method, url) {
++    this.url = url;
++    opened.push(url);
++  }
++
++  setRequestHeader() {}
++
++  addEventListener() {}
++
++  getAllResponseHeaders() {
++    return '';
++  }
++
++  send() {
++    this.status = 200;
++    this.statusText = 'OK';
++    this.readyState = 4;
++
++    queueMicrotask(() => this.onloadend && this.onloadend());
++  }
++
++  abort() {}
++}
++
++let opened = [];
++let OriginalXMLHttpRequest;
++
++const PARAMS = { foo: 'bar' };
++
++const expectGuardRejection = (promise) =>
++  expect(promise).rejects.toMatchObject({
++    name: 'AxiosError',
++    code: 'ERR_INVALID_URL',
++    message: expect.stringMatching(/for a dispatched request$/),
++  });
++
++describe('request url validation (vitest browser)', () => {
++  beforeEach(() => {
++    opened = [];
++    OriginalXMLHttpRequest = window.XMLHttpRequest;
++    window.XMLHttpRequest = RecordingXMLHttpRequest;
++  });
++
++  afterEach(() => {
++    window.XMLHttpRequest = OriginalXMLHttpRequest;
++  });
++
++  describe('xhr adapter', () => {
++    it.each([null, undefined])(
++      'rejects a %s url with params instead of requesting the current page',
++      async (url) => {
++        await expectGuardRejection(axios.get(url, { params: PARAMS }));
++
++        expect(opened).toEqual([]);
 +      }
++    );
++
++    it.each([null, undefined])('rejects a %s url without params', async (url) => {
++      await expectGuardRejection(axios.get(url));
++
++      expect(opened).toEqual([]);
 +    });
 +
-+    it('keeps the timeout reason when manual cancellation follows', async () => {
-+      vi.useFakeTimers();
-+      const controller = new AbortController();
-+      const remove = vi.spyOn(controller.signal, 'removeEventListener');
++    it('still sends an empty-string url as a relative url', async () => {
++      await axios.get('', { params: PARAMS });
 +
-+      try {
-+        const signal = composeSignals([controller.signal], 100);
-+        await vi.advanceTimersByTimeAsync(100);
-+        const reason = signal.reason;
++      expect(opened).toEqual(['?foo=bar']);
++    });
 +
-+        assert.strictEqual(reason.code, 'ETIMEDOUT');
-+        assert.strictEqual(remove.mock.calls.length, 1);
-+        controller.abort(new Error('late cancellation'));
-+        assert.strictEqual(signal.reason, reason);
-+        assert.strictEqual(vi.getTimerCount(), 0);
-+      } finally {
-+        vi.useRealTimers();
-+        vi.restoreAllMocks();
-+      }
++    it.each([null, undefined])('sends a %s url to the configured baseURL', async (url) => {
++      await axios.get(url, { baseURL: '/api', params: PARAMS });
++
++      expect(opened).toEqual(['/api?foo=bar']);
++    });
++
++    it('rejects a nullish url even when a socketPath is set', async () => {
++      await expectGuardRejection(axios.get(null, { socketPath: '/app.sock', params: PARAMS }));
++
++      expect(opened).toEqual([]);
 +    });
 +  });
- });
++
++  describe('fetch adapter', () => {
++    const fetchConfig = (fetch, overrides = {}) => ({
++      adapter: 'fetch',
++      env: { fetch },
++      params: PARAMS,
++      ...overrides,
++    });
++
++    it.each([null, undefined])(
++      'rejects a %s url with params instead of requesting the current page',
++      async (url) => {
++        const fetch = vi.fn(async () => new Response('ok'));
++
++        await expectGuardRejection(axios.get(url, fetchConfig(fetch)));
++
++        expect(fetch).not.toHaveBeenCalled();
++      }
++    );
++
++    it.each([null, undefined])(
++      'rejects a %s url when the fetch adapter is passed as a function',
++      async (url) => {
++        const fetch = vi.spyOn(window, 'fetch');
++
++        try {
++          await expectGuardRejection(
++            axios.get(url, { adapter: axios.getAdapter('fetch'), params: PARAMS })
++          );
++
++          expect(fetch).not.toHaveBeenCalled();
++        } finally {
++          fetch.mockRestore();
++        }
++      }
++    );
++
++    it('still sends an empty-string url as a relative url', async () => {
++      const fetch = vi.fn(async () => new Response('ok'));
++
++      await axios.get('', fetchConfig(fetch));
++
++      expect(fetch).toHaveBeenCalledTimes(1);
++
++      const expected = new URL('?foo=bar', window.location.href).href;
++
++      expect(fetch.mock.calls[0][0].url).toBe(expected);
++    });
++  });
++});
+```
+
+**File**: `tests/unit/api.test.js` (modified, +10/-0)
+```diff
+@@ -69,6 +69,16 @@ describe('static api', () => {
+     assert.strictEqual(typeof axios.getUri, 'function');
+   });
+ 
++  it('should build a query-only uri without a destination', () => {
++    // `getUri` only builds a query string; it never dispatches a request, so
++    // it must keep supporting a missing url.
++    assert.strictEqual(axios.getUri({ params: { foo: 'bar' } }), '?foo=bar');
++    assert.strictEqual(axios.getUri({ url: null, params: { foo: 'bar' } }), '?foo=bar');
++    assert.strictEqual(axios.getUri({ url: undefined, params: { foo: 'bar' } }), '?foo=bar');
++    assert.strictEqual(axios.getUri({ url: '', params: { foo: 'bar' } }), '?foo=bar');
++    assert.strictEqual(axios.getUri({ url: '/foo', params: { foo: 'bar' } }), '/foo?foo=bar');
++  });
++
+   it('should ignore inherited data for bodyless method helpers', async () => {
+     Object.defineProperty(Object.prototype, 'data', {
+       value: 'inherited-body',
+```
+
+**File**: `tests/unit/core/dispatchRequest.test.js` (modified, +197/-0)
+```diff
+@@ -4,6 +4,8 @@ import axios from '../../../index.js';
+ import dispatchRequest from '../../../lib/core/dispatchRequest.js';
+ import AxiosError from '../../../lib/core/AxiosError.js';
+ import defaults from '../../../lib/defaults/index.js';
++import adapters from '../../../lib/adapters/adapters.js';
++import fetchAdapter from '../../../lib/adapters/fetch.js';
+ import resolveConfig from '../../../lib/helpers/resolveConfig.js';
+ 
+ class ReactNativeFormData {
+@@ -32,6 +34,201 @@ function baseConfig(overrides = {}) {
+ }
+ 
+ describe('core::dispatchRequest', () => {
++  describe('request url validation', () => {
++    const PARAMS = { foo: 'bar' };
++
++    const okResponse = (config) =>
++      Promise.resolve({
++        data: null,
++        status: 200,
++        statusText: 'OK',
++        headers: {},
++        config,
++        request: {},
++      });
++
++    // dispatchRequest throws synchronously when the guard rejects.
++    const rejection = async (dispatch) => {
++      try {
++        await dispatch();
++      } catch (e) {
++        return e;
++      }
++
++      assert.fail('expected the request to reject');
++    };
++
++    const assertGuardRejection = (error) => {
++      assert.ok(error instanceof AxiosError, 'must be AxiosError');
++      assert.strictEqual(error.code, AxiosError.ERR_INVALID_URL);
++      assert.match(error.message, /for a dispatched request$/);
++    };
++
++    // Swap the registered `http` built-in for a stub. `getAdapter('http')` and
++    // the built-in check both read the same registry, so the stub is treated
++    // as the built-in transport and the guard runs in full against it.
++    let stubbedHttp;
++    let originalHttp;
++
++    beforeEach(() => {
++      originalHttp = adapters.adapters.http;
++      stubbedHttp = vi.fn(okResponse);
++      adapters.adapters.http = stubbedHttp;
++    });
++
++    afterEach(() => {
++      adapters.adapters.http = originalHttp;
++    });
++
++    const builtinConfig = (overrides = {}) => baseConfig({ adapter: 'http', ...overrides });
++
++    describe.each([null, undefined])('a %s url', (url) => {
++      it.each([
++        ['without params', undefined],
++        ['with params', PARAMS],
++      ])('rejects on the default adapter path %s', async (_, params) => {
++        // The default adapter list resolves to the real Node HTTP adapter.
++        adapters.adapters.http = originalHttp;
++
++        assertGuardRejection(
++          await rejection(() => dispatchRequest(baseConfig({ url, params, adapter: undefined })))
++        );
++      });
++
++      it('rejects on a built-in adapter before it runs', async () => {
++        assertGuardRejection(await rejection(() => dispatchRequest(builtinConfig({ url }))));
++        assert.strictEqual(stubbedHttp.mock.calls.length, 0, 'adapter must not run');
++      });
++
++      it('rejects when a built-in name wins the resolution of an array', async () => {
++        assertGuardRejection(
++          await rejection(() =>
++            dispatchRequest(baseConfig({ url, adapter: ['xhr', 'http', 'fetch'] }))
++          )
++        );
++        assert.strictEqual(stubbedHttp.mock.calls.length, 0, 'adapter must not run');
++      });
++
++      it.each([
++        ['the global fetch', undefined],
++        ['a custom env.fetch', true],
++      ])('rejects on the fetch adapter with %s', async (_, useCustomFetch) => {
++        const customFetch = vi.fn(() => Promise.resolve(new Response('{}')));
++
++        assertGuardRejection(
++          await rejection(() =>
++            dispatchRequest(
++              baseConfig({
++                url,
++                params: PARAMS,
++                adapter: 'fetch',
++                env: useCustomFetch ? { fetch: customFetch } : undefined,
++              })
++            )
++          )
++        );
++        assert.strictEqual(customFetch.mock.calls.length, 0, 'fetch must not be called');
++      });
++
++      // A fetch adapter passed as a function can be cached for a different
++      // environment from the request's: a real request inherits `env.Blob`
++      // from the defaults, so `fetch.get(config)` returns another instance.
++      it.each([
++        ["axios.getAdapter('fetch')", () => axios.getAdapter('fetch')],
++        ['the default export of the fetch adapter module', () => fetchAdapter],
++        [
++          "axios.getAdapter('fetch') for a custom env.fetch",
++          (customFetch) => axios.getAdapter('fetch', { env: { fetch: customFetch } }),
++        ],
++      ])('rejects when the fetch adapter is passed as %s', async (_, resolve) => {
++        const customFetch = vi.fn(() => Promise.resolve(new Response('{}')));
++
++        assertGuardRejection(
++          await rejection(() =>
++            dispatchRequest(
++              baseConfig({
++                url,
++                params: PARAMS,
++                env: defaults.env,
++                adapter: resolve(customFetch),
++              })
++            )
++          )
++        );
++        assert.strictEqual(customFetch.mock.calls.length, 0, 'fetch must not be called');
+
+```
+
+---
+
+### Incident Patch 3: `b628e2fc` (2026-11-10)
+**Commit Message**: fix(headers): register the Content-Encoding shortcuts and declare the Accept-Encoding ones (#11436)
+
+Co-authored-by: jasonsaayman <[REDACTED_EMAIL]>
+
+**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -8,6 +8,7 @@
+ 
+ - **Response duration clock:** `response.duration` is now measured with the monotonic `performance.now()` instead of `Date.now()`, falling back to `Date.now()` only in runtimes without `performance.now()`. Since v1.21.0, axios read `Date.now()` on every request, which broke Next.js production builds that use Cache Components (`cacheComponents: true`) because Next.js rejects reading the current time while prerendering; `performance.now()` is the timing API Next.js allows for this. The monotonic clock also stops system clock adjustments from skewing the value. `duration` is rounded to whole milliseconds, so it stays an integer as in v1.21.0, and it is still clamped at `0`. No public API or type changes; the `duration` declaration comments in `index.d.ts` and `index.d.cts` now name the clock. ([#11407](https://github.com/axios/axios/issues/11407))
+ - **`getAdapter` typings:** `getAdapter(adapters, config?)` in `index.d.ts` and `index.d.cts` now accepts the optional request config that the runtime already forwards to adapter getters, so `getAdapter('fetch', { env: { fetch } })` type-checks without a cast. A JSDoc comment on the parameter notes that the built-in `fetch` adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and that other fields are not applied. Type-only; additive and backwards compatible, no runtime change. ([#11403](https://github.com/axios/axios/issues/11403), [#11404](https://github.com/axios/axios/pull/11404))
++- **Header encoding shortcuts:** The documented `Content-Encoding` shortcuts (`setContentEncoding`, `getContentEncoding`, `hasContentEncoding`) now exist at runtime; previously `getContentEncoding()` threw `TypeError` because `AxiosHeaders` only registered the `Accept-Encoding` accessor. The `Accept-Encoding` trio that the runtime already provided is now declared in `index.d.ts` and `index.d.cts`. `getContentEncoding` and `getAcceptEncoding` are typed to match `AxiosHeaders#get`: `AxiosHeaders.parseParameters` returns `AxiosHeaderParameters`, a `RegExp` returns `RegExpExecArray | null`, and no argument, `true`, or another parser function returns `AxiosHeaderValue`. The type changes are compile-time corrections, not purely additive: `getContentEncoding()` was previously declared to return `RegExpExecArray | null` and to accept string matchers, which throw `parser must be boolean|regexp|function` at runtime, and `getAcceptEncoding()` previously resolved to `any` through the `AxiosHeaders` index signature. TypeScript callers that relied on those declarations may need to narrow the result or pass a supported parser. No change to how existing headers are read or written at runtime; the matching README and docs-site shortcut-list updates are recorded in `PRE_RELEASE_DOCS.md` for release preparation. ([#11432](https://github.com/axios/axios/issues/11432))
+ 
+ ## Documentation
+ 
+```
+
+**File**: `PRE_RELEASE_DOCS.md` (modified, +9/-0)
+```diff
+@@ -110,3 +110,12 @@ Do not store raw diffs or line-number-only instructions here; prefer stable sect
+ - **Status:** Pending (README only; the English, Spanish, French, and Chinese docs site was applied in [PR #11390](https://github.com/axios/axios/pull/11390)).
+ - **Docs targets:** `README.md` Handling errors section.
+ - **Required content:** Explain that wrapped errors append the original stack to `error.stack` after `Caused by:`, that `error.cause` remains the programmatic link, and that stacks are not redacted by `config.redact`. Do not present the marker as a parsing contract. Follow the Wrapped error stacks section of `docs/pages/advanced/error-handling.md`.
++
++### `AxiosHeaders` encoding shortcut lists
++
++- **Change:** The `Content-Encoding` shortcuts now exist at runtime, and the `Accept-Encoding` shortcuts are declared in both type files.
++- **Source:** [Issue #11432](https://github.com/axios/axios/issues/11432).
++- **Status:** Pending.
++- **Docs targets:** `README.md` AxiosHeaders Shortcuts, `docs/pages/advanced/header-methods.md` Shortcuts, and the Spanish, French, and Chinese translations.
++- **Required content:** Keep the `setContentEncoding`, `getContentEncoding`, `hasContentEncoding` entries, which now match the runtime. Add `setAcceptEncoding`, `getAcceptEncoding`, `hasAcceptEncoding`; add the existing `Authorization` shortcuts (`setAuthorization`, `getAuthorization`, `hasAuthorization`); and mention `getSetCookie()` in the methods list, since none of these appear in the shortcut lists today.
++- **Notes:** Release-time documentation only; the runtime and type changes ship with the PR. Translations use their own section headings and may need localized wording.
+```
+
+**File**: `index.d.cts` (modified, +12/-2)
+```diff
+@@ -112,10 +112,20 @@ declare class AxiosHeaders {
+     value: axios.AxiosHeaderValue,
+     rewrite?: boolean | AxiosHeaderMatcher
+   ): AxiosHeaders;
+-  getContentEncoding(parser?: RegExp): RegExpExecArray | null;
+-  getContentEncoding(matcher?: AxiosHeaderMatcher): axios.AxiosHeaderValue;
++  getContentEncoding(parser: typeof AxiosHeaders.parseParameters): axios.AxiosHeaderParameters;
++  getContentEncoding(parser: RegExp): RegExpExecArray | null;
++  getContentEncoding(matcher?: true | AxiosHeaderParser): axios.AxiosHeaderValue;
+   hasContentEncoding(matcher?: AxiosHeaderMatcher): boolean;
+ 
++  setAcceptEncoding(
++    value: axios.AxiosHeaderValue,
++    rewrite?: boolean | AxiosHeaderMatcher
++  ): AxiosHeaders;
++  getAcceptEncoding(parser: typeof AxiosHeaders.parseParameters): axios.AxiosHeaderParameters;
++  getAcceptEncoding(parser: RegExp): RegExpExecArray | null;
++  getAcceptEncoding(matcher?: true | AxiosHeaderParser): axios.AxiosHeaderValue;
++  hasAcceptEncoding(matcher?: AxiosHeaderMatcher): boolean;
++
+   setAuthorization(
+     value: axios.AxiosHeaderValue,
+     rewrite?: boolean | AxiosHeaderMatcher
+```
+
+**File**: `index.d.ts` (modified, +9/-2)
+```diff
+@@ -86,10 +86,17 @@ export class AxiosHeaders {
+   hasUserAgent(matcher?: AxiosHeaderMatcher): boolean;
+ 
+   setContentEncoding(value: AxiosHeaderValue, rewrite?: boolean | AxiosHeaderMatcher): AxiosHeaders;
+-  getContentEncoding(parser?: RegExp): RegExpExecArray | null;
+-  getContentEncoding(matcher?: AxiosHeaderMatcher): AxiosHeaderValue;
++  getContentEncoding(parser: typeof AxiosHeaders.parseParameters): AxiosHeaderParameters;
++  getContentEncoding(parser: RegExp): RegExpExecArray | null;
++  getContentEncoding(matcher?: true | AxiosHeaderParser): AxiosHeaderValue;
+   hasContentEncoding(matcher?: AxiosHeaderMatcher): boolean;
+ 
++  setAcceptEncoding(value: AxiosHeaderValue, rewrite?: boolean | AxiosHeaderMatcher): AxiosHeaders;
++  getAcceptEncoding(parser: typeof AxiosHeaders.parseParameters): AxiosHeaderParameters;
++  getAcceptEncoding(parser: RegExp): RegExpExecArray | null;
++  getAcceptEncoding(matcher?: true | AxiosHeaderParser): AxiosHeaderValue;
++  hasAcceptEncoding(matcher?: AxiosHeaderMatcher): boolean;
++
+   setAuthorization(value: AxiosHeaderValue, rewrite?: boolean | AxiosHeaderMatcher): AxiosHeaders;
+   getAuthorization(parser?: RegExp): RegExpExecArray | null;
+   getAuthorization(matcher?: AxiosHeaderMatcher): AxiosHeaderValue;
+```
+
+**File**: `lib/core/AxiosHeaders.js` (modified, +1/-0)
+```diff
+@@ -465,6 +465,7 @@ class AxiosHeaders {
+ AxiosHeaders.accessor([
+   'Content-Type',
+   'Content-Length',
++  'Content-Encoding',
+   'Accept',
+   'Accept-Encoding',
+   'User-Agent',
+```
+
+**File**: `tests/module/cjs/tests/helpers/cjs-added-types.ts` (modified, +21/-0)
+```diff
+@@ -27,6 +27,27 @@ const parsedHeaderParameters: axios.AxiosHeaderParameters = headers.get(
+   axios.AxiosHeaders.parseParameters
+ );
+ 
++const encodingHeaders = new axios.AxiosHeaders();
++encodingHeaders.setContentEncoding('gzip');
++encodingHeaders.setAcceptEncoding('gzip, br');
++const contentEncodingValue: axios.AxiosHeaderValue = encodingHeaders.getContentEncoding();
++const contentEncodingTokens: axios.AxiosHeaderValue = encodingHeaders.getContentEncoding(true);
++const contentEncodingMatch: RegExpExecArray | null = encodingHeaders.getContentEncoding(/gzip/);
++const contentEncodingParameters: axios.AxiosHeaderParameters = encodingHeaders.getContentEncoding(
++  axios.AxiosHeaders.parseParameters
++);
++const acceptEncodingParameters: axios.AxiosHeaderParameters = encodingHeaders.getAcceptEncoding(
++  axios.AxiosHeaders.parseParameters
++);
++// @ts-expect-error -- getContentEncoding rejects string matchers, which throw at runtime
++encodingHeaders.getContentEncoding('gzip');
++const acceptEncodingValue: axios.AxiosHeaderValue = encodingHeaders.getAcceptEncoding();
++const acceptEncodingTokens: axios.AxiosHeaderValue = encodingHeaders.getAcceptEncoding(true);
++const acceptEncodingMatch: RegExpExecArray | null = encodingHeaders.getAcceptEncoding(/gzip/);
++const hasAcceptEncoding: boolean = encodingHeaders.hasAcceptEncoding('gzip');
++// @ts-expect-error -- getAcceptEncoding only accepts a RegExp, true, or a parser function
++encodingHeaders.getAcceptEncoding(1);
++
+ const source = axios.CancelToken.source();
+ source.token.subscribe((cancel) => {
+   const message: string | undefined = cancel && cancel.message;
+```
+
+**File**: `tests/module/esm/tests/helpers/esm-added-types.ts` (modified, +21/-0)
+```diff
+@@ -43,6 +43,27 @@ const parsedHeaderParameters: AxiosHeaderParameters = headers.get(
+   AxiosHeaders.parseParameters
+ );
+ 
++const encodingHeaders = new AxiosHeaders();
++encodingHeaders.setContentEncoding('gzip');
++encodingHeaders.setAcceptEncoding('gzip, br');
++const contentEncodingValue: AxiosHeaderValue = encodingHeaders.getContentEncoding();
++const contentEncodingTokens: AxiosHeaderValue = encodingHeaders.getContentEncoding(true);
++const contentEncodingMatch: RegExpExecArray | null = encodingHeaders.getContentEncoding(/gzip/);
++const contentEncodingParameters: AxiosHeaderParameters = encodingHeaders.getContentEncoding(
++  AxiosHeaders.parseParameters
++);
++const acceptEncodingParameters: AxiosHeaderParameters = encodingHeaders.getAcceptEncoding(
++  AxiosHeaders.parseParameters
++);
++// @ts-expect-error -- getContentEncoding rejects string matchers, which throw at runtime
++encodingHeaders.getContentEncoding('gzip');
++const acceptEncodingValue: AxiosHeaderValue = encodingHeaders.getAcceptEncoding();
++const acceptEncodingTokens: AxiosHeaderValue = encodingHeaders.getAcceptEncoding(true);
++const acceptEncodingMatch: RegExpExecArray | null = encodingHeaders.getAcceptEncoding(/gzip/);
++const hasAcceptEncoding: boolean = encodingHeaders.hasAcceptEncoding('gzip');
++// @ts-expect-error -- getAcceptEncoding only accepts a RegExp, true, or a parser function
++encodingHeaders.getAcceptEncoding(1);
++
+ const source = axios.CancelToken.source();
+ source.token.subscribe((cancel) => {
+   const message: string | undefined = cancel && cancel.message;
+```
+
+**File**: `tests/unit/axiosHeaders.test.js` (modified, +28/-0)
+```diff
+@@ -784,6 +784,34 @@ describe('AxiosHeaders', () => {
+     });
+   });
+ 
++  describe('encoding accessors', () => {
++    it('should support the Content-Encoding shortcuts', () => {
++      const headers = new AxiosHeaders({ 'Content-Encoding': 'gzip' });
++
++      assert.strictEqual(headers.getContentEncoding(), 'gzip');
++      assert.strictEqual(headers.hasContentEncoding(), true);
++      assert.deepStrictEqual(Object.keys(headers.getContentEncoding(true)), ['gzip']);
++      assert.strictEqual(headers.getContentEncoding(/gz/)[0], 'gz');
++
++      assert.strictEqual(headers.setContentEncoding('br'), headers);
++      assert.strictEqual(headers.get('content-encoding'), 'br');
++      assert.strictEqual(headers.hasContentEncoding('br'), true);
++    });
++
++    it('should support the Accept-Encoding shortcuts', () => {
++      const headers = new AxiosHeaders({ 'Accept-Encoding': 'gzip, br' });
++
++      assert.strictEqual(headers.getAcceptEncoding(), 'gzip, br');
++      assert.strictEqual(headers.hasAcceptEncoding(), true);
++      assert.deepStrictEqual(Object.keys(headers.getAcceptEncoding(true)), ['gzip', 'br']);
++      assert.strictEqual(headers.getAcceptEncoding(/br/)[0], 'br');
++
++      assert.strictEqual(headers.setAcceptEncoding('deflate'), headers);
++      assert.strictEqual(headers.get('accept-encoding'), 'deflate');
++      assert.strictEqual(headers.hasAcceptEncoding('deflate'), true);
++    });
++  });
++
+   it('should be caseless', () => {
+     const headers = new AxiosHeaders({
+       fOo: 1,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11429** (2026-11-06): docs: add missing error codes to the error tables (@Aryapatel-007)
-- **PR #11427** (2026-11-05): fix(deps): bump follow-redirects and form-data, refresh dev dependencies (v0.x) (@jasonsaayman)
-- **PR #11426** (2026-11-05): chore(deps-dev): refresh development dependencies (@jasonsaayman)
-- **PR #11422** (2026-11-03): chore(deps-dev): bump the development_dependencies group with 4 updates (@dependabot[bot])
-- **PR #11421** (2026-11-03): chore(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 in the github-actions group (@dependabot[bot])
-- **PR #11420** (closed): chore(release): prepare release 1.21.1 (@github-actions[bot])
+- **PR #11439** (2026-11-10): docs(agents): narrow the validator rule to option type and shape checks (@jasonsaayman)
+- **PR #11438** (2026-11-10): chore(deps-dev): bump the development_dependencies group with 6 updates (@dependabot[bot])
+- **PR #11437** (2026-11-10): chore(deps): bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 in the github-actions group (@dependabot[bot])
+- **PR #11436** (2026-11-10): fix(headers): register the Content-Encoding shortcuts and declare the Accept-Encoding ones (@PerryLink)
+- **PR #11435** (2026-11-09): chore(release): prepare release 1.21.1 (@github-actions[bot])
+- **PR #11433** (closed): fix(headers): synchronize encoding shortcuts and types (@Narek-Khachikyan)
 
 ---
 
@@ -2083,13 +2777,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: cover cancellation lifecycle and timeout precedence (#11376)
+## X. fetch): close source streams after size-limit errors (#11239)
 
 **RULE**:
 When implementing operations in `PRE_RELEASE_CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in axios/axios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a81d62a2`: test: cover cancellation lifecycle and timeout precedence (#11376). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ee8d46f`: fetch): close source streams after size-limit errors (#11239). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `PRE_RELEASE_CHANGELOG.md`.
@@ -2097,8 +2791,7 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-- **Cancellation lifecycle regression coverage:** Added Node HTTP/Fetch and browser XHR tests for cancellation inside asynchronous request interceptors and successful reuse of an Axios instance after an in-flight cancellation, using AbortSignal, CancelToken, and both together. Added deterministic signal-composition tests for timeout/cancellation precedence and subscription cleanup. Runtime behavior, public APIs, and types are unchanged.
-
+- **Fetch stream cleanup:** When the fetch adapter rejects a streamed upload for exceeding `maxBodyLength`, or a streamed response for exceeding `maxContentLength`, it now cancels the source stream instead of leaving it open. Previously the size-limit error left the source paused mid-read, so its `cancel` hook never ran and the underlying connection or user-supplied `ReadableStream` stayed open until garbage collection. Cancellation is started without waiting for it, so a slow or failing cancel does not delay or replace the size-limit error. No public API or type changes. ([#11239](https://github.com/axios/axios/pull/11239))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2108,4 +2801,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a81d62a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ee8d46f` are properly handled with clean fallback behavior.

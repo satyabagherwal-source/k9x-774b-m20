@@ -9077,3 +9077,7 @@
 | `CYCLE-20261112-E33O` | `2026-11-12T05:13:21.204Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4678d5af...`) |
 | `CYCLE-20261112-EBEZ` | `2026-11-12T05:13:31.979Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cc5dca54...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T05:13:50.798Z` | `hf-facebook-dinov3-vitl16-pretrain-lvd1689m` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5F13CAC2` [Domain D] | Yes (`d83b1160...`) |
+| `CYCLE-20261112-VPDN` | `2026-11-12T05:27:03.227Z` | `wasm-bindgen/wasm-pack` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3c0a9e08...`) |
+| `CYCLE-20261112-VSWJ` | `2026-11-12T05:27:07.795Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0211fbae...`) |
+| `CYCLE-20261112-VZNJ` | `2026-11-12T05:27:16.543Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`66775b30...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T05:27:35.956Z` | `wasm-bindgen-wasm-pack` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0AA4F6ED` [Domain H] | Yes (`a7342d58...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:13:31.988Z",
-  "total_cycles_completed": 8913,
-  "total_learnings_persisted": 8913,
-  "total_rules_promoted": 8760,
+  "last_updated": "2026-11-12T05:27:16.552Z",
+  "total_cycles_completed": 8916,
+  "total_learnings_persisted": 8916,
+  "total_rules_promoted": 8763,
   "history": [
-    {
-      "timestamp": "2026-11-11T06:13:35.588Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T06:13:56.567Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T06:16:20.783Z",
-      "repository": "MiniMaxAI/MiniMax-H3-Image",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T06:23:40.346Z",
       "repository": "Marker-Inc-Korea/AutoRAG",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T05:13:31.988Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T05:27:03.239Z",
+      "repository": "wasm-bindgen/wasm-pack",
+      "learningId": "learn-github-wasm-bindgen-wasm-pack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T05:27:07.806Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T05:27:16.552Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
