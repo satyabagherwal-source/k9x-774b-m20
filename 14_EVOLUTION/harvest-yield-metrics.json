@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:10:45.848Z",
-  "total_cycles_completed": 8894,
-  "total_learnings_persisted": 8894,
-  "total_rules_promoted": 8743,
+  "last_updated": "2026-11-12T03:24:03.369Z",
+  "total_cycles_completed": 8897,
+  "total_learnings_persisted": 8897,
+  "total_rules_promoted": 8746,
   "history": [
-    {
-      "timestamp": "2026-11-10T03:04:38.498Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T04:37:07.245Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T04:44:29.880Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T04:51:48.792Z",
       "repository": "react/metro",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T03:10:45.848Z",
       "repository": "apple/foundationdb",
       "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:23:54.816Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:24:02.405Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:24:03.369Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

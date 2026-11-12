@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:10:50.955Z",
+  "last_updated": "2026-11-12T03:24:10.863Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5965,6 +5965,33 @@
       "source_repo": "cheeriojs-dom-serializer",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9BDB9D-build-deps-bump-github-codeql-action-fro.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EFEC88",
+      "directive_title": "build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (#5255)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "okteto-okteto",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EFEC88-build-deps-bump-rack-from-3-2-6-to-3-2-8.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-DD910F",
+      "directive_title": "Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arangodb-arangodb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DD910F-merge-pull-request-23635-from-arangodb-b.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0847EF",
+      "directive_title": "luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0847EF-luau-date-lua-clobbering-filter-after-er.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `0084887c`  
+> **Source Version**: `75fd3e94`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:33:39.210Z  
+> **Timestamp**: 2026-11-12T03:23:48.368Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:33:39.202Z  
+> **Harvest Timestamp**: 2026-11-12T03:23:48.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14295 stars
+- **Stars / Engagement**: 14297 stars
 
 ---
 
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23609** (2026-11-06): **Bug fix 3.12/dump connection table**
-  *Symptoms*: backport of https://github.com/arangodb/arangodb/pull/23583
+- **Issue #23636** (2026-11-11): **[COR-367] Update libunwind to 1.8.3**
+  *Symptoms*: ### Scope & Purpose  And switch to FetchContent instead off adding the complete source. 
 
-- **Issue #23608** (2026-11-06): **Update ann-benchmark job for 3.12**
-  *Symptoms*: ### Scope & Purpose  Backport of https://github.com/arangodb/arangodb/pull/23606  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [ ] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*
+- **Issue #23635** (2026-11-11): **Fix ann-bencmark load_run**
+  *Symptoms*: ### Scope & Purpose  *(Please describe the changes in this PR for reviewers, motivation, rationale - **mandatory**)*  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [ ] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [ ] GitHub issue / Jira ticket: - [ ] Design document:  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,84 +1662,92 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0084887c` (2026-11-09)
-**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
+### Incident Patch 1: `071b1c0d` (2026-11-11)
+**Commit Message**: Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark
 
-**File**: `CHANGELOG` (modified, +3/-6)
-```diff
-@@ -1,6 +1,9 @@
- 4.0.0 (XXXX-XX-XX)
- ------------------
- 
-+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-+  dependencies.
-+
- * Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
-   when used with LIMIT and {fullCount: true}. The single result row was counted
-   twice: once when produced and again during the fullCount skip phase.
-@@ -31,9 +34,6 @@
-   distances computed, heap updates, coarse search and list scan time) in query
-   statistics and in the profile output.
- 
--* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
--  dependencies.
--
- * Updated ArangoDB Starter to v0.20.0-preview-20.
- 
- * The AQL optimizer lets a sorted COLLECT reuse a preceding SORT only if the
-@@ -587,9 +587,6 @@
- 
- * Remove FoxxMaster code.
- 
--* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
--  dependencies.
--
- * Updated ArangoDB Starter to v0.19.30.
- 
- * COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list, ==,
-```
+Fix ann-bencmark load_run
 
-**File**: `VERSIONS` (modified, +3/-3)
+**File**: `scripts/benchmark/ann/load_run.py` (modified, +2/-1)
 ```diff
-@@ -6,8 +6,8 @@ GCC_LINUX "13.2.0"
- CLANG_LINUX "19.1.7"
- OPENSSL_LINUX "3.5.9"
- USE_RCLONE "true"
--RCLONE_GO "1.26.10-60c5ceb_20261025121659"
-+RCLONE_GO "1.26.10-3e15daf_20261109131457"
- RCLONE_VERSION "1.75.1"
--RCLONE_SHA256_AMD64 "eea373d11983607664980b9f3b6ce96450b2af0ed4c467f1a8380c79ffe037ea"
--RCLONE_SHA256_ARM64 "8a8d59b513a68a04e82c2fbff75e7ae5f709cb53f18404edc1ea5996b1f90b64"
-+RCLONE_SHA256_AMD64 "1f107ab7dfd836ccc7748d42d80796537e308101ace8fd17ae85dbe78993965d"
-+RCLONE_SHA256_ARM64 "d195faf74a5fac20bba18eb1688bf0d0de35b3064f9b7416ca1c7538beba8ccc"
- MINIMAL_DEBUG_INFO "On"
+@@ -70,7 +70,8 @@ def _request(self, method, path, body=None):
+                                      headers=self.headers)
+         if self.trx_id:
+             req.add_header("x-arango-trx-id", self.trx_id)
+-        try: with urllib.request.urlopen(req, context=self.ssl_context) as resp:
++        try:
++            with urllib.request.urlopen(req, context=self.ssl_context) as resp:
+                 return json.loads(resp.read() or b"{}")
+         except urllib.error.HTTPError as e:
+             try:
 ```
 
 ---
 
-### Incident Patch 2: `392f3415` (2026-11-09)
-**Commit Message**: Fix PROTECTED branch ruleset fir CircleCI
+### Incident Patch 2: `47627c56` (2026-11-11)
+**Commit Message**: [BTS-2530] Test IN index lookups with non-array values in loops (#23633)
 
-**File**: `.circleci/base_config.yml` (modified, +1/-1)
+An IN lookup on a persistent index that is rearmed for each row of an outer
+loop matches nothing for non-array and empty-array values, whatever the
+previous row matched.
+
+**File**: `tests/js/client/aql/aql-index-rearming.js` (modified, +21/-0)
 ```diff
-@@ -775,7 +775,7 @@ jobs:
-             LIST=.circleci/required-checks.txt
-             # PR pipelines run on the head branch, so the protected branch
-             # cannot be derived from CIRCLE_BRANCH.
--            PROTECTED=4.0
-+            PROTECTED=devel
-             DRIFT=0
-             if [ ! -s "${LIST}" ]; then
-               echo "ERROR: ${LIST} is missing or empty. Commit the required-check inventory." >&2
+@@ -768,6 +768,27 @@ function VPackIndexInRearmingSuite (unique) {
+         }
+       }
+     },
++
++    testVPackLookupBySingleAttributeUsingInNonArrayValuesRearm : function () {
++      const q = `FOR v IN [["001"], "nope", null, [], {}, "002", 2, ["002", "003"], true] FOR doc IN ${cn} FILTER doc.value1 IN v RETURN [v, doc.value1]`;
++
++      const opts = { optimizer: { rules: ["-interchange-adjacent-enumerations"] } };
++
++      let nodes = db._createStatement({query: q, bindVars:  null, options:  opts}).explain().plan.nodes;
++      let indexNodes = nodes.filter((node) => node.type === 'IndexNode');
++      assertEqual(1, indexNodes.length);
++      assertEqual(1, indexNodes[0].indexes.length);
++      assertEqual("UnitTestsIndex", indexNodes[0].indexes[0].name);
++
++      // an IN value that is not an array, or is an empty array, matches
++      // nothing, whatever the previous lookup matched
++      let results = db._query(q, null, opts).toArray();
++      assertEqual([
++        [["001"], "001"],
++        [["002", "003"], "002"],
++        [["002", "003"], "003"],
++      ], results);
++    },
+     
+   };
+ }
+```
+
+---
+
+### Incident Patch 3: `e44bc6e2` (2026-11-11)
+**Commit Message**: Fix ann-bencmark load_run
+
+**File**: `scripts/benchmark/ann/load_run.py` (modified, +2/-1)
+```diff
+@@ -70,7 +70,8 @@ def _request(self, method, path, body=None):
+                                      headers=self.headers)
+         if self.trx_id:
+             req.add_header("x-arango-trx-id", self.trx_id)
+-        try: with urllib.request.urlopen(req, context=self.ssl_context) as resp:
++        try:
++            with urllib.request.urlopen(req, context=self.ssl_context) as resp:
+                 return json.loads(resp.read() or b"{}")
+         except urllib.error.HTTPError as e:
+             try:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23609** (2026-11-06): Bug fix 3.12/dump connection table (@dothebart)
-- **PR #23608** (2026-11-06): Update ann-benchmark job for 3.12 (@jbajic)
-- **PR #23606** (2026-11-06): Update `ann-benchmark` job (@jbajic)
-- **PR #23605** (2026-11-06): [3.12] AQL sorted COLLECT reuses a SORT only if it starts with the group variables (@maierlars)
-- **PR #23604** (2026-11-06): [COR-1111] Fix fullCount double-counting for empty COLLECT AGGREGATE (@bluepal-avanthi-dundigala)
-- **PR #23603** (2026-11-06): AQL sorted COLLECT reuses a SORT only if it starts with the group variables (@maierlars)
+- **PR #23636** (2026-11-11): [COR-367] Update libunwind to 1.8.3 (@mpoeter)
+- **PR #23635** (2026-11-11): Fix ann-bencmark load_run (@jbajic)
+- **PR #23633** (2026-11-11): [BTS-2530] Test IN index lookups with non-array values in loops (@maierlars)
+- **PR #23629** (2026-11-11): Fix ann-benchmark artifacts upload (@jbajic)
+- **PR #23627** (2026-11-10): [3.12] Use more reliable infrastructural flow (@KVS85)
+- **PR #23626** (2026-11-11): [COR-1179] Fix SUBSTRING_BYTES AQL function (@jbajic)
 
 ---
 
@@ -1759,35 +1767,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
+## X. Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark
 
 **RULE**:
-When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/benchmark/ann/load_run.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0084887c`: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `071b1c0d`: Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/benchmark/ann/load_run.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-  dependencies.
-
+        try:
+            with urllib.request.urlopen(req, context=self.ssl_context) as resp:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-  dependencies.
-
-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-  dependencies.
-
+        try: with urllib.request.urlopen(req, context=self.ssl_context) as resp:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0084887c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `071b1c0d` are properly handled with clean fallback behavior.

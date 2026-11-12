@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "84c85c1f",
+    "sourceVersion": "fcc9870c",
     "license": "NOASSERTION",
-    "contentHash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
-    "lastHarvestedAt": "2026-11-11T14:43:51.362Z",
+    "contentHash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
+    "lastHarvestedAt": "2026-11-12T03:24:03.363Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "a2043817",
+    "sourceVersion": "037d6597",
     "license": "Apache-2.0",
-    "contentHash": "accdc0cef8f4987f6300bf46e07b0844671a992b0bce256cf4db4674e1bf7121",
-    "lastHarvestedAt": "2026-11-06T14:57:24.442Z",
+    "contentHash": "1403f6b6db9ec1c67e802ca0eced1e557614dc0fb95aa0a6bcdbfc144f78db8c",
+    "lastHarvestedAt": "2026-11-12T03:23:54.786Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "0084887c",
+    "sourceVersion": "75fd3e94",
     "license": "NOASSERTION",
-    "contentHash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
-    "lastHarvestedAt": "2026-11-09T16:33:39.715Z",
+    "contentHash": "a969464ff12cfdca9d298a10fe24aa3222965e443c74fd5454592907225012ee",
+    "lastHarvestedAt": "2026-11-12T03:24:02.387Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {

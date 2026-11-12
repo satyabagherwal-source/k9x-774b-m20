@@ -9057,3 +9057,6 @@
 | `CYCLE-20261112-0AK6` | `2026-11-12T03:10:39.222Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f2c98b2c...`) |
 | `CYCLE-20261112-0FNP` | `2026-11-12T03:10:45.829Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6b1c1a0f...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T03:10:59.806Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E8885F06` [Domain D] | Yes (`0988e74b...`) |
+| `CYCLE-20261112-HCF2` | `2026-11-12T03:23:54.782Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1403f6b6...`) |
+| `CYCLE-20261112-HIA7` | `2026-11-12T03:24:02.383Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a969464f...`) |
+| `CYCLE-20261112-HJ1A` | `2026-11-12T03:24:03.358Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`97bf868b...`) |

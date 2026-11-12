@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T03:10:45.739Z",
+  "last_updated": "2026-11-12T03:24:03.206Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3309,8 +3309,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "0084887c",
-      "content_hash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
+      "source_version": "75fd3e94",
+      "content_hash": "a969464ff12cfdca9d298a10fe24aa3222965e443c74fd5454592907225012ee",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -3322,6 +3322,11 @@
         {
           "number": null,
           "title": "[COR-1111] Fix fullCount double-counting for empty COLLECT AGGREGATE (#23604)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3385,7 +3390,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:33:39.583Z",
+      "verified_at": "2026-11-12T03:24:02.221Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10415,8 +10420,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "84c85c1f",
-      "content_hash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
+      "source_version": "fcc9870c",
+      "content_hash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10534,6 +10539,11 @@
           "number": null,
           "title": "Synchronous Invariant Guarding in Asynchronous Concurrency Managers",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1719,
@@ -10886,7 +10896,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T14:43:51.223Z",
+      "verified_at": "2026-11-12T03:24:03.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49450,11 +49460,16 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "a2043817",
-      "content_hash": "accdc0cef8f4987f6300bf46e07b0844671a992b0bce256cf4db4674e1bf7121",
+      "source_version": "037d6597",
+      "content_hash": "1403f6b6db9ec1c67e802ca0eced1e557614dc0fb95aa0a6bcdbfc144f78db8c",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (#5255)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1842,
           "title": "wait until the namespace is fully deleted in `okteto namespace delete` (#5187)",
@@ -49506,7 +49521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:57:24.296Z",
+      "verified_at": "2026-11-12T03:23:54.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

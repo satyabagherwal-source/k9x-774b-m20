@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T03:10:50.864Z",
-    "lastVerified": "2026-11-12T03:10:50.864Z",
+    "lastChecked": "2026-11-12T03:24:10.670Z",
+    "lastVerified": "2026-11-12T03:24:10.670Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -250,22 +250,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T02:33:28.489Z",
-    "lastVerified": "2026-11-12T02:33:28.489Z",
+    "lastChecked": "2026-11-12T03:23:49.059Z",
+    "lastVerified": "2026-11-12T03:23:49.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 0,
+    "contentHash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "84c85c1f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2380,8 +2379,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T17:13:04.657Z",
-    "lastVerified": "2026-11-11T17:13:04.657Z",
+    "lastChecked": "2026-11-12T03:23:39.778Z",
+    "lastVerified": "2026-11-12T03:23:39.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3705,22 +3704,21 @@
     "revisionIdentifier": "e3084ac5"
   },
   "okteto-okteto": {
-    "name": "okteto",
+    "name": "okteto/okteto",
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:43:55.549Z",
-    "lastVerified": "2026-11-09T17:43:55.549Z",
+    "lastChecked": "2026-11-12T03:23:42.507Z",
+    "lastVerified": "2026-11-12T03:23:42.507Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "accdc0cef8f4987f6300bf46e07b0844671a992b0bce256cf4db4674e1bf7121",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "1403f6b6db9ec1c67e802ca0eced1e557614dc0fb95aa0a6bcdbfc144f78db8c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a2043817"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
     "name": "neuron-ai",
@@ -4060,9 +4058,9 @@
   "pemistahl-grex": {
     "name": "grex",
     "officialUrl": "https://github.com/pemistahl/grex",
-    "lastChecked": "2026-11-09T08:03:17.691Z",
+    "lastChecked": "2026-11-12T03:23:29.705Z",
     "revisionIdentifier": "99cc3477",
-    "lastVerified": "2026-11-09T08:03:17.691Z"
+    "lastVerified": "2026-11-12T03:23:29.705Z"
   },
   "hf-baai-bge-m3": {
     "name": "BAAI/bge-m3",
@@ -6188,14 +6186,14 @@
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-09T16:33:39.202Z",
-    "lastVerified": "2026-11-09T16:33:39.202Z",
+    "lastChecked": "2026-11-12T03:23:48.360Z",
+    "lastVerified": "2026-11-12T03:23:48.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
+    "contentHash": "a969464ff12cfdca9d298a10fe24aa3222965e443c74fd5454592907225012ee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9587,9 +9585,9 @@
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
-    "lastChecked": "2026-11-08T03:43:13.144Z",
+    "lastChecked": "2026-11-12T03:23:34.642Z",
     "revisionIdentifier": "9eca97b8",
-    "lastVerified": "2026-11-08T03:43:13.144Z"
+    "lastVerified": "2026-11-12T03:23:34.642Z"
   },
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
@@ -11459,9 +11457,9 @@
   "unifiedjs-unified": {
     "name": "unified",
     "officialUrl": "https://github.com/unifiedjs/unified",
-    "lastChecked": "2026-11-07T04:29:31.587Z",
+    "lastChecked": "2026-11-12T03:23:32.202Z",
     "revisionIdentifier": "dfaf172e",
-    "lastVerified": "2026-11-07T04:29:31.587Z"
+    "lastVerified": "2026-11-12T03:23:32.202Z"
   },
   "relatedcode-progresshud": {
     "name": "ProgressHUD",

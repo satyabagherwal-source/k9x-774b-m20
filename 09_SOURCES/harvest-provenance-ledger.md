@@ -9066,3 +9066,6 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `bb49df41` | Multi-dimensional audit evidence | 2026-11-12T03:10:39.224Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `5431e621` | Multi-dimensional audit evidence | 2026-11-12T03:10:45.844Z |
 | `learn-dom-d-e8885f06` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-12T03:10:59.806Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `037d6597` | Multi-dimensional audit evidence | 2026-11-12T03:23:54.786Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `75fd3e94` | Multi-dimensional audit evidence | 2026-11-12T03:24:02.387Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `fcc9870c` | Multi-dimensional audit evidence | 2026-11-12T03:24:03.363Z |

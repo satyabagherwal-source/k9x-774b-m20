@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T03:10:45.851Z",
+  "last_updated": "2026-11-12T03:24:03.373Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
-      "verified_at": "2026-11-11T14:43:51.384Z",
+      "content_hash": "97bf868b01da784adcbffc8c80942bf5ebc7a46cfc2f90add93bd701a15cca40",
+      "verified_at": "2026-11-12T03:24:03.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:43:51.384Z"
+      "last_updated": "2026-11-12T03:24:03.372Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "accdc0cef8f4987f6300bf46e07b0844671a992b0bce256cf4db4674e1bf7121",
-      "verified_at": "2026-11-06T14:57:24.451Z",
+      "content_hash": "1403f6b6db9ec1c67e802ca0eced1e557614dc0fb95aa0a6bcdbfc144f78db8c",
+      "verified_at": "2026-11-12T03:23:54.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:57:24.451Z"
+      "last_updated": "2026-11-12T03:23:54.823Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
-      "verified_at": "2026-11-09T16:33:39.733Z",
+      "content_hash": "a969464ff12cfdca9d298a10fe24aa3222965e443c74fd5454592907225012ee",
+      "verified_at": "2026-11-12T03:24:02.409Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:33:39.733Z"
+      "last_updated": "2026-11-12T03:24:02.409Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
