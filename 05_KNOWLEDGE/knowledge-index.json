@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T01:52:07.039Z",
+  "last_updated": "2026-11-12T02:03:47.646Z",
   "total_verified_learnings": 1256,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -59760,8 +59760,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "d4f206e3",
-      "content_hash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
+      "source_version": "3c673a3b",
+      "content_hash": "2ce122bd971384009a5c1ee40501ebe523515b2e2fa8f34231627846ef1cf12f",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -59816,7 +59816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:39:11.895Z",
+      "verified_at": "2026-11-12T02:03:45.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62041,11 +62041,16 @@
       "slug": "taubyte-tau",
       "platform": "github",
       "source_url": "https://github.com/taubyte/tau",
-      "source_version": "374537fb",
-      "content_hash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
+      "source_version": "59816f6f",
+      "content_hash": "1e19823b27f4f2c0ddbbc3a5c542e015afa2409fdfc0d5525f3ca5c15314d844",
       "dossier_path": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #565 from taubyte/fix/dream-push-wait-race",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1797,
           "title": "vm): clamp attacker-controlled HTTP status codes to avoid a gateway crash (#519)",
@@ -62062,7 +62067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:00:09.178Z",
+      "verified_at": "2026-11-12T02:03:47.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

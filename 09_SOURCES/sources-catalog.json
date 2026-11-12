@@ -3093,10 +3093,10 @@
     "repository": "taubyte/tau",
     "platform": "github",
     "sourceUrl": "https://github.com/taubyte/tau",
-    "sourceVersion": "374537fb",
+    "sourceVersion": "59816f6f",
     "license": "BSD-3-Clause",
-    "contentHash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
-    "lastHarvestedAt": "2026-11-03T21:00:09.286Z",
+    "contentHash": "1e19823b27f4f2c0ddbbc3a5c542e015afa2409fdfc0d5525f3ca5c15314d844",
+    "lastHarvestedAt": "2026-11-12T02:03:47.733Z",
     "learningId": "learn-github-taubyte-tau"
   },
   "build-trust-ockam": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "d4f206e3",
+    "sourceVersion": "3c673a3b",
     "license": "MIT",
-    "contentHash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
-    "lastHarvestedAt": "2026-11-03T11:39:12.004Z",
+    "contentHash": "2ce122bd971384009a5c1ee40501ebe523515b2e2fa8f34231627846ef1cf12f",
+    "lastHarvestedAt": "2026-11-12T02:03:45.833Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T01:52:12.654Z",
+  "updated_at": "2026-11-12T02:03:51.162Z",
   "stats": {
-    "total_discovered": 430,
-    "approved_pending_harvest": 384,
+    "total_discovered": 453,
+    "approved_pending_harvest": 405,
     "harvested_count": 0,
-    "rejected_count": 46,
+    "rejected_count": 48,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 396,
+      "COMMUNITY_AND_EXPERT": 419,
       "OFFICIAL_DOCUMENTATION": 18,
       "STANDARDS_AND_SPECIFICATIONS": 15,
       "ENGINEERING_BLOGS": 1
@@ -9154,6 +9154,498 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md",
         "fileName": "beclab-olares-learnings.md"
+      }
+    },
+    "SRC-E45304D006BC": {
+      "id": "SRC-E45304D006BC",
+      "url": "https://github.com/taubyte/tau",
+      "title": "https://github.com/taubyte/tau",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/taubyte-tau-learnings.md",
+        "fileName": "taubyte-tau-learnings.md"
+      }
+    },
+    "SRC-98FB92AE87E0": {
+      "id": "SRC-98FB92AE87E0",
+      "url": "https://github.com/sqlpage/SQLPage",
+      "title": "https://github.com/sqlpage/SQLPage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-56AE3BC41209": {
+      "id": "SRC-56AE3BC41209",
+      "url": "https://sql-page.com/component.sql?component=status_code",
+      "title": "https://sql-page.com/component.sql?component=status_code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-CFFD3D8DBDD4": {
+      "id": "SRC-CFFD3D8DBDD4",
+      "url": "https://sql-page.com/component.sql?component=http_header",
+      "title": "https://sql-page.com/component.sql?component=http_header",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-F5BAA97BE1F0": {
+      "id": "SRC-F5BAA97BE1F0",
+      "url": "https://sql-page.com/component.sql?component=redirect",
+      "title": "https://sql-page.com/component.sql?component=redirect",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.125Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-BA94667F19BE": {
+      "id": "SRC-BA94667F19BE",
+      "url": "https://sql-page.com/documentation.sql",
+      "title": "https://sql-page.com/documentation.sql",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.126Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-505E4B20FCDA": {
+      "id": "SRC-505E4B20FCDA",
+      "url": "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0",
+      "title": "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.128Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-B846228F9A1D": {
+      "id": "SRC-B846228F9A1D",
+      "url": "https://github.com/eugenioenko/autentico",
+      "title": "https://github.com/eugenioenko/autentico",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-E041A707BE10": {
+      "id": "SRC-E041A707BE10",
+      "url": "https://192.168.56.20:8282/sqlpage/oidc_callback",
+      "title": "https://192.168.56.20:8282/sqlpage/oidc_callback",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-BFBC8D4BB5E8": {
+      "id": "SRC-BFBC8D4BB5E8",
+      "url": "http://192.168.56.20:8282/sqlpage/oidc_callback",
+      "title": "http://192.168.56.20:8282/sqlpage/oidc_callback",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T02:03:51.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-FF177ED4E953": {
+      "id": "SRC-FF177ED4E953",
+      "url": "http://...`/",
+      "title": "http://...`/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T02:03:51.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-E6328FB027BE": {
+      "id": "SRC-E6328FB027BE",
+      "url": "https://...`/",
+      "title": "https://...`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-019FE61A2938": {
+      "id": "SRC-019FE61A2938",
+      "url": "https://github.com/sqlpage/SQLPage/issues/1464",
+      "title": "https://github.com/sqlpage/SQLPage/issues/1464",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-EE100D5611BB": {
+      "id": "SRC-EE100D5611BB",
+      "url": "https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/sq/sqlpage/package.nix",
+      "title": "https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/sq/sqlpage/package.nix",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-94C6498960B9": {
+      "id": "SRC-94C6498960B9",
+      "url": "https://github.com/NixOS/nixpkgs/pull/574594",
+      "title": "https://github.com/NixOS/nixpkgs/pull/574594",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.148Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-B446A51DCCA8": {
+      "id": "SRC-B446A51DCCA8",
+      "url": "https://github.com/apache/datafusion-sqlparser-rs/pull/2539",
+      "title": "https://github.com/apache/datafusion-sqlparser-rs/pull/2539",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-C26A590E64D9": {
+      "id": "SRC-C26A590E64D9",
+      "url": "https://github.com/apache/datafusion-sqlparser-rs/pull/2917",
+      "title": "https://github.com/apache/datafusion-sqlparser-rs/pull/2917",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-C9DCBC86F2F4": {
+      "id": "SRC-C9DCBC86F2F4",
+      "url": "https://github.com/NixOS/nixpkgs/issues/576544",
+      "title": "https://github.com/NixOS/nixpkgs/issues/576544",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.153Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-2BE220EDA1BF": {
+      "id": "SRC-2BE220EDA1BF",
+      "url": "https://github.com/rustls/webpki/releases/tag/v%2F0.103.16",
+      "title": "https://github.com/rustls/webpki/releases/tag/v%2F0.103.16",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-E4C94CC5927B": {
+      "id": "SRC-E4C94CC5927B",
+      "url": "https://github.com/rustls/webpki-roots/releases/tag/v%2F1.0.11",
+      "title": "https://github.com/rustls/webpki-roots/releases/tag/v%2F1.0.11",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-D539E1F2E473": {
+      "id": "SRC-D539E1F2E473",
+      "url": "https://github.com/sqlpage/SQLPage/issues/791",
+      "title": "https://github.com/sqlpage/SQLPage/issues/791",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-EFE476F5A303": {
+      "id": "SRC-EFE476F5A303",
+      "url": "https://github.com/tabler/tabler/releases/tag/%40tabler%2Fcore%401.7.3",
+      "title": "https://github.com/tabler/tabler/releases/tag/%40tabler%2Fcore%401.7.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-9984C0EAEE37": {
+      "id": "SRC-9984C0EAEE37",
+      "url": "https://github.com/sqlpage/SQLPage/issues/957",
+      "title": "https://github.com/sqlpage/SQLPage/issues/957",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:03:51.162Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
       }
     }
   }

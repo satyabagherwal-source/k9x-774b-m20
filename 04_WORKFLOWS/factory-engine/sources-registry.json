@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T01:52:12.473Z",
-    "lastVerified": "2026-11-12T01:52:12.473Z",
+    "lastChecked": "2026-11-12T02:03:51.030Z",
+    "lastVerified": "2026-11-12T02:03:51.030Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -458,8 +458,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T01:23:22.611Z",
-    "lastVerified": "2026-11-12T01:23:22.611Z",
+    "lastChecked": "2026-11-12T02:03:43.175Z",
+    "lastVerified": "2026-11-12T02:03:43.175Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1822,8 +1822,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T15:27:05.126Z",
-    "lastVerified": "2026-11-11T15:27:05.126Z",
+    "lastChecked": "2026-11-12T02:03:38.277Z",
+    "lastVerified": "2026-11-12T02:03:38.277Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -3334,22 +3334,21 @@
     "lastVerified": "2026-11-09T17:12:04.416Z"
   },
   "taubyte-tau": {
-    "name": "tau",
+    "name": "taubyte/tau",
     "officialUrl": "https://github.com/taubyte/tau",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T16:25:55.526Z",
-    "lastVerified": "2026-11-09T16:25:55.526Z",
+    "lastChecked": "2026-11-12T02:03:40.689Z",
+    "lastVerified": "2026-11-12T02:03:40.689Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-taubyte-tau",
-    "contentHash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
+    "contentHash": "1e19823b27f4f2c0ddbbc3a5c542e015afa2409fdfc0d5525f3ca5c15314d844",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "374537fb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "xerj-org-xerj": {
     "name": "xerj-org/xerj",
@@ -3668,9 +3667,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-09T07:13:13.836Z",
+    "lastChecked": "2026-11-12T02:03:28.185Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-09T07:13:13.836Z"
+    "lastVerified": "2026-11-12T02:03:28.185Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -5753,22 +5752,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqlpage-sqlpage": {
-    "name": "SQLPage",
+    "name": "sqlpage/SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T15:29:00.097Z",
-    "lastVerified": "2026-11-09T15:29:00.097Z",
+    "lastChecked": "2026-11-12T02:03:45.577Z",
+    "lastVerified": "2026-11-12T02:03:45.577Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "2ce122bd971384009a5c1ee40501ebe523515b2e2fa8f34231627846ef1cf12f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d4f206e3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mlua-rs-mlua": {
     "name": "mlua",
@@ -9391,9 +9389,9 @@
   "swiftkickmobile-swiftmessages": {
     "name": "SwiftMessages",
     "officialUrl": "https://github.com/SwiftKickMobile/SwiftMessages",
-    "lastChecked": "2026-11-08T02:56:53.463Z",
+    "lastChecked": "2026-11-12T02:03:33.141Z",
     "revisionIdentifier": "c0ff6c65",
-    "lastVerified": "2026-11-08T02:56:53.463Z"
+    "lastVerified": "2026-11-12T02:03:33.141Z"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
     "name": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -11303,9 +11301,9 @@
   "html5lib-html5lib-python": {
     "name": "html5lib-python",
     "officialUrl": "https://github.com/html5lib/html5lib-python",
-    "lastChecked": "2026-11-07T03:41:42.402Z",
+    "lastChecked": "2026-11-12T02:03:30.657Z",
     "revisionIdentifier": "fd4f032b",
-    "lastVerified": "2026-11-07T03:41:42.402Z"
+    "lastVerified": "2026-11-12T02:03:30.657Z"
   },
   "kruszoneq-macusb": {
     "name": "macUSB",

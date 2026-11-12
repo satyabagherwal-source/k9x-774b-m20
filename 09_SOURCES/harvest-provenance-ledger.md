@@ -9043,3 +9043,5 @@ Every entry in this ledger must capture:
 | `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `2af81b9e` | Multi-dimensional audit evidence | 2026-11-12T01:31:23.741Z |
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `ba82d526` | Multi-dimensional audit evidence | 2026-11-12T01:52:01.991Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `36caf4ca` | Multi-dimensional audit evidence | 2026-11-12T01:52:07.159Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `3c673a3b` | Multi-dimensional audit evidence | 2026-11-12T02:03:45.833Z |
+| `learn-github-taubyte-tau` | `https://github.com/taubyte/tau` | `59816f6f` | Multi-dimensional audit evidence | 2026-11-12T02:03:47.733Z |

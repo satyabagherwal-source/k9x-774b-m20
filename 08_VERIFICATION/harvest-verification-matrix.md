@@ -9034,3 +9034,5 @@
 | `CYCLE-20261112-GNA2` | `2026-11-12T01:31:23.738Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dd619f03...`) |
 | `CYCLE-20261112-76PT` | `2026-11-12T01:52:01.985Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`47b8bac0...`) |
 | `CYCLE-20261112-7APF` | `2026-11-12T01:52:07.155Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4731c5a8...`) |
+| `CYCLE-20261112-M9T2` | `2026-11-12T02:03:45.830Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md` | Yes (`2ce122bd...`) |
+| `CYCLE-20261112-MB9U` | `2026-11-12T02:03:47.730Z` | `taubyte/tau` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1e19823b...`) |
