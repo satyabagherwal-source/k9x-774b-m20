@@ -1,0 +1,25 @@
+{
+  "fixture_type": "SYNTHETIC_TEST_FIXTURE",
+  "synthetic_label": "DO_NOT_TREAT_AS_REAL_WORLD_KNOWLEDGE",
+  "repository": "UKPLab/sentence-transformers",
+  "sourceUrl": "https://github.com/UKPLab/sentence-transformers",
+  "sourceVersion": "v2.2.2",
+  "license": "Apache-2.0",
+  "aiProvider": "test-duplicate-agent",
+  "dossierText": "Duplicate attempt to persist CD-D-CLOUD-CMTP.",
+  "candidateRules": [
+    {
+      "candidate_id": "CD-D-CLOUD-CMTP",
+      "title": "Clamped Masked Temporal Pooling (CMTP)",
+      "content": "Duplicate content attempting to re-persist.",
+      "summary": "Duplicate candidate.",
+      "tags": [
+        "duplicate"
+      ],
+      "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+      "duplicate_references": [],
+      "approval_status": "APPROVED"
+    }
+  ]
+}

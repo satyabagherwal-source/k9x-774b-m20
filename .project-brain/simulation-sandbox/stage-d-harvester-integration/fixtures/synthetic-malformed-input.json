@@ -1,0 +1,8 @@
+{
+  "fixture_type": "SYNTHETIC_TEST_FIXTURE",
+  "synthetic_label": "DO_NOT_TREAT_AS_REAL_WORLD_KNOWLEDGE",
+  "sourceVersion": "1.0.0",
+  "license": "MIT",
+  "dossierText": "Malformed input lacking identity fields.",
+  "candidateRules": []
+}

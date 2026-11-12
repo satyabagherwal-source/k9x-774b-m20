@@ -1,0 +1,48 @@
+{
+  "store_version": "1.0.0-stage-c",
+  "created_at": "2026-11-12T16:36:47.358Z",
+  "records_count": 4,
+  "records": {
+    "CD-D-CLOUD-CMTP": {
+      "candidate_id": "CD-D-CLOUD-CMTP",
+      "title": "Clamped Masked Temporal Pooling (CMTP)",
+      "domain": "H",
+      "destination": "05_KNOWLEDGE",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-d-harvester-integration\\test-store\\CD-D-CLOUD-CMTP.json",
+      "integrity_hash": "d1a5dc024c98254fbedc12fd4c1e8a10752d1562dac9210f75dfae080a4c54bb",
+      "stored_at": "2026-11-12T16:36:47.536Z",
+      "readback_verified": true
+    },
+    "CD-D-MANUAL-TOKENIZER": {
+      "candidate_id": "CD-D-MANUAL-TOKENIZER",
+      "title": "Tokenizer Special Token Normalization Boundary",
+      "domain": "H",
+      "destination": "05_KNOWLEDGE",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-d-harvester-integration\\test-store\\CD-D-MANUAL-TOKENIZER.json",
+      "integrity_hash": "bf301cb9c10a0850092980429965c00eafcb67900bbe95762916490d2aeda8b1",
+      "stored_at": "2026-11-12T16:36:47.701Z",
+      "readback_verified": true
+    },
+    "CD-D-EQUIV-CLOUD-MHUP": {
+      "candidate_id": "CD-D-EQUIV-CLOUD-MHUP",
+      "title": "Metric Hypersphere Unit Projection (MHUP)",
+      "domain": "H",
+      "destination": "05_KNOWLEDGE",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-d-harvester-integration\\test-store\\CD-D-EQUIV-CLOUD-MHUP.json",
+      "integrity_hash": "d945bdbcfd369da895d0cda705d77c0e7c2a93859afb02d40c1d0bf57984875e",
+      "stored_at": "2026-11-12T16:36:47.873Z",
+      "readback_verified": true
+    },
+    "CD-D-EQUIV-MANUAL-MHUP": {
+      "candidate_id": "CD-D-EQUIV-MANUAL-MHUP",
+      "title": "Metric Hypersphere Unit Projection (MHUP)",
+      "domain": "H",
+      "destination": "05_KNOWLEDGE",
+      "file_path": ".project-brain\\simulation-sandbox\\stage-d-harvester-integration\\test-store\\CD-D-EQUIV-MANUAL-MHUP.json",
+      "integrity_hash": "eeb0d870113651cd2d3520d301df87c690b8c26bb15649e4a2df1ebecd3756fc",
+      "stored_at": "2026-11-12T16:36:47.901Z",
+      "readback_verified": true
+    }
+  },
+  "updated_at": "2026-11-12T16:36:47.906Z"
+}

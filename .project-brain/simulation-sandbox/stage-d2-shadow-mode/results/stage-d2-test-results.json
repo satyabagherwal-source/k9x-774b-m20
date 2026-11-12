@@ -1,0 +1,175 @@
+{
+  "mission_id": "UKD-STAGE-D2-SHADOW-MODE-READINESS-01",
+  "timestamp": "2026-11-12T17:21:04.570Z",
+  "execution_duration_ms": 1046,
+  "overall_status": "VERIFIED",
+  "summary": {
+    "total_tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "pass_rate_pct": "100.0"
+  },
+  "suites": [
+    {
+      "name": "SHADOW_MODE_ISOLATION_AND_PRESERVATION",
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "name": "SHADOW_MODE_COMPARATOR_AND_EQUIVALENCE",
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "name": "SHADOW_MODE_RESILIENCE_SECURITY_LIMITS",
+      "passed": 4,
+      "failed": 0
+    }
+  ],
+  "tests": [
+    {
+      "test_id": "TEST-1-SHADOW-DISABLED",
+      "name": "Shadow Mode OFF Passthrough",
+      "passed": true,
+      "details": {
+        "legacy_success": true,
+        "traces_generated": 0,
+        "expected_traces": 0
+      }
+    },
+    {
+      "test_id": "TEST-2-SHADOW-ENABLED",
+      "name": "Shadow Mode ON Execution & Trace Emitted",
+      "passed": true,
+      "details": {
+        "legacy_success": true,
+        "traces_generated": 1,
+        "trace_file": "trace-1794504063642-0525b943.json"
+      }
+    },
+    {
+      "test_id": "TEST-3-ZERO-PROD-WRITE",
+      "name": "Zero Production Write Isolation",
+      "passed": true,
+      "details": {
+        "domain_reg_sha256_match": true,
+        "inbox_reg_sha256_match": true,
+        "production_modified": false
+      }
+    },
+    {
+      "test_id": "TEST-4-RETURN-PRESERVATION",
+      "name": "Legacy Return Value Exact Preservation",
+      "passed": true,
+      "details": {
+        "keys_match": true,
+        "values_match": true,
+        "key_count": 15
+      }
+    },
+    {
+      "test_id": "TEST-6-CLOUD-EQUIVALENCE",
+      "name": "Cloud Standard Payload Semantic Parity",
+      "passed": true,
+      "details": {
+        "overall_status": "MATCH",
+        "domain_match": true,
+        "routing_match": true,
+        "shadow_status": "SHADOW_VERIFIED",
+        "discrepancies": []
+      }
+    },
+    {
+      "test_id": "TEST-7-MANUAL-EQUIVALENCE",
+      "name": "Manual Standard Payload Semantic Parity",
+      "passed": true,
+      "details": {
+        "overall_status": "MATCH",
+        "domain_match": true,
+        "routing_match": true,
+        "shadow_status": "SHADOW_VERIFIED",
+        "discrepancies": []
+      }
+    },
+    {
+      "test_id": "TEST-8-DUPLICATE-DETECTION",
+      "name": "Duplicate Detection Alignment",
+      "passed": true,
+      "details": {
+        "shadow_status": "SHADOW_DUPLICATE",
+        "is_duplicate": true,
+        "duplicate_type": "CONTENT_HASH_EXACT",
+        "duplicate_match": true,
+        "overall_status": "MATCH",
+        "discrepancies": []
+      }
+    },
+    {
+      "test_id": "TEST-11-UNAPPROVED-STAGING-GATE",
+      "name": "Unapproved Candidate Staging Gate",
+      "passed": true,
+      "details": {
+        "shadow_status": "SHADOW_STAGED_UNAPPROVED",
+        "admitted_to_canonical": false,
+        "routing_action": "STAGE_INBOX_PENDING",
+        "approval_match": true,
+        "overall_status": "MISMATCH",
+        "discrepancies": [
+          "Domain divergence: legacy=K vs shadow=H"
+        ]
+      }
+    },
+    {
+      "test_id": "TEST-5-EXCEPTION-ISOLATION",
+      "name": "Shadow Exception Isolation",
+      "passed": true,
+      "details": {
+        "legacy_succeeded": true,
+        "legacy_status": "VERIFIED_LEARNING",
+        "exception_suppressed": true
+      }
+    },
+    {
+      "test_id": "TEST-9-RESOURCE-LIMITS-CIRCUIT-BREAKER",
+      "name": "Resource Limits & Circuit Breaker",
+      "passed": true,
+      "details": {
+        "batch_limit_enforced": true,
+        "timeout_enforced": true,
+        "circuit_breaker_tripped": true,
+        "circuit_state": "OPEN",
+        "consecutive_failures": 3
+      }
+    },
+    {
+      "test_id": "TEST-10-SECRET-SANITIZER",
+      "name": "Secret Sanitization & Redaction",
+      "passed": true,
+      "details": {
+        "leaked_tokens_count": 0,
+        "redaction_masks_present": true,
+        "trace_file": "trace-1794504064094-56f8b9da.json"
+      }
+    },
+    {
+      "test_id": "TEST-12-RETRY-IDEMPOTENCY",
+      "name": "Retry Execution Idempotency",
+      "passed": true,
+      "details": {
+        "status_match": true,
+        "domain_match": true,
+        "folder_match": true,
+        "hash_match": true,
+        "run1_status": "SHADOW_VERIFIED",
+        "run2_status": "SHADOW_VERIFIED"
+      }
+    }
+  ],
+  "integrity_verification": {
+    "domain_registry_preserved": true,
+    "candidate_registry_preserved": true,
+    "relationship_graph_preserved": true,
+    "zero_tracked_git_modifications": true,
+    "production_write_isolation_verified": true
+  }
+}

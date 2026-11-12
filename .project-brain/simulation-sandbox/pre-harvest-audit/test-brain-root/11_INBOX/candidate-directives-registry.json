@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-11-12T20:03:16.258Z",
+  "directives": [
+    {
+      "id": "CD-6IZM",
+      "directive_title": "Rule 999: Synthetic Test Persistence Verification Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "audit-test-org/audit-test-repo",
+      "source_commit": "commit-sha-9",
+      "date_staged": "2026-11-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-audit-test-org-audit-test-repo",
+      "candidateDomain": "K",
+      "candidateDomainName": "Quality & Verification Intelligence",
+      "secondaryDomains": [],
+      "classificationConfidence": 0.8,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/domain-intelligence/DOM-K-rule-999-synthetic-test-persistence-verification-invariant.md",
+      "isUntrusted": false
+    }
+  ]
+}

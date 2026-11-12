@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-11-12T19:36:09.696Z",
+  "stagedItems": [
+    {
+      "id": "PROP-RULE-069",
+      "title": "Brace-Aware Structured Output Extraction (extractJSON)",
+      "upstreamRepository": "manojahi/serpiq",
+      "commitRevision": "f3330d7e",
+      "license": "MIT",
+      "forensicDossier": "07_PROJECT_LEARNING/manojahi-serpiq-learnings.md",
+      "independentVerificationEvidence": "verification-evidence/E4-TEST-01-extractJSON.md"
+    },
+    {
+      "id": "PROP-RULE-070",
+      "title": "GitHub-Standard Documentation Anchor & TOC Synchronization Invariant",
+      "upstreamRepository": "mikeroyal/Apple-Silicon-Guide",
+      "commitRevision": "7e58c7d7",
+      "license": "MIT",
+      "forensicDossier": "07_PROJECT_LEARNING/mikeroyal-apple-silicon-guide-learnings.md",
+      "independentVerificationEvidence": "verification-evidence/E4-TEST-02-anchor-slugifier.md"
+    },
+    {
+      "id": "PROP-RULE-071",
+      "title": "Safe Binary Model Header Inspection & Allocation Guard",
+      "upstreamRepository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "commitRevision": "hf-abenzerps",
+      "license": "Apache-2.0",
+      "forensicDossier": "07_PROJECT_LEARNING/abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+      "independentVerificationEvidence": "verification-evidence/E4-TEST-03-binary-inspector.md"
+    },
+    {
+      "id": "PROP-SKILL-001",
+      "title": "Reusable Zero-Dependency CLI Command Dispatcher",
+      "upstreamRepository": "AI-Builder-Brain/Phase-G-Improvements",
+      "commitRevision": "phase-g-verified",
+      "license": "MIT",
+      "forensicDossier": "Local Phase G Verified Improvement",
+      "independentVerificationEvidence": "verification-evidence/PHASE-G-cli-dispatcher.md"
+    },
+    {
+      "id": "PROP-VERIFY-001",
+      "title": "Post-Extraction Schema Invariant Validator Contract",
+      "upstreamRepository": "AI-Builder-Brain/Phase-G-Improvements",
+      "commitRevision": "phase-g-verified",
+      "license": "MIT",
+      "forensicDossier": "Local Phase G Verified Improvement",
+      "independentVerificationEvidence": "verification-evidence/PHASE-G-schema-validator.md"
+    }
+  ]
+}

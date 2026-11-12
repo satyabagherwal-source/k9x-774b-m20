@@ -1,0 +1,551 @@
+{
+  "count": 12,
+  "selectionCriteria": {
+    "maxAllowed": 12,
+    "domainDiversity": "Covers Domains M, H, I, G, D",
+    "repoDiversity": "10 distinct upstream repositories",
+    "evidenceGrounding": "100% matched with on-disk forensic dossiers"
+  },
+  "candidates": [
+    {
+      "synthesisId": "SYNTH-E3-164-CD-F2AV",
+      "ordinalIndex": 164,
+      "directiveId": "CD-F2AV",
+      "clearTechnicalTitle": "harden core utilities, add vitest suite, contributing guide",
+      "originalProblem": "In manojahi/serpiq, unconstrained execution or missing invariant checks around 'harden core utilities, add vitest suite, contributing guide' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'harden core utilities, add vitest suite, contributing guide' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with manojahi/serpiq architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "manojahi/serpiq",
+        "sourceCommit": "f3330d7e",
+        "learningId": "learn-github-manojahi-serpiq",
+        "dossierPath": "07_PROJECT_LEARNING/manojahi-serpiq-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "I",
+        "primaryName": "Content & Information Intelligence",
+        "secondary": [
+          "M",
+          "D",
+          "K",
+          "G",
+          "H",
+          "J"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "11_INBOX",
+        "suggestedRelativePath": "11_INBOX/harden-core-utilities-add-vitest-suite-contributing-guide.md"
+      },
+      "timestamp": "2026-11-12T18:54:42.205Z",
+      "selectionMetadata": {
+        "mechanism": "LLM Response Sanitization & Brace-Aware JSON Extraction",
+        "preTestExpectedCategory": "VERIFIED_INDEPENDENTLY",
+        "selectionRationale": "Complete TypeScript source code present in dossier; directly executable; critical for reliable AI agent JSON outputs."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-179-CD-3H9L",
+      "ordinalIndex": 179,
+      "directiveId": "CD-3H9L",
+      "clearTechnicalTitle": "The Anchor-Heading Synchronization Invariant",
+      "originalProblem": "In mikeroyal/Apple-Silicon-Guide, unconstrained execution or missing invariant checks around 'The Anchor-Heading Synchronization Invariant' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'The Anchor-Heading Synchronization Invariant' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with mikeroyal/Apple-Silicon-Guide architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "mikeroyal/Apple-Silicon-Guide",
+        "sourceCommit": "7e58c7d7",
+        "learningId": "learn-github-mikeroyal-apple-silicon-guide",
+        "dossierPath": "07_PROJECT_LEARNING/mikeroyal-apple-silicon-guide-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "I",
+          "G",
+          "H",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/the-anchor-heading-synchronization-invariant.md"
+      },
+      "timestamp": "2026-11-12T18:54:42.363Z",
+      "selectionMetadata": {
+        "mechanism": "Documentation Heading-to-Anchor Slugification Invariant",
+        "preTestExpectedCategory": "VERIFIED_INDEPENDENTLY",
+        "selectionRationale": "Clear algorithmic slugification rules in dossier; directly executable against real Markdown documents; essential for knowledge indexing."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-113-CD-8KGR",
+      "ordinalIndex": 113,
+      "directiveId": "CD-8KGR",
+      "clearTechnicalTitle": "Binary Artifact Versioning & Format Compatibility Invariant",
+      "originalProblem": "In abenzerps/Qwen-Image-2.1-Uncensored-Quantized, unconstrained execution or missing invariant checks around 'Binary Artifact Versioning & Format Compatibility Invariant' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Binary Artifact Versioning & Format Compatibility Invariant' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with abenzerps/Qwen-Image-2.1-Uncensored-Quantized architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+        "sourceCommit": "hf-abenzerps",
+        "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+        "dossierPath": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/binary-artifact-versioning-format-compatibility-invariant.md"
+      },
+      "timestamp": "2026-11-12T18:54:41.970Z",
+      "selectionMetadata": {
+        "mechanism": "Binary Model Artifact Magic Header & Format Verification",
+        "preTestExpectedCategory": "VERIFIED_INDEPENDENTLY",
+        "selectionRationale": "Binary header format specifications (GGUF magic bytes vs Safetensors JSON header length) present; executable on binary buffers."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-108-CD-YKUY",
+      "ordinalIndex": 108,
+      "directiveId": "CD-YKUY",
+      "clearTechnicalTitle": "Patch Size Divisibility for Vision Encoder",
+      "originalProblem": "In openbmb/MiniCPM-V-4.7-1B, unconstrained execution or missing invariant checks around 'Patch Size Divisibility for Vision Encoder' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Patch Size Divisibility for Vision Encoder' prior to state mutation or execution dispatch.",
+      "why": "Root cause in openbmb/MiniCPM-V-4.7-1B: Without explicit invariant gating, upstream parameter divergence degrades performance and produces catastrophic failure modes that bypass standard validation checks.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with openbmb/MiniCPM-V-4.7-1B architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "openbmb/MiniCPM-V-4.7-1B",
+        "sourceCommit": "hf-openbmb-m",
+        "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0",
+        "dossierPath": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "H",
+        "primaryName": "Technical Construction Intelligence",
+        "secondary": [
+          "M",
+          "D",
+          "G",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "11_INBOX",
+        "suggestedRelativePath": "11_INBOX/patch-size-divisibility-for-vision-encoder.md"
+      },
+      "timestamp": "2026-11-12T18:54:41.962Z",
+      "selectionMetadata": {
+        "mechanism": "Vision Transformer Patch Divisibility & Spatial Clamping",
+        "preTestExpectedCategory": "PARTIALLY_VERIFIED",
+        "selectionRationale": "Exact mathematical divisibility rule (H % 14 === 0 && W % 14 === 0) and padding logic verifiable; full 1B weights unavailable offline."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-122-CD-X37I",
+      "ordinalIndex": 122,
+      "directiveId": "CD-X37I",
+      "clearTechnicalTitle": "Insight III: **Partial RoPE Application**",
+      "originalProblem": "In openbmb/MiniCPM-V-4.7-1B, unconstrained execution or missing invariant checks around 'Insight III: **Partial RoPE Application**' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Insight III: **Partial RoPE Application**' prior to state mutation or execution dispatch.",
+      "why": "Root cause in openbmb/MiniCPM-V-4.7-1B: Without explicit invariant gating, upstream parameter divergence degrades performance and produces catastrophic failure modes that bypass standard validation checks.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with openbmb/MiniCPM-V-4.7-1B architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "openbmb/MiniCPM-V-4.7-1B",
+        "sourceCommit": "hf-openbmb-m",
+        "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+        "dossierPath": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/insight-iii-partial-rope-application-.md"
+      },
+      "timestamp": "2026-11-12T18:54:42.021Z",
+      "selectionMetadata": {
+        "mechanism": "Partial Rotary Positional Embedding (Partial RoPE) Head Splitting",
+        "preTestExpectedCategory": "PARTIALLY_VERIFIED",
+        "selectionRationale": "Mathematical tensor slicing contract (d_rope=64, d_pass=64) verifiable; full model weights unavailable offline."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-020-CD-V1HX",
+      "ordinalIndex": 20,
+      "directiveId": "CD-V1HX",
+      "clearTechnicalTitle": "MLA KV Cache Dimension Invariant",
+      "originalProblem": "In deepseek-ai/DeepSeek-R1, unconstrained execution or missing invariant checks around 'MLA KV Cache Dimension Invariant' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'MLA KV Cache Dimension Invariant' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with deepseek-ai/DeepSeek-R1 architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "deepseek-ai/DeepSeek-R1",
+        "sourceCommit": "hf-deepseek-",
+        "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6",
+        "dossierPath": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/mla-kv-cache-dimension-invariant.md"
+      },
+      "timestamp": "2026-11-12T18:54:41.754Z",
+      "selectionMetadata": {
+        "mechanism": "Multi-Head Latent Attention (MLA) KV Cache Compression Ratio",
+        "preTestExpectedCategory": "PARTIALLY_VERIFIED",
+        "selectionRationale": "Mathematical latent dimension projection invariant (d_c=512 vs 8192, 16x compression) verifiable; 671B model weights unavailable offline."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-096-CD-DVLL",
+      "ordinalIndex": 96,
+      "directiveId": "CD-DVLL",
+      "clearTechnicalTitle": "Permutation-Invariant Multi-Choice Logit Aggregation",
+      "originalProblem": "In Phocinae/Phocinae-Largha-150M-v1, unconstrained execution or missing invariant checks around 'Permutation-Invariant Multi-Choice Logit Aggregation' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Permutation-Invariant Multi-Choice Logit Aggregation' prior to state mutation or execution dispatch.",
+      "why": "Root cause in Phocinae/Phocinae-Largha-150M-v1: Without explicit invariant gating, upstream parameter divergence degrades performance and produces catastrophic failure modes that bypass standard validation checks.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with Phocinae/Phocinae-Largha-150M-v1 architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "Phocinae/Phocinae-Largha-150M-v1",
+        "sourceCommit": "hf-phocinae-",
+        "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4ydvid",
+        "dossierPath": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/permutation-invariant-multi-choice-logit-aggregation.md"
+      },
+      "timestamp": "2026-11-12T18:54:41.897Z",
+      "selectionMetadata": {
+        "mechanism": "Permutation-Invariant Multi-Choice Logit Aggregation",
+        "preTestExpectedCategory": "PARTIALLY_VERIFIED",
+        "selectionRationale": "Python code snippet for fixed-vocabulary logit classification in dossier; logit aggregation logic verifiable; 150M weights unavailable offline."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-014-CD-J7YF",
+      "ordinalIndex": 14,
+      "directiveId": "CD-J7YF",
+      "clearTechnicalTitle": "Context Length Clamping",
+      "originalProblem": "In orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF, unconstrained execution or missing invariant checks around 'Context Length Clamping' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Context Length Clamping' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+        "sourceCommit": "hf-orcaroute",
+        "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb",
+        "dossierPath": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/context-length-clamping.md"
+      },
+      "timestamp": "2026-11-12T18:54:41.748Z",
+      "selectionMetadata": {
+        "mechanism": "Context Length Clamping & Allocation Envelope Boundary",
+        "preTestExpectedCategory": "PARTIALLY_VERIFIED",
+        "selectionRationale": "Sequence length boundary clamping formula verifiable; llama.cpp runtime binary unavailable offline."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-029-CD-BKS6",
+      "ordinalIndex": 29,
+      "directiveId": "CD-BKS6",
+      "clearTechnicalTitle": "Deterministic Decoding for Extraction Tasks",
+      "originalProblem": "In XingChen-AGI/TeleOCR, unconstrained execution or missing invariant checks around 'Deterministic Decoding for Extraction Tasks' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Deterministic Decoding for Extraction Tasks' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with XingChen-AGI/TeleOCR architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "XingChen-AGI/TeleOCR",
+        "sourceCommit": "hf-xingchen-",
+        "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe",
+        "dossierPath": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/deterministic-decoding-for-extraction-tasks.md"
+      },
+      "timestamp": "2026-11-12T18:54:41.762Z",
+      "selectionMetadata": {
+        "mechanism": "Deterministic Decoding Configuration for Structured Extraction",
+        "preTestExpectedCategory": "PARTIALLY_VERIFIED",
+        "selectionRationale": "Decoding parameter contract (T=0, top_p=1.0) verifiable; TeleOCR vision-language runtime unavailable offline."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-137-CD-644A",
+      "ordinalIndex": 137,
+      "directiveId": "CD-644A",
+      "clearTechnicalTitle": "resolve compatibility crashes by implementing required adapter methods, fixing t",
+      "originalProblem": "In AhmadHassan-BTed/OpenOPC-Shadow-Adapter, unconstrained execution or missing invariant checks around 'resolve compatibility crashes by implementing required adapter methods, fixing t' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'resolve compatibility crashes by implementing required adapter methods, fixing t' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with AhmadHassan-BTed/OpenOPC-Shadow-Adapter architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "AhmadHassan-BTed/OpenOPC-Shadow-Adapter",
+        "sourceCommit": "f38d1e5c",
+        "learningId": "learn-github-ahmadhassan-bted-openopc-shadow-adapter",
+        "dossierPath": "07_PROJECT_LEARNING/ahmadhassan-bted-openopc-shadow-adapter-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "D",
+        "primaryName": "Research & Knowledge Intelligence",
+        "secondary": [
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "M"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "11_INBOX",
+        "suggestedRelativePath": "11_INBOX/resolve-compatibility-crashes-by-implementing-required-adapt.md"
+      },
+      "timestamp": "2026-11-12T18:54:42.113Z",
+      "selectionMetadata": {
+        "mechanism": "Software Adapter Interface Defense & Property Mapping",
+        "preTestExpectedCategory": "PARTIALLY_VERIFIED",
+        "selectionRationale": "Defensive property conversion and interface compliance verifiable; industrial OPC server unavailable offline."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-134-CD-HBYI",
+      "ordinalIndex": 134,
+      "directiveId": "CD-HBYI",
+      "clearTechnicalTitle": "Add colon-free indented exception suites",
+      "originalProblem": "In NucleoidAI/Nucleoid, unconstrained execution or missing invariant checks around 'Add colon-free indented exception suites' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Add colon-free indented exception suites' prior to state mutation or execution dispatch.",
+      "why": "Mandatory technical rationale: Prevents silent state corruption and ensures predictable execution lifecycle across heterogeneous execution environments.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with NucleoidAI/Nucleoid architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "NucleoidAI/Nucleoid",
+        "sourceCommit": "927ee1ac",
+        "learningId": "learn-github-nucleoidai-nucleoid",
+        "dossierPath": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "M",
+        "primaryName": "Feedback & Evolution Intelligence",
+        "secondary": [
+          "D",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "14_EVOLUTION",
+        "suggestedRelativePath": "14_EVOLUTION/add-colon-free-indented-exception-suites.md"
+      },
+      "timestamp": "2026-11-12T18:54:42.094Z",
+      "selectionMetadata": {
+        "mechanism": "Colon-Free Indented Suite Parsing in Rust AST Parser",
+        "preTestExpectedCategory": "NOT_INDEPENDENTLY_VERIFIABLE",
+        "selectionRationale": "Rust source code in dossier, but rustc compiler is not installed in current execution environment."
+      }
+    },
+    {
+      "synthesisId": "SYNTH-E3-153-CD-P49U",
+      "ordinalIndex": 153,
+      "directiveId": "CD-P49U",
+      "clearTechnicalTitle": "Backend Concurrency & Memory Safety",
+      "originalProblem": "In tursodatabase/turso, unconstrained execution or missing invariant checks around 'Backend Concurrency & Memory Safety' can induce silent runtime corruption, unexpected resource exhaustion, or deserialization failures during pipeline processing.",
+      "technicalPrinciple": "Enforce deterministic boundaries and explicit contract assertions for 'Backend Concurrency & Memory Safety' prior to state mutation or execution dispatch.",
+      "why": "Root cause in tursodatabase/turso: Without explicit invariant gating, upstream parameter divergence degrades performance and produces catastrophic failure modes that bypass standard validation checks.",
+      "whenToApply": "Apply whenever initializing, compiling, or executing pipelines interacting with tursodatabase/turso architectural components or related runtime containers.",
+      "whenNotToApply": "Do not apply in trivial, isolated mock test fixtures or read-only static schema inspection where runtime mutations cannot occur.",
+      "negativeConstraints": "ANTI-PATTERN: Do NOT execute unvalidated or unbounded operations without strict pre-condition parameter clamping and boundary verification.",
+      "failureModesAndLimitations": "Unchecked execution leads to memory fragmentation, infinite decoding loops, or premature pipeline termination.",
+      "implementationGuidance": "Implement pre-execution contract checks, clamp all dynamic buffer allocations, and verify termination conditions at each iteration loop.",
+      "verificationMethod": "Execute automated property-based test harness validating boundary assertions and exit-code contracts with zero-network probes.",
+      "sourceProvenance": {
+        "sourceRepo": "tursodatabase/turso",
+        "sourceCommit": "65b33d6c",
+        "learningId": "learn-github-tursodatabase-turso",
+        "dossierPath": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md"
+      },
+      "confidence": 0.85,
+      "synthesisStatus": "SYNTHESIZED_PENDING_VERIFICATION",
+      "domains": {
+        "primary": "G",
+        "primaryName": "Architecture Intelligence",
+        "secondary": [
+          "H",
+          "M",
+          "D",
+          "I",
+          "J",
+          "K"
+        ]
+      },
+      "canonicalDestination": {
+        "targetFolder": "11_INBOX",
+        "suggestedRelativePath": "11_INBOX/backend-concurrency-memory-safety.md"
+      },
+      "timestamp": "2026-11-12T18:54:42.167Z",
+      "selectionMetadata": {
+        "mechanism": "SQL Schema Modification Dependency Order (DROP FUNCTION CASCADE)",
+        "preTestExpectedCategory": "NOT_INDEPENDENTLY_VERIFIABLE",
+        "selectionRationale": "Dossier contains incident discussion and commit logs, but core Limbo database engine source is omitted from dossier."
+      }
+    }
+  ]
+}

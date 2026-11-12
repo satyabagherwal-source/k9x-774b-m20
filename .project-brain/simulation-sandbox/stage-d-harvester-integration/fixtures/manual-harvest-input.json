@@ -1,0 +1,41 @@
+{
+  "fixture_type": "STAGE_D_MANUAL_HARVEST_FIXTURE",
+  "rawUrl": "https://github.com/Nanbeige/Nanbeige",
+  "owner": "Nanbeige",
+  "repo": "Nanbeige",
+  "commitSha": "8a1b2c3d4e5f6789",
+  "license": "Apache-2.0",
+  "provider": "local-cli-synthesizer",
+  "text": "# Manual Forensic Extraction: Nanbeige Tokenizer\n\nControl tokens must maintain special: true and normalized: false.",
+  "rules": [
+    {
+      "candidate_id": "CD-D-MANUAL-TOKENIZER",
+      "title": "Tokenizer Special Token Normalization Boundary",
+      "content": "Control tokens in added_tokens_decoder must specify special: true and normalized: false to avoid stripping preceding whitespace.",
+      "summary": "Fast tokenizer control tokens require normalized: false to preserve whitespace boundaries.",
+      "actionable_instruction": "Assert control tokens in added_tokens_decoder have normalized: false.",
+      "tags": [
+        "tokenizer",
+        "huggingface",
+        "special-tokens",
+        "normalization"
+      ],
+      "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+      "duplicate_references": [],
+      "approval_status": "APPROVED",
+      "file_path": "tokenizer_config.json",
+      "evidence": {
+        "evidence_type": "CONFIGURATION_SCHEMA_CONTRACT_AUDIT",
+        "verification_status": "CONTRACT_VERIFIED",
+        "harvest_origin": "MANUAL_HARVESTER"
+      }
+    }
+  ],
+  "fixCommits": [
+    "Fix whitespace stripping defect on special tokens"
+  ],
+  "closedIssues": [
+    "Issue #44: tokenizer strips space before control token"
+  ]
+}

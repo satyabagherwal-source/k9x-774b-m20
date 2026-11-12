@@ -1,0 +1,32 @@
+{
+  "fixture_type": "SYNTHETIC_TEST_FIXTURE",
+  "synthetic_label": "DO_NOT_TREAT_AS_REAL_WORLD_KNOWLEDGE",
+  "repository": "example/unapproved-repo",
+  "sourceUrl": "https://github.com/example/unapproved-repo",
+  "sourceVersion": "1.0.0",
+  "license": "MIT",
+  "aiProvider": "unapproved-agent",
+  "dossierText": "Draft patterns that have not yet undergone human review.",
+  "candidateRules": [
+    {
+      "candidate_id": "CD-D-UNAPPROVED-DRAFT",
+      "title": "Unapproved Candidate Pattern Draft",
+      "content": "This pattern has not been approved by a human engineer.",
+      "summary": "Unapproved pattern draft to test admission gate staging.",
+      "actionable_instruction": "Hold staged until review.",
+      "tags": [
+        "draft",
+        "unapproved"
+      ],
+      "implementation_evidence_status": "STATIC_EVIDENCE_ONLY",
+      "knowledge_transferability_status": "INSUFFICIENT_EVIDENCE",
+      "duplicate_references": [],
+      "approval_status": "PENDING_APPROVAL",
+      "target_source_file": "draft.py",
+      "evidence": {
+        "evidence_type": "STATIC_ANALYSIS",
+        "verification_status": "PENDING_REVIEW"
+      }
+    }
+  ]
+}

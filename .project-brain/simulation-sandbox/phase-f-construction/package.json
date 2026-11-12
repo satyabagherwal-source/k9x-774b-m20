@@ -1,0 +1,19 @@
+{
+  "name": "agentic-kgw",
+  "version": "1.0.0",
+  "description": "Agentic Knowledge Gateway — CLI + Reusable Core Library for Safe AI Structured Knowledge Extraction",
+  "type": "module",
+  "main": "src/index.mjs",
+  "bin": {
+    "agentic-kgw": "bin/cli.mjs"
+  },
+  "scripts": {
+    "test": "node tests/test-runner.mjs"
+  },
+  "author": "AI-Builder-Brain",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
+

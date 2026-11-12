@@ -1,0 +1,61 @@
+{
+  "learning_id": "large-batch-stress-pkg",
+  "slug": "large-batch-stress",
+  "repository": "stress/test-suite",
+  "source_url": "https://github.com/stress/test-suite",
+  "source_version": "11223344556677889900aabbccddeeff00112233",
+  "license": "MIT",
+  "harvest_origin": "SYNTHETIC_FIXTURE",
+  "dossier_content": "Stress batch with 8 candidates",
+  "content_hash": "018ec8f6fd6c39069ddc30a2884d577d90c68dba071a8a00cc7554b7b0f4b05d",
+  "candidates": [
+    {
+      "candidate_id": "CAND-STRESS-1",
+      "title": "Stress Candidate 1",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    },
+    {
+      "candidate_id": "CAND-STRESS-2",
+      "title": "Stress Candidate 2",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    },
+    {
+      "candidate_id": "CAND-STRESS-3",
+      "title": "Stress Candidate 3",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    },
+    {
+      "candidate_id": "CAND-STRESS-4",
+      "title": "Stress Candidate 4",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    },
+    {
+      "candidate_id": "CAND-STRESS-5",
+      "title": "Stress Candidate 5",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    },
+    {
+      "candidate_id": "CAND-STRESS-6",
+      "title": "Stress Candidate 6",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    },
+    {
+      "candidate_id": "CAND-STRESS-7",
+      "title": "Stress Candidate 7",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    },
+    {
+      "candidate_id": "CAND-STRESS-8",
+      "title": "Stress Candidate 8",
+      "approval_status": "APPROVED",
+      "domain": "H"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "learning_id": "cloud-pkg-fastapi-lifespan-01",
+  "slug": "fastapi-lifespan-async-cleanup",
+  "repository": "tiangolo/fastapi",
+  "platform": "github",
+  "source_url": "https://github.com/tiangolo/fastapi",
+  "source_version": "9f83a1b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0",
+  "license": "MIT",
+  "harvest_origin": "CLOUD_HARVESTER",
+  "approval_status": "APPROVED",
+  "dossier_content": "# FastAPI Lifespan Async Context Management\n\n## Abstract\nModern FastAPI applications handle startup and shutdown logic via asynccontextmanager lifespan handlers instead of deprecated on_event handlers.",
+  "content_hash": "8f56ac1dd279f9140ef638c1082cc67b4d0a672112e67d7f3dd35c3e56d1cbc3",
+  "candidates": [
+    {
+      "candidate_id": "CAND-FASTAPI-LIFESPAN-01",
+      "title": "FastAPI Lifespan Async State Lifecycle Pattern",
+      "approval_status": "APPROVED",
+      "domain": "H",
+      "evidence": "Use @asynccontextmanager lifespan instead of on_event startup/shutdown",
+      "confidence": 0.96
+    }
+  ],
+  "metadata": {
+    "stars": 76000,
+    "language": "Python",
+    "agent": "Agent-Alpha"
+  }
+}

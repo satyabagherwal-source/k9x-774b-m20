@@ -1,0 +1,12 @@
+{
+  "audit-test-repo": {
+    "repository": "audit-test-org/audit-test-repo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/audit-test-org/audit-test-repo",
+    "sourceVersion": "commit-sha-9999999999",
+    "license": "MIT",
+    "contentHash": "992873f445b29cef2770fd5ca4c43199c17bb0f28afa0e78dc151365f8829a22",
+    "lastHarvestedAt": "2026-11-12T20:03:16.241Z",
+    "learningId": "learn-github-audit-test-org-audit-test-repo"
+  }
+}

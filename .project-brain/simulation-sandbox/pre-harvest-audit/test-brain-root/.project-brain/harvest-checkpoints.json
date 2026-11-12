@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "pipeline_mode": "CLOUD_HARVEST",
+  "last_updated": "2026-11-12T20:03:16.298Z",
+  "checkpoints": {
+    "audit-test-org/audit-test-repo": {
+      "repository": "audit-test-org/audit-test-repo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-audit-test-org-audit-test-repo",
+      "content_hash": "992873f445b29cef2770fd5ca4c43199c17bb0f28afa0e78dc151365f8829a22",
+      "verified_at": "2026-11-12T20:03:16.287Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-12T20:03:16.287Z"
+    }
+  }
+}

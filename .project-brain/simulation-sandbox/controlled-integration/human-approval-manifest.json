@@ -1,0 +1,42 @@
+{
+  "missionId": "AB-BRAIN-CONSTRUCTION-EVOLUTION-01",
+  "timestamp": "2026-11-12T19:36:09.710Z",
+  "authorizationStatus": "AWAITING_EXPLICIT_HUMAN_APPROVAL",
+  "productionMutationAuthorized": false,
+  "gateNotice": "STOP: Production files must not be modified until the human user reviews this manifest and issues explicit approval.",
+  "proposedFileChanges": [
+    {
+      "targetFile": "05_KNOWLEDGE/engineering-patterns.md",
+      "modificationType": "APPEND",
+      "proposedRules": [
+        "Rule 69 (extractJSON)",
+        "Rule 70 (slugifier)",
+        "Rule 71 (binary-inspector)"
+      ],
+      "riskAssessment": "LOW (Purely additive append to end of file, zero existing rules modified)",
+      "rollbackMethod": "git checkout -- 05_KNOWLEDGE/engineering-patterns.md"
+    },
+    {
+      "targetFile": "03_SKILLS/cli-command-dispatcher/SKILL.md",
+      "modificationType": "CREATE_NEW",
+      "proposedCapability": "Reusable CLI Command Dispatcher Playbook",
+      "riskAssessment": "ZERO (New isolated directory in 03_SKILLS)",
+      "rollbackMethod": "rm -rf 03_SKILLS/cli-command-dispatcher"
+    },
+    {
+      "targetFile": "08_VERIFICATION/contracts/schema-invariant-validator.md",
+      "modificationType": "CREATE_NEW",
+      "proposedCapability": "Post-Extraction Schema Invariant Validator Contract",
+      "riskAssessment": "ZERO (New isolated verification contract)",
+      "rollbackMethod": "rm -f 08_VERIFICATION/contracts/schema-invariant-validator.md"
+    }
+  ],
+  "strictSafetyGuarantees": [
+    "Zero changes to Cloud Harvester, Manual Harvester, or harvest-control.json",
+    "Zero changes to GitHub Actions workflows or 24/7 schedules",
+    "Zero modifications to existing 74 domain records or 697 candidate directives",
+    "All 5 KHU-005 duplicate records remain 100% intact",
+    "All 7 partially verified candidates remain quarantined in sandbox and will NOT be promoted",
+    "Zero git commit, git push, or remote deployment without user permission"
+  ]
+}

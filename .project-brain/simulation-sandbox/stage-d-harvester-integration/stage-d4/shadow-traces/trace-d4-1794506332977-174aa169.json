@@ -1,0 +1,52 @@
+{
+  "trace_id": "trace-d4-1794506332977-174aa169",
+  "timestamp": "2026-11-12T17:58:52.979Z",
+  "origin": "CLOUD_HARVESTER",
+  "repository": "tiangolo/fastapi",
+  "learning_id": "learn-github-tiangolo-fastapi",
+  "content_hash": "88171552cb4ffe519e11a798b74a20e6be3925e0a0dfc86b74acc5bbd2b561a8",
+  "execution_duration_ms": 2,
+  "shadow_status": "SHADOW_STAGED_UNAPPROVED",
+  "success": true,
+  "payload_audit": {
+    "source_url": "https://github.com/tiangolo/fastapi",
+    "dossier_text": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/legacy-error-preservation-01-learnings.md`  \n> **Source**: github ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  \n> **Source Version**: `HEAD`  \n> **License**: MIT  \n> **Synthesized By**: unknown  \n> **Timestamp**: 2026-11-12T17:58:52.745Z  \n> **Learning ID**: `learn-github-tiangolo-fastapi`  \n> **Pipeline Version**: `2.0.0`  \n> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  \n> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  \n> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  \n\n---\n\n# FastAPI Lifespan Limit Test\n\nValid test dossier for evaluating circuit breakers and privacy redaction.",
+    "apiKey": "[REDACTED_SENSITIVE_FIELD]",
+    "client_secret": "[REDACTED_SENSITIVE_FIELD]",
+    "token": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "classification": {
+    "primary_domain": "H",
+    "primary_domain_name": "Technical Construction Intelligence",
+    "confidence": 0,
+    "secondary_domains": []
+  },
+  "routing": {
+    "destination_folder": "05_KNOWLEDGE",
+    "suggested_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi.md",
+    "requires_human_approval": false
+  },
+  "duplicate_detection": {
+    "is_duplicate": false,
+    "duplicate_type": null,
+    "matched_id": null,
+    "matched_repo": null
+  },
+  "approval_evaluation": [
+    {
+      "candidate_id": "learn-github-tiangolo-fastapi",
+      "eval": {
+        "admitted_to_canonical": false,
+        "routing_action": "STAGE_INBOX_PENDING",
+        "target_folder": "11_INBOX",
+        "reason": "Record has approval_status PENDING_APPROVAL. Staged in 11_INBOX awaiting human review."
+      }
+    }
+  ],
+  "provenance_completeness": {
+    "valid": true,
+    "fingerprint": null,
+    "errors": []
+  },
+  "errors": []
+}

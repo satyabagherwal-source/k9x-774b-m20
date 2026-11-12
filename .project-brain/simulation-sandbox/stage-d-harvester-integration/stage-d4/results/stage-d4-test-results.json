@@ -1,0 +1,294 @@
+{
+  "mission_id": "UKD-STAGE-D4-SANDBOX-PATCH-SAFETY-01",
+  "timestamp": "2026-11-12T18:15:18.004Z",
+  "execution_duration_ms": 6356,
+  "verdict": "SANDBOX_PATCH_VERIFIED",
+  "summary": {
+    "total_tests": 20,
+    "passed": 20,
+    "failed": 0,
+    "pass_rate_pct": "100.0"
+  },
+  "suites": [
+    {
+      "name": "STAGE_D4_ACTUAL_CONTRACT_PRESERVATION",
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "name": "STAGE_D4_MUTATION_AND_REFERENCE_ISOLATION",
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "name": "STAGE_D4_SIDE_EFFECT_AND_PRODUCTION_PURITY",
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "name": "STAGE_D4_FAILURE_HANDLING_LIMITS_PRIVACY",
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "name": "STAGE_D4_CONFIGURATION_SAFETY_AND_PROPAGATION",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "name": "STAGE_D4_PROPOSED_CANARY_SIMULATION",
+      "passed": 3,
+      "failed": 0
+    }
+  ],
+  "tests": [
+    {
+      "test_id": "TEST-A1-REAL-CONTRACT-EXTRACTION",
+      "name": "Actual Gateway Real 22+ Field Contract Verification",
+      "passed": true,
+      "details": {
+        "total_fields_returned": 27,
+        "expected_core_fields": 24,
+        "missing_core_fields": [],
+        "status": "VERIFIED_LEARNING",
+        "stage": "VERIFIED"
+      }
+    },
+    {
+      "test_id": "TEST-A2-DISABLED-CONTRACT-PARITY",
+      "name": "Contract Parity with Shadow Mode Disabled",
+      "passed": true,
+      "details": {
+        "keys_identical": true,
+        "values_identical": true,
+        "field_count": 27
+      }
+    },
+    {
+      "test_id": "TEST-A3-ENABLED-CONTRACT-PARITY",
+      "name": "Contract Parity with Shadow Mode Enabled",
+      "passed": true,
+      "details": {
+        "keys_identical": true,
+        "values_identical": true,
+        "field_count": 27
+      }
+    },
+    {
+      "test_id": "TEST-A4-FAULTY-SHADOW-CONTRACT-PARITY",
+      "name": "Contract Parity under Shadow Crash Failure",
+      "passed": true,
+      "details": {
+        "keys_identical": true,
+        "status_matches": true,
+        "legacy_status": "VERIFIED_LEARNING"
+      }
+    },
+    {
+      "test_id": "TEST-B1-STRUCTURED-CLONE-COMPATIBILITY",
+      "name": "StructuredClone Compatibility on Actual Gateway Packages",
+      "passed": true,
+      "details": {
+        "success": true,
+        "reference_distinct": true,
+        "field_count": 26
+      }
+    },
+    {
+      "test_id": "TEST-B2-NESTED-REFERENCE-ISOLATION",
+      "name": "Deep Reference Isolation of Nested Arrays & Metadata",
+      "passed": true,
+      "details": {
+        "original_title_preserved": "FastAPI Lifespan Context Manager Pattern",
+        "original_meta_preserved": "original_value",
+        "original_array_length": 1,
+        "clone_array_length": 2
+      }
+    },
+    {
+      "test_id": "TEST-B3-GATEWAY-MUTATION-ISOLATION",
+      "name": "Real Gateway In-Place Mutation Isolation",
+      "passed": true,
+      "details": {
+        "gateway_mutated_original": true,
+        "shadow_received_distinct_object": true,
+        "shadow_free_of_gateway_mutation": true,
+        "legacy_success": true
+      }
+    },
+    {
+      "test_id": "TEST-B4-NON-CLONEABLE-FAIL-CLOSED",
+      "name": "Non-Cloneable Input Graceful Fail-Closed Handling",
+      "passed": true,
+      "details": {
+        "shadow_aborted_safely": true,
+        "legacy_succeeded": true
+      }
+    },
+    {
+      "test_id": "TEST-C1-PRODUCTION-STORES-INVARIANCE",
+      "name": "Cryptographic Production Stores Invariance (6 Critical Files)",
+      "passed": true,
+      "details": {
+        "all_stores_identical": true,
+        "learning_dir_unmodified": true,
+        "pre_file_count": 1830,
+        "post_file_count": 1830,
+        "stores": [
+          {
+            "name": "Domain Registry",
+            "match": true,
+            "pre": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f",
+            "post": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f"
+          },
+          {
+            "name": "Candidate Directives",
+            "match": true,
+            "pre": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b",
+            "post": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b"
+          },
+          {
+            "name": "Relationship Graph",
+            "match": true,
+            "pre": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb",
+            "post": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb"
+          },
+          {
+            "name": "Engineering Patterns",
+            "match": true,
+            "pre": "6ea819849e8b3ef74b5654f16b1a6ff0f2d833d6d8eb536dc8c5b9947c98aa04",
+            "post": "6ea819849e8b3ef74b5654f16b1a6ff0f2d833d6d8eb536dc8c5b9947c98aa04"
+          },
+          {
+            "name": "Harvest Control",
+            "match": true,
+            "pre": "79b321c884ca80c6e8c63f2f49921af9b627eef265de5cd5e5f5a045b1e31ddb",
+            "post": "79b321c884ca80c6e8c63f2f49921af9b627eef265de5cd5e5f5a045b1e31ddb"
+          },
+          {
+            "name": "GHA Workflow",
+            "match": true,
+            "pre": "34311d5d1eeb7bd4fb14ac6e2b98e0bde59cf04fadfb41573f9c641a212f0c92",
+            "post": "34311d5d1eeb7bd4fb14ac6e2b98e0bde59cf04fadfb41573f9c641a212f0c92"
+          }
+        ]
+      }
+    },
+    {
+      "test_id": "TEST-C2-TRACE-DIRECTORY-CONFINEMENT",
+      "name": "Trace Confinement to Sandbox Shadow Directory",
+      "passed": true,
+      "details": {
+        "sandbox_traces_count": 27,
+        "master_root_leak": false
+      }
+    },
+    {
+      "test_id": "TEST-D1-LEGACY-ERROR-PRESERVATION",
+      "name": "Legacy Error Preservation (No Silent Swallowing of Real Errors)",
+      "passed": true,
+      "details": {
+        "error_re为其": "CRITICAL_UPSTREAM_LEGACY_GATEWAY_OUTAGE",
+        "preserved": true
+      }
+    },
+    {
+      "test_id": "TEST-D2-CIRCUIT-BREAKER-LIFECYCLE",
+      "name": "Circuit Breaker Trip, Cooldown & Self-Healing Recovery",
+      "passed": true,
+      "details": {
+        "tripped_after_3_fails": true,
+        "blocked_while_open": true,
+        "half_open_after_cooldown": true,
+        "recovered_to_closed": true
+      }
+    },
+    {
+      "test_id": "TEST-D3-TIMEOUT-ENFORCEMENT",
+      "name": "Shadow Execution Timeout Hard Interruption",
+      "passed": true,
+      "details": {
+        "timeout_error": "TIMEOUT",
+        "duration_ms": 174,
+        "interrupted_safely": true
+      }
+    },
+    {
+      "test_id": "TEST-D4-SECRET-REDACTION-AUDIT",
+      "name": "Cryptographic Secret Redaction & Token Scrubbing in Traces",
+      "passed": true,
+      "details": {
+        "leaked_secrets_count": 0,
+        "redaction_masks_present": true,
+        "trace_file": "trace-d4-1794507315455-b4587347.json"
+      }
+    },
+    {
+      "test_id": "TEST-E1-LIVE-RUNTIME-PROPAGATION",
+      "name": "Dynamic Configuration Reload & Sub-Second Rollback Propagation",
+      "passed": true,
+      "details": {
+        "initial_disabled": true,
+        "toggled_on_without_restart": true,
+        "rolled_back_without_restart": true,
+        "toggle_latency_ms": "4.808",
+        "rollback_latency_ms": "3.865"
+      }
+    },
+    {
+      "test_id": "TEST-E2-FAIL-CLOSED-MISSING-CONFIG",
+      "name": "Fail-Closed Handling of Missing Configuration File",
+      "passed": true,
+      "details": {
+        "enabled": false,
+        "dryRun": true
+      }
+    },
+    {
+      "test_id": "TEST-E3-FAIL-CLOSED-MALFORMED-CONFIG",
+      "name": "Fail-Closed Handling of Malformed Syntax in Configuration",
+      "passed": true,
+      "details": {
+        "enabled": false,
+        "dryRun": true
+      }
+    },
+    {
+      "test_id": "TEST-S1-REPOSITORY-PINNING-FILTER",
+      "name": "Single Repository Pinning Filter (tiangolo/fastapi Only)",
+      "passed": true,
+      "details": {
+        "non_target_bypassed": true,
+        "target_admitted": true,
+        "pinned_repo": "tiangolo/fastapi"
+      }
+    },
+    {
+      "test_id": "TEST-S2-MAX-BATCH-SIZE-CAP",
+      "name": "Maximum Candidate Batch Size Enforcement (<= 5 items)",
+      "passed": true,
+      "details": {
+        "large_batch_capped": true,
+        "small_batch_allowed": true,
+        "max_batch_size": 5
+      }
+    },
+    {
+      "test_id": "TEST-S3-ONE-PERCENT-SAMPLING-DISTRIBUTION",
+      "name": "1% Canary Sampling Statistical Distribution (1000 Trials)",
+      "passed": true,
+      "details": {
+        "trials": 1000,
+        "shadow_executions": 11,
+        "observed_sample_rate": "0.0110",
+        "expected_rate": 0.01,
+        "within_bounds": true
+      }
+    }
+  ],
+  "integrity_verification": {
+    "all_production_stores_bitwise_identical": true,
+    "zero_tracked_git_modifications": true,
+    "production_isolation_verified": true
+  }
+}

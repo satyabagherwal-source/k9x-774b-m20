@@ -1,0 +1,37 @@
+{
+  "candidate_id": "CD-D-UNAPPROVED-DRAFT",
+  "title": "Unapproved Candidate Pattern Draft",
+  "content": "This pattern has not been approved by a human engineer.",
+  "summary": "Unapproved pattern draft to test admission gate staging.",
+  "actionable_instruction": "Hold staged until review.",
+  "tags": [
+    "draft",
+    "unapproved"
+  ],
+  "implementation_evidence_status": "STATIC_EVIDENCE_ONLY",
+  "knowledge_transferability_status": "INSUFFICIENT_EVIDENCE",
+  "duplicate_references": [],
+  "approval_status": "PENDING_APPROVAL",
+  "provenance": {
+    "upstream_repository": "https://github.com/example/unapproved-repo",
+    "target_source_file": "draft.py",
+    "source_revision": "1.0.0",
+    "license": "MIT",
+    "harvest_origin": "CLOUD_HARVESTER",
+    "extracted_at": "2026-11-12T16:36:48.036Z"
+  },
+  "evidence": {
+    "evidence_type": "STATIC_ANALYSIS",
+    "verification_status": "PENDING_REVIEW"
+  },
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "staged_at": "2026-11-12T16:36:48.039Z",
+  "admission_decision": {
+    "admitted_to_canonical": false,
+    "routing_action": "STAGE_INBOX_PENDING",
+    "target_folder": "11_INBOX",
+    "reason": "Record has approval_status PENDING_APPROVAL. Staged in 11_INBOX awaiting human review."
+  },
+  "staging_status": "STAGED_IN_INBOX_PENDING_HUMAN_APPROVAL"
+}

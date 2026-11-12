@@ -1,0 +1,102 @@
+{
+  "fastapi-lifespan-contract-test-raw": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "25e2fa4b8bc6631204d33e09dad68e8601807428ab0fc3553e688d01ab092c26",
+    "lastHarvestedAt": "2026-11-12T18:15:12.119Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-test-direct-off": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "9e1b9486e8d06486782132bc776d49450561fb0973b5fa507f38aa53d3d2cf02",
+    "lastHarvestedAt": "2026-11-12T18:15:12.246Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-test-wrapped-off": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "cfcc60226c31cc0af9a8b0bc9864fa3cac191dd09995977c680186a80f90d9b3",
+    "lastHarvestedAt": "2026-11-12T18:15:12.372Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-test-direct-on": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "8e8c88dc24151036674a1011a9c948b6df0e42850b49fac8b760fe0befcff83c",
+    "lastHarvestedAt": "2026-11-12T18:15:12.468Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-test-wrapped-on": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "c49dd17bc1b60c3c583544802c73aa8b7891c1ce748a3d21f780987cd5a94922",
+    "lastHarvestedAt": "2026-11-12T18:15:12.554Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-test-direct-err": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "d7c98330432bfcece4ba1e8120bc676c80a8e4f8cf920c46f640c5c53b40ad1c",
+    "lastHarvestedAt": "2026-11-12T18:15:12.702Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-test-wrapped-err": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "c422fea08dfd8575675e9feb2e8b343cf70e7dfb0b12114c1b8ad58a00d44e19",
+    "lastHarvestedAt": "2026-11-12T18:15:12.816Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-diff-1": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "ecb49edfc02037ca86aeca97b65255472e18bfe480ccac4832808ebda5e4a42c",
+    "lastHarvestedAt": "2026-11-12T17:54:16.917Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-lifespan-contract-diff-2": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "1c2a6ddb942306a97eb74b19075a932a3dbdfa26536939de46239f9d66c70193",
+    "lastHarvestedAt": "2026-11-12T17:54:17.823Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  },
+  "fastapi-live-mutation-01": {
+    "repository": "tiangolo/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "HEAD",
+    "license": "MIT",
+    "contentHash": "fc46dd050f7e3919feccc94a81c394449859de751adeb36b523f7bd39848a96b",
+    "lastHarvestedAt": "2026-11-12T18:15:12.936Z",
+    "learningId": "learn-github-tiangolo-fastapi"
+  }
+}

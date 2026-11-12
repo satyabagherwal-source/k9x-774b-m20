@@ -1,0 +1,97 @@
+{
+  "mission_id": "UKD-STAGE-D-HARVESTER-INTEGRATION-READINESS-01",
+  "timestamp": "2026-11-12T16:36:48.055Z",
+  "all_suites_passed": true,
+  "requirements_matrix": [
+    {
+      "req_id": "REQ-1",
+      "requirement": "Cloud input reaches the shared pipeline",
+      "verified": true,
+      "suite": "test-cloud-adapter"
+    },
+    {
+      "req_id": "REQ-2",
+      "requirement": "Manual input reaches the same shared pipeline",
+      "verified": true,
+      "suite": "test-manual-adapter"
+    },
+    {
+      "req_id": "REQ-3",
+      "requirement": "Equivalent inputs produce consistent classification",
+      "verified": true,
+      "suite": "test-consistency-and-duplicates"
+    },
+    {
+      "req_id": "REQ-4",
+      "requirement": "Domain and destination decisions remain consistent",
+      "verified": true,
+      "suite": "test-consistency-and-duplicates"
+    },
+    {
+      "req_id": "REQ-5",
+      "requirement": "Duplicate candidates are detected",
+      "verified": true,
+      "suite": "test-consistency-and-duplicates"
+    },
+    {
+      "req_id": "REQ-6",
+      "requirement": "Unapproved candidates cannot persist canonically",
+      "verified": true,
+      "suite": "test-approval-and-persistence"
+    },
+    {
+      "req_id": "REQ-7",
+      "requirement": "Approved sandbox candidates persist successfully",
+      "verified": true,
+      "suite": "test-cloud-adapter & test-manual-adapter"
+    },
+    {
+      "req_id": "REQ-8",
+      "requirement": "Read-back verification succeeds with SHA-256 match",
+      "verified": true,
+      "suite": "test-cloud-adapter & test-manual-adapter"
+    },
+    {
+      "req_id": "REQ-9",
+      "requirement": "Indexing and real retrieval return correct stored records",
+      "verified": true,
+      "suite": "test-cloud-adapter & test-manual-adapter"
+    },
+    {
+      "req_id": "REQ-10",
+      "requirement": "Invalid or corrupted inputs fail safely",
+      "verified": true,
+      "suite": "test-approval-and-persistence"
+    },
+    {
+      "req_id": "REQ-11",
+      "requirement": "Pipeline errors do not silently lose candidates (staged in 11_INBOX)",
+      "verified": true,
+      "suite": "test-approval-and-persistence"
+    },
+    {
+      "req_id": "REQ-12",
+      "requirement": "Retry behavior does not create duplicate records",
+      "verified": true,
+      "suite": "test-consistency-and-duplicates"
+    },
+    {
+      "req_id": "REQ-13",
+      "requirement": "Provenance is preserved from source to retrieval",
+      "verified": true,
+      "suite": "test-cloud-adapter & test-manual-adapter"
+    },
+    {
+      "req_id": "REQ-14",
+      "requirement": "Human approval decisions are respected",
+      "verified": true,
+      "suite": "test-approval-and-persistence"
+    },
+    {
+      "req_id": "REQ-15",
+      "requirement": "Both entry points produce auditable execution records",
+      "verified": true,
+      "suite": "PipelineAuditLogger"
+    }
+  ]
+}

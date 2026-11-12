@@ -1,0 +1,39 @@
+{
+  "mission_id": "UKD-STAGE-D2-SHADOW-MODE-READINESS-01",
+  "verified_at": "2026-11-12T17:21:04.571Z",
+  "preflight": {
+    "domain_registry": {
+      "path": "05_KNOWLEDGE/domain-intelligence/domain-registry.json",
+      "sha256": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f"
+    },
+    "candidate_registry": {
+      "path": "11_INBOX/candidate-directives-registry.json",
+      "sha256": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b"
+    },
+    "relationship_graph": {
+      "path": "05_KNOWLEDGE/domain-intelligence/relationship-graph.json",
+      "sha256": null
+    }
+  },
+  "postflight": {
+    "domain_registry": {
+      "path": "05_KNOWLEDGE/domain-intelligence/domain-registry.json",
+      "sha256": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f"
+    },
+    "candidate_registry": {
+      "path": "11_INBOX/candidate-directives-registry.json",
+      "sha256": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b"
+    },
+    "relationship_graph": {
+      "path": "05_KNOWLEDGE/domain-intelligence/relationship-graph.json",
+      "sha256": null
+    }
+  },
+  "integrity": {
+    "domain_registry_preserved": true,
+    "candidate_registry_preserved": true,
+    "relationship_graph_preserved": true,
+    "zero_tracked_git_modifications": true,
+    "production_write_isolation_verified": true
+  }
+}

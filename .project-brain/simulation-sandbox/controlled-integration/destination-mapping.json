@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "preservationStandard": "PRESERVE_FIRST_ADDITIVE_ONLY",
+  "proposedCanonicalMutations": [
+    {
+      "action": "APPEND_SECTION",
+      "targetPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "proposedRule": "Rule 69: Brace-Aware Structured Output Extraction (extractJSON)",
+      "ruleNumber": 69,
+      "sourceId": "PROP-RULE-069",
+      "bytesDelta": "+1,850 bytes",
+      "impact": "Purely additive section at end of file. Zero modification to existing Rules 1-68."
+    },
+    {
+      "action": "APPEND_SECTION",
+      "targetPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "proposedRule": "Rule 70: GitHub-Standard Documentation Anchor & TOC Synchronization Invariant",
+      "ruleNumber": 70,
+      "sourceId": "PROP-RULE-070",
+      "bytesDelta": "+1,720 bytes",
+      "impact": "Purely additive section at end of file. Zero modification to existing Rules 1-68."
+    },
+    {
+      "action": "APPEND_SECTION",
+      "targetPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "proposedRule": "Rule 71: Safe Binary Model Header Inspection & Allocation Guard",
+      "ruleNumber": 71,
+      "sourceId": "PROP-RULE-071",
+      "bytesDelta": "+1,940 bytes",
+      "impact": "Purely additive section at end of file. Zero modification to existing Rules 1-68."
+    },
+    {
+      "action": "CREATE_FILE",
+      "targetPath": "03_SKILLS/cli-command-dispatcher/SKILL.md",
+      "sourceId": "PROP-SKILL-001",
+      "bytesDelta": "+2,450 bytes",
+      "impact": "New skill playbook for CLI command dispatching. Zero existing file modification."
+    },
+    {
+      "action": "CREATE_FILE",
+      "targetPath": "08_VERIFICATION/contracts/schema-invariant-validator.md",
+      "sourceId": "PROP-VERIFY-001",
+      "bytesDelta": "+2,200 bytes",
+      "impact": "New verification contract matrix. Zero existing file modification."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "candidate_id": "CD-D-EQUIV-CLOUD-MHUP",
+  "title": "Metric Hypersphere Unit Projection (MHUP)",
+  "content": "Normalize pooled embeddings with F.normalize(p=2, dim=1) to project onto unit hypersphere so dot product equals cosine distance.",
+  "summary": "Euclidean L2 unit projection normalizing embeddings to unit hypersphere.",
+  "actionable_instruction": "Apply F.normalize(p=2, dim=1) prior to vector database insertion.",
+  "tags": [
+    "embeddings",
+    "l2-normalization",
+    "hypersphere",
+    "vector-search"
+  ],
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+  "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+    "target_source_file": "sentence_transformers/models/Normalize.py",
+    "source_revision": "v2.2.2",
+    "license": "Apache-2.0",
+    "harvest_origin": "CLOUD_HARVESTER",
+    "extracted_at": "2026-11-12T16:36:47.868Z"
+  },
+  "evidence": {
+    "evidence_type": "EMPIRICAL_PYTORCH_TENSOR_EXECUTION",
+    "verification_status": "DIRECTLY_VERIFIED",
+    "harvest_origin": "CLOUD_HARVESTER"
+  },
+  "persistence_status": "PERSISTED",
+  "stored_at": "2026-11-12T16:36:47.873Z",
+  "integrity_hash": "d945bdbcfd369da895d0cda705d77c0e7c2a93859afb02d40c1d0bf57984875e",
+  "readback_verified": true
+}

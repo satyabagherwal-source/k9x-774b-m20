@@ -1,0 +1,52 @@
+{
+  "trace_id": "trace-1794504063881-21fcd0e2",
+  "timestamp": "2026-11-12T17:21:03.884Z",
+  "origin": "CLOUD_HARVESTER",
+  "repository": "tikv/raft-rs",
+  "learning_id": "unapproved-candidate-raft-snapshot-01",
+  "content_hash": "000a11e244cd7f4c3dbb90e94eebda66f46961ae1c9e62e8e88fb16d49c81ef9",
+  "execution_duration_ms": 3,
+  "shadow_status": "SHADOW_STAGED_UNAPPROVED",
+  "success": true,
+  "payload_audit": {
+    "source_url": "https://github.com/tikv/raft-rs",
+    "dossier_text": "# Raft Snapshot Compaction Safety\n\n## Abstract\nSnapshot installation requires holding term invariant.",
+    "apiKey": "[REDACTED_SENSITIVE_FIELD]",
+    "client_secret": "[REDACTED_SENSITIVE_FIELD]",
+    "token": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "classification": {
+    "primary_domain": "H",
+    "primary_domain_name": "Technical Construction Intelligence",
+    "confidence": 0,
+    "secondary_domains": []
+  },
+  "routing": {
+    "destination_folder": "05_KNOWLEDGE",
+    "suggested_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tikv-raft-rs.md",
+    "requires_human_approval": true
+  },
+  "duplicate_detection": {
+    "is_duplicate": false,
+    "duplicate_type": null,
+    "matched_id": null,
+    "matched_repo": null
+  },
+  "approval_evaluation": [
+    {
+      "candidate_id": "CAND-RAFT-UNAPPROVED-01",
+      "eval": {
+        "admitted_to_canonical": false,
+        "routing_action": "STAGE_INBOX_PENDING",
+        "target_folder": "11_INBOX",
+        "reason": "Record has approval_status PENDING_APPROVAL. Staged in 11_INBOX awaiting human review."
+      }
+    }
+  ],
+  "provenance_completeness": {
+    "valid": true,
+    "fingerprint": null,
+    "errors": []
+  },
+  "errors": []
+}

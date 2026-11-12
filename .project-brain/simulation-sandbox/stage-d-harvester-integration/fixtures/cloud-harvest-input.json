@@ -1,0 +1,44 @@
+{
+  "fixture_type": "STAGE_D_CLOUD_HARVEST_FIXTURE",
+  "repository": "UKPLab/sentence-transformers",
+  "platform": "github",
+  "slug": "ukplab-sentence-transformers",
+  "sourceUrl": "https://github.com/UKPLab/sentence-transformers",
+  "sourceVersion": "v2.2.2-commit-7248ef",
+  "license": "Apache-2.0",
+  "aiProvider": "google-gemini-cloud-agent",
+  "dossierText": "# Intelligence Dossier: sentence-transformers\n\nIdentified mean pooling temporal invariant with attention mask clamp.",
+  "candidateRules": [
+    {
+      "candidate_id": "CD-D-CLOUD-CMTP",
+      "title": "Clamped Masked Temporal Pooling (CMTP)",
+      "content": "When pooling transformer token representations, clamp attention mask sum divisor to min 1e-9 to prevent NaN division.",
+      "summary": "Transformer pooling with epsilon divisor clamp preventing division by zero.",
+      "actionable_instruction": "Calculate sum_mask = torch.clamp(mask.sum(1), min=1e-9) before division.",
+      "tags": [
+        "transformer",
+        "pooling",
+        "attention-mask",
+        "clamp",
+        "pytorch"
+      ],
+      "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+      "duplicate_references": [],
+      "approval_status": "APPROVED",
+      "target_source_file": "sentence_transformers/models/Pooling.py",
+      "evidence": {
+        "evidence_type": "EMPIRICAL_PYTORCH_TENSOR_EXECUTION",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "harvest_origin": "CLOUD_HARVESTER"
+      }
+    }
+  ],
+  "auditEvidence": {
+    "fixCommitsCount": 14,
+    "closedIssuesCount": 32,
+    "commitsSample": [
+      "7248efa Fix division by zero on empty sequences"
+    ]
+  }
+}

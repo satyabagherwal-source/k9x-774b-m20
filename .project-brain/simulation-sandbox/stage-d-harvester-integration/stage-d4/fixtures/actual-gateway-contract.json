@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BrainLearningGatewayActualSourceContract",
+  "source_file": "04_WORKFLOWS/factory-engine/brain-learning-gateway.mjs",
+  "source_version": "2.0.0",
+  "extracted_at": "2026-11-12T17:48:00.000Z",
+  "target_function": "submitToBrainGateway(learningPackage, options)",
+  "input_contract": {
+    "parameters": [
+      {
+        "name": "learningPackage",
+        "type": "object",
+        "required": true,
+        "properties": {
+          "repository": { "type": "string", "source_line": 992, "description": "Owner/repo identifier (e.g. tiangolo/fastapi)" },
+          "learning_id": { "type": "string", "source_line": 993, "description": "Unique canonical learning package ID" },
+          "content_hash": { "type": "string", "source_line": 994, "description": "64-character SHA-256 digest of dossier content" },
+          "slug": { "type": "string", "source_line": 1037, "description": "Normalized repository slug" },
+          "platform": { "type": "string", "source_line": 1134, "default": "github" },
+          "source_url": { "type": "string", "source_line": 1135, "description": "Full upstream HTTPS URL" },
+          "source_version": { "type": "string", "source_line": 1136, "default": "HEAD" },
+          "license": { "type": "string", "source_line": 623, "default": "Open-Source" },
+          "dossier_content": { "type": "string", "source_line": 1060, "description": "Complete markdown dossier text including metadata header" },
+          "candidate_rules": { "type": "array", "source_line": 478, "description": "Array of candidate rule objects with title and body" },
+          "metadata": { "type": "object", "source_line": 988, "description": "Optional metadata containing brainRoot override" }
+        }
+      },
+      {
+        "name": "options",
+        "type": "object",
+        "required": false,
+        "properties": {
+          "brainRoot": { "type": "string", "source_line": 988, "description": "Overrides master brain root path for all reads/writes" },
+          "evidenceList": { "type": "array", "source_line": 580, "description": "Optional evidence items for rule promotion" },
+          "checkpointsFile": { "type": "string", "source_line": 281, "description": "Optional path override for harvest-checkpoints.json" }
+        }
+      }
+    ],
+    "mutations_on_input": [
+      {
+        "field": "validated_rules",
+        "type": "array",
+        "source_line": 490,
+        "description": "Added during validateLearningPackage step"
+      },
+      {
+        "field": "rejected_rules",
+        "type": "array",
+        "source_line": 491,
+        "description": "Added during validateLearningPackage step"
+      },
+      {
+        "field": "validated",
+        "type": "boolean",
+        "source_line": 492,
+        "description": "Set to true upon successful structural validation"
+      },
+      {
+        "field": "stage",
+        "type": "string",
+        "source_line": 493,
+        "description": "Updated to LEARNING_STAGES.VALIDATED"
+      },
+      {
+        "field": "status",
+        "type": "string",
+        "source_line": 494,
+        "description": "Updated to LEARNING_STATUS.VALIDATED"
+      }
+    ]
+  },
+  "output_contract": {
+    "total_return_fields": 28,
+    "core_fields": {
+      "success": { "type": "boolean", "source_lines": [1045, 1055, 1077, 1088, 1113, 1234, 1254, 1273] },
+      "repository": { "type": "string", "source_line": 1003 },
+      "learning_id": { "type": "string", "source_line": 1004 },
+      "content_hash": { "type": "string", "source_line": 1005 },
+      "status": { "type": "string", "source_line": 1006, "enum": ["EXTRACTED_ONLY", "VALIDATED", "PERSISTED", "PROMOTED", "VERIFIED_LEARNING", "FAILED_VALIDATION", "FAILED_PERSISTENCE"] },
+      "stage": { "type": "string", "source_line": 1007, "enum": ["EXTRACTED", "VALIDATED", "PERSISTED", "PROMOTED", "VERIFIED"] },
+      "extracted": { "type": "boolean", "source_line": 1008, "value": true },
+      "validated": { "type": "boolean", "source_line": 1009 },
+      "promoted_to_brain": { "type": "boolean", "source_line": 1010 },
+      "brain_write": { "type": "boolean", "source_line": 1011 },
+      "brain_readback": { "type": "boolean", "source_line": 1012 },
+      "knowledge_index_updated": { "type": "boolean", "source_line": 1013 },
+      "promoted_rules": { "type": "array", "source_line": 1014 },
+      "dossier_path": { "type": ["string", "null"], "source_line": 1015 },
+      "errors": { "type": "array", "source_line": 1016 },
+      "primary_domain": { "type": "string", "source_line": 1017, "example": "H" },
+      "primary_domain_name": { "type": "string", "source_line": 1018, "example": "Technical Construction Intelligence" },
+      "secondary_domains": { "type": "array", "source_line": 1019, "items": { "type": "string" } },
+      "classification_confidence": { "type": "number", "source_line": 1020 },
+      "destination_folder": { "type": "string", "source_line": 1021, "example": "05_KNOWLEDGE" },
+      "destination_path": { "type": "string", "source_line": 1022 },
+      "requires_human_approval": { "type": "boolean", "source_line": 1023 },
+      "is_untrusted": { "type": "boolean", "source_line": 1024 },
+      "security_flags": { "type": "array", "source_line": 1025 }
+    },
+    "conditional_fields": {
+      "already_indexed": { "type": "boolean", "source_lines": [1041, 1045], "condition": "Present when package was previously indexed with identical verified hash" },
+      "verification_ledger_updated": { "type": "boolean", "source_line": 1190, "condition": "Present on successful 08_VERIFICATION matrix append" },
+      "source_provenance_updated": { "type": "boolean", "source_line": 1201, "condition": "Present on successful 09_SOURCES provenance ledger append" },
+      "evolution_metrics_updated": { "type": "boolean", "source_line": 1222, "condition": "Present on successful 14_EVOLUTION harvest metrics append" }
+    }
+  },
+  "filesystem_write_paths": [
+    { "target": "07_PROJECT_LEARNING/${slug}-learnings.md", "source_line": 1060, "operation": "fs.writeFileSync" },
+    { "target": "05_KNOWLEDGE/engineering-patterns.md", "source_line": 643, "operation": "fs.writeFileSync" },
+    { "target": "05_KNOWLEDGE/knowledge-index.json", "source_line": 1176, "operation": "fs.writeFileSync" },
+    { "target": "08_VERIFICATION/harvest-verification-matrix.md", "source_line": 786, "operation": "fs.appendFileSync" },
+    { "target": "08_VERIFICATION/verification-log.json", "source_line": 804, "operation": "fs.writeFileSync" },
+    { "target": "09_SOURCES/harvest-provenance-ledger.md", "source_line": 847, "operation": "fs.appendFileSync" },
+    { "target": "11_INBOX/candidate-directives-registry.json", "source_line": 907, "operation": "fs.writeFileSync (conditional on rejected rules)" },
+    { "target": "14_EVOLUTION/harvest-yield-metrics.json", "source_line": 942, "operation": "fs.writeFileSync" },
+    { "target": ".project-brain/harvest-checkpoints.json", "source_line": 307, "operation": "fs.writeFileSync" }
+  ]
+}
+

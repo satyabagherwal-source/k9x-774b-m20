@@ -1,0 +1,61 @@
+{
+  "mission_id": "UKD-STAGE-D4-SANDBOX-PATCH-SAFETY-01",
+  "verified_at": "2026-11-12T18:15:18.006Z",
+  "preflight": {
+    "domain_registry": {
+      "path": "C:\\AI-Builder-Brain\\05_KNOWLEDGE\\domain-intelligence\\domain-registry.json",
+      "sha256": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f"
+    },
+    "candidate_registry": {
+      "path": "C:\\AI-Builder-Brain\\11_INBOX\\candidate-directives-registry.json",
+      "sha256": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b"
+    },
+    "relationship_graph": {
+      "path": "C:\\AI-Builder-Brain\\.project-brain\\knowledge-graph\\relationship-graph.json",
+      "sha256": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb"
+    },
+    "engineering_patterns": {
+      "path": "C:\\AI-Builder-Brain\\05_KNOWLEDGE\\engineering-patterns.md",
+      "sha256": "6ea819849e8b3ef74b5654f16b1a6ff0f2d833d6d8eb536dc8c5b9947c98aa04"
+    },
+    "harvest_control": {
+      "path": "C:\\AI-Builder-Brain\\harvest-control.json",
+      "sha256": "79b321c884ca80c6e8c63f2f49921af9b627eef265de5cd5e5f5a045b1e31ddb"
+    },
+    "cloud_workflow": {
+      "path": "C:\\AI-Builder-Brain\\.github\\workflows\\24-7-cloud-harvester.yml",
+      "sha256": "34311d5d1eeb7bd4fb14ac6e2b98e0bde59cf04fadfb41573f9c641a212f0c92"
+    }
+  },
+  "postflight": {
+    "domain_registry": {
+      "path": "C:\\AI-Builder-Brain\\05_KNOWLEDGE\\domain-intelligence\\domain-registry.json",
+      "sha256": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f"
+    },
+    "candidate_registry": {
+      "path": "C:\\AI-Builder-Brain\\11_INBOX\\candidate-directives-registry.json",
+      "sha256": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b"
+    },
+    "relationship_graph": {
+      "path": "C:\\AI-Builder-Brain\\.project-brain\\knowledge-graph\\relationship-graph.json",
+      "sha256": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb"
+    },
+    "engineering_patterns": {
+      "path": "C:\\AI-Builder-Brain\\05_KNOWLEDGE\\engineering-patterns.md",
+      "sha256": "6ea819849e8b3ef74b5654f16b1a6ff0f2d833d6d8eb536dc8c5b9947c98aa04"
+    },
+    "harvest_control": {
+      "path": "C:\\AI-Builder-Brain\\harvest-control.json",
+      "sha256": "79b321c884ca80c6e8c63f2f49921af9b627eef265de5cd5e5f5a045b1e31ddb"
+    },
+    "cloud_workflow": {
+      "path": "C:\\AI-Builder-Brain\\.github\\workflows\\24-7-cloud-harvester.yml",
+      "sha256": "34311d5d1eeb7bd4fb14ac6e2b98e0bde59cf04fadfb41573f9c641a212f0c92"
+    }
+  },
+  "integrity": {
+    "all_production_stores_bitwise_identical": true,
+    "zero_tracked_git_modifications": true,
+    "production_isolation_verified": true
+  }
+}

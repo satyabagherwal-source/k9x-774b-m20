@@ -1,0 +1,67 @@
+{
+  "missionId": "AB-BRAIN-CONSTRUCTION-EVOLUTION-01",
+  "phase": "PHASE_G_CAPABILITY_IMPROVEMENT",
+  "timestamp": "2026-11-12T19:40:00.000Z",
+  "taxonomicAudit13Domains": {
+    "A": { "name": "Foundation Intelligence", "representation": "HIGH", "role": "Core system invariants & safety rules" },
+    "B": { "name": "Product Intelligence", "representation": "LOW", "role": "Product specifications, user personas, PRDs" },
+    "C": { "name": "Market & Business Intelligence", "representation": "LOW", "role": "Market analysis, monetization models, commercial compliance" },
+    "D": { "name": "Research Intelligence", "representation": "HIGH", "role": "Academic papers, theoretical foundations, algorithmic research" },
+    "E": { "name": "Creative Intelligence", "representation": "LOW", "role": "Creative copy, artistic style, tone of voice" },
+    "F": { "name": "Design Intelligence", "representation": "LOW", "role": "UI design systems, accessibility, typography, layout" },
+    "G": { "name": "Architecture Intelligence", "representation": "MEDIUM", "role": "High-level system topology, microservices, database schemas" },
+    "H": { "name": "Technical Construction Intelligence", "representation": "HIGH", "role": "Reusable algorithmic implementations, code patterns, data parsers" },
+    "I": { "name": "Content & Information Intelligence", "representation": "HIGH", "role": "Documentation slugification, Markdown indexing, TOC generation" },
+    "J": { "name": "Search & Distribution Intelligence", "representation": "MEDIUM", "role": "Vector embeddings, BM25 indexing, retrieval caching" },
+    "K": { "name": "Quality & Verification Intelligence", "representation": "HIGH", "role": "Property-based testing, invariant contracts, verification matrices" },
+    "L": { "name": "Deployment & Operations Intelligence", "representation": "LOW", "role": "CI/CD pipelines, containerization, observability, telemetry" },
+    "M": { "name": "Feedback & Evolution Intelligence", "representation": "HIGH", "role": "Forensic error autopsies, defect prevention, yield metrics" }
+  },
+  "gaps": [
+    {
+      "gapId": "GAP-G-01",
+      "title": "Reusable CLI Command Dispatcher & Argument Validator",
+      "affectedDomains": ["H", "I"],
+      "observedFailure": "During Phase F construction, Model had to write custom procedural argument parsing in bin/cli.mjs because Brain lacked a standard, reusable CLI dispatch pattern.",
+      "supportingEvidence": ".project-brain/simulation-sandbox/phase-f-construction/bin/cli.mjs lines 80-107",
+      "rootCause": "Existing Engineering Patterns define exit codes (0, 1, 2) but omit a modular, zero-dependency dispatcher library for command routing, help text formatting, and typed flag parsing.",
+      "proposedImprovement": "Implement CliCommandDispatcher: a pure Node.js modular class managing subcommand registration, positional argument clamping, flag extraction (--flag, --opt <val>), automated manual formatting, and standardized error handling.",
+      "implementationStatus": "IMPLEMENTED",
+      "targetFile": ".project-brain/simulation-sandbox/phase-g-improvements/src/cli-command-dispatcher.mjs"
+    },
+    {
+      "gapId": "GAP-G-02",
+      "title": "Post-Extraction Schema Invariant Validator",
+      "affectedDomains": ["K", "H"],
+      "observedFailure": "While extractJSON safely slices balanced JSON, it does not validate that the extracted structure satisfies required application properties (types, required fields, non-null values) without depending on external libraries (Zod/AJV).",
+      "supportingEvidence": "Phase F json-extractor.mjs requires manual checks after extractJSON() invocation.",
+      "rootCause": "Brain lacked a lightweight, zero-dependency schema invariant engine designed specifically for post-LLM extraction validation.",
+      "proposedImprovement": "Implement SchemaInvariantValidator: a pure zero-dependency contract checker validating required keys, primitive types ('string', 'number', 'boolean', 'array', 'object'), non-empty string constraints, and array item schemas with structured violation reporting.",
+      "implementationStatus": "IMPLEMENTED",
+      "targetFile": ".project-brain/simulation-sandbox/phase-g-improvements/src/schema-invariant-validator.mjs"
+    },
+    {
+      "gapId": "GAP-G-03",
+      "title": "Frontend UI Component & Design Tokens Gap",
+      "affectedDomains": ["F", "B"],
+      "observedFailure": "Zero reusable CSS, React, Vue, or Web Component patterns exist in the 141 synthesized candidate set.",
+      "supportingEvidence": "141 candidates in Phase E.3/E.4 originate predominantly from HuggingFace model weight repositories (Python/C++).",
+      "rootCause": "Harvester sources have prioritized HuggingFace model cards over frontend/UI open-source repositories.",
+      "proposedImprovement": "Expand Harvester target lists to incorporate established UI component libraries (e.g., shadcn/ui, Radix UI, Tailwind CSS).",
+      "implementationStatus": "DESIGNED_NEEDS_HARVEST",
+      "targetFile": "harvest-control.json"
+    },
+    {
+      "gapId": "GAP-G-04",
+      "title": "Full-Stack Server Middleware & API Route Contracts Gap",
+      "affectedDomains": ["G", "L"],
+      "observedFailure": "Brain lacks standardized HTTP route handlers, request validation middleware, and rate-limiting contracts.",
+      "supportingEvidence": "Zero full-stack Express/Fastify/Next.js API route templates in 05_KNOWLEDGE.",
+      "rootCause": "Current engineering patterns focus on isolated algorithms rather than full-stack service lifecycles.",
+      "proposedImprovement": "Harvest and crystallize high-throughput HTTP gateway middleware patterns from top Node/Go servers.",
+      "implementationStatus": "DESIGNED_NEEDS_HARVEST",
+      "targetFile": "05_KNOWLEDGE/engineering-patterns.md"
+    }
+  ]
+}
+

@@ -1,0 +1,742 @@
+{
+  "index_version": "1.0.0-stage-c",
+  "created_at": "2026-11-12T16:36:47.363Z",
+  "updated_at": "2026-11-12T16:36:47.910Z",
+  "total_docs": 4,
+  "total_terms": 84,
+  "avg_doc_length": 49.25,
+  "doc_lengths": {
+    "CD-D-CLOUD-CMTP": 52,
+    "CD-D-MANUAL-TOKENIZER": 49,
+    "CD-D-EQUIV-CLOUD-MHUP": 48,
+    "CD-D-EQUIV-MANUAL-MHUP": 48
+  },
+  "inverted_index": {
+    "clamped": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "masked": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "temporal": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "pooling": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 5
+      }
+    ],
+    "cmtp": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "when": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "transformer": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 3
+      }
+    ],
+    "token": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "representations": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "clamp": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 4
+      }
+    ],
+    "attention": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "mask": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "sum": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "divisor": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "to": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 3
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 3
+      }
+    ],
+    "min": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "1e-9": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 2
+      }
+    ],
+    "prevent": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "nan": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "division": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 3
+      }
+    ],
+    "with": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "epsilon": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "preventing": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "by": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "zero": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "calculate": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "sum_mask": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "torch": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "before": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "attention-mask": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "pytorch": [
+      {
+        "doc_id": "CD-D-CLOUD-CMTP",
+        "term_frequency": 1
+      }
+    ],
+    "tokenizer": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 4
+      }
+    ],
+    "special": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "normalization": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "boundary": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "control": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "tokens": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "in": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "added_tokens_decoder": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "must": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "specify": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "true": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "and": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "normalized": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "false": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 3
+      }
+    ],
+    "avoid": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "stripping": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "preceding": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "whitespace": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 2
+      }
+    ],
+    "fast": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "require": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "preserve": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "boundaries": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "assert": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "have": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "huggingface": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "special-tokens": [
+      {
+        "doc_id": "CD-D-MANUAL-TOKENIZER",
+        "term_frequency": 1
+      }
+    ],
+    "metric": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "hypersphere": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 5
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 5
+      }
+    ],
+    "unit": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 5
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 5
+      }
+    ],
+    "projection": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 3
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 3
+      }
+    ],
+    "mhup": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "normalize": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 3
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 3
+      }
+    ],
+    "pooled": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "embeddings": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 3
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 3
+      }
+    ],
+    "dim": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 2
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 2
+      }
+    ],
+    "project": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "onto": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "so": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "dot": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "product": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "equals": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "cosine": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "distance": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "euclidean": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "l2": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "normalizing": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "apply": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "prior": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "vector": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "database": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "insertion": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "l2-normalization": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ],
+    "vector-search": [
+      {
+        "doc_id": "CD-D-EQUIV-CLOUD-MHUP",
+        "term_frequency": 1
+      },
+      {
+        "doc_id": "CD-D-EQUIV-MANUAL-MHUP",
+        "term_frequency": 1
+      }
+    ]
+  },
+  "domain_facets": {
+    "H": [
+      "CD-D-CLOUD-CMTP",
+      "CD-D-MANUAL-TOKENIZER",
+      "CD-D-EQUIV-CLOUD-MHUP",
+      "CD-D-EQUIV-MANUAL-MHUP"
+    ]
+  },
+  "destination_facets": {
+    "05_KNOWLEDGE": [
+      "CD-D-CLOUD-CMTP",
+      "CD-D-MANUAL-TOKENIZER",
+      "CD-D-EQUIV-CLOUD-MHUP",
+      "CD-D-EQUIV-MANUAL-MHUP"
+    ]
+  },
+  "doc_metadata": {
+    "CD-D-CLOUD-CMTP": {
+      "candidate_id": "CD-D-CLOUD-CMTP",
+      "title": "Clamped Masked Temporal Pooling (CMTP)",
+      "domain_classification": "H",
+      "proposed_canonical_destination": "05_KNOWLEDGE",
+      "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+      "provenance": {
+        "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+        "target_source_file": "sentence_transformers/models/Pooling.py",
+        "source_revision": "v2.2.2-commit-7248ef",
+        "license": "Apache-2.0",
+        "harvest_origin": "CLOUD_HARVESTER",
+        "extracted_at": "2026-11-12T16:36:47.522Z"
+      },
+      "integrity_hash": "d1a5dc024c98254fbedc12fd4c1e8a10752d1562dac9210f75dfae080a4c54bb",
+      "stored_at": "2026-11-12T16:36:47.536Z"
+    },
+    "CD-D-MANUAL-TOKENIZER": {
+      "candidate_id": "CD-D-MANUAL-TOKENIZER",
+      "title": "Tokenizer Special Token Normalization Boundary",
+      "domain_classification": "H",
+      "proposed_canonical_destination": "05_KNOWLEDGE",
+      "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+      "provenance": {
+        "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+        "target_source_file": "tokenizer_config.json",
+        "source_revision": "8a1b2c3d4e5f6789",
+        "license": "Apache-2.0",
+        "harvest_origin": "MANUAL_HARVESTER",
+        "extracted_at": "2026-11-12T16:36:47.696Z"
+      },
+      "integrity_hash": "bf301cb9c10a0850092980429965c00eafcb67900bbe95762916490d2aeda8b1",
+      "stored_at": "2026-11-12T16:36:47.701Z"
+    },
+    "CD-D-EQUIV-CLOUD-MHUP": {
+      "candidate_id": "CD-D-EQUIV-CLOUD-MHUP",
+      "title": "Metric Hypersphere Unit Projection (MHUP)",
+      "domain_classification": "H",
+      "proposed_canonical_destination": "05_KNOWLEDGE",
+      "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+      "provenance": {
+        "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+        "target_source_file": "sentence_transformers/models/Normalize.py",
+        "source_revision": "v2.2.2",
+        "license": "Apache-2.0",
+        "harvest_origin": "CLOUD_HARVESTER",
+        "extracted_at": "2026-11-12T16:36:47.868Z"
+      },
+      "integrity_hash": "d945bdbcfd369da895d0cda705d77c0e7c2a93859afb02d40c1d0bf57984875e",
+      "stored_at": "2026-11-12T16:36:47.873Z"
+    },
+    "CD-D-EQUIV-MANUAL-MHUP": {
+      "candidate_id": "CD-D-EQUIV-MANUAL-MHUP",
+      "title": "Metric Hypersphere Unit Projection (MHUP)",
+      "domain_classification": "H",
+      "proposed_canonical_destination": "05_KNOWLEDGE",
+      "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+      "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+      "provenance": {
+        "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+        "target_source_file": "sentence_transformers/models/Normalize.py",
+        "source_revision": "v2.2.2",
+        "license": "Apache-2.0",
+        "harvest_origin": "MANUAL_HARVESTER",
+        "extracted_at": "2026-11-12T16:36:47.896Z"
+      },
+      "integrity_hash": "eeb0d870113651cd2d3520d301df87c690b8c26bb15649e4a2df1ebecd3756fc",
+      "stored_at": "2026-11-12T16:36:47.901Z"
+    }
+  }
+}

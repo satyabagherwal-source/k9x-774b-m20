@@ -1,0 +1,52 @@
+{
+  "trace_id": "trace-1794504064094-56f8b9da",
+  "timestamp": "2026-11-12T17:21:04.095Z",
+  "origin": "CLOUD_HARVESTER",
+  "repository": "auth0/jwt-decode",
+  "learning_id": "credential-bearing-test-pkg",
+  "content_hash": "e14a601a7a1e95fc4b189fe69429fcc7af59e63e54e905bafbecf47151883265",
+  "execution_duration_ms": 1,
+  "shadow_status": "SHADOW_STAGED_UNAPPROVED",
+  "success": true,
+  "payload_audit": {
+    "source_url": "https://github.com/auth0/jwt-decode?token=[REDACTED_GITHUB_PAT]",
+    "dossier_text": "# Security Redaction Test\n\nGitHub PAT: [REDACTED_GITHUB_PAT]\nHuggingFace Token: [REDACTED_HF_TOKEN]\nGoogle Key: [REDACTED_GOOGLE_API_KEY]2\nBearer: Bearer [REDACTED_BEARER_TOKEN]\nAWS: [REDACTED_AWS_ACCESS_KEY]",
+    "apiKey": "[REDACTED_SENSITIVE_FIELD]",
+    "client_secret": "[REDACTED_SENSITIVE_FIELD]",
+    "token": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "classification": {
+    "primary_domain": "H",
+    "primary_domain_name": "Technical Construction Intelligence",
+    "confidence": 0,
+    "secondary_domains": []
+  },
+  "routing": {
+    "destination_folder": "05_KNOWLEDGE",
+    "suggested_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-auth0-jwt-decode.md",
+    "requires_human_approval": false
+  },
+  "duplicate_detection": {
+    "is_duplicate": false,
+    "duplicate_type": null,
+    "matched_id": null,
+    "matched_repo": null
+  },
+  "approval_evaluation": [
+    {
+      "candidate_id": "credential-bearing-test-pkg",
+      "eval": {
+        "admitted_to_canonical": false,
+        "routing_action": "STAGE_INBOX_PENDING",
+        "target_folder": "11_INBOX",
+        "reason": "Record has approval_status PENDING_APPROVAL. Staged in 11_INBOX awaiting human review."
+      }
+    }
+  ],
+  "provenance_completeness": {
+    "valid": true,
+    "fingerprint": null,
+    "errors": []
+  },
+  "errors": []
+}

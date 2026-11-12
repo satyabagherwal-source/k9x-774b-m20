@@ -1,0 +1,24 @@
+{
+  "mission_id": "UKD-STAGE-D-HARVESTER-INTEGRATION-READINESS-01",
+  "status": "STAGED_FOR_FUTURE_USER_AUTHORIZATION",
+  "proposed_changes": [
+    {
+      "file": "04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs",
+      "modification": "Route extracted candidate directives through CloudHarvesterAdapter and SharedHarvestingPipeline before calling legacy gateway",
+      "risk_level": "LOW (Additive wrapper; preserves legacy fallback)",
+      "approval_required": true
+    },
+    {
+      "file": "04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs",
+      "modification": "Route extracted candidate directives through ManualHarvesterAdapter and SharedHarvestingPipeline",
+      "risk_level": "LOW (Additive wrapper; preserves legacy fallback)",
+      "approval_required": true
+    },
+    {
+      "file": "04_WORKFLOWS/factory-engine/brain-learning-gateway.mjs",
+      "modification": "Enforce HumanApprovalGate so that candidates require explicit approval before canonical engineering-patterns.md write",
+      "risk_level": "MEDIUM (Governs production rule promotion)",
+      "approval_required": true
+    }
+  ]
+}

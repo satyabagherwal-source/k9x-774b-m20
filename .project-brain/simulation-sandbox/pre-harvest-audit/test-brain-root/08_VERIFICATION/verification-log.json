@@ -1,0 +1,17 @@
+[
+  {
+    "cycleId": "CYCLE-20261112-6IYP",
+    "timestamp": "2026-11-12T20:03:16.225Z",
+    "repository": "audit-test-org/audit-test-repo",
+    "learningId": "learn-github-audit-test-org-audit-test-repo",
+    "contentHash": "992873f445b29cef2770fd5ca4c43199c17bb0f28afa0e78dc151365f8829a22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  }
+]

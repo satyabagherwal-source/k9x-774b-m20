@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-11-12T20:03:16.269Z",
+  "total_cycles_completed": 1,
+  "total_learnings_persisted": 1,
+  "total_rules_promoted": 0,
+  "history": [
+    {
+      "timestamp": "2026-11-12T20:03:16.269Z",
+      "repository": "audit-test-org/audit-test-repo",
+      "learningId": "learn-github-audit-test-org-audit-test-repo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    }
+  ]
+}

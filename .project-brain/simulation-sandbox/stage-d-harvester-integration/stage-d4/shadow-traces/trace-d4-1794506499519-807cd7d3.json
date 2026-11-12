@@ -1,0 +1,52 @@
+{
+  "trace_id": "trace-d4-1794506499519-807cd7d3",
+  "timestamp": "2026-11-12T18:01:39.520Z",
+  "origin": "CLOUD_HARVESTER",
+  "repository": "tiangolo/fastapi",
+  "learning_id": "learn-github-tiangolo-fastapi",
+  "content_hash": "bd6f33684b2bd8827a36717bee5bab0d39516032e24b2858f8fe48cc874f90ea",
+  "execution_duration_ms": 1,
+  "shadow_status": "SHADOW_STAGED_UNAPPROVED",
+  "success": true,
+  "payload_audit": {
+    "source_url": "https://github.com/auth0/jwt-decode?token=[REDACTED_GITHUB_PAT]",
+    "dossier_text": "# Secret Scrubbing Verification\n\nGitHub PAT: [REDACTED_GITHUB_PAT]\nHF Token: [REDACTED_HF_TOKEN]\nGoogle: [REDACTED_GOOGLE_API_KEY]2\nAWS: [REDACTED_AWS_ACCESS_KEY]",
+    "apiKey": "[REDACTED_SENSITIVE_FIELD]",
+    "client_secret": "[REDACTED_SENSITIVE_FIELD]",
+    "token": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "classification": {
+    "primary_domain": "H",
+    "primary_domain_name": "Technical Construction Intelligence",
+    "confidence": 0,
+    "secondary_domains": []
+  },
+  "routing": {
+    "destination_folder": "05_KNOWLEDGE",
+    "suggested_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi.md",
+    "requires_human_approval": false
+  },
+  "duplicate_detection": {
+    "is_duplicate": false,
+    "duplicate_type": null,
+    "matched_id": null,
+    "matched_repo": null
+  },
+  "approval_evaluation": [
+    {
+      "candidate_id": "learn-github-tiangolo-fastapi",
+      "eval": {
+        "admitted_to_canonical": false,
+        "routing_action": "STAGE_INBOX_PENDING",
+        "target_folder": "11_INBOX",
+        "reason": "Record has approval_status PENDING_APPROVAL. Staged in 11_INBOX awaiting human review."
+      }
+    }
+  ],
+  "provenance_completeness": {
+    "valid": true,
+    "fingerprint": null,
+    "errors": []
+  },
+  "errors": []
+}

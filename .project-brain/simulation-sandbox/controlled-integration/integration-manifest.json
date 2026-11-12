@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "missionId": "AB-BRAIN-CONSTRUCTION-EVOLUTION-01",
+  "stagedDate": "2026-11-12T19:36:09.719Z",
+  "status": "STAGED_AND_VERIFIED_AWAITING_APPROVAL",
+  "stagingDirectory": ".project-brain/simulation-sandbox/controlled-integration/",
+  "artifacts": [
+    "eligible-knowledge.json",
+    "source-provenance.json",
+    "destination-mapping.json",
+    "duplicate-conflict-report.json",
+    "rollback-plan.md",
+    "human-approval-manifest.json",
+    "verification-evidence/E4-TEST-01-extractJSON.md",
+    "verification-evidence/E4-TEST-02-anchor-slugifier.md",
+    "verification-evidence/E4-TEST-03-binary-inspector.md",
+    "verification-evidence/PHASE-G-cli-dispatcher.md",
+    "verification-evidence/PHASE-G-schema-validator.md"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "candidate_id": "CD-D-MANUAL-TOKENIZER",
+  "title": "Tokenizer Special Token Normalization Boundary",
+  "content": "Control tokens in added_tokens_decoder must specify special: true and normalized: false to avoid stripping preceding whitespace.",
+  "summary": "Fast tokenizer control tokens require normalized: false to preserve whitespace boundaries.",
+  "actionable_instruction": "Assert control tokens in added_tokens_decoder have normalized: false.",
+  "tags": [
+    "tokenizer",
+    "huggingface",
+    "special-tokens",
+    "normalization"
+  ],
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "CONFIGURATION_CONTRACT_TESTED",
+  "knowledge_transferability_status": "TRANSFERABLE_PRINCIPLE_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://github.com/Nanbeige/Nanbeige",
+    "target_source_file": "tokenizer_config.json",
+    "source_revision": "8a1b2c3d4e5f6789",
+    "license": "Apache-2.0",
+    "harvest_origin": "MANUAL_HARVESTER",
+    "extracted_at": "2026-11-12T16:36:47.696Z"
+  },
+  "evidence": {
+    "evidence_type": "CONFIGURATION_SCHEMA_CONTRACT_AUDIT",
+    "verification_status": "CONTRACT_VERIFIED",
+    "harvest_origin": "MANUAL_HARVESTER"
+  },
+  "persistence_status": "PERSISTED",
+  "stored_at": "2026-11-12T16:36:47.701Z",
+  "integrity_hash": "bf301cb9c10a0850092980429965c00eafcb67900bbe95762916490d2aeda8b1",
+  "readback_verified": true
+}

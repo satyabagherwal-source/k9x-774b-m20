@@ -1,0 +1,934 @@
+{
+  "missionId": "UKD-PHASE-E1-BASELINE-SANDBOX-01",
+  "timestamp": "2026-11-12T18:31:37.993Z",
+  "verdict": "VERIFIED",
+  "productionIsolation": {
+    "pure": true,
+    "filesChecked": 6,
+    "hashComparison": {
+      "05_KNOWLEDGE/domain-intelligence/domain-registry.json": {
+        "pre": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f",
+        "post": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f",
+        "match": true
+      },
+      "11_INBOX/candidate-directives-registry.json": {
+        "pre": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b",
+        "post": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b",
+        "match": true
+      },
+      ".project-brain/knowledge-graph/relationship-graph.json": {
+        "pre": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb",
+        "post": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb",
+        "match": true
+      },
+      "05_KNOWLEDGE/knowledge-index.json": {
+        "pre": "7e49f275a9a71cb25d684b45e6ec541f24461319add82126bc341e7cf3cd14ea",
+        "post": "7e49f275a9a71cb25d684b45e6ec541f24461319add82126bc341e7cf3cd14ea",
+        "match": true
+      },
+      "05_KNOWLEDGE/engineering-patterns.md": {
+        "pre": "6ea819849e8b3ef74b5654f16b1a6ff0f2d833d6d8eb536dc8c5b9947c98aa04",
+        "post": "6ea819849e8b3ef74b5654f16b1a6ff0f2d833d6d8eb536dc8c5b9947c98aa04",
+        "match": true
+      },
+      "harvest-control.json": {
+        "pre": "79b321c884ca80c6e8c63f2f49921af9b627eef265de5cd5e5f5a045b1e31ddb",
+        "post": "79b321c884ca80c6e8c63f2f49921af9b627eef265de5cd5e5f5a045b1e31ddb",
+        "match": true
+      }
+    }
+  },
+  "baseline": {
+    "timestamp": "2026-11-12T18:31:35.869Z",
+    "hashes": {
+      "candidateRegistry": {
+        "path": "11_INBOX/candidate-directives-registry.json",
+        "sha256": "c7322ed633cc0b74472a4ff83485cb8065a0a6fb3a2385e8fb14a3f84d3b127b",
+        "size": 312232
+      },
+      "domainRegistry": {
+        "path": "05_KNOWLEDGE/domain-intelligence/domain-registry.json",
+        "sha256": "7a5075ac6e049e27887581b750fee24fcae45d54d4b29230bf1e4d212527cb6f",
+        "size": 151561
+      },
+      "knowledgeIndex": {
+        "path": "05_KNOWLEDGE/knowledge-index.json",
+        "sha256": "7e49f275a9a71cb25d684b45e6ec541f24461319add82126bc341e7cf3cd14ea",
+        "size": 8695502
+      },
+      "relationshipGraph": {
+        "path": ".project-brain/knowledge-graph/relationship-graph.json",
+        "sha256": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb",
+        "size": 33059
+      },
+      "engineeringPatterns": {
+        "path": "05_KNOWLEDGE/engineering-patterns.md",
+        "sha256": "6ea819849e8b3ef74b5654f16b1a6ff0f2d833d6d8eb536dc8c5b9947c98aa04",
+        "size": 23587505
+      },
+      "harvestControl": {
+        "path": "harvest-control.json",
+        "sha256": "79b321c884ca80c6e8c63f2f49921af9b627eef265de5cd5e5f5a045b1e31ddb",
+        "size": 11496
+      }
+    },
+    "candidateTotal": 697,
+    "statusCounts": {
+      "PROMOTED_CANONICAL_ACTIVE": 3,
+      "STAGED_FOR_VERIFICATION": 398,
+      "STAGED_FOR_HUMAN_REVIEW": 296
+    },
+    "sourceTypeCounts": {
+      "chat_master_prompt": 1,
+      "automated_harvester_candidate": 394,
+      "engineering_gap_feedback": 6,
+      "UNKNOWN": 296
+    },
+    "evidenceCompleteness": {
+      "withStagedFile": 302,
+      "withSourceRepo": 690,
+      "withSourceCommit": 394,
+      "withVerificationCriteria": 7,
+      "withRejectionReason": 394,
+      "rejectionReasons": {
+        "Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**": 7,
+        "Rule body fails substance threshold (minimum 200 characters required)": 54,
+        "Missing mandatory **WHEN TO APPLY** context": 9,
+        "Generic header title rejected": 59,
+        "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern": 208,
+        "Missing mandatory **WHY** technical rationale": 42,
+        "Invalid or missing rule title": 3,
+        "Rule title references repository-specific PR/issue rather than a universal engineering principle": 3,
+        "Missing mandatory **VERIFICATION METHOD** automated verification protocol": 9
+      }
+    },
+    "candidateClassification": {
+      "domainCounts": {
+        "A": 0,
+        "B": 2,
+        "C": 0,
+        "D": 50,
+        "E": 1,
+        "F": 3,
+        "G": 308,
+        "H": 16,
+        "I": 18,
+        "J": 4,
+        "K": 43,
+        "L": 1,
+        "M": 25
+      },
+      "unclassifiedCount": 226,
+      "multiDomainCount": 364,
+      "secondaryDomainCounts": {
+        "A": 23,
+        "B": 4,
+        "C": 1,
+        "D": 302,
+        "E": 0,
+        "F": 3,
+        "G": 7,
+        "H": 292,
+        "I": 18,
+        "J": 8,
+        "K": 352,
+        "L": 2,
+        "M": 287
+      },
+      "unclassifiedSamples": [
+        {
+          "id": "CD-SPIP",
+          "title": "Multi-EOS Set-Normalizing Generation Terminal Guard",
+          "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-4YX5",
+          "title": "Frozen Vision Encoder for Zero-Shot Generalization",
+          "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-ZNND",
+          "title": "Clamped Masked Temporal Pooling (CMTP)",
+          "reason": "Missing mandatory **WHEN TO APPLY** context",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-BE6X",
+          "title": "Rule: Precision Parity in Normalization Layers",
+          "reason": "Generic header title rejected",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-F5VV",
+          "title": "Modality-Specific Sparsity Heuristic",
+          "reason": "Missing mandatory **WHEN TO APPLY** context",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-J7YF",
+          "title": "Context Length Clamping",
+          "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-N11P",
+          "title": "Selective MoE Quantization Rule",
+          "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-N11P",
+          "title": "Domain-Specific Calibration Rule",
+          "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-N11P",
+          "title": "Engine-Specific Checkpoint Rule",
+          "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+          "hasStagedFile": false
+        },
+        {
+          "id": "CD-RABK",
+          "title": "Quantized Tensor Transplant Integrity Rule",
+          "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+          "hasStagedFile": false
+        }
+      ]
+    },
+    "legacyFolderRouting": {
+      "05_KNOWLEDGE": 696,
+      "08_VERIFICATION": 1
+    },
+    "duplicates": {
+      "uniqueTitles": 572,
+      "duplicateTitleInstances": 125,
+      "duplicateGroupCount": 33,
+      "topDuplicates": [
+        {
+          "title": "models): add download user-agent and ipv4 fallback (#370)",
+          "count": 32,
+          "ids": [
+            "CD-REV-E91DAF",
+            "CD-REV-8EAC7D",
+            "CD-REV-A38FAD",
+            "CD-REV-DF6EC7",
+            "CD-REV-FC51E5",
+            "CD-REV-6A1D8E",
+            "CD-REV-0E8CB4",
+            "CD-REV-A43B15",
+            "CD-REV-299B2B",
+            "CD-REV-E7035B",
+            "CD-REV-721E77",
+            "CD-REV-B1C7E0",
+            "CD-REV-0B0DBD",
+            "CD-REV-1C53D8",
+            "CD-REV-30A070",
+            "CD-REV-30D8E1",
+            "CD-REV-E95373",
+            "CD-REV-7D1DAB",
+            "CD-REV-BB4F45",
+            "CD-REV-8EBE75",
+            "CD-REV-4A698A",
+            "CD-REV-82B529",
+            "CD-REV-6D0FCE",
+            "CD-REV-1C9882",
+            "CD-REV-7A223B",
+            "CD-REV-42B4DB",
+            "CD-REV-194312",
+            "CD-REV-2B0017",
+            "CD-REV-72A12A",
+            "CD-REV-D646C7",
+            "CD-REV-431057",
+            "CD-REV-DF405F"
+          ]
+        },
+        {
+          "title": "export: fix consent of former subscribers covering private channels.",
+          "count": 16,
+          "ids": [
+            "CD-REV-7479A7",
+            "CD-REV-803435",
+            "CD-REV-DCEE59",
+            "CD-REV-0A0FB5",
+            "CD-REV-906646",
+            "CD-REV-53B093",
+            "CD-REV-F3D791",
+            "CD-REV-C4BF9F",
+            "CD-REV-C4F4F7",
+            "CD-REV-3EC187",
+            "CD-REV-39B167",
+            "CD-REV-72E615",
+            "CD-REV-035CDC",
+            "CD-REV-FB50D3",
+            "CD-REV-514F52",
+            "CD-REV-03D931"
+          ]
+        },
+        {
+          "title": "the 8 learning extraction artifacts",
+          "count": 14,
+          "ids": [
+            "CD-YP7G",
+            "CD-2CP6",
+            "CD-ACEZ",
+            "CD-ECR6",
+            "CD-I0YB",
+            "CD-DY0S",
+            "CD-PMZ3",
+            "CD-T3YB",
+            "CD-CM4A",
+            "CD-GBD0",
+            "CD-T42I",
+            "CD-WUJZ",
+            "CD-30ZM",
+            "CD-MI7L"
+          ]
+        },
+        {
+          "title": "editor): add scoped ios account deletion",
+          "count": 14,
+          "ids": [
+            "CD-REV-8E0D9F",
+            "CD-REV-26DF2A",
+            "CD-REV-E785F7",
+            "CD-REV-0FDA5F",
+            "CD-REV-CB302D",
+            "CD-REV-B51DB4",
+            "CD-REV-B15E6C",
+            "CD-REV-2EFD1D",
+            "CD-REV-1C7B8B",
+            "CD-REV-C32D68",
+            "CD-REV-0D0B0C",
+            "CD-REV-16EA67",
+            "CD-REV-862A3F",
+            "CD-REV-CB0166"
+          ]
+        },
+        {
+          "title": "stream & asynciterable collection bound limitation",
+          "count": 6,
+          "ids": [
+            "CD-090",
+            "CD-091",
+            "CD-092",
+            "CD-093",
+            "CD-094",
+            "CD-095"
+          ]
+        },
+        {
+          "title": "splash screen staying visible after warm start on android 12+",
+          "count": 6,
+          "ids": [
+            "CD-REV-5AF5AE",
+            "CD-REV-EA034B",
+            "CD-REV-39FC47",
+            "CD-REV-9C09F2",
+            "CD-REV-F6E93D",
+            "CD-REV-81C555"
+          ]
+        },
+        {
+          "title": "android): skip explicit kotlin plugin when agp registers the kotlin extension (#",
+          "count": 6,
+          "ids": [
+            "CD-REV-32633D",
+            "CD-REV-FA9848",
+            "CD-REV-0AF7AC",
+            "CD-REV-CB82EF",
+            "CD-REV-8309E5",
+            "CD-REV-091CBC"
+          ]
+        },
+        {
+          "title": "backend concurrency & memory safety",
+          "count": 5,
+          "ids": [
+            "CD-GBD0",
+            "CD-YSCG",
+            "CD-P49U",
+            "CD-YDR5",
+            "CD-V7GX"
+          ]
+        },
+        {
+          "title": "forensic learning record (deep inspection): zleap-ai/sag",
+          "count": 5,
+          "ids": [
+            "CD-REV-3A2D9B",
+            "CD-REV-B16568",
+            "CD-REV-5A70CC",
+            "CD-REV-616E3C",
+            "CD-REV-12C225"
+          ]
+        },
+        {
+          "title": "empirical invariant guard in readme.md",
+          "count": 4,
+          "ids": [
+            "CD-Y9MQ",
+            "CD-0HFF",
+            "CD-VAST",
+            "CD-5I3C"
+          ]
+        }
+      ]
+    },
+    "domainRegistry": {
+      "totalRecords": 74,
+      "domainCounts": {
+        "A": 1,
+        "B": 2,
+        "C": 1,
+        "D": 35,
+        "E": 1,
+        "F": 2,
+        "G": 1,
+        "H": 19,
+        "I": 2,
+        "J": 3,
+        "K": 4,
+        "L": 2,
+        "M": 1
+      },
+      "khu005Status": [
+        {
+          "id": "DOM-H-94C4B932",
+          "preserved": true,
+          "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)"
+        },
+        {
+          "id": "DOM-H-2007DF83",
+          "preserved": true,
+          "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)"
+        },
+        {
+          "id": "DOM-H-7D0B9F17",
+          "preserved": true,
+          "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)"
+        },
+        {
+          "id": "DOM-H-C2A738D4",
+          "preserved": true,
+          "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)"
+        },
+        {
+          "id": "DOM-H-1B2AC6F8",
+          "preserved": true,
+          "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)"
+        }
+      ],
+      "khu005Intact": true
+    }
+  },
+  "domainCoverage": {
+    "suite": "13_DOMAIN_COVERAGE_VERIFICATION",
+    "domains": {
+      "A": {
+        "letter": "A",
+        "name": "Human & Need Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "A",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/cognitive-load-and-accessibility-contrast-thresholds-for-nov.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "B": {
+        "letter": "B",
+        "name": "Product Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "B",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/prd-feature-scoping-and-mvp-acceptance-criteria-gate.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "C": {
+        "letter": "C",
+        "name": "Market & Business Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "C",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/gross-margin-and-cloud-infrastructure-compute-hurdle-rate.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "D": {
+        "letter": "D",
+        "name": "Research & Knowledge Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "D",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "09_SOURCES",
+        "routingPath": "09_SOURCES/cryptographic-source-provenance-and-cross-corroboration-prot.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "E": {
+        "letter": "E",
+        "name": "Creative Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "E",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/visual-metaphor-anchoring-and-brand-tone-uniqueness.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "F": {
+        "letter": "F",
+        "name": "Design Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "F",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/responsive-viewport-breakpoints-and-tailwind-oklch-design-to.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "G": {
+        "letter": "G",
+        "name": "Architecture Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "G",
+        "confidence": 1,
+        "secondaryDomains": [
+          "H"
+        ],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/zero-copy-ipc-buffer-bridge-and-decoupled-service-boundaries.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "H": {
+        "letter": "H",
+        "name": "Technical Construction Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "H",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/wasm-linear-memory-allocation-and-asynchronous-stream-buffer.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "I": {
+        "letter": "I",
+        "name": "Content & Information Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "I",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/structured-technical-documentation-and-micro-copy-clarity-st.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "J": {
+        "letter": "J",
+        "name": "Search & Distribution Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "J",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/canonical-self-referential-links-and-multilingual-hreflang-s.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "K": {
+        "letter": "K",
+        "name": "Quality & Verification Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "K",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "08_VERIFICATION",
+        "routingPath": "08_VERIFICATION/deterministic-regression-assertion-harness-and-zero-network-.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "L": {
+        "letter": "L",
+        "name": "Deployment & Operations Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "L",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "05_KNOWLEDGE",
+        "routingPath": "05_KNOWLEDGE/ephemeral-container-healthchecks-and-immutable-vault-backup-.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      },
+      "M": {
+        "letter": "M",
+        "name": "Feedback & Evolution Intelligence",
+        "eligibleRecords": 1,
+        "correctlyClassified": 1,
+        "classifiedAs": "M",
+        "confidence": 1,
+        "secondaryDomains": [],
+        "routingFolder": "14_EVOLUTION",
+        "routingPath": "14_EVOLUTION/production-incident-post-mortem-and-universal-rule-derivatio.md",
+        "evidenceComplete": true,
+        "readBackVerified": true,
+        "retrievalSuccess": true,
+        "status": "VERIFIED"
+      }
+    },
+    "allPassed": true,
+    "totalTests": 13,
+    "passedCount": 13
+  },
+  "folderDistribution": {
+    "suite": "16_FOLDER_DISTRIBUTION_VERIFICATION",
+    "folders": {
+      "00_START_HERE": {
+        "folder": "00_START_HERE",
+        "responsibility": "Onboarding, quickstart orientation, architecture sitemap, beginner pair-programming primer",
+        "allowedTypes": [
+          "orientation_guide",
+          "sitemap",
+          "onboarding_primer"
+        ],
+        "testedType": "orientation_guide",
+        "routedFolder": "00_START_HERE",
+        "destinationPath": "00_START_HERE/developer-orientation-architecture-sitemap.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "01_CORE": {
+        "folder": "01_CORE",
+        "responsibility": "Immutable system rules, operating laws, non-negotiable safety invariants",
+        "allowedTypes": [
+          "core_law",
+          "system_invariant",
+          "operating_protocol"
+        ],
+        "testedType": "core_law",
+        "routedFolder": "01_CORE",
+        "destinationPath": "01_CORE/system-invariant-1-preserve-first-operations.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "02_AGENT_INTELLIGENCE": {
+        "folder": "02_AGENT_INTELLIGENCE",
+        "responsibility": "Agent role contracts, multi-agent fleet specs, prompt chains, subagent definitions",
+        "allowedTypes": [
+          "agent_contract",
+          "fleet_roster",
+          "subagent_spec"
+        ],
+        "testedType": "agent_contract",
+        "routedFolder": "02_AGENT_INTELLIGENCE",
+        "destinationPath": "02_AGENT_INTELLIGENCE/coordinator-agent-behavioral-specification.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "03_SKILLS": {
+        "folder": "03_SKILLS",
+        "responsibility": "Reusable, model-independent execution playbooks and procedural domain skills",
+        "allowedTypes": [
+          "skill_playbook",
+          "procedural_guide",
+          "execution_recipe"
+        ],
+        "testedType": "skill_playbook",
+        "routedFolder": "03_SKILLS",
+        "destinationPath": "03_SKILLS/fastapi-lifespan-context-manager-playbook.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "04_WORKFLOWS": {
+        "folder": "04_WORKFLOWS",
+        "responsibility": "Deterministic automation scripts, Project Factory engines, testing harnesses",
+        "allowedTypes": [
+          "automation_engine",
+          "factory_workflow",
+          "test_suite"
+        ],
+        "testedType": "automation_engine",
+        "routedFolder": "04_WORKFLOWS",
+        "destinationPath": "04_WORKFLOWS/zero-clone-harvester-factory-runner.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "05_KNOWLEDGE": {
+        "folder": "05_KNOWLEDGE",
+        "responsibility": "Curated facts, verified domain patterns, professional disciplines, taxonomy",
+        "allowedTypes": [
+          "engineering_pattern",
+          "domain_fact",
+          "discipline_profile",
+          "taxonomy_def"
+        ],
+        "testedType": "engineering_pattern",
+        "routedFolder": "05_KNOWLEDGE",
+        "destinationPath": "05_KNOWLEDGE/rule-1724-master-epistemic-graph-sync-pattern.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "06_PROJECT_CONTEXT": {
+        "folder": "06_PROJECT_CONTEXT",
+        "responsibility": "Active project state, ephemeral build variables, child repo bridge configuration",
+        "allowedTypes": [
+          "project_context",
+          "workspace_bridge",
+          "environment_state"
+        ],
+        "testedType": "project_context",
+        "routedFolder": "06_PROJECT_CONTEXT",
+        "destinationPath": "06_PROJECT_CONTEXT/active-project-bridge-configuration.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "07_PROJECT_LEARNING": {
+        "folder": "07_PROJECT_LEARNING",
+        "responsibility": "Raw harvested dossiers, repository extraction artifacts, commit forensic logs",
+        "allowedTypes": [
+          "raw_dossier",
+          "commit_forensic",
+          "extraction_archive"
+        ],
+        "testedType": "raw_dossier",
+        "routedFolder": "07_PROJECT_LEARNING",
+        "destinationPath": "07_PROJECT_LEARNING/fastapi-release-v0-115-forensic-learning-dossier.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "08_VERIFICATION": {
+        "folder": "08_VERIFICATION",
+        "responsibility": "Test reports, independent audit trails, capability verification contracts, knowledge gaps",
+        "allowedTypes": [
+          "audit_report",
+          "verification_contract",
+          "knowledge_gap",
+          "test_manifest"
+        ],
+        "testedType": "audit_report",
+        "routedFolder": "08_VERIFICATION",
+        "destinationPath": "08_VERIFICATION/stage-d-5-independent-production-patch-review-report.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "09_SOURCES": {
+        "folder": "09_SOURCES",
+        "responsibility": "External source catalogs, trust tier ledgers, scraping manifests, API registries",
+        "allowedTypes": [
+          "source_entry",
+          "catalog_manifest",
+          "provenance_ledger"
+        ],
+        "testedType": "source_entry",
+        "routedFolder": "09_SOURCES",
+        "destinationPath": "09_SOURCES/github-tier-1-official-repository-catalog.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "10_PROMPTS": {
+        "folder": "10_PROMPTS",
+        "responsibility": "Production system meta-prompts, pair-programming instructions, review guidelines",
+        "allowedTypes": [
+          "system_prompt",
+          "instruction_template",
+          "review_prompt"
+        ],
+        "testedType": "system_prompt",
+        "routedFolder": "10_PROMPTS",
+        "destinationPath": "10_PROMPTS/autonomous-auditor-master-instruction-directive.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "11_INBOX": {
+        "folder": "11_INBOX",
+        "responsibility": "Pre-promotion staging buffer, candidate directives, unverified discoveries, review queue",
+        "allowedTypes": [
+          "candidate_directive",
+          "unverified_discovery",
+          "staged_proposal"
+        ],
+        "testedType": "candidate_directive",
+        "routedFolder": "11_INBOX",
+        "destinationPath": "11_INBOX/staged-candidate-modality-specific-sparsity.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "12_DECISIONS": {
+        "folder": "12_DECISIONS",
+        "responsibility": "Architecture Decision Records (ADRs), structural trade-offs, design choices",
+        "allowedTypes": [
+          "architecture_decision",
+          "adr",
+          "tradeoff_analysis"
+        ],
+        "testedType": "architecture_decision",
+        "routedFolder": "12_DECISIONS",
+        "destinationPath": "12_DECISIONS/adr-004-dual-schema-knowledge-graph-integration.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "13_GOVERNANCE": {
+        "folder": "13_GOVERNANCE",
+        "responsibility": "Change control protocols, human approval workflows, release procedures, safety gates",
+        "allowedTypes": [
+          "governance_policy",
+          "approval_gate",
+          "change_protocol"
+        ],
+        "testedType": "governance_policy",
+        "routedFolder": "13_GOVERNANCE",
+        "destinationPath": "13_GOVERNANCE/cryptographic-human-approval-authority-protocol.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "14_EVOLUTION": {
+        "folder": "14_EVOLUTION",
+        "responsibility": "System capability roadmaps, historical milestones, schema migration logs",
+        "allowedTypes": [
+          "roadmap_milestone",
+          "evolution_metric",
+          "migration_log"
+        ],
+        "testedType": "roadmap_milestone",
+        "routedFolder": "14_EVOLUTION",
+        "destinationPath": "14_EVOLUTION/phase-e-universal-knowledge-distribution-roadmap.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      },
+      "15_METADATA": {
+        "folder": "15_METADATA",
+        "responsibility": "Machine-readable capability registries, system taxonomy schemas, Zod definitions",
+        "allowedTypes": [
+          "capability_contract",
+          "system_schema",
+          "metadata_registry"
+        ],
+        "testedType": "system_schema",
+        "routedFolder": "15_METADATA",
+        "destinationPath": "15_METADATA/machine-readable-knowledge-taxonomy-schema-v2-0.md",
+        "readBackVerified": true,
+        "status": "VERIFIED"
+      }
+    },
+    "allPassed": true,
+    "totalTests": 16,
+    "passedCount": 16
+  },
+  "qualitySuite": {
+    "suite": "INDEPENDENT_QUALITY_TEST_SUITE",
+    "tests": [
+      {
+        "id": "Q-01",
+        "name": "Correct Domain Classification",
+        "pass": true,
+        "details": "Classified as F (expected F), confidence 1"
+      },
+      {
+        "id": "Q-02",
+        "name": "Multi-Domain Routing",
+        "pass": true,
+        "details": "Detected primary F with secondary H"
+      },
+      {
+        "id": "Q-03",
+        "name": "Wrong-Destination Rejection",
+        "pass": true,
+        "details": "Target folder routed to 11_INBOX (prevented unverified write to 01_CORE)"
+      },
+      {
+        "id": "Q-04",
+        "name": "Duplicate Prevention",
+        "pass": true,
+        "details": "Duplicate detected: IDENTICAL_TITLE_COLLISION matching REC-001"
+      },
+      {
+        "id": "Q-05",
+        "name": "Conflicting Evidence Detection",
+        "pass": true,
+        "details": "Conflict detected: CONTRADICTORY_DIRECTIVE"
+      },
+      {
+        "id": "Q-06",
+        "name": "Missing Provenance Quarantine",
+        "pass": true,
+        "details": "Quarantined with error: Missing mandatory provenance attribution"
+      },
+      {
+        "id": "Q-07",
+        "name": "Unverified Knowledge Quarantine",
+        "pass": true,
+        "details": "Flagged as inadmissible: Item lacks explicit empirical verification criteria or executable assertions"
+      },
+      {
+        "id": "Q-08",
+        "name": "Read-Back Integrity Barrier",
+        "pass": true,
+        "details": "Persisted 295 bytes with SHA-256 dac6335711efdc9e..."
+      },
+      {
+        "id": "Q-09",
+        "name": "Retrieval Relevance",
+        "pass": true,
+        "details": "Found 1 matches, top match score: 2"
+      },
+      {
+        "id": "Q-10",
+        "name": "Restart Resilience",
+        "pass": true,
+        "details": "Retrieved 6 items after clean instance rebuild"
+      }
+    ],
+    "passedCount": 10,
+    "totalTests": 10,
+    "allPassed": true
+  }
+}

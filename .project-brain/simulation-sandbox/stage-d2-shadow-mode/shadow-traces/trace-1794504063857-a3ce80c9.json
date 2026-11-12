@@ -1,0 +1,52 @@
+{
+  "trace_id": "trace-1794504063857-a3ce80c9",
+  "timestamp": "2026-11-12T17:21:03.857Z",
+  "origin": "CLOUD_HARVESTER",
+  "repository": "colinhacks/zod",
+  "learning_id": "duplicate-zod-memoizer-check",
+  "content_hash": "c1b48b64e0310705a2e6fca78e8b6b0b5c7e098492040b2d6a7d18861cf1f92e",
+  "execution_duration_ms": 0,
+  "shadow_status": "SHADOW_DUPLICATE",
+  "success": true,
+  "payload_audit": {
+    "source_url": "https://github.com/colinhacks/zod",
+    "dossier_text": "# Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)\n\n## Duplicate verification",
+    "apiKey": "[REDACTED_SENSITIVE_FIELD]",
+    "client_secret": "[REDACTED_SENSITIVE_FIELD]",
+    "token": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "classification": {
+    "primary_domain": "H",
+    "primary_domain_name": "Technical Construction Intelligence",
+    "confidence": 0,
+    "secondary_domains": []
+  },
+  "routing": {
+    "destination_folder": "05_KNOWLEDGE",
+    "suggested_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-colinhacks-zod.md",
+    "requires_human_approval": false
+  },
+  "duplicate_detection": {
+    "is_duplicate": true,
+    "duplicate_type": "CONTENT_HASH_EXACT",
+    "matched_id": "existing-zod-pkg",
+    "matched_repo": "colinhacks/zod"
+  },
+  "approval_evaluation": [
+    {
+      "candidate_id": "duplicate-zod-memoizer-check",
+      "eval": {
+        "admitted_to_canonical": false,
+        "routing_action": "STAGE_INBOX_PENDING",
+        "target_folder": "11_INBOX",
+        "reason": "Record has approval_status PENDING_APPROVAL. Staged in 11_INBOX awaiting human review."
+      }
+    }
+  ],
+  "provenance_completeness": {
+    "valid": true,
+    "fingerprint": null,
+    "errors": []
+  },
+  "errors": []
+}

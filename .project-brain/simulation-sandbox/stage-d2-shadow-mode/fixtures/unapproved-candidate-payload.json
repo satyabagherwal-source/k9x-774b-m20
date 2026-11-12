@@ -1,0 +1,21 @@
+{
+  "learning_id": "unapproved-candidate-raft-snapshot-01",
+  "slug": "raft-snapshot-log-compaction-safety",
+  "repository": "tikv/raft-rs",
+  "platform": "github",
+  "source_url": "https://github.com/tikv/raft-rs",
+  "source_version": "7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b",
+  "license": "Apache-2.0",
+  "harvest_origin": "CLOUD_HARVESTER",
+  "dossier_content": "# Raft Snapshot Compaction Safety\n\n## Abstract\nSnapshot installation requires holding term invariant.",
+  "content_hash": "000a11e244cd7f4c3dbb90e94eebda66f46961ae1c9e62e8e88fb16d49c81ef9",
+  "requires_human_approval": true,
+  "candidates": [
+    {
+      "candidate_id": "CAND-RAFT-UNAPPROVED-01",
+      "title": "Raft Snapshot Truncation Gate",
+      "approval_status": "PENDING_REVIEW",
+      "domain": "G"
+    }
+  ]
+}

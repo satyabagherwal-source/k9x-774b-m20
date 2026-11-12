@@ -1,0 +1,34 @@
+{
+  "mission_id": "UKD-STAGE-D-HARVESTER-INTEGRATION-READINESS-01",
+  "timestamp": "2026-11-12T16:36:53.486Z",
+  "integrity_status": "VERIFIED_100_PERCENT_READ_ONLY_SANDBOX",
+  "git_state": {
+    "branch": "main",
+    "head_commit": "bb6582fcf042ee335f8d271a5be6267bca7fb815",
+    "tracked_modifications": 0,
+    "working_tree_clean": true
+  },
+  "system_registries": {
+    "domain_registry_records": 74,
+    "candidate_directives_count": 697,
+    "pending_zod_records_count": 6,
+    "zod_records_intact": true
+  },
+  "production_artifacts": {
+    "retrieval_cache_bytes": 405601926,
+    "retrieval_cache_sha256": "09e91ddf2b4c3174f8f9745e0d5b417d5fef77fec7be0a3723fab03f1d48fdd1",
+    "relationship_graph_bytes": 33059,
+    "relationship_graph_sha256": "488e8ccd4fee03acb541b8adf29d4b089d63e8222c7be7e0f3461a53a9e39fdb",
+    "canonical_folders_count": 16,
+    "all_16_folders_intact": true,
+    "production_files_modified": 0
+  },
+  "stage_d_test_metrics": {
+    "all_15_requirements_verified": true,
+    "all_suites_passed": true,
+    "cloud_adapter_verified": true,
+    "manual_adapter_verified": true,
+    "consistency_verified": true,
+    "approval_gate_verified": true
+  }
+}

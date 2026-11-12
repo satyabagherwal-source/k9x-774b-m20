@@ -1,0 +1,258 @@
+{
+  "timestamp": "2026-11-12T19:19:36.561Z",
+  "missionId": "UKD-PHASE-E4-INDEPENDENT-VERIFICATION-01",
+  "sampleSize": 12,
+  "suitesRun": 13,
+  "suitesPassed": 13,
+  "checksPassed": 61,
+  "checksTotal": 61,
+  "statusBreakdown": {
+    "VERIFIED_INDEPENDENTLY": 4,
+    "PARTIALLY_VERIFIED": 7,
+    "NOT_INDEPENDENTLY_VERIFIABLE": 2,
+    "FAILED_VERIFICATION": 0
+  },
+  "candidateOutcomes": [
+    {
+      "testId": "TEST-01",
+      "name": "serpiq extractJSON",
+      "candidateId": "SYNTH-E3-164-CD-F2AV",
+      "title": "harden core utilities, add vitest suite, contributing guide",
+      "status": "VERIFIED_INDEPENDENTLY",
+      "evidenceType": "ACTUAL_SOURCE_CODE_EXECUTED",
+      "checksPassed": 8,
+      "checksTotal": 8,
+      "log": [
+        "Executing Test 01: serpiq extractJSON (Actual Original Implementation)",
+        "  PASS: Fast path standard JSON parsing",
+        "  PASS: Markdown code fences stripped cleanly",
+        "  PASS: Conversational preamble/postscript correctly sliced via brace balancing",
+        "  PASS: Braces inside string literal do not corrupt brace balance depth",
+        "  PASS: Escaped quotes inside strings correctly tracked",
+        "  PASS: Empty response correctly rejected with ExtractJSONError",
+        "  PASS: Unstructured response without braces rejected with ExtractJSONError",
+        "  PASS: Malformed JSON within braces caught with attempted slice preserved"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-02",
+      "name": "Apple Silicon Guide Anchor Heading",
+      "candidateId": "SYNTH-E3-179-CD-3H9L",
+      "title": "The Anchor-Heading Synchronization Invariant",
+      "status": "VERIFIED_INDEPENDENTLY",
+      "evidenceType": "ALGORITHMIC_CONTRACT_EXECUTED",
+      "checksPassed": 8,
+      "checksTotal": 8,
+      "log": [
+        "Executing Test 02: Apple Silicon Guide Anchor-Heading Synchronization",
+        "  PASS: Basic heading slugified correctly (\"table-of-contents\")",
+        "  PASS: Punctuation cleanly removed (\"whats-new-in-macos-tahoe\")",
+        "  PASS: Numbered and ampersand headings slugified consistently",
+        "  PASS: Duplicate heading disambiguated with sequential suffix (\"-1\")",
+        "  PASS: Valid anchor links successfully validated",
+        "  PASS: Case-sensitive mismatch correctly rejected",
+        "  PASS: Unescaped space anchor correctly rejected",
+        "  PASS: Empty heading correctly rejected"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-03",
+      "name": "Qwen Image Binary Header",
+      "candidateId": "SYNTH-E3-113-CD-8KGR",
+      "title": "Binary Artifact Versioning & Format Compatibility Invariant",
+      "status": "VERIFIED_INDEPENDENTLY",
+      "evidenceType": "BINARY_ENVELOPE_EXECUTION",
+      "checksPassed": 6,
+      "checksTotal": 6,
+      "log": [
+        "Executing Test 03: Binary Model Artifact Header & Format Verification",
+        "  PASS: Valid GGUF v3 header envelope recognized",
+        "  PASS: Valid Safetensors header parsed and validated",
+        "  PASS: Truncated buffer under 8 bytes rejected",
+        "  PASS: Unsupported GGUF version caught",
+        "  PASS: Memory exhaustion attack via header overflow rejected immediately",
+        "  PASS: Truncated Safetensors buffer caught before reading memory"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-04",
+      "name": "MiniCPM-V Patch Divisibility",
+      "candidateId": "SYNTH-E3-108-CD-YKUY",
+      "title": "Patch Size Divisibility for Vision Encoder",
+      "status": "PARTIALLY_VERIFIED",
+      "evidenceType": "MATHEMATICAL_INVARIANT_VERIFIED",
+      "qualification": "Patch calculation and boundary padding verified; full 1B vision weights unavailable offline",
+      "checksPassed": 5,
+      "checksTotal": 5,
+      "log": [
+        "Executing Test 04: MiniCPM-V Patch Size Divisibility Invariant",
+        "  PASS: Native 980x980 yields exactly 4900 patches (70x70 grid)",
+        "  PASS: Rectangular 448x224 yields exactly 512 patches (32x16 grid)",
+        "  PASS: Non-divisible height (985 % 14 = 5) correctly rejected",
+        "  PASS: Non-divisible width (983 % 14 = 3) correctly rejected",
+        "  PASS: Automatic padding recovers patch divisibility (994x994)"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-05",
+      "name": "MiniCPM-V Partial RoPE",
+      "candidateId": "SYNTH-E3-122-CD-X37I",
+      "title": "Insight III: Partial RoPE Application",
+      "status": "PARTIALLY_VERIFIED",
+      "evidenceType": "MATHEMATICAL_INVARIANT_VERIFIED",
+      "qualification": "Rotational tensor slicing logic verified; full multimodal model weights unavailable offline",
+      "checksPassed": 5,
+      "checksTotal": 5,
+      "log": [
+        "Executing Test 05: MiniCPM-V Partial RoPE Head Slicing Invariant",
+        "  PASS: Output dimensions strictly match 128 with 64 rotated / 64 passed-through",
+        "  PASS: Pass-through coordinates (indices 64..127) strictly untouched by RoPE",
+        "  PASS: Rotated coordinates (indices 0..63) mathematically rotated",
+        "  PASS: Incompatible input head dimension caught",
+        "  PASS: Odd dRope dimension rejected"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-06",
+      "name": "DeepSeek-R1 MLA KV Cache",
+      "candidateId": "SYNTH-E3-020-CD-V1HX",
+      "title": "MLA KV Cache Dimension Invariant",
+      "status": "PARTIALLY_VERIFIED",
+      "evidenceType": "MATHEMATICAL_INVARIANT_VERIFIED",
+      "qualification": "Matrix dimension contracts and memory reduction ratios verified; 671B R1 weights unavailable offline",
+      "checksPassed": 4,
+      "checksTotal": 4,
+      "log": [
+        "Executing Test 06: DeepSeek-R1 MLA KV Cache Dimension Invariant",
+        "  PASS: DeepSeek-R1 MLA compression ratio strictly verified (32x combined KV footprint reduction: 128MB -> 4MB for 4k seq)",
+        "  PASS: Matrix projection dimensions [7168 -> 512 -> 8192] strictly satisfied",
+        "  PASS: Dimension mismatch on latent compression caught",
+        "  PASS: Dimension mismatch on uncompression matrix caught"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-07",
+      "name": "Phocinae Multi-Choice Logits",
+      "candidateId": "SYNTH-E3-096-CD-DVLL",
+      "title": "Permutation-Invariant Multi-Choice Logit Aggregation",
+      "status": "PARTIALLY_VERIFIED",
+      "evidenceType": "ALGORITHMIC_CONTRACT_EXECUTED",
+      "qualification": "Logit extraction and permutation invariance verified; 150M weights unavailable offline",
+      "checksPassed": 4,
+      "checksTotal": 4,
+      "log": [
+        "Executing Test 07: Phocinae Multi-Choice Logit Aggregation",
+        "  PASS: Logit extraction and softmax normalizes choice probability distribution to 1.0",
+        "  PASS: Permutation averaging robustly selects choice \"A\" while mitigating single-shot position bias",
+        "  PASS: Out-of-vocabulary choice token ID correctly rejected",
+        "  PASS: Empty permutation list caught"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-08",
+      "name": "Qwen GGUF Context Clamping",
+      "candidateId": "SYNTH-E3-014-CD-J7YF",
+      "title": "Context Length Clamping",
+      "status": "PARTIALLY_VERIFIED",
+      "evidenceType": "BOUNDARY_ENVELOPE_VERIFIED",
+      "qualification": "Context clamping and allocation boundary logic verified; llama.cpp runtime binary unavailable offline",
+      "checksPassed": 5,
+      "checksTotal": 5,
+      "log": [
+        "Executing Test 08: Qwen GGUF Context Length Clamping Invariant",
+        "  PASS: Within-bounds context length (8192 <= 32768) preserved without clamping",
+        "  PASS: Exact boundary context length (32768) accepted",
+        "  PASS: Out-of-bounds request (65536) clamped to 32768 with clamp flag asserted",
+        "  PASS: Out-of-bounds request with strict mode throws ContextExceededError",
+        "  PASS: Non-positive context lengths rejected"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-09",
+      "name": "TeleOCR Deterministic Decoding",
+      "candidateId": "SYNTH-E3-029-CD-BKS6",
+      "title": "Deterministic Decoding for Extraction Tasks",
+      "status": "PARTIALLY_VERIFIED",
+      "evidenceType": "CONFIGURATION_CONTRACT_VERIFIED",
+      "qualification": "Generation configuration contract verified; TeleOCR vision-language runtime unavailable offline",
+      "checksPassed": 4,
+      "checksTotal": 4,
+      "log": [
+        "Executing Test 09: TeleOCR Deterministic Decoding Invariant",
+        "  PASS: Deterministic configuration (T=0, do_sample=false) validated",
+        "  PASS: Stochastic temperature (T=0.7) rejected for extraction tasks",
+        "  PASS: do_sample=true rejected",
+        "  PASS: Repetition penalty < 1.0 rejected"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-10",
+      "name": "OpenOPC Shadow Adapter",
+      "candidateId": "SYNTH-E3-137-CD-644A",
+      "title": "resolve compatibility crashes by implementing required adapter methods, fixing t",
+      "status": "PARTIALLY_VERIFIED",
+      "evidenceType": "INTERFACE_CONTRACT_VERIFIED",
+      "qualification": "Adapter interface assertions and defensive conversion verified; live OPC server environment unavailable offline",
+      "checksPassed": 4,
+      "checksTotal": 4,
+      "log": [
+        "Executing Test 10: OpenOPC Software Adapter Interface Invariant",
+        "  PASS: Compliant adapter satisfies contract assertions",
+        "  PASS: Defensive mapping converts task model with trimmed fields and uppercase status",
+        "  PASS: Malformed task safely mapped without throwing null reference exceptions",
+        "  PASS: Non-compliant adapter caught with explicit missing methods list"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-11",
+      "name": "Nucleoid Rust Parser",
+      "candidateId": "SYNTH-E3-134-CD-HBYI",
+      "title": "Add colon-free indented exception suites",
+      "status": "NOT_INDEPENDENTLY_VERIFIABLE",
+      "evidenceType": "ENVIRONMENT_BLOCKED",
+      "qualification": "Rust source code present in dossier, but rustc compiler is not installed on Windows host",
+      "checksPassed": 2,
+      "checksTotal": 2,
+      "rustcAvailable": false,
+      "log": [
+        "Executing Test 11: Nucleoid Colon-Free Indented Suite Parser Check",
+        "  CHECK: Dossier exists and contains Rust AST parser snippet: true",
+        "  CHECK: rustc is NOT available in current execution environment",
+        "  EPISTEMIC BOUNDARY: Actual compilation and native execution cannot proceed without Rust toolchain.",
+        "  CLASSIFICATION: NOT_INDEPENDENTLY_VERIFIABLE (Environment Limitation)"
+      ],
+      "error": null
+    },
+    {
+      "testId": "TEST-12",
+      "name": "Turso Limbo SQL Engine Source",
+      "candidateId": "SYNTH-E3-153-CD-P49U",
+      "title": "Backend Concurrency & Memory Safety",
+      "status": "NOT_INDEPENDENTLY_VERIFIABLE",
+      "evidenceType": "SOURCE_OMITTED_BLOCKED",
+      "qualification": "PR issue discussion and autopsy documented, but core database engine source is omitted from learning dossier",
+      "checksPassed": 2,
+      "checksTotal": 2,
+      "hasEngineSource": false,
+      "log": [
+        "Executing Test 12: Turso Limbo SQL Engine Source Availability Check",
+        "  CHECK: Dossier exists (110004 bytes)",
+        "  CHECK: PR #11737 problem autopsy and issue metadata present: true",
+        "  CHECK: Full Limbo database engine source files embedded: false",
+        "  EPISTEMIC BOUNDARY: Actual SQL execution and dependency cascade ordering cannot be executed without engine source.",
+        "  CLASSIFICATION: NOT_INDEPENDENTLY_VERIFIABLE (Source Limitation)"
+      ],
+      "error": null
+    }
+  ]
+}

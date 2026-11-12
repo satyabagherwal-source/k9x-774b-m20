@@ -1,0 +1,16 @@
+{
+  "learning_id": "duplicate-zod-memoizer-check",
+  "slug": "zod-memoizer-leak-dupe-test",
+  "repository": "colinhacks/zod",
+  "platform": "github",
+  "source_url": "https://github.com/colinhacks/zod",
+  "source_version": "c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7",
+  "license": "MIT",
+  "harvest_origin": "CLOUD_HARVESTER",
+  "dossier_content": "# Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)\n\n## Duplicate verification",
+  "content_hash": "c1b48b64e0310705a2e6fca78e8b6b0b5c7e098492040b2d6a7d18861cf1f92e",
+  "metadata": {
+    "is_duplicate": true,
+    "parent_id": "DOM-H-83C24083"
+  }
+}

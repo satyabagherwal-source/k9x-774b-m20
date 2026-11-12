@@ -1,0 +1,37 @@
+{
+  "candidate_id": "CD-D-CLOUD-CMTP",
+  "title": "Clamped Masked Temporal Pooling (CMTP)",
+  "content": "When pooling transformer token representations, clamp attention mask sum divisor to min 1e-9 to prevent NaN division.",
+  "summary": "Transformer pooling with epsilon divisor clamp preventing division by zero.",
+  "actionable_instruction": "Calculate sum_mask = torch.clamp(mask.sum(1), min=1e-9) before division.",
+  "tags": [
+    "transformer",
+    "pooling",
+    "attention-mask",
+    "clamp",
+    "pytorch"
+  ],
+  "domain_classification": "H",
+  "proposed_canonical_destination": "05_KNOWLEDGE",
+  "duplicate_references": [],
+  "approval_status": "APPROVED",
+  "implementation_evidence_status": "ORIGINAL_SOURCE_EXECUTED",
+  "knowledge_transferability_status": "TRANSFERABLE_PATTERN_CANDIDATE",
+  "provenance": {
+    "upstream_repository": "https://github.com/UKPLab/sentence-transformers",
+    "target_source_file": "sentence_transformers/models/Pooling.py",
+    "source_revision": "v2.2.2-commit-7248ef",
+    "license": "Apache-2.0",
+    "harvest_origin": "CLOUD_HARVESTER",
+    "extracted_at": "2026-11-12T16:36:47.522Z"
+  },
+  "evidence": {
+    "evidence_type": "EMPIRICAL_PYTORCH_TENSOR_EXECUTION",
+    "verification_status": "DIRECTLY_VERIFIED",
+    "harvest_origin": "CLOUD_HARVESTER"
+  },
+  "persistence_status": "PERSISTED",
+  "stored_at": "2026-11-12T16:36:47.536Z",
+  "integrity_hash": "d1a5dc024c98254fbedc12fd4c1e8a10752d1562dac9210f75dfae080a4c54bb",
+  "readback_verified": true
+}

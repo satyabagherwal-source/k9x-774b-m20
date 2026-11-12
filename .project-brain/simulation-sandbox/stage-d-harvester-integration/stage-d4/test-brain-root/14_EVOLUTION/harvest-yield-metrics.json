@@ -1,0 +1,247 @@
+{
+  "metrics": [],
+  "total_cycles_completed": 34,
+  "total_learnings_persisted": 34,
+  "total_rules_promoted": 0,
+  "last_updated": "2026-11-12T18:15:12.969Z",
+  "history": [
+    {
+      "timestamp": "2026-11-12T17:53:18.791Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:53:18.917Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:53:19.214Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:53:19.758Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:53:19.915Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:53:20.046Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:53:20.147Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:54:17.767Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:54:18.027Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:55:20.418Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:55:20.559Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:55:20.690Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:55:20.787Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:55:20.875Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:55:21.510Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:55:21.625Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:56:24.395Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T17:57:09.268Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:35.906Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:36.036Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:36.189Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:36.348Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:36.513Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:36.635Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:36.759Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:01:36.935Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.155Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.308Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.406Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.493Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.593Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.750Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.835Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T18:15:12.969Z",
+      "repository": "tiangolo/fastapi",
+      "learningId": "learn-github-tiangolo-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    }
+  ]
+}

@@ -1,0 +1,512 @@
+[
+  {
+    "cycleId": "CYCLE-20261112-JEDK",
+    "timestamp": "2026-11-12T17:53:18.728Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "5512c4a5b8ca4886a4339d8a3a4508c2c9255df3767e1b6863d8598f7d81fceb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JEHC",
+    "timestamp": "2026-11-12T17:53:18.864Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "c9e8cd506f7bdecfb8d792782554b23d61746f7182efef7db8c9a8cb033a739c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JELA",
+    "timestamp": "2026-11-12T17:53:19.006Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "60a0b55d3efc3882c043ce0339c136de08380dc559fc41fc7ebf69c955408833",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JESO",
+    "timestamp": "2026-11-12T17:53:19.272Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "8ad1ed47a4863e5622dccd784240e0c76c1acd0caf68f6086e09ea71d2c3b184",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JF7M",
+    "timestamp": "2026-11-12T17:53:19.810Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "c2ad366200b751cf2363ac1a1643a198a0633d5b47e970eb09b4a483d40db1bf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JFD4",
+    "timestamp": "2026-11-12T17:53:20.008Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "6e017fb5cb66cb7de6819f0f9215be7b6ce9f197ca4093b295bed2eee941ea0c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-JFG5",
+    "timestamp": "2026-11-12T17:53:20.117Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "51c146a1a165afb96d28ba87a3bf993eedb95e2341d663338b7c5aeedda19e59",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-KN8F",
+    "timestamp": "2026-11-12T17:54:16.863Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "ecb49edfc02037ca86aeca97b65255472e18bfe480ccac4832808ebda5e4a42c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-KNYV",
+    "timestamp": "2026-11-12T17:54:17.815Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "1c2a6ddb942306a97eb74b19075a932a3dbdfa26536939de46239f9d66c70193",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M08T",
+    "timestamp": "2026-11-12T17:55:20.381Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "1bdcebf6f89cb63aa8bcc3af037fb816e9ef1762da3489c943ce004890ceefaf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M0B9",
+    "timestamp": "2026-11-12T17:55:20.469Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "49159777dd7767d5a2ad583dc3f0dfb3983e4700786138299d892df2460ceab9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M0GF",
+    "timestamp": "2026-11-12T17:55:20.655Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "afc1cc7ab97b355e41cf5212ed79bf571feec941a65fae7de137d0b065134e33",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M0IM",
+    "timestamp": "2026-11-12T17:55:20.734Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "c58631e3bf4a5ce99275805f0452660ad2e0207f0b926b9d89ed29af111fdcb9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M0L1",
+    "timestamp": "2026-11-12T17:55:20.821Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "3fb57d47ee01594c08cdae7b538d519f74e7a487d23f1d84d26f0a418f90e582",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M10R",
+    "timestamp": "2026-11-12T17:55:21.387Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "10e3272e131fc70945ad287e3a90daedb961443aae6e9113cd43d62d01dc0bd6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-M164",
+    "timestamp": "2026-11-12T17:55:21.580Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "d2f8c54a73a9234a3a32964d98c01a6042b222d4c89ba3dde3c5c65696df754d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-NDLM",
+    "timestamp": "2026-11-12T17:56:24.346Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "cedb4f20461e9e9090669bc0fdf5cb125094ec7568c8c25c719d8c227ecd42f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-OC8Z",
+    "timestamp": "2026-11-12T17:57:09.251Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "8a9dd25e1539b54290c74de5ad740948b75a393f956dcadd596b8c0d2e908a2b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U1YU",
+    "timestamp": "2026-11-12T18:01:35.862Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "9794cf5d4950d5e8e29654e0cb8efa72d55728b9b8d14a75b67640242313a731",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U22H",
+    "timestamp": "2026-11-12T18:01:35.993Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "fc87829e1404982d2525fd3b28bfc054407414adf28c261b4ef98c214ef4ff8b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U26E",
+    "timestamp": "2026-11-12T18:01:36.134Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "bf8c43536c60f998a3cda5a58f4db540e9b346ecb09ff280feaeb00ebe4482b2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U29T",
+    "timestamp": "2026-11-12T18:01:36.257Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "91f33f008d8334dd54744bbc133208c3c84bddfa09ba194a9665c8be858d956d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U2F2",
+    "timestamp": "2026-11-12T18:01:36.446Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "740f2783cd1101219abd764892a7e982592aecb82890d2bd4c2aa4c972d11499",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U2J4",
+    "timestamp": "2026-11-12T18:01:36.592Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "7237978415207ad7fed4be7e7b794f32b37ba2ee7046bc7d0be2aaf93c603190",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U2LO",
+    "timestamp": "2026-11-12T18:01:36.684Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "c79ab5f00a8671d0374a745042849e97d93b1a73d537d73eb038854787eeaa85",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-U2RM",
+    "timestamp": "2026-11-12T18:01:36.898Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "5a048429166e5a44ba743b6c595e54109aaedc7aa021444844c12f583b23daa3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BJSA",
+    "timestamp": "2026-11-12T18:15:12.106Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "25e2fa4b8bc6631204d33e09dad68e8601807428ab0fc3553e688d01ab092c26",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BJVM",
+    "timestamp": "2026-11-12T18:15:12.226Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "9e1b9486e8d06486782132bc776d49450561fb0973b5fa507f38aa53d3d2cf02",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BJZE",
+    "timestamp": "2026-11-12T18:15:12.362Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "cfcc60226c31cc0af9a8b0bc9864fa3cac191dd09995977c680186a80f90d9b3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BK24",
+    "timestamp": "2026-11-12T18:15:12.460Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "8e8c88dc24151036674a1011a9c948b6df0e42850b49fac8b760fe0befcff83c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BK4B",
+    "timestamp": "2026-11-12T18:15:12.539Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "c49dd17bc1b60c3c583544802c73aa8b7891c1ce748a3d21f780987cd5a94922",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BK87",
+    "timestamp": "2026-11-12T18:15:12.679Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "d7c98330432bfcece4ba1e8120bc676c80a8e4f8cf920c46f640c5c53b40ad1c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BKBO",
+    "timestamp": "2026-11-12T18:15:12.804Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "c422fea08dfd8575675e9feb2e8b343cf70e7dfb0b12114c1b8ad58a00d44e19",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-BKEX",
+    "timestamp": "2026-11-12T18:15:12.921Z",
+    "repository": "tiangolo/fastapi",
+    "learningId": "learn-github-tiangolo-fastapi",
+    "contentHash": "fc46dd050f7e3919feccc94a81c394449859de751adeb36b523f7bd39848a96b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  }
+]

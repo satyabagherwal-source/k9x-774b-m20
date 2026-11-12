@@ -1,0 +1,25 @@
+{
+  "mission_id": "UKD-STAGE-D-HARVESTER-INTEGRATION-READINESS-01",
+  "harvester_type": "MANUAL_HARVESTER",
+  "user_invocation": "CLI / npm run harvest / batch-auto-harvester.mjs",
+  "fleet_controller": "04_WORKFLOWS/factory-engine/local-daemon-harvester.mjs",
+  "worker_script": "04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs",
+  "discovery_mechanism": "CLI arguments / repos.txt queue",
+  "extraction_method": "Local shallow git clone to temporary directory",
+  "adapter_entry_point": ".project-brain/simulation-sandbox/stage-d-harvester-integration/src/manual-adapter.mjs",
+  "shared_pipeline_contract": "SharedHarvestingPipeline.processHarvest(normalizedInput)",
+  "call_chain_sequence": [
+    "1. User or daemon executes batch-auto-harvester.mjs with repo URL",
+    "2. Git shallow clone to temp directory",
+    "3. Commit history and closed issues analyzed",
+    "4. Candidate directives extracted from commit diffs",
+    "5. ManualHarvesterAdapter normalizes payload into NormalizedHarvestInput",
+    "6. SharedHarvestingPipeline: ProvenanceResolver asserts source commit and license",
+    "7. SharedHarvestingPipeline: DomainClassifier classifies into 13 domains",
+    "8. SharedHarvestingPipeline: DestinationRouter maps to 16 canonical folders",
+    "9. SharedHarvestingPipeline: HumanApprovalGate evaluates admission eligibility",
+    "10. If APPROVED: StageCPersistenceEngine writes to test store, verifies readback hash, indexes, and retrieves",
+    "11. If PENDING: HumanApprovalGate stages record in 11_INBOX awaiting review",
+    "12. PipelineAuditLogger logs immutable execution event"
+  ]
+}

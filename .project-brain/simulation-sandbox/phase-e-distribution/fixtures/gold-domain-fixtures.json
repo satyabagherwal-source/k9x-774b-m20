@@ -1,0 +1,186 @@
+{
+  "domains": [
+    {
+      "id": "GOLD-DOM-A-01",
+      "expectedDomain": "A",
+      "domainName": "Human & Need Intelligence",
+      "title": "Cognitive Load and Accessibility Contrast Thresholds for Novice Users",
+      "content": "Users experiencing visual impairment or high cognitive friction require minimum 4.5:1 contrast ratios and progressive disclosure of complex tooling to prevent cognitive abandonment. Implements user persona need mapping.",
+      "tags": ["accessibility", "user", "persona", "contrast", "friction", "need"],
+      "source_repo": "w3c/wcag",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-B-01",
+      "expectedDomain": "B",
+      "domainName": "Product Intelligence",
+      "title": "PRD Feature Scoping and MVP Acceptance Criteria Gate",
+      "content": "Defines strict product requirements documents (PRD) scope boundaries, negative scope exclusions, and user story acceptance criteria to prevent feature creep during initial delivery.",
+      "tags": ["prd", "product", "mvp", "feature", "scope", "acceptance-criteria"],
+      "source_repo": "product-standards/prd-engine",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-C-01",
+      "expectedDomain": "C",
+      "domainName": "Market & Business Intelligence",
+      "title": "Gross Margin and Cloud Infrastructure Compute Hurdle Rate",
+      "content": "Evaluates commercial viability and SaaS margin economics by asserting compute costs per user remain strictly below 15% of ARR, enforcing minimum ROI hurdle rates before deployment.",
+      "tags": ["business", "margin", "pricing", "viability", "commercial", "hurdle"],
+      "source_repo": "finops/cost-model",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-D-01",
+      "expectedDomain": "D",
+      "domainName": "Research & Knowledge Intelligence",
+      "title": "Cryptographic Source Provenance and Cross-Corroboration Protocol",
+      "content": "Mandates empirical research verification by requiring primary source commit SHAs, line citations, and multi-repository cross-corroboration before promoting experimental findings.",
+      "tags": ["research", "evidence", "provenance", "corroboration", "citation"],
+      "source_repo": "arxiv/epistemic-standards",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-E-01",
+      "expectedDomain": "E",
+      "domainName": "Creative Intelligence",
+      "title": "Visual Metaphor Anchoring and Brand Tone Uniqueness",
+      "content": "Governs creative design expression, original narrative metaphors, and distinctive brand voice to establish memorable user engagement without generic AI boilerplate.",
+      "tags": ["creative", "metaphor", "brand", "uniqueness", "storytelling", "aesthetic"],
+      "source_repo": "brand/creative-playbook",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-F-01",
+      "expectedDomain": "F",
+      "domainName": "Design Intelligence",
+      "title": "Responsive Viewport Breakpoints and Tailwind OKLCH Design Tokens",
+      "content": "Implements fluid typography, OKLCH color palettes, and strict Tailwind CSS grid spacing tokens across mobile, tablet, and desktop viewports with dark mode parity.",
+      "tags": ["design", "ui", "ux", "tailwind", "typography", "color", "responsive"],
+      "source_repo": "tailwindlabs/tailwindcss",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-G-01",
+      "expectedDomain": "G",
+      "domainName": "Architecture Intelligence",
+      "title": "Zero-Copy IPC Buffer Bridge and Decoupled Service Boundaries",
+      "content": "Establishes asynchronous inter-process communication using shared memory ring buffers and strict modular boundaries to achieve high concurrency without lock contention.",
+      "tags": ["architecture", "boundary", "modular", "ipc", "concurrency", "zero-copy"],
+      "source_repo": "system-arch/ring-buffer",
+      "expectedFolder": "12_DECISIONS"
+    },
+    {
+      "id": "GOLD-DOM-H-01",
+      "expectedDomain": "H",
+      "domainName": "Technical Construction Intelligence",
+      "title": "WASM Linear Memory Allocation and Asynchronous Stream Buffer Management",
+      "content": "Executes high-throughput binary parsers in WebAssembly with manual linear memory safety checks to eliminate GC pauses and prevent memory retention leaks in long-running Node processes.",
+      "tags": ["algorithm", "code", "wasm", "memory", "performance", "stream", "buffer"],
+      "source_repo": "bytecodealliance/wasmtime",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-I-01",
+      "expectedDomain": "I",
+      "domainName": "Content & Information Intelligence",
+      "title": "Structured Technical Documentation and Micro-Copy Clarity Standard",
+      "content": "Enforces information hierarchy, clear explanatory prose, code snippet sandboxing, and progressive disclosure in developer-facing technical manuals and API guides.",
+      "tags": ["content", "documentation", "copy", "writing", "guide", "manual", "markdown"],
+      "source_repo": "docs/diataxis",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-J-01",
+      "expectedDomain": "J",
+      "domainName": "Search & Distribution Intelligence",
+      "title": "Canonical Self-Referential Links and Multilingual Hreflang Sitemaps",
+      "content": "Generates automated XML sitemaps, reciprocal hreflang tags with x-default fallback, and OpenGraph social meta cards to ensure comprehensive organic discoverability.",
+      "tags": ["seo", "sitemap", "canonical", "hreflang", "opengraph", "discoverability"],
+      "source_repo": "google/search-central",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-K-01",
+      "expectedDomain": "K",
+      "domainName": "Quality & Verification Intelligence",
+      "title": "Deterministic Regression Assertion Harness and Zero-Network Probes",
+      "content": "Validates system invariants via property-based test assertions, exit-code contract enforcement, and sandboxed mock boundaries to guarantee zero flakiness across test cycles.",
+      "tags": ["test", "verification", "assertion", "invariant", "quality", "regression"],
+      "source_repo": "vitest-dev/vitest",
+      "expectedFolder": "08_VERIFICATION"
+    },
+    {
+      "id": "GOLD-DOM-L-01",
+      "expectedDomain": "L",
+      "domainName": "Deployment & Operations Intelligence",
+      "title": "Ephemeral Container Healthchecks and Immutable Vault Backup Rotation",
+      "content": "Configures zero-downtime rolling updates, automated container readiness probes, and offsite cryptographic disaster recovery vault mirroring for 24/7 high availability.",
+      "tags": ["deployment", "hosting", "ci-cd", "vault", "backup", "monitoring", "healthcheck"],
+      "source_repo": "kubernetes/kubernetes",
+      "expectedFolder": "05_KNOWLEDGE"
+    },
+    {
+      "id": "GOLD-DOM-M-01",
+      "expectedDomain": "M",
+      "domainName": "Feedback & Evolution Intelligence",
+      "title": "Production Incident Post-Mortem and Universal Rule Derivation Pipeline",
+      "content": "Ingests production error telemetry, conducts forensic root-cause autopsies, and automatically extracts generalized engineering invariants to prevent recurring defect classes.",
+      "tags": ["feedback", "learning", "autopsy", "incident", "evolution", "post-mortem"],
+      "source_repo": "sre/incident-response",
+      "expectedFolder": "14_EVOLUTION"
+    }
+  ],
+  "folderResponsibilityFixtures": [
+    { "folder": "00_START_HERE", "type": "orientation_guide", "title": "Developer Orientation & Architecture Sitemap", "content": "Welcome guide and visual directory navigation primer." },
+    { "folder": "01_CORE", "type": "core_law", "title": "System Invariant 1: Preserve-First Operations", "content": "Non-negotiable rule requiring git status check before making edits." },
+    { "folder": "02_AGENT_INTELLIGENCE", "type": "agent_contract", "title": "Coordinator Agent Behavioral Specification", "content": "Defines agent role boundaries, input/output protocols, and peer coordination rules." },
+    { "folder": "03_SKILLS", "type": "skill_playbook", "title": "FastAPI Lifespan Context Manager Playbook", "content": "Step-by-step procedural implementation checklist for async context managers." },
+    { "folder": "04_WORKFLOWS", "type": "automation_engine", "title": "Zero-Clone Harvester Factory Runner", "content": "Executable automation script coordinating batch extraction across repositories." },
+    { "folder": "05_KNOWLEDGE", "type": "engineering_pattern", "title": "Rule 1724: Master Epistemic Graph Sync Pattern", "content": "Verified engineering pattern for bi-directional relationship graph maintenance." },
+    { "folder": "06_PROJECT_CONTEXT", "type": "project_context", "title": "Active Project Bridge Configuration", "content": "Ephemeral configuration linking child repository to canonical brain hub." },
+    { "folder": "07_PROJECT_LEARNING", "type": "raw_dossier", "title": "FastAPI Release v0.115 Forensic Learning Dossier", "content": "Full extracted intelligence dossier analyzing lifespan task lifecycle." },
+    { "folder": "08_VERIFICATION", "type": "audit_report", "title": "Stage D.5 Independent Production Patch Review Report", "content": "Empirical inspection matrix and verification evidence ledger." },
+    { "folder": "09_SOURCES", "type": "source_entry", "title": "GitHub Tier-1 Official Repository Catalog", "content": "Authoritative ledger recording commit SHAs and cryptographic licenses." },
+    { "folder": "10_PROMPTS", "type": "system_prompt", "title": "Autonomous Auditor Master Instruction Directive", "content": "Standardized pair-programming prompt template enforcing rigorous verification." },
+    { "folder": "11_INBOX", "type": "candidate_directive", "title": "Staged Candidate: Modality-Specific Sparsity", "content": "Unverified raw discovery awaiting manual engineering review." },
+    { "folder": "12_DECISIONS", "type": "architecture_decision", "title": "ADR-004: Dual-Schema Knowledge Graph Integration", "content": "Architectural decision record detailing trade-offs of BFS retrieval." },
+    { "folder": "13_GOVERNANCE", "type": "governance_policy", "title": "Cryptographic Human Approval Authority Protocol", "content": "Governs high-impact domain promotion and non-distillation mandates." },
+    { "folder": "14_EVOLUTION", "type": "roadmap_milestone", "title": "Phase E Universal Knowledge Distribution Roadmap", "content": "System capability evolution milestones and quantified harvest yield metrics." },
+    { "folder": "15_METADATA", "type": "system_schema", "title": "Machine-Readable Knowledge Taxonomy Schema v2.0", "content": "Canonical JSON schema defining the 13 domains and 16 folders." }
+  ],
+  "adversarialFixtures": [
+    {
+      "id": "ADV-WRONG-DEST-01",
+      "test": "Wrong Destination Rejection",
+      "item": { "title": "Raw Unverified Bug Note", "content": "Quick note without tests", "targetFolder": "01_CORE", "knowledgeType": "candidate_directive" },
+      "expectedResult": "REJECT_FROM_01_CORE_OR_REROUTE_TO_11_INBOX"
+    },
+    {
+      "id": "ADV-DUPLICATE-01",
+      "test": "Duplicate Hash Prevention",
+      "item": { "id": "DUP-01", "title": "Exact Hash Duplicate", "content": "Duplicate body payload exactly identical to existing record." },
+      "expectedResult": "DUPLICATE_DETECTED_HASH"
+    },
+    {
+      "id": "ADV-CONFLICT-01",
+      "test": "Conflicting Evidence Detection",
+      "item": { "id": "CONF-01", "title": "Never use asynccontextmanager in FastAPI", "content": "Async context managers cause memory leaks and should be avoided." },
+      "conflictingWith": { "id": "EXISTING-01", "title": "Use asynccontextmanager in FastAPI for clean lifespan shutdown", "content": "Always use asynccontextmanager for robust lifecycle management." },
+      "expectedResult": "CONFLICT_FLAGGED_FOR_HUMAN_REVIEW"
+    },
+    {
+      "id": "ADV-MISSING-PROV-01",
+      "test": "Missing Provenance Rejection",
+      "item": { "title": "Anonymous Performance Trick", "content": "Substantive body text meeting the 200 character threshold but having no source repository, author, or commit SHA.", "source_repo": null, "author": null },
+      "expectedResult": "QUALITY_GATE_REJECT_MISSING_PROVENANCE"
+    },
+    {
+      "id": "ADV-UNVERIFIED-01",
+      "test": "Unverified Knowledge Quarantine",
+      "item": { "title": "Unverified Hypothesis on Cache Eviction", "content": "Hypothesis without empirical test proofs or verification criteria.", "verification_criteria": [] },
+      "expectedResult": "QUARANTINED_IN_11_INBOX"
+    }
+  ]
+}
+

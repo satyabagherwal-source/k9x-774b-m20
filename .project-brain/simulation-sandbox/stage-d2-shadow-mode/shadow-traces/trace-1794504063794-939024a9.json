@@ -1,0 +1,52 @@
+{
+  "trace_id": "trace-1794504063794-939024a9",
+  "timestamp": "2026-11-12T17:21:03.795Z",
+  "origin": "CLOUD_HARVESTER",
+  "repository": "tiangolo/fastapi",
+  "learning_id": "cloud-pkg-fastapi-lifespan-01",
+  "content_hash": "8f56ac1dd279f9140ef638c1082cc67b4d0a672112e67d7f3dd35c3e56d1cbc3",
+  "execution_duration_ms": 1,
+  "shadow_status": "SHADOW_VERIFIED",
+  "success": true,
+  "payload_audit": {
+    "source_url": "https://github.com/tiangolo/fastapi",
+    "dossier_text": "# FastAPI Lifespan Async Context Management\n\n## Abstract\nModern FastAPI applications handle startup and shutdown logic via asynccontextmanager lifespan handlers instead of deprecated on_event handlers.",
+    "apiKey": "[REDACTED_SENSITIVE_FIELD]",
+    "client_secret": "[REDACTED_SENSITIVE_FIELD]",
+    "token": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "classification": {
+    "primary_domain": "H",
+    "primary_domain_name": "Technical Construction Intelligence",
+    "confidence": 0,
+    "secondary_domains": []
+  },
+  "routing": {
+    "destination_folder": "05_KNOWLEDGE",
+    "suggested_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi.md",
+    "requires_human_approval": false
+  },
+  "duplicate_detection": {
+    "is_duplicate": false,
+    "duplicate_type": null,
+    "matched_id": null,
+    "matched_repo": null
+  },
+  "approval_evaluation": [
+    {
+      "candidate_id": "CAND-FASTAPI-LIFESPAN-01",
+      "eval": {
+        "admitted_to_canonical": true,
+        "routing_action": "PERSIST_CANONICAL",
+        "target_folder": "05_KNOWLEDGE",
+        "reason": "Record has explicit human approval status APPROVED."
+      }
+    }
+  ],
+  "provenance_completeness": {
+    "valid": true,
+    "fingerprint": null,
+    "errors": []
+  },
+  "errors": []
+}

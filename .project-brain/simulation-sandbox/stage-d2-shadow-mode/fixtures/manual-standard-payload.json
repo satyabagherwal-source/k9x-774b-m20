@@ -1,0 +1,27 @@
+{
+  "learning_id": "manual-pkg-tokio-task-budget-01",
+  "slug": "tokio-cooperative-task-budgeting",
+  "repository": "tokio-rs/tokio",
+  "platform": "github",
+  "source_url": "https://github.com/tokio-rs/tokio",
+  "source_version": "a1b2c3d4e5f67890123456789abcdef012345678",
+  "license": "MIT",
+  "harvest_origin": "MANUAL_HARVESTER",
+  "approval_status": "APPROVED",
+  "dossier_content": "# Tokio Cooperative Task Scheduling & Budgeting\n\n## Abstract\nTo prevent long-running tasks from starving other tasks on the runtime thread, Tokio uses task budgets decremented on each yield.",
+  "content_hash": "b7d051bda1b2f4cf4e63d804e2a229a96346883595ad2bfb09d58937c4d00ac6",
+  "candidates": [
+    {
+      "candidate_id": "CAND-TOKIO-BUDGET-01",
+      "title": "Tokio Cooperative Task Budgeting Invariant",
+      "approval_status": "APPROVED",
+      "domain": "G",
+      "evidence": "coop::poll_budget decrement preventing starvation in unbounded loops",
+      "confidence": 0.94
+    }
+  ],
+  "metadata": {
+    "manual_session": "session-2026-11-12-tokio-eval",
+    "operator": "admin"
+  }
+}

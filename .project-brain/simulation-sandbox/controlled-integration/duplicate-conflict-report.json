@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-11-12T19:36:09.694Z",
+  "targetRegistryCounts": {
+    "domainRegistryRecords": 74,
+    "candidateDirectives": 0
+  },
+  "khu005PendingStatus": {
+    "DOM-H-94C4B932": "PRESERVED",
+    "DOM-H-2007DF83": "PRESERVED",
+    "DOM-H-7D0B9F17": "PRESERVED",
+    "DOM-H-C2A738D4": "PRESERVED",
+    "DOM-H-1B2AC6F8": "PRESERVED"
+  },
+  "idCollisionCheck": {
+    "PROP-RULE-069": "UNIQUE_OK",
+    "PROP-RULE-070": "UNIQUE_OK",
+    "PROP-RULE-071": "UNIQUE_OK",
+    "PROP-SKILL-001": "UNIQUE_OK",
+    "PROP-VERIFY-001": "UNIQUE_OK"
+  },
+  "ruleNumberCollisionCheck": {
+    "Rule 69": "FREE_AVAILABLE (Current max rule in engineering-patterns.md is Rule 68)",
+    "Rule 70": "FREE_AVAILABLE",
+    "Rule 71": "FREE_AVAILABLE"
+  },
+  "verdict": "ZERO_CONFLICT_CLEAN_STAGING"
+}

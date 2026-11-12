@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-11-12T19:31:13.898Z",
+  "productName": "agentic-kgw",
+  "version": "1.0.0",
+  "suites": {
+    "unit": {
+      "passed": 16,
+      "total": 16
+    },
+    "adversarial": {
+      "passed": 7,
+      "total": 7
+    },
+    "cli": {
+      "passed": 10,
+      "total": 10
+    }
+  },
+  "totalPassed": 33,
+  "totalTests": 33,
+  "status": "ALL_PASSED"
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "2.0.0",
+  "last_updated": "2026-11-12T20:03:16.199Z",
+  "total_items": 0,
+  "items": {
+    "learn-github-audit-test-org-audit-test-repo": {
+      "learning_id": "learn-github-audit-test-org-audit-test-repo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "audit-test-org/audit-test-repo",
+      "repository": "audit-test-org/audit-test-repo",
+      "slug": "audit-test-repo",
+      "platform": "github",
+      "source_url": "https://github.com/audit-test-org/audit-test-repo",
+      "source_version": "commit-sha-9999999999",
+      "content_hash": "992873f445b29cef2770fd5ca4c43199c17bb0f28afa0e78dc151365f8829a22",
+      "dossier_path": "07_PROJECT_LEARNING/audit-test-repo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/audit-test-repo-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T20:03:16.196Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    }
+  },
+  "total_verified_learnings": 1
+}

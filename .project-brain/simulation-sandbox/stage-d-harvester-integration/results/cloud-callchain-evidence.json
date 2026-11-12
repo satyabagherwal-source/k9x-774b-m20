@@ -1,0 +1,26 @@
+{
+  "mission_id": "UKD-STAGE-D-HARVESTER-INTEGRATION-READINESS-01",
+  "harvester_type": "CLOUD_HARVESTER",
+  "workflow_trigger": ".github/workflows/24-7-cloud-harvester.yml",
+  "schedule_cron": "*/20 * * * * (Public Mode Continuous Self-Relay + Cron)",
+  "fleet_controller": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs",
+  "worker_script": "04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs",
+  "discovery_mechanism": "auto-discovery-scout.mjs (repos.txt / GitHub REST API)",
+  "extraction_method": "Zero-clone in-memory fetch of tree, patches, and issues",
+  "adapter_entry_point": ".project-brain/simulation-sandbox/stage-d-harvester-integration/src/cloud-adapter.mjs",
+  "shared_pipeline_contract": "SharedHarvestingPipeline.processHarvest(normalizedInput)",
+  "call_chain_sequence": [
+    "1. GitHub Actions schedule / self-relay trigger",
+    "2. multi-agent-fleet.mjs assigns domain target to Agent worker",
+    "3. zero-clone-harvester.mjs fetches repo tree and commits via GitHub API",
+    "4. Intelligence synthesized into candidate directives",
+    "5. CloudHarvesterAdapter normalizes payload into NormalizedHarvestInput",
+    "6. SharedHarvestingPipeline: ProvenanceResolver asserts source commit and license",
+    "7. SharedHarvestingPipeline: DomainClassifier classifies into 13 domains",
+    "8. SharedHarvestingPipeline: DestinationRouter maps to 16 canonical folders",
+    "9. SharedHarvestingPipeline: HumanApprovalGate evaluates admission eligibility",
+    "10. If APPROVED: StageCPersistenceEngine writes to test store, verifies readback hash, indexes, and retrieves",
+    "11. If PENDING: HumanApprovalGate stages record in 11_INBOX awaiting review",
+    "12. PipelineAuditLogger logs immutable execution event"
+  ]
+}

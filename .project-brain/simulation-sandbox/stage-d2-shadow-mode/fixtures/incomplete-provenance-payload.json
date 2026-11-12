@@ -1,0 +1,11 @@
+{
+  "learning_id": "incomplete-prov-pkg-01",
+  "slug": "incomplete-provenance-test",
+  "repository": "",
+  "source_url": "",
+  "source_version": "",
+  "license": "",
+  "harvest_origin": "SYNTHETIC_FIXTURE",
+  "dossier_content": "Incomplete content",
+  "content_hash": "a9580203157ee8db40960036f5a49f5e724eabde1e964522871dc7939c79813b"
+}
