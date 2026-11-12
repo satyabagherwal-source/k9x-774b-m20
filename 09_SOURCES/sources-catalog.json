@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "d2677dfc",
+    "sourceVersion": "668cec06",
     "license": "Apache-2.0",
-    "contentHash": "884f54ad9d2596142b4e0cd3601f38a047c11d7580be56b85806a4d39a80da1c",
-    "lastHarvestedAt": "2026-11-11T11:00:47.576Z",
+    "contentHash": "77aa75b39115f05e21b9826b197b608cd2c56264e854ddf27ea1e05e184ea7a7",
+    "lastHarvestedAt": "2026-11-12T23:29:00.812Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -8843,10 +8843,10 @@
     "repository": "kamgurgul/cpu-info",
     "platform": "github",
     "sourceUrl": "https://github.com/kamgurgul/cpu-info",
-    "sourceVersion": "9599db1d",
+    "sourceVersion": "b93f1630",
     "license": "Apache-2.0",
-    "contentHash": "6d29002c43dfd6d2bc967b9465de459dc75ba7fe8af36a4c07932a4d64cf17fa",
-    "lastHarvestedAt": "2026-11-08T17:29:07.045Z",
+    "contentHash": "ef9d1c1b2cac39b003a84d40640ead8f917cf5d9eeeb387de24036d769faa4ee",
+    "lastHarvestedAt": "2026-11-12T23:28:54.711Z",
     "learningId": "learn-github-kamgurgul-cpu-info"
   },
   "ugolbck-seofordev": {

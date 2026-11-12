@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T23:17:01.243Z",
+  "last_updated": "2026-11-12T23:29:00.831Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "884f54ad9d2596142b4e0cd3601f38a047c11d7580be56b85806a4d39a80da1c",
-      "verified_at": "2026-11-11T11:00:47.582Z",
+      "content_hash": "77aa75b39115f05e21b9826b197b608cd2c56264e854ddf27ea1e05e184ea7a7",
+      "verified_at": "2026-11-12T23:29:00.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T11:00:47.582Z"
+      "last_updated": "2026-11-12T23:29:00.831Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -13311,14 +13311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kamgurgul-cpu-info",
-      "content_hash": "6d29002c43dfd6d2bc967b9465de459dc75ba7fe8af36a4c07932a4d64cf17fa",
-      "verified_at": "2026-11-08T17:29:07.055Z",
+      "content_hash": "ef9d1c1b2cac39b003a84d40640ead8f917cf5d9eeeb387de24036d769faa4ee",
+      "verified_at": "2026-11-12T23:28:54.720Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:29:07.055Z"
+      "last_updated": "2026-11-12T23:28:54.720Z"
     },
     "ugolbck/seofordev": {
       "repository": "ugolbck/seofordev",

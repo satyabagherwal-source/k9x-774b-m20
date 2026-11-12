@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T23:17:07.907Z",
+  "updated_at": "2026-11-12T23:29:06.399Z",
   "stats": {
-    "total_discovered": 1823,
-    "approved_pending_harvest": 1681,
+    "total_discovered": 1827,
+    "approved_pending_harvest": 1685,
     "harvested_count": 0,
     "rejected_count": 142,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1685,
+      "COMMUNITY_AND_EXPERT": 1689,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -39129,6 +39129,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
         "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-BE9E0959454A": {
+      "id": "SRC-BE9E0959454A",
+      "url": "https://github.com/kamgurgul/cpu-info",
+      "title": "https://github.com/kamgurgul/cpu-info",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:29:06.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
+        "fileName": "kamgurgul-cpu-info-learnings.md"
+      }
+    },
+    "SRC-661C19324AEE": {
+      "id": "SRC-661C19324AEE",
+      "url": "https://developer.amazon.com/docs/fire-app-builder/use-an-android-tv-emulator.html",
+      "title": "https://developer.amazon.com/docs/fire-app-builder/use-an-android-tv-emulator.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:29:06.382Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
+        "fileName": "kamgurgul-cpu-info-learnings.md"
+      }
+    },
+    "SRC-8EB1D1B93FF5": {
+      "id": "SRC-8EB1D1B93FF5",
+      "url": "https://github.com/kamgurgul/cpu-info/assets/114566667/b94c5d79-9bf5-4daf-807c-893f063ebccd",
+      "title": "https://github.com/kamgurgul/cpu-info/assets/114566667/b94c5d79-9bf5-4daf-807c-893f063ebccd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:29:06.387Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
+        "fileName": "kamgurgul-cpu-info-learnings.md"
+      }
+    },
+    "SRC-D93EC6645E73": {
+      "id": "SRC-D93EC6645E73",
+      "url": "https://github.com/Ontos-AI/knowhere",
+      "title": "https://github.com/Ontos-AI/knowhere",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:29:06.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
+        "fileName": "ontos-ai-knowhere-learnings.md"
       }
     }
   }

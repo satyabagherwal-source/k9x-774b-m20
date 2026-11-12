@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T23:17:07.727Z",
-    "lastVerified": "2026-11-12T23:17:07.727Z",
+    "lastChecked": "2026-11-12T23:29:06.284Z",
+    "lastVerified": "2026-11-12T23:29:06.284Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T22:41:00.609Z",
-    "lastVerified": "2026-11-12T22:41:00.609Z",
+    "lastChecked": "2026-11-12T23:28:44.078Z",
+    "lastVerified": "2026-11-12T23:28:44.078Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -750,9 +750,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-12T12:45:20.078Z",
+    "lastChecked": "2026-11-12T23:28:39.184Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-12T12:45:20.078Z"
+    "lastVerified": "2026-11-12T23:28:39.184Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2966,14 +2966,14 @@
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T11:00:35.248Z",
-    "lastVerified": "2026-11-11T11:00:35.248Z",
+    "lastChecked": "2026-11-12T23:28:45.682Z",
+    "lastVerified": "2026-11-12T23:28:45.682Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "884f54ad9d2596142b4e0cd3601f38a047c11d7580be56b85806a4d39a80da1c",
+    "contentHash": "77aa75b39115f05e21b9826b197b608cd2c56264e854ddf27ea1e05e184ea7a7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8116,9 +8116,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-11-10T04:44:16.193Z",
+    "lastChecked": "2026-11-12T23:28:29.074Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-11-10T04:44:16.193Z"
+    "lastVerified": "2026-11-12T23:28:29.074Z"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -10934,12 +10934,12 @@
     "officialUrl": "https://github.com/kamgurgul/cpu-info",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T17:29:05.544Z",
-    "lastVerified": "2026-11-08T17:29:05.544Z",
+    "lastChecked": "2026-11-12T23:28:38.999Z",
+    "lastVerified": "2026-11-12T23:28:38.999Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kamgurgul-cpu-info",
-    "contentHash": "6d29002c43dfd6d2bc967b9465de459dc75ba7fe8af36a4c07932a4d64cf17fa",
+    "contentHash": "ef9d1c1b2cac39b003a84d40640ead8f917cf5d9eeeb387de24036d769faa4ee",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -12927,9 +12927,9 @@
   "rubenverborgh-sparql.js": {
     "name": "SPARQL.js",
     "officialUrl": "https://github.com/RubenVerborgh/SPARQL.js",
-    "lastChecked": "2026-11-08T00:48:56.560Z",
+    "lastChecked": "2026-11-12T23:28:31.615Z",
     "revisionIdentifier": "91cbd01b",
-    "lastVerified": "2026-11-08T00:48:56.560Z"
+    "lastVerified": "2026-11-12T23:28:31.615Z"
   },
   "makecindy-cindy": {
     "name": "makecindy/cindy",
@@ -14483,12 +14483,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aquasecurity-trivy-operator": {
-    "name": "aquasecurity/trivy-operator",
+    "name": "trivy-operator",
     "officialUrl": "https://github.com/aquasecurity/trivy-operator",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T12:53:23.412Z",
-    "lastVerified": "2026-11-11T12:53:23.412Z",
+    "lastChecked": "2026-11-12T23:28:36.621Z",
+    "lastVerified": "2026-11-12T23:28:36.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy-operator",
@@ -14497,7 +14497,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "689215dd"
   },
   "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic": {
     "name": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",

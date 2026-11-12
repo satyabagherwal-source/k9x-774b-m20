@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T23:17:01.082Z",
+  "last_updated": "2026-11-12T23:29:00.687Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38647,14 +38647,19 @@
       "slug": "kamgurgul-cpu-info",
       "platform": "github",
       "source_url": "https://github.com/kamgurgul/cpu-info",
-      "source_version": "9599db1d",
-      "content_hash": "6d29002c43dfd6d2bc967b9465de459dc75ba7fe8af36a4c07932a4d64cf17fa",
+      "source_version": "b93f1630",
+      "content_hash": "ef9d1c1b2cac39b003a84d40640ead8f917cf5d9eeeb387de24036d769faa4ee",
       "dossier_path": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[SHARED] Libs update",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[SHARED] Code formatting",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38678,7 +38683,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:29:06.913Z",
+      "verified_at": "2026-11-12T23:28:54.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50190,8 +50195,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "d2677dfc",
-      "content_hash": "884f54ad9d2596142b4e0cd3601f38a047c11d7580be56b85806a4d39a80da1c",
+      "source_version": "668cec06",
+      "content_hash": "77aa75b39115f05e21b9826b197b608cd2c56264e854ddf27ea1e05e184ea7a7",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -50208,6 +50213,11 @@
         {
           "number": null,
           "title": "Merge pull request #532 from Ontos-AI/fix/wangbinqi/nonblocking-progressive-sear",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Audit fixes for media parsing and pooled greenlet context",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50271,7 +50281,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T11:00:47.443Z",
+      "verified_at": "2026-11-12T23:29:00.663Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

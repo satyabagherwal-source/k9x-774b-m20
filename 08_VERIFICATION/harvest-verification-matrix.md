@@ -9248,3 +9248,5 @@
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T23:08:56.567Z` | `hf-speridlabs-idol` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CDB84B7D` [Domain D] | Yes (`a3042da6...`) |
 | `CYCLE-20261112-3J1I` | `2026-11-12T23:16:53.670Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7734d429...`) |
 | `CYCLE-20261112-3OVG` | `2026-11-12T23:17:01.228Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f65937a3...`) |
+| `CYCLE-20261112-IZEB` | `2026-11-12T23:28:54.707Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ef9d1c1b...`) |
+| `CYCLE-20261112-J43T` | `2026-11-12T23:29:00.809Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`77aa75b3...`) |

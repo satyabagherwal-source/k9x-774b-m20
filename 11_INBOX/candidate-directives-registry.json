@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:17:07.919Z",
+  "last_updated": "2026-11-12T23:29:06.404Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7535,6 +7535,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-00D772-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-8BEF8C",
+      "directive_title": "[SHARED] Code formatting",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kamgurgul-cpu-info",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8BEF8C--shared-code-formatting.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9E754D",
+      "directive_title": "Audit fixes for media parsing and pooled greenlet context",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ontos-ai-knowhere",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9E754D-audit-fixes-for-media-parsing-and-pooled.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-005D51",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-005D51-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-12"
     }
   ]

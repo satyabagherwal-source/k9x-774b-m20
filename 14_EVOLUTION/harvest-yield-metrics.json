@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:17:01.239Z",
-  "total_cycles_completed": 9064,
-  "total_learnings_persisted": 9064,
-  "total_rules_promoted": 8900,
+  "last_updated": "2026-11-12T23:29:00.828Z",
+  "total_cycles_completed": 9066,
+  "total_learnings_persisted": 9066,
+  "total_rules_promoted": 8902,
   "history": [
-    {
-      "timestamp": "2026-11-12T01:12:06.374Z",
-      "repository": "darrylmorley/whatcable",
-      "learningId": "learn-github-darrylmorley-whatcable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T01:12:10.862Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T01:23:10.426Z",
       "repository": "LiquidAI/LFM3-Audio-2B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T23:17:01.239Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T23:28:54.717Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T23:29:00.828Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

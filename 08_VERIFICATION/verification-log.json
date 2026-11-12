@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-YUUR",
-    "timestamp": "2026-11-09T13:34:22.899Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "4aa21afa16b360c6f1278ae73ef54367472c6e1d635dc680b0c72fb03dca7e3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-YYJ5",
-    "timestamp": "2026-11-09T13:34:27.665Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "453c4cdf88bb5941535f84bf7d0b3514eeaf2b13480acebdccf9c5d13c655626",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-Z3SY",
     "timestamp": "2026-11-09T13:34:34.498Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "f65937a30f1db18983b9f090a3944ff9e9383e3ce209562027f185416bcfdccd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-IZEB",
+    "timestamp": "2026-11-12T23:28:54.707Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "ef9d1c1b2cac39b003a84d40640ead8f917cf5d9eeeb387de24036d769faa4ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-J43T",
+    "timestamp": "2026-11-12T23:29:00.809Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "77aa75b39115f05e21b9826b197b608cd2c56264e854ddf27ea1e05e184ea7a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

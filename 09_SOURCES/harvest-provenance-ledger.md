@@ -9257,3 +9257,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-cdb84b7d` | `project://hf-speridlabs-idol` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | 2026-11-12T23:08:56.567Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `b684174b` | Multi-dimensional audit evidence | 2026-11-12T23:16:53.674Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `203f88d7` | Multi-dimensional audit evidence | 2026-11-12T23:17:01.232Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `b93f1630` | Multi-dimensional audit evidence | 2026-11-12T23:28:54.711Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `668cec06` | Multi-dimensional audit evidence | 2026-11-12T23:29:00.812Z |
