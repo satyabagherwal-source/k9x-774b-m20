@@ -20914,5 +20914,17 @@
     "qualityScore": 4100,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-12T02:45:15.270Z"
+  },
+  {
+    "name": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "fullName": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "url": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: facebook/dinov3-vitl16-pretrain-lvd1689m (2125 likes, 704782 downloads)",
+    "likes": 2125,
+    "downloads": 704782,
+    "qualityScore": 23250,
+    "discoveredAt": "2026-11-12T05:10:49.095Z"
   }
 ]

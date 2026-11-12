@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:50:41.515Z",
-  "total_cycles_completed": 8910,
-  "total_learnings_persisted": 8910,
-  "total_rules_promoted": 8758,
+  "last_updated": "2026-11-12T05:13:31.988Z",
+  "total_cycles_completed": 8913,
+  "total_learnings_persisted": 8913,
+  "total_rules_promoted": 8760,
   "history": [
-    {
-      "timestamp": "2026-11-10T06:12:51.616Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T06:13:25.225Z",
-      "repository": "Comfy-Org/MiniMax-H3-Image",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T06:13:27.808Z",
-      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
-      "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T06:13:35.588Z",
       "repository": "yyjeqhc/webcodex",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T04:50:41.515Z",
       "repository": "apache/pinot",
       "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T05:13:03.132Z",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T05:13:21.226Z",
+      "repository": "nodejs/undici",
+      "learningId": "learn-github-nodejs-undici",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T05:13:31.988Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

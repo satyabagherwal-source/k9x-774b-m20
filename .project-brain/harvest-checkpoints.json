@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T04:50:41.520Z",
+  "last_updated": "2026-11-12T05:13:31.992Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
-      "verified_at": "2026-11-09T18:11:37.171Z",
+      "content_hash": "cc5dca54cc99e6cac5510523e4013cae95c294c130f30769f2eb3db3eea2f5e6",
+      "verified_at": "2026-11-12T05:13:31.991Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T18:11:37.171Z"
+      "last_updated": "2026-11-12T05:13:31.991Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -14406,14 +14406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nodejs-undici",
-      "content_hash": "8013e05035a4564ef8ab57c7636cb9e5b9fdce96af82f2c2dd1e93517e4454ee",
-      "verified_at": "2026-11-07T05:37:01.546Z",
+      "content_hash": "4678d5af2d3b162a06a5577229ea2eabeef43a2bc5616ff8b2c007c4fc1f8a93",
+      "verified_at": "2026-11-12T05:13:21.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:37:01.546Z"
+      "last_updated": "2026-11-12T05:13:21.229Z"
     },
     "jordansinger/SwiftUI-Kit": {
       "repository": "jordansinger/SwiftUI-Kit",
@@ -18644,6 +18644,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-12T02:48:40.329Z"
+    },
+    "facebook/dinov3-vitl16-pretrain-lvd1689m": {
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "content_hash": "25dac713a24cea0c0d42073676ee7a715a4fb3c5878193dfdf249699547242fb",
+      "verified_at": "2026-11-12T05:13:03.135Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-12T05:13:03.135Z"
     }
   },
   "repos": {

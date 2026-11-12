@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:50:47.119Z",
+  "last_updated": "2026-11-12T05:13:50.940Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T01:44:30.411Z",
@@ -811,9 +811,24 @@
       "processed_at": "2026-11-12T04:50:47.079Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md": {
+      "processed_at": "2026-11-12T05:13:50.798Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "nodejs-undici-learnings.md": {
+      "processed_at": "2026-11-12T05:13:50.810Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "yugabyte-yugabyte-db-learnings.md": {
+      "processed_at": "2026-11-12T05:13:50.883Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 210,
-  "total_canonical_promoted": 24,
-  "total_staged_for_review": 183
+  "total_dossiers_evaluated": 213,
+  "total_canonical_promoted": 25,
+  "total_staged_for_review": 185
 }

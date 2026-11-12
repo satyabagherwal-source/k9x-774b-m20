@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:50:47.077Z",
+  "last_updated": "2026-11-12T05:13:50.882Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6165,6 +6165,24 @@
       "source_repo": "apache-pinot",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-296862-evaluate-user-filters-only-on-the-rows-t.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5686BE",
+      "directive_title": "build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (#6190)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nodejs-undici",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5686BE-build-deps-dev-bump-node-forge-from-1-4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BBA5D2",
+      "directive_title": "[#35476,#36130] YSQL: Fix single-row UPDATE/DELETE when the WHERE value's type d",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yugabyte-yugabyte-db",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BBA5D2--35476-36130-ysql-fix-single-row-update-.md",
       "staged_date": "2026-11-12"
     }
   ]

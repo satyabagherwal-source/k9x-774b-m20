@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T04:50:47.116Z",
+  "updated_at": "2026-11-12T05:13:50.938Z",
   "stats": {
-    "total_discovered": 778,
-    "approved_pending_harvest": 704,
+    "total_discovered": 806,
+    "approved_pending_harvest": 730,
     "harvested_count": 0,
-    "rejected_count": 74,
+    "rejected_count": 76,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 728,
+      "COMMUNITY_AND_EXPERT": 754,
       "OFFICIAL_DOCUMENTATION": 22,
-      "STANDARDS_AND_SPECIFICATIONS": 26,
+      "STANDARDS_AND_SPECIFICATIONS": 28,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 1
     }
@@ -16615,6 +16615,608 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
         "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-3AC86B283842": {
+      "id": "SRC-3AC86B283842",
+      "url": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "title": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.801Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+        "fileName": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md"
+      }
+    },
+    "SRC-4B9C5ACCC20E": {
+      "id": "SRC-4B9C5ACCC20E",
+      "url": "https://github.com/nodejs/undici",
+      "title": "https://github.com/nodejs/undici",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-9E680156530B": {
+      "id": "SRC-9E680156530B",
+      "url": "https://www.bing.com/search?q=bing",
+      "title": "https://www.bing.com/search?q=bing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.817Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-F2B99CE05B94": {
+      "id": "SRC-F2B99CE05B94",
+      "url": "https://localhost/",
+      "title": "https://localhost/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.821Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-4479FE1DA0A0": {
+      "id": "SRC-4479FE1DA0A0",
+      "url": "https://github.com/nodejs/undici/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/nodejs/undici/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-B40F8FAD84FA": {
+      "id": "SRC-B40F8FAD84FA",
+      "url": "https://github.com/digitalbazaar/forge",
+      "title": "https://github.com/digitalbazaar/forge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-8E1F78F3D167": {
+      "id": "SRC-8E1F78F3D167",
+      "url": "https://github.com/digitalbazaar/forge/blob/main/CHANGELOG.md",
+      "title": "https://github.com/digitalbazaar/forge/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-026B587038D6": {
+      "id": "SRC-026B587038D6",
+      "url": "https://github.com/digitalbazaar/forge/compare/v1.4.2...v1.4.3",
+      "title": "https://github.com/digitalbazaar/forge/compare/v1.4.2...v1.4.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-865C7F2BE20F": {
+      "id": "SRC-865C7F2BE20F",
+      "url": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.2.tgz",
+      "title": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-80296BABB803": {
+      "id": "SRC-80296BABB803",
+      "url": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.3.tgz",
+      "title": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-6302134EBE38": {
+      "id": "SRC-6302134EBE38",
+      "url": "https://github.com/websockets/ws",
+      "title": "https://github.com/websockets/ws",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.861Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-0FBBCFA69F26": {
+      "id": "SRC-0FBBCFA69F26",
+      "url": "https://github.com/websockets/ws/releases",
+      "title": "https://github.com/websockets/ws/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-082E71D72A80": {
+      "id": "SRC-082E71D72A80",
+      "url": "https://github.com/websockets/ws/compare/8.22.0...8.22.1",
+      "title": "https://github.com/websockets/ws/compare/8.22.0...8.22.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.869Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-184ABE2B20C3": {
+      "id": "SRC-184ABE2B20C3",
+      "url": "https://registry.npmjs.org/ws/-/ws-8.22.0.tgz",
+      "title": "https://registry.npmjs.org/ws/-/ws-8.22.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.873Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-AC9498C375A8": {
+      "id": "SRC-AC9498C375A8",
+      "url": "https://registry.npmjs.org/ws/-/ws-8.22.1.tgz",
+      "title": "https://registry.npmjs.org/ws/-/ws-8.22.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-255F429CFB84": {
+      "id": "SRC-255F429CFB84",
+      "url": "https://github.com/yugabyte/yugabyte-db",
+      "title": "https://github.com/yugabyte/yugabyte-db",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.886Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-73447B5FAB96": {
+      "id": "SRC-73447B5FAB96",
+      "url": "https://github.com/YugaByte/yugabyte-db/blob/master/licenses/POLYFORM-FREE-TRIAL-LICENSE-1.0.0.txt",
+      "title": "https://github.com/YugaByte/yugabyte-db/blob/master/licenses/POLYFORM-FREE-TRIAL-LICENSE-1.0.0.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.890Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-EBA8B2B74358": {
+      "id": "SRC-EBA8B2B74358",
+      "url": "https://management.azure.com/subscriptions/%7B",
+      "title": "https://management.azure.com/subscriptions/%7B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.893Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-5D0F4C38C7B4": {
+      "id": "SRC-5D0F4C38C7B4",
+      "url": "https://prices.azure.com/api/retail/prices?%24filter=",
+      "title": "https://prices.azure.com/api/retail/prices?%24filter=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-7DC8790A38A3": {
+      "id": "SRC-7DC8790A38A3",
+      "url": "https://www.googleapis.com/compute/v1/projects",
+      "title": "https://www.googleapis.com/compute/v1/projects",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-787E3B5ABF6B": {
+      "id": "SRC-787E3B5ABF6B",
+      "url": "https://downloads.yugabyte.com/gcp_price_list/pricelist_gcp.json",
+      "title": "https://downloads.yugabyte.com/gcp_price_list/pricelist_gcp.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.905Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-08D21E211859": {
+      "id": "SRC-08D21E211859",
+      "url": "http://testcompany.info/google-cloud-sdk/lib/third_party/apitools/base/py/http_wrapper.py",
+      "title": "http://testcompany.info/google-cloud-sdk/lib/third_party/apitools/base/py/http_wrapper.py",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T05:13:50.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-74DEF11C4D52": {
+      "id": "SRC-74DEF11C4D52",
+      "url": "http://metadata.google.internal/computeMetadata/v1",
+      "title": "http://metadata.google.internal/computeMetadata/v1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T05:13:50.913Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-B9140F6C5336": {
+      "id": "SRC-B9140F6C5336",
+      "url": "https://github.com/yugabyte/tcmalloc/pull/3",
+      "title": "https://github.com/yugabyte/tcmalloc/pull/3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.916Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-C831860D96D9": {
+      "id": "SRC-C831860D96D9",
+      "url": "https://github.com/yugabyte/yugabyte-db/issues/37087",
+      "title": "https://github.com/yugabyte/yugabyte-db/issues/37087",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-EEC7E1C5051A": {
+      "id": "SRC-EEC7E1C5051A",
+      "url": "https://github.com/yugabyte/yugabyte-db/commit/029efa15de1de198469109a94da285d9eeeaeba9",
+      "title": "https://github.com/yugabyte/yugabyte-db/commit/029efa15de1de198469109a94da285d9eeeaeba9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.924Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-BC3F91F7ECAB": {
+      "id": "SRC-BC3F91F7ECAB",
+      "url": "https://www.rfc-editor.org/rfc/rfc1035",
+      "title": "IETF RFC 1035",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-3B2C9B661099": {
+      "id": "SRC-3B2C9B661099",
+      "url": "https://www.rfc-editor.org/rfc/rfc952",
+      "title": "IETF RFC 952",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:13:50.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
       }
     }
   }

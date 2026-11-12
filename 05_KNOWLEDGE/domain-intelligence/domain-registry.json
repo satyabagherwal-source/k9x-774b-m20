@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T03:10:59.805Z",
-  "total_records": 57,
+  "last_updated": "2026-11-12T05:13:50.796Z",
+  "total_records": 58,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 27,
+      "total": 28,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -52,7 +52,8 @@
         "DOM-D-66B0E6DD",
         "DOM-D-1866CC44",
         "DOM-D-3429AF3D",
-        "DOM-D-E8885F06"
+        "DOM-D-E8885F06",
+        "DOM-D-5F13CAC2"
       ]
     },
     "E": {
@@ -2306,6 +2307,48 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-12T03:10:59.804Z"
+    },
+    "DOM-D-5F13CAC2": {
+      "record_id": "DOM-D-5F13CAC2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m))  \n> **Source Version**: `",
+      "content_hash": "d83b1160f18b2f4c6034fef328afaf8659057dbcc4475a2e403c4b2dee0cd22f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-facebook-dinov3-vitl16-pretrain-lvd1689m/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T05:13:38.557Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebook-dinov3-vitl16-pretrain-lvd1689m)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-facebook-dinov3-vitl16-pretrain-lvd1689m"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T05:13:50.795Z"
     }
   }
 }

@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "6420c698",
+    "sourceVersion": "43410e87",
     "license": "NOASSERTION",
-    "contentHash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
-    "lastHarvestedAt": "2026-11-09T18:11:37.118Z",
+    "contentHash": "cc5dca54cc99e6cac5510523e4013cae95c294c130f30769f2eb3db3eea2f5e6",
+    "lastHarvestedAt": "2026-11-12T05:13:31.982Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -9573,10 +9573,10 @@
     "repository": "nodejs/undici",
     "platform": "github",
     "sourceUrl": "https://github.com/nodejs/undici",
-    "sourceVersion": "55bf2946",
+    "sourceVersion": "09ed1694",
     "license": "MIT",
-    "contentHash": "8013e05035a4564ef8ab57c7636cb9e5b9fdce96af82f2c2dd1e93517e4454ee",
-    "lastHarvestedAt": "2026-11-07T05:37:01.537Z",
+    "contentHash": "4678d5af2d3b162a06a5577229ea2eabeef43a2bc5616ff8b2c007c4fc1f8a93",
+    "lastHarvestedAt": "2026-11-12T05:13:21.207Z",
     "learningId": "learn-github-nodejs-undici"
   },
   "jordansinger-swiftui-kit": {
@@ -12388,5 +12388,15 @@
     "contentHash": "6a096eb2df0ec29c2b8e6535748e1afc30e677a7d72712d0948aa978affbf6b8",
     "lastHarvestedAt": "2026-11-12T02:48:40.315Z",
     "learningId": "learn-github-unovue-reka-ui"
+  },
+  "hf-facebook-dinov3-vitl16-pretrain-lvd1689m": {
+    "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "sourceVersion": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
+    "license": "Open-Source",
+    "contentHash": "25dac713a24cea0c0d42073676ee7a715a4fb3c5878193dfdf249699547242fb",
+    "lastHarvestedAt": "2026-11-12T05:13:03.127Z",
+    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T04:50:41.380Z",
-  "total_verified_learnings": 1257,
+  "last_updated": "2026-11-12T05:13:31.858Z",
+  "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -68143,8 +68143,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "6420c698",
-      "content_hash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
+      "source_version": "43410e87",
+      "content_hash": "cc5dca54cc99e6cac5510523e4013cae95c294c130f30769f2eb3db3eea2f5e6",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -68166,6 +68166,11 @@
         {
           "number": null,
           "title": "[#36860] DocDB: Fix org.yb.pgsql.TestJWTAuth#invalidJWTAudiencesConfiguration by",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[#35476,#36130] YSQL: Fix single-row UPDATE/DELETE when the WHERE value's type d",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -68249,7 +68254,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T18:11:36.285Z",
+      "verified_at": "2026-11-12T05:13:31.837Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82630,11 +82635,16 @@
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "55bf2946",
-      "content_hash": "8013e05035a4564ef8ab57c7636cb9e5b9fdce96af82f2c2dd1e93517e4454ee",
+      "source_version": "09ed1694",
+      "content_hash": "4678d5af2d3b162a06a5577229ea2eabeef43a2bc5616ff8b2c007c4fc1f8a93",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (#6190)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2905,
           "title": "ignore missing release ref during cleanup (#5891)",
@@ -82661,7 +82671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:37:01.382Z",
+      "verified_at": "2026-11-12T05:13:21.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191326,6 +191336,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-12T02:48:40.145Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m": {
+      "learning_id": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "slug": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "source_version": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "content_hash": "25dac713a24cea0c0d42073676ee7a715a4fb3c5878193dfdf249699547242fb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T05:13:03.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -9082,3 +9082,7 @@ Every entry in this ledger must capture:
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `927950e2` | Multi-dimensional audit evidence | 2026-11-12T04:50:27.837Z |
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `9f6d833e` | Multi-dimensional audit evidence | 2026-11-12T04:50:34.374Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `18e46648` | Multi-dimensional audit evidence | 2026-11-12T04:50:41.496Z |
+| `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-12T05:13:03.127Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `09ed1694` | Multi-dimensional audit evidence | 2026-11-12T05:13:21.207Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `43410e87` | Multi-dimensional audit evidence | 2026-11-12T05:13:31.982Z |
+| `learn-dom-d-5f13cac2` | `project://hf-facebook-dinov3-vitl16-pretrain-lvd1689m` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | 2026-11-12T05:13:50.798Z |

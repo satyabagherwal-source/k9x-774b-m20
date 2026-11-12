@@ -9073,3 +9073,7 @@
 | `CYCLE-20261112-KNEF` | `2026-11-12T04:50:27.831Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`00802509...`) |
 | `CYCLE-20261112-KSG2` | `2026-11-12T04:50:34.370Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`07a847cc...`) |
 | `CYCLE-20261112-KXXW` | `2026-11-12T04:50:41.492Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`32c85bda...`) |
+| `CYCLE-20261112-DP5F` | `2026-11-12T05:13:03.123Z` | `facebook/dinov3-vitl16-pretrain-lvd1689m` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | Yes (`25dac713...`) |
+| `CYCLE-20261112-E33O` | `2026-11-12T05:13:21.204Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4678d5af...`) |
+| `CYCLE-20261112-EBEZ` | `2026-11-12T05:13:31.979Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cc5dca54...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T05:13:50.798Z` | `hf-facebook-dinov3-vitl16-pretrain-lvd1689m` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5F13CAC2` [Domain D] | Yes (`d83b1160...`) |
