@@ -1503,10 +1503,10 @@
     "repository": "pathwaycom/serviette",
     "platform": "github",
     "sourceUrl": "https://github.com/pathwaycom/serviette",
-    "sourceVersion": "84e92a33",
+    "sourceVersion": "53c6382b",
     "license": "MIT",
-    "contentHash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
-    "lastHarvestedAt": "2026-11-03T19:15:16.750Z",
+    "contentHash": "4edefa749f9d24c1f97d1695a3447e877f4c47bc6fb8fe3f46e2f6f893cb9a93",
+    "lastHarvestedAt": "2026-11-12T10:52:55.020Z",
     "learningId": "learn-github-pathwaycom-serviette"
   },
   "evermind-ai-raven": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "f68d6d29",
+    "sourceVersion": "970b4474",
     "license": "NOASSERTION",
-    "contentHash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
-    "lastHarvestedAt": "2026-11-11T18:03:57.490Z",
+    "contentHash": "11e4d485f61841a281b14a07ca5518946433f6add2308035775253e1ba557de4",
+    "lastHarvestedAt": "2026-11-12T10:52:54.199Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "2f05e83e",
+    "sourceVersion": "72d4626f",
     "license": "MPL-2.0",
-    "contentHash": "057cd7a8b6cc2b30c6a8f9b441b1ec03dcfecd5dc641d4585571f7e4c887bb82",
-    "lastHarvestedAt": "2026-11-10T04:44:29.864Z",
+    "contentHash": "4325fd9e34857af151d30061db21ec01c9d8c1ab82ed88d3f26c5d0545857a3f",
+    "lastHarvestedAt": "2026-11-12T10:52:51.122Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "c1668355",
+    "sourceVersion": "ac4f4442",
     "license": "Apache-2.0",
-    "contentHash": "012c2baefb2c5b8a40129e788ab31b50ba84ea83dac261c66d45e698e0df91ad",
-    "lastHarvestedAt": "2026-11-09T16:33:28.591Z",
+    "contentHash": "66f63764a50b634dde410cb827a0f1252a10ddf59eb2fb60dd8ea8325f4ea299",
+    "lastHarvestedAt": "2026-11-12T10:52:37.875Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {

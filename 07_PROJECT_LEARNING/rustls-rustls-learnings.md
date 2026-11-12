@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `f68d6d29`  
+> **Source Version**: `970b4474`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:03:46.171Z  
+> **Timestamp**: 2026-11-12T10:52:39.821Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:03:45.960Z  
+> **Harvest Timestamp**: 2026-11-12T10:52:39.814Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7757 stars
+- **Stars / Engagement**: 7761 stars
 
 ---
 
@@ -2251,16 +2251,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3424** (2026-11-11): **aws-lc-sys is a pain in the ass**
-  *Symptoms*: aws-lc-sys is a pain in the ass causing a massive waste of time on virtually every project that somehow uses rustls and uses a target that isn't x86_64-linux-gnu or does anything other than presumably compiling axum/hyper with default settings. Clearly I don't expect anything to be done about it, just wanted to express my gratitude.
+- **Issue #3426** (2026-11-12): **Test coverage improvements**
+  *Symptoms*: As a result, 0a4c554f815e617522475ebd7c20c84a33b170a8 fixes the `Display` formatting of `CertificateError::InvalidPurposeContext`  
   **Post-Mortem & Fix Analysis**:
-  > rustls 0.24 will not depend on any crypto providers.  Next time, find a different way to vent your frustration.  (rustls 0.23 works perfectly fine without aws-lc-rs. To the extent that it causes problems for you, complain at crates in your dependency graph that make that impossible. If you're going to argue with this, I will ban you from the project.)
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8757105 | 8795983 | [38878](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client) (0.44%) | 0.83% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8788472 | 8773708 | [-14764](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.17%) | 0.97% | | handshake_tickets_aws_lc_rs_1.3_rsa_chacha_client | 42208866 | 42273
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `97.10145%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 96.08%. Comparing base ([`c805ecf`](https://app.codecov.io/gh/rustls/rustls/commit/c805ecfe373a43a3007007a913a67c817804b433?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`433b3fd`](https://app.codecov.io/gh/rustls/rustls/commit/433b3fd76c8c5ac37cafc288d15311668f6a6bbc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 5 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=tree&utm_medium
 
-- **Issue #3423** (2026-11-11): **add Wycheproof HPKE coverage, reject non-canonical X25519 HPKE recipient keys **
-  *Symptoms*: Adds HPKE test coverage from https://github.com/C2SP/wycheproof/pull/273. Tighten up one "acceptable" case to forbid non-canonical X25519 HPKE recipient keys to avoid an undecryptable inner hello during ECH, instead producing a more obvious error at HPKE setup time.
+- **Issue #3425** (2026-11-12): **Take pki-types 1.16: rely on canonical `DnsName`s & use `DnsName::into_owned()`**
+  *Symptoms*: This PR notably does not do anything for ECH (refer #3388)
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10398994 | 10438399 | [39405](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:5f0e2cecf5c20a684cb01a571c8442776612b6d8/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (0.38%) | 1.62% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10956486 | 10918720 | [-37766](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:5f0e2cecf5c20a684cb01a571c8442776612b6d8/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (-0.34%) | 0.97% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8772065 | 8753741 | [-18324]
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3423?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.76%. Comparing base ([`c805ecf`](https://app.codecov.io/gh/rustls/rustls/commit/c805ecfe373a43a3007007a913a67c817804b433?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`5f0e2ce`](https://app.codecov.io/gh/rustls/rustls/commit/5f0e2cecf5c20a684cb01a571c8442776612b6d8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3423      +/-   ## ==================================
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_1.2_no_crypto_server | 692664 | 676404 | ✅ [-16260](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_session_id_1.2_no_crypto_server) (-2.35%) | 0.20% | | handshake_tickets_1.2_no_crypto_server | 746845 | 730585 | ✅ [-16260](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_tickets_1.2_no_crypto_server) (-2.18%) | 0.20% | | handshake_tickets_1.3_no_crypto_server | 1430564 | 1408814 | ✅ [-21750](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b85
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3425?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.75%. Comparing base ([`f68d6d2`](https://app.codecov.io/gh/rustls/rustls/commit/f68d6d296759bb002c462b402401f2cf295b92da?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`115a8b6`](https://app.codecov.io/gh/rustls/rustls/commit/115a8b6df4a97b857c10228e1b15b255d7e6f174?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3425      +/-   ## ==================================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2277,624 +2278,159 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f68d6d29` (2026-11-10)
-**Commit Message**: rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys
+### Incident Patch 1: `970b4474` (2026-11-11)
+**Commit Message**: Test `Display` for remaining error variants
 
-RFC 7748 decoders mask the high bit of an X25519 public key and reduce
-its u-coordinate mod p, so a key can have several encodings. However,
-DHKEM hashes the recipient's public key into the KEM context using the
-encoding the sender was given, whereas the recipient uses the canonical
-encoding of its own key. Since a message sealed to a non-canonical
-encoding can never be opened by a recipient, reject such encodings.
-
-For ECH this turns an undecryptable inner hello from a malformed config
-into an error when the sealer is set up, which seems much easier to
-debug as an end user.
-
-Notably since the GREASE placeholder key given to
-`EchGreaseConfig::new()` goes through the same setup, it must be
-a valid public key for the suite (as produced by `generate_key_pair()`)
-rather than arbitrary bytes, since those will have a non-canonical
-encoding with some chance.
-
-**File**: `rustls-aws-lc-rs/src/hpke/mod.rs` (modified, +26/-0)
+**File**: `rustls/src/error/tests.rs` (modified, +85/-0)
 ```diff
-@@ -574,6 +574,15 @@ impl<const KDF_SIZE: usize> DhKem<KDF_SIZE> {
-         recipient: &HpkePublicKey,
-         sk_e: agreement::PrivateKey,
-     ) -> Result<(KemSharedSecret<KDF_SIZE>, EncapsulatedSecret), Error> {
-+        // RFC 7748 decoders mask the high bit of an X25519 public key and reduce its
-+        // u-coordinate mod p, so a key has several encodings. The encoding we are given is
-+        // hashed into the KEM context as-is below, whereas the recipient uses the canonical
-+        // encoding of its own key, so a message sealed to a non-canonical encoding can never
-+        // be opened. Reject such encodings rather than produce undecryptable output.
-+        if self.id == HpkeKem::DHKEM_X25519_HKDF_SHA256 && x25519_is_non_canonical(&recipient.0) {
-+            return Err(Error::General("non-canonical X25519 public key".into()));
-+        }
-+
-         // def Encap(pkR):
-         //   skE, pkE = GenerateKeyPair()
-         //   dh = DH(skE, pkR)
-@@ -755,6 +764,23 @@ fn generate_key_pair(
-     Ok((public_key, private_key))
+@@ -271,6 +271,91 @@ fn smoke() {
+     }
  }
  
-+/// Whether `encoding` is a well-formed but non-canonical X25519 public key.
-+///
-+/// A 32 byte encoding is non-canonical when its little-endian value is at least
-+/// p = 2^255 - 19, which includes any with the high bit set. Encodings of other lengths are
-+/// left to the agreement to reject.
-+fn x25519_is_non_canonical(encoding: &[u8]) -> bool {
-+    // p = 2^255 - 19 in little-endian.
-+    const P: [u8; 32] = {
-+        let mut p = [0xff; 32];
-+        p[0] = 0xed;
-+        p[31] = 0x7f;
-+        p
++#[test]
++fn error_display() {
++    use super::{
++        ApiMisuse, CertificateError, EncryptedClientHelloError, ExtendedKeyPurpose, RejectedEch,
 +    };
 +
-+    encoding.len() == P.len() && encoding.iter().rev().ge(P.iter().rev())
-+}
-+
- /// KeySchedule holds the derived AEAD key, base nonce, and seq number
- /// common to both a [Sealer] and [Opener].
- struct KeySchedule<const KEY_SIZE: usize> {
-```
-
-**File**: `rustls-aws-lc-rs/src/hpke/tests.rs` (modified, +63/-9)
-```diff
-@@ -183,6 +183,64 @@ fn open_at_the_sequence_limit_fails_without_advancing() {
-     assert_eq!(opener.key_schedule.seq_num, max_seq_num);
- }
- 
-+#[test]
-+fn x25519_non_canonical_encodings() {
-+    // p - 1 is the largest canonical u-coordinate.
-+    let mut p_minus_one = [0xff; 32];
-+    p_minus_one[0] = 0xec;
-+    p_minus_one[31] = 0x7f;
-+    assert!(!x25519_is_non_canonical(&p_minus_one));
-+
-+    // p, 2^255 - 1 and 2^255 are not canonical.
-+    let mut p = p_minus_one;
-+    p[0] = 0xed;
-+    assert!(x25519_is_non_canonical(&p));
-+    let mut below_high_bit = [0xff; 32];
-+    below_high_bit[31] = 0x7f;
-+    assert!(x25519_is_non_canonical(&below_high_bit));
-+    let mut high_bit = [0; 32];
-+    high_bit[31] = 0x80;
-+    assert!(x25519_is_non_canonical(&high_bit));
-+
-+    // Encodings of the wrong length are left to the agreement to reject.
-+    assert!(!x25519_is_non_canonical(&[0xff; 31]));
-+    assert!(!x25519_is_non_canonical(&[0xff; 33]));
-+}
-+
-+#[cfg(not(feature = "fips"))]
-+#[test]
-+fn x25519_sender_rejects_non_canonical_recipient_key() {
-+    // The base point u = 9 is a valid recipient public key of large order. Adding p, or
-+    // setting the high bit, gives encodings that decode to the same point but which the
-+    // recipient would never produce for its own key.
-+    let mut canonical = [0; 32];
-+    canonical[0] = 9;
-+    let mut plus_p = [0xff; 32];
-+    plus_p[0] = 9 + 0xed;
-+    plus_p[31] = 0x7f;
-+    let mut high_bit = canonical;
-+    high_bit[31] |= 0x80;
-+
-+    let suites: &[&dyn Hpke] = &[
-+        DH_KEM_X25519_HKDF_SHA256_AES_128,
-+        DH_KEM_X25519_HKDF_SHA256_AES_256,
-+        DH_KEM_X25519_HKDF_SHA256_CHACHA20_POLY1305,
++    let cases: &[(Error, &str)] = &[
++        (
++            Error::UnsupportedNameType,
++            "presented server name type wasn't supported",
++        ),
++        (
++            Error::InvalidEncryptedClientHello(EncryptedClientHelloError::NoCompatibleConfig),
++            "encrypted client hello failure: NoCompatibleConfig",
++        ),
++        (Error::EncryptError, "cannot encrypt message"),
++        (
++            Error::NoSuitableCertificate,
++            "no suitable certificate found",
++        ),
++        (
++            Error::RejectedEch(RejectedEch {
++                retry_configs: Some(vec![]),
++            }),
++            "server rejected encrypted client hello (ECH) with retry configs",
++        ),
++        (
++            Error::RejectedEch(RejectedEch {
++                retry_configs: None,
++            }),
++            "server rejected encrypted client hello (ECH) without retry configs",
++        ),
++        (
++            CertificateError::NotValidForNameContext {
++                expected: ServerName::try_from("example.com")
++                    .unwrap()
++                    .to_owned(),
++                presented: vec![
++                    "DnsName(\"a.com\")".into(),
++                    "DnsName(\"b.com\")".into(),
++                    "DnsName(\"c.com\")".into(),
++                ],
++            }
++            .into(),
++            "invalid peer certificate: certificate not valid for name \"example.com\"; \
++             certificate is only valid for DnsName(\"a.com\"), DnsName(\"b.com\") \
++             or DnsName(\"c.com\")",
++        ),
++        (
++            CertificateError::InvalidPurposeContext {
++                required: ExtendedKeyPurpose::ServerAuth,
++                presented: vec![
++                    ExtendedKeyPurpose::ClientAuth,
++                    ExtendedKeyPurpose::Other(vec![1, 3, 6, 1, 5, 5, 7, 3, 3]),
++                ],
++            }
++            .into(),
++            "invalid peer certificate: certificate does not allow extended key usage for \
++             server authentication; it allows client authentication, 1.3.6.1.5.5.7.3.3",
++        ),
++        (
++            CertificateError::InvalidPurposeContext {
++                required: ExtendedKeyPurpose::ServerAuth,
++                presented: vec![],
++            }
++            .into(),
++            "invalid peer certificate: certificate does not allow extended key usage for \
++             server authentication; it allows nothing",
++        ),
++        (
++            CertificateError::Other(OtherError::new(TestError)).into(),
++            "invalid peer certificate: test error",
++        ),
 +    ];
-+    for suite in suites {
-+        assert!(
-+            suite
-+                .setup_sealer(b"info", &HpkePublicKey(canonical.to_vec()))
-+                .is_ok()
-+        );
-+        for encoding in [plus_p, high_bit] {
-+            let err = suite
-+                .setup_sealer(b"info", &HpkePublicKey(encoding.to_vec()))
-+                .unwrap_err();
-+            assert!(matches!(err, Error::General(_)), "{err:?}");
-+        }
++
++    for (err, expected) in cases {
++        assert_eq!(err.to_string(), *expected);
 +    }
++
++    assert_eq!(
++        ApiMisuse::ExporterNotAvailable.to_string(),
++        "ExporterNotAvailable"
++    );
 +}
 +
- /// Confirm open/seal operations work using the test vectors from [RFC 9180 Appendix A].
- ///
- /// [RFC 9180 Appendix A]: https://www.rfc-editor.org/info/rfc9180#TestVectors
-@@ -710,15 +768,11 @@ impl Deref for HexBytes {
+ #[derive(Debug)]
+ struct TestError;
  
- /// Flags of `acceptable` vectors that the implementation accepts rather than rejects.
- ///
--/// RFC 9180 leaves these to the implementation. aws-lc-rs follows RFC 7748 literally,
--/// masking the high bit of a non-canonical X25519 key and computing with points on the
--/// twist, and no length limit is applied to `info`.
--const ACCEPTED_FLAGS: &[&str] = &[
--    "LongInfo",
--    "NonCanonicalEncLargeOrder",
--    "NonCanonicalPkRmLargeOrder",
--    "Twist",
--];
-+/// RFC 9180 leaves these to the implementation. When receiving, aws-lc-rs follows RFC 7748
-+/// literally, masking the high bit of a non-canonical `enc` and computing with points on
-+/// the twist, and no length limit is applied to `info`. When sending, a non-canonical
-+/// recipient public key (`NonCanonicalPkRmLargeOrder`) is rejected.
-+const ACCEPTED_FLAGS: &[&str] = &["LongInfo", "NonCanonicalEncLargeOrder", "Twist"];
- 
- /// Flags of vectors whose `enc` is not `Nenc` bytes long.
- ///
 ```
 
 ---
 
-### Incident Patch 2: `bc2e8420` (2026-11-10)
-**Commit Message**: rustls-aws-lc-rs: test HPKE against the Wycheproof vectors
+### Incident Patch 2: `0f57288d` (2026-11-11)
+**Commit Message**: Improve `Display` for `CertificateError::InvalidPurposeContext`
 
-Wycheproof recently added HPKE test vectors for base mode. These extend
-the existing RFC 9180 known-answer coverage. In particular, they test
-the sender's handling of recipient keys that are small-order,
-non-canonical or the wrong length, and the receiver's handling of
-small-order `enc` values, raw `enc` bytes in the KEM context, modified
-tags and trailing zero bytes in `info` or `aad`. They also test stateful
-message opening.
+- Print OIDs with dots, not commas
+- Fix where no EKUs are presented
 
-The outcome of "acceptable" vectors (long info, non-canonical X25519
-encodings, points on the twist) is left to the implementation by RFC
-9180. For these we pin to what aws-lc-rs does today.
-
-**File**: `rustls-aws-lc-rs/src/hpke/mod.rs` (modified, +14/-0)
+**File**: `rustls-test/tests/api/server_cert_verifier.rs` (modified, +1/-1)
 ```diff
-@@ -639,6 +639,20 @@ impl<const KDF_SIZE: usize> DhKem<KDF_SIZE> {
-         Ok(KemSharedSecret(shared_secret))
-     }
+@@ -807,7 +807,7 @@ fn client_check_server_valid_purpose() {
+     assert_eq!(
+         format!("{error}"),
+         "invalid peer certificate: certificate does not allow extended key usage for \
+-         server authentication, allows client authentication"
++         server authentication; it allows client authentication"
+     );
+ }
  
-+    /// A test-only operation computing the public key corresponding to `recipient`.
-+    #[cfg(test)]
-+    fn test_only_public_key(&self, recipient: &HpkePrivateKey) -> Result<HpkePublicKey, Error> {
-+        let sk_r = agreement::PrivateKey::from_private_key(
-+            self.agreement_algorithm,
-+            recipient.secret_bytes(),
-+        )
-+        .map_err(key_rejected_err)?;
-+        let pk_rm = sk_r
-+            .compute_public_key()
-+            .map_err(unspecified_err)?;
-+        Ok(HpkePublicKey(pk_rm.as_ref().to_vec()))
-+    }
-+
-     /// See [RFC 9180 §4.1 "DH-Based KEM (DHKEM)"][0].
-     ///
-     /// [0]: https://www.rfc-editor.org/info/rfc9180#section-4.1
 ```
 
-**File**: `rustls-aws-lc-rs/src/hpke/tests.rs` (modified, +404/-1)
+**File**: `rustls/src/error/mod.rs` (modified, +5/-2)
 ```diff
-@@ -1,8 +1,11 @@
- use alloc::string::String;
- use alloc::{format, vec};
-+use core::fmt::Debug;
-+use core::ops::Deref;
- use std::println;
- 
--use serde::Deserialize;
-+use serde::de::DeserializeOwned;
-+use serde::{Deserialize, Deserializer};
- 
- use super::*;
- 
-@@ -289,6 +292,20 @@ pub(super) trait TestHpke: Hpke {
-         pub_key: &HpkePublicKey,
-         sk_em: &[u8],
-     ) -> Result<(EncapsulatedSecret, Box<dyn HpkeSealer + 'static>), Error>;
-+
-+    fn setup_test_opener(
-+        &self,
-+        enc: &EncapsulatedSecret,
-+        info: &[u8],
-+        secret_key: &HpkePrivateKey,
-+    ) -> Result<Box<dyn TestOpener + 'static>, Error>;
-+
-+    fn public_key(&self, secret_key: &HpkePrivateKey) -> Result<HpkePublicKey, Error>;
-+}
-+
-+/// An [`HpkeOpener`] that exposes its current sequence number.
-+pub(super) trait TestOpener: HpkeOpener {
-+    fn seq_num(&self) -> u128;
- }
- 
- impl<const KEY_SIZE: usize, const KDF_SIZE: usize> TestHpke for HpkeAwsLcRs<KEY_SIZE, KDF_SIZE> {
-@@ -301,6 +318,26 @@ impl<const KEY_SIZE: usize, const KDF_SIZE: usize> TestHpke for HpkeAwsLcRs<KEY_
-         let (encap, sealer) = Sealer::test_only_new(self, info, pub_key, sk_em)?;
-         Ok((encap, Box::new(sealer)))
-     }
-+
-+    fn setup_test_opener(
-+        &self,
-+        enc: &EncapsulatedSecret,
-+        info: &[u8],
-+        secret_key: &HpkePrivateKey,
-+    ) -> Result<Box<dyn TestOpener + 'static>, Error> {
-+        Ok(Box::new(Opener::new(self, enc, info, secret_key)?))
-+    }
-+
-+    fn public_key(&self, secret_key: &HpkePrivateKey) -> Result<HpkePublicKey, Error> {
-+        self.dh_kem
-+            .test_only_public_key(secret_key)
-+    }
-+}
-+
-+impl<const KEY_SIZE: usize, const KDF_SIZE: usize> TestOpener for Opener<KEY_SIZE, KDF_SIZE> {
-+    fn seq_num(&self) -> u128 {
-+        self.key_schedule.seq_num
-+    }
- }
- 
- static TEST_SUITES: &[&dyn TestHpke] = &[
-@@ -323,3 +360,369 @@ static TEST_SUITES: &[&dyn TestHpke] = &[
-     #[cfg(not(feature = "fips"))]
-     DH_KEM_X25519_HKDF_SHA256_CHACHA20_POLY1305,
- ];
-+
-+/// Confirm base mode encapsulation accepts and rejects recipient public keys as expected.
-+#[test]
-+fn encap_test_vectors() {
-+    for (group, hpke) in applicable_groups::<EncapTest>("hpke_x25519_encap_test.json") {
-+        for test in group.tests {
-+            println!("testing encap vector {}: {}", test.tc_id, test.comment);
-+            let should_pass = should_pass(test.result, &test.flags);
-+            let pk_rm = HpkePublicKey(test.pk_rm.to_vec());
-+            let sk_rm = test
-+                .sk_rm
-+                .as_ref()
-+                .map(|sk_rm| HpkePrivateKey::from(sk_rm.to_vec()));
-+            if let Some(sk_rm) = &sk_rm {
-+                assert_eq!(hpke.public_key(sk_rm).unwrap().0, *test.pk_rm);
-+
-+                // The vector's own `enc` and `ct` must open to `pt`.
-+                let enc = EncapsulatedSecret(test.enc.to_vec());
-+                let pt = hpke
-+                    .open(&enc, &test.info, &test.aad, &test.ct, sk_rm)
-+                    .unwrap();
-+                assert_eq!(pt, *test.pt);
-+            }
-+
-+            // Setting up a sealer with an invalid key must fail. Sealing with a sealer
-+            // that was set up must not fail. Encapsulating with the vector's ephemeral
-+            // key must produce the expected `enc` and `ct` exactly.
-+            let deterministic = hpke.setup_test_sealer(&test.info, &pk_rm, &test.sk_em);
-+            if let Some((enc, mut sealer)) = check(test.tc_id, should_pass, deterministic) {
-+                assert_eq!(enc.0, *test.enc);
-+                assert_eq!(
-+                    sealer
-+                        .seal(&test.aad, &test.pt)
-+                        .unwrap(),
-+                    *test.ct
-+                );
-+            }
-+
-+            // Encapsulating with a fresh ephemeral key must accept or reject the
-+            // recipient key in the same way and produce output of the same lengths. When
-+            // the recipient private key is known, the output must also open to the
-+            // plaintext.
-+            let randomized = hpke.setup_sealer(&test.info, &pk_rm);
-+            if let Some((enc, mut sealer)) = check(test.tc_id, should_pass, randomized) {
-+                let ct = sealer
-+                    .seal(&test.aad, &test.pt)
-+                    .unwrap();
-+                assert_eq!(enc.0.len(), test.enc.len());
-+                assert_eq!(ct.len(), test.ct.len());
-+                if let Some(sk_rm) = &sk_rm {
-+                    let pt = hpke
-+                        .open(&enc, &test.info, &test.aad, &ct, sk_rm)
-+                        .unwrap();
-+                    assert_eq!(pt, *test.pt);
+@@ -711,8 +711,11 @@ impl fmt::Display for CertificateError {
+             } => {
+                 write!(
+                     f,
+-                    "certificate does not allow extended key usage for {required}, allows "
++                    "certificate does not allow extended key usage for {required}; it allows "
+                 )?;
++                if presented.is_empty() {
++                    write!(f, "nothing")?;
 +                }
-+            }
-+        }
-+    }
-+}
-+
-+/// Confirm single-shot base mode open accepts and rejects messages as expected.
-+#[test]
-+fn decrypt_test_vectors() {
-+    for (group, hpke) in applicable_groups::<DecryptTest>("hpke_x25519_decrypt_test.json") {
-+        for test in group.tests 
-```
-
-**File**: `rustls-provider-test/tests/wycheproof/LICENSE` (added, +202/-0)
-```diff
-@@ -0,0 +1,202 @@
-+
-+                                 Apache License
-+                           Version 2.0, January 2004
-+                        http://www.apache.org/licenses/
-+
-+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-+
-+   1. Definitions.
-+
-+      "License" shall mean the terms and conditions for use, reproduction,
-+      and distribution as defined by Sections 1 through 9 of this document.
-+
-+      "Licensor" shall mean the copyright owner or entity authorized by
-+      the copyright owner that is granting the License.
-+
-+      "Legal Entity" shall mean the union of the acting entity and all
-+      other entities that control, are controlled by, or are under common
-+      control with that entity. For the purposes of this definition,
-+      "control" means (i) the power, direct or indirect, to cause the
-+      direction or management of such entity, whether by contract or
-+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-+      outstanding shares, or (iii) beneficial ownership of such entity.
-+
-+      "You" (or "Your") shall mean an individual or Legal Entity
-+      exercising permissions granted by this License.
-+
-+      "Source" form shall mean the preferred form for making modifications,
-+      including but not limited to software source code, documentation
-+      source, and configuration files.
-+
-+      "Object" form shall mean any form resulting from mechanical
-+      transformation or translation of a Source form, including but
-+      not limited to compiled object code, generated documentation,
-+      and conversions to other media types.
-+
-+      "Work" shall mean the work of authorship, whether in Source or
-+      Object form, made available under the License, as indicated by a
-+      copyright notice that is included in or attached to the work
-+      (an example is provided in the Appendix below).
-+
-+      "Derivative Works" shall mean any work, whether in Source or Object
-+      form, that is based on (or derived from) the Work and for which the
-+      editorial revisions, annotations, elaborations, or other modifications
-+      represent, as a whole, an original work of authorship. For the purposes
-+      of this License, Derivative Works shall not include works that remain
-+      separable from, or merely link (or bind by name) to the interfaces of,
-+      the Work and Derivative Works thereof.
-+
-+      "Contribution" shall mean any work of authorship, including
-+      the original version of the Work and any modifications or additions
-+      to that Work or Derivative Works thereof, that is intentionally
-+      submitted to Licensor for inclusion in the Work by the copyright owner
-+      or by an individual or Legal Entity authorized to submit on behalf of
-+      the copyright owner. For the purposes of this definition, "submitted"
-+      means any form of electronic, verbal, or written communication sent
-+      to the Licensor or its representatives, including but not limited to
-+      communication on electronic mailing lists, source code control systems,
-+      and issue tracking systems that are managed by, or on behalf of, the
-+      Licensor for the purpose of discussing and improving the Work, but
-+      excluding communication that is conspicuously marked or otherwise
-+      designated in writing by the copyright owner as "Not a Contribution."
-+
-+      "Contributor" shall mean Licensor and any individual or Legal Entity
-+      on behalf of whom a Contribution has been received by Licensor and
-+      subsequently incorporated within the Work.
-+
-+   2. Grant of Copyright License. Subject to the terms and conditions of
-+      this License, each Contributor hereby grants to You a perpetual,
-+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-+      copyright license to reproduce, prepare Derivative Works of,
-+      publicly display, publicly perform, sublicense, and distribute the
-+      Work and such Derivative Works in Source or Object form.
-+
-+   3. Grant of Patent License. Subject to the terms and conditions of
-+      this License, each Contributor hereby grants to You a perpetual,
-+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-+      (except as stated in this section) patent license to make, have made,
-+      use, offer to sell, sell, import, and otherwise transfer the Work,
-+      where such license applies only to those patent claims licensable
-+      by such Contributor that are necessarily infringed by their
-+      Contribution(s) alone or by combination of their Contribution(s)
-+      with the Work to which such Contribution(s) was submitted. If You
-+      institute patent litigation against any entity (including a
-+      cross-claim or counterclaim in a lawsuit) alleging that the Work
-+      or a Contribution incorporated within the Work constitutes direct
-+      or contributory patent infringement, then any patent licenses
-+      granted to You under this License for that Work shal
-```
-
-**File**: `rustls-provider-test/tests/wycheproof/README.md` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+# Wycheproof HPKE test vectors
-+
-+The JSON files in this directory are unmodified copies of the HPKE test vectors
-+from the [Wycheproof] project's `testvectors_v1/` directory, taken at commit
-+`d5f724a21e449bbf8f142e032a6bf86884f2851c`. The upstream `doc/hpke.md`
-+describes how each file applies to an implementation.
-+
-+Only the DHKEM(X25519, HKDF-SHA256) vectors are vendored. The upstream ML-KEM
-+vectors cover KEMs that no rustls HPKE implementation supports. The vectors
-+are exercised by the `rustls-aws-lc-rs` HPKE unit tests.
-+
-+[Wycheproof]: https://github.com/C2SP/wycheproof
-```
-
-**File**: `rustls-provider-test/tests/wycheproof/hpke_x25519_decrypt_test.json` (added, +1546/-0)
-```diff
-@@ -0,0 +1,1546 @@
-+{
-+  "algorithm": "HPKE",
-+  "schema": "hpke_decrypt_test_schema.json",
-+  "numberOfTests": 83,
-+  "header": [
-+    "Test vectors for HPKE (RFC 9180) single-shot Open in base mode",
-+    "using DHKEM(X25519, HKDF-SHA256). The recipient private key skRm",
-+    "is the 32-byte X25519 scalar (Nsk = 32). Valid cases include",
-+    "ikmE, the DeriveKeyPair input for the sender's ephemeral key, and",
-+    "the derived skEm, so deterministic encapsulation reproduces enc",
-+    "and ct. Given (skRm, info, aad, enc, ct) an implementation runs",
-+    "SetupBaseR then Open and must recover pt for valid cases or",
-+    "reject invalid cases. Acceptable cases are interoperability",
-+    "probes that an RFC-literal implementation opens; an",
-+    "implementation may reject them, but if it opens one it must",
-+    "recover pt. The first group uses HKDF-SHA256 and AES-128-GCM; two",
-+    "further groups use HKDF-SHA384 with AES-256-GCM and HKDF-SHA512",
-+    "with ChaCha20Poly1305, whose hash differs from the KEM's internal",
-+    "HKDF-SHA256. See doc/hpke.md."
-+  ],
-+  "notes": {
-+    "AppendedByteCiphertext": {
-+      "bugType": "AUTH_BYPASS",
-+      "description": "A trailing byte was appended to the AEAD ciphertext."
-+    },
-+    "EmbeddedZeroAad": {
-+      "bugType": "EDGE_CASE",
-+      "description": "The AEAD associated data contains embedded zero bytes."
-+    },
-+    "EmbeddedZeroInfo": {
-+      "bugType": "EDGE_CASE",
-+      "description": "The HPKE info contains embedded zero bytes, catching a consumer that mishandles them (e.g. treats info as null-terminated)."
-+    },
-+    "EmbeddedZeroPlaintext": {
-+      "bugType": "EDGE_CASE",
-+      "description": "The plaintext contains embedded zero bytes."
-+    },
-+    "EmptyAad": {
-+      "bugType": "EDGE_CASE",
-+      "description": "The AEAD associated data is empty."
-+    },
-+    "EmptyCiphertext": {
-+      "bugType": "AUTH_BYPASS",
-+      "description": "The AEAD ciphertext is empty (shorter than one tag)."
-+    },
-+    "EmptyInfo": {
-+      "bugType": "EDGE_CASE",
-+      "description": "The HPKE info string is empty."
-+    },
-+    "EmptyPlaintext": {
-+      "bugType": "EDGE_CASE",
-+      "description": "The sealed plaintext is empty, so ct is the Nt-byte AEAD tag alone; Open must succeed and return an empty plaintext. hpke-rs-rust-crypto 0.4.0 through 0.6.0 rejected every ciphertext of at most Nt bytes on Open (its AEAD checked msg.len() <= tag_length instead of <); fixed in 0.6.1.",
-+      "effect": "Interoperability failure: the receiver cannot open messages with an empty plaintext, such as ones that only authenticate aad.",
-+      "links": [
-+        "https://github.com/celabshq/hpke-rs/issues/107",
-+        "https://github.com/celabshq/hpke-rs/commit/d035ea18dfd4f19e28ef1be2ac50f172e49a690d"
-+      ]
-+    },
-+    "EncTrailingByteInContext": {
-+      "bugType": "KNOWN_BUG",
-+      "description": "enc is the 32-byte ephemeral public key followed by one extra byte, and ct is sealed under a KEM context built from that 33-byte enc. A receiver that truncates enc to Nenc for the Diffie-Hellman but hashes the full buffer into the KEM context derives the sender's key and accepts; a correct receiver rejects an enc that is not exactly Nenc bytes (RFC 9180 Section 4: DeserializePublicKey parses a byte string of length Npk; Section 4.1: Decap applies it to enc). cloudflare/circl before v1.6.5 accepted this (checked on v1.5.0 and v1.6.1). The plain 'enc one byte long' case does not catch it, because there ct is sealed under the 32-byte context and fails the AEAD tag.",
-+      "effect": "The receiver accepts an encapsulation that is not a well-formed Nenc-byte encoding, so one ciphertext is accepted under several distinct enc values (enc is malleable).",
-+      "links": [
-+        "RFC 9180, Section 4",
-+        "RFC 9180, Section 4.1",
-+        "https://github.com/cloudflare/circl/commit/e97d46f1bd3703d70c320fbb27425d71ff8aaa9d"
-+      ]
-+    },
-+    "KemKdfDiffersFromHpkeKdf": {
-+      "bugType": "KNOWN_BUG",
-+      "description": "The HPKE KDF is HKDF-SHA384 or HKDF-SHA512 while DHKEM(X25519, HKDF-SHA256) keeps its own HKDF-SHA256 inside the KEM. RFC 9180 Section 4.1 requires implementations to use the constants and function calls of the appropriate KDF for DHKEM. wolfSSL used the HPKE KDF's digest inside the KEM and so failed to interoperate for these combinations.",
-+      "effect": "Silent interoperability failure: the implementation derives different keys from the peer.",
-+      "links": [
-+        "RFC 9180, Section 4.1",
-+        "https://github.com/wolfSSL/wolfssl/pull/9999"
-+      ]
-+    },
-+    "LongInfo": {
-+      "bugType": "FUNCTIONALITY",
-+      "description": "info is 1024 bytes, above the RECOMMENDED 64-byte limit of RFC 9180 Section 7.2.1 but far below the maximum (2^61 - 91 bytes for HKDF-SHA256, 2^125 - 155 for HKDF-SHA384 and HKDF-SHA512). An implementation may reject it because of an input length limit; if it accepts it, it must rec
-```
-
-**File**: `rustls-provider-test/tests/wycheproof/hpke_x25519_encap_test.json` (added, +402/-0)
-```diff
-@@ -0,0 +1,402 @@
-+{
-+  "algorithm": "HPKE",
-+  "schema": "hpke_encap_test_schema.json",
-+  "numberOfTests": 19,
-+  "header": [
-+    "HPKE (RFC 9180) base-mode encapsulation-key validation (SetupBaseS) with DHKEM(X25519, HKDF-SHA256). Every case carries ikmE (and the derived skEm) as the encapsulation randomness; its presence does not mean the case is valid. See doc/hpke.md."
-+  ],
-+  "notes": {
-+    "LowOrderPublic": {
-+      "bugType": "DEFINED",
-+      "description": "The encapsulation key is a low-order point on the curve or its twist."
-+    },
-+    "NonCanonicalPkRmLargeOrder": {
-+      "bugType": "EDGE_CASE",
-+      "description": "pkRm is the valid Pseudorandom encapsulation key with bit 255 set. RFC 7748 Section 5 masks bit 255, so the Diffie-Hellman output equals that for the canonical key. SerializePublicKey and DeserializePublicKey are the identity for X25519 (RFC 9180 Section 7.1.1), so an RFC-literal sender hashes the pkRm bytes as given into kem_context = enc || pkRm (Section 4.1 Encap); enc and ct are what such a sender produces from ikmE. An implementation may instead reject the key as non-canonical. A sender that canonicalizes pkRm before building kem_context produces a different ct, which deviates from RFC 9180. The holder of the matching private key builds kem_context from the canonical SerializePublicKey(pk(skR)) in Decap, so it cannot open this ct; for that reason no skRm is given.",
-+      "links": [
-+        "RFC 7748, Section 5",
-+        "RFC 9180, Section 4.1",
-+        "RFC 9180, Section 7.1.1"
-+      ]
-+    },
-+    "NonCanonicalPublic": {
-+      "bugType": "DEFINED",
-+      "description": "The encapsulation key is a non-canonical encoding: its u-coordinate is >= p, or bit 255 is set, or both. RFC 7748 Section 5 masks bit 255 and reduces u mod p."
-+    },
-+    "Pseudorandom": {
-+      "bugType": "BASIC",
-+      "description": "A well-formed encapsulation key; SetupBaseS must succeed."
-+    },
-+    "SmallPublicKey": {
-+      "bugType": "DEFINED",
-+      "description": "The encapsulation key is a small-order point whose u-coordinate is 0 or 1 (mod p); it does not belong to a valid private key."
-+    },
-+    "WrongLengthPublicKey": {
-+      "bugType": "MODIFIED_PARAMETER",
-+      "description": "The encapsulation key is not 32 bytes (empty, short, or long) and must be rejected."
-+    },
-+    "ZeroSharedSecret": {
-+      "bugType": "CONFIDENTIALITY",
-+      "description": "The encapsulation key is a small-order point whose X25519 Diffie-Hellman output is all-zero for every ephemeral key, so SetupBaseS MUST fail. RFC 9180 Section 7.1.4 states \"For X25519 and X448, public keys and Diffie-Hellman outputs MUST be validated as described in [RFC7748]\". That sentence is not limited to the recipient, and the validation RFC 7748 Section 6.1 describes is the all-zero check; the next sentence additionally requires recipients to check for the all-zero value and abort. Section 8.2 likewise notes that DHKEM Encap() fails when given an invalid recipient public key. (Plain X25519, RFC 7748 Section 6.1, leaves the all-zero check optional, which is why x25519_test.json labels such keys acceptable.) RUSTSEC-2026-0072 and wolfSSL before 5.9.2, where the check existed but was off by default, accepted the all-zero output.",
-+      "effect": "The sender's message is encrypted under a key that anyone can compute: the shared secret depends only on the public values enc and pkRm.",
-+      "links": [
-+        "RFC 9180, Section 7.1.4",
-+        "https://rustsec.org/advisories/RUSTSEC-2026-0072.html",
-+        "https://github.com/wolfSSL/wolfssl/commit/2aacc18788f8633ea937efca257ea676128e4e0f"
-+      ]
-+    }
-+  },
-+  "testGroups": [
-+    {
-+      "type": "HpkeEncapTest",
-+      "source": {
-+        "name": "github/C2SP/wycheproof/pull/273",
-+        "version": "0.1"
-+      },
-+      "kem": "DHKEM(X25519, HKDF-SHA256)",
-+      "kemId": 32,
-+      "kdf": "HKDF-SHA256",
-+      "kdfId": 1,
-+      "aead": "AES-128-GCM",
-+      "aeadId": 1,
-+      "tests": [
-+        {
-+          "tcId": 1,
-+          "comment": "valid encapsulation key",
-+          "pkRm": "34244fcfe68b99aeb02ecc64b033170a2973f43fc14c36d6a92562b1c9045f10",
-+          "ikmE": "5c2179753439e19a85fc894a91fbcca45a95ee8ad57733b34c660205f691b8d7",
-+          "skEm": "0b437bd4474efdcf983c3d9a1e17fc012621a752825ab8eba097ba8ddd212c3c",
-+          "skRm": "d0d58da87c32bed247e359b2b7abf0f5ca8fa324e29fe73ae63f38ec84ac4cb7",
-+          "info": "777963686570726f6f662068706b6520696e666f",
-+          "aad": "777963686570726f6f6620616164",
-+          "pt": "426561757479206973207472757468",
-+          "enc": "25848f4f85bb10244115b28d536ea6b99df989a5a6c2f554442f4c67f3e3d714",
-+          "ct": "9c7bcaf6a5c55fd7fe75ddb18ca8fc27b27b106f1a320aa4f90cdc2a33e542",
-+          "result": "valid",
-+          "flags": [
-+            "Pseudorandom"
-+          ]
-+        },
-+        {
-+          "tcId": 2,
-+          "comment": "small-order encapsulation key 000000000000000000000
+                 for (i, eku) in presented.iter().enumerate() {
+                     if i > 0 {
+                         write!(f, ", ")?;
+@@ -1406,7 +1409,7 @@ impl fmt::Display for ExtendedKeyPurpose {
+             Self::Other(values) => {
+                 for (i, value) in values.iter().enumerate() {
+                     if i > 0 {
+-                        write!(f, ", ")?;
++                        write!(f, ".")?;
+                     }
+                     write!(f, "{value}")?;
+                 }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3426** (2026-11-12): Test coverage improvements (@ctz)
+- **PR #3425** (2026-11-12): Take pki-types 1.16: rely on canonical `DnsName`s & use `DnsName::into_owned()` (@ctz)
 - **PR #3423** (2026-11-11): add Wycheproof HPKE coverage, reject non-canonical X25519 HPKE recipient keys  (@cpu)
 - **PR #3422** (2026-11-10): Take graviola 0.4.5 and delete FAKE_HASH (@ctz)
 - **PR #3420** (2026-11-09): replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info (@mcr)
 - **PR #3419** (2026-11-09): Update Rust crate crabgrind to 0.5 (@renovate-bot)
-- **PR #3417** (2026-11-06): Refactor ALPN selection (@ctz)
-- **PR #3414** (2026-11-06): client: reject hello retry request naming a group already offered (@Mounika2456)
 
 ---
 
@@ -2914,44 +2450,56 @@ encodings, points on the twist) is left to the implementation by RFC
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys
+## X. Test `Display` for remaining error variants
 
 **RULE**:
-When implementing operations in `rustls-aws-lc-rs/src/hpke/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls/src/error/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f68d6d29`: rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `970b4474`: Test `Display` for remaining error variants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-aws-lc-rs/src/hpke/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/error/tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // RFC 7748 decoders mask the high bit of an X25519 public key and reduce its
-        // u-coordinate mod p, so a key has several encodings. The encoding we are given is
-        // hashed into the KEM context as-is below, whereas the recipient uses the canonical
-        // encoding of its own key, so a message sealed to a non-canonical encoding can never
-        // be opened. Reject such encodings rather than produce undecryptable output.
-        if self.id == HpkeKem::DHKEM_X25519_HKDF_SHA256 && x25519_is_non_canonical(&recipient.0) {
-            return Err(Error::General("non-canonical X25519 public key".into()));
-        }
-
-/// Whether `encoding` is a well-formed but non-canonical X25519 public key.
-///
-/// A 32 byte encoding is non-canonical when its little-endian value is at least
-/// p = 2^255 - 19, which includes any with the high bit set. Encodings of other lengths are
-/// left to the agreement to reject.
-fn x25519_is_non_canonical(encoding: &[u8]) -> bool {
-    // p = 2^255 - 19 in little-endian.
-    const P: [u8; 32] = {
-        let mut p = [0xff; 32];
-        p[0] = 0xed;
-        p[31] = 0x7f;
-        p
+#[test]
+fn error_display() {
+    use super::{
+        ApiMisuse, CertificateError, EncryptedClientHelloError, ExtendedKeyPurpose, RejectedEch,
     };
 
-    encoding.len() == P.len() && encoding.iter().rev
+    let cases: &[(Error, &str)] = &[
+        (
+            Error::UnsupportedNameType,
+            "presented server name type wasn't supported",
+        ),
+        (
+            Error::InvalidEncryptedClientHello(EncryptedClientHelloError::NoCompatibleConfig),
+            "encrypted client hello failure: NoCompatibleConfig",
+        ),
+        (Error::EncryptError, "cannot encrypt message"),
+        (
+            Error::NoSuitableCertificate,
+            "no suitable certificate found",
+        ),
+        (
+            Error::RejectedEch(RejectedEch {
+                retry_configs: Some(vec![]),
+            }),
+            "server rejected encrypted client hello (ECH) with retry configs",
+        ),
+        (
+            Error::RejectedEch(RejectedEch {
+                retry_configs: None,
+            }),
+            "server rejected encrypted client hello (ECH) without retry configs",
+        ),
+        (
+            CertificateError::NotValidForNameContext {
+                expected: ServerName::try_from("example.com")
+           
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2961,4 +2509,4 @@ fn x25519_is_non_canonical(encoding: &[u8]) -> bool {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f68d6d29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `970b4474` are properly handled with clean fallback behavior.

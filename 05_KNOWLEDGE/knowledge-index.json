@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T10:43:07.084Z",
+  "last_updated": "2026-11-12T10:52:54.854Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13726,14 +13726,19 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "2f05e83e",
-      "content_hash": "057cd7a8b6cc2b30c6a8f9b441b1ec03dcfecd5dc641d4585571f7e4c887bb82",
+      "source_version": "72d4626f",
+      "content_hash": "4325fd9e34857af151d30061db21ec01c9d8c1ab82ed88d3f26c5d0545857a3f",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Revert \"runtimes: log in to Cloud SQL with GCP IAM database authentication (#264",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tsparser: match tsc for null conditions and pattern choice",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -13802,7 +13807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T04:44:29.738Z",
+      "verified_at": "2026-11-12T10:52:50.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48506,8 +48511,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "c1668355",
-      "content_hash": "012c2baefb2c5b8a40129e788ab31b50ba84ea83dac261c66d45e698e0df91ad",
+      "source_version": "ac4f4442",
+      "content_hash": "66f63764a50b634dde410cb827a0f1252a10ddf59eb2fb60dd8ea8325f4ea299",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -48524,6 +48529,11 @@
         {
           "number": null,
           "title": "Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifi",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Readiness example link to guide",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48602,7 +48612,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:33:28.457Z",
+      "verified_at": "2026-11-12T10:52:37.668Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56602,8 +56612,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "f68d6d29",
-      "content_hash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
+      "source_version": "970b4474",
+      "content_hash": "11e4d485f61841a281b14a07ca5518946433f6add2308035775253e1ba557de4",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -56630,6 +56640,11 @@
         {
           "number": null,
           "title": "rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Test `Display` for remaining error variants",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56738,7 +56753,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:03:57.287Z",
+      "verified_at": "2026-11-12T10:52:54.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76596,14 +76611,19 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "pathwaycom/serviette",
       "repository": "pathwaycom/serviette",
-      "slug": "pathwaycom-llm-app",
+      "slug": "pathwaycom-serviette",
       "platform": "github",
-      "source_url": "https://github.com/pathwaycom/llm-app",
-      "source_version": "84e92a33",
-      "content_hash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
-      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+      "source_url": "https://github.com/pathwaycom/serviette",
+      "source_version": "53c6382b",
+      "content_hash": "4edefa749f9d24c1f97d1695a3447e877f4c47bc6fb8fe3f46e2f6f893cb9a93",
+      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "missed short values in document comparisons",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 926,
           "title": "relative links to assets in llm-app (#9439)",
@@ -76625,7 +76645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:01:01.904Z",
+      "verified_at": "2026-11-12T10:52:54.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

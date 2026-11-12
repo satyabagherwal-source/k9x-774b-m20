@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T10:43:12.745Z",
+  "last_updated": "2026-11-12T10:53:03.297Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6707,6 +6707,33 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-091CBC-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B73AA2",
+      "directive_title": "Readiness example link to guide",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ntex-rs-ntex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B73AA2-readiness-example-link-to-guide.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B8D7F3",
+      "directive_title": "tsparser: match tsc for null conditions and pattern choice",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "encoredev-encore",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B8D7F3-tsparser-match-tsc-for-null-conditions-a.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9F6F94",
+      "directive_title": "Test `Display` for remaining error variants",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustls-rustls",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9F6F94-test-display-for-remaining-error-variant.md",
       "staged_date": "2026-11-12"
     }
   ]

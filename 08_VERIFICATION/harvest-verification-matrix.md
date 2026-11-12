@@ -9137,3 +9137,7 @@
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T09:55:51.213Z` | `hf-viggle-viggle-remake` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-78355AEC` [Domain D] | Yes (`bc033152...`) |
 | `CYCLE-20261112-9AK1` | `2026-11-12T10:17:33.361Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bdd6fd2c...`) |
 | `CYCLE-20261112-662Q` | `2026-11-12T10:43:07.202Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`94ccab96...`) |
+| `CYCLE-20261112-IEEM` | `2026-11-12T10:52:37.870Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`66f63764...`) |
+| `CYCLE-20261112-IOMM` | `2026-11-12T10:52:51.118Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4325fd9e...`) |
+| `CYCLE-20261112-IR04` | `2026-11-12T10:52:54.196Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`11e4d485...`) |
+| `CYCLE-20261112-IRMW` | `2026-11-12T10:52:55.016Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4edefa74...`) |

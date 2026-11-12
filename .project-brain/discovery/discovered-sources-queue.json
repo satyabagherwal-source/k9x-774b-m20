@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T10:43:12.695Z",
+  "updated_at": "2026-11-12T10:53:03.356Z",
   "stats": {
-    "total_discovered": 1164,
-    "approved_pending_harvest": 1051,
+    "total_discovered": 1192,
+    "approved_pending_harvest": 1079,
     "harvested_count": 0,
     "rejected_count": 113,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1073,
-      "OFFICIAL_DOCUMENTATION": 40,
+      "COMMUNITY_AND_EXPERT": 1098,
+      "OFFICIAL_DOCUMENTATION": 43,
       "STANDARDS_AND_SPECIFICATIONS": 48,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 2
@@ -24834,6 +24834,622 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infracost-infracost-learnings.md",
         "fileName": "infracost-infracost-learnings.md"
+      }
+    },
+    "SRC-013AA7D980F8": {
+      "id": "SRC-013AA7D980F8",
+      "url": "https://github.com/ntex-rs/ntex",
+      "title": "https://github.com/ntex-rs/ntex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.209Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-D8D0853B97A1": {
+      "id": "SRC-D8D0853B97A1",
+      "url": "https://docs.ntex.rs/3-state.html",
+      "title": "https://docs.ntex.rs/3-state.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.214Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-F5B23496BD1F": {
+      "id": "SRC-F5B23496BD1F",
+      "url": "https://codecov.io/gh/ntex-rs/ntex/pull/130?src=pr&el=h1",
+      "title": "https://codecov.io/gh/ntex-rs/ntex/pull/130?src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-AB4621AE1125": {
+      "id": "SRC-AB4621AE1125",
+      "url": "https://codecov.io/gh/ntex-rs/ntex/pull/130?src=pr&el=desc",
+      "title": "https://codecov.io/gh/ntex-rs/ntex/pull/130?src=pr&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-1E7C5F8C0211": {
+      "id": "SRC-1E7C5F8C0211",
+      "url": "https://codecov.io/gh/ntex-rs/ntex/commit/d808574b97b09b4ebb7e143603668ae192baaeee?el=desc",
+      "title": "https://codecov.io/gh/ntex-rs/ntex/commit/d808574b97b09b4ebb7e143603668ae192baaeee?el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.229Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-3D5C77459939": {
+      "id": "SRC-3D5C77459939",
+      "url": "https://github.com/ntex-rs/examples/tree/main/service/readiness",
+      "title": "https://github.com/ntex-rs/examples/tree/main/service/readiness",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-560D31A08335": {
+      "id": "SRC-560D31A08335",
+      "url": "https://github.com/ntex-rs/examples",
+      "title": "https://github.com/ntex-rs/examples",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-E2B67CD2E3F5": {
+      "id": "SRC-E2B67CD2E3F5",
+      "url": "https://github.com/torvalds/linux/blob/master/kernel/time/timer.c",
+      "title": "https://github.com/torvalds/linux/blob/master/kernel/time/timer.c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-44E219636C37": {
+      "id": "SRC-44E219636C37",
+      "url": "https://lwn.net/Articles/646950",
+      "title": "https://lwn.net/Articles/646950",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-CD5ED78C634C": {
+      "id": "SRC-CD5ED78C634C",
+      "url": "https://docs.ntex.rs/api/ntex/rt/struct.DefaultRuntime.html",
+      "title": "https://docs.ntex.rs/api/ntex/rt/struct.DefaultRuntime.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.252Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-477E2F10EDB0": {
+      "id": "SRC-477E2F10EDB0",
+      "url": "https://github.com/encoredev/encore",
+      "title": "https://github.com/encoredev/encore",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-E2596FCB808A": {
+      "id": "SRC-E2596FCB808A",
+      "url": "https://app.encore.dev/%s",
+      "title": "https://app.encore.dev/%s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-E56694E3A597": {
+      "id": "SRC-E56694E3A597",
+      "url": "https://app.encore.dev/",
+      "title": "https://app.encore.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-7099F9C0AE78": {
+      "id": "SRC-7099F9C0AE78",
+      "url": "https://automativity.encore.dev/bits",
+      "title": "https://automativity.encore.dev/bits",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-D83A33337818": {
+      "id": "SRC-D83A33337818",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-4232CB73FABC": {
+      "id": "SRC-4232CB73FABC",
+      "url": "https://fetch.spec.whatwg.org/",
+      "title": "https://fetch.spec.whatwg.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-4A36777A77E1": {
+      "id": "SRC-4A36777A77E1",
+      "url": "https://github.com/encoredev/swc?branch=node-resolve-exports",
+      "title": "https://github.com/encoredev/swc?branch=node-resolve-exports",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.290Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-D4B5199CD580": {
+      "id": "SRC-D4B5199CD580",
+      "url": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client",
+      "title": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-15C88FDB11D2": {
+      "id": "SRC-15C88FDB11D2",
+      "url": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client",
+      "title": "https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-06D592C03D3B": {
+      "id": "SRC-06D592C03D3B",
+      "url": "https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-5BE9A2AD09B4": {
+      "id": "SRC-5BE9A2AD09B4",
+      "url": "https://app.codecov.io/gh/rustls/rustls/commit/433b3fd76c8c5ac37cafc288d15311668f6a6bbc?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/rustls/rustls/commit/433b3fd76c8c5ac37cafc288d15311668f6a6bbc?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-43894E30F533": {
+      "id": "SRC-43894E30F533",
+      "url": "https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=tree",
+      "title": "https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=tree",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-5D446A7B917E": {
+      "id": "SRC-5D446A7B917E",
+      "url": "https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_session_id_1.2_no_crypto_server",
+      "title": "https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_session_id_1.2_no_crypto_server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.331Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-5B65F669B887": {
+      "id": "SRC-5B65F669B887",
+      "url": "https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_tickets_1.2_no_crypto_server",
+      "title": "https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_tickets_1.2_no_crypto_server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.336Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-94D458D6E420": {
+      "id": "SRC-94D458D6E420",
+      "url": "https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b85",
+      "title": "https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b85",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-2419729854D0": {
+      "id": "SRC-2419729854D0",
+      "url": "https://app.codecov.io/gh/rustls/rustls/pull/3425?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/rustls/rustls/pull/3425?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-6A6F8F9F1F55": {
+      "id": "SRC-6A6F8F9F1F55",
+      "url": "https://app.codecov.io/gh/rustls/rustls/commit/f68d6d296759bb002c462b402401f2cf295b92da?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/rustls/rustls/commit/f68d6d296759bb002c462b402401f2cf295b92da?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-BB7CD6DABDE6": {
+      "id": "SRC-BB7CD6DABDE6",
+      "url": "https://app.codecov.io/gh/rustls/rustls/commit/115a8b6df4a97b857c10228e1b15b255d7e6f174?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/rustls/rustls/commit/115a8b6df4a97b857c10228e1b15b255d7e6f174?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:53:03.356Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
       }
     }
   }

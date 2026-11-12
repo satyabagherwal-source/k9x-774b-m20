@@ -9146,3 +9146,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-78355aec` | `project://hf-viggle-viggle-remake` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | 2026-11-12T09:55:51.213Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ac7afd8b` | Multi-dimensional audit evidence | 2026-11-12T10:17:33.365Z |
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `40ad0ac9` | Multi-dimensional audit evidence | 2026-11-12T10:43:07.206Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `ac4f4442` | Multi-dimensional audit evidence | 2026-11-12T10:52:37.875Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `72d4626f` | Multi-dimensional audit evidence | 2026-11-12T10:52:51.122Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `970b4474` | Multi-dimensional audit evidence | 2026-11-12T10:52:54.199Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/serviette` | `53c6382b` | Multi-dimensional audit evidence | 2026-11-12T10:52:55.020Z |

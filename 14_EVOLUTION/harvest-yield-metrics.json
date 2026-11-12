@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T10:43:07.213Z",
-  "total_cycles_completed": 8965,
-  "total_learnings_persisted": 8965,
-  "total_rules_promoted": 8809,
+  "last_updated": "2026-11-12T10:52:55.044Z",
+  "total_cycles_completed": 8969,
+  "total_learnings_persisted": 8969,
+  "total_rules_promoted": 8813,
   "history": [
-    {
-      "timestamp": "2026-11-11T10:35:10.423Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:35:17.396Z",
-      "repository": "sqldelight/sqldelight",
-      "learningId": "learn-github-sqldelight-sqldelight",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:35:27.139Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T10:35:27.935Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T10:43:22.233Z",
       "repository": "tw93/Pake",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T10:43:07.213Z",
       "repository": "infracost/infracost",
       "learningId": "learn-github-infracost-infracost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T10:52:37.884Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T10:52:51.129Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T10:52:54.207Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T10:52:55.044Z",
+      "repository": "pathwaycom/serviette",
+      "learningId": "learn-github-pathwaycom-serviette",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
