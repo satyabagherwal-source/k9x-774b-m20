@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T10:17:33.376Z",
+  "last_updated": "2026-11-12T10:43:07.217Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7416,14 +7416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infracost-infracost",
-      "content_hash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
-      "verified_at": "2026-11-04T01:44:30.938Z",
+      "content_hash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
+      "verified_at": "2026-11-12T10:43:07.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:44:30.938Z"
+      "last_updated": "2026-11-12T10:43:07.216Z"
     },
     "apache/shardingsphere": {
       "repository": "apache/shardingsphere",

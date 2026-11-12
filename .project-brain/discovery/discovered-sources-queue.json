@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T10:17:38.715Z",
+  "updated_at": "2026-11-12T10:43:12.695Z",
   "stats": {
-    "total_discovered": 1159,
-    "approved_pending_harvest": 1046,
+    "total_discovered": 1164,
+    "approved_pending_harvest": 1051,
     "harvested_count": 0,
     "rejected_count": 113,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1068,
+      "COMMUNITY_AND_EXPERT": 1073,
       "OFFICIAL_DOCUMENTATION": 40,
       "STANDARDS_AND_SPECIFICATIONS": 48,
       "ENGINEERING_BLOGS": 1,
@@ -24724,6 +24724,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
         "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-ABE0C6BB4D93": {
+      "id": "SRC-ABE0C6BB4D93",
+      "url": "https://github.com/infracost/infracost",
+      "title": "https://github.com/infracost/infracost",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:43:12.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infracost-infracost-learnings.md",
+        "fileName": "infracost-infracost-learnings.md"
+      }
+    },
+    "SRC-B4DBC4E94AC8": {
+      "id": "SRC-B4DBC4E94AC8",
+      "url": "https://azure.microsoft.com/en-us/pricing/details/virtual-network",
+      "title": "https://azure.microsoft.com/en-us/pricing/details/virtual-network",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:43:12.672Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infracost-infracost-learnings.md",
+        "fileName": "infracost-infracost-learnings.md"
+      }
+    },
+    "SRC-2C32EAD0DA31": {
+      "id": "SRC-2C32EAD0DA31",
+      "url": "https://learn.microsoft.com/en-us/azure/cdn/cdn-billing",
+      "title": "https://learn.microsoft.com/en-us/azure/cdn/cdn-billing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:43:12.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infracost-infracost-learnings.md",
+        "fileName": "infracost-infracost-learnings.md"
+      }
+    },
+    "SRC-65E0FFC7E100": {
+      "id": "SRC-65E0FFC7E100",
+      "url": "https://github.com/infracost/infracost/releases/tag/v0.10.43",
+      "title": "https://github.com/infracost/infracost/releases/tag/v0.10.43",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:43:12.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infracost-infracost-learnings.md",
+        "fileName": "infracost-infracost-learnings.md"
+      }
+    },
+    "SRC-BD76FFFA3C30": {
+      "id": "SRC-BD76FFFA3C30",
+      "url": "https://github.com/user-attachments/assets/25679909-f2d8-460b-a643-cd2ad56de07f",
+      "title": "https://github.com/user-attachments/assets/25679909-f2d8-460b-a643-cd2ad56de07f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T10:43:12.695Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infracost-infracost-learnings.md",
+        "fileName": "infracost-infracost-learnings.md"
       }
     }
   }

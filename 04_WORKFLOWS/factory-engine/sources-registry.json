@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T10:17:38.464Z",
-    "lastVerified": "2026-11-12T10:17:38.464Z",
+    "lastChecked": "2026-11-12T10:43:12.525Z",
+    "lastVerified": "2026-11-12T10:43:12.525Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,8 +255,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T09:19:18.420Z",
-    "lastVerified": "2026-11-12T09:19:18.420Z",
+    "lastChecked": "2026-11-12T10:42:57.896Z",
+    "lastVerified": "2026-11-12T10:42:57.896Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2464,8 +2464,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T03:30:38.463Z",
-    "lastVerified": "2026-11-12T03:30:38.463Z",
+    "lastChecked": "2026-11-12T10:42:52.849Z",
+    "lastVerified": "2026-11-12T10:42:52.849Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -5550,22 +5550,21 @@
     "lastVerified": "2026-11-10T04:59:10.542Z"
   },
   "infracost-infracost": {
-    "name": "infracost",
+    "name": "infracost/infracost",
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:36:50.565Z",
-    "lastVerified": "2026-11-10T04:36:50.565Z",
+    "lastChecked": "2026-11-12T10:42:55.671Z",
+    "lastVerified": "2026-11-12T10:42:55.671Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
-    "contentHash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
+    "contentHash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "93b9a2d9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -5862,8 +5861,8 @@
     "officialUrl": "https://github.com/cloudwego/volo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:25:47.933Z",
-    "lastVerified": "2026-11-09T16:25:47.933Z",
+    "lastChecked": "2026-11-12T10:42:42.787Z",
+    "lastVerified": "2026-11-12T10:42:42.787Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cloudwego-volo",
@@ -8063,12 +8062,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "tickernelz/opencode-mem",
+    "name": "opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T02:06:46.963Z",
-    "lastVerified": "2026-11-10T02:06:46.963Z",
+    "lastChecked": "2026-11-12T10:42:55.236Z",
+    "lastVerified": "2026-11-12T10:42:55.236Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
@@ -8077,7 +8076,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "040b27f4"
   },
   "str4d-rage": {
     "name": "rage",
@@ -10202,9 +10202,9 @@
   "kudoleh-ios-clean-architecture-mvvm": {
     "name": "iOS-Clean-Architecture-MVVM",
     "officialUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
-    "lastChecked": "2026-11-08T07:30:47.053Z",
+    "lastChecked": "2026-11-12T10:42:47.718Z",
     "revisionIdentifier": "a68da3e3",
-    "lastVerified": "2026-11-08T07:30:47.053Z"
+    "lastVerified": "2026-11-12T10:42:47.718Z"
   },
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
@@ -12016,9 +12016,9 @@
   "mozilla-readability": {
     "name": "readability",
     "officialUrl": "https://github.com/mozilla/readability",
-    "lastChecked": "2026-11-07T19:23:33.912Z",
+    "lastChecked": "2026-11-12T10:42:45.253Z",
     "revisionIdentifier": "ab4027a8",
-    "lastVerified": "2026-11-07T19:23:33.912Z"
+    "lastVerified": "2026-11-12T10:42:45.253Z"
   },
   "aheze-popovers": {
     "name": "Popovers",

@@ -4863,10 +4863,10 @@
     "repository": "infracost/infracost",
     "platform": "github",
     "sourceUrl": "https://github.com/infracost/infracost",
-    "sourceVersion": "93b9a2d9",
+    "sourceVersion": "40ad0ac9",
     "license": "Apache-2.0",
-    "contentHash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
-    "lastHarvestedAt": "2026-11-04T01:44:30.928Z",
+    "contentHash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
+    "lastHarvestedAt": "2026-11-12T10:43:07.206Z",
     "learningId": "learn-github-infracost-infracost"
   },
   "apache-shardingsphere": {

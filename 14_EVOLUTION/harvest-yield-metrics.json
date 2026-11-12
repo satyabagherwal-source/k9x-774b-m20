@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T10:17:33.372Z",
-  "total_cycles_completed": 8964,
-  "total_learnings_persisted": 8964,
-  "total_rules_promoted": 8808,
+  "last_updated": "2026-11-12T10:43:07.213Z",
+  "total_cycles_completed": 8965,
+  "total_learnings_persisted": 8965,
+  "total_rules_promoted": 8809,
   "history": [
-    {
-      "timestamp": "2026-11-11T10:27:16.907Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T10:35:10.423Z",
       "repository": "nguyenphutrong/quotio",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-12T10:17:33.372Z",
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T10:43:07.213Z",
+      "repository": "infracost/infracost",
+      "learningId": "learn-github-infracost-infracost",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

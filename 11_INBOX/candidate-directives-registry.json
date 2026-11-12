@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T10:17:38.762Z",
+  "last_updated": "2026-11-12T10:43:12.745Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6680,6 +6680,33 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8309E5-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-555E1C",
+      "directive_title": "deps): bump brotli, go-jose and klauspost/compress (#3641)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "infracost-infracost",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-555E1C-deps-bump-brotli-go-jose-and-klauspost-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-194312",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-194312-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-091CBC",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-091CBC-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-12"
     }
   ]

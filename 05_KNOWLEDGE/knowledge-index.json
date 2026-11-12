@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T10:17:33.248Z",
+  "last_updated": "2026-11-12T10:43:07.084Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36815,11 +36815,16 @@
       "slug": "infracost-infracost",
       "platform": "github",
       "source_url": "https://github.com/infracost/infracost",
-      "source_version": "93b9a2d9",
-      "content_hash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
+      "source_version": "40ad0ac9",
+      "content_hash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
       "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): bump brotli, go-jose and klauspost/compress (#3641)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2017,
           "title": "deps): bump Go to 1.25.12 to patch CVE-2026-39822 (#3597)",
@@ -36841,7 +36846,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:44:30.821Z",
+      "verified_at": "2026-11-12T10:43:07.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

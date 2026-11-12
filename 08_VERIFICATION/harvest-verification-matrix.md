@@ -9136,3 +9136,4 @@
 | `CYCLE-20261112-GWJD` | `2026-11-12T09:55:28.825Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fca586e8...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T09:55:51.213Z` | `hf-viggle-viggle-remake` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-78355AEC` [Domain D] | Yes (`bc033152...`) |
 | `CYCLE-20261112-9AK1` | `2026-11-12T10:17:33.361Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bdd6fd2c...`) |
+| `CYCLE-20261112-662Q` | `2026-11-12T10:43:07.202Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`94ccab96...`) |

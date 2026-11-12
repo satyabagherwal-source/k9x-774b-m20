@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-TM7E",
-    "timestamp": "2026-11-09T04:10:26.090Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-TO3P",
     "timestamp": "2026-11-09T04:10:28.549Z",
     "repository": "wcandillon/react-native-skia",
@@ -7490,6 +7475,21 @@
     "repository": "aws/aws-cdk",
     "learningId": "learn-github-aws-aws-cdk",
     "contentHash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-662Q",
+    "timestamp": "2026-11-12T10:43:07.202Z",
+    "repository": "infracost/infracost",
+    "learningId": "learn-github-infracost-infracost",
+    "contentHash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
