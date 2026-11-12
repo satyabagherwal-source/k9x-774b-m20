@@ -9090,3 +9090,4 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `4ee8d46f` | Multi-dimensional audit evidence | 2026-11-12T05:27:07.800Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `f8d8fe10` | Multi-dimensional audit evidence | 2026-11-12T05:27:16.546Z |
 | `learn-dom-h-0aa4f6ed` | `project://wasm-bindgen-wasm-pack` | `c262c330` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md` | 2026-11-12T05:27:35.956Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `9495f482` | Multi-dimensional audit evidence | 2026-11-12T05:35:15.908Z |

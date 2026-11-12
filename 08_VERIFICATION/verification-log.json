@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-2S45",
-    "timestamp": "2026-11-09T01:01:36.341Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "13a0d394e2efe9dcc72867bcf11d1c691957222af8809b97de15ad54a2a55dc2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-8H2Y",
     "timestamp": "2026-11-09T01:06:01.978Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7490,6 +7475,21 @@
     "repository": "GreptimeTeam/greptimedb",
     "learningId": "learn-github-greptimeteam-greptimedb",
     "contentHash": "66775b3009776caebd919003873c234b50d7764be90b55457162069910c8539f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-69J5",
+    "timestamp": "2026-11-12T05:35:15.905Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "9afea8a9017f1173ace93ee5a2dfd9d855c0f7627c2a6d880b8d30140550b0d1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

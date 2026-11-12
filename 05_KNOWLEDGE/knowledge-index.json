@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T05:27:16.444Z",
+  "last_updated": "2026-11-12T05:35:15.801Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -67706,8 +67706,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "f5af00bb",
-      "content_hash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
+      "source_version": "9495f482",
+      "content_hash": "9afea8a9017f1173ace93ee5a2dfd9d855c0f7627c2a6d880b8d30140550b0d1",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -67729,6 +67729,11 @@
         {
           "number": null,
           "title": "Hive bridge drain recovery and per-DC followers (#56221)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Post-commit review fixes for bridge and BSC changes (#59012)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67817,7 +67822,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T21:27:04.802Z",
+      "verified_at": "2026-11-12T05:35:15.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

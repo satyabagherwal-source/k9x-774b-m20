@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "f5af00bb",
+    "sourceVersion": "9495f482",
     "license": "Apache-2.0",
-    "contentHash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
-    "lastHarvestedAt": "2026-11-09T21:27:04.954Z",
+    "contentHash": "9afea8a9017f1173ace93ee5a2dfd9d855c0f7627c2a6d880b8d30140550b0d1",
+    "lastHarvestedAt": "2026-11-12T05:35:15.908Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {

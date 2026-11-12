@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T05:27:36.124Z",
+  "updated_at": "2026-11-12T05:35:19.775Z",
   "stats": {
-    "total_discovered": 842,
-    "approved_pending_harvest": 764,
+    "total_discovered": 847,
+    "approved_pending_harvest": 769,
     "harvested_count": 0,
     "rejected_count": 78,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 790,
+      "COMMUNITY_AND_EXPERT": 795,
       "OFFICIAL_DOCUMENTATION": 22,
       "STANDARDS_AND_SPECIFICATIONS": 28,
       "ENGINEERING_BLOGS": 1,
@@ -17995,6 +17995,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
         "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-CA8D3D478692": {
+      "id": "SRC-CA8D3D478692",
+      "url": "https://github.com/ydb-platform/ydb",
+      "title": "https://github.com/ydb-platform/ydb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:35:19.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-4414F4BE6236": {
+      "id": "SRC-4414F4BE6236",
+      "url": "https://nda.ya.ru/t/aLgg1-317uhkgX",
+      "title": "https://nda.ya.ru/t/aLgg1-317uhkgX",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:35:19.765Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-DD58FCDE9560": {
+      "id": "SRC-DD58FCDE9560",
+      "url": "https://github.com/ydb-platform/ydb/pull/53991",
+      "title": "https://github.com/ydb-platform/ydb/pull/53991",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:35:19.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-94150D2B4099": {
+      "id": "SRC-94150D2B4099",
+      "url": "https://github.com/user-attachments/files/33068025/tpcds-45-before.txt",
+      "title": "https://github.com/user-attachments/files/33068025/tpcds-45-before.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:35:19.771Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-EFE5FCBF8827": {
+      "id": "SRC-EFE5FCBF8827",
+      "url": "https://github.com/user-attachments/files/33068026/tpcds-45-after.txt",
+      "title": "https://github.com/user-attachments/files/33068026/tpcds-45-after.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:35:19.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
       }
     }
   }

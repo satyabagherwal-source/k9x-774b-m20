@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `f5af00bb`  
+> **Source Version**: `9495f482`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T21:27:03.494Z  
+> **Timestamp**: 2026-11-12T05:35:08.519Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T21:27:03.132Z  
+> **Harvest Timestamp**: 2026-11-12T05:35:05.355Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4787 stars
+- **Stars / Engagement**: 4788 stars
 
 ---
 
@@ -2044,13 +2044,13 @@ impl Remappable for noncontiguous::NFA {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #56001** (2026-11-10): **Verify during import CS from backup**
+  *Symptoms*: Previous logs: https://nda.ya.ru/t/aLgg1-317uhkgX  The binary was stripped, so full backtrace is not available ``` VERIFY failed (2026-10-16T16:12:59.189659+0300): verification=blobsSplittedConclusion.GetResult().size() == 1;fline=import_actor.cpp:173;   ydb/library/actors/core/log.cpp:918   ~TVerifyFormattedRecordWriter(): requirement false failed build: commit 52f169ee22efc85ae56a8a53e34bb50d453ce580 (clean) 0. ??:0: ?? @ 0xAB125BA 1. ??:0: ?? @ 0xAB0C58B 2. ??:0: ?? @ 0xB746A4F 3. ??:0: ?? @ 0x15C738BC 4. ??:0: ?? @ 0x15C7442B 5. ??:0: ?? @ 0xB6CDD4D 6. ??:0: ?? @ 0xB738306 7. ??:0: ?? @ 0xB73BB3A 8. ??:0: ?? @ 0xB73B774 9. ??:0: ?? @ 0xB73C218 10. ??:0: ?? @ 0xAB135E7 11. ??:0: start_thread @ 0x7FD31134E608 12. ??:0: __clone @ 0x7FD311273352 ??+0 (0xAB125BB) ??+0 (0xAB0C58C) ??+0 (0xB746A50) ??+0 (0x15C738BD) ??+0 (0x15C7442C) ??+0 (0xB6CDD4E) ??+0 (0xB738307) ??+0 (0xB73BB3B) ??+0 (0xB73B775) ??+0 (0xB73C219) ??+0 (0xAB135E8) ??+0 (0x7FD31134E609) clone+67 (0x7FD311273353) ```
+
 - **Issue #55219** (2026-10-06): **[NEW RBO] Possible perfomance regression in the TPCDS Q45 query, now it fullscans**
   *Symptoms*: After https://github.com/ydb-platform/ydb/pull/53991 SqlIn range pushdown stopped applying, resorting to a fullscan.  BEFORE ([AST](https://github.com/user-attachments/files/33068025/tpcds-45-before.txt)): ``` Read (/Root/row_tpcds_item,/Root/row_tpcds_item, [i_item_id->i_item_id, i_item_sk->/Root/row_tpcds_item.i_item_sk]) (StorageType: Row) Ranges: (((let $1 (DataType 'Int64)) (return (RangeFinalize (RangeMultiply (Uint64 '10000) (RangeUnion (IfPresent (Map (Just '((Int32 '2) (Int32 '"3") (Int32 '5) (Int32 '7) (Int32 '"11") (Int32 '"13") (Int32 '"17") (Int32 '"19") (Int32 '"23") (Int32 '"29"))) (lambda '($2) (AsList (Nth $2 '0) (Nth $2 '1) (Nth $2 '2) (Nth $2 '3) (Nth $2 '4) (Nth $2 '5) (Nth $2 '6) (Nth $2 '7) (Nth $2 '8) (Nth $2 '9)))) (lambda '($3) (block '((let $4 (Collect (Take (FlatMap $3 (lambda '($6) (block '((let $7 (RangeFor '=== $6 $1)) (return (RangeMultiply (Uint64 '10000) $7)))))) (Uint64 '10001)))) (let $5 '((Nothing (OptionalType $1)) (Int32 '0))) (return (IfStrict (> (Length $4) (Uint64 '10000)) (AsRange '($5 $5)) (RangeUnion $4)))))) (RangeEmpty $1)))))))) Original predicate: (((let $1 '((Int32 '2) (Int32 '"3") (Int32 '5) (Int32 '7) (Int32 '"11") (Int32 '"13") (Int32 '"17") (Int32 '"19") (Int32 '"23") (Int32 '"29"))) (return (SqlIn $1 (Member _FreeArg0 '"/Root/row_tpcds_item.i_item_sk") '('('ansi)))))) StageId: 7 ```  AFTER ([AST](https://github.com/user-attachments/files/33068026/tpcds-45-after.txt)): ``` Filter :((let $1 '((Int32 '2) (Int32 '"3") (Int32 '
   **Post-Mortem & Fix Analysis**:
   > fixed
-
-- **Issue #54282** (2026-09-28): **TSan: tests hang in teardown in TActorCoroImpl::Destroy of a coroutine actor that was never bootstrapped**
-  *Symptoms*: ## Summary  In TSan builds a random test of a KQP unit test suite sometimes never finishes and is killed at the 600 s ya test timeout. The test body has already passed: the process hangs in the test server teardown, in `TActorCoroImpl::Destroy`, waiting for the worker thread of a coroutine actor that was never bootstrapped, so the thread does not exist. Only TSan builds are affected, because only there coroutine actors run on threads (`CORO_THROUGH_THREADS`). In the KQP tests the actor is the datashard table stats builder (`TTableStatsCoroBuilder`) registered right before the actor system stops, but any `TActorCoro` registered at that moment hangs the same way.  ## Environment  - `./ya make --build relwithdebinfo --sanitize=thread -tA ydb/core/kqp/ut/join/index_lookup`, 108 tests in 60 chunks. - Hangs seen on main `9445e841a8e` and `de286f42f02`; the fix was tested on `7d08c4d0693`. The code involved is the same in all three. - Default single-node `TKikimrRunner`.  ## Symptom  - About 1 run of the suite in 4 has one test (once two) that never finishes; about 1 test in 400. The test differs from run to run: 13 hangs in 47 TSan runs, 12 different tests. Those marked * come from 15 earlier runs of branch builds with unmerged DQ channel PRs; they were not caught with gdb but look the same (a 600 s kill after a passing body):   - `KqpJoin`: `RightSemiJoin_ComplexKey` (twice, once *), `RightSemiJoin_SimpleKey`*, `RightSemiJoin_KeyPrefix`, `JoinDupColumnRight`*, `JoinDupColumnRightP
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2067,502 +2067,951 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ef48dff` (2026-11-09)
-**Commit Message**: Fix Hive bridge drain recovery and per-DC followers (#56221)
+### Incident Patch 1: `63a50ed8` (2026-11-11)
+**Commit Message**: Post-commit review fixes for bridge and BSC changes (#59012)
 
-Co-authored-by: mregrock <[REDACTED_EMAIL]>
-
-**File**: `ydb/core/mind/hive/bridge_pile_info.h` (modified, +1/-0)
+**File**: `ydb/core/base/bridge.h` (modified, +21/-0)
 ```diff
-@@ -10,6 +10,7 @@ struct TBridgePileInfo {
-     bool Drain = false;
-     TVector<TActorId> DrainInitiators; // Currently always empty
-     THiveDrain* DrainActor = nullptr;
-+    bool DrainRetry = false;
+@@ -95,6 +95,27 @@ namespace NKikimr {
+             }
+         }
  
-     TBridgePileInfo(const TBridgeInfo::TPile& wardenPileInfo)
-         : Id(wardenPileInfo.BridgePileId)
-```
-
-**File**: `ydb/core/mind/hive/drain.cpp` (modified, +87/-31)
-```diff
-@@ -18,8 +18,7 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
-     ui32 KickInFlight;
-     ui32 Movements;
-     TDrainTarget Target;
--    const std::unordered_set<TNodeId> Nodes; // nodes of the target at the start of the drain
--    const std::unordered_set<TNodeId> ReservedNodes; // the ones the drain has added to BalancerNodes
-+    const std::unordered_set<TNodeId> Nodes;
-     std::unordered_map<TNodeId, bool> DownBefore;
-     TActorId DomainHivePipeClient;
-     TTabletId DomainHiveId = 0;
-@@ -37,11 +36,8 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
-             NTabletPipe::CloseClient(SelfId(), DomainHivePipeClient);
-         }
-         Hive->RemoveSubActor(this);
--        // the nodes are released as they were reserved, as the target pile may have changed or even gone meanwhile
--        for (const TNodeId nodeId : ReservedNodes) {
--            Hive->BalancerNodes.erase(nodeId);
--        }
-         for (const TNodeId nodeId : Nodes) {
-+            Hive->BalancerNodes.erase(nodeId);
-             if (auto node = Hive->FindNode(nodeId); node && node->DrainActor == this) {
-                 node->DrainActor = nullptr;
-             }
-@@ -72,15 +68,21 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
-             {"selfId", SelfId()},
-             {"movements", Movements});
-         for (auto [nodeId, downBefore] : DownBefore) {
--            TNodeInfo* nodeInfo = Hive->FindNode(nodeId);
--            if (nodeInfo != nullptr) {
--                if (!downBefore) {
--                    nodeInfo->SetDown(false, EHiveEventReason::DrainFinished);
--                }
-+            if (TNodeInfo* nodeInfo = Hive->FindNode(nodeId); nodeInfo != nullptr && !downBefore) {
-+                nodeInfo->SetDown(false, EHiveEventReason::DrainFinished);
-             }
-         }
--        Hive->Execute(Hive->CreateSwitchDrainOff(Target, std::move(Settings), status, Movements + DomainMovements));
-+        auto* switchDrainOff = Hive->CreateSwitchDrainOff(Target, status, Movements + DomainMovements);
-+        // Complete may run synchronously and start another drain.
-         PassAway();
-+        Hive->Execute(switchDrainOff);
-+    }
++        // Does the part of the bridged group at this stage take TEvPut of the requests coming to the group (the part of
++        // the pile in data quorum, that is); the one being synced or dropped doesn't yet/already. Bridge proxy routes
++        // writes by this rule, and BS_CONTROLLER counts the space of the group by it.
++        constexpr bool GroupPartTakesPuts(NKikimrBridge::TGroupState::EStage stage) {
++            switch (stage) {
++                case NKikimrBridge::TGroupState::WRITE_KEEP_BARRIER_DONOTKEEP_DATA:
++                case NKikimrBridge::TGroupState::SYNCED:
++                    return true;
 +
-+    bool IsTargetTablet(const TTabletInfo& tablet) const {
-+        if (const auto* pileId = std::get_if<TBridgePileId>(&Target)) {
-+            return tablet.Node != nullptr && Nodes.contains(tablet.Node->Id) && !tablet.GetNodeFilter().IsAllowedPile(*pileId);
++                case NKikimrBridge::TGroupState::BLOCKS:
++                case NKikimrBridge::TGroupState::WRITE_KEEP:
++                case NKikimrBridge::TGroupState::WRITE_KEEP_BARRIER_DONOTKEEP:
++                    return false;
++
++                case NKikimrBridge::TGroupState_EStage_TGroupState_EStage_INT_MIN_SENTINEL_DO_NOT_USE_:
++                case NKikimrBridge::TGroupState_EStage_TGroupState_EStage_INT_MAX_SENTINEL_DO_NOT_USE_:
++                    break;
++            }
++            Y_ABORT();
 +        }
-+        return Nodes.contains(tablet.NodeId);
-     }
++
+         bool IsSameClusterState(const NKikimrBridge::TClusterState& x, const NKikimrBridge::TClusterState& y);
  
-     bool CanKickNextTablet() const {
-@@ -92,7 +94,7 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
-         while (CanKickNextTablet()) {
-             TFullTabletId tabletId = *NextKick;
-             TTabletInfo* tablet = Hive->FindTablet(tabletId);
--            if (tablet != nullptr && tablet->IsAlive() && Nodes.contains(tablet->NodeId)) {
-+            if (tablet != nullptr && tablet->IsAlive() && IsTargetTablet(*tablet)) {
-                 THive::TBestNodeResult result = Hive->FindBestNode(*tablet);
-                 if (std::holds_alternative<TNodeInfo*>(result)) {
-                     TNodeInfo* node = std::get<TNodeInfo*>(result);
-@@ -219,15 +221,13 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
-         return NKikimrServices::TActivity::HIVE_BALANCER_ACTOR;
-     }
- 
--    THiveDrain(THive* hive, TDrainTarget target, TDrainSettings settings, std::unordered_set<TNodeId> nodes,
--            std::unordered_set<TNodeId> reservedNodes)
-+    THiveDrain(THive* hive, TDrainTarget target, TDrainSettings settings, std::unordered_set<TNodeId> nodes)
-         : Hive(hive)
-         , NextKick(Tablets.end())
-         , KickInFlight(0)
-         , Movements(0)
-         , Target(target)
-         , Nodes(std::move(nodes))
--        , ReservedNodes(std::move(reservedNodes))
-         , Settings(std::move(settings))
-     {}
- 
-@@ -299,25 +299,81 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
- };
- 
- THiveDrain* THive::StartHiveDrain(TDrainTarget target, TDrainSettings settings) {
--    TGetNodes getNodes{this};
--    std::unordered_set<TNodeId> nodes = std::visit(getNodes, target);
--    std::unordered_set<TNodeId> reservedNodes;
--    for (const TNodeId nodeId : nodes) {
--        if (BalancerNodes.emplace(nodeId).second) {
--            reservedNodes.insert(nodeId);
--        }
--    }
--    if (!reservedNodes.empty()) {
--        auto* balancer = new THiveDrain(this, target, std::move(settings), std::move(nodes), std::move(reservedNodes));
--        SubActors.emplace_back(balancer);
--        RegisterWithSameMailbox(balancer);
--        return balancer;
--    } else {
--        YDB_LOG_WARN("Cannot start drain: target is already busy",
-+    std::unordered_set<TNodeId> nodes = std::visit(TGetNodes{this}, target);
-+    std::erase_if(nodes, [this](TNodeId nodeId) { return !BalancerNodes.emplace(no
+         // State of the pile in the cluster state; the pile not listed there is INACTIVE.
 ```
 
-**File**: `ydb/core/mind/hive/drain.h` (modified, +1/-2)
+**File**: `ydb/core/blobstorage/bridge/proxy/bridge_proxy.cpp` (modified, +77/-18)
 ```diff
-@@ -19,11 +19,10 @@ struct TGetNodes {
-         return {nodeId};
-     }
+@@ -205,6 +205,7 @@ namespace NKikimr {
+             std::optional<TDuration> RoutingBudget;
  
--    // Scans all nodes: called only to start a pile drain, so the overhead is negligible
-     std::unordered_set<TNodeId> operator()(TBridgePileId pileId) const {
-         std::unordered_set<TNodeId> nodes;
-         for (const auto& [nodeId, node] : Hive->Nodes) {
--            if (node.BridgePileId == pileId) {
-+            if (node.BridgePileId == pileId && !node.Drain) {
-                 nodes.insert(nodeId);
+             TDynBitMap Processed; // a set of piles we already got main reply from
++            bool RestartNeeded = false; // set while processing a response: the request has to start over by current routing
+ 
+             template<typename TEvRequest>
+             TRequest(TActorId sender, ui64 cookie, std::unique_ptr<TEvRequest>&& request, TIntrusivePtr<TBlobStorageGroupInfo> info,
+@@ -429,6 +430,10 @@ namespace NKikimr {
+                         // the flag may be known from the earlier response about this blob, while this read may come from
+                         // VDisks not knowing it yet
+                         RestoreQueue[payload.Index].IssueKeepFlag |= response.DoNotKeep < response.Keep;
++                        DropRestoreTargetsOutOfDataQuorum(self, RestoreQueue[payload.Index]);
++                        if (RestoreQueue[payload.Index].WriteTo.Empty()) {
++                            return IssueNextRestoreGet(self); // the piles to restore have left while the blob was read
++                        }
+                         IssueRestorePut(self, payload.Index);
+                         return nullptr;
+                     } else {
+@@ -559,6 +564,7 @@ namespace NKikimr {
+ 
+                 while (RestoreIndex < RestoreQueue.size()) {
+                     auto& item = RestoreQueue[RestoreIndex];
++                    DropRestoreTargetsOutOfDataQuorum(self, item);
+ 
+                     if (!item.ReadFrom || item.WriteTo.Empty()) {
+                         ++RestoreIndex;
+@@ -569,6 +575,11 @@ namespace NKikimr {
+ 
+                     if (item.Buffer && item.Buffer.size() == item.Id.BlobSize()) {
+                         IssueRestorePut(self, RestoreIndex);
++                    } else if (!self.IsPileInDataQuorum(item.ReadFrom)) {
++                        // the pile to read the blob from has left data quorum since it answered, so it may never answer
++                        // again; the request is restarted to find the blob in the piles still there
++                        RestartNeeded = true;
++                        return nullptr;
+                     } else {
+                         auto get = std::make_unique<TEvBlobStorage::TEvGet>(item.Id, 0, 0, Deadline,
+                             GetHandleClass);
+@@ -604,6 +615,17 @@ namespace NKikimr {
+                 }, State);
              }
-         }
-```
-
-**File**: `ydb/core/mind/hive/follower_group.h` (modified, +6/-4)
-```diff
-@@ -35,21 +35,23 @@ struct TFollowerGroup {
-         FollowerCount = followerGroup.GetFollowerCount();
-         AllowLeaderPromotion = followerGroup.GetAllowLeaderPromotion();
-         AllowClientRead = followerGroup.GetAllowClientRead();
--        RequireAllDataCenters = followerGroup.GetRequireAllDataCenters();
-+        SetRequireAllDataCenters(followerGroup.GetRequireAllDataCenters());
-         {
-             const auto& allowedNodes(followerGroup.GetAllowedNodeIDs());
-             std::copy(allowedNodes.begin(), allowedNodes.end(), std::back_inserter(NodeFilter.AllowedNodes));
-         }
-         NodeFilter.AllowedDataCenters.MutableDataCenter()->CopyFrom(followerGroup.GetAllowedDataCenters());
--        if (RequireAllDataCenters) {
--            NodeFilter.MustBePrimaryPile = false;
--        }
-         LocalNodeOnly = followerGroup.GetLocalNodeOnly();
-         RequireDifferentNodes = followerGroup.GetRequireDifferentNodes();
-         FollowerCountPerDataCenter = followerGroup.GetFollowerCountPerDataCenter();
-         return *this;
-     }
  
-+    void SetRequireAllDataCenters(bool requireAllDataCenters) {
-+        RequireAllDataCenters = requireAllDataCenters;
-+        NodeFilter.MustBePrimaryPile = !RequireAllDataCenters;
-+    }
-+
-     ui32 GetRawFollowerCount() const {
-         return FollowerCount;
-     }
-```
-
-**File**: `ydb/core/mind/hive/hive_events.h` (modified, +3/-0)
-```diff
-@@ -43,6 +43,7 @@ struct TEvPrivate {
-         EvReassignInactiveGroupsComplete,
-         EvMoveDataComplete,
-         EvLogHangingRequests,
-+        EvProcessPileDrains,
-         EvEnd
-     };
- 
-@@ -62,6 +63,8 @@ struct TEvPrivate {
- 
-     struct TEvPostponeProcessBootQueue : TEventLocal<TEvPostponeProcessBootQueue, EvPostponeProcessBootQueue> {};
- 
-+    struct TEvProcessPileDrains : TEventLocal<TEvProcessPileDrains, EvProcessPileDrains> {};
-+
-     struct TEvProcessDisconnectNode : TEventLocal<TEvProcessDisconnectNode, EvProcessDisconnectNode> {
-         ui32 NodeId;
-         TActorId Local;
-```
-
-**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +2/-0)
-```diff
-@@ -3808,6 +3808,7 @@ void THive::ProcessEvent(std::unique_ptr<IEventHandle> event) {
-         hFunc(TEvInterconnect::TEvNodesInfo, Handle);
-         hFunc(TEvents::TEvUndelivered, Handle);
-         hFunc(TEvPrivate::TEvProcessBootQueue, Handle);
-+        hFunc(TEvPrivate::TEvProcessPileDrains, Handle);
-         hFunc(TEvPrivate::TEvPostponeProcessBootQueue, Handle);
-         hFunc(TEvPrivate::TEvProcessPendingOperations, Handle);
-         hFunc(TEvPrivate::TEvProcessDisconnectNode, Handle);
-@@ -3929,6 +3930,7 @@ STFUNC(THive::StateWork) {
-         fFunc(TEvInterconnect::TEvNodesInfo::EventType, EnqueueIncomingEvent);
-         fFunc(TEvents::TEvUndelivered::EventType, EnqueueIncomingEvent);
-         fFunc(TEvPrivate::TEvProcessBootQueue::EventType, EnqueueIncomingEvent);
-+        fFunc(TEvPrivate::TEvProcessPileDrains::EventType, EnqueueIncomingEvent);
-         fFunc(TEvPrivate::TEvPostponeProcessBootQueue::EventType, EnqueueIncomingEvent);
-         fFunc(TEvPrivate::TEvProcessPendingOperations::EventType, EnqueueIncomingEvent);
-         fFunc(TEvPrivate::TEvProcessDisconnectNode::EventType, EnqueueIncomingEvent);
-```
-
-**File**: `ydb/core/mind/hive/hive_impl.h` (modified, +6/-1)
-```diff
-@@ -272,6 +272,9 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
-     void LogBalancerNotStarted(const TString& balancerType, EBalancerSuppressReason reason);
-     bool StartHiveBalancer(TBalancerSettings&& settings);
-     THiveDrain* StartHiveDrain(TDrainTarget target, TDrainSettings settings);
-+    void StartPileDrain(TBridgePileInfo& pile);
-+    bool HasTabletsToDrain(TBridgePileId pileId) const;
-+    void ProcessPileDrains();
-     void StartHiveFill(TNodeId nodeId, const TActorId& initiator);
-     bool StartHiveStorageBalancer(TStorageBalancerSettings settings);
-     // starts a new reassign for every tablet in the list
-@@ -328,7 +331,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
-     ITransaction* CreateReleaseTabletsReply(TEvHive::TEvReleaseTabletsReply::TPtr event);
-     ITransaction* CreateConfigureSubdomain(TEvHive::TEvConfigureHive::TPtr event);
-     ITransaction* CreateSwitchDrainOn(TNodeId nodeId, TDrainSettings settings, const TActorId& initiator, ui64 seqNo = 0, ui64 cookie = 0);
--    ITransaction* CreateSwitchDrainOff(TDrainTarget target, TDrainSettings settings, NKikimrProto::EReplyStatus status, ui32 movements);
-+    ITransaction* CreateSwitchDrainOff(TDrainTarget target, NKikimrProto::EReplyStatus status, ui32 movements);
-     ITransaction* CreateTabletOwnersReply(TEvHive::TEvTabletOwnersReply::TPtr event);
-     ITransaction* CreateRequestTabletOwners(TEvHive::TEvRequestTabletOwners::TPtr event);
-     ITransaction* CreateUpdateTabletsObject(TEvHive::TEvUpdateTabletsObject::TPtr event);
-@@ -417,6 +420,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
-     TBootQueue BootQueue;
-     bool ProcessWaitQueueScheduled = false;
-     bool ProcessBootQueueScheduled = false;
-+    bool ProcessPileDrainsScheduled = false;
-     bool ProcessBootQueuePostponed = false;
-     TInstant LastConnect;
-     TInstant ProcessBootQueuePostponedUntil;
-@@ -624,6 +628,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
-     void Handle(TEvPrivate::TEvCheckTabletNodeAlive::TPtr&);
-     void HandleInit(TEvPrivate::TEvProcessBootQueue::TPtr&);
-     void Handle(TEvPrivate::TEvProcessBootQueue::TPtr&);
-+    void Handle(TEvPrivate::TEvProcessPileDrains::TPtr&);
-     void Handle(TEvPrivate::TEvPostponeProcessBootQueue::TPtr&);
-     void Handle(TEvPrivate::TEvProcessDisconnectNode::TPtr&);
-     void HandleInit(TEvPrivate::TEvProcessTabletBalancer::TPtr&);
-```
-
-**File**: `ydb/core/mind/hive/hive_ut.cpp` (modified, +681/-87)
-```diff
-@@ -10440,25 +10440,340 @@ Y_UNIT_TEST_SUITE(THiveTest) {
-         });
-     }
- 
--    enum class EBridgeHiveRestart {
--        None,
--        BeforePromotion,
--        BeforeDisconnect,
--        DisconnectBeforeResync,
--        DisconnectWithDeadNodes,
--    };
--
--    // Not runtime.WaitFor: it aborts the whole binary on timeout
-     bool WaitUntil(TTestBasicRuntime& runtime, const std::function<bool()>& condition) {
-         bool done = condition();
--        for (ui32 i = 0; i < 100 && !done; ++i) {
-+        for (ui32 i = 0; i < 300 && !done; ++i) {
-             runtime.SimulateSleep(TDuration::MilliSeconds(100));
-             done = condition();
-         }
-         return done;
-     }
- 
--    void TestBridgeDemotion(EBridgeHiveRestart hiveRestart) {
-+    std::optional<bool> ReadPileDrain(TTestActorRuntime& runtime, ui64 hiveTablet, const TActorId& sender, ui32 pile) {
-+        auto query = MakeHolder<TEvTablet::TEvLocalMKQL>();
-+        query->Record.MutableProgram()->MutableProgram()->SetText(TStringBuilder()
-+            << "((let row (SelectRow 'BridgePile '('('Id (Uint32 '" << TBridgePileId::FromPileIndex(pile).GetLocalDb() << "))) '('Drain)))"
-+            << "(return (AsList (SetResult 'row row))))");
-+        runtime.SendToPipe(hiveTablet, sender, query.Release(), 0, GetPipeConfigWithRetries());
-+        TAutoPtr<IEventHandle> handle;
-+        auto* response = runtime.GrabEdgeEventRethrow<TEvTablet::TEvLocalMKQLResponse>(handle);
-+        UNIT_ASSERT_VALUES_EQUAL_C(response->Record.GetStatus(), NKikimrProto::OK, response->Record.ShortDebugString());
-+        const auto& result = response->Record.GetExecutionEngineEvaluatedResponse().GetValue().GetStruct(0);
-+        if (!result.HasOptional() || !result.GetOptional().HasOptional()) {
-+            return std::nullopt;
-+        }
-+        const auto& drain = result.GetOptional().GetOptional().GetStruct(0);
-+        return drain.HasOptional() && drain.GetOptional().GetBool();
-+    }
-+
-+    bool IsPileDrainPersisted(TTestActorRuntime& runtime, ui64 hiveTablet, const TActorId& sender, ui32 pile) {
-+        return ReadPileDrain(runtime, hiveTablet, sender, pile).value_or(false);
-+    }
-+
-+    struct TBridgeDrainTest {
-+        TTestBasicRuntime Runtime;
-+        TDummyBridge Bridge;
-+        const ui64 HiveTablet = MakeDefaultHiveID();
-+        const ui64 OwnerTablet = MakeTabletID(false, 1);
-+        TActorId Sender;
-+
-+        explicit TBridgeDrainTest(ui32 nodes = 2)
-+            : Runtime(nodes, false)
-+            , Bridge(Runtime)
-+        {
-+            Setup(Runtime, true, 2, [](TAppPrepare& app) {
-+                app.HiveConfig.SetDrainInflight(1);
-+                app.HiveConfig.SetEnableFastTabletMove(true);
-+            });
-+            Sender = Runtime.AllocateEdgeActor(0);
-+            CreateTestBootstrapper(Runtime, CreateTestTabletInfo(HiveTablet, TTabletTypes::Hive), &CreateDefaultHive);
-+            MakeSureTabletIsUp(Runtime, HiveTablet, 0);
-+            Bridge.Subscribe(GetHiveActor(Runtime, HiveTablet));
-+            Runtime.EnableScheduleForActor(GetHiveActor(Runtime, HiveTablet));
-+            UNIT_ASSERT_C(WaitUntil(Runtime, [&] {
-+                Runtime.SendToPipe(HiveTablet, Sender, new TEvHive::TEvRequestHiveDomainStats());
-+                TAutoPtr<IEventHandle> handle;
-+                const auto* response = Runtime.GrabEdgeEventRethrow<TEvHive::TEvResponseHiveDomainStats>(handle);
-+                std::unordered_set<ui32> aliveNodes;
-+                for (const auto& domain : response->Record.GetDomainStats()) {
-+                    aliveNodes.insert(domain.GetNodeIds().begin(), domain.GetNodeIds().end());
++            // The pile which has left data quorum since it reported the blob missing is not restored: the request admitted
++            // now wouldn't touch it, it gets synced when it is back, and it may be gone for good (so that the write would
++            // just fail the read of the blob other piles have).
++            static void DropRestoreTargetsOutOfDataQuorum(TThis& self, TRestoreItem& item) {
++                Y_FOR_EACH_BIT(i, item.WriteTo) {
++                    if (!self.IsPileInDataQuorum(TBridgePileId::FromPileIndex(i))) {
++                        item.WriteTo.Reset(i);
++                    }
 +                }
-+                return aliveNodes.size() == Runtime.GetNodeCount();
-+            }), "Locals did not connect to Hive");
++            }
++
+             void IssueRestorePut(TThis& self, size_t index) {
+                 auto& item = RestoreQueue[index];
+ 
+@@ -1011,9 +1033,36 @@ namespace NKikimr {
+ 
+         void Handle(TEvNodeWardenStorageConfig::TPtr ev) {
+             StorageConfig = std::move(ev->Get()->Config);
+-            BridgeInfo = std::move(ev->Get()->BridgeInfo);
++            const TBridgeInfo::TPtr prevBridgeInfo = std::exchange(BridgeInfo, std::move(ev->Get()->BridgeInfo));
+             RetryPending(PendingForClusterState);
+-            RestartRequestsWaitingForPilesOut();
++            // subrequests go only to the piles in data quorum, so there is nothing to look for unless some pile has left
++            // it with this very config (which is rare, unlike config changes of other kinds)
++            const bool pileLeftDataQuorum = prevBridgeInfo && std::ranges::any_of(prevBridgeInfo->Piles, [&](const auto& pile) {
++                return IsPileInDataQuorum(*prevBridgeInfo, pile.BridgePileId) && !IsPileInDataQuorum(pile.BridgePileId);
++            });
++            if (pileLeftDataQuorum) {
++                RestartRequestsWaitingForPilesOut();
++            }
 +        }
 +
-+        ui64 CreateTablet(ui64 index = 0, bool waitForBoot = true) {
-+            auto create = MakeHolder<TEvHive::TEvCreateTablet>(OwnerTablet, index, TTabletTypes::Dummy, BINDED_CHANNELS);
-+            create->Record.SetBalancerPolicy(NKikimrHive::POLICY_IGNORE);
-+            return SendCreateTestTablet(Runtime, HiveTablet, OwnerTablet, std::move(create), 0, waitForBoot);
++        // does the pile take part in data quorum (and hence gets requests) by the cluster state
++        static bool IsPileInDataQuorum(const TBridgeInfo& bridgeInfo, TBridgePileId bridgePileId) {
++            const TBridgeInfo::TPile *pile = bridgeInfo.FindPile(bridgePileId);
++            return pile && NBridge::PileStateTraits(pile->State).RequiresDataQuorum;
 +        }
 +
-+        auto TabletInfo(ui64 tabletId) {
-+            return GetHiveTabletInfo(Runtime, HiveTablet, tabletId, Sender);
++        bool IsPileInDataQuorum(TBridgePileId bridgePileId) const {
++            return BridgeInfo && IsPileInDataQuorum(*BridgeInfo, bridgePileId);
 +        }
 +
-+        void SetDown(ui32 nodeIndex, bool down) {
-+            Runtime.SendToPipe(HiveTablet, Sender, new TEvHive::TEvSetDown(Runtime.GetNodeId(nodeIndex), down));
-+            TAutoPtr<IEventHandle> handle;
-+            const auto* response = Runtime.GrabEdgeEventRethrow<TEvHive::TEvSetDownReply>(handle);
-+            UNIT_ASSERT_VALUES_EQUAL(response->Record.GetStatus(), NKikimrProto::OK);
++        // a request racing with configuration changes is restarted this many times at most
++        static constexpr ui32 MaxRestarts = 100;
++
++        // the responses of the subrequests still 
+```
+
+**File**: `ydb/core/blobstorage/ut_blobstorage/bridge_routing.cpp` (modified, +185/-3)
+```diff
+@@ -76,6 +76,8 @@ namespace {
+         bool RaceWithNewerPileGeneration = false;
+         bool HoldResults = false;
+         std::vector<std::unique_ptr<IEventHandle>> HeldResults;
++        std::optional<TInstant> PileOutAt; // when the proxy got the first cluster state with a pile disconnected
++        std::map<ui64, TInstant> ResultAt;
+ 
+         TQueuedRoutingTest() {
+             Env.CreatePool();
+@@ -90,6 +92,11 @@ namespace {
+                         ev->GetTypeRewrite() == TEvNodeWardenStorageConfig::EventType) {
+                     Config = ev->Get<TEvNodeWardenStorageConfig>()->Config;
+                     BridgeInfo = ev->Get<TEvNodeWardenStorageConfig>()->BridgeInfo;
++                    if (!PileOutAt && BridgeInfo && std::ranges::any_of(BridgeInfo->Piles, [](const auto& pile) {
++                            return pile.State == NKikimrBridge::TClusterState::DISCONNECTED;
++                        })) {
++                        PileOutAt = Env.Runtime->GetClock();
++                    }
+                 } else if (HoldResults && ev->GetRecipientRewrite() == Proxy &&
+                         ev->GetTypeRewrite() == TEvBlobStorage::EvGetResult) {
+                     HeldResults.push_back(std::move(ev));
+@@ -99,6 +106,7 @@ namespace {
+                     MakeRace(*ev->Get<TEvBlobStorage::TEvGetResult>());
+                 } else if (ev->GetRecipientRewrite() == Edge && ev->GetTypeRewrite() == TEvBlobStorage::EvGetResult) {
+                     UNIT_ASSERT_C(!Results.contains(ev->Cookie), "duplicate terminal response");
++                    ResultAt.emplace(ev->Cookie, Env.Runtime->GetClock());
+                     Results.emplace(ev->Cookie, std::unique_ptr<TEvBlobStorage::TEvGetResult>(
+                         ev->Release<TEvBlobStorage::TEvGetResult>().Release()));
+                     return false;
+@@ -566,7 +574,6 @@ Y_UNIT_TEST_SUITE(BridgeRouting) {
+         env.Runtime->FilterFunction = {};
+         UNIT_ASSERT(poisoned);
+         UNIT_ASSERT_C(res, "restarted request lost when the proxy stopped");
+-        Cerr << "*** result " << res->Get()->ToString() << Endl;
+     }
+ 
+     // the request restarted as it waits for the pile disconnected keeps the routing wait it has left
+@@ -587,10 +594,14 @@ Y_UNIT_TEST_SUITE(BridgeRouting) {
+         test.Env.Sim(TDuration::MilliSeconds(10));
+         UNIT_ASSERT(!test.Results.contains(1));
+         SwitchPileState(test.Env, 1, NKikimrBridge::TClusterState::DISCONNECTED);
+-        const TInstant restarted = test.Env.Runtime->GetClock();
+         WaitUntil(test.Env, [&] { return test.Results.contains(1); }, "read timed out", TDuration::MilliSeconds(10),
+             300);
+-        const TDuration waited = test.Env.Runtime->GetClock() - restarted;
++
++        // the read had waited for 1.5 s of 2 s when it was dispatched, so it is to wait for the remaining 0.5 s since
++        // the proxy has restarted it: neither for the whole wait anew, nor for no time at all
++        UNIT_ASSERT(test.PileOutAt);
++        const TDuration waited = test.ResultAt.at(1) - *test.PileOutAt;
++        UNIT_ASSERT_C(waited >= TDuration::MilliSeconds(300), "restarted read lost its routing wait: " << waited);
+         UNIT_ASSERT_C(waited <= TDuration::MilliSeconds(700), "restarted read got a new routing wait: " << waited);
+         UNIT_ASSERT_VALUES_EQUAL(test.Results.at(1)->Status, NKikimrProto::ERROR);
+         UNIT_ASSERT_STRING_CONTAINS(test.Results.at(1)->ErrorReason, "bridge request timed out");
+@@ -614,4 +625,175 @@ Y_UNIT_TEST_SUITE(BridgeRouting) {
+             });
+     }
+ 
++    // The read with MustRestoreFirst has got the answer of the pile lacking the blob and waits for the pile having it,
++    // when the former leaves data quorum. The blob is not restored into the pile out then (it gets synced when it is
++    // back, and the write could only fail the read), and the read is answered with what the remaining pile has.
++    Y_UNIT_TEST(RestoreSkipsPileDisconnected) {
++        TEnvironmentSetup env(MakeTwoPileSettings());
++        env.CreatePool();
++        env.Sim(TDuration::Seconds(30));
++        const ui32 groupId = env.GetGroups().front();
++        const auto pileGroups = GetPileGroups(env, groupId);
++        UNIT_ASSERT_VALUES_EQUAL(pileGroups.size(), 2);
++        TDataChecker checker(env);
++        checker.Write(groupId); // start the bridge proxy on node 1
++
++        // the blob only the first pile has
++        const TString data = "restore me!";
++        const TLogoBlobID id(100500, 1, 1, 0, data.size(), 0);
++        const auto put = QueryPileGroup<TEvBlobStorage::TEvPutResult>(env, pileGroups[0], 1,
++            new TEvBlobStorage::TEvPut(id, data, TInstant::Max()));
++        UNIT_ASSERT_VALUES_EQUAL_C(put->Status, NKikimrProto::OK, put->ToString());
++
++        bool hold = true;
++        std::vector<std::unique_ptr<IEventHandle>> held;
++        ui32 numGetsOfSecondPile = 0;
++        ui32 numPutsToSecondPile = 0;
++        env.Runtime->FilterFunction = [&](ui32
+```
+
+**File**: `ydb/core/blobstorage/ut_blobstorage/database_space.cpp` (modified, +89/-25)
+```diff
+@@ -3,6 +3,7 @@
+ #include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
+ #include <ydb/core/blobstorage/base/blobstorage_database_space_events.h>
+ #include <ydb/core/blobstorage/pdisk/blobstorage_pdisk_util_space_color.h>
++#include <ydb/core/protos/blob_depot_config.pb.h>
+ 
+ Y_UNIT_TEST_SUITE(DatabaseSpace) {
+ 
+@@ -120,6 +121,17 @@ Y_UNIT_TEST_SUITE(DatabaseSpace) {
+             return subscriber.States->back();
+         }
+ 
++        // restart BS_CONTROLLER and check that the database stays blocked all the time
++        void RestartControllerKeepingBlocked(const TSubscriber& subscriber, const char *what) {
++            const size_t numStates = subscriber.States->size();
++            Env.RestartNode(Env.Settings.ControllerNodeId);
++            WaitState(subscriber, true, TDuration::Seconds(60), numStates);
++            Env.Sim(TDuration::Seconds(20));
++            for (size_t i = numStates; i < subscriber.States->size(); ++i) {
++                UNIT_ASSERT_C((*subscriber.States)[i].GetExhausted(), "database got unblocked after " << what);
++            }
 +        }
 +
-+        bool DrainPending() {
-+            return IsPileDrainPersisted(Runtime, HiveTablet, Sender, 0);
+         // sequence numbers of injected VDisk reports, above the ones real VDisks of the test use
+         ui64 LastSpaceSequence = 1'000'000'000;
+ 
+@@ -313,13 +325,7 @@ Y_UNIT_TEST_SUITE(DatabaseSpace) {
+         UNIT_ASSERT(subscriber.States->back().GetExhausted());
+ 
+         // the latch must survive BS_CONTROLLER restart: the database stays blocked all the time
+-        const size_t numStates = subscriber.States->size();
+-        ctx.Env.RestartNode(ctx.Env.Settings.ControllerNodeId);
+-        ctx.WaitState(subscriber, true, TDuration::Seconds(60), numStates);
+-        ctx.Env.Sim(TDuration::Seconds(20));
+-        for (size_t i = numStates; i < subscriber.States->size(); ++i) {
+-            UNIT_ASSERT_C((*subscriber.States)[i].GetExhausted(), "database got unblocked after BS_CONTROLLER restart");
+-        }
++        ctx.RestartControllerKeepingBlocked(subscriber, "BS_CONTROLLER restart");
+     }
+ 
+     Y_UNIT_TEST(HysteresisSurvivesReassignmentAndRestart) {
+@@ -374,16 +380,9 @@ Y_UNIT_TEST_SUITE(DatabaseSpace) {
+         const auto response = ctx.Env.Invoke(request);
+         UNIT_ASSERT_C(response.GetSuccess(), response.GetErrorDescription());
+ 
+-        const size_t numStates = subscriber.States->size();
+-        ctx.Env.RestartNode(controllerNodeId);
+-
+         // the latch must be kept while colors are unknown or partially reported (CYAN VDisks may report before the
+         // worst one), and after they are refreshed within the hysteresis band
+-        ctx.WaitState(subscriber, true, TDuration::Seconds(60), numStates);
+-        ctx.Env.Sim(TDuration::Seconds(20));
+-        for (size_t i = numStates; i < subscriber.States->size(); ++i) {
+-            UNIT_ASSERT_C((*subscriber.States)[i].GetExhausted(), "database got unblocked after reassignment and restart");
+-        }
++        ctx.RestartControllerKeepingBlocked(subscriber, "reassignment and restart");
+     }
+ 
+     Y_UNIT_TEST(ResubscribeAfterControllerRestart) {
+@@ -418,7 +417,7 @@ Y_UNIT_TEST_SUITE(DatabaseSpace) {
+             .NumPiles = 2,
+             .AutomaticBootstrap = true,
+         });
+-        ctx.SetThresholds(TColor::YELLOW, TColor::YELLOW);
++        ctx.SetThresholds(TColor::YELLOW, TColor::LIGHT_YELLOW);
+         const TSubscriber subscriber = ctx.Subscribe(ctx.Env.Settings.ControllerNodeId + 1);
+         ctx.WaitState(subscriber, false, TDuration::Seconds(10));
+ 
+@@ -439,20 +438,19 @@ Y_UNIT_TEST_SUITE(DatabaseSpace) {
+         ctx.Env.Sim(TDuration::Seconds(20));
+         reportPart(parts[1], TColor::YELLOW);
+         ctx.WaitState(subscriber, true, TDuration::Seconds(9));
++
++        // The part gets between the unblock and block colors, so it is only the latch that keeps the pool exhausted:
++        // the colors stored wouldn't make it exhausted anew.
++        reportPart(parts[1], TColor::LIGHT_YELLOW);
+         ctx.Env.Sim(TDuration::Seconds(20)); // let BSC persist the colors
++        UNIT_ASSERT(subscriber.States->back().GetExhausted());
+ 
+-        // Stable colors and the exhaustion latch must survive a controller restart.
+-        size_t numStates = subscriber.States->size();
+-        ctx.Env.RestartNode(ctx.Env.Settings.ControllerNodeId);
+-        ctx.WaitState(subscriber, true, TDuration::Seconds(60), numStates);
+-        ctx.Env.Sim(TDuration::Seconds(20));
+-        for (size_t i = numStates; i < subscriber.States->size(); ++i) {
+-            UNIT_ASSERT_C((*subscriber.States)[i].GetExhausted(), "database got unblocked after BS_CONTROLLER restart");
+-        }
++        // The exhaustion latch must survive a controller restart.
++        ctx.RestartControllerKeepingBlocked(subscriber, "BS_CONTROLLER restart");
+ 
+         // Removing the full part from the data quorum unblocks the pool without waiting for new metrics.
+         NBridgeTest::SwitchPileState(ctx.Env, 1, NKikimrBridge::TClusterState::SUSPENDED);
+-        numStates = subscriber.States->size(
+```
+
+**File**: `ydb/core/blobstorage/ut_blobstorage/move_pdisk.cpp` (modified, +39/-0)
+```diff
+@@ -54,9 +54,46 @@ Y_UNIT_TEST_SUITE(BSCMovePDisk) {
+         auto *destinationId = cmd->MutableDestinationPDisk()->MutableTargetPDiskId();
+         destinationId->SetNodeId(destination.first);
+         destinationId->SetPDiskId(destination.second);
++        request.AddCommand()->MutableQueryBaseConfig(); // the config as the move makes it
+         return env.Invoke(request);
+     }
+ 
++    // the config reported by QueryBaseConfig in the request moving the PDisk has the generations the groups get when
++    // this request is committed, so they are usable in further commands
++    void CheckGenerationsReported(TEnvironmentSetup& env, const NKikimrBlobStorage::TConfigResponse& response,
++            TPDisk destination) {
++        UNIT_ASSERT_VALUES_EQUAL(response.StatusSize(), 2);
++        const auto& reported = response.GetStatus(1).GetBaseConfig();
++        const auto committed = env.FetchBaseConfig();
++
++        std::map<ui32, ui32> groupGenerations;
++        for (const auto& group : committed.GetGroup()) {
++            groupGenerations.emplace(group.GetGroupId(), group.GetGroupGeneration());
++        }
++        UNIT_ASSERT_VALUES_EQUAL(reported.GroupSize(), committed.GroupSize());
++        for (const auto& group : reported.GetGroup()) {
++            UNIT_ASSERT_VALUES_EQUAL_C(group.GetGroupGeneration(), groupGenerations.at(group.GetGroupId()),
++                "GroupId# " << group.GetGroupId());
 +        }
 +
-+        bool IsRunningInPile(ui64 tabletId, ui32 pile) {
-+            const auto info = TabletInfo(tabletId);
-+            return info.GetNo
++        std::map<std::tuple<ui32, ui32, ui32>, ui32> vslotGenerations;
++        for (const auto& vslot : committed.GetVSlot()) {
++            const auto& id = vslot.GetVSlotId();
++            vslotGenerations.emplace(std::make_tuple(id.GetNodeId(), id.GetPDiskId(), id.GetVSlotId()),
++                vslot.GetGroupGeneration());
++        }
++        UNIT_ASSERT_VALUES_EQUAL(reported.VSlotSize(), committed.VSlotSize());
++        size_t numMoved = 0;
++        for (const auto& vslot : reported.GetVSlot()) {
++            const auto& id = vslot.GetVSlotId();
++            const auto key = std::make_tuple(id.GetNodeId(), id.GetPDiskId(), id.GetVSlotId());
++            UNIT_ASSERT_C(vslotGenerations.contains(key), id.ShortDebugString());
++            UNIT_ASSERT_VALUES_EQUAL_C(vslot.GetGroupGeneration(), vslotGenerations.at(key), id.ShortDebugString());
++            numMoved += id.GetNodeId() == destination.first && id.GetPDiskId() == destination.second;
++        }
++        UNIT_ASSERT_C(numMoved, "the config reported doesn't show VSlots on the destination PDisk");
++    }
++
+     void RestartPDisk(TEnvironmentSetup& env, TPDisk pdisk) {
+         NKikimrBlobStorage::TConfigRequest request;
+         request.SetIgnoreGroupFailModelChecks(true);
+@@ -202,6 +239,7 @@ Y_UNIT_TEST_SUITE(BSCMovePDisk) {
+ 
+         // Wait until destination PDisk is restarted.
+         WaitForPDiskRestart(env);
++        CheckGenerationsReported(env, response, destination);
+         RestartPDisk(env, destination);
+ 
+         // Wait and read the data back from the destination PDisk.
+@@ -280,6 +318,7 @@ Y_UNIT_TEST_SUITE(BSCMovePDisk) {
+         const auto response = InvokeMovePDisk(env, source, destination);
+         UNIT_ASSERT_C(response.GetSuccess(), response.GetErrorDescription());
+         WaitForPDiskRestart(env);
++        CheckGenerationsReported(env, response, destination);
+         RestartPDisk(env, destination);
+         env.Sim(TDuration::Seconds(30));
+ 
+```
+
+**File**: `ydb/core/mind/bscontroller/bridge.cpp` (modified, +6/-0)
+```diff
+@@ -440,6 +440,12 @@ class TBlobStorageController::TTxBridgePileOperation : public TTransactionBase<T
+     bool Execute(TTransactionContext& txc, const TActorContext&) override {
+         State.emplace(*Self, Self->HostRecords, TActivationContext::Now(), TActivationContext::Monotonic(),
+             ProposedStorageConfig ? &*ProposedStorageConfig : nullptr);
++        if (ProposedStorageConfig) {
++            // The operation is validated the way it is going to run: BSC gets the pending operation with the
++            // StorageConfig, and adopts its storage pool pile overrides first. They may differ from the ones followed now
++            // (distconf may have committed them already, with BSC not notified yet).
++            State->PileOverrideRules = Self->GetPileOverrideRulesWith(*ProposedStorageConfig);
++        }
+ 
+         try {
+             NumGroups = DoStep(*State);
+```
+
+**File**: `ydb/core/mind/bscontroller/cmds_storage_pool.cpp` (modified, +21/-2)
+```diff
+@@ -66,6 +66,13 @@ namespace NKikimr::NBsController {
+             : nullptr;
+     }
+ 
++    const TStoragePoolPileOverrideRules *TBlobStorageController::GetPileOverrideRulesWith(
++            const NKikimrBlobStorage::TStorageConfig& config) const {
++        // the same choice TTxUpdatePileOverrides makes
++        const auto& rules = config.GetBlobStorageConfig().GetStoragePoolPileOverrides();
++        return AppliedPileOverrides && CheckGroupsAgainstPileOverrides(rules) ? &AppliedPileOverrides->GetRule() : &rules;
++    }
++
+     std::optional<TString> TBlobStorageController::ValidateStoragePoolPileOverrides(
+             const NKikimrBlobStorage::TStorageConfig& config) const {
+         if (auto error = NKikimr::ValidateStoragePoolPileOverrides(config.GetBlobStorageConfig())) {
+@@ -249,7 +256,7 @@ namespace NKikimr::NBsController {
+             const auto [erasure, inserted] = erasures.try_emplace(group->BridgePileId);
+             if (inserted) {
+                 erasure->second = Self.ResolveStoragePoolForPile(id, storagePool, group->BridgePileId,
+-                    BridgeInfo.get(), Self.GetPileOverrideRules()).ErasureSpecies;
++                    BridgeInfo.get(), GetPileOverrideRules()).ErasureSpecies;
+             }
+             if (group->ErasureSpecies != erasure->second) {
+                 throw TExError() << "GroupId# " << it->second << " has different erasure species";
+@@ -908,6 +915,11 @@ namespace NKikimr::NBsController {
+ 
+         const bool virtualGroupsOnly = cmd.GetVirtualGroupsOnly();
+ 
++        // The config reported is the one the commands executed so far make, and the groups they have changed get new
++        // generation at commit; report it too, so that it agrees with the placement shown (and may be used in further
++        // commands like ReassignGroupDisk once the request is committed).
++        Self.PropagateGroupContentChanged(*this);
++
+         THashSet<TGroupId> groupFilter;
+         THashSet<TVSlotId> vslotFilter;
+         THashSet<TPDiskId> pdiskFilter;
+@@ -942,7 +954,11 @@ namespace NKikimr::NBsController {
+             }};
+             VSlots.ForEach([&](TVSlotId vslotId, const TVSlotInfo& vslotInfo) {
+                 if (vslotInfo.Group && (!virtualGroupsOnly || vslotFilter.contains(vslotId))) {
+-                    Serialize(pb->AddVSlot(), vslotInfo, vslotFinder);
++                    auto *vslot = pb->AddVSlot();
++                    Serialize(vslot, vslotInfo, vslotFinder);
++                    if (GroupContentChanged.contains(vslotInfo.GroupId)) {
++                        vslot->SetGroupGeneration(vslotInfo.Group->Generation + 1);
++                    }
+                 }
+             });
+         }
+@@ -955,6 +971,9 @@ namespace NKikimr::NBsController {
+                 if (!virtualGroupsOnly || groupFilter.contains(groupId)) {
+                     auto* group = pb->AddGroup();
+                     Serialize(group, groupInfo, finder, BridgeInfo.get());
++                    if (GroupContentChanged.contains(groupId)) {
++                        group->SetGroupGeneration(groupInfo.Generation + 1);
++                    }
+                     if (group->FailRealmsSize()) {
+                         for (const TVSlotInfo* slot : groupInfo.VDisksInGroup) {
+                             UpdateFailRealmDataCenter(group->MutableFailRealms(slot->RingIdx),
+```
+
+**File**: `ydb/core/mind/bscontroller/config.cpp` (modified, +35/-12)
+```diff
+@@ -391,14 +391,9 @@ namespace NKikimr::NBsController {
+             }
+         };
+ 
+-        bool TBlobStorageController::ValidateConfigUpdates(TConfigState& state, TValidateConfigUpdatesParameters parameters,
+-                TString *errorDescription, NKikimrBlobStorage::TConfigResponse *response) {
+-
+-            if (auto result = state.ApplyDataCenterStates(parameters.SuppressFailModelChecking, parameters.SuppressDegradedGroupsChecking); !result) {
+-                *errorDescription = result.error();
+-                return false;
+-            }
+-
++        // Completes the set of groups getting new generation when the changes made so far are committed. It only adds the
++        // groups which would be added at commit anyway, so it may be called at any point of the transaction.
++        void TBlobStorageController::PropagateGroupContentChanged(TConfigState& state) {
+             // virtual group state reported to node wardens may change without explicit group content change (for
+             // instance, when decommission starts or BlobDepot creation fails), deliver it with new generation
+             for (const auto& [base, overlay] : state.Groups.Diff()) {
+@@ -433,6 +428,17 @@ namespace NKikimr::NBsController {
+                 }
+             }
+             state.GroupContentChanged.insert(updates.begin(), updates.end());
++        }
++
++        bool TBlobStorageController::ValidateConfigUpdates(TConfigState& state, TValidateConfigUpdatesParameters parameters,
++                TString *errorDescription, NKikimrBlobStorage::TConfigResponse *response) {
++
++            if (auto result = state.ApplyDataCenterStates(parameters.SuppressFailModelChecking, parameters.SuppressDegradedGroupsChecking); !result) {
++                *errorDescription = result.error();
++                return false;
++            }
++
++            PropagateGroupContentChanged(state);
+ 
+             // spin generation for every changed group
+             THashSet<TGroupId> bridgeProxyGroupIds;
+@@ -675,7 +681,7 @@ namespace NKikimr::NBsController {
+             // while converting to bridged cluster, watch for groups that have to be converted or stop blocking conversion
+             if (StorageConfig && StorageConfig->GetClusterStateDetails().GetBscConversionPending()) {
+                 for (const auto& [base, overlay] : state.Groups.Diff()) {
+-                    const TGroupInfo *prev = base ? base->second.Get() : nullptr;
++                    const TGroupInfo *prev = base ? &*base->second : nullptr;
+                     const TGroupInfo *cur = overlay->second.Get();
+                     if ((cur && cur->IsBridgeConversionCandidate()) ||
+                             (prev && prev->BlocksBridgeConversion() && !(cur && cur->BlocksBridgeConversion()))) {
+@@ -685,9 +691,26 @@ namespace NKikimr::NBsController {
+                 }
+             }
+ 
+-            // the groups that didn't let BSC adopt storage pool pile overrides of StorageConfig may be gone now
+-            if (PileOverridesError && (state.Groups.Changed() || state.StoragePools.Changed())) {
+-                state.Callbacks.push_back([this] { UpdatePileOverrides(); });
++            // the groups that didn't let BSC adopt storage pool pile overrides of StorageConfig may be gone now; only
++            // the changes able to make them fit are of interest (see CheckGroupsAgainstPileOverrides), as groups change
++            // all the time for other reasons (e.g. sync stages)
++            if (PileOverridesError) {
++                bool recheck = state.StoragePools.Changed();
++                if (!recheck) {
++                    for (const auto& [base, overlay] : state.Groups.Diff()) {
++                        const TGroupInfo *prev = base ? &*base->second : nullptr;
++                        const TGroupInfo *cur = overlay->second ? &*overlay->second : nullptr;
++                        if (prev && (!cur || cur->StoragePoolId != prev->StoragePoolId ||
++                                cur->BridgePileId != prev->BridgePileId ||
++                                cur->VDisksInGroup.empty() != prev->VDisksInGroup.empty())) {
++                            recheck = true;
++                            break;
++                        }
++                    }
++                }
++                if (recheck) {
++                    state.Callbacks.push_back([this] { UpdatePileOverrides(); });
++                }
+             }
+ 
+             // groups relying on single parts get synced or lose their parts, see if they are done with it
 ```
 
 ---
 
-### Incident Patch 2: `39205ea2` (2026-11-09)
-**Commit Message**: Fix possible blob bugs main (#58454)
+### Incident Patch 2: `ea420b36` (2026-11-11)
+**Commit Message**: Fix PDisk and Bridge CLI regression test setup (#59080)
 
-**File**: `ydb/core/persqueue/pqtablet/blob/blob_serialization.cpp` (modified, +44/-9)
+**File**: `ydb/apps/ydb/ut/bridge.cpp` (modified, +1/-0)
 ```diff
-@@ -37,9 +37,14 @@ ui32 GetBatchClientBlobCount(const NKikimrPQ::TBatchHeader& header) {
+@@ -217,6 +217,7 @@ class TBridgeService : public TMockGrpcServiceBase<Ydb::Bridge::V1::BridgeServic
+ class TBridgeCliFixture : public TCliTestFixture {
+ public:
+     void AddServices() override {
++        EnvHomeFile("ydb/bin/config.json", R"({"check_version":false})");
+         AddService<TBridgeDiscovery>(GetAddress());
+         AddService<TBridgeLogin>();
+         AddService<TBridgeService>();
+```
+
+**File**: `ydb/core/blobstorage/pdisk/blobstorage_pdisk_ut_failure.cpp` (modified, +8/-6)
+```diff
+@@ -221,9 +221,10 @@ Y_UNIT_TEST_SUITE(TPDiskFailureInjection) {
+             });
  
- NScheme::TDataRef GetChunk(const char*& data, const char *end)
- {
--    ui32 size = ReadUnaligned<ui32>(data);
--    data += sizeof(ui32) + size;
-     AFL_ENSURE(data <= end);
-+    AFL_ENSURE(static_cast<size_t>(end - data) >= sizeof(ui32));
+             // Let both pieces of the write leave in the same PDisk cycle.
+-            auto cfg = testCtx.GetPDiskConfig();
+-            cfg->UseNoopScheduler = true;
+-            testCtx.UpdateConfigRecreatePDisk(cfg);
++            testCtx.SafeRunOnPDisk([](NPDisk::TPDisk* pdisk) {
++                pdisk->UseNoopSchedulerHDD = 1;
++                pdisk->UseNoopSchedulerSSD = 1;
++            });
+ 
+             TVDiskMock vdisk(&testCtx);
+             vdisk.InitFull();
+@@ -292,9 +293,10 @@ Y_UNIT_TEST_SUITE(TPDiskFailureInjection) {
+             });
+ 
+             // Let all buffers of the record leave in the same PDisk cycle.
+-            auto cfg = testCtx.GetPDiskConfig();
+-            cfg->UseNoopScheduler = true;
+-            testCtx.UpdateConfigRecreatePDisk(cfg);
++            testCtx.SafeRunOnPDisk([](NPDisk::TPDisk* pdisk) {
++                pdisk->UseNoopSchedulerHDD = 1;
++                pdisk->UseNoopSchedulerSSD = 1;
++            });
+ 
+             TVDiskMock vdisk(&testCtx);
+             vdisk.InitFull();
+```
+
+---
+
+### Incident Patch 3: `9495f482` (2026-11-12)
+**Commit Message**: Fix/statestorage migration visibility (#59112)
+
+**File**: `ydb/core/base/board_lookup.cpp` (modified, +16/-2)
+```diff
+@@ -108,6 +108,7 @@ class TBoardLookupActor : public TActorBootstrapped<TBoardLookupActor> {
+     };
+ 
+     TVector<TStats> Stats;
++    bool CollectingReplies = false;
+ 
+     bool CheckConfigVersion(const TActorId &sender, const auto *msg) {
+         ui64 msgGeneration = msg->Record.GetClusterStateGeneration();
+@@ -190,10 +191,17 @@ class TBoardLookupActor : public TActorBootstrapped<TBoardLookupActor> {
+         return false;
+     }
+ 
+-    void CheckCompletion() {
++    void CheckCompletion(bool collectionTimedOut = false) {
+         if (CurrentStateFunc() != &TThis::StateSubscribe) {
+             if ((!Subscriber && AnyGroupStatsHasInfo()) ||
+                     (Subscriber && AllStatsHasAndHasNoInfo())) {
++                if (Mode == EBoardLookupMode::SecondWithAllReplies && !AllStatsReplied() && !collectionTimedOut) {
++                    if (!CollectingReplies) {
++                        CollectingReplies = true;
++                        Schedule(TDuration::Seconds(1), new TEvents::TEvWakeup());
++                    }
++                    return;
++                }
+                 auto reply = MakeHolder<TEvStateStorage::TEvBoardInfo>(
+                     TEvStateStorage::TEvBoardInfo::EStatus::Ok, Path);
+                 reply->InfoEntries = std::move(Info);
+@@ -206,7 +214,7 @@ class TBoardLookupActor : public TActorBootstrapped<TBoardLookupActor> {
+             }
+ 
+             if (!Subscriber) {
+-                if (AllStatsReplied()) {
++                if (AllStatsReplied() || collectionTimedOut) {
+                     return NotAvailable();
+                 }
+             } else {
+@@ -221,6 +229,10 @@ class TBoardLookupActor : public TActorBootstrapped<TBoardLookupActor> {
+         }
+     }
+ 
++    void FinishCollectingReplies() {
++        CheckCompletion(true);
++    }
 +
-+    ui32 size = ReadUnaligned<ui32>(data);
-+    data += sizeof(ui32);
-+    AFL_ENSURE(static_cast<size_t>(end - data) >= size);
-+
-+    data += size;
-     return NScheme::TDataRef(data - size, size);
+     void Handle(TEvStateStorage::TEvResolveReplicasList::TPtr &ev) {
+         auto *msg = ev->Get();
+ 
+@@ -256,6 +268,7 @@ class TBoardLookupActor : public TActorBootstrapped<TBoardLookupActor> {
+                 replicaGroups.WaitForReplicasToSuccess = 1;
+                 break;
+             case EBoardLookupMode::Second:
++            case EBoardLookupMode::SecondWithAllReplies:
+             case EBoardLookupMode::SecondNonEmptyDoubleTime:
+                 replicaGroups.WaitForReplicasToSuccess = Min<ui32>(2, msgReplicaGroups.Replicas.size());
+                 break;
+@@ -622,6 +635,7 @@ class TBoardLookupActor : public TActorBootstrapped<TBoardLookupActor> {
+ 
+     STATEFN(StateLookup) {
+         switch (ev->GetTypeRewrite()) {
++            cFunc(TEvents::TEvWakeup::EventType, FinishCollectingReplies);
+             hFunc(TEvStateStorage::TEvReplicaBoardInfo, Handle);
+             hFunc(TEvStateStorage::TEvReplicaBoardInfoUpdate, Handle);
+             hFunc(TEvents::TEvUndelivered, Handle);
+```
+
+**File**: `ydb/core/base/board_subscriber_ut.cpp` (modified, +145/-0)
+```diff
+@@ -103,6 +103,13 @@ class TBoardSubscriberTestBase : public NUnitTest::TTestBase {
+     void KeepInfoFromOtherRingGroup();
+     void IgnoreWriteOnlyRingGroupOnLookup();
+     void ReturnNotAvailableWithoutReadableRingGroup();
++    void LookupCollectsDelayedReplica();
++    void LookupWithUnavailableReplica();
++    void LookupWithSilentReplica();
++    void LookupWithoutQuorum();
++    void LookupWaitsForLateQuorum();
++    void LookupLosesQuorumWhileCollecting();
++    void CheckLookupWithMissingReplica(bool silent, bool quorum);
+ 
+ protected:
+     THolder<TTestBasicRuntime> Context;
+@@ -117,6 +124,12 @@ class TBoardSubscriberTest : public TBoardSubscriberTestBase {
+     UNIT_TEST(ReconnectReplica);
+     UNIT_TEST(RepublishAfterReplicaShutdown);
+     UNIT_TEST(RepublishAfterInitialUndelivery);
++    UNIT_TEST(LookupCollectsDelayedReplica);
++    UNIT_TEST(LookupWithUnavailableReplica);
++    UNIT_TEST(LookupWithSilentReplica);
++    UNIT_TEST(LookupWithoutQuorum);
++    UNIT_TEST(LookupWaitsForLateQuorum);
++    UNIT_TEST(LookupLosesQuorumWhileCollecting);
+     UNIT_TEST(DropByDisconnect);
+     UNIT_TEST_SUITE_END();
+ };
+@@ -640,4 +653,136 @@ void TBoardSubscriberTestBase::ReturnNotAvailableWithoutReadableRingGroup() {
+     UNIT_ASSERT_VALUES_EQUAL(result->Get()->Path, "path");
  }
  
-@@ -347,13 +352,21 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
-         auto chunk = NScheme::IChunkDecoder::ReadChunk(GetChunk(data, dataEnd), &ui32Codecs);
-         auto iter = chunk->MakeIterator();
-         for (ui32 i = 0; i < totalBlobs; ++i) {
--            pos.push_back(ReadUnaligned<ui32>(iter->Next().Data()));
-+            ui32 blobPos = ReadUnaligned<ui32>(iter->Next().Data());
-+            AFL_ENSURE(blobPos < totalBlobs);
-+            pos.push_back(blobPos);
++void TBoardSubscriberTestBase::LookupCollectsDelayedReplica() {
++    const auto replicas = ResolveReplicas();
++    const auto edge = Context->AllocateEdgeActor();
++    size_t publishAcks = 0;
++    auto ackObserver = Context->AddObserver<TEvStateStorage::TEvReplicaBoardPublishAck>(
++        [&](TEvStateStorage::TEvReplicaBoardPublishAck::TPtr&) { ++publishAcks; });
++    const auto common = CreatePublisher("path", "common", edge, 0);
++    Context->WaitFor("common publication", [&] { return publishAcks == 3; });
++
++    // Two recently restarted replicas have only a subset of the publications.
++    auto previousObserver = Context->SetObserverFunc([&](TAutoPtr<IEventHandle>& ev) {
++        if (ev->GetTypeRewrite() == TEvStateStorage::TEvReplicaBoardPublish::EventType
++                && ev->Recipient != replicas.back()) {
++            return TTestActorRuntime::EEventAction::DROP;
++        }
++        return TTestActorRuntime::EEventAction::PROCESS;
++    });
++    const auto unique = CreatePublisher("path", "unique", edge, 0);
++    Context->WaitFor("unique publication", [&] { return publishAcks == 4; });
++    Context->SetObserverFunc(previousObserver);
++
++    NActors::TBlockEvents<TEvStateStorage::TEvReplicaBoardInfo> delayedReply(
++        *Context, [&](const TEvStateStorage::TEvReplicaBoardInfo::TPtr& ev) {
++            return ev->Sender.NodeId() == replicas.back().NodeId();
++        });
++    size_t replies = 0;
++    auto replyObserver = Context->AddObserver<TEvStateStorage::TEvBoardInfo>(
++        [&](TEvStateStorage::TEvBoardInfo::TPtr&) { ++replies; });
++    CreateLookup("path", edge, EBoardLookupMode::SecondWithAllReplies, 0);
++    Context->WaitFor("replica response or early completion", [&] { return delayedReply.size() == 1 || replies != 0; });
++    Context->SimulateSleep(TDuration::MilliSeconds(10));
++    UNIT_ASSERT_VALUES_EQUAL(replies, 0);
++
++    delayedReply.Stop().Unblock();
++    auto result = Context->GrabEdgeEvent<TEvStateStorage::TEvBoardInfo>(edge);
++    UNIT_ASSERT_EQUAL(result->Get()->Status, TEvStateStorage::TEvBoardInfo::EStatus::Ok);
++    UNIT_ASSERT_VALUES_EQUAL(result->Get()->InfoEntries.size(), 2);
++    UNIT_ASSERT_VALUES_EQUAL(result->Get()->InfoEntries.at(common).Payload, "common");
++    UNIT_ASSERT_VALUES_EQUAL(result->Get()->InfoEntries.at(unique).Payload, "unique");
++}
++
++void TBoardSubscriberTestBase::CheckLookupWithMissingReplica(bool silent, bool quorum) {
++    const auto replicas = ResolveReplicas();
++    const auto edge = Context->AllocateEdgeActor();
++    size_t publishAcks = 0;
++    auto ackObserver = Context->AddObserver<TEvStateStorage::TEvReplicaBoardPublishAck>(
++        [&](TEvStateStorage::TEvReplicaBoardPublishAck::TPtr&) { ++publishAcks; });
++    const auto publisher = CreatePublisher("path", "test", edge, 0);
++    Context->WaitFor("publication", [&] { return publishAcks == 3; });
++
++    auto previousObserver = Context->SetObserverFunc([&](TAutoPtr<IEventHandle>& ev) {
++        if (ev->GetTypeRewrite() == TEvStateStorage::TEvReplicaBoardLookup::EventType
++                && (ev->Recipient == replicas.back() || (!quorum && ev->Recipient == replicas[1]))) {
++            if (!silent) {
++                Context->Send(new IEventHandle(ev->Sender, ev->Recipient,
++                    new TEvents::TEvUndelivered(ev->GetTypeRewrite(), TEvents::TEvUndelivered::ReasonActorUnknown),
++                    0, ev->Cookie), 0);
++            }
++            return TTestActorRuntime::EEventAction::DROP;
++        }
++        return TTestActorRuntime::EEventAction::PROCESS;
++    });
++    CreateLookup("path", edge, EBoardLookupMode::SecondWithAllReplies, 0);
++    auto result = Context->GrabEdgeEvent<TEvStateStorage::TEvBoardI
+```
+
+**File**: `ydb/core/base/statestorage.h` (modified, +3/-0)
+```diff
+@@ -631,6 +631,9 @@ enum class EBoardLookupMode {
+     SecondNonEmptyDoubleTime,
+     MajorityDoubleTime,
+     Subscription,
++    // Require two nonempty replies, collecting all available replicas before
++    // returning. A slow replica may delay the result by at most one second.
++    SecondWithAllReplies,
+ };
+ 
+ struct TBoardRetrySettings {
+```
+
+**File**: `ydb/core/blobstorage/nodewarden/distconf_binding.cpp` (modified, +10/-4)
+```diff
+@@ -1,5 +1,6 @@
+ #include "distconf.h"
+ #include "distconf_quorum.h"
++#include <ydb/core/base/nameservice.h>
+ #include <ydb/core/protos/node_broker.pb.h>
+ 
+ #include <ydb/library/actors/core/log.h>
+@@ -790,6 +791,11 @@ namespace NKikimr::NStorage {
+             return;
          }
-         sourceIdCount = ReadUnaligned<ui32>(iter->Next().Data());
-+        AFL_ENSURE(sourceIdCount > 0 || totalBlobs == 0);
-+        AFL_ENSURE(sourceIdCount <= totalBlobs);
-         end.reserve(sourceIdCount);
-         for (ui32 i = 0; i < sourceIdCount; ++i) {
--            end.push_back(ReadUnaligned<ui32>(iter->Next().Data()));
-+            ui32 sourceIdEnd = ReadUnaligned<ui32>(iter->Next().Data());
-+            AFL_ENSURE(sourceIdEnd <= totalBlobs);
-+            AFL_ENSURE(end.empty() || end.back() < sourceIdEnd);
-+            end.push_back(sourceIdEnd);
-         }
-+        AFL_ENSURE(end.empty() || end.back() == totalBlobs);
+         if (const auto it = SubscribedSessions.find(nodeId); it != SubscribedSessions.end()) {
++            // Dynamic peers are not listed in AllNodeIds. Dropping their distconf
++            // subscription must not close the session used by other actors.
++            const auto& dynamicNameserviceConfig = AppData()->DynamicNameserviceConfig;
++            const bool isRemovedStaticNode = !AllNodeIds.contains(nodeId)
++                && (!dynamicNameserviceConfig || nodeId <= dynamicNameserviceConfig->MaxStaticNodeId);
+             TSessionSubscription& subs = it->second;
+             YDB_LOG_DEBUG("UnsubscribeInterconnect",
+                 {"marker", "NWDC55"},
+@@ -802,16 +808,16 @@ namespace NKikimr::NStorage {
+                 Y_ABORT_UNLESS(jt != SubscriptionCookieMap.end());
+                 Y_ABORT_UNLESS(jt->second == nodeId);
+                 SubscriptionCookieMap.erase(jt);
+-                if (!AllNodeIds.contains(nodeId)) {
++                if (isRemovedStaticNode) {
+                     TActivationContext::Send(new IEventHandle(TEvInterconnect::EvDisconnect, 0,
+                         TActivationContext::InterconnectProxy(nodeId), {}, nullptr, 0));
+                 }
+             } else {
+                 // we already had TEvNodeConnected, so we have to unsubscribe
+                 Y_ABORT_UNLESS(subs.SessionId);
+-                ui32 event = AllNodeIds.contains(nodeId)
+-                    ? TEvents::TSystem::Unsubscribe
+-                    : TEvents::TSystem::Poison;
++                const ui32 event = isRemovedStaticNode
++                    ? TEvents::TSystem::Poison
++                    : TEvents::TSystem::Unsubscribe;
+                 TActivationContext::Send(new IEventHandle(event, 0, subs.SessionId, SelfId(), nullptr, 0));
+             }
+             SubscribedSessions.erase(it);
+```
+
+**File**: `ydb/core/blobstorage/nodewarden/distconf_ut.cpp` (modified, +117/-0)
+```diff
+@@ -2,6 +2,7 @@
+ #include <ydb/core/base/nodestate.h>
+ #include <ydb/core/base/statestorage_impl.h>
+ #include <ydb/core/base/tablet_resolver.h>
++#include <ydb/core/base/nameservice.h>
+ #include <ydb/core/base/tabletid.h>
+ #include <ydb/core/blobstorage/base/blobstorage_events.h>
+ #include <ydb/core/blobstorage/nodewarden/distconf.h>
+@@ -636,12 +637,30 @@ Y_UNIT_TEST_SUITE(TDistconfNodeRoleTest) {
+         runtime.RegisterService(MakeBlobStorageNodeWardenID(4), childId);
+         UNIT_ASSERT(SimUntil(runtime, [&] { return FindConvergedRoot(runtime, {keeperId}) == 3; }));
+ 
++        TActorId childSession;
++        TActorId childProxy;
++        ui32 removedChildDisconnects = 0;
++        UNIT_ASSERT(runtime.WrapInActorContext(keeperId, [&](IActor*) {
++            auto& nameservice = AppData()->DynamicNameserviceConfig;
++            nameservice = new TDynamicNameserviceConfig;
++            nameservice->MaxStaticNodeId = 4;
++            nameservice->MaxDynamicNodeId = 5;
++            nameservice->MinDynamicNodeId = 5;
++            childProxy = TActivationContext::InterconnectProxy(4);
++        }));
+         bool pushDelivered = false;
+         runtime.FilterFunction = [&](ui32 nodeId, std::unique_ptr<IEventHandle>& ev) {
+             if (nodeId == keeperId.NodeId() && ev->InterconnectSession
+                 && ev->GetRecipientRewrite() == keeperId && ev->Sender == childId
+                 && ev->GetTypeRewrite() == NStorage::TEvNodeConfigPush::EventType) {
+                 pushDelivered = true;
++                childSession = ev->InterconnectSession;
++            }
++            const ui32 type = ev->GetTypeRewrite();
++            if (nodeId == keeperId.NodeId() && ((type == TEvents::TSystem::Poison && childSession
++                    && ev->GetRecipientRewrite() == childSession)
++                    || (type == TEvInterconnect::EvDisconnect && ev->GetRecipientRewrite() == childProxy))) {
++                ++removedChildDisconnects;
+             }
+             return true;
+         };
+@@ -678,6 +697,7 @@ Y_UNIT_TEST_SUITE(TDistconfNodeRoleTest) {
+         const std::vector keepers{keeperId, addedKeeperId};
+         UNIT_ASSERT(SimUntil(runtime, [&] { return FindConvergedRoot(runtime, keepers) == 3; }));
+         CheckStaysConverged(runtime, keepers);
++        UNIT_ASSERT_C(removedChildDisconnects, "a removed static child must still be disconnected");
      }
  
-     sourceIds.reserve(sourceIdCount);
-@@ -366,6 +379,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
-             sourceIds.emplace_back(ref.Data(), ref.Size());
-         }
+     // two-pile bridged config of 4 nodes: nodes 1 and 4 are in the first pile, nodes 2 and 3 are in the second one; the
+@@ -6484,6 +6504,103 @@ selector_config: []
+         CheckDurableConfigConverges(fixture, advanced);
      }
-+    AFL_ENSURE(sourceIds.size() == end.size());
-     TVector<ui64> seqNo;
-     seqNo.reserve(totalBlobs);
  
-@@ -494,6 +508,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
-     blobs->resize(totalBlobs);
-     ui32 currentSID = 0;
-     for (ui32 i = 0; i < totalBlobs; ++i) {
-+        AFL_ENSURE(currentSID < end.size());
-         TMaybe<TPartData> pd;
-         if (auto it = partData.find(pos[i]); it != partData.end()) {
-             pd = it->second;
-@@ -524,6 +539,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
-             ++currentSID;
-         }
-     }
-+    AFL_ENSURE(currentSID == sourceIds.size());
++    void CheckDynamicConfigUnsubscribeKeepsSession(bool pendingSubscription) {
++        TCommitConfirmationFixture fixture(true, 4);
++        fixture.State.RequiredRootNodeId = 1;
++        fixture.Start();
++        auto& runtime = fixture.Runtime;
++        const TActorId keeper = fixture.Keepers[1];
++        const TActorId dynamicPeer = runtime.Register(new TIgnoreActor, 4);
++        TActorId dynamicProxy;
++        UNIT_ASSERT(runtime.WrapInActorContext(keeper, [&](IActor*) {
++            auto& nameservice = AppData()->DynamicNameserviceConfig;
++            nameservice = new TDynamicNameserviceConfig;
++            nameservice->MaxStaticNodeId = 3;
++            nameservice->MaxDynamicNodeId = 4;
++            nameservice->MinDynamicNodeId = 4;
++            dynamicProxy = TActivationContext::InterconnectProxy(4);
++        }));
++
++        TActorId session;
++        bool subscribed = false;
++        bool noQuorum = false;
++        bool holdConnected = pendingSubscription;
++        bool queryDelivered = false;
++        bool queryReplied = false;
++        ui32 sessionCloses = 0;
++        ui32 disconnections = 0;
++        std::vector<std::unique_ptr<IEventHandle>> heldConnected;
++        runtime.FilterFunction = [&](ui32 nodeId, std::unique_ptr<IEventHandle>& ev) {
++            const ui32 type = ev->GetTypeRewrite();
++            if (nodeId == 2 && ev->Sender == dynamicPeer
++                    && type == TEvBlobStorage::EvNodeWardenDynamicConfigSubscribe) {
++                session = ev->InterconnectSession;
++                UNIT_ASSERT(session);
++            }
++            if (holdConnected && nodeId == 2 && type == TEvInterconnect::TEvNodeConnected::EventType
++                    && ev->Get<TEvInterconnect::TEvNodeConnected>()->NodeId == 4) {
++                heldConnected.push_back(std::move(ev));
++                return false;
++            }
++            if (nodeId == 4 && type == NStorage::TEvNodeWardenDynamicConfigPush::EventType) {
++                const auto& record = ev->Get<NStorage::TEvNodeWardenDynamicConfigPush>()->Record;
++                subscribed |= record.HasConfig();
++                noQuorum |= record.GetNoQuorum();
++            }
++            if (nodeId == 2 && ((type == TEvents::TSystem::Poison && session
++                    && ev->GetRecipientRewrite() == session)
++                    || (type == TEvInterconnect:
+```
+
+**File**: `ydb/core/viewer/json_pipe_req.cpp` (modified, +2/-2)
+```diff
+@@ -1026,15 +1026,15 @@ void TViewerPipeClient::RequestTxProxyDescribe(const TString& path, const NKikim
+ void TViewerPipeClient::RequestStateStorageEndpointsLookup(const TString& path) {
+     RegisterWithSameMailbox(CreateBoardLookupActor(MakeEndpointsBoardPath(path),
+                                                    SelfId(),
+-                                                   EBoardLookupMode::Second));
++                                                   EBoardLookupMode::SecondWithAllReplies));
+     ++DataRequests;
  }
  
- template<>
-@@ -692,17 +708,26 @@ TClientBlob DeserializeClientBlob(const char *data, ui32 size) {
-     AFL_ENSURE(size > TClientBlob::OVERHEAD);
-     ui32 totalSize = ReadUnaligned<ui32>(data);
-     AFL_ENSURE(size >= totalSize);
-+    AFL_ENSURE(totalSize >= sizeof(ui32));
-     const char *end = data + totalSize;
-     data += sizeof(ui32);
- 
-+    auto ensureRemaining = [&] (size_t length) {
-+        AFL_ENSURE(data <= end);
-+        AFL_ENSURE(length <= static_cast<size_t>(end - data));
-+    };
-+
-+    ensureRemaining(sizeof(ui64));
-     ui64 seqNo = ReadUnaligned<ui64>(data);
-     data += sizeof(ui64);
- 
-+    ensureRemaining(sizeof(ui8));
-     TMessageFlags flags(ReadUnaligned<ui8>(data));
-     ++data;
- 
-     TMaybe<TPartData> partData;
-     if (flags.F.HasPartData) {
-+            ensureRemaining(sizeof(ui16) + sizeof(ui16) + sizeof(ui32));
-             ui16 partNo = ReadUnaligned<ui16>(data);
-             data += sizeof(ui16);
-             ui16 totalParts = ReadUnaligned<ui16>(data);
-@@ -715,43 +740,53 @@ TClientBlob DeserializeClientBlob(const char *data, ui32 size) {
-     TString partitionKey;
-     TString explicitHashKey;
-     if (flags.F.HasKinesisData) {
-+            ensureRemaining(sizeof(ui8));
-             ui8 keySize = ReadUnaligned<ui8>(data);
-             data += sizeof(ui8);
--            partitionKey = TString(data, keySize == 0 ? 256 : keySize);
--            data += partitionKey.size();
-+            const size_t partitionKeySize = keySize == 0 ? 256 : keySize;
-+            ensureRemaining(partitionKeySize);
-+            partitionKey = TString(data, partitionKeySize);
-+            data += partitionKeySize;
-+
-+            ensureRemaining(sizeof(ui8));
-             keySize = ReadUnaligned<ui8>(data);
-             data += sizeof(ui8);
-+            ensureRemaining(keySize);
-             explicitHashKey = TString(data, keySize);
--            data += explicitHashKey.size();
-+            data += keySize;
+ TViewerPipeClient::TRequestResponse<TEvStateStorage::TEvBoardInfo> TViewerPipeClient::MakeRequestStateStorageEndpointsLookup(const TString& path, ui64 cookie) {
+     TRequestResponse<TEvStateStorage::TEvBoardInfo> response(Span.CreateChild(TComponentTracingLevels::THttp::Detailed, "BoardLookupActor-Endpoints"));
+     RegisterWithSameMailbox(CreateBoardLookupActor(MakeEndpointsBoardPath(path),
+                                                    SelfId(),
+-                                                   EBoardLookupMode::Second, {}, cookie));
++                                                   EBoardLookupMode::SecondWithAllReplies, {}, cookie));
+     if (response.Span) {
+         response.Span.Attribute("path", path);
      }
- 
-     ui32 logicalMessageCount = 1;
-     bool isBatch = false;
-     if (flags.F.HasBatchInfo) {
-+        ensureRemaining(sizeof(ui32));
-         std::tie(logicalMessageCount, isBatch) = UnpackMessageMetadata(ReadUnaligned<ui32>(data));
-         data += sizeof(ui32);
-     }
- 
-     TInstant writeTimestamp;
-     if (flags.F.HasWriteTimestamp) {
-+            ensureRemaining(sizeof(ui64));
-             writeTimestamp = TInst
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58804** (2026-11-09): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58803** (2026-11-09): Reduce empty audit test chunks from 564 to 4 (@maximyurchuk)
-- **PR #58799** (2026-11-09): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58797** (2026-11-09): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #58790** (2026-11-09): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #58780** (2026-11-09): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #59137** (2026-11-12): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #59136** (2026-11-12): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #59135** (2026-11-12): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #59133** (2026-11-12): Sync branches 261112-0047: main to prestable-27-1-1 (@ydbot)
+- **PR #59132** (2026-11-12): Sync branches 261112-0047: rightlib to main (@ydbot)
+- **PR #59131** (2026-11-12): Update muted_ya (relwithdebinfo) in main (@ydbot)
 
 ---
 
@@ -2582,21 +3031,41 @@ Co-authored-by: mregrock <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Hive bridge drain recovery and per-DC followers (#56221)
+## X. Post-commit review fixes for bridge and BSC changes (#59012)
 
 **RULE**:
-When implementing operations in `ydb/core/mind/hive/bridge_pile_info.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/base/bridge.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ef48dff`: Hive bridge drain recovery and per-DC followers (#56221). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `63a50ed8`: Post-commit review fixes for bridge and BSC changes (#59012). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/mind/hive/bridge_pile_info.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/base/bridge.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    bool DrainRetry = false;
+        // Does the part of the bridged group at this stage take TEvPut of the requests coming to the group (the part of
+        // the pile in data quorum, that is); the one being synced or dropped doesn't yet/already. Bridge proxy routes
+        // writes by this rule, and BS_CONTROLLER counts the space of the group by it.
+        constexpr bool GroupPartTakesPuts(NKikimrBridge::TGroupState::EStage stage) {
+            switch (stage) {
+                case NKikimrBridge::TGroupState::WRITE_KEEP_BARRIER_DONOTKEEP_DATA:
+                case NKikimrBridge::TGroupState::SYNCED:
+                    return true;
+
+                case NKikimrBridge::TGroupState::BLOCKS:
+                case NKikimrBridge::TGroupState::WRITE_KEEP:
+                case NKikimrBridge::TGroupState::WRITE_KEEP_BARRIER_DONOTKEEP:
+                    return false;
+
+                case NKikimrBridge::TGroupState_EStage_TGroupState_EStage_INT_MIN_SENTINEL_DO_NOT_USE_:
+                case NKikimrBridge::TGroupState_EStage_TGroupState_EStage_INT_MAX_SENTINEL_DO_NOT_USE_:
+                    break;
+            }
+            Y_ABORT();
+        }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2606,4 +3075,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ef48dff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `63a50ed8` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:27:36.103Z",
+  "last_updated": "2026-11-12T05:35:19.793Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6201,6 +6201,33 @@
       "source_repo": "greptimeteam-greptimedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BAF4A6-log-store-close-raft-engine-engines-on-s.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-AB29D4",
+      "directive_title": "Post-commit review fixes for bridge and BSC changes (#59012)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ydb-platform-ydb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AB29D4-post-commit-review-fixes-for-bridge-and-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9C09F2",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9C09F2-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-CB82EF",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB82EF-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-12"
     }
   ]
