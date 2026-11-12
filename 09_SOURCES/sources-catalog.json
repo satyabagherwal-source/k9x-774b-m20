@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "e50f0f23",
+    "sourceVersion": "5b68aa9e",
     "license": "NOASSERTION",
-    "contentHash": "cfe55aa32d7a35a09fee3e61002bd4ac8d5ca049313266c6316b374f7f3af52b",
-    "lastHarvestedAt": "2026-11-12T11:01:10.486Z",
+    "contentHash": "c0a274c39ef6a0ed72682b6ba66ddc30b685b59430c01714421217ca34856cae",
+    "lastHarvestedAt": "2026-11-12T22:21:25.656Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "03ecd1d2",
+    "sourceVersion": "f16ceaa3",
     "license": "MIT",
-    "contentHash": "de9f9ce4bbf507a4e42e2c928fd52822dbc746847235e403c18bb1520cf89548",
-    "lastHarvestedAt": "2026-11-11T11:00:39.189Z",
+    "contentHash": "dccaca496171ebec87b1fc086adad0e49c5a811af245d71171ca575c3dbd3686",
+    "lastHarvestedAt": "2026-11-12T22:21:23.144Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -7073,10 +7073,10 @@
     "repository": "crate-ci/typos",
     "platform": "github",
     "sourceUrl": "https://github.com/crate-ci/typos",
-    "sourceVersion": "2611abd1",
+    "sourceVersion": "aa7e5314",
     "license": "Apache-2.0",
-    "contentHash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
-    "lastHarvestedAt": "2026-11-10T02:11:42.763Z",
+    "contentHash": "455ab3b6be398b5b0049311dd6ad24827916a8d923724608c739ecb37f9cd4e9",
+    "lastHarvestedAt": "2026-11-12T22:21:06.790Z",
     "learningId": "learn-github-crate-ci-typos"
   },
   "emberstack-kubernetes-reflector": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "fdcf2d37",
+    "sourceVersion": "c930abe2",
     "license": "Apache-2.0",
-    "contentHash": "62fed4452bccce51ae36532779be903e6a52d6ffd15fc87099ff0af073a77029",
-    "lastHarvestedAt": "2026-11-11T10:08:35.830Z",
+    "contentHash": "6120ebb2bcced89ff21bcbbcbc3e860511e1c9495cecbbc4618f581d94d23829",
+    "lastHarvestedAt": "2026-11-12T22:21:27.745Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -8773,10 +8773,10 @@
     "repository": "JuulLabs/kable",
     "platform": "github",
     "sourceUrl": "https://github.com/JuulLabs/kable",
-    "sourceVersion": "e9a39099",
+    "sourceVersion": "67aed25e",
     "license": "Apache-2.0",
-    "contentHash": "d7494d75e857f1bf392d0d9708e1624d4a3a6f6a75e61ad8a0b21348dd3eb319",
-    "lastHarvestedAt": "2026-11-02T15:57:21.181Z",
+    "contentHash": "d5babb294ac084a41ea91a26d686fdea44d73abd493518827a129574b1b1e3bc",
+    "lastHarvestedAt": "2026-11-12T22:21:20.681Z",
     "learningId": "learn-github-juullabs-kable"
   },
   "tmolavi-siteprobe": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:05:39.938Z",
+  "last_updated": "2026-11-12T22:21:34.840Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -213,7 +213,7 @@
       "staged_for_review": 1
     },
     "temporalio-temporal-learnings.md": {
-      "processed_at": "2026-11-11T11:00:52.992Z",
+      "processed_at": "2026-11-12T22:21:34.799Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1286,9 +1286,19 @@
       "processed_at": "2026-11-12T22:05:39.904Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "crate-ci-typos-learnings.md": {
+      "processed_at": "2026-11-12T22:21:34.635Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "juullabs-kable-learnings.md": {
+      "processed_at": "2026-11-12T22:21:34.657Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 360,
+  "total_dossiers_evaluated": 363,
   "total_canonical_promoted": 44,
-  "total_staged_for_review": 315
+  "total_staged_for_review": 318
 }

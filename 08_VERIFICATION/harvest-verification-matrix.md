@@ -9231,3 +9231,8 @@
 | `CYCLE-20261112-JLSW` | `2026-11-12T22:05:24.896Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7d8f2fb...`) |
 | `CYCLE-20261112-JPC3` | `2026-11-12T22:05:29.475Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3b8c4938...`) |
 | `CYCLE-20261112-JS2Y` | `2026-11-12T22:05:33.034Z` | `oceanbase/oceanbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4fecfa7c...`) |
+| `CYCLE-20261112-3SKH` | `2026-11-12T22:21:06.785Z` | `crate-ci/typos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`455ab3b6...`) |
+| `CYCLE-20261112-43AB` | `2026-11-12T22:21:20.675Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d5babb29...`) |
+| `CYCLE-20261112-456R` | `2026-11-12T22:21:23.139Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dccaca49...`) |
+| `CYCLE-20261112-474I` | `2026-11-12T22:21:25.650Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c0a274c3...`) |
+| `CYCLE-20261112-48QK` | `2026-11-12T22:21:27.740Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6120ebb2...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:05:39.902Z",
+  "last_updated": "2026-11-12T22:21:34.798Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7364,6 +7364,33 @@
       "source_repo": "oceanbase-oceanbase",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C79E61--master-fix-restore-preserve-real-error-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D6746F",
+      "directive_title": "ci): Drop fail-fast from maturin builds",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crate-ci-typos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D6746F-ci-drop-fail-fast-from-maturin-builds.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D6CC7D",
+      "directive_title": "Update Gradle to v9.9.1 (#1290)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "juullabs-kable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D6CC7D-update-gradle-to-v9-9-1-1290-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-984D41",
+      "directive_title": "flakes: `TestWorkerRegistry_CountWorkers` (#13068)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "temporalio-temporal",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-984D41-flakes-testworkerregistry-countworkers-1.md",
       "staged_date": "2026-11-12"
     }
   ]

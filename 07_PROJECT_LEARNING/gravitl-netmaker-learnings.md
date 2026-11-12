@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `e50f0f23`  
+> **Source Version**: `5b68aa9e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:00:58.929Z  
+> **Timestamp**: 2026-11-12T22:21:00.252Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:00:58.924Z  
+> **Harvest Timestamp**: 2026-11-12T22:21:00.233Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11869 stars
+- **Stars / Engagement**: 11870 stars
 
 ---
 
@@ -1017,599 +1017,444 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e50f0f23` (2026-11-12)
-**Commit Message**: NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)
+### Incident Patch 1: `5b68aa9e` (2026-11-12)
+**Commit Message**: Pre-Release Fixes v1.8.0 (#4230)
 
-* NM-356: add username filter to nodes api
+* fix(go): validate traffic public key;
 
-* NM-356: disconnect user devices and force Desktop logout on disable/delete
+* feat(go): rekey tenant idp sync hook;
 
-When a user is disabled or deleted (including IdP sync), disconnect their
-nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
+* feat(go): check if membership exists before creating;
 
-* NM-356: rm force logout from delete user path
+* feat(go): parse node addr without cidr as well;
 
-* NM-356: keep AllowAll when both default ACL policies are open
+* feat(go): only check for orphans before the cursor;
 
-Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
-Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
-rules. Short-circuit on open defaults only, and document the constraint.
+* feat(go): normalize usernames in idp synced users;
 
-* fix: enrich topology and connections with location, is_gw, and egresses
+* feat(go): allow patch method;
 
-Add location/country and is_gw on topology vertices and connection peers,
-with egresses listing egress vs internet_gateway (exit). Also classify paths
-through a peer's RelayedBy as relayed even when that relay is an exit router.
+* feat(go): allow master user to list all tenants;
 
-* add update fallback ns error
+* feat(go): publish server sync for non-master pods on idp sync hook rekey;
 
-* fix: require network query on network-scoped mutations for network admins
+* feat(go): add before peer can be skipped;
 
-ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
-after NM-378, so auth fell thro
+* feat(go): ignore vendor dir;
 
-**File**: `controllers/user.go` (modified, +13/-1)
+* fix(go): use normalized usernames when verifying auth request;
+
+* fix(go): return error on user device host sso callback if user is disabled;
+
+* fix(go): reset auto relayed peers on inet gw creation;
+
+* feat(go): reset host owner_username field;
+
+* feat(go): return user-auth host registration unsupported error;
+
+* feat(go): remove unused file;
+
+* feat(go): move auto relayed peers reset to callers;
+
+* feat(go): allow updating static port;
+
+* feat(go): set net id is passed for flow logs;
+
+* feat(go): validate egress node firewall; optimize db queries on egress validation;
+
+* fix(go): add exclusion filter to list host api
+
+**File**: `controllers/auto_relay.go` (renamed, +60/-68)
 ```diff
-@@ -1983,6 +1983,18 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
- 			}
+@@ -1,4 +1,4 @@
+-package controllers
++package controller
  
- 			if !logic.UserHasNetworkGroupAccess(ctx, user, extclient.Network) {
-+				if logic.IsStaticConfigExtClient(extclient) {
-+					changed, err := logic.DisableExtClient(ctx, &extclient)
-+					if err != nil {
-+						slog.Error("failed to disable static extclient",
-+							"id", extclient.ClientID, "owner", user.Username, "error", err)
-+					} else if changed {
-+						if err := mq.PublishDeletedClientPeerUpdate(ctx, &extclient); err != nil {
-+							slog.Error("error setting ext peers: " + err.Error())
-+						}
-+					}
-+					continue
-+				}
- 				err = logic.DeleteExtClient(r.Context(), extclient)
- 				if err != nil {
- 					slog.Error("failed to delete extclient",
-@@ -2160,7 +2172,7 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
- 			if extclient.OwnerID != username {
- 				continue
- 			}
--			if extclient.DeviceID == "" && extclient.RemoteAccessClientID == "" && !forceDeleteConfigs {
-+			if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
- 				// only delete wireguard configs on force
- 				continue
- 			}
+ import (
+ 	"context"
+@@ -9,37 +9,34 @@ import (
+ 	"strconv"
+ 
+ 	"github.com/gorilla/mux"
+-	controller "github.com/gravitl/netmaker/controllers"
+ 	"github.com/gravitl/netmaker/db"
+ 	dbtypes "github.com/gravitl/netmaker/db/types"
+ 	"github.com/gravitl/netmaker/logger"
+ 	"github.com/gravitl/netmaker/logic"
+ 	"github.com/gravitl/netmaker/middleware"
+ 	"github.com/gravitl/netmaker/models"
+ 	"github.com/gravitl/netmaker/mq"
+-	proLogic "github.com/gravitl/netmaker/pro/logic"
+ 	"github.com/gravitl/netmaker/schema"
+ 	"github.com/gravitl/netmaker/scope"
+-	"github.com/gravitl/netmaker/servercfg"
+ 	"golang.org/x/exp/slog"
+ 	"gorm.io/gorm"
+ )
+ 
+-// AutoRelayHandlers - handlers for AutoRelay
+-func AutoRelayHandlers(r *mux.Router) {
+-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
++// autoRelayHandlers - handlers for AutoRelay
++func autoRelayHandlers(r *mux.Router) {
++	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
+ 		Methods(http.MethodGet)
+ 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(setAutoRelay)))).
+ 		Methods(http.MethodPost)
+ 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(unsetAutoRelay)))).
+ 		Methods(http.MethodDelete)
+ 	r.HandleFunc("/api/v1/node/{network}/auto_relay/reset", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(resetAutoRelayGw)))).
+ 		Methods(http.MethodPost)
+-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayME)))).
++	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayME)))).
+ 		Methods(http.MethodPost)
+-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
++	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
+ 		Methods(http.MethodPut)
+-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
++	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
+ 		Methods(http.MethodGet)
+ 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relayed_peers", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listAutoRelayedPeers)))).
+ 		Methods(http.MethodGet)
+@@ -63,7 +60,7 @@ func getAutoRelayGws(w http.ResponseWriter, r *http.Request) {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
+ 		return
+ 	}
+-	autoRelayNodes := proLogic.DoesAutoRelayExist(r.Context(), node.Network)
++	autoRelayNodes := logic.DoesAutoRelayExist(r.Context(), node.Network)
+ 	if len(autoRelayNodes) == 0 {
+ 		logic.ReturnErrorResponse(
+ 			w,
+@@ -219,7 +216,7 @@ func setAutoRelay(w http.ResponseWriter, r *http.Request) {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
+ 		return
+ 	}
+-	err = proLogic.CreateAutoRelay(node)
++	err = logic.CreateAutoRelay(node)
+ 	if err != nil {
+ 		errType := logic.Internal
+ 		switch err.Error() {
+@@ -299,12 +296,9 @@ func unsetAutoRelay(w http.ResponseWriter, r *http.Request) {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
+ 		return
+ 	}
+-	if servercfg.CacheEnabled() {
+-		proLogic.RemoveAutoRelayFromCache(node.Network)
+-	}
+ 	ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
+ 	go func(ctx context.Context) {
+-		proLogic.ResetAutoRelay(ctx, &node)
++		logic.ResetAutoRelay(ctx, &node)
+ 		mq.PublishPeerUpdate(ctx, false)
+ 	}(ctx)
+ 	w.Header().Set("Content-Type", "application/json")
+@@ -325,21 +319,14 @@ func unsetAutoRelay(w http.ResponseWriter, r *http.Request) {
+ func autoRelayME(w http.ResponseWriter, r *http.Request) {
+ 	var params = mux.Vars(r)
+ 	nodeid := params["nodeid"]
+-	// confirm host exists
+-	node, err := logic.GetNodeByID(nodeid)
++	_node := &schema.Node{ID: nodeid}
++	err := _node.Get(r.Context(), dbtypes.WithAllPreloads())
+ 	if err != nil {
+ 		logger.Log(0, r.Header.Get("user"), "failed to get node:", err.Error())
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
+ 		return
+ 	}
+-	host := &schema.Host{
+-		ID: node.HostID,
+-	}
+-	err = host.Get(r.Context())
+-	if err != nil {
+-		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
+-		return
+-	}
++	node := *logic.ConvertSchemaNodeToModelsNodeWithContext(r.Context(), _node, logic.SkipViolations())
+ 	v
 ```
 
-**File**: `logic/extpeers.go` (modified, +54/-19)
+**File**: `controllers/controller.go` (modified, +1/-0)
 ```diff
-@@ -315,9 +315,15 @@ func UpdateExtClient(old *models.ExtClient, update *models.CustomExtClient) mode
- 	if update.DeniedACLs != nil && !reflect.DeepEqual(old.DeniedACLs, update.DeniedACLs) {
- 		new.DeniedACLs = update.DeniedACLs
- 	}
--	// replace any \r\n with \n in postup and postdown from HTTP request
--	new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
--	new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
-+	// PostUp/PostDown: omitted and explicit "" both decode to empty, so treat
-+	// empty as "leave unchanged" (same idea as PublicKey). Sparse updates
-+	// (toggle, rename) must not wipe existing scripts.
-+	if update.PostUp != "" {
-+		new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
-+	}
-+	if update.PostDown != "" {
-+		new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
-+	}
- 	// Tags are usually managed via the tags API. Extclient edit payloads often
- 	// omit tags (nil); overwriting would drop the client from all tags. Only
- 	// apply when the caller explicitly sends a tags map (including {} to clear).
-@@ -388,25 +394,24 @@ func listExtClients(ctx context.Context, options ...dbtypes.Option) ([]models.Ex
+@@ -47,6 +47,7 @@ var HttpHandlers = []interface{}{
+ 	egressHandlers,
+ 	internetGatewayHandlers,
+ 	orgHandlers,
++	autoRelayHandlers,
  }
  
- // ToggleExtClientConnectivity - enables or disables an ext client
-+//
-+// Flips Enabled in place and saves. Does not go through UpdateExtClient with a
-+// sparse CustomExtClient, which would drop fields omitted from the update
-+// (notably PostUp/PostDown before those were guarded).
- func ToggleExtClientConnectivity(ctx context.Context, client *models.ExtClient, enable bool) (models.ExtClient, error) {
--	update := models.CustomExtClient{
--		Enabled:              enable,
--		ClientID:             client.ClientID,
--		PublicKey:            client.PublicKey,
--		DNS:                  client.DNS,
--		ExtraAllowedIPs:      client.ExtraAllowedIPs,
--		DeniedACLs:           client.DeniedACLs,
--		RemoteAccessClientID: client.RemoteAccessClientID,
-+	if client == nil {
-+		return models.ExtClient{}, errors.New("nil ext client")
+ func HandleRESTRequests(wg *sync.WaitGroup, ctx context.Context) {
+```
+
+**File**: `controllers/hosts.go` (modified, +8/-0)
+```diff
+@@ -223,6 +223,7 @@ func getHosts(w http.ResponseWriter, r *http.Request) {
+ // @Param       os query []string false "Filter by OS" Enums(windows, linux, darwin)
+ // @Param       q query string false "Search across fields"
+ // @Param       not_in_network query []string false "Exclude hosts that have a node in this network (repeatable)"
++// @Param       exclude_owned query bool false "Exclude user-owned devices (hosts registered via the desktop/device flow)"
+ // @Param       page query int false "Page number"
+ // @Param       per_page query int false "Items per page"
+ // @Success     200 {array} models.ApiHost
+@@ -244,6 +245,11 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
+ 		notInNetworkIDs = append(notInNetworkIDs, network.ID)
  	}
+ 
++	var ownerFilters []interface{}
++	if r.URL.Query().Get("exclude_owned") == "true" {
++		ownerFilters = append(ownerFilters, "")
++	}
++
+ 	var page, pageSize int
+ 	page, _ = strconv.Atoi(r.URL.Query().Get("page"))
+ 	if page == 0 {
+@@ -260,6 +266,7 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
+ 		dbtypes.WithFilter("os", osFilters...),
+ 		dbtypes.WithSearchQuery(q, "id", "name", "public_key", expr.ByteaField("endpoint_ip"), expr.ByteaField("endpoint_ipv6")),
+ 		schema.ExcludeHostsInNetworks(r.Context(), notInNetworkIDs...),
++		dbtypes.WithFilter("owner_username", ownerFilters...),
+ 		dbtypes.InAscOrder("name"),
+ 		dbtypes.WithPagination(page, pageSize),
+ 	)
+@@ -280,6 +287,7 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
+ 		dbtypes.WithFilter("os", osFilters...),
+ 		dbtypes.WithSearchQuery(q, "id", "name", "public_key", expr.ByteaField("endpoint_ip"), expr.ByteaField("endpoint_ipv6")),
+ 		schema.ExcludeHostsInNetworks(r.Context(), notInNetworkIDs...),
++		dbtypes.WithFilter("owner_username", ownerFilters...),
+ 	)
+ 	if err != nil {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
+```
+
+**File**: `controllers/user.go` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ func userHandlers(r *mux.Router) {
+ 	r.HandleFunc("/api/users/{username}/disable", middleware.InferScope(logic.SecurityCheck(true, http.HandlerFunc(disableUserAccount)))).Methods(http.MethodPost)
+ 	r.HandleFunc("/api/users/{username}/settings", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatch(http.HandlerFunc(getUserSettings))))).Methods(http.MethodGet)
+ 	r.HandleFunc("/api/users/{username}/settings", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatch(http.HandlerFunc(updateUserSettings))))).Methods(http.MethodPut)
+-	r.HandleFunc("/api/v1/users", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatchOrAdmin(http.HandlerFunc(getUserV1))))).Methods(http.MethodGet).Queries("username", "{username}")
++	r.HandleFunc("/api/v1/users", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatchOrAdminOrAuditor(http.HandlerFunc(getUserV1))))).Methods(http.MethodGet).Queries("username", "{username}")
+ 	r.HandleFunc("/api/users", middleware.InferScope(logic.SecurityCheck(true, http.HandlerFunc(getUsers)))).Methods(http.MethodGet)
+ 	r.HandleFunc("/api/v2/users", middleware.InferScope(logic.SecurityCheck(true, http.HandlerFunc(listUsers)))).Methods(http.MethodGet)
+ 	r.HandleFunc("/api/v1/users/bulk", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(bulkDeleteUsers)))).Methods(http.MethodDelete)
+```
+
+**File**: `logic/auto_relay.go` (renamed, +49/-147)
+```diff
+@@ -4,86 +4,49 @@ import (
+ 	"context"
+ 	"errors"
+ 	"net"
+-	"sync"
+ 
+ 	"github.com/gravitl/netmaker/db"
+ 	"github.com/gravitl/netmaker/logger"
+-	"github.com/gravitl/netmaker/logic"
+ 	"github.com/gravitl/netmaker/models"
+ 	"github.com/gravitl/netmaker/schema"
+-	"github.com/gravitl/netmaker/servercfg"
+ 	"golang.org/x/exp/slog"
+ )
+ 
+-var autoRelayCtxMutex = &sync.RWMutex{}
+-var autoRelayCacheMutex = &sync.RWMutex{}
+-var autoRelayCache = make(map[schema.NetworkID][]string)
 -
--	// update in DB (same ClientID — upsert, no delete/recreate)
--	newClient := UpdateExtClient(client, &update)
--	if err := SaveExtClient(ctx, &newClient); err != nil {
--		slog.Error("failed to save updated ext client during update", "id", newClient.ClientID, "network", newClient.Network, "error", err)
--		return newClient, err
-+	if client.Enabled == enable {
-+		return *client, nil
- 	}
+-func InitAutoRelayCache() {
+-	autoRelayCacheMutex.Lock()
+-	defer autoRelayCacheMutex.Unlock()
+-	allNodes, err := logic.GetAllNodes(db.WithContext(context.Background()))
+-	if err != nil {
+-		return
+-	}
+-	for _, node := range allNodes {
+-		if node.IsAutoRelay {
+-			autoRelayCache[schema.NetworkID(node.Network)] = append(autoRelayCache[schema.NetworkID(node.Network)], node.ID.String())
+-		}
+-	}
 -
--	return newClient, nil
-+	updated := *client
-+	updated.Enabled = enable
-+	if err := SaveExtClient(ctx, &updated); err != nil {
-+		slog.Error("failed to save updated ext client during update", "id", updated.ClientID, "network", updated.Network, "error", err)
-+		return updated, err
-+	}
-+	return updated, nil
- }
- 
- func GetExtPeers(ctx context.Context, g *PeerGraph, node, peer *models.Node, addressIdentityMap map[string]models.PeerIdentity) ([]wgtypes.PeerConfig, []models.IDandAddr, []models.EgressNetworkRoutes, error) {
-@@ -690,6 +695,36 @@ func GetStaticNodesByNetwork(ctx context.Context, network schema.NetworkID, only
- 	return
- }
- 
-+// IsRACExtClient reports whether the ext client was created by the remote
-+// access / desktop client app (has a device or RAC id). Admin-managed static
-+// WireGuard config files have neither.
-+func IsRACExtClient(client models.ExtClient) bool {
-+	return client.DeviceID != "" || client.RemoteAccessClientID != ""
-+}
-+
-+// IsStaticConfigExtClient reports whether the ext client is an admin-managed
-+// static WireGuard config file (no device / RAC id). JIT never deletes or
-+// disables these. On IdP sync or group/network access loss they are disabled
-+// (not deleted) so the config remains but cannot be used until re-enabled.
-+func IsStaticConfigExtClient(client models.ExtClient) bool {
-+	return !IsRACExtClient(client)
-+}
-+
-+// DisableExtClient disables an ext client without deleting it. No-op if
-+// already disabled. Callers should publish a deleted-client peer update when
-+// changed is true so gateways drop the peer.
-+func DisableExtClient(ctx context.Context, client *models.ExtClient) (changed bool, err error) {
-+	if client == nil || !client.Enabled {
-+		return false, nil
-+	}
-+	updated, err := ToggleExtClientConnectivity(ctx, client, false)
-+	if err != nil {
-+		return false, err
-+	}
-+	*client = updated
-+	return true, nil
-+}
-+
- // CleanupOtherExtclients cleans up other clients owned by the same use for the same device and network.
- func CleanupOtherExtclients(ctx context.Context, extclient *models.ExtClient) error {
- 	extclients, err := GetNetworkExtClients(ctx, extclient.Network)
-```
-
-**File**: `logic/extpeers_test.go` (modified, +95/-0)
-```diff
-@@ -173,6 +173,101 @@ func TestGetNetworkAndAllExtClients(t *testing.T) {
- 	assert.Equal(t, "tenant-list-other", all[0].TenantID)
- }
- 
-+func TestIsRACExtClient(t *testing.T) {
-+	assert.True(t, IsRACExtClient(models.ExtClient{DeviceID: "dev-1"}))
-+	assert.True(t, IsRACExtClient(models.ExtClient{RemoteAccessClientID: "rac-1"}))
-+	assert.True(t, IsRACExtClient(models.ExtClient{DeviceID: "dev-1", RemoteAccessClientID: "rac-1"}))
-+	assert.False(t, IsRACExtClient(models.ExtClient{}))
-+	assert.True(t, IsStaticConfigExtClient(models.ExtClient{}))
-+	assert.False(t, IsStaticConfigExtClient(models.ExtClient{DeviceID: "dev-1"}))
-+}
-+
-+func TestDisableExtClient(t *testing.T) {
-+	ctx := extClientTestCtx("tenant-1")
-+	network := createExtClientTestNetwork(t, ctx, "extclient-disable-"+uuid.NewString()[:8])
-+
-+	extclient := newTestExtClient("client-disable", network.Name)
-+	extclient.DeviceID = ""
-+	extclient.RemoteAccessClientID = ""
-+	extclient.Enabled = true
-+	require.NoError(t, SaveExtClient(ctx, extclient))
-+
-+	changed, err := DisableExtClient(ctx, extclient)
-+	require.NoError(t, err)
-+	assert.True(t, changed)
-+	assert.False(t, extclient.Enabled)
-+
-+	got, err := GetExtClient(ctx, "client-disable", network.Name)
-+	require.NoError(t, err)
-+	assert.False(t, got.Enabled)
-+
-+	changed, err = DisableExtClient(ctx, &got)
-+	require.NoError(t, err)
-+	assert.False(t, changed, "already disabled is a no-op")
-+}
-+
-+func TestDisableExtClientPreservesPostUpPostDown(t *testing.T) {
-+	ctx := extClientTestCtx("tenant-1")
-+	network := createExtClientTestNetwork(t, ctx, "extclient-disable-post-"+uuid.NewString()[:8])
-+
-+	extclient := newTestExtClient("client-disable-post", network.Name)
-+	extclient.DeviceID = ""
-+	extclient.RemoteAccessClientID = ""
-+	extclient.Enabled = true
-+	extclient.PostUp = "iptables -A FORWARD -j ACCEPT"
-+	extclient.PostDown = "iptables -D FORWARD -j ACCEPT"
-+	require.NoError(t, SaveExtClient(ctx, extclient))
-+
-+	changed, err := DisableExtClient(ctx, extclient)
-+	require.NoError(t, err)
-+	assert.True(t, changed)
-+
-+	disabled, err := GetExtClient(ctx, "client-disable-post", network.Name)
-+	require.NoError(t, err)
-+	assert.False(t, disabled.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", disabled.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", disabled.PostDown)
-+
-+	reenabled, err := ToggleExtClientConnectivity(ctx, &disabled, true)
-+	require.NoError(t, err)
-+	assert.True(t, reenabled.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", reenabled.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", reenabled.PostDown)
-+
-+	got, err := GetExtClient(ctx, "client-disable-post", network.Name)
-+	require.NoError(t, err)
-+	assert.True(t, got.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", got.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", got.PostDown)
-+}
-+
-+func TestUpdateExtClientPreservesPostUpPostDownWhenOmitted(t *testing.T) {
-+	old := models.ExtClient{
-+		ClientID: "client-1",
-+		Enabled:  true,
-+		PostUp:   "iptables -A FORWARD -j ACCEPT",
-+		PostDown: "iptables -D FORWARD -j ACCEPT",
-+		DNS:      "1.1.1.1",
-+	}
-+	updated := UpdateExtClient(&old, &models.CustomExtClient{
-+		ClientID:  "client-1-renamed",
-+		PublicKey: "pub",
-+		Enabled:   false,
-+	})
-+	assert.Equal(t, "client-1-renamed", updated.ClientID)
-+	assert.False(t, updated.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", updated.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", updated.PostDown)
-+
-+	withScripts := UpdateExtClient(&old, &models.CustomExtClient{
-+		ClientID: "client-1",
-+		PostUp:   "echo up\r\necho up2",
-+		PostDown: "echo down\r\necho down2",
-+	})
-+	assert.Equal(t, "echo up\necho up2", withScripts.PostUp)
-+	assert.Equal(t, "echo down\necho down2", withScripts.PostDown)
-+}
-+
- func TestDeleteExtClient(t *testing.T) {
- 	ctx := extClientTestCtx("tenant-1")
- 	network := createExtClientTestNetwork(t, ctx, "extclient-delete-net")
-```
-
-**File**: `logic/network_topology.go` (modified, +19/-0)
-```diff
-@@ -601,10 +601,29 @@ func (b *networkStatusBuilder) connection(node, peer *models.Node) models.Networ
- 	if via != "" {
- 		conn.Via = b.nodeRef(via)
+-}
+-func SetAutoRelay(node *models.Node) {
+-	node.IsAutoRelay = true
+-}
+-
+ func CheckAutoRelayCtx(autoRelayNode, victimNode, peerNode models.Node) error {
+-	autoRelayCtxMutex.RLock()
+-	defer autoRelayCtxMutex.RUnlock()
+-	if err := logic.ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
++	if err := ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
+ 		return err
  	}
-+	// Peers disconnected from the network keep stale metrics; force
-+	// connected=false and skip metric lookups. Otherwise connected/latency
-+	// come from metrics as before.
-+	if !peerNetworkConnected(peer) {
-+		conn.Connected = false
-+		return conn
-+	}
- 	b.applyConnectionLiveness(&conn, node, peer, via)
- 	return conn
- }
- 
-+// peerNetworkConnected reports whether the peer is attached to the network
-+// (node.Connected, or Enabled for static ExtClients).
-+func peerNetworkConnected(peer *models.Node) bool {
-+	if peer == nil {
-+		return false
-+	}
-+	if peer.IsStatic {
-+		return peer.StaticNode.Enabled
-+	}
-+	return peer.Connected
-+}
-+
- // connectionPath classifies the clicked node's path to peer: direct, through a
- // relay, or through the viewer's selected internet exit.
- func (b *networkStatusBuilder) connectionPath(node, peer *models.Node) (models.NetworkConnectionType, string) {
-```
-
-**File**: `logic/network_topology_test.go` (modified, +57/-0)
-```diff
-@@ -403,20 +403,27 @@ func TestNodeConnectionsUsesLoadedUserPolicy(t *testing.T) {
- func TestNodeConnectionsRelayedExitAndExtClient(t *testing.T) {
- 	relay := newTestNode()
- 	relay.IsRelay = true
-+	relay.Connected = true
- 	exitNode := newTestNode()
-+	exitNode.Connected = true
- 	site := newTestNode()
-+	site.Connected = true
- 	plain := newTestNode()
-+	plain.Connected = true
- 	client := newTestNode()
-+	client.Connected = true
- 	client.IsRelayed = true
- 	client.RelayedBy = relay.ID.String()
- 	exitClient := newTestNode()
-+	exitClient.Connected = true
- 	exitClient.IsRelayed = true
- 	exitClient.RelayedBy = exitNode.ID.String()
- 	exitClient.SelectedInternetEgressID = "exit"
- 	exitClient.InternetGwID = exitNode.ID.String()
- 	// Peer manually RelayedBy a node that is also an internet-egress router —
- 	// path type must stay "relayed", not flip to "exit".
- 	relayedByExit := newTestNode()
-+	relayedByExit.Connected = true
- 	relayedByExit.IsRelayed = true
- 	relayedByExit.RelayedBy = exitNode.ID.String()
- 
-@@ -550,12 +557,17 @@ func TestNodeConnectionsExtClientLiveness(t *testing.T) {
- 	gw := newTestNode()
- 	gw.IsIngressGateway = true
- 	gw.IsRelay = true
-+	gw.Connected = true
- 	viewer := newTestNode()
-+	viewer.Connected = true
- 	relayed := newTestNode()
-+	relayed.Connected = true
- 	relayed.IsRelayed = true
- 	relayed.RelayedBy = gw.ID.String()
- 	partial := newTestNode()
-+	partial.Connected = true
- 	down := newTestNode()
-+	down.Connected = true
- 
- 	ext := &models.Node{IsStatic: true}
- 	ext.StaticNode.ClientID = "laptop"
-@@ -622,6 +634,51 @@ func TestNodeConnectionsExtClientLiveness(t *testing.T) {
+-	if err := logic.ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
++	if err := ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
+ 		return err
  	}
+-	if err := logic.ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
++	if err := ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
+ 		return err
+ 	}
+-	if peerNode.AutoRelayedPeers == nil {
+-		return nil
+-	}
+-	if victimNode.AutoRelayedPeers == nil {
++	if peerNode.AutoRelayedPeers == nil || victimNode.AutoRelayedPeers == nil {
+ 		return nil
+ 	}
+-	if peerNode.Mutex != nil {
+-		peerNode.Mutex.Lock()
+-	}
+ 	autoRelayNodeIDPeerNode, peerHasAutoRelayed := peerNode.AutoRelayedPeers[victimNode.ID.String()]
+-	if peerNode.Mutex != nil {
+-		peerNode.Mutex.Unlock()
+-	}
+-	if victimNode.Mutex != nil {
+-		victimNode.Mutex.Lock()
+-	}
+ 	autoRelayNodeIDVictim, victimHasAutoRelayed := victimNode.AutoRelayedPeers[peerNode.ID.String()]
+-	if victimNode.Mutex != nil {
+-		victimNode.Mutex.Unlock()
+-	}
+ 	if peerHasAutoRelayed && victimHasAutoRelayed && autoRelayNodeIDVictim == autoRelayNodeIDPeerNode {
+ 		return errors.New("auto relay ctx is already set")
+ 	}
+ 	return nil
  }
- 
-+func TestNodeConnectionsSkipsMetricsWhenPeerDisconnected(t *testing.T) {
-+	viewer := newTestNode()
-+	viewer.Connected = true
-+	peer := newTestNode()
-+	peer.Connected = false
+-func SetAutoRelayCtx(autoRelayNode, victimNode, peerNode models.Node) error {
+-	autoRelayCtxMutex.Lock()
+-	defer autoRelayCtxMutex.Unlock()
+-	if err := logic.ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
 +
-+	b := newTestStatusBuilder(nil, NetworkStatusOptions{}, viewer, peer)
-+	stubMetrics(t, map[string]map[string]models.Metric{
-+		viewer.ID.String(): {
-+			peer.ID.String(): {Connected: true, Latency: 50, PercentUp: 99},
-+		},
-+	})
-+
-+	got, err := b.nodeConnections([]models.Node{*viewer, *peer}, viewer.ID.String())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	c := indexConns(t, got.Connections)[peer.ID.String()]
-+	if c.Connected || c.LatencyMs != 0 || c.PercentUp != 0 {
-+		t.Fatalf("disconnected peer should skip metrics = %+v", c)
-+	}
-+
-+	disabled := &models.Node{IsStatic: true}
-+	disabled.StaticNode.ClientID = "off-cfg"
-+	disabled.StaticNode.Enabled = false
-+	gw := newTestNode()
-+	gw.IsIngressGateway = true
-+	gw.Connected = true
-+	b2 := newTestStatusBuilder(nil, NetworkStatusOptions{}, gw)
-+	b2.names[disabled.StaticNode.ClientID] = "off-cfg"
-+	stubMetrics(t, map[string]map[string]models.Metric{
-+		gw.ID.String(): {
-+			disabled.StaticNode.ClientID: {Connected: true, Latency: 9, PercentUp: 80},
-+		},
-+	})
-+	fromGW, err := b2.nodeConnections([]models.Node{*gw, *disabled}, gw.ID.String())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	c = indexConns(t, fromGW.Connections)[disabled.StaticNode.ClientID]
-+	if c.Connected || c.LatencyMs != 0 || c.PercentUp != 0 {
-+		t.Fatalf("disabled config file should skip metrics = %+v", c)
-+	}
-+}
-+
- func indexConns(t *testing.T, conns []models.NetworkConnection) map[string]models.NetworkConnection {
- 	t.Helper()
- 	out := make(map[string]models.NetworkConnection, len(conns))
++// SetAutoRelayCtx pairs victimNode and peerNode via autoRelayNode. Each side's
++// AutoRelayedPeers entry is written with a single targeted JSON-key update
++// (schema.Node.SetAutoRelayedPeer) rather than a full-row fetch/mutate/upsert,
++// so two concurrent calls for different pairs on the same node never race or
++// clobber each other's key (or any unrelated column) — no app-level lock
++// needed, same as CheckAutoRelayCtx.
++func SetAutoRelayCtx(ctx context.Context, autoRelayNode, victimNode, peerNode models.Node) error {
++	if err := ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
+ 		return err
+ 	}
+-	if err := logic.ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
++	if err := ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
+ 		return err
+ 	}
+-	if err := logic.ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
++	if err := ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
+ 		return err
+ 	}
+ 	if peerNode.AutoRelayedPeers == nil {
+@@ -92,89 +55,31 @@ func SetAutoRelayCtx(autoRelayNode, victimNode, peerNode models.Node) error {
+ 	if victimNode.AutoRelayedPeers == nil {
+ 		victimNode.AutoRelayedPeers = make(map[string]string)
+ 	}
+-	if peerNode.Mutex != nil {
+-		peerNode.Mutex.Lock()
+-	}
+ 	autoRelayNodeIDPeerNode, peerHasAutoRelayed := peerNode.AutoRelayedPeers[victimNode.ID.String()]
+-	if peerNode.Mutex != nil {
+-		peerNode.Mutex.Unlock()
+-	}
+-	if victimNode.Mutex != nil {
+-		victimNode.Mutex.Lock()
+-	}
+ 	autoRelayNodeIDVictim, victimHasAutoRelayed := victimNode.AutoRelayedPeers[peerNode.ID.String()]
+-	if victimNode.Mutex != nil {
+-		victimNode.Mutex.Unlock()
+-	}
+ 	if peerHasAutoRelayed && victimHasAutoRelayed && autoRelayNodeIDVictim == autoRelayNodeIDPeerNode {
+ 		return errors.New("auto relay ctx is already set")
+ 	}
+-	if peerNode.Mutex != nil {
+-		peerNode.Mutex.Lock()
+-	}
+ 	peerNode.AutoRelayedPeers[victimNode.ID.String()] = autoRelayNode.ID.String()
+-	if peerNode.Mutex != nil {
+-		peerNode.Mutex.Unlock()
+-	}
+-	if victimNode.Mutex != nil {
+-		victimNode.Mutex.Lock()
+-	}
+ 	victimNode.AutoRelayedPeers[peerNode.ID.String()] = autoRelayNode.ID.String()
+-	if victimNode.Mutex != nil {
+-		victimNode.Mutex.Unlock()
+-	}
+-	if err := logic.UpsertNode(&victimNode); err != nil {
++	_peerNode := &schema.Node{ID: peerNode.ID.String()}
++	if err := _peerNode.SetAutoRelayedPeer(ctx, victimNode.ID.String(), autoRelayNode.ID.String());
 ```
 
-**File**: `pro/auth/sync.go` (modified, +15/-5)
+**File**: `logic/dns.go` (modified, +3/-0)
 ```diff
-@@ -337,7 +337,8 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
- 			// delete the user if it has been archived.
- 			user, ok := dbUsersMap[user.Username]
- 			if ok {
--				_ = deleteUser(ctx, user, true, cleanupUserRefs)
-+				// Keep admin-managed static WireGuard configs; RAC clients are cleaned up.
-+				_ = deleteUser(ctx, user, false, cleanupUserRefs)
- 			}
+@@ -318,6 +318,9 @@ func GetNodeDNS(ctx context.Context, network string) ([]models.DNSEntry, error)
+ 		if err != nil {
  			continue
  		}
-@@ -459,8 +460,8 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
- 				}
- 
- 				// delete the user if it has been deleted on idp
--				// or is filtered out.
--				err = deleteUser(ctx, user, true, cleanupUserRefs)
-+				// or is filtered out. Keep admin-managed static WireGuard configs.
-+				err = deleteUser(ctx, user, false, cleanupUserRefs)
- 				if err != nil {
- 					return err
- 				}
-@@ -694,10 +695,19 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
- 		extclients, err := logic.GetAllExtClients(ctx)
- 		if err == nil {
- 			for _, extclient := range extclients {
--				if extclient.OwnerID == username {
--					if err := logic.DeleteExtClient(ctx, extclient); err == nil {
-+				if extclient.OwnerID != username {
-+					continue
-+				}
-+				if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
-+					// Keep the config file but disable it so it cannot be used.
-+					changed, err := logic.DisableExtClient(ctx, &extclient)
-+					if err == nil && changed {
- 						_ = mq.PublishDeletedClientPeerUpdate(ctx, &extclient)
- 					}
-+					continue
-+				}
-+				if err := logic.DeleteExtClient(ctx, extclient); err == nil {
-+					_ = mq.PublishDeletedClientPeerUpdate(ctx, &extclient)
- 				}
- 			}
- 		}
++		if IsUserOwnedHost(host) {
++			continue
++		}
+ 		var entry = models.DNSEntry{}
+ 		if defaultDomain == "" {
+ 			entry.Name = fmt.Sprintf("%s.%s", host.Name, network)
 ```
 
-**File**: `pro/logic/jit.go` (modified, +21/-15)
+**File**: `logic/peers.go` (modified, +0/-19)
 ```diff
-@@ -721,12 +721,12 @@ func DisconnectExtClientsFromNetwork(ctx context.Context, networkID string) erro
+@@ -23,25 +23,6 @@ import (
+ 	"gorm.io/gorm"
+ )
  
- // extClientFromClientApp reports whether the ext client was created by the desktop/RAC app.
- func extClientFromClientApp(client models.ExtClient) bool {
--	return client.DeviceID != "" || client.RemoteAccessClientID != ""
-+	return logic.IsRACExtClient(client)
- }
- 
- // DisconnectExtClientsFromNetworkForScope removes client-app ext clients for users who require
--// a JIT grant under the given network configuration. Admin-managed config files (no device/
--// remote_access_client id) are kept.
-+// a JIT grant under the given network configuration. Admin-managed static config files (no
-+// device / remote_access_client id) are left untouched — JIT does not apply to them.
- func DisconnectExtClientsFromNetworkForScope(ctx context.Context, network *schema.Network) error {
- 	extClients, err := logic.GetNetworkExtClients(ctx, network.Name)
- 	if err != nil {
-@@ -805,7 +805,8 @@ func DeactivateUserGrantsOnNetwork(ctx context.Context, networkID, userID string
- }
- 
- // RemoveUserJITNetworkAccess removes a user's network presence after JIT ends:
--// ExtClients are deleted; host-backed user device nodes are disconnected.
-+// RAC ExtClients are deleted (static config files are left alone); host-backed
-+// user device nodes are disconnected.
- func RemoveUserJITNetworkAccess(ctx context.Context, networkID, userID string) error {
- 	return removeUserJITNetworkAccess(ctx, networkID, userID)
- }
-@@ -844,17 +845,22 @@ func disconnectUserExtClients(ctx context.Context, networkID, userID string) err
- 	for _, client := range extClients {
- 		// Check if this ext client belongs to the user
- 		// Ext clients have OwnerID field that should match userID
--		if client.OwnerID == userID {
--			clientCopy := client
--			if err := logic.DeleteExtClient(ctx, client); err != nil {
--				slog.Warn("failed to delete ext client after JIT ended",
--					"client_id", client.ClientID, "error", err)
--				continue
--			}
--			if err := mq.PublishDeletedClientPeerUpdate(ctx, &clientCopy); err != nil {
--				slog.Warn("failed to publish deleted client peer update",
--					"client_id", client.ClientID, "error", err)
--			}
-+		if client.OwnerID != userID {
-+			continue
-+		}
-+		// Admin-managed static configs are outside JIT — never delete or disable them.
-+		if !logic.IsRACExtClient(client) {
-+			continue
-+		}
-+		clientCopy := client
-+		if err := logic.DeleteExtClient(ctx, client); err != nil {
-+			slog.Warn("failed to delete ext client after JIT ended",
-+				"client_id", client.ClientID, "error", err)
-+			continue
-+		}
-+		if err := mq.PublishDeletedClientPeerUpdate(ctx, &clientCopy); err != nil {
-+			slog.Warn("failed to publish deleted client peer update",
-+				"client_id", client.ClientID, "error", err)
- 		}
+-var (
+-	// ResetAutoRelay - function to reset autorelayed peers on this node
+-	ResetAutoRelay = func(ctx context.Context, autoRelayNode *models.Node) error {
+-		return nil
+-	}
+-	// ResetAutoRelayedPeer - removes relayed peers for node
+-	ResetAutoRelayedPeer = func(ctx context.Context, failedOverNode *models.Node) error {
+-		return nil
+-	}
+-	// GetAutoRelayPeerIps - gets autorelay peerips
+-	GetAutoRelayPeerIps = func(ctx context.Context, g *PeerGraph, peer, node *models.Node) []net.IPNet {
+-		return []net.IPNet{}
+-	}
+-	// SetAutoRelay - sets autorelay flag on the node
+-	SetAutoRelay = func(node *models.Node) {
+-		node.IsAutoRelay = false
+-	}
+-)
+-
+ var (
+ 	hostPeerInfoCache   map[string]map[string]models.HostPeerInfo
+ 	hostPeerInfoCacheMu sync.RWMutex
+```
+
+**File**: `logic/security.go` (modified, +2/-2)
+```diff
+@@ -206,7 +206,7 @@ func ContinueIfUserMatch(next http.Handler) http.HandlerFunc {
  	}
+ }
  
-```
-
-**File**: `pro/logic/jit_extclient_cleanup_test.go` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+package logic
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/gravitl/netmaker/db"
-+	"github.com/gravitl/netmaker/logic"
-+	"github.com/gravitl/netmaker/models"
-+	"github.com/gravitl/netmaker/schema"
-+	"github.com/gravitl/netmaker/scope"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"gorm.io/gorm"
-+)
-+
-+func TestDisconnectUserExtClientsLeavesStaticConfigsAlone(t *testing.T) {
-+	t.Chdir(t.TempDir())
-+	require.NoError(t, db.InitializeDB(schema.ListModels()...))
-+	t.Cleanup(db.CloseDB)
-+
-+	ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, "tenant-1")
-+	network := &schema.Network{TenantID: "tenant-1", Name: "jit-ext-net", AddressRange: "10.10.0.0/24"}
-+	require.NoError(t, network.Create(ctx))
-+
-+	staticCfg := &models.ExtClient{
-+		ClientID: "static-cfg",
-+		Network:  network.Name,
-+		OwnerID:  "alice",
-+		Enabled:  true,
-+	}
-+	require.NoError(t, logic.SaveExtClient(ctx, staticCfg))
-+
-+	racClient := &models.ExtClient{
-+		ClientID:             "rac-client",
-+		Network:              network.Name,
-+		OwnerID:              "alice",
-+		Enabled:              true,
-+		DeviceID:             "device-1",
-+		RemoteAccessClientID: "rac-1",
-+	}
-+	require.NoError(t, logic.SaveExtClient(ctx, racClient))
-+
-+	otherOwner := &models.ExtClient{
-+		ClientID:             "other-rac",
-+		Network:              network.Name,
-+		OwnerID:              "bob",
-+		Enabled:              true,
-+		RemoteAccessClientID: "rac-2",
-+	}
-+	require.NoError(t, logic.SaveExtClient(ctx, otherOwner))
-+
-+	require.NoError(t, disconnectUserExtClients(ctx, network.Name, "alice"))
-+
-+	got, err := logic.GetExtClient(ctx, "static-cfg", network.Name)
-+	require.NoError(t, err, "static config file should be kept")
-+	assert.True(t, got.Enabled, "static config should stay enabled; JIT does not apply")
-+
-+	_, err = logic.GetExtClient(ctx, "rac-client", network.Name)
-+	assert.ErrorIs(t, err, gorm.ErrRecordNotFound, "RAC client should be deleted")
-+
-+	_, err = logic.GetExtClient(ctx, "other-rac", network.Name)
-+	require.NoError(t, err, "other owners should be untouched")
-+}
+-func ContinueIfUserMatchOrAdmin(next http.Handler) http.HandlerFunc {
++func ContinueIfUserMatchOrAdminOrAuditor(next http.Handler) http.HandlerFunc {
+ 	return func(w http.ResponseWriter, r *http.Request) {
+ 		var errorResponse = models.ErrorResponse{
+ 			Code: http.StatusForbidden, Message: Forbidden_Msg,
+@@ -232,7 +232,7 @@ func ContinueIfUserMatchOrAdmin(next http.Handler) http.HandlerFunc {
+ 			next.ServeHTTP(w, r)
+ 			return
+ 		case scope.TenantScope:
+-			if user.PlatformRoleID == schema.SuperAdminRole || user.PlatformRoleID == schema.AdminRole {
++			if user.PlatformRoleID == schema.SuperAdminRole || user.PlatformRoleID == schema.AdminRole || user.PlatformRoleID == schema.Auditor {
+ 				next.ServeHTTP(w, r)
+ 				return
+ 			}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
 - **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4223** (closed): Release v1.7.0 (@abhishek9686)
 - **PR #4222** (2026-11-11): NM-356: skip FwUpdate calc for user-owned devices, allow relayed/auto-relayed egress traffic on gateway ACL paths (@abhishek9686)
 - **PR #4219** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4217** (2026-11-05): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 
 ---
 
@@ -1629,40 +1474,60 @@ after NM-378, so auth fell thro
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)
+## X. Pre-Release Fixes v1.8.0 (#4230)
 
 **RULE**:
-When implementing operations in `controllers/user.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/auto_relay.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e50f0f23`: NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b68aa9e`: Pre-Release Fixes v1.8.0 (#4230). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/user.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/auto_relay.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				if logic.IsStaticConfigExtClient(extclient) {
-					changed, err := logic.DisableExtClient(ctx, &extclient)
-					if err != nil {
-						slog.Error("failed to disable static extclient",
-							"id", extclient.ClientID, "owner", user.Username, "error", err)
-					} else if changed {
-						if err := mq.PublishDeletedClientPeerUpdate(ctx, &extclient); err != nil {
-							slog.Error("error setting ext peers: " + err.Error())
-						}
-					}
-					continue
-				}
-			if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
+package controller
+// autoRelayHandlers - handlers for AutoRelay
+func autoRelayHandlers(r *mux.Router) {
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayME)))).
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
+	autoRelayNodes := logic.DoesAutoRelayExist(r.Context(), node.Network)
+	err = logic.CreateAutoRelay(node)
+		logic.ResetAutoRelay(ctx, &node)
+	_node := &schema.Node{ID: nodeid}
+	err := _node.Get(r.Context(), dbtypes.WithAllPreloads())
+	node := *logic.ConvertSchemaNodeToModelsNodeWithContext(r.Context(), _node, logic.SkipViolations())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			if extclient.DeviceID == "" && extclient.RemoteAccessClientID == "" && !forceDeleteConfigs {
+package controllers
+	controller "github.com/gravitl/netmaker/controllers"
+	proLogic "github.com/gravitl/netmaker/pro/logic"
+	"github.com/gravitl/netmaker/servercfg"
+// AutoRelayHandlers - handlers for AutoRelay
+func AutoRelayHandlers(r *mux.Router) {
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayME)))).
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
+	autoRelayNodes := proLogic.DoesAutoRelayExist(r.Context(), node.Network)
+	err = proLogic.CreateAutoRelay(node)
+	if servercfg.CacheEnabled() {
+		proLogic.RemoveAutoRelayFromCache(node.Network)
+	}
+		proLogic.ResetAutoRelay(ctx, &node)
+	// confirm host exists
+	node, err := logic.GetNodeByID(nodeid)
+	host := &schema.Host{
+		ID: node.HostID,
+	
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e50f0f23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b68aa9e` are properly handled with clean fallback behavior.

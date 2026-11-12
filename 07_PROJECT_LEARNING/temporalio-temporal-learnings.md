@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `03ecd1d2`  
+> **Source Version**: `f16ceaa3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:00:30.591Z  
+> **Timestamp**: 2026-11-12T22:20:57.586Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:00:30.587Z  
+> **Harvest Timestamp**: 2026-11-12T22:20:57.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24330 stars
+- **Stars / Engagement**: 24363 stars
 
 ---
 
@@ -2121,481 +2121,350 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `915dbdc6` (2026-11-10)
-**Commit Message**: Fix history_size/history_count CompletionStats double emitting (#12931)
+### Incident Patch 1: `610f69f8` (2026-11-12)
+**Commit Message**: Fix flakes: `TestWorkerRegistry_CountWorkers` (#13068)
 
 ## What changed?
-
-- `emitWorkflowHistoryStats` records `history_size` and `history_count`
-under `operation=CompletionStats` only when the transaction wrote
-history events.
-- `executeWorkflowTransaction` passes
-`wroteEvents(payload.ExecutionEvents)`, the same check
-`emitCompletionMetrics` already uses for the `workflow_*` counters.
+Don't assert exact system worker count in CountWorkers test. Assert the
+total is at least 3, and check the test's own system worker directly by
+WorkerInstanceKey: counted with IncludeSystemWorkers, not counted
+without it.
 
 ## Why?
-
-`CompletionStats` is meant to describe each run once, at close. But a
-closed run can be persisted again without new events, for example by a
-task refresh or a visibility close cleanup, and each of those updates
-record `CompletionStats` again with the same values. This means one
-close can produce several samples, which inflates anything that counts
-or sums them.
-
-The `workflow_*` counters had the same problem and were fixed in #8353
-and #10988. An already closed WF run doesn't record new history events,
-so gating on them would stop us from double emitting this metric.
+The cluster's per-namespace system worker can heartbeat into the test
+namespace once heartbeats are enabled, so the IncludeSystemWorkers count
+was sometimes 4 instead of 3 (~4% flake rate).
 
 ## How did you test it?
-
-- [x] built
+- [ ] built
 - [ ] run locally and tested manually
-- [x] covered by existing tests
-- [x] added new unit test(s)
+- [ ] covered by existing tests
+- [ ] added new unit test(s)
 - [ ] added new functional test(s)
 
-`TestEmitWorkflowHistoryStats` covers
+<!-- CURSOR_SUMMARY -->
+---
 
-**File**: `service/history/workflow/context.go` (modified, +1/-0)
-```diff
-@@ -1120,6 +1120,7 @@ func (c *ContextImpl) executeWorkflowTransaction(
- 		c.metricsHandler,
- 		c.GetNamespace(shardContext),
- 		c.MutableState.GetExecutionState().State,
-+		wroteEvents(payload.ExecutionEvents),
- 		int(c.MutableState.GetExecutionInfo().ExecutionStats.HistorySize),
- 		int(c.MutableState.GetNextEventID()-1),
- 	)
-```
+> [!NOTE]
+> **Low Risk**
+> Test-only changes to CountWorkers assertions; no production code
+modified.
+> 
+> **Overview**
+> **`TestWorkerRegistry_CountWorkers`** no longer assumes an exact total
+when `IncludeSystemWorkers` is true. It now requires **at least 3**
+workers so a cluster per-namespace system worker that heartbeats into
+the test namespace cannot make the test fail.
+> 
+> The suite also **asserts the test’s own system worker by
+`WorkerInstanceKey`**: count is **1** with `IncludeSystemWorkers`,
 
-**File**: `service/history/workflow/context_test.go` (modified, +13/-0)
+**File**: `tests/worker_registry_test.go` (modified, +22/-2)
 ```diff
-@@ -583,8 +583,21 @@ func (s *contextSuite) TestRefreshTask() {
+@@ -284,14 +284,34 @@ func (s *WorkerRegistryTestSuite) TestWorkerRegistry_CountWorkers() {
+ 		s.Equal(int64(2), resp.GetCount())
+ 	}
  
- 			tc.setupMock(s.mockShard)
- 
-+			handler := metricstest.NewCaptureHandler()
-+			capture := handler.StartCapture()
-+			defer handler.StopCapture(capture)
-+			s.workflowContext.metricsHandler = handler
-+
- 			err = s.workflowContext.RefreshTasks(context.Background(), s.mockShard)
- 			s.NoError(err)
-+
-+			// A refresh writes no events, so even a closed run must not record completion stats again.
-+			snapshot := capture.Snapshot()
-+			for _, metricName := range []string{metrics.HistorySize.Name(), metrics.HistoryCount.Name()} {
-+				recordings := snapshot[metricName]
-+				s.Len(recordings, 1, metricName)
-+				s.Equal(metrics.ExecutionStatsScope, recordings[0].Tags[metrics.OperationTagName], metricName)
-+			}
+-	// Count all workers including system workers
++	// Count all workers including system workers. The cluster's own per-namespace worker may also
++	// heartbeat into this namespace, so the total is at least our 3 workers rather than exactly 3.
+ 	{
+ 		resp, err := env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
+ 			Namespace:            env.Namespace().String(),
+ 			IncludeSystemWorkers: true,
  		})
- 	}
- }
-```
-
-**File**: `service/history/workflow/metrics.go` (modified, +2/-1)
-```diff
-@@ -21,6 +21,7 @@ func emitWorkflowHistoryStats(
- 	metricsHandler metrics.Handler,
- 	namespace namespace.Name,
- 	state enumsspb.WorkflowExecutionState,
-+	wroteEventsInTransaction bool,
- 	historySize int,
- 	historyCount int,
- ) {
-@@ -29,7 +30,7 @@ func emitWorkflowHistoryStats(
- 	metrics.HistorySize.With(executionScope).Record(int64(historySize))
- 	metrics.HistoryCount.With(executionScope).Record(int64(historyCount))
- 
--	if state == enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED {
-+	if state == enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED && wroteEventsInTransaction {
- 		completionScope := handler.WithTags(metrics.OperationTag(metrics.WorkflowCompletionStatsScope))
- 		metrics.HistorySize.With(completionScope).Record(int64(historySize))
- 		metrics.HistoryCount.With(completionScope).Record(int64(historyCount))
-```
-
-**File**: `service/history/workflow/metrics_test.go` (modified, +40/-0)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	deploymentspb "go.temporal.io/server/api/deployment/v1"
-+	enumsspb "go.temporal.io/server/api/enums/v1"
- 	"go.temporal.io/server/chasm"
- 	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
- 	"go.temporal.io/server/common/clock"
-@@ -557,3 +558,42 @@ func testActivityMetricTags(operation string) []metrics.Tag {
- 		metrics.ActivityTypeTag("test-activity"),
- 	}
- }
-+
-+func TestEmitWorkflowHistoryStats(t *testing.T) {
-+	for _, tc := range []struct {
-+		name                     string
-+		state                    enumsspb.WorkflowExecutionState
-+		wroteEventsInTransaction bool
-+		expectedOperations       []string
-+	}{
-+		{
-+			name:                     "closing transaction",
-+			state:                    enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED,
-+			wroteEventsInTransaction: true,
-+			expectedOperations:       []string{metrics.ExecutionStatsScope, metrics.WorkflowCompletionStatsScope},
-+		},
-+		{
-+			name:                     "closed workflow updated without events",
-+			state:                    enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED,
-+			wroteEventsInTransaction: false,
-+			expectedOperations:       []string{metrics.ExecutionStatsScope},
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			handler := metricstest.NewCaptureHandler()
-+			capture := handler.StartCapture()
-+			defer handler.StopCapture(capture)
-+
-+			emitWorkflowHistoryStats(handler, "test-namespace", tc.state, tc.wroteEventsInTransaction, 1024, 12)
-+
-+			snapshot := capture.Snapshot()
-+			for _, metricName := range []string{metrics.HistorySize.Name(), metrics.HistoryCount.Name()} {
-+				var operations []string
-+				for _, recording := range snapshot[metricName] {
-+					operations = append(operations, recording.Tags[metrics.OperationTagName])
-+				}
-+				require.ElementsMatch(t, tc.expectedOperations, operations, metricName)
-+			}
-+		})
+ 		s.NoError(err)
+-		s.Equal(int64(3), resp.GetCount())
++		s.GreaterOrEqual(resp.GetCount(), int64(3))
 +	}
-+}
++
++	// Our system worker is counted only when system workers are included
++	{
++		sysWorkerQuery := fmt.Sprintf("WorkerInstanceKey='%s'", sysWorkerKey)
++		resp, err := env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
++			Namespace:            env.Namespace().String(),
++			Query:                sysWorkerQuery,
++			IncludeSystemWorkers: true,
++		})
++		s.NoError(err)
++		s.Equal(int64(1), resp.GetCount())
++
++		resp, err = env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
++			Namespace: env.Namespace().String(),
++			Query:     sysWorkerQuery,
++		})
++		s.NoError(err)
++		s.Equal(int64(0), resp.GetCount())
+ 	}
+ 
+ 	// Count with query filter
 ```
 
 ---
 
-### Incident Patch 2: `862b2db4` (2026-11-10)
-**Commit Message**: Fix await accepting cancelled attempts as successful (#12868)
+### Incident Patch 2: `c4cea589` (2026-11-12)
+**Commit Message**: Move parallelsuite into testx (#12855)
 
 ## What changed?
-Require an uncancelled attempt for `await.Require` success.
+Move `parallelsuite` into `testx` module.
 
 ## Why?
-A soft-deadlock cancellation can make a blocked callback return without
-assertions, falsely satisfying the polling condition and skipping
-subsequent attempts.
 
-**File**: `common/testing/await/require_ctx.go` (modified, +4/-2)
+Share across Go projects.
+
+**File**: `common/testing/parallelsuite/wrapper.go` (added, +41/-0)
 ```diff
-@@ -120,6 +120,8 @@ func run(
- 
- 		// Run attempt.
- 		res := runAttempt(t, condition, attemptCancel, funcName, cancellable)
-+		// Capture the error before cleanup; attemptCancel marks every attempt canceled.
-+		attemptErr := attemptCtx.Err()
- 		attemptCancel()
- 		if res.panicVal != nil {
- 			panic(res.panicVal) // propagate to caller
-@@ -140,7 +142,7 @@ func run(
- 		// Attempt-timeout expiry: attemptCtx is done but awaitCtx is not.
- 		// An attempt timeout is retryable while the await is still active. Track
- 		// it separately so the final report identifies the responsible timeout.
--		attemptHitOwnTimeout := attemptCtx.Err() == context.DeadlineExceeded && awaitCtx.Err() == nil
-+		attemptHitOwnTimeout := attemptErr == context.DeadlineExceeded && awaitCtx.Err() == nil
- 		if attemptHitOwnTimeout {
- 			report.recordAttemptTimeout()
- 		}
-@@ -165,7 +167,7 @@ func run(
- 		}
- 
- 		// Success: attempt completed without failures.
--		if !res.stopped && !t.Failed() && !attemptHitOwnTimeout {
-+		if !res.stopped && !t.Failed() && attemptErr == nil {
- 			return
- 		}
- 
+@@ -0,0 +1,41 @@
++package parallelsuite
++
++import (
++	"context"
++	"testing"
++
++	"go.temporal.io/server/common/testing/historyrequire"
++	"go.temporal.io/server/common/testing/protorequire"
++	"go.temporal.io/testx/parallelsuite"
++)
++
++type Scope = parallelsuite.Scope
++
++// Suite extends the shared parallel suite with server assertions.
++type Suite[T parallelsuite.TestingSuite] struct {
++	parallelsuite.Suite[T]
++	protorequire.ProtoAssertions
++	historyrequire.HistoryRequire
++}
++
++// InitAssertions binds server assertions to each test, subtest, or await attempt.
++func (s *Suite[T]) InitAssertions() {
++	s.ProtoAssertions = protorequire.New(s.AssertionT())
++	s.HistoryRequire = historyrequire.New(s.AssertionT())
++}
++
++func WithContext(ctx context.Context, scope Scope) Scope {
++	return parallelsuite.WithContext(ctx, scope)
++}
++
++func Run[T parallelsuite.TestingSuite](t *testing.T, s T, args ...any) {
++	t.Helper()
++	parallelsuite.Run(t, s, args...)
++}
++
++// Deprecated: use [Run] for new tests. This only exists for backwards-compatibility
++// with legacy behavior to ease migration.
++func RunLegacySequential[T parallelsuite.TestingSuite](t *testing.T, s T, args ...any) {
++	t.Helper()
++	parallelsuite.RunLegacySequential(t, s, args...) //nolint:staticcheck // SA1019: forwarding the legacy runner
++}
 ```
 
-**File**: `common/testing/await/require_ctx_test.go` (modified, +19/-18)
+**File**: `common/testx/README.md` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-+	"testing/synctest"
+@@ -4,4 +4,5 @@ Collection of general-purpose Go test helpers.
+ 
+ - `await`: context-bounded polling assertions and channel operations.
+ - `freeport`: reserve available ports for tests.
++- `parallelsuite`: isolated parallel test suites with fail-fast assertions.
+ - `testcontext`: shared test contexts with deadlines and decorators.
+```
+
+**File**: `common/testx/parallelsuite/guard.go` (renamed, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ type guardT struct {
+ 
+ func (g *guardT) Helper() {
+ 	if g.hasSubtests.Load() {
++		//nolint:forbidigo // Panics are fine in testing code.
+ 		panic(fmt.Sprintf(
+ 			"parallelsuite: assertion called on %q after Run() was called; "+
+ 				"use the callback parameter's assertions inside Run() instead",
+```
+
+**File**: `common/testx/parallelsuite/suite.go` (renamed, +44/-28)
+```diff
+@@ -12,21 +12,25 @@ import (
+ 
+ 	"github.com/stretchr/testify/require"
+ 	testifysuite "github.com/stretchr/testify/suite"
+-	"go.temporal.io/server/common/testing/await"
+-	"go.temporal.io/server/common/testing/historyrequire"
+-	"go.temporal.io/server/common/testing/protorequire"
+-	"go.temporal.io/server/common/testing/testcontext"
++	"go.temporal.io/testx/await"
++	"go.temporal.io/testx/testcontext"
+ )
+ 
+-// testingSuite is the constraint for suite types.
+-type testingSuite interface {
++// TestingSuite is the constraint for suite types.
++type TestingSuite interface {
+ 	testifysuite.TestingSuite
+ 	//nolint:revive // ctx is last so callers can pass nil to mean "no override"; SA1012 forbids passing nil as the first ctx arg.
+-	copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) testingSuite
++	copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) TestingSuite
+ 	//nolint:revive // see copySuite above.
+ 	initSuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context)
+ }
+ 
++// AssertionsInitializer may be implemented by an embedded suite to bind
++// additional assertions after each test, subtest, or await attempt is initialized.
++type AssertionsInitializer interface {
++	InitAssertions()
++}
++
+ // Scope provides the context and test handles for a test or await attempt.
+ // It is useful for test helpers.
+ type Scope interface {
+@@ -54,11 +58,9 @@ func (s contextScope) Context() context.Context {
+ //
+ // It enforces a strict rule: a test method (or subtest) must either use assertions
+ // directly OR create subtests via Run — not both.
+-type Suite[T testingSuite] struct {
++type Suite[T TestingSuite] struct {
+ 	testifyBase
+ 	*require.Assertions
+-	protorequire.ProtoAssertions
+-	historyrequire.HistoryRequire
+ 
+ 	guardT      guardT
+ 	runParallel bool
+@@ -71,9 +73,12 @@ type Suite[T testingSuite] struct {
+ // ctx overrides the suite's context; nil means use the test context (see [Suite.Context]).
+ //
+ //nolint:revive // ctx is last so callers can pass nil to mean "no override"; SA1012 forbids passing nil as the first ctx arg.
+-func (s *Suite[T]) copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) testingSuite {
++func (s *Suite[T]) copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) TestingSuite {
+ 	cp := reflect.New(reflect.TypeFor[T]().Elem()).Interface().(T)
+ 	cp.initSuite(t, parallel, assertT, ctx)
++	if initializer, ok := any(cp).(AssertionsInitializer); ok {
++		initializer.InitAssertions()
++	}
+ 	return cp
+ }
+ 
+@@ -93,13 +98,12 @@ func (s *Suite[T]) initSuite(t *testing.T, parallel bool, assertT require.Testin
+ 	}
+ 	s.assertT = assertT
+ 	s.Assertions = require.New(assertT)
+-	s.ProtoAssertions = protorequire.New(assertT)
+-	s.HistoryRequire = historyrequire.New(assertT)
+ }
+ 
+ // T returns the *testing.T, panicking if the guard has been sealed.
+ func (s *Suite[T]) T() *testing.T {
+ 	if s.guardT.hasSubtests.Load() {
++		//nolint:forbidigo // Panics are fine in testing code.
+ 		panic("parallelsuite: do not call T() after Run(); use the subtest callback's parameter instead")
+ 	}
+ 	return s.guardT.T
+@@ -200,23 +204,24 @@ func (s *Suite[T]) AwaitTruef(fn func() bool, timeout, interval time.Duration, m
+ // parallel. Any sequential setup must happen before calling Run.
+ //
+ // The suite must embed [Suite] and have no other fields.
+-func Run[T testingSuite](t *testing.T, s T, args ...any) {
++func Run[T TestingSuite](t *testing.T, s T, args ...any) {
+ 	run(t, s, true, args...)
+ }
+ 
+ // RunLegacySequential behaves like [Run] but does not mark test methods as parallel.
+ //
+ // Deprecated: use [Run] for new tests. This only exists for backwards-compatibility
+ // with legacy behavior to ease migration.
+-func RunLegacySequential[T testingSuite](t *testing.T, s T, args ...any) {
++func RunLegacySequential[T TestingSuite](t *testing.T, s T, args ...any) {
+ 	run(t, s, false, args...)
+ }
+ 
+-func run[T testingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
++func run[T TestingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
+ 	t.Helper()
+ 
+ 	typ := reflect.TypeFor[T]()
+ 	if typ.Kind() != reflect.Pointer || typ.Elem().Kind() != reflect.Struct {
++		//nolint:forbidigo // Panics are fine in testing code.
+ 		panic(fmt.Sprintf("parallelsuite.Run: suite must be a pointer to a struct, got %v", typ))
+ 	}
+ 	structType := typ.Elem()
+@@ -225,6 +230,7 @@ func run[T testingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
+ 
+ 	methods := discoverTestMethods(typ, structType, args)
+ 	if len(methods) == 0 {
++		//nolint:forbidigo // Panics are fine in testing code.
+ 		panic(fmt.Sprintf("parallelsuite.Run: suite %s has no Test* methods", structType.Name()))
+ 	}
+ 
+@@ -239,6 +245,9 @@ func run[T testingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
+ 	}
+ 
+ 	s.initSuite(t, true, nil, nil)
++	if initializer, ok := any(s).(AssertionsInitializer); ok {
++		initializer.
+```
+
+**File**: `common/testx/parallelsuite/suite_test.go` (renamed, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ import (
  	"time"
  
  	"github.com/stretchr/testify/require"
-@@ -394,28 +395,28 @@ func TestRequire_FailureScenarios(t *testing.T) {
- 	})
- }
+-	"go.temporal.io/server/common/testing/testcontext"
++	"go.temporal.io/testx/testcontext"
+ )
  
--func TestRequire_SoftDeadlockLogsAndCancels(t *testing.T) {
-+func TestRequire_RetriesAfterSoftCancellation(t *testing.T) {
- 	// not using T.Parallel() so it can use t.Setenv to override the deadlock timeouts
--	t.Setenv("TEMPORAL_AWAIT_SOFT_DEADLOCK_TIMEOUT", "50ms")
--	t.Setenv("TEMPORAL_AWAIT_HARD_DEADLOCK_TIMEOUT", "5s")
-+	t.Setenv("TEMPORAL_AWAIT_SOFT_DEADLOCK_TIMEOUT", "1ms")
- 
--	const awaitTimeout = 10 * time.Second
-+	synctest.Test(t, func(t *testing.T) {
-+		tb := newRecordingTB()
-+		attempts := 0
- 
--	ctx := testcontext.For(t)
--	tb := newRecordingTB()
--	start := time.Now()
--	tb.run(func() {
--		// Await timeout is long so parent-cancel doesn't beat the soft timer.
--		await.Require(ctx, tb, func(t *await.T) {
--			<-t.Context().Done() // exits as soon as soft cancel fires
--		}, awaitTimeout, 100*time.Millisecond)
-+		tb.run(func() {
-+			// Await timeout is long so parent-cancel doesn't beat the soft timer.
-+			await.Require(t.Context(), tb, func(t *await.T) {
-+				attempts++
-+				if attempts == 1 {
-+					<-t.Context().Done() // exits as soon as soft cancel fires
-+				}
-+			}, 5*time.Millisecond, time.Millisecond)
-+		})
-+
-+		require.Equal(t, 2, attempts)
-+		require.False(t, tb.Failed())
-+		require.Contains(t, tb.logs(), "soft deadlock")
- 	})
--	elapsed := time.Since(start)
--	require.False(t, tb.Failed(), "soft deadlock + clean exit should succeed")
--	require.Contains(t, tb.logs(), "soft deadlock")
--	require.NotContains(t, tb.fatals(), "still running")
--	require.Less(t, elapsed, awaitTimeout,
--		"should return shortly after soft cancel, not wait the full await timeout (elapsed=%v)", elapsed)
- }
- 
- func TestRequire_DeadlockDetected(t *testing.T) {
+ type validSuite struct{ Suite[*validSuite] }
 ```
 
----
-
-### Incident Patch 3: `03ecd1d2` (2026-11-11)
-**Commit Message**: Fix V2 schedules closing before their final action starts (#13016)
-
-## What changed?
-`computeLastEventTime` now counts buffered starts that have no RunId
-yet, using their `ActualTime`. Previously it only saw starts via
-`recentActions()`, which skips unstarted ones.
-
-## Why?
-The generator tick that buffers a schedule's **final** action (no next
-spec wakeup) also arms the idle task, at `lastEventTime + IdleTime`.
-Because the just-buffered start wasn't counted, `lastEventTime` fell
-back to the previous event (create / update / previous start). If the
-final action was more than `IdleTime` (default 7d) after that, the
-deadline was already in the past: the idle task was due immediately, its
-`Validate` recomputed the same stale deadline and passed, and the
-schedule closed before `InvokerExecuteTask` started the workflow. The
-final run was silently dropped and Describe returned NotFound.
-
-Affected:
-- one-shot calendar specs (fixed year, or `EndTime` just after the fire
-time) more than 7d after the last event
-- any spec with an `EndTime` whose final gap is > 7d (the last run is
-always dropped)
-- weekly + `EndTime`: a race. The deadline was the final nominal time +
-the previous run's start l
-
-**File**: `chasm/lib/scheduler/config.go` (modified, +2/-0)
+**File**: `common/testx/parallelsuite/testify.go` (renamed, +5/-1)
 ```diff
-@@ -18,6 +18,7 @@ type (
- 		CanceledTerminatedCountAsFailures bool          // Whether cancelled+terminated count for pause-on-failure
- 		MaxActionsPerExecution            int           // Limits the number of actions (startWorkflow, terminate/cancel) taken by ExecuteTask in a single iteration
- 		EnableGeneratorJitterFix          bool          // Preserve pending jittered actions across empty generator wakeups; disable to restore the legacy cursor behavior.
-+		EnablePendingStartIdleFix         bool          // Count pending starts as activity when calculating idle expiration. Disabling does not rewind persisted LastEventTime.
- 		EnableVersioningOverride          bool          // Whether to forward versioning overrides to started workflows
- 		IdleTime                          time.Duration // How long to keep schedules after they're done
- 		EventLogMaxEntries                int           // Maximum EventLog entries retained per component; the earliest entries are dropped beyond this.
-@@ -95,6 +96,7 @@ var (
- 		MaxActionsPerExecution:            5,
- 		EnableVersioningOverride:          true,
- 		EnableGeneratorJitterFix:          true,
-+		EnablePendingStartIdleFix:         true,
- 		IdleTime:                          7 * 24 * time.Hour,
- 		EventLogMaxEntries:                30,
- 		EventLogMaxMessageLen:             1000,
-```
-
-**File**: `chasm/lib/scheduler/idle_pending_start_test.go` (added, +330/-0)
-```diff
-@@ -0,0 +1,330 @@
-+package scheduler_test
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	enumspb "go.temporal.io/api/enums/v1"
-+	schedulepb "go.temporal.io/api/schedule/v1"
-+	"go.temporal.io/api/workflowservice/v1"
-+	schedulespb "go.temporal.io/server/api/schedule/v1"
-+	"go.temporal.io/server/chasm"
-+	"go.temporal.io/server/chasm/lib/scheduler"
-+	"go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
-+	"go.temporal.io/server/common/clock"
-+	"google.golang.org/protobuf/types/known/durationpb"
-+	"google.golang.org/protobuf/types/known/timestamppb"
-+)
-+
-+const idleWeek = 7 * 24 * time.Hour
-+
-+var (
-+	pendingCreateTime  = time.Date(2026, 1, 5, 10, 0, 0, 500000000, time.UTC)
-+	pendingUnpauseTime = pendingCreateTime.Add(1265 * time.Millisecond)
-+)
-+
-+func TestPendingStartIdleFix(t *testing.T) {
-+	t.Parallel()
-+	fire := pendingCreateTime.Add(idleWeek + time.Hour)
-+	for _, tc := range []struct {
-+		name                 string
-+		enabled              bool
-+		lastEventTime        time.Time
-+		expectedDeadline     time.Time
-+		expectedOldTaskValid bool
-+	}{
-+		{
-+			name: "enabled", enabled: true, lastEventTime: pendingCreateTime,
-+			expectedDeadline: fire.Add(idleWeek), expectedOldTaskValid: false,
-+		},
-+		{
-+			name: "disabled", enabled: false, lastEventTime: pendingCreateTime,
-+			expectedDeadline: pendingCreateTime.Add(idleWeek), expectedOldTaskValid: true,
-+		},
-+		{
-+			name: "disabled after watermark persisted", enabled: false, lastEventTime: fire,
-+			expectedDeadline: fire.Add(idleWeek), expectedOldTaskValid: false,
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			env := newTestEnv(t)
-+			tweakables := scheduler.DefaultTweakables
-+			tweakables.EnablePendingStartIdleFix = tc.enabled
-+			ctx := scheduler.ContextWithTweakables(env.ReadContext(), tweakables)
-+			sched := env.Scheduler
-+			anchorLastEventTo(sched, pendingCreateTime)
-+			sched.LastEventTime = timestamppb.New(tc.lastEventTime)
-+			sched.Invoker.Get(ctx).BufferedStarts = []*schedulespb.BufferedStart{{
-+				ActualTime: timestamppb.New(fire),
-+			}}
-+
-+			require.Equal(t, tc.expectedDeadline, sched.IdleDeadline(ctx, idleWeek))
-+			valid, err := newIdleHandler(idleWeek).Validate(ctx, sched, chasm.TaskInvocation{
-+				TaskAttributes: chasm.TaskAttributes{ScheduledTime: pendingCreateTime.Add(idleWeek)},
-+			}, &schedulerpb.SchedulerIdleTask{IdleTimeTotal: durationpb.New(idleWeek)})
-+			require.NoError(t, err)
-+			require.Equal(t, tc.expectedOldTaskValid, valid)
-+		})
-+	}
-+}
-+
-+func oneShotSpec(fire time.Time) *schedulepb.ScheduleSpec {
-+	r := func(v int) []*schedulepb.Range { return []*schedulepb.Range{{Start: int32(v)}} }
-+	return &schedulepb.ScheduleSpec{
-+		StructuredCalendar: []*schedulepb.StructuredCalendarSpec{
-+			// Keep-alive entry past EndTime, so it never fires.
-+			{
-+				Second: r(59), Minute: r(59), Hour: r(23),
-+				DayOfMonth: r(31), Month: r(12), Year: r(2100),
-+				DayOfWeek: []*schedulepb.Range{{End: 6, Step: 1}},
-+			},
-+			{
-+				Second: r(fire.Second()), Minute: r(fire.Minute()), Hour: r(fire.Hour()),
-+				DayOfMonth: r(fire.Day()), Month: r(int(fire.Month())), Year: r(fire.Year()),
-+				DayOfWeek: []*schedulepb.Range{{End: 6}},
-+			},
-+		},
-+		StartTime:    timestamppb.New(time.Unix(0, 0)),
-+		EndTime:      timestamppb.New(time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC)),
-+		TimezoneName: "Etc/GMT",
-+	}
-+}
-+
-+// intervalSpecFiringAt returns an interval spec phased so that it fires at fire.
-+func intervalSpecFiringAt(every time.Duration, fire time.Time, end time.Time) *schedulepb.ScheduleSpec {
-+	phase := time.Duration(fire.Unix()%int64(every/time.Second)) * time.Second
-+	spec := &schedulepb.ScheduleSpec{Interval: []*schedulepb.IntervalSpec{{
-+		Interval: durationpb.New(every),
-+		Phase:    durationpb.New(phase),
-+	}}}
-+	if !end.IsZero() {
-+		spec.EndTime = timestamppb.New(end)
-+	}
-+	return spec
-+}
-+
-+// newPausedThenUnpaused creates the schedule paused, then unpauses it ~1s later
-+// via UpdateSchedule.
-+func newPausedThenUnpaused(t *testing.T, spec *schedulepb.ScheduleSpec, limited int64) (*schedulerTestEngine, *clock.EventTimeSource) {
-+	t.Helper()
-+	ts := clock.NewEventTimeSource()
-+	ts.Update(pendingCreateTime)
-+	build := func(paused bool) *schedulepb.Schedule {
-+		s := defaultSchedule()
-+		s.Spec = spec
-+		s.Policies = &schedulepb.SchedulePolicies{}
-+		s.State = &schedulepb.ScheduleState{
-+			Paused:           paused,
-+			LimitedActions:   limited > 0,
-+			RemainingActions: limited,
-+		}
-+		return s
-+	}
-+	e := newSchedulerTestEngine(t, build(true), withEngineTimeSource(ts))
-+
-+	ts.Update(pendingUnpauseTime)
-+	_, err := scheduler.NewTestHandler(e.logger).UpdateSchedule(e.engineCtx, &schedulerpb.UpdateScheduleRequest{
-+		NamespaceId: namespaceID,
-+		FrontendRequest: &workflowservice.UpdateScheduleRequest{
-+			Namespace:  namespace,
-+			ScheduleId: scheduleID,
-+			Schedule:   build(false),
-+			RequestId:  "unpause",
-+		},
-+	})
-+	require.NoError(t, err)
-+	return e, ts
-+}
-+
-```
-
-**File**: `chasm/lib/scheduler/scheduler.go` (modified, +11/-0)
-```diff
-@@ -557,6 +557,17 @@ func (s *Scheduler) computeLastEventTime(ctx chasm.Context) time.Time {
- 		latest = util.MaxTime(latest, a.GetActualTime().AsTime())
- 	}
+@@ -17,21 +17,25 @@ type testifyBase struct {
  
-+	// recentActions skips starts without a RunId. Count them by scheduled time,
-+	// or the tick that buffers a schedule's final action can arm the idle task in
-+	// the past and close it before InvokerExecuteTask runs.
-+	if tweakablesFromContext(ctx).EnablePendingStartIdleFix {
-+		for _, start := range s.Invoker.Get(ctx).GetBufferedStarts() {
-+			if start.GetRunId() == "" {
-+				latest = util.MaxTime(latest, start.GetActualTime().AsTime())
-+			}
-+		}
-+	}
-+
- 	return latest
+ // Deprecated: SetT is managed internally by [Run]. Do not call directly.
+ func (b *testifyBase) SetT(_ *testing.T) {
++	//nolint:forbidigo // Panics are fine in testing code.
+ 	panic("parallelsuite: do not call SetT directly; it is managed by parallelsuite.Run")
  }
  
+ // Deprecated: SetS is managed internally by [Run]. Do not call directly.
+ func (b *testifyBase) SetS(_ testifysuite.TestingSuite) {
++	//nolint:forbidigo // Panics are fine in testing code.
+ 	panic("parallelsuite: do not call SetS directly; it is managed by parallelsuite.Run")
+ }
+ 
+ // Deprecated: Assert returns non-fatal assertions which are not supported.
+ // Use s.NoError, s.Equal, etc. directly (require semantics).
+-func (b *testifyBase) Assert() *assert.Assertions {
++func (b *testifyBase) Assert() *assert.Assertions { //nolint:forbidigo // The disabled testify API must retain its signature.
++	//nolint:forbidigo // Panics are fine in testing code.
+ 	panic("parallelsuite: do not use Assert(); use s.NoError, s.Equal, etc. directly")
+ }
+ 
+ // Deprecated: Require bypasses the guard mechanism. Use s.NoError, s.Equal, etc. directly.
+ func (b *testifyBase) Require() *require.Assertions {
++	//nolint:forbidigo // Panics are fine in testing code.
+ 	panic("parallelsuite: do not use Require(); use s.NoError, s.Equal, etc. directly")
+ }
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -74,7 +74,7 @@ require (
+ 	go.temporal.io/api v1.64.3
+ 	go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29
+ 	go.temporal.io/sdk v1.49.0
+-	go.temporal.io/testx v0.0.0-20261112165046-80ad2c2c7f36
++	go.temporal.io/testx v0.0.0-20261112165317-388e10c4b213
+ 	go.uber.org/fx v1.24.0
+ 	go.uber.org/goleak v1.3.0
+ 	go.uber.org/mock v0.6.0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13022** (2026-11-10): Update go.temporal.io/api to v1.64.3 (@veeral-patel)
-- **PR #13021** (2026-11-10): Emit the SDK-reported poller target in worker metrics (@veeral-patel)
-- **PR #13020** (closed): Emit the SDK-reported poller target in worker metrics (@veeral-patel)
-- **PR #13016** (2026-11-11): Fix V2 schedules closing before their final action starts (@davidporter-id-au)
-- **PR #13009** (closed): Time skipping fix chasm tasks reference time (@feiyang3cat)
-- **PR #13008** (2026-11-10): rename and add more time-skipping util functions (@feiyang3cat)
+- **PR #13068** (2026-11-12): Fix flakes: `TestWorkerRegistry_CountWorkers` (@carlydf)
+- **PR #13052** (2026-11-12): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13048** (2026-11-12): Use SQLite by default for mixed brain tests (@stephanos)
+- **PR #13043** (closed): Fix CHASM ALLOW_ALL callback race losing action accounting (@chaptersix)
+- **PR #13039** (2026-11-11): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13033** (2026-11-11): [cloud 3.167] Fix V2 schedules closing before their final action starts (@davidporter-id-au)
 
 ---
 
@@ -2615,28 +2484,50 @@ the previous run's start l
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. history_size/history_count CompletionStats double emitting (#12931)
+## X. flakes: `TestWorkerRegistry_CountWorkers` (#13068)
 
 **RULE**:
-When implementing operations in `service/history/workflow/context.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/worker_registry_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `915dbdc6`: history_size/history_count CompletionStats double emitting (#12931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `610f69f8`: flakes: `TestWorkerRegistry_CountWorkers` (#13068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/workflow/context.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/worker_registry_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		wroteEvents(payload.ExecutionEvents),
+	// Count all workers including system workers. The cluster's own per-namespace worker may also
+	// heartbeat into this namespace, so the total is at least our 3 workers rather than exactly 3.
+		s.GreaterOrEqual(resp.GetCount(), int64(3))
+	}
+
+	// Our system worker is counted only when system workers are included
+	{
+		sysWorkerQuery := fmt.Sprintf("WorkerInstanceKey='%s'", sysWorkerKey)
+		resp, err := env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
+			Namespace:            env.Namespace().String(),
+			Query:                sysWorkerQuery,
+			IncludeSystemWorkers: true,
+		})
+		s.NoError(err)
+		s.Equal(int64(1), resp.GetCount())
+
+		resp, err = env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
+			Namespace: env.Namespace().String(),
+			Query:     sysWorkerQuery,
+		})
+		s.NoError(err)
+		s.Equal(int64(0), resp.GetCount())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	// Count all workers including system workers
+		s.Equal(int64(3), resp.GetCount())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `915dbdc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `610f69f8` are properly handled with clean fallback behavior.

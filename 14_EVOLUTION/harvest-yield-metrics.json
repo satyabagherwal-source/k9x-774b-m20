@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:05:33.062Z",
-  "total_cycles_completed": 9048,
-  "total_learnings_persisted": 9048,
-  "total_rules_promoted": 8886,
+  "last_updated": "2026-11-12T22:21:27.754Z",
+  "total_cycles_completed": 9053,
+  "total_learnings_persisted": 9053,
+  "total_rules_promoted": 8891,
   "history": [
-    {
-      "timestamp": "2026-11-11T19:28:45.063Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T19:46:17.203Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T19:46:23.714Z",
-      "repository": "mrkai77/Loop",
-      "learningId": "learn-github-mrkai77-loop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T19:46:32.242Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T19:53:46.598Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T20:18:40.331Z",
       "repository": "authzed/spicedb",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-12T22:05:33.062Z",
       "repository": "oceanbase/oceanbase",
       "learningId": "learn-github-oceanbase-oceanbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:21:06.801Z",
+      "repository": "crate-ci/typos",
+      "learningId": "learn-github-crate-ci-typos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:21:20.693Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:21:23.157Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:21:25.665Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T22:21:27.754Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

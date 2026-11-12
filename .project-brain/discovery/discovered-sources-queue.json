@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T22:05:39.933Z",
+  "updated_at": "2026-11-12T22:21:34.834Z",
   "stats": {
-    "total_discovered": 1694,
-    "approved_pending_harvest": 1555,
+    "total_discovered": 1712,
+    "approved_pending_harvest": 1573,
     "harvested_count": 0,
     "rejected_count": 139,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1556,
+      "COMMUNITY_AND_EXPERT": 1574,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -36312,6 +36312,402 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
         "fileName": "oceanbase-oceanbase-learnings.md"
+      }
+    },
+    "SRC-265C1F5D5797": {
+      "id": "SRC-265C1F5D5797",
+      "url": "https://github.com/crate-ci/typos",
+      "title": "https://github.com/crate-ci/typos",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-6378019AC97A": {
+      "id": "SRC-6378019AC97A",
+      "url": "https://github.com/JuulLabs/kable",
+      "title": "https://github.com/JuulLabs/kable",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-7308D4FF7C87": {
+      "id": "SRC-7308D4FF7C87",
+      "url": "https://developer.android.com/reference/android/bluetooth/BluetoothDevice",
+      "title": "https://developer.android.com/reference/android/bluetooth/BluetoothDevice",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-27543A85E245": {
+      "id": "SRC-27543A85E245",
+      "url": "https://cs.android.com/android/platform/superproject/main/+/b7a389a145ff443550e1a942bf713c60c2bd6a14:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothGatt.java;l=1587-1593",
+      "title": "https://cs.android.com/android/platform/superproject/main/+/b7a389a145ff443550e1a942bf713c60c2bd6a14:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothGatt.java;l=1587-1593",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.684Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-E88C8972BC47": {
+      "id": "SRC-E88C8972BC47",
+      "url": "https://cs.android.com/android/platform/superproject/main/+/main:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothStatusCodes.java;l=50",
+      "title": "https://cs.android.com/android/platform/superproject/main/+/main:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothStatusCodes.java;l=50",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.694Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-637C3B1B4381": {
+      "id": "SRC-637C3B1B4381",
+      "url": "https://developer.android.com/reference/kotlin/android/bluetooth/BluetoothStatusCodes",
+      "title": "https://developer.android.com/reference/kotlin/android/bluetooth/BluetoothStatusCodes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-6CF6F4910847": {
+      "id": "SRC-6CF6F4910847",
+      "url": "https://medium.com/@martijn.van.welie/making-android-ble-work-part-1-a736dcd53b02",
+      "title": "https://medium.com/@martijn.van.welie/making-android-ble-work-part-1-a736dcd53b02",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-4FE0BE97234F": {
+      "id": "SRC-4FE0BE97234F",
+      "url": "https://github.com/JuulLabs/kable/issues/737",
+      "title": "https://github.com/JuulLabs/kable/issues/737",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.724Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-9AE0A77B2966": {
+      "id": "SRC-9AE0A77B2966",
+      "url": "https://developer.android.com/reference/android/bluetooth/BluetoothAdapter",
+      "title": "https://developer.android.com/reference/android/bluetooth/BluetoothAdapter",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-6DADE894E7A2": {
+      "id": "SRC-6DADE894E7A2",
+      "url": "https://github.com/JuulLabs/kable/issues/295",
+      "title": "https://github.com/JuulLabs/kable/issues/295",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.745Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-2276E989B8EC": {
+      "id": "SRC-2276E989B8EC",
+      "url": "https://cs.android.com/android/platform/superproject/main/+/b7a389a145ff443550e1a942bf713c60c2bd6a14:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothStatusCodes.java;l=45-50",
+      "title": "https://cs.android.com/android/platform/superproject/main/+/b7a389a145ff443550e1a942bf713c60c2bd6a14:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothStatusCodes.java;l=45-50",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.755Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-E3A3C2531063": {
+      "id": "SRC-E3A3C2531063",
+      "url": "https://github.com/JuulLabs/kable/issues/654",
+      "title": "https://github.com/JuulLabs/kable/issues/654",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-B5C31723E67E": {
+      "id": "SRC-B5C31723E67E",
+      "url": "https://github.com/JuulLabs/kable/issues/854",
+      "title": "https://github.com/JuulLabs/kable/issues/854",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-739EB495E378": {
+      "id": "SRC-739EB495E378",
+      "url": "https://github.com/JuulLabs/kable/blob/368d4d5b16ae7ed46c89fac331b0788183a94ed7/kable-core/src/commonMain/kotlin/SharedRepeatableAction.awaitConnect.kt",
+      "title": "https://github.com/JuulLabs/kable/blob/368d4d5b16ae7ed46c89fac331b0788183a94ed7/kable-core/src/commonMain/kotlin/SharedRepeatableAction.awaitConnect.kt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.785Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-3E9EEAABD866": {
+      "id": "SRC-3E9EEAABD866",
+      "url": "https://github.com/temporalio/temporal",
+      "title": "https://github.com/temporalio/temporal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-74586A984C08": {
+      "id": "SRC-74586A984C08",
+      "url": "https://pkg.go.dev/google.golang.org/protobuf/proto",
+      "title": "https://pkg.go.dev/google.golang.org/protobuf/proto",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.814Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-D49DD4E84EC3": {
+      "id": "SRC-D49DD4E84EC3",
+      "url": "https://github.com/temporalio/temporal/blob/main/service/worker/scheduler/workflow.go",
+      "title": "https://github.com/temporalio/temporal/blob/main/service/worker/scheduler/workflow.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-C1634CD68A84": {
+      "id": "SRC-C1634CD68A84",
+      "url": "https://github.com/temporalio/temporal/blob/main/service/worker/scheduler/activities.go",
+      "title": "https://github.com/temporalio/temporal/blob/main/service/worker/scheduler/activities.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T22:21:34.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
       }
     }
   }

@@ -9240,3 +9240,8 @@ Every entry in this ledger must capture:
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `3967c693` | Multi-dimensional audit evidence | 2026-11-12T22:05:24.900Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `2cd8d27a` | Multi-dimensional audit evidence | 2026-11-12T22:05:29.481Z |
 | `learn-github-oceanbase-oceanbase` | `https://github.com/oceanbase/oceanbase` | `d375c6d7` | Multi-dimensional audit evidence | 2026-11-12T22:05:33.038Z |
+| `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `aa7e5314` | Multi-dimensional audit evidence | 2026-11-12T22:21:06.790Z |
+| `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `67aed25e` | Multi-dimensional audit evidence | 2026-11-12T22:21:20.681Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `f16ceaa3` | Multi-dimensional audit evidence | 2026-11-12T22:21:23.144Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `5b68aa9e` | Multi-dimensional audit evidence | 2026-11-12T22:21:25.656Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `c930abe2` | Multi-dimensional audit evidence | 2026-11-12T22:21:27.745Z |

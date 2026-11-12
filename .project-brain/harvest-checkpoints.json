@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T22:05:33.067Z",
+  "last_updated": "2026-11-12T22:21:27.760Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "cfe55aa32d7a35a09fee3e61002bd4ac8d5ca049313266c6316b374f7f3af52b",
-      "verified_at": "2026-11-12T11:01:10.494Z",
+      "content_hash": "c0a274c39ef6a0ed72682b6ba66ddc30b685b59430c01714421217ca34856cae",
+      "verified_at": "2026-11-12T22:21:25.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:01:10.494Z"
+      "last_updated": "2026-11-12T22:21:25.671Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "de9f9ce4bbf507a4e42e2c928fd52822dbc746847235e403c18bb1520cf89548",
-      "verified_at": "2026-11-11T11:00:39.201Z",
+      "content_hash": "dccaca496171ebec87b1fc086adad0e49c5a811af245d71171ca575c3dbd3686",
+      "verified_at": "2026-11-12T22:21:23.162Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T11:00:39.201Z"
+      "last_updated": "2026-11-12T22:21:23.162Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -10656,14 +10656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-ci-typos",
-      "content_hash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
-      "verified_at": "2026-11-10T02:11:42.773Z",
+      "content_hash": "455ab3b6be398b5b0049311dd6ad24827916a8d923724608c739ecb37f9cd4e9",
+      "verified_at": "2026-11-12T22:21:06.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:11:42.773Z"
+      "last_updated": "2026-11-12T22:21:06.806Z"
     },
     "emberstack/kubernetes-reflector": {
       "repository": "emberstack/kubernetes-reflector",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "62fed4452bccce51ae36532779be903e6a52d6ffd15fc87099ff0af073a77029",
-      "verified_at": "2026-11-11T10:08:35.844Z",
+      "content_hash": "6120ebb2bcced89ff21bcbbcbc3e860511e1c9495cecbbc4618f581d94d23829",
+      "verified_at": "2026-11-12T22:21:27.759Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:08:35.844Z"
+      "last_updated": "2026-11-12T22:21:27.759Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -13206,14 +13206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juullabs-kable",
-      "content_hash": "d7494d75e857f1bf392d0d9708e1624d4a3a6f6a75e61ad8a0b21348dd3eb319",
-      "verified_at": "2026-11-02T15:57:21.187Z",
+      "content_hash": "d5babb294ac084a41ea91a26d686fdea44d73abd493518827a129574b1b1e3bc",
+      "verified_at": "2026-11-12T22:21:20.699Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:57:21.187Z"
+      "last_updated": "2026-11-12T22:21:20.699Z"
     },
     "tmolavi/siteprobe": {
       "repository": "tmolavi/siteprobe",

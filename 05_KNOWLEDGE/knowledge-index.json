@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T22:05:32.911Z",
+  "last_updated": "2026-11-12T22:21:27.573Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9418,14 +9418,19 @@
       "slug": "crate-ci-typos",
       "platform": "github",
       "source_url": "https://github.com/crate-ci/typos",
-      "source_version": "2611abd1",
-      "content_hash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
+      "source_version": "aa7e5314",
+      "content_hash": "455ab3b6be398b5b0049311dd6ad24827916a8d923724608c739ecb37f9cd4e9",
       "dossier_path": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "dict): Resolve extraversion, causalities false positives",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci): Drop fail-fast from maturin builds",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9454,7 +9459,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:11:42.615Z",
+      "verified_at": "2026-11-12T22:21:06.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10222,8 +10227,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "fdcf2d37",
-      "content_hash": "62fed4452bccce51ae36532779be903e6a52d6ffd15fc87099ff0af073a77029",
+      "source_version": "c930abe2",
+      "content_hash": "6120ebb2bcced89ff21bcbbcbc3e860511e1c9495cecbbc4618f581d94d23829",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -10245,6 +10250,11 @@
         {
           "number": null,
           "title": "query): defer transaction maintenance until after commit (#21020)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "query): keep the shared executor alive on processor panics (#21065)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10313,7 +10323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:08:35.602Z",
+      "verified_at": "2026-11-12T22:21:27.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18361,8 +18371,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "e50f0f23",
-      "content_hash": "cfe55aa32d7a35a09fee3e61002bd4ac8d5ca049313266c6316b374f7f3af52b",
+      "source_version": "5b68aa9e",
+      "content_hash": "c0a274c39ef6a0ed72682b6ba66ddc30b685b59430c01714421217ca34856cae",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -18379,6 +18389,11 @@
         {
           "number": null,
           "title": "NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Pre-Release Fixes v1.8.0 (#4230)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18432,7 +18447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T11:01:10.312Z",
+      "verified_at": "2026-11-12T22:21:25.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38466,11 +38481,16 @@
       "slug": "juullabs-kable",
       "platform": "github",
       "source_url": "https://github.com/JuulLabs/kable",
-      "source_version": "e9a39099",
-      "content_hash": "d7494d75e857f1bf392d0d9708e1624d4a3a6f6a75e61ad8a0b21348dd3eb319",
+      "source_version": "67aed25e",
+      "content_hash": "d5babb294ac084a41ea91a26d686fdea44d73abd493518827a129574b1b1e3bc",
       "dossier_path": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update Gradle to v9.9.1 (#1290)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2771,
           "title": "Update Rust crate uuid to v1.24.1 (#1255)",
@@ -38497,7 +38517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:57:21.117Z",
+      "verified_at": "2026-11-12T22:21:20.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62740,8 +62760,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "03ecd1d2",
-      "content_hash": "de9f9ce4bbf507a4e42e2c928fd52822dbc746847235e403c18bb1520cf89548",
+      "source_version": "f16ceaa3",
+      "content_hash": "dccaca496171ebec87b1fc086adad0e49c5a811af245d71171ca575c3dbd3686",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -62768,6 +62788,11 @@
         {
           "number": null,
           "title": "history_size/history_count CompletionStats double emitting (#12931)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "flakes: `TestWorkerRegistry_CountWorkers` (#13068)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62851,7 +62876,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T11:00:39.014Z",
+      "verified_at": "2026-11-12T22:21:22.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

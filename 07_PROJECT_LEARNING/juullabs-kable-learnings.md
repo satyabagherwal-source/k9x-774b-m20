@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source**: github ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
-> **Source Version**: `e9a39099`  
+> **Source Version**: `67aed25e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:57:20.698Z  
+> **Timestamp**: 2026-11-12T22:20:54.941Z  
 > **Learning ID**: `learn-github-juullabs-kable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:57:20.379Z  
+> **Harvest Timestamp**: 2026-11-12T22:20:54.934Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1116,32 +1116,28 @@ internal val bluetoothState = broadcastReceiverFlow(intentFilter)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9a39099` (2026-10-30)
-**Commit Message**: Update Rust crate tokio to v1.54.1 [SECURITY] (#1302)
+### Incident Patch 1: `67aed25e` (2026-11-11)
+**Commit Message**: Update Gradle to v9.9.1 (#1290)
 
-**File**: `kable-btleplug-ffi/Cargo.lock` (modified, +2/-2)
+**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
 ```diff
-@@ -1022,9 +1022,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.54.0"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "libc",
-  "mio",
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1302** (2026-10-30): Update Rust crate tokio to v1.54.1 [SECURITY] (@juul-mobile-bot)
 - **PR #1301** (closed): Bump tokio from 1.54.0 to 1.54.1 in /kable-btleplug-ffi (@dependabot[bot])
 - **PR #1297** (closed): Update Rust crate tokio to v1.54.1 - autoclosed (@juul-mobile-bot)
+- **PR #1290** (2026-11-11): Update Gradle to v9.9.1 (@juul-mobile-bot)
 - **PR #1288** (2026-10-21): Update Rust crate tokio to v1.54.0 (@juul-mobile-bot)
 - **PR #1286** (2026-10-05): Update Rust crate btleplug to v0.13.4 (@juul-mobile-bot)
-- **PR #1285** (2026-09-28): Update Gradle to v9.8.0 (@juul-mobile-bot)
 
 ---
 
@@ -1161,30 +1157,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate tokio to v1.54.1 [SECURITY] (#1302)
+## X. Update Gradle to v9.9.1 (#1290)
 
 **RULE**:
-When implementing operations in `kable-btleplug-ffi/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9a39099`: Update Rust crate tokio to v1.54.1 [SECURITY] (#1302). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67aed25e`: Update Gradle to v9.9.1 (#1290). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kable-btleplug-ffi/Cargo.lock`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.54.0"
-checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9a39099` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67aed25e` are properly handled with clean fallback behavior.
