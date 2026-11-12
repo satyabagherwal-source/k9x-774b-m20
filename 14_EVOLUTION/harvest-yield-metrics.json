@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:55:29.005Z",
-  "total_cycles_completed": 8963,
-  "total_learnings_persisted": 8963,
-  "total_rules_promoted": 8807,
+  "last_updated": "2026-11-12T10:17:33.372Z",
+  "total_cycles_completed": 8964,
+  "total_learnings_persisted": 8964,
+  "total_rules_promoted": 8808,
   "history": [
-    {
-      "timestamp": "2026-11-11T10:26:52.265Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T10:27:16.907Z",
       "repository": "google/tcmalloc",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-12T09:55:29.005Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T10:17:33.372Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

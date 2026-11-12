@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T09:55:51.226Z",
+  "last_updated": "2026-11-12T10:17:38.762Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6653,6 +6653,33 @@
       "source_repo": "buresdv-cork",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6496A9--appearance-override.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BD4795",
+      "directive_title": "docs: fix README images that do not render on the API reference site (#38862)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aws-aws-cdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BD4795-docs-fix-readme-images-that-do-not-rende.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-42B4DB",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-42B4DB-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-8309E5",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8309E5-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-12"
     }
   ]

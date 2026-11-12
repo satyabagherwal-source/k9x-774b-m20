@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "8a8b12fc",
+    "sourceVersion": "ac7afd8b",
     "license": "Apache-2.0",
-    "contentHash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
-    "lastHarvestedAt": "2026-11-10T03:04:38.488Z",
+    "contentHash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
+    "lastHarvestedAt": "2026-11-12T10:17:33.365Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

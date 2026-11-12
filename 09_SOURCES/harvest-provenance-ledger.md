@@ -9144,3 +9144,4 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e3ecbb98` | Multi-dimensional audit evidence | 2026-11-12T09:55:22.984Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `719fcc41` | Multi-dimensional audit evidence | 2026-11-12T09:55:28.885Z |
 | `learn-dom-d-78355aec` | `project://hf-viggle-viggle-remake` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | 2026-11-12T09:55:51.213Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ac7afd8b` | Multi-dimensional audit evidence | 2026-11-12T10:17:33.365Z |

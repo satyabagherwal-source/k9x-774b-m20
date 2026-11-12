@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T09:55:28.641Z",
+  "last_updated": "2026-11-12T10:17:33.248Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4800,8 +4800,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "8a8b12fc",
-      "content_hash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
+      "source_version": "ac7afd8b",
+      "content_hash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -4813,6 +4813,11 @@
         {
           "number": null,
           "title": "security-guardian): accept extra named fixtures in the rule fixture test (#39657",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs: fix README images that do not render on the API reference site (#38862)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4891,7 +4896,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T03:04:38.375Z",
+      "verified_at": "2026-11-12T10:17:33.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T09:55:37.821Z",
-    "lastVerified": "2026-11-12T09:55:37.821Z",
+    "lastChecked": "2026-11-12T10:17:38.464Z",
+    "lastVerified": "2026-11-12T10:17:38.464Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T08:52:46.048Z",
-    "lastVerified": "2026-11-12T08:52:46.048Z",
+    "lastChecked": "2026-11-12T10:07:22.708Z",
+    "lastVerified": "2026-11-12T10:07:22.708Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2380,8 +2380,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T03:23:39.778Z",
-    "lastVerified": "2026-11-12T03:23:39.778Z",
+    "lastChecked": "2026-11-12T10:07:17.758Z",
+    "lastVerified": "2026-11-12T10:07:17.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -5489,14 +5489,14 @@
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T02:59:34.992Z",
-    "lastVerified": "2026-11-10T02:59:34.992Z",
+    "lastChecked": "2026-11-12T10:07:20.306Z",
+    "lastVerified": "2026-11-12T10:07:20.306Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
+    "contentHash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5785,8 +5785,8 @@
     "officialUrl": "https://github.com/mlua-rs/mlua",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:18:15.372Z",
-    "lastVerified": "2026-11-09T16:18:15.372Z",
+    "lastChecked": "2026-11-12T10:07:07.757Z",
+    "lastVerified": "2026-11-12T10:07:07.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mlua-rs-mlua",
@@ -8004,12 +8004,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-source-legal-opencontracts": {
-    "name": "Open-Source-Legal/OpenContracts",
+    "name": "OpenContracts",
     "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T01:58:36.412Z",
-    "lastVerified": "2026-11-10T01:58:36.412Z",
+    "lastChecked": "2026-11-12T10:07:20.225Z",
+    "lastVerified": "2026-11-12T10:07:20.225Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-source-legal-opencontracts",
@@ -8018,7 +8018,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "01dd8500"
   },
   "bgreenwell-doxx": {
     "name": "doxx",
@@ -10187,9 +10188,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-11-08T07:21:58.107Z",
+    "lastChecked": "2026-11-12T10:07:12.744Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-11-08T07:21:58.107Z"
+    "lastVerified": "2026-11-12T10:07:12.744Z"
   },
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
@@ -11990,9 +11991,9 @@
   "goose3-goose3": {
     "name": "goose3",
     "officialUrl": "https://github.com/goose3/goose3",
-    "lastChecked": "2026-11-07T19:16:39.076Z",
+    "lastChecked": "2026-11-12T10:07:10.261Z",
     "revisionIdentifier": "87b6003d",
-    "lastVerified": "2026-11-07T19:16:39.076Z"
+    "lastVerified": "2026-11-12T10:07:10.261Z"
   },
   "sozercan-kaset": {
     "name": "kaset",
