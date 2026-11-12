@@ -9250,3 +9250,8 @@
 | `CYCLE-20261112-3OVG` | `2026-11-12T23:17:01.228Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f65937a3...`) |
 | `CYCLE-20261112-IZEB` | `2026-11-12T23:28:54.707Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ef9d1c1b...`) |
 | `CYCLE-20261112-J43T` | `2026-11-12T23:29:00.809Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`77aa75b3...`) |
+| `CYCLE-20261112-ZIFW` | `2026-11-12T23:41:45.884Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`39c66e3e...`) |
+| `CYCLE-20261112-ZQ7V` | `2026-11-12T23:41:55.963Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`420abd1b...`) |
+| `CYCLE-20261112-ZRIA` | `2026-11-12T23:41:57.634Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`223e7a20...`) |
+| `CYCLE-20261112-ZTYL` | `2026-11-12T23:42:00.813Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1f5048eb...`) |
+| `CYCLE-20261112-068F` | `2026-11-12T23:42:16.719Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f918b327...`) |

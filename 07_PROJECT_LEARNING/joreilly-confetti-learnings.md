@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/joreilly-confetti-learnings.md`  
 > **Source**: github ([https://github.com/joreilly/Confetti](https://github.com/joreilly/Confetti))  
-> **Source Version**: `32c0714d`  
+> **Source Version**: `d29c8ec6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T17:35:41.831Z  
+> **Timestamp**: 2026-11-12T23:41:29.833Z  
 > **Learning ID**: `learn-github-joreilly-confetti`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/joreilly-confetti-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/joreilly/Confetti](https://github.com/joreilly/Confetti))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T17:35:41.363Z  
+> **Harvest Timestamp**: 2026-11-12T23:41:29.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KMP/CMP GraphQL based conference project with Jetpack Compose Android, Compose for Wear, and Compose Multiplatform Desktop, Web and iOS clients along with GraphQL backend.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1068 stars
+- **Stars / Engagement**: 1067 stars
 
 ---
 
@@ -367,242 +367,333 @@ fun LocalDateTime.Companion.nowAtTimeZone(timeZone: TimeZone) =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e07140d` (2026-11-08)
-**Commit Message**: Livery 1/6: sduiDebug variant and an empty :livery module (#2007)
+### Incident Patch 1: `c2b35310` (2026-11-09)
+**Commit Message**: build: take Livery and rc-players from their BOMs, and group Renovate by project (#2042)
 
-* Add the sduiDebug variant and an empty :livery module
+The compose-ai-tools Renovate rule matched every ee.schimke.composeai artifact,
+so Livery and rc-players updates landed in its PR (#2025 bundled Livery 0.5.0
+and rc-players 2.31.0 with it). Each project now gets its own group: the
+compose-ai-tools rule matches only the preview plugin, preview-annotations
+and the CI actions.
 
-- sduiDebug: debug plus :livery, the one variant that will include Livery (server-driven UI
-  templates per conference). Unit tests run for it too.
-- :livery: an Android library depending on Livery 0.4.0 (livery-client, livery-compose) and
-  :shared. Only sduiDebugImplementation pulls it into the app, so debug, release and the other
-  variants don't ship it; the module builds and tests in its own debug and release.
-- Android CI builds :livery and the sduiDebug app.
+Livery's modules now resolve through livery-bom, with the 'livery' version
+pinning only the BOM and the catalog plugin, so Renovate has one Livery
+update. :livery also takes rc-players-bom, as :livery-catalog does, so the
+app plays templates with the player that captured them. Resolved versions
+are unchanged (Livery 0.8.0, rc-players 2.31.0).
 
-No behaviour change in any variant.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_017xSuvobFYXdQ2QMpahMagX
+Claude-Session: https://claude.ai/code/session_017xSuvnrqtgdck2uPu87WP6
 
-* ci: build sduiDebug in its own step
+Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-Assembling debug, the Wear app, :livery and sduiDebug in one Gradle invocation ran their D8 dex
-merges together, and :wearApp:mergeExtDexDebug hit "OutOfMemoryError: Java heap space" on the
-runner. The sduiDebug and :livery builds now run as a step of their own.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_017xSuvobFYXdQ2QMpahMagX
-
-* fix(test): keep
-
-**File**: `.github/workflows/android_wear_jvm.yml` (modified, +6/-1)
+**File**: `gradle/libs.versions.toml` (modified, +6/-5)
 ```diff
-@@ -44,7 +44,7 @@ jobs:
-         cache-read-only: ${{ github.ref != 'refs/heads/main' }}
- 
-     - name: Wear Unit Tests
--      run: ./gradlew :androidApp:testDebugUnitTest :wearApp:testDebugUnitTest
-+      run: ./gradlew :androidApp:testDebugUnitTest :wearApp:testDebugUnitTest :livery:testDebugUnitTest
- 
-     # Diagnostics for the intermittent "Gradle Test Executor 1 finished with non-zero exit value 1"
-     # crash, which happens before any test reports a result and so leaves nothing in the log.
-@@ -73,6 +73,11 @@ jobs:
-     - name: Build
-       run: ./gradlew :androidApp:assembleDebug :wearApp:assembleDebug
- 
-+    # :livery builds on its own like any library; sduiDebug is the one app variant that includes it.
-+    # A separate invocation: three apps' dex merges in one build ran the runner's 4 GB heap out.
-+    - name: Build sduiDebug
-+      run: ./gradlew :livery:assembleDebug :androidApp:assembleSduiDebug
-+
-   # Launch the app on an emulator and run the Maestro flow shared with the iOS app
-   maestro:
-     runs-on: ubuntu-26.04
-```
-
-**File**: `androidApp/build.gradle.kts` (modified, +23/-0)
-```diff
-@@ -127,6 +127,14 @@ android {
-         getByName("debug") {
-             signingConfig = signingConfigs.getByName("confetti")
-         }
-+        // Server-driven UI: debug plus the :livery module (Livery templates per conference, with
-+        // Confetti's own composables as the fallback). The only variant that includes Livery. Same
-+        // applicationId as debug: google-services.json has no client for a suffixed one.
-+        create("sduiDebug") {
-+            initWith(getByName("debug"))
-+            versionNameSuffix = "-sdui"
-+            matchingFallbacks += listOf("debug")
-+        }
-     }
- 
-     packaging {
-@@ -151,6 +159,14 @@ kotlin {
-     }
- }
- 
-+// No Firebase measurement in unit tests: under Robolectric its background service fails
-+// bytecode verification and can crash the test JVM.
-+configurations.matching { it.name.endsWith("UnitTestRuntimeClasspath") }.configureEach {
-+    exclude(group = "com.google.android.gms", module = "play-services-measurement")
-+    exclude(group = "com.google.android.gms", module = "play-services-measurement-impl")
-+    exclude(group = "com.google.android.gms", module = "play-services-measurement-sdk")
-+}
-+
- dependencies {
-     baselineProfile(project(":androidBenchmark"))
-     implementation(enforcedPlatform(libs.compose.bom))
-@@ -214,6 +230,9 @@ dependencies {
-     testImplementation(libs.roborazzi.rule)
-     testImplementation(libs.coil.test)
-     debugImplementation(libs.compose.ui.manifest)
-+    "sduiDebugImplementation"(libs.compose.ui.manifest)
-+    // Livery, only in the sduiDebug build type: no other variant ships it.
-+    "sduiDebugImplementation"(projects.livery)
- 
-     screenshotTestImplementation(libs.androidx.compose.ui.tooling)
- }
-@@ -226,6 +245,10 @@ baselineProfile {
- // The plugin's profiling builds copy release's signing config, whose keystore isn't checked in.
- // They're only installed on the generator's emulator, so sign them with the committed key.
- androidComponents {
-+    // AGP creates unit tests only for the test build type (debug); sduiDebug's run too.
-+    beforeVariants(selector().withBuildType("sduiDebug")) { variant ->
-+        variant.hostTests[com.android.build.api.variant.HostTestBuilder.UNIT_TEST_TYPE]?.enable = true
-+    }
-     onVariants(selector().withBuildType("nonMinifiedRelease")) {
-         it.signingConfig.setConfig(android.signingConfigs.getByName("confetti"))
-     }
-```
-
-**File**: `gradle/libs.versions.toml` (modified, +3/-0)
-```diff
-@@ -63,9 +63,12 @@ composeai-preview = "2.89.0"
- composeai-preview-annotations = "3.27.3"
- koogAgents = "1.3.0"
- koogPromptExecutorAll = "1.2.0-beta"
-+livery = "0.4.0"
+@@ -68,11 +68,12 @@ rc-players = "2.31.0"
  
  
  [libraries]
-+livery-compose = { module = "ee.schimke.composeai:livery-compose", version.ref = "livery" }
-+livery-client = { module = "ee.schimke.composeai:livery-client", version.ref = "livery" }
- compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
- coil-bom = { module = "io.coil-kt:coil-bom", version.ref = "io-coil-kt" }
- coil3-bom = { module = "io.coil-kt.coil3:coil-bom", version.ref = "io-coil3-kt" }
+-livery-compose = { module = "ee.schimke.composeai:livery-compose", version.ref = "livery" }
+-livery-compose-material3 = { module = "ee.schimke.composeai:livery-compose-material3", version.ref = "livery" }
+-livery-client = { module = "ee.schimke.composeai:livery-client", version.ref = "livery" }
+-livery-render = { module = "ee.schimke.composeai:livery-render", version.ref = "livery" }
+-livery-publish = { module = "ee.schimke.composeai:livery-publish", version.ref = "livery" }
++livery-bom = { module = "ee.schimke.composeai:livery-bom", version.ref = "livery" }
++livery-compose = { module = "ee.schimke.composeai:livery-compose" }
++livery-compose-material3 = { module = "ee.schimke.composeai:livery-compose-material3" }
++livery-client = { module = "ee.schimke.composeai:livery-client" }
++livery-render = { module = "ee.schimke.composeai:livery-render" }
++livery-publish = { module = "ee.schimke.composeai:livery-publish" }
+ rc-players-bom = { module = "ee.schimke.composeai:rc-players-bom", version.ref = "rc-players" }
+ rc-player-compose = { module = "ee.schimke.composeai:rc-player-compose" }
+ rc-remote-creation-compose = { module = "ee.schimke.composeai:third-party-remote-creation-compose" }
 ```
 
-**File**: `livery/README.md` (added, +11/-0)
+**File**: `livery-catalog/build.gradle.kts` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+# :livery
-+
-+Confetti's server-driven UI: each conference's [Livery](https://github.com/yschimke/livery)
-+templates (Remote Compose documents) drawn in place of Confetti's own composables, with those
-+composables as the fallback.
-+
-+- Only the `sduiDebug` build type of `:androidApp` depends on this module
-+  (`sduiDebugImplementation(projects.livery)`). `debug`, `release` and the other variants don't
-+  include it, and draw Confetti's own UI.
-+- The module builds, tests and renders its previews in its own `debug` and `release`, like any
-+  library, so CI covers it without the app variant.
-```
-
-**File**: `livery/build.gradle.kts` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+// Confetti's server-driven UI (Livery: Remote Compose templates per conference). The app depends
-+// on this module only in the sduiDebug build type (androidApp: sduiDebugImplementation), so every
-+// other variant ships without Livery; the module itself builds, tests and previews in its own
-+// debug and release like any library. See livery/README.md.
-+plugins {
-+    id("com.android.library")
-+    alias(libs.plugins.compose.compiler)
-+}
-+
-+configureCompilerOptions()
-+
-+android {
-+    compileSdk = AndroidSdk.compile
-+    defaultConfig {
-+        minSdk = AndroidSdk.min
-+    }
-+
-+    testOptions {
-+        unitTests {
-+            isIncludeAndroidResources = true
-+        }
-+    }
-+
-+    compileOptions {
-+        isCoreLibraryDesugaringEnabled = true
-+    }
-+
-+    buildFeatures {
-+        compose = true
-+    }
-+
-+    namespace = "dev.johnoreilly.confetti.livery"
-+}
-+
-+dependencies {
-+    implementation(enforcedPlatform(libs.compose.bom))
-+    implementation(projects.shared)
-+    implementation(libs.livery.client)
-+    implementation(libs.livery.compose)
-+
-+    coreLibraryDesugaring(libs.desugar)
-+}
-```
-
-**File**: `livery/src/main/kotlin/dev/johnoreilly/confetti/livery/Livery.kt` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+package dev.johnoreilly.confetti.livery
-+
-+/** Confetti's Livery integration; only the app's sduiDebug build type includes this module. */
-+internal object Livery
-```
-
-**File**: `settings.gradle.kts` (modified, +1/-0)
-```diff
-@@ -119,6 +119,7 @@ include(":wearBenchmark")
- include(":compose-desktop")
- include(":compose-web")
- include(":proto")
-+include(":livery")
+@@ -36,6 +36,7 @@ dependencies {
+     // Playing back (previews, tests): the Compose player and Livery's contract binding.
+     implementation(libs.rc.player.compose)
+     implementation(projects.liveryContracts)
++    implementation(platform(libs.livery.bom))
+     implementation(libs.livery.compose)
+     implementation(libs.livery.render)
+     implementation(libs.livery.compose.material3)
+@@ -47,6 +48,7 @@ dependencies {
+     implementation(libs.kotlinx.serialization)
  
- check(JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
-     "This project needs to be run with Java 17 or higher (found: ${JavaVersion.current()})."
+     testImplementation(kotlin("test"))
++    testImplementation(platform(libs.livery.bom))
+     testImplementation(libs.livery.client)
+ }
+ 
+@@ -92,6 +94,7 @@ tasks.register<JavaExec>("renderLiveryCatalog") {
+ val liveryCli: Configuration by configurations.creating
+ 
+ dependencies {
++    liveryCli(platform(libs.livery.bom))
+     liveryCli(libs.livery.publish)
+ }
+ 
+```
+
+**File**: `livery/build.gradle.kts` (modified, +4/-0)
+```diff
+@@ -49,6 +49,10 @@ dependencies {
+     implementation(enforcedPlatform(libs.compose.bom))
+     implementation(projects.shared)
+     implementation(projects.liveryContracts)
++    // Livery and the Remote Compose players come from their BOMs, the same ones :livery-catalog
++    // captures the templates with, so the app plays a document with the player it was made for.
++    implementation(platform(libs.livery.bom))
++    implementation(platform(libs.rc.players.bom))
+     implementation(libs.livery.client)
+     implementation(libs.livery.compose) {
+         // rc-player-compose declares Ktor's CIO engine but never uses it; beside OkHttp it would
+```
+
+**File**: `renovate.json` (modified, +24/-2)
+```diff
+@@ -19,16 +19,38 @@
+       "groupName": "github actions"
+     },
+     {
+-      "description": "compose-ai-tools ships the preview CLI, the ee.schimke.composeai Gradle plugin, and the reusable CI composite actions as a single release, and this repo pins BOTH halves: the composeai-preview catalog key and the versioned action refs in design-artifacts.yml / compose-preview.yml. Without this rule they are separate updates and land in separate PRs, so the CLI and the action code that drives it skew apart between merges. Group them into one PR and skip the batching window so the published catalog tracks the renderer it was rendered with.",
++      "description": "compose-ai-tools ships the preview CLI, the ee.schimke.composeai.preview Gradle plugin, preview-annotations and the reusable CI composite actions as one release, and this repo pins BOTH halves: the composeai-preview catalog key and the versioned action refs in the compose-preview workflows and design-artifacts.yml. Group them into one PR and skip the batching window so the CLI and the action code that drives it never skew. Only compose-ai-tools' own artifacts: Livery and rc-players also publish under ee.schimke.composeai but are separate projects with their own releases and rules below.",
+       "matchPackageNames": [
+         "yschimke/compose-ai-tools",
+-        "/^ee\\.schimke\\.composeai($|[.:])/"
++        "/^ee\\.schimke\\.composeai\\.preview($|[.:])/",
++        "ee.schimke.composeai:preview-annotations"
+       ],
+       "groupName": "compose-ai-tools",
+       "schedule": [
+         "at any time"
+       ]
+     },
++    {
++      "description": "Livery is versioned through its BOM (livery-bom), which pins every Livery module, livery-publish and the Gradle plugin's jar included; the catalog declares the modules without versions. The `livery` version ref also pins the ee.schimke.composeai.livery.catalog plugin, which a BOM can't cover, so group the BOM and the plugin marker into one PR.",
++      "matchPackageNames": [
++        "ee.schimke.composeai:livery-bom",
++        "/^ee\\.schimke\\.composeai\\.livery\\./"
++      ],
++      "groupName": "livery",
++      "schedule": [
++        "at any time"
++      ]
++    },
++    {
++      "description": "The Remote Compose players (rc-player-*, the vendored AndroidX creation fork) are versioned only through rc-players-bom; the catalog declares the modules without versions, so the BOM is the one update.",
++      "matchPackageNames": [
++        "ee.schimke.composeai:rc-players-bom"
++      ],
++      "groupName": "rc-players",
++      "schedule": [
++        "at any time"
++      ]
++    },
+     {
+       "description": "Every com.squareup.okhttp3 artifact is published from one release and only supports being used at a matching version — okhttp, okhttp-coroutines and logging-interceptor all sit on the same classpath in backend/service-import. Renovate's monorepo data does not group them from Maven metadata alone, so v5.5.0 arrived as three independent PRs, each of which skews the classpath until the last one merges. The catalog now shares one `okhttp` version ref, which groups the declared entries; this rule keeps the guarantee for any okhttp3 artifact declared outside the catalog.",
+       "matchPackageNames": [
 ```
 
 ---
 
-### Incident Patch 2: `c4369145` (2026-11-07)
-**Commit Message**: Update dependency androidx.test.uiautomator:uiautomator to v2.4.1 (#1991)
+### Incident Patch 2: `5af86040` (2026-11-10)
+**Commit Message**: build(livery): capture the catalogs with Livery 0.9.0's Gradle plugin (#2050)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Livery 0.9.0's catalog plugin captures a catalog from Kotlin at build time
+(livery { capture { } }), so :livery:catalog drops its own generateLiveryCatalog
+JavaExec: captureLiveryCatalog runs GenerateCatalog's main, cached on the
+module's code and the hand-edited catalogs/, into build/livery/captured/<series>.
+The channel builds and :livery:android's bundled catalogs read from there.
+
+
+Claude-Session: https://claude.ai/code/session_017xSuvnrqtgdck2uPu87WP6
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 **File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -235,7 +235,7 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
- room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
- splash-screen = "androidx.core:core-splashscreen:1.2.0"
- test-espressocore = "androidx.test.espresso:espresso-core:3.7.0"
--test-uiautomator = "androidx.test.uiautomator:uiautomator:2.4.0"
-+test-uiautomator = "androidx.test.uiautomator:uiautomator:2.4.1"
- wear-complications-data = { module = "androidx.wear.watchface:watchface-complications-data-source-ktx", version.ref = "wear-watchface"}
- wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "wear-compose"}
- xoxo = "net.mbonnin.xoxo:xoxo:0.4.0"
+@@ -63,7 +63,7 @@ composeai-preview = "2.89.0"
+ composeai-preview-annotations = "3.27.4"
+ koogAgents = "1.3.0"
+ koogPromptExecutorAll = "1.2.0-beta"
+-livery = "0.8.0"
++livery = "0.9.0"
+ rc-players = "2.31.1"
+ 
+ 
+```
+
+**File**: `livery/android/build.gradle.kts` (modified, +3/-3)
+```diff
+@@ -83,18 +83,18 @@ dependencies {
+ }
+ 
+ // Each series catalog (confetti, the base, and any conference's), generated from the Kotlin designs
+-// at build time by :livery:catalog:generateLiveryCatalog and built and checked like
++// at build time by :livery:catalog:captureLiveryCatalog and built and checked like
+ // `livery build --inspect` into this module's assets at livery/<series>/, where
+ // AndroidBundled.fromAssets(context, "livery/<series>") reads it back. The bundled copy has serial 0,
+ // so a catalog the app downloads (the livery-templates branch) always replaces it.
+ val liveryCatalogs = rootProject.layout.projectDirectory.dir("livery/catalog/catalogs").asFile
+     .listFiles { f -> f.isDirectory }.orEmpty().map { it.name }.sorted()
+-val generatedLiveryCatalogs = rootProject.layout.projectDirectory.dir("livery/catalog/build/livery/catalogs")
++val generatedLiveryCatalogs = rootProject.layout.projectDirectory.dir("livery/catalog/build/livery/captured")
+ val liveryCatalogTasks = liveryCatalogs.map { series ->
+     tasks.register<ee.schimke.livery.gradle.BuildLiveryCatalog>("buildLiveryCatalog${series.replaceFirstChar { it.uppercase() }}") {
+         group = "build"
+         description = "Builds the $series Livery catalog into generated assets"
+-        dependsOn(":livery:catalog:generateLiveryCatalog")
++        dependsOn(":livery:catalog:captureLiveryCatalog")
+         source.set(generatedLiveryCatalogs.dir(series))
+         assetsPath.set("livery/$series")
+         inspect.set(true)
+```
+
+**File**: `livery/catalog/README.md` (modified, +5/-5)
+```diff
+@@ -10,7 +10,7 @@ tonal Material cards), which every conference without designs of its own draws;
+ a gradient that drifts on the player's clock).
+ 
+ **The source is always Kotlin.** Every design is a `@RemoteComposable` function in
+-`livery/catalog/src/main`; a `.rc` document is build output (`build/livery/catalogs/`, and the
++`livery/catalog/src/main`; a `.rc` document is build output (`build/livery/captured/`, and the
+ APK's bundled catalogs) or lives on the `livery-templates` branch the workflow publishes. Neither
+ `.rc` files nor renders are committed: a design change in a pull request is a Kotlin diff, and its
+ pictures are the preview renders (below, from the `livery-templates` branch).
+@@ -74,7 +74,7 @@ livery/contracts/   Contracts.kt: the four contracts, typed (KMP: Android, iOS,
+         │                     remote-creation-compose), captured to .rc on the JVM at build time
+         │       └── catalogs/<series>/  each series' hand-edited data only: themes, placements,
+         │                     experiments, fonts. The build adds the captured designs and
+-        │                     contracts in build/livery/catalogs/<series>/, what `livery build`
++        │                     contracts in build/livery/captured/<series>/, what `livery build`
+         │                     publishes to the livery-templates branch
+         │
+         ├── shared/ui/components  ConferenceComponents: what the screens draw a conference's
+@@ -91,7 +91,7 @@ livery/contracts/   Contracts.kt: the four contracts, typed (KMP: Android, iOS,
+ ```
+ 
+ ```bash
+-./gradlew :livery:catalog:generateLiveryCatalog   # capture designs -> build/livery/catalogs/<series>/ (cached)
++./gradlew :livery:catalog:captureLiveryCatalog    # capture designs -> build/livery/captured/<series>/ (cached)
+ ./gradlew :livery:catalog:renderLiveryCatalog     # preview renders -> build/livery/renders/
+ ./gradlew :livery:catalog:test                    # contract checks on the generated catalogs
+ ./gradlew :livery:catalog:buildLiveryChannels     # livery build --inspect per series -> build/livery-channels/
+@@ -178,8 +178,8 @@ conference admin would be:
+    header say Berlin and use the blue from the venue"). The app sends it with the slot's
+    design id, contract and current data to an agent session.
+ 2. The agent works on the generated catalog through `livery-mcp` (`livery-mcp
+-   livery/catalog/build/livery/catalogs/droidcon --preview-out …`, after
+-   `:livery:catalog:generateLiveryCatalog`): `get_contract` for what it may use; data-only changes
++   livery/catalog/build/livery/captured/droidcon --preview-out …`, after
++   `:livery:catalog:captureLiveryCatalog`): `get_contract` for what it may use; data-only changes
+    (copy, a theme pack's colours, a placement's schedule) are edits to the hand-edited JSON in
+    `catalogs/droidcon/`, checked by `validate_data`; a layout change edits the design's Kotlin and
+    is re-captured. `render_preview` shows the result. Either way the change it proposes is source:
+```
+
+**File**: `livery/catalog/build.gradle.kts` (modified, +14/-17)
+```diff
+@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+ // (themes/, placements/, experiments/, fonts/).
+ //
+ //   ./gradlew :livery:catalog:test                     captures every template and checks it plays
+-//   ./gradlew :livery:catalog:generateLiveryCatalog    each series' catalog into build/livery/catalogs/<series>/
++//   ./gradlew :livery:catalog:captureLiveryCatalog     each series' catalog into build/livery/captured/<series>/
+ //   ./gradlew :livery:catalog:renderLiveryCatalog      the previews into build/livery/renders/
+ //   ./gradlew :livery:catalog:buildLiveryChannels      `livery build --inspect` of each series into
+ //                                                     build/livery-channels/<series>/, what the
+@@ -18,6 +18,7 @@ plugins {
+     kotlin("jvm")
+     id("org.jetbrains.compose")
+     alias(libs.plugins.compose.compiler)
++    alias(libs.plugins.livery.catalog)
+ }
+ 
+ kotlin {
+@@ -53,23 +54,19 @@ dependencies {
+ }
+ 
+ // One catalog per conference series: catalogs/confetti (the base), and one per conference. Only the
+-// hand-edited data is here; the generated catalogs are in build/livery/catalogs.
++// hand-edited data is here. Livery's plugin captures the designs (captureLiveryCatalog: GenerateCatalog's
++// main, cached on this module's code and the hand-edited data) into build/livery/captured/<series>.
+ val catalogsDir = layout.projectDirectory.dir("catalogs")
+-val generatedCatalogsDir = layout.buildDirectory.dir("livery/catalogs")
+ 
+-val generateLiveryCatalog = tasks.register<JavaExec>("generateLiveryCatalog") {
+-    group = "livery"
+-    description = "Captures every Confetti design to .rc, with each series' data, into build/livery/catalogs/<series>/."
+-    classpath = sourceSets["main"].runtimeClasspath
+-    mainClass.set("dev.johnoreilly.confetti.livery.GenerateCatalogKt")
+-    // Locals, not the script's vals: the configuration cache can't serialize script references.
+-    val source = catalogsDir.asFile.absolutePath
+-    val out = generatedCatalogsDir
+-    inputs.dir(catalogsDir)
+-    outputs.dir(out)
+-    outputs.cacheIf { true }
+-    argumentProviders.add(CommandLineArgumentProvider { listOf(source, out.get().asFile.absolutePath) })
++livery {
++    source.set(catalogsDir)
++    capture { mainClass.set("dev.johnoreilly.confetti.livery.GenerateCatalogKt") }
+ }
++val capturedCatalogsDir = livery.capture.outputDir
++
++// The plugin's own buildLiveryCatalog builds one catalog; this module captures one per series, which
++// buildLiveryChannels here and :livery:android's buildLiveryCatalog<Series> build.
++tasks.named("buildLiveryCatalog") { enabled = false }
+ 
+ tasks.register<JavaExec>("renderLiveryCatalog") {
+     group = "livery"
+@@ -110,9 +107,9 @@ catalogsDir.asFile.listFiles { f -> f.isDirectory }.orEmpty().map { it.name }.so
+         group = "livery"
+         classpath = liveryCli
+         mainClass.set("ee.schimke.livery.publisher.MainKt")
+-        val src = generatedCatalogsDir.map { it.dir(series) }
++        val src = capturedCatalogsDir.map { it.dir(series) }
+         val out = channelsDir.map { it.dir(series) }
+-        dependsOn(generateLiveryCatalog)
++        dependsOn("captureLiveryCatalog")
+         inputs.dir(src)
+         outputs.dir(out)
+         // --serial: the commit time when CI passes it, so a rebuild of the same commit is the same
+```
+
+**File**: `livery/catalog/src/main/kotlin/dev/johnoreilly/confetti/livery/GenerateCatalog.kt` (modified, +1/-1)
+```diff
+@@ -193,7 +193,7 @@ private fun JsonElement.pretty() = json.encodeToString(JsonElement.serializer(),
+  */
+ fun main(args: Array<String>) {
+     val source = File(args.getOrElse(0) { "livery/catalog/catalogs" })
+-    val out = File(args.getOrElse(1) { "livery/catalog/build/livery/catalogs" })
++    val out = File(args.getOrElse(1) { "livery/catalog/build/livery/captured" })
+     val renders = args.getOrNull(2)?.let(::File)
+     for (brand in AllBrands) {
+         val catalog = out.resolve(brand.series)
+```
+
+**File**: `livery/catalog/src/test/kotlin/dev/johnoreilly/confetti/livery/CatalogTest.kt` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
+  * The contract is enforced at three points: Kotlin types (designs and the app use Contracts.kt),
+  * capture (a template can only read and emit what its contract declares), and here: each series'
+  * generated catalog holds its own designs and passes the checks the Livery publisher can't make.
+- * The catalogs are build output (`:livery:catalog:generateLiveryCatalog`), never committed.
++ * The catalogs are build output (`:livery:catalog:captureLiveryCatalog`), never committed.
+  */
+ class CatalogTest {
+     private val root = File("catalogs")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2027** (2026-11-08): Livery 2a/8: draw conference components through a ConferenceComponents context (@yschimke)
-- **PR #2026** (2026-11-08): CI: retry the Maestro download and fail fast if it doesn't install (@joreilly)
-- **PR #2020** (2026-11-08): Batch Renovate updates (@joreilly)
-- **PR #2019** (2026-11-07): Unblock Backend Deploy: let today's graphiql release through pnpm's age check (@joreilly)
-- **PR #2018** (closed): Update actions/setup-python action to v7 (@renovate[bot])
-- **PR #2017** (closed): Update actions/github-script action to v9 (@renovate[bot])
+- **PR #2063** (2026-11-12): Add AppFunctions displayDescription so Play accepts the bundle (@joreilly)
+- **PR #2059** (closed): ci: benchmark the Compose preview edit → render loop (@yschimke)
+- **PR #2055** (2026-11-11): feat(livery): the top bar's title as a server-driven design (@yschimke)
+- **PR #2054** (2026-11-10): feat(livery): agenda breaks as a contract of their own, with a design per series (@yschimke)
+- **PR #2052** (2026-11-10): Update dependency ee.schimke.composeai:rc-players-bom to v2.32.0 (@renovate[bot])
+- **PR #2050** (2026-11-10): build(livery): capture the catalogs with Livery 0.9.0's Gradle plugin (@yschimke)
 
 ---
 
@@ -622,33 +713,37 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Livery 1/6: sduiDebug variant and an empty :livery module (#2007)
+## X. build: take Livery and rc-players from their BOMs, and group Renovate by project
 
 **RULE**:
-When implementing operations in `.github/workflows/android_wear_jvm.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e07140d`: Livery 1/6: sduiDebug variant and an empty :livery module (#2007). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2b35310`: build: take Livery and rc-players from their BOMs, and group Renovate by project (#2042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/android_wear_jvm.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-      run: ./gradlew :androidApp:testDebugUnitTest :wearApp:testDebugUnitTest :livery:testDebugUnitTest
-    # :livery builds on its own like any library; sduiDebug is the one app variant that includes it.
-    # A separate invocation: three apps' dex merges in one build ran the runner's 4 GB heap out.
-    - name: Build sduiDebug
-      run: ./gradlew :livery:assembleDebug :androidApp:assembleSduiDebug
-
+livery-bom = { module = "ee.schimke.composeai:livery-bom", version.ref = "livery" }
+livery-compose = { module = "ee.schimke.composeai:livery-compose" }
+livery-compose-material3 = { module = "ee.schimke.composeai:livery-compose-material3" }
+livery-client = { module = "ee.schimke.composeai:livery-client" }
+livery-render = { module = "ee.schimke.composeai:livery-render" }
+livery-publish = { module = "ee.schimke.composeai:livery-publish" }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-      run: ./gradlew :androidApp:testDebugUnitTest :wearApp:testDebugUnitTest
+livery-compose = { module = "ee.schimke.composeai:livery-compose", version.ref = "livery" }
+livery-compose-material3 = { module = "ee.schimke.composeai:livery-compose-material3", version.ref = "livery" }
+livery-client = { module = "ee.schimke.composeai:livery-client", version.ref = "livery" }
+livery-render = { module = "ee.schimke.composeai:livery-render", version.ref = "livery" }
+livery-publish = { module = "ee.schimke.composeai:livery-publish", version.ref = "livery" }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e07140d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2b35310` are properly handled with clean fallback behavior.

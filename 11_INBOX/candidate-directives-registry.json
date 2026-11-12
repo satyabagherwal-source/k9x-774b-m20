@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:29:06.404Z",
+  "last_updated": "2026-11-12T23:42:22.331Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7562,6 +7562,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-005D51-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-25D4D4",
+      "directive_title": "🐛 Fix synchronous dependency cleanup on cancellation (#16734)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tiangolo-fastapi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-25D4D4--fix-synchronous-dependency-cleanup-on-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-3947D8",
+      "directive_title": "build: take Livery and rc-players from their BOMs, and group Renovate by project",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "joreilly-confetti",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3947D8-build-take-livery-and-rc-players-from-th.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-65315E",
+      "directive_title": "Validate network size aganist allowed devices only (#4038)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "defguard-defguard",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-65315E-validate-network-size-aganist-allowed-de.md",
       "staged_date": "2026-11-12"
     }
   ]

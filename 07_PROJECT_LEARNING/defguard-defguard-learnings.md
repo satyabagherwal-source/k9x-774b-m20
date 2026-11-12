@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `e17756e7`  
+> **Source Version**: `eaec0e89`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:40:43.126Z  
+> **Timestamp**: 2026-11-12T23:41:34.346Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:40:43.121Z  
+> **Harvest Timestamp**: 2026-11-12T23:41:34.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2899 stars
+- **Stars / Engagement**: 2915 stars
 
 ---
 
@@ -2024,309 +2024,244 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ddbf7f3` (2026-10-23)
-**Commit Message**: Update dependency vitest to v4.1.11 [SECURITY] (#3936)
+### Incident Patch 1: `eaec0e89` (2026-11-12)
+**Commit Message**: Validate network size aganist allowed devices only (#4038)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `web/package.json` (modified, +1/-1)
+**File**: `crates/defguard_common/src/db/models/wireguard.rs` (modified, +15/-4)
 ```diff
-@@ -88,6 +88,6 @@
-     "typescript": "~6.0.3",
-     "vite": "^8.3.4",
-     "vite-plugin-image-optimizer": "^2.0.3",
--    "vitest": "4.1.9"
-+    "vitest": "4.1.11"
-   }
- }
+@@ -182,8 +182,13 @@ impl fmt::Debug for WireguardNetwork<Id> {
+ 
+ #[derive(Debug, Error)]
+ pub enum WireguardNetworkError {
+-    #[error("Network address space cannot fit all devices")]
+-    NetworkTooSmall,
++    #[error(
++        "The network is too small to accommodate all devices allowed in this location (network capacity: {network_size}, devices: {device_count}). Use a larger network or change allowed groups."
++    )]
++    NetworkTooSmall {
++        network_size: usize,
++        device_count: usize,
++    },
+     #[error(transparent)]
+     IpNetworkError(#[from] IpNetworkError),
+     #[error("Database error")]
+@@ -329,14 +334,20 @@ impl<I> WireguardNetwork<I> {
+                     // +3: network address, broadcast address, gateway
+                     let count = (device_count + 3) as u32;
+                     if count > size {
+-                        return Err(WireguardNetworkError::NetworkTooSmall);
++                        return Err(WireguardNetworkError::NetworkTooSmall {
++                            network_size: size.saturating_sub(3) as usize,
++                            device_count,
++                        });
+                     }
+                 }
+                 NetworkSize::V6(size) => {
+                     // +2: network address, gateway (IPv6 has no broadcast)
+                     let count = (device_count + 2) as u128;
+                     if count > size {
+-                        return Err(WireguardNetworkError::NetworkTooSmall);
++                        return Err(WireguardNetworkError::NetworkTooSmall {
++                            network_size: size.saturating_sub(2) as usize,
++                            device_count,
++                        });
+                     }
+                 }
+             }
 ```
 
-**File**: `web/pnpm-lock.yaml` (modified, +59/-43)
+**File**: `crates/defguard_core/src/error.rs` (modified, +1/-1)
 ```diff
-@@ -283,7 +283,7 @@ importers:
-         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       '@vitest/ui':
-         specifier: 4.1.9
--        version: 4.1.9(vitest@4.1.9)
-+        version: 4.1.9(vitest@4.1.11)
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.1(postcss@8.5.31)
-@@ -321,8 +321,8 @@ importers:
-         specifier: ^2.0.3
-         version: 2.0.3(sharp@0.35.5(@types/node@26.6.5))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       vitest:
--        specifier: 4.1.9
--        version: 4.1.9(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-+        specifier: 4.1.11
-+        version: 4.1.11(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
- 
- packages:
- 
-@@ -1842,11 +1842,11 @@ packages:
-       oxc-transform-react:
-         optional: true
- 
--  '@vitest/expect@4.1.9':
--    resolution: {integrity: sha512-vl/rYsUKcBr3SnQn166+XR5ZQcgMx3DQhFWdfli/cWpLnLUmbxZvyrJZotLFUryib+LtArYMSTJ5RbQ57ZqrlA==}
-+  '@vitest/expect@4.1.11':
-+    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
- 
--  '@vitest/mocker@4.1.9':
--    resolution: {integrity: sha512-EVkXzBjrPGM+cK8/ANWgBrkUCfJfb38/EfTSO8h7pWvKkyPkpWxvR7BkD2MyItMF62C97zAEoqdpUixwR/e+Rw==}
-+  '@vitest/mocker@4.1.11':
-+    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
-     peerDependencies:
-       msw: ^2.4.9
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -1856,23 +1856,29 @@ packages:
-       vite:
-         optional: true
- 
-+  '@vitest/pretty-format@4.1.11':
-+    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
-+
-   '@vitest/pretty-format@4.1.9':
-     resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
- 
--  '@vitest/runner@4.1.9':
--    resolution: {integrity: sha512-KXLMDtc7oe70+3mJfGrPUWPesswH+3sTxAMAMl8DG7I8IUQT4XW718dY5ID3vPUcmlu27CcKfY4P3h3I29SLJg==}
-+  '@vitest/runner@4.1.11':
-+    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
- 
--  '@vitest/snapshot@4.1.9':
--    resolution: {integrity: sha512-Jc7RKGNBo8Z28WYIm0Niej4xdSPByRf6mU58VpHQkd6Zh05rlnA+twjbK5HyeIGHxrzsc3mJgS43uM0CZKzaIA==}
-+  '@vitest/snapshot@4.1.11':
-+    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
- 
--  '@vitest/spy@4.1.9':
--    resolution: {integrity: sha512-fHpsS6mIi+PiEW+vcRVOMkX1oSaPKne3VOclSFICPcGOmfKgXPU5iAah+wcNcj2xPrCCmfq99IDGf+EojhhvhA==}
-+  '@vitest/spy@4.1.11':
-+    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
- 
-   '@vitest/ui@4.1.9':
-     resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
-     peerDependencies:
-       vitest: 4.1.9
- 
-+  '@vitest/utils@4.1.11':
-+    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
-+
-   '@vitest/utils@4.1.9':
-     resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
- 
-@@ -3591,20 +3597,20 @@ packages:
-       yaml:
-         optional: true
- 
--  vitest@4.1.9:
--    resolution: {integrity: sha512-nE3/LEyc0z87uHYLZebqCUOaJr2hdtuPp7BQ4BosVFnfltxgAvMG08NyrSGlPpOUWvR27c5flSmYFTNr78L9GQ==}
-+  vitest@4.1.11:
-+    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
-     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
-     hasBin: true
-     peerDependencies:
-       '@edge-runtime/vm': '*'
-       '@opentelemetry/api': ^1.9.0
-       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
--      '@vitest/browser-playwright': 4.1.9
--      '@vitest/browser-preview': 4.1.9
--      '@vitest/browser-webdriverio': 4.1.9
--      '@vitest/coverage-istanbul': 4.1.9
--      '@vitest/coverage-v8': 4.1.9
--      '@vitest/ui': 4.1.9
-+      '@vitest/browser-playwright': 4.1.11
-+      '@vitest/browser-preview': 4.1.11
-+      '@vitest/browser-webdriverio': 4.1.11
-+      '@vitest/coverage-istanbul': 4.1.11
-+      '@vitest/coverage-v8': 4.1.11
-+      '@vitest/ui': 4.1.11
-       happy-dom: '*'
-       jsdom: '*'
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -5035,42 +5041,46 @@ snapshots:
-       '@rolldown/pluginutils': 1.0.1
-       vite: 8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2)
- 
--  '@vitest/expect@4.1.9':
-+  '@vitest/expect@4.1.11':
-     dependencies:
-       '@standard-schema/spec': 1.1.0
-       '@types/chai': 5.2.3
--      '@vitest/spy': 4.1.9
--      '@vitest/utils': 4.1.9
-+      '@vitest/spy': 4.1.11
-+      '@vitest/utils': 4.1.11
-       chai:
+@@ -172,7 +172,7 @@ impl From<DeviceError> for WebError {
+ impl From<WireguardNetworkError> for WebError {
+     fn from(error: WireguardNetworkError) -> Self {
+         match error {
+-            WireguardNetworkError::NetworkTooSmall
++            WireguardNetworkError::NetworkTooSmall { .. }
+             | WireguardNetworkError::IpNetworkError(_)
+             | WireguardNetworkError::InvalidDevicePubkey(_) => Self::BadRequest(error.to_string()),
+             WireguardNetworkError::DbError(_)
 ```
 
-**File**: `web/pnpm-workspace.yaml` (modified, +3/-0)
+**File**: `crates/defguard_core/src/handlers/wireguard.rs` (modified, +3/-0)
 ```diff
-@@ -15,3 +15,6 @@ onlyBuiltDependencies:
-   - '@swc/core'
-   - esbuild
-   - sharp
-+minimumReleaseAgeExclude:
-+  # Renovate security update: vitest@4.1.11
-+  - vitest@4.1.11
+@@ -428,6 +428,9 @@ pub(crate) async fn create_network(
+         save_group_client_mtus(&network, &mut transaction, overrides).await?;
+     }
+ 
++    let allowed_devices = network.get_allowed_devices(&mut transaction).await?;
++    network.validate_network_size(allowed_devices.len())?;
++
+     // generate IP addresses for existing devices
+     network.add_all_allowed_devices(&mut transaction).await?;
+     info!("Assigning IPs for existing devices in network {network}");
 ```
 
----
-
-### Incident Patch 2: `d76aa308` (2026-10-28)
-**Commit Message**: fix cargo deny (#3971)
-
-**File**: `Cargo.lock` (modified, +3/-3)
+**File**: `web/src/pages/AddLocationPage/steps/AddLocationFirewallStep.tsx` (modified, +7/-0)
 ```diff
-@@ -1278,7 +1278,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
- dependencies = [
-  "quote",
-- "syn 3.0.9",
-+ "syn 2.0.119",
- ]
+@@ -1,9 +1,11 @@
+ import { useMutation, useQuery } from '@tanstack/react-query';
+ import { useNavigate } from '@tanstack/react-router';
++import type { AxiosError } from 'axios';
+ import { cloneDeep, omit } from 'lodash-es';
+ import { useCallback, useMemo, useState } from 'react';
+ import { m } from '../../../paraglide/messages';
+ import api from '../../../shared/api/api';
++import type { ApiError } from '../../../shared/api/types';
+ import { ActionCard } from '../../../shared/components/ActionCard/ActionCard';
+ import { Controls } from '../../../shared/components/Controls/Controls';
+ import { WizardCard } from '../../../shared/components/wizard/WizardCard/WizardCard';
+@@ -13,6 +15,7 @@ import { Checkbox } from '../../../shared/defguard-ui/components/Checkbox/Checkb
+ import { Divider } from '../../../shared/defguard-ui/components/Divider/Divider';
+ import { Radio } from '../../../shared/defguard-ui/components/Radio/Radio';
+ import { SizedBox } from '../../../shared/defguard-ui/components/SizedBox/SizedBox';
++import { Snackbar } from '../../../shared/defguard-ui/providers/snackbar/snackbar';
+ import { ThemeSpacing } from '../../../shared/defguard-ui/types';
+ import { isPresent } from '../../../shared/defguard-ui/utils/isPresent';
+ import { getLicenseInfoQueryOptions } from '../../../shared/query';
+@@ -58,6 +61,10 @@ export const AddLocationFirewallStep = () => {
+         });
+       }
+     },
++    onError: (error: AxiosError<ApiError>) => {
++      const msg = error.response?.status === 400 ? error.response.data?.msg : undefined;
++      Snackbar.error(msg ?? m.error_unknown());
++    },
+   });
  
- [[package]]
-@@ -5137,9 +5137,9 @@ dependencies = [
- 
- [[package]]
- name = "pulldown-cmark"
--version = "0.13.4"
-+version = "0.13.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
-+checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
- dependencies = [
-  "bitflags 2.13.2",
-  "getopts",
+   const saveChanges = useCallback((value: Choice) => {
 ```
 
----
-
-### Incident Patch 3: `38f81762` (2026-10-26)
-**Commit Message**: Fix 403 error after user switch (#3953)
-
-**File**: `web/src/pages/user-profile/UserProfilePage/UserProfilePage.tsx` (modified, +5/-1)
+**File**: `web/src/pages/AddLocationPage/steps/AddLocationInternalVpnStep.tsx` (modified, +0/-17)
 ```diff
-@@ -32,6 +32,7 @@ const defaultTab = UserProfileTab.Details;
- export const UserProfilePage = () => {
-   const navigate = useNavigate();
-   const authUsername = useAuth((s) => s.user?.username as string);
-+  const isAdmin = useAuth((s) => s.isAdmin);
-   const search = useSearch({ from: '/_authorized/_default/user/$username' });
-   const activeTab = search.tab ?? defaultTab;
+@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
+ import z from 'zod';
+ import { useShallow } from 'zustand/react/shallow';
+ import { m } from '../../../paraglide/messages';
+-import api from '../../../shared/api/api';
+ import { LicenseFeature } from '../../../shared/api/types';
+ import { Controls } from '../../../shared/components/Controls/Controls';
+ import { DescriptionBlock } from '../../../shared/components/DescriptionBlock/DescriptionBlock';
+@@ -11,14 +10,12 @@ import { externalLink } from '../../../shared/constants';
+ import { Button } from '../../../shared/defguard-ui/components/Button/Button';
+ import { Helper } from '../../../shared/defguard-ui/components/Helper/Helper';
+ import { SizedBox } from '../../../shared/defguard-ui/components/SizedBox/SizedBox';
+-import { Snackbar } from '../../../shared/defguard-ui/providers/snackbar/snackbar';
+ import { ThemeSpacing } from '../../../shared/defguard-ui/types';
+ import { isPresent } from '../../../shared/defguard-ui/utils/isPresent';
+ import { useAppForm } from '../../../shared/form';
+ import { formChangeLogic } from '../../../shared/formLogic';
+ import { getLicenseInfoQueryOptions } from '../../../shared/query';
+ import { canUseEnterpriseFeature } from '../../../shared/utils/license';
+-import { smallestNetworkCapacity } from '../../../shared/utils/network';
+ import { Validate } from '../../../shared/validate';
+ import { AddLocationPageStep } from '../types';
+ import { useAddLocationStore } from '../useAddLocationStore';
+@@ -75,12 +72,6 @@ export const AddLocationInternalVpnStep = () => {
+     LicenseFeature.AclAllowedIps,
+   ).result;
  
-@@ -46,7 +47,10 @@ export const UserProfilePage = () => {
- 
-   const { data: userProfile } = useSuspenseQuery(userProfileQueryOptions(username));
-   const { data: userAuthKeys } = useSuspenseQuery(getUserAuthKeysQueryOptions(username));
--  const { data: licenseInfo } = useQuery(getLicenseInfoQueryOptions);
-+  const { data: licenseInfo } = useQuery({
-+    ...getLicenseInfoQueryOptions,
-+    enabled: isAdmin,
-+  });
- 
-   const apiTokensTabAvailability = useMemo((): ApiTokensTabAvailabilityValue => {
-     if (!userProfile.user.is_admin) {
+-  const { data: devices } = useQuery({
+-    queryKey: ['device', 'all'],
+-    queryFn: api.device.getDevices,
+-    select: (resp) => resp.data,
+-  });
+-
+   const defaultValues = useAddLocationStore(
+     useShallow((s) => ({
+       allowed_ips: s.allowed_ips,
+@@ -100,14 +91,6 @@ export const AddLocationInternalVpnStep = () => {
+       onChange: formSchema,
+     },
+     onSubmit: ({ value }) => {
+-      const deviceCount = Array.isArray(devices) ? devices.length : 0;
+-      const network_size = smallestNetworkCapacity(value.address);
+-      if (deviceCount > network_size) {
+-        Snackbar.error(
+-          m.location_error_network_too_small({ network_size, device_count: deviceCount }),
+-        );
+-        return;
+-      }
+       useAddLocationStore.setState({
+         ...value,
+         allowed_ips: value.allowed_ips.join(','),
 ```
 
-**File**: `web/src/routes/auth.tsx` (modified, +2/-1)
+**File**: `web/src/pages/EditLocationPage/EditLocationPage.tsx` (modified, +5/-18)
 ```diff
-@@ -6,7 +6,7 @@ import api from '../shared/api/api';
- import { ActiveWizard, type User, UserMfaMethod } from '../shared/api/types';
- import { isPresent } from '../shared/defguard-ui/utils/isPresent';
- import { useAuth } from '../shared/hooks/useAuth';
--import { getSessionInfoQueryOptions } from '../shared/query';
-+import { getLicenseInfoQueryOptions, getSessionInfoQueryOptions } from '../shared/query';
+@@ -2,12 +2,14 @@ import './style.scss';
  
- const basicSchema = z.object({
-   url: z.string().nullable().optional(),
-@@ -73,6 +73,7 @@ function RouteComponent() {
-       const basicResult = basicSchema.safeParse(state);
-       const basicResponse = basicResult.data;
-       if (isPresent(basicResponse) && basicResult.success) {
-+        queryClient.removeQueries({ queryKey: getLicenseInfoQueryOptions.queryKey });
-         useAuth.getState().setUser(basicResponse.user);
-         await Promise.all([
-           queryClient.invalidateQueries({
-```
-
-**File**: `web/tests/auth-user-switch.test.tsx` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-+import { act, render } from '@testing-library/react';
-+import { type ComponentType, createElement } from 'react';
-+import { afterEach, describe, expect, it, vi } from 'vitest';
-+import { Route } from '../src/routes/auth';
-+import api from '../src/shared/api/api';
-+import type { User } from '../src/shared/api/types';
-+import { useAuth } from '../src/shared/hooks/useAuth';
-+import { getLicenseInfoQueryOptions } from '../src/shared/query';
-+
-+vi.mock('@tanstack/react-router', async (importOriginal) => ({
-+  ...(await importOriginal<typeof import('@tanstack/react-router')>()),
-+  useNavigate: () => vi.fn(),
-+  Outlet: () => null,
-+}));
-+
-+afterEach(() => {
-+  vi.clearAllTimers();
-+  vi.useRealTimers();
-+  vi.restoreAllMocks();
-+  useAuth.getState().reset();
-+});
-+
-+describe('switching users', () => {
-+  it('discards the previous user license error when login succeeds', async () => {
-+    vi.useFakeTimers();
-+    const queryClient = new QueryClient({
-+      defaultOptions: { queries: { retry: false } },
-+    });
-+    const forbidden = new Error('Request failed with status code 403');
-+    vi.spyOn(api, 'getSessionInfo').mockResolvedValue({
-+      data: { authorized: true, is_admin: true, active_wizard: null, username: 'admin' },
-+    } as Awaited<ReturnType<typeof api.getSessionInfo>>);
-+
-+    await expect(
-+      queryClient.fetchQuery({
-+        ...getLicenseInfoQueryOptions,
-+        queryFn: async () => {
-+          throw forbidden;
-+        },
-+      }),
-+    ).rejects.toThrow(forbidden);
-+    expect(queryClient.getQueryState(getLicenseInfoQueryOptions.queryKey)?.status).toBe(
-+      'error',
-+    );
-+
-+    render(
-+      <QueryClientProvider client={queryClient}>
-+        {createElement(Route.options.component as ComponentType)}
-+      </QueryClientProvider>,
-+    );
-+
-+    await act(async () => {
-+      useAuth.getState().authSubject.next({
-+        user: { username: 'admin', is_admin: true } as User,
-+      });
-+    });
-+
-+    expect(
-+      queryClient.getQueryState(getLicenseInfoQueryOptions.queryKey),
-+    ).toBeUndefined();
-+    queryClient.clear();
-+  });
-+});
+ import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+ import { Link, useNavigate, useParams } from '@tanstack/react-router';
++import type { AxiosError } from 'axios';
+ import { cloneDeep, isEqual, omit } from 'lodash-es';
+ import { useMemo, useState } from 'react';
+ import z from 'zod';
+ import { m } from '../../paraglide/messages';
+ import api from '../../shared/api/api';
+ import {
++  type ApiError,
+   type EditNetworkLocation,
+   type GroupClientMtu,
+   LicenseFeature,
+@@ -58,7 +60,6 @@ import {
+   canUseBusinessFeature,
+   canUseEnterpriseFeature,
+ } from '../../shared/utils/license';
+-import { smallestNetworkCapacity } from '../../shared/utils/network';
+ import { confirmLocationPostureChange } from '../../shared/utils/postureWarning';
+ import { Validate } from '../../shared/validate';
+ import postureCheckShield from './assets/posture_check_shield.png';
+@@ -475,12 +476,6 @@ const EditLocationForm = ({
+     );
+   }, [postureChecksSectionState.locked]);
+ 
+-  const { data: devices } = useQuery({
+-    queryKey: ['device', 'all'],
+-    queryFn: api.device.getDevices,
+-    select: (resp) => resp.data,
+-  });
+-
+   const { data: groupsOptions } = useQuery({
+     queryFn: api.group.getGroups,
+     queryKey: ['group'],
+@@ -521,8 +516,9 @@ const EditLocationForm = ({
+         replace: true,
+       });
+     },
+-    onError: () => {
+-      Snackbar.error(m.location_edit_failed());
++    onError: (error: AxiosError<ApiError>) => {
++      const msg = error.response?.status === 400 ? error.response.data?.msg : undefined;
++      Snackbar.error(msg ?? m.location_edit_failed());
+     },
+   });
+ 
+@@ -602,15 +598,6 @@ const EditLocationForm = ({
+         return;
+       }
+ 
+-      const deviceCount = Array.isArray(devices) ? devices.length : 0;
+-      const network_size = smallestNetworkCapacity(value.address);
+-      if (deviceCount > network_size) {
+-        Snackbar.error(
+-          m.location_error_network_too_small({ network_size, device_count: deviceCount }),
+-        );
+-        return;
+-      }
+-
+       const changedFields = getDisconnectRelevantChangedFields(
+         getDisconnectRelevantLocationData(
+           buildLocationSubmissionData(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4039** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
+- **PR #4038** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
+- **PR #4025** (2026-11-09): Posture device attestation (@filipslezaklab)
 - **PR #4010** (2026-11-06): Add Device::{attestation_status,attested_at} fields (@j-chmielewski)
 - **PR #4008** (2026-11-06): chore: post 2.2 release sync (@wojcik91)
 - **PR #3999** (2026-11-04): chore: prerelease cleanup (@wojcik91)
-- **PR #3996** (2026-11-03): update trusted authenticators db (@filipslezaklab)
-- **PR #3982** (2026-11-02): add MFA flows e2e tests (@wojcik91)
-- **PR #3981** (2026-10-30): update labels (@filipslezaklab)
 
 ---
 
@@ -2346,28 +2281,45 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency vitest to v4.1.11 [SECURITY] (#3936)
+## X. Validate network size aganist allowed devices only (#4038)
 
 **RULE**:
-When implementing operations in `web/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/defguard_common/src/db/models/wireguard.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ddbf7f3`: Update dependency vitest to v4.1.11 [SECURITY] (#3936). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eaec0e89`: Validate network size aganist allowed devices only (#4038). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/defguard_common/src/db/models/wireguard.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "vitest": "4.1.11"
+    #[error(
+        "The network is too small to accommodate all devices allowed in this location (network capacity: {network_size}, devices: {device_count}). Use a larger network or change allowed groups."
+    )]
+    NetworkTooSmall {
+        network_size: usize,
+        device_count: usize,
+    },
+                        return Err(WireguardNetworkError::NetworkTooSmall {
+                            network_size: size.saturating_sub(3) as usize,
+                            device_count,
+                        });
+                        return Err(WireguardNetworkError::NetworkTooSmall {
+                            network_size: size.saturating_sub(2) as usize,
+                            device_count,
+                        });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "vitest": "4.1.9"
+    #[error("Network address space cannot fit all devices")]
+    NetworkTooSmall,
+                        return Err(WireguardNetworkError::NetworkTooSmall);
+                        return Err(WireguardNetworkError::NetworkTooSmall);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ddbf7f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eaec0e89` are properly handled with clean fallback behavior.

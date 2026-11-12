@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b20fce7c`  
+> **Source Version**: `af417d1d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:30:50.865Z  
+> **Timestamp**: 2026-11-12T23:41:38.505Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:30:50.847Z  
+> **Harvest Timestamp**: 2026-11-12T23:41:38.496Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3842 stars
+- **Stars / Engagement**: 3843 stars
 
 ---
 
@@ -2201,261 +2201,47 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07f21b3b` (2026-11-12)
-**Commit Message**: build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (#5039)
+### Incident Patch 1: `fa7f8a03` (2026-11-12)
+**Commit Message**: build(deps): bump @hono/node-server in /.claude/skills (#5042)
 
-* build: make 8 deps optional so qsvlite/qsvdp skip crates they don't use
+Bumps [@hono/node-server](https://github.com/honojs/node-server) from 2.1.5 to 2.1.8.
+- [Release notes](https://github.com/honojs/node-server/releases)
+- [Commits](https://github.com/honojs/node-server/compare/v2.1.5...v2.1.8)
 
-Rust 1.100's cargo unused_dependencies lint (silent under `--bin`, so it
-never shows in our builds) flagged these for the lite/dp binaries:
-- const_format, minijinja-contrib: only the full qsv/qsvmcp code uses them
-  (minijinja-contrib also by `profile`, which qsvdp has)
-- semver: only the #[cfg(feature = "self_update")] code in util/update.rs
-- dunce, ext-sort, grex, hostname-validator, jaq-json: commands qsvlite
-  shares with qsv, absent from qsvdp
+---
+updated-dependencies:
+- dependency-name: "@hono/node-server"
+  dependency-version: 2.1.8
+  dependency-type: indirect
+...
 
-Each is now optional and enabled by feature_capable / lite / profile /
-self_update. Cargo.lock is unchanged; all four flavors check clean with no
-unused-dependency warnings.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* build: raise MSRV to Rust 1.100
-
-Bumps rust-version and the README badge. CI's stable jobs get 1.100 (released
-today) and the pinned nightly-2026-09-01 is 1.100.0-nightly, which cargo
-accepts. Homebrew still ships 1.99.1, so per the README's MSRV policy the next
-qsv release waits until Homebrew has 1.100.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTE
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `.claude/skills/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **docs: the `profile --locate census` USAGE gives the state-column threshold** ([#5025](https://github.com/dathere/qsv/pull/5025)): a state column lists states only when at least 90% of its values are US states.
- 
- ### Changed
-+- **MSRV is now Rust 1.100** (was 1.99; [#5039](https://github.com/dathere/qsv/pull/5039)).
-+- **build: qsvlite and qsvdp no longer compile crates they don't use.** Rust 1.100's new `unused_dependencies` Cargo lint found eight dependencies that only the full `qsv` binary needs. They are now optional and turned on by the features that use them: `const_format` and `minijinja-contrib` (`feature_capable`, and `profile` for `minijinja-contrib`), `semver` (`self_update`), and `dunce`, `ext-sort`, `grex`, `hostname-validator` and `jaq-json` (`feature_capable` and `lite`). Every binary is built from the same code as before, so the lite and dp builds just compile a little faster ([#5039](https://github.com/dathere/qsv/pull/5039)).
- - **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now [1.12.1](https://github.com/nilbuild/driver.js/releases/tag/1.12.1)** (was 1.10.2; [#5038](https://github.com/dathere/qsv/pull/5038)):
-   - **Enter moves to the next step on every step.** Each popover focuses Next instead of the close button, and the Tour no longer moves focus off Next on the first step. Before, Enter did nothing on the first step and ended the tour on every later one.
-   - Escape pressed in a text field inside the spotlighted element, such as the data viewer's search box, goes to that field, and the drawer stays open. Before, it ended the tour. While a tour runs, the dictionary and data drawers leave Escape to the tour, so Escape anywhere else ends the tour and closes the open drawer, as before.
-```
-
-**File**: `Cargo.toml` (modified, +27/-12)
-```diff
-@@ -11,7 +11,7 @@ categories    = ["command-line-utilities", "parser-implementations"]
- license       = "MIT"
- autotests     = false
- edition       = "2024"
--rust-version  = "1.99"
-+rust-version  = "1.100"
- resolver      = "3"
- autobins      = false
- 
-@@ -185,7 +185,7 @@ censor = { version = "0.3", optional = true }
- chrono = { version = "0.4", default-features = false }
- chrono-tz = "0.10"
- console = { version = "0.16", optional = true }
--const_format = "0.2"
-+const_format = { version = "0.2", optional = true }
- cpc = { version = "5", optional = true }
- crc32fast = { version = "1.4", optional = true }
- crossbeam-channel = "0.5"
-@@ -205,7 +205,7 @@ csvs_convert = { version = "0.13", default-features = false, features = [
- dns-lookup = { version = "4", optional = true }
- directories = "6.0"
- dotenvy = "0.15"
--dunce = "1"
-+dunce = { version = "1", optional = true }
- dynfmt2 = { version = "0.4", default-features = false, features = ["curly"] }
- # only used to validate --default-encoding labels up front (fetch/fetchpost).
- # reqwest's charset feature does the actual decoding, but Encoding::for_label()
-@@ -215,7 +215,7 @@ dynfmt2 = { version = "0.4", default-features = false, features = ["curly"] }
- # simd-accel (+ std, which multiversions more x86 code paths) for the whole dep tree.
- encoding_rs = "0.8"
- eudex = { version = "0.1", optional = true }
--ext-sort = { version = "0.1", default-features = false, features = ["memory-limit"] }
-+ext-sort = { version = "0.1", default-features = false, features = ["memory-limit"], optional = true }
- fake = { version = "5", features = [
-     "derive",
-     "chrono",
-@@ -250,9 +250,9 @@ geozero = { version = "0.15", features = [
-     "with-shp",
- ], optional = true }
- governor = { version = "0.10", optional = true }
--grex = { version = "1.4", default-features = false }
-+grex = { version = "1.4", default-features = false, optional = true }
- gzp = { version = "2", default-features = false, features = ["snappy_default"] }
--hostname-validator = "1.1"
-+hostname-validator = { version = "1.1", optional = true }
- human-panic = "2"
- iana-time-zone = "0.1"
- indexmap = { version = "2.14", features = ["serde"] }
-@@ -263,7 +263,7 @@ iso_currency = "0.7"
- itertools = "0.15"
- itoa = "1"
- jaq-core = "3"
--jaq-json = { version = "2", features = ["serde"] }
-+jaq-json = { version = "2", features = ["serde"], optional = true }
- jaq-std = "3"
- # not used directly: compiles in jiff's bundled tzdb so minijinja-contrib's datetime filters
- # can fall back to it for zone names missing from the OS database (minijinja#1008)
-@@ -298,7 +298,7 @@ minijinja-contrib = { version = "3.0", features = [
-     "unicode_wordwrap",
-     "wordcount",
-     "wordwrap",
--] }
-+], optional = true }
- mlua = { version = "0.12", features = [
-     "luau",
-     "luau-jit",
-@@ -476,7 +476,7 @@ self_update = { version = "1.2", features = [
-     "rustls",
-     "signatures",
- ], default-features = false, optional = true }
--semver = "1"
-+semver = { version = "1", optional = true }
- serde = { version = "1", features = ["derive"] }
- serde_json = { version = "1", features = ["preserve_order"] }
- serde_urlencoded = { version = "0.7", optional = true }
-@@ -761,7 +761,7 @@ python = ["pyo3"]
- # evaluation; polars (SQL context) backs the SQL-requiring helpers
- # (temporal_resolution, guess_accrual_periodicity). yaml_serde parses the
- # scheming spec YAML. See `qsv profile --help`.
--profile = ["dep:sha2", "polars", "yaml_serde"]
-+profile = ["dep:sha2", "minijinja-contrib", "polars", "yaml_serde"]
- # geoconnex: bundled SHACL-validated linked-data profile for hydrologic
- # features (https://docs.geoconnex.us/). Embeds the Geoconnex SHACL
- # shapes (~10KB Turtle bundle) so `qsv profile --profile geoconnex
-@@ -807,7 +807,8 @@ viz = [
- # `qsvmcp` uses plain `viz`: publish.yml builds qsvmcp on Windows with --features=qsvmcp.
- viz_static = ["viz", "plotly/static_export_default"]
- lens = ["csvlens"]
--lite = []
-+# deps used by commands that qsvlite shares with qsv (extsort/json/schema/split) but qsvdp lacks
-+lite = ["dunce", "ext-sort", "grex", "hostname-validator", "jaq-json"]
- datapusher_plus = [
-     "base64-simd",
-     "geocode",
-@@ -819,12 +820,26 @@ datapusher_plus = [
- ]
- ui = ["clipboard", "color", "prompt", "lens"]
- jemallocator = ["tikv-jemallocator", "tikv-jemalloc-ctl"]
-+self_update = ["dep:self_update", "semver"]
- # feature_capable backs the always-compiled commands that consume lookup tables
- # (validate/template/describegpt). Pull flate2 + zstd so their remote lookups
- # auto-decompress .gz/.zlib/.zst (alongside the always-available .zip/.sz). #1417.
- # base64-simd backs describegpt's multimodal --context-file (base64-encoding image/PDF
- # attachments for the LLM); it's always available wherever describegpt is (non-lite).
--feature_capable = ["base64-simd", "flate2", "zstd"]
-+# The remaining deps back code only the full `qsv`/qsvmcp binaries compile; the lite/dp
-+# binaries gate them via `lite`/`profile`/`self_update` (cargo's unused_de
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- [![Security audit](https://github.com/dathere/qsv/actions/workflows/security-audit.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/security-audit.yml)
- [![Codacy Badge](https://app.codacy.com/project/badge/Grade/29e587760af64abcb115ba23efe1b365)](https://app.codacy.com/gh/dathere/qsv/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
- [![Discussions](https://img.shields.io/github/discussions/dathere/qsv)](https://github.com/dathere/qsv/discussions)
--[![Minimum supported Rust version](https://img.shields.io/badge/Rust-1.99-red?logo=rust)](#minimum-supported-rust-version)
-+[![Minimum supported Rust version](https://img.shields.io/badge/Rust-1.100-red?logo=rust)](#minimum-supported-rust-version)
- [![Crates.io](https://img.shields.io/badge/Rust-crates.io-yellow?logo=rust)](https://crates.io/crates/qsv)
- [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjqnatividad%2Fqsv.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjqnatividad%2Fqsv?ref=badge_shield) [![DOI](https://zenodo.org/badge/320463703.svg)](https://doi.org/10.5281/zenodo.17851335)
- [![Wiki](https://img.shields.io/badge/Wiki-Available-blue)](https://github.com/dathere/qsv/wiki)
-```
-
-**File**: `src/cmd/denull.rs` (modified, +1/-1)
-```diff
-@@ -371,7 +371,7 @@ fn trim_ascii(cell: &[u8]) -> &[u8] {
- /// A leading `0` followed by another digit marks a padded code (`007`, `05.10`).
- /// A bare `0`, or `0.5`, is a real number.
- fn is_zero_padded(sample: &[u8]) -> bool {
--    let body = sample.strip_prefix(b"-").unwrap_or(sample);
-+    let body = sample.trim_prefix(b"-");
-     matches!(body, [b'0', second, ..] if second.is_ascii_digit())
- }
- 
-```
-
-**File**: `src/cmd/describegpt/session.rs` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ pub(super) fn load_session(session_path: &Path) -> CliResult<SessionState> {
-             while i < lines.len() && !lines[i].trim().starts_with("##") {
-                 let line = lines[i].trim();
-                 if line.starts_with("- ") {
--                    let error = line.strip_prefix("- ").unwrap_or(line).to_string();
-+                    let error = line.trim_prefix("- ").to_string();
-                     state.sql_errors.push(error);
-                 }
-                 i += 1;
-```
-
-**File**: `src/cmd/get.rs` (modified, +3/-3)
-```diff
-@@ -213,7 +213,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     if args.cmd_cache_fetch {
-         let name = args.arg_name.as_deref().unwrap_or_default();
-         // convenience: accept (and ignore) a leading `dc:` prefix
--        let name = name.strip_prefix("dc:").unwrap_or(name);
-+        let name = name.trim_prefix("dc:");
-         diskcache::write_output(&cache_dir, name, args.flag_output.as_deref())?;
-         // stderr confirmation only when writing to a real file (never pollute stdout data)
-         if !args.flag_quiet
-@@ -242,7 +242,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     if args.cmd_cache_set_ttl {
-         let name = args.arg_name.as_deref().unwrap_or_default();
-         // convenience: accept (and ignore) a leading `dc:` prefix, like cache-fetch
--        let name = name.strip_prefix("dc:").unwrap_or(name);
-+        let name = name.trim_prefix("dc:");
-         diskcache::set_ttl(&cache_dir, name, args.flag_ttl)?;
-         if !args.flag_quiet {
-             eprintln!("Set TTL of '{name}' to {} seconds.", args.flag_ttl);
-@@ -253,7 +253,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         let policy = diskcache::RefreshPolicy::parse(&args.flag_refresh)?;
-         let name = args.arg_name.as_deref().unwrap_or_default();
-         // convenience: accept (and ignore) a leading `dc:` prefix, like cache-fetch
--        let name = name.strip_prefix("dc:").unwrap_or(name);
-+        let name = name.trim_prefix("dc:");
-         diskcache::set_policy(&cache_dir, name, policy)?;
-         if !args.flag_quiet {
-             eprintln!("Set refresh policy of '{name}' to {}.", args.flag_refresh);
-```
-
-**File**: `src/cmd/validate.rs` (modified, +1/-1)
-```diff
-@@ -2539,7 +2539,7 @@ Try running `qsv validate schema {}` to check the JSON Schema file.", json_schem
- /// `~1` must be decoded before `~0`, or a literal `~1` in a name (escaped `~01`) becomes `/`.
- fn instance_field(location: &Location) -> String {
-     let pointer = location.as_str();
--    let field = pointer.strip_prefix('/').unwrap_or(pointer);
-+    let field = pointer.trim_prefix('/');
-     if field.contains('~') {
-         field.replace("~1", "/").replace("~0", "~")
-     } else {
-```
-
-**File**: `src/cmd/viz.rs` (modified, +1/-1)
-```diff
-@@ -44432,7 +44432,7 @@ fn smart_grid_top(row_units: f64, has_subtitles: bool) -> f64 {
- /// `dc:` prefix of a `qsv get` disk-cache handle, which means nothing to a reader of the page.
- fn dataset_display_name(input: Option<&str>) -> &str {
-     let input = input.unwrap_or("data");
--    let input = input.strip_prefix("dc:").unwrap_or(input);
-+    let input = input.trim_prefix("dc:");
-     std::path::Path::new(input)
-         .file_name()
-         .and_then(|s| s.to_str())
+@@ -39,9 +39,9 @@
+       }
+     },
+     "node_modules/@hono/node-server": {
+-      "version": "2.1.5",
+-      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.5.tgz",
+-      "integrity": "sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q==",
++      "version": "2.1.8",
++      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.8.tgz",
++      "integrity": "sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=20"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5042** (2026-11-12): build(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /.claude/skills (@dependabot[bot])
+- **PR #5041** (2026-11-12): deps: bump Polars to upstream 8ecd1ca (@jqnatividad)
 - **PR #5040** (2026-11-12): chore: clear qsvlite/qsvdp dead-code warnings (@jqnatividad)
 - **PR #5039** (2026-11-12): build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (@jqnatividad)
 - **PR #5038** (2026-11-12): deps(viz): driver.js 1.12.1 for the Data Schematic Tour (@jqnatividad)
 - **PR #5037** (2026-11-12): build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (@dependabot[bot])
-- **PR #5036** (2026-11-12): fix(luau): date.lua clobbering, filter-after-error, insertrecord width & more (@jqnatividad)
-- **PR #5035** (2026-11-11): docs(viz): warn that plotly.js 4.x re-blanks sandboxed maps (@jqnatividad)
 
 ---
 
@@ -2475,29 +2261,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTE
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvd
+## X. build(deps): bump @hono/node-server in /.claude/skills (#5042)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07f21b3b`: build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (#5039). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa7f8a03`: build(deps): bump @hono/node-server in /.claude/skills (#5042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **MSRV is now Rust 1.100** (was 1.99; [#5039](https://github.com/dathere/qsv/pull/5039)).
-- **build: qsvlite and qsvdp no longer compile crates they don't use.** Rust 1.100's new `unused_dependencies` Cargo lint found eight dependencies that only the full `qsv` binary needs. They are now optional and turned on by the features that use them: `const_format` and `minijinja-contrib` (`feature_capable`, and `profile` for `minijinja-contrib`), `semver` (`self_update`), and `dunce`, `ext-sort`, `grex`, `hostname-validator` and `jaq-json` (`feature_capable` and `lite`). Every binary is built from the same code as before, so the lite and dp builds just compile a little faster ([#5039](https://github.com/dathere/qsv/pull/5039)).
+      "version": "2.1.8",
+      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.8.tgz",
+      "integrity": "sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      "version": "2.1.5",
+      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.5.tgz",
+      "integrity": "sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07f21b3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa7f8a03` are properly handled with clean fallback behavior.

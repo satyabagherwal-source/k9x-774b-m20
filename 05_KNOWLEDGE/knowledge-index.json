@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T23:29:00.687Z",
+  "last_updated": "2026-11-12T23:42:16.602Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10510,8 +10510,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b20fce7c",
-      "content_hash": "3e8b982f011d5e5c04908daa9862539f628938603069f901c3b3ac793f59417d",
+      "source_version": "af417d1d",
+      "content_hash": "1f5048ebe1fa9e9aa0739174175c960e0b20c5de34f423534a94fce46b711828",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10653,6 +10653,11 @@
         {
           "number": null,
           "title": "build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvd",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump @hono/node-server in /.claude/skills (#5042)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11006,7 +11011,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T21:31:14.637Z",
+      "verified_at": "2026-11-12T23:42:00.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11224,14 +11229,19 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "e17756e7",
-      "content_hash": "f8717d261030d46afea040e2c8e04b7d2eec61c0a838ba28560b254539e1dd4c",
+      "source_version": "eaec0e89",
+      "content_hash": "420abd1b14347f6db4320df31aeb9d5ad8ed3336244f211d61068a22ab9c3f0e",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Update dependency vitest to v4.1.11 [SECURITY] (#3936)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Validate network size aganist allowed devices only (#4038)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11270,7 +11280,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:40:44.291Z",
+      "verified_at": "2026-11-12T23:41:55.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15205,14 +15215,19 @@
       "slug": "tiangolo-fastapi",
       "platform": "github",
       "source_url": "https://github.com/tiangolo/fastapi",
-      "source_version": "8f9f47de",
-      "content_hash": "faca089e506cde77bbe8ab4c73ccc15d6d6b7e39615adc17198cede6d037f660",
+      "source_version": "5add7a45",
+      "content_hash": "f918b3270d2a4fd1b1d54de8a804aefdafdb5e630077f6da628e18448475bb8d",
       "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "🐛 Fix AI coding agent notice links in previews (#16700)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "🐛 Fix synchronous dependency cleanup on cancellation (#16734)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15301,7 +15316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:56:04.132Z",
+      "verified_at": "2026-11-12T23:42:16.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16892,14 +16907,19 @@
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "c9a37f4b",
-      "content_hash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
+      "source_version": "401a9202",
+      "content_hash": "223e7a20de68748531919b0859379c9f80d527b088d19e4d16b76fc114e37ee9",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "release v1.16.2",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update @hono/node-server to 1.19.19",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16928,7 +16948,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:14:25.258Z",
+      "verified_at": "2026-11-12T23:41:57.384Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38105,14 +38125,19 @@
       "slug": "joreilly-confetti",
       "platform": "github",
       "source_url": "https://github.com/joreilly/Confetti",
-      "source_version": "32c0714d",
-      "content_hash": "b6db71fa892210db795e2f927a2376a30295bd236809130da1740d4e8a479645",
+      "source_version": "d29c8ec6",
+      "content_hash": "39c66e3effd7bd570a6c0069c9189297cdd17b8995ece7dbd29e12833db4dc29",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Livery 1/6: sduiDebug variant and an empty :livery module (#2007)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build: take Livery and rc-players from their BOMs, and group Renovate by project",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38156,7 +38181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:35:42.622Z",
+      "verified_at": "2026-11-12T23:41:45.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

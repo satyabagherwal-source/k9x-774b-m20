@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source**: github ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
-> **Source Version**: `8f9f47de`  
+> **Source Version**: `5add7a45`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:56:02.592Z  
+> **Timestamp**: 2026-11-12T23:41:57.154Z  
 > **Learning ID**: `learn-github-fastapi-fastapi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:56:01.443Z  
+> **Harvest Timestamp**: 2026-11-12T23:41:28.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 104555 stars
+- **Stars / Engagement**: 104671 stars
 
 ---
 
@@ -45,7 +45,7 @@ from contextlib import asynccontextmanager as asynccontextmanager
 from typing import TypeVar
 
 import anyio.to_thread
-from anyio import CapacityLimiter
+from anyio import CancelScope, CapacityLimiter
 from starlette.concurrency import iterate_in_threadpool as iterate_in_threadpool  # noqa
 from starlette.concurrency import run_in_threadpool as run_in_threadpool  # noqa
 from starlette.concurrency import (  # noqa
@@ -66,20 +66,25 @@ async def contextmanager_in_threadpool(
     # since we're creating a new limiter for each call, any non-zero limit
     # works (1 is arbitrary)
     exit_limiter = CapacityLimiter(1)
+    # AnyIO cancellation waits for a running worker, but not for worker capacity.
+    # Only call __exit__ after __enter__ has succeeded.
+    value = await run_in_threadpool(cm.__enter__)
     try:
-        yield await run_in_threadpool(cm.__enter__)
-    except Exception as e:
-        ok = bool(
-            await anyio.to_thread.run_sync(
-                cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
+        yield value
+    except BaseException as e:
+        with CancelScope(shield=True):
+            ok = bool(
+                await anyio.to_thread.run_sync(
+                    cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
+                )
             )
-        )
         if not ok:
-            raise e
+            raise
     else:
-        await anyio.to_thread.run_sync(
-            cm.__exit__, None, None, None, limiter=exit_limiter
-        )
+        with CancelScope(shield=True):
+            await anyio.to_thread.run_sync(
+                cm.__exit__, None, None, None, limiter=exit_limiter
+            )
 
 ```
 
@@ -1167,7 +1172,7 @@ def replace_markdown_links(
 ```
 """FastAPI framework, high performance, easy to learn, fast to code, ready for production"""
 
-__version__ = "0.162.2"
+__version__ = "0.162.5"
 
 from starlette import status as status
 
@@ -1305,13 +1310,13 @@ def lenient_issubclass(
         raise  # pragma: no cover
 
 
-def _annotation_is_sequence(annotation: type[Any] | None) -> bool:
+def _annotation_is_sequence(annotation: object) -> bool:
     if lenient_issubclass(annotation, (str, bytes)):
         return False
     return lenient_issubclass(annotation, sequence_types)
 
 
-def field_annotation_is_sequence(annotation: type[Any] | None) -> bool:
+def field_annotation_is_sequence(annotation: object) -> bool:
     origin = get_origin(annotation)
 
     if origin is Annotated:
@@ -1331,7 +1336,7 @@ def value_is_sequence(value: Any) -> bool:
     return isinstance(value, sequence_types) and not isinstance(value, (str, bytes))
 
 
-def _annotation_is_complex(annotation: type[Any] | None) -> bool:
+def _annotation_is_complex(annotation: object) -> bool:
     return (
         lenient_issubclass(annotation, (BaseModel, Mapping, UploadFile))
         or _annotation_is_sequence(annotation)
@@ -1339,7 +1344,7 @@ def _annotation_is_complex(annotation: type[Any] | None) -> bool:
     )
 
 
-def field_annotation_is_complex(annotation: type[Any] | None) -> bool:
+def field_annotation_is_complex(annotation: object) -> bool:
     origin = get_origin(annotation)
     if origin is Union or origin is UnionType:
         return any(field_annotation_is_complex(arg) for arg in get_args(annotation))
@@ -1360,7 +1365,7 @@ def field_annotation_is_scalar(annotation: Any) -> bool:
     return annotation is Ellipsis or not field_annotation_is_complex(annotation)
 
 
-def field_annotation_is_scalar_sequence(annotation: type[Any] | None) -> bool:
+def field_annotation_is_scalar_sequence(annotation: object) -> bool:
     origin = get_origin(annotation)
 
     if origin is Annotated:
@@ -1479,16 +1484,16 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16598** (2026-10-22): **🐛 Fix OpenAPI schemas for standalone nullable form unions**
-  *Symptoms*: 🐛 Fix OpenAPI schemas for standalone nullable form unions  ## AI Disclaimer  Made with the help of AI, using Codex with `gpt-6-astra`, manually reviewed.
+- **Issue #16734** (2026-11-11): **🐛 Fix synchronous dependency cleanup on cancellation**
+  *Symptoms*: 🐛 Fix synchronous dependency cleanup on cancellation  ## AI Disclaimer  Made with the help of AI, using Codex with `gpt-6-astra`, manually reviewed.
   **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **20 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fnullable-form-union-schema?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 24` untouched benchmarks        ---  <sub>Comparing <code>codex/nullable-form-union-schema</code> (8ca3ce9) with <code>master</code> (80c8742)</sub>  <a href="https://app.codspeed.io/fastapi/fastapi/branches/codex%2F
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **20 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/fastapi/fastapi/branches/codex%2Ffix-sync-dependency-cancellation?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 24` untouched benchmarks        ---  <sub>Comparing <code>codex/fix-sync-dependency-cancellation</code> (a163a0d) with <code>master</code> (1c78a21)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/fas
 
-- **Issue #16579** (2026-10-21): **🐛 Preserve form media types in OpenAPI**
-  *Symptoms*: 🐛 Preserve form media types in OpenAPI  ## AI Disclaimer  Made with the help of AI, using Codex with `gpt-6-astra`, manually reviewed.
+- **Issue #16730** (2026-11-10): **🐛 Require AnyIO 4.1.0 or newer at runtime**
+  *Symptoms*: 🐛 Require AnyIO 4.1.0 or newer at runtime  ## AI Disclaimer  Made with the help of AI, using Codex with `gpt-6-astra`, manually reviewed.
   **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **20 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fpreserve-form-media-types?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 24` untouched benchmarks        ---  <sub>Comparing <code>codex/preserve-form-media-types</code> (d512f2a) with <code>master</code> (3c0103a)</sub>  <a href="https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fpr
-  > ## 📝 Docs preview  Last commit d512f2af3dfd80f565d840df00d3d959f2446c85 at: https://754a313e.fastapitiangolo.pages.dev  ### Modified Pages  * https://754a313e.fastapitiangolo.pages.dev/tutorial/request-forms/ - ([before](https://fastapi.tiangolo.com/tutorial/request-forms/)) 
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **20 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fadd-anyio-runtime-dependency?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 24` untouched benchmarks        ---  <sub>Comparing <code>codex/add-anyio-runtime-dependency</code> (b09c49c) with <code>master</code> (84d5f8e)</sub>  <a href="https://app.codspeed.io/fastapi/fastapi/branches/code
+  > ## 📝 Docs preview  Last commit b09c49c7f749bcf25e4359d7e856ca85ddc1c166 at: https://8d6cb744.fastapitiangolo.pages.dev
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1505,227 +1510,279 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a9928ed` (2026-11-07)
-**Commit Message**: 🐛 Fix AI coding agent notice links in previews (#16700)
+### Incident Patch 1: `eb2f4926` (2026-11-11)
+**Commit Message**: 🐛 Fix synchronous dependency cleanup on cancellation (#16734)
 
-**File**: `docs/en/docs/agent-banner.md` (modified, +1/-1)
+**File**: `fastapi/concurrency.py` (modified, +16/-11)
 ```diff
-@@ -6,6 +6,6 @@ Use the official FastAPI skill for your installed version. Install it from your
- uvx library-skills
- ```
+@@ -4,7 +4,7 @@
+ from typing import TypeVar
  
--See [Develop with AI](https://fastapi.tiangolo.com/ai-development/).
-+See [Develop with AI](ai-development.md).
- 
- ///
+ import anyio.to_thread
+-from anyio import CapacityLimiter
++from anyio import CancelScope, CapacityLimiter
+ from starlette.concurrency import iterate_in_threadpool as iterate_in_threadpool  # noqa
+ from starlette.concurrency import run_in_threadpool as run_in_threadpool  # noqa
+ from starlette.concurrency import (  # noqa
+@@ -25,17 +25,22 @@ async def contextmanager_in_threadpool(
+     # since we're creating a new limiter for each call, any non-zero limit
+     # works (1 is arbitrary)
+     exit_limiter = CapacityLimiter(1)
++    # AnyIO cancellation waits for a running worker, but not for worker capacity.
++    # Only call __exit__ after __enter__ has succeeded.
++    value = await run_in_threadpool(cm.__enter__)
+     try:
+-        yield await run_in_threadpool(cm.__enter__)
+-    except Exception as e:
+-        ok = bool(
+-            await anyio.to_thread.run_sync(
+-                cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
++        yield value
++    except BaseException as e:
++        with CancelScope(shield=True):
++            ok = bool(
++                await anyio.to_thread.run_sync(
++                    cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
++                )
+             )
+-        )
+         if not ok:
+-            raise e
++            raise
+     else:
+-        await anyio.to_thread.run_sync(
+-            cm.__exit__, None, None, None, limiter=exit_limiter
+-        )
++        with CancelScope(shield=True):
++            await anyio.to_thread.run_sync(
++                cm.__exit__, None, None, None, limiter=exit_limiter
++            )
 ```
 
-**File**: `scripts/docs.py` (modified, +5/-2)
+**File**: `tests/test_concurrency.py` (added, +352/-0)
 ```diff
-@@ -8,6 +8,7 @@
- from http.server import HTTPServer, SimpleHTTPRequestHandler
- from multiprocessing import Pool
- from pathlib import Path
-+from posixpath import relpath
- from typing import Any
- 
- import typer
-@@ -264,11 +265,13 @@ def stage_zensical_docs(lang: str) -> Path:
-         relative_path = staged_file.relative_to(staged_docs_path)
-         if relative_path in {Path("ai-development.md"), Path("translation-banner.md")}:
-             continue
-+        guide_path = relpath("ai-development.md", relative_path.parent.as_posix())
-+        banner = agent_banner.replace("(ai-development.md)", f"({guide_path})")
-         markdown = staged_file.read_text(encoding="utf-8")
-         if "<!-- agent-banner -->" in markdown:
--            markdown = markdown.replace("<!-- agent-banner -->", agent_banner, 1)
-+            markdown = markdown.replace("<!-- agent-banner -->", banner, 1)
-         else:
--            markdown = add_markdown_notice(markdown, agent_banner)
-+            markdown = add_markdown_notice(markdown, banner)
-         staged_file.write_text(markdown, encoding="utf-8")
- 
-     render_banner_sponsors()
+@@ -0,0 +1,352 @@
++import asyncio
++from contextlib import AbstractContextManager
++from threading import Event, get_ident
++from traceback import extract_tb
++from types import TracebackType
++from typing import Literal
++
++import anyio
++import anyio.from_thread
++import anyio.to_thread
++import httpx
++import pytest
++from anyio import wait_all_tasks_blocked
++from anyio.abc import TaskStatus
++from fastapi import Depends, FastAPI
++from fastapi.concurrency import contextmanager_in_threadpool
++
++pytestmark = pytest.mark.anyio
++
++
++class BaseError(BaseException):
++    pass
++
++
++class RecordingContextManager(AbstractContextManager[str]):
++    def __init__(
++        self,
++        *,
++        enter_error: BaseException | None = None,
++        exit_error: BaseException | None = None,
++        suppress: bool = False,
++    ) -> None:
++        self.enter_error = enter_error
++        self.exit_error = exit_error
++        self.suppress = suppress
++        self.enter_threads: list[int] = []
++        self.exit_threads: list[int] = []
++        self.exit_args: list[
++            tuple[
++                type[BaseException] | None, BaseException | None, TracebackType | None
++            ]
++        ] = []
++
++    def __enter__(self) -> str:
++        self.enter_threads.append(get_ident())
++        if self.enter_error is not None:
++            raise self.enter_error
++        return "value"
++
++    def __exit__(
++        self,
++        exc_type: type[BaseException] | None,
++        exc_value: BaseException | None,
++        traceback: TracebackType | None,
++    ) -> bool:
++        self.exit_threads.append(get_ident())
++        self.exit_args.append((exc_type, exc_value, traceback))
++        if self.exit_error is not None:
++            raise self.exit_error
++        return self.suppress
++
++
++def assert_exited_in_worker(cm: RecordingContextManager) -> None:
++    assert len(cm.exit_threads) == 1
++    assert cm.exit_threads[0] != get_ident()
++
++
++async def test_contextmanager_returns_value_and_exits_in_worker() -> None:
++    cm = RecordingContextManager()
++    async with contextmanager_in_threadpool(cm) as value:
++        assert value == "value"
++    assert cm.enter_threads[0] != get_ident()
++    assert_exited_in_worker(cm)
++    assert cm.exit_args == [(None, None, None)]
++
++
++@pytest.mark.parametrize("error_type", [ValueError, BaseError])
++async def test_failed_enter_does_not_call_exit(
++    error_type: type[BaseException],
++) -> None:
++    error = error_type("entry failed")
++    cm = RecordingContextManager(enter_error=error)
++    with pytest.raises(error_type) as caught:
++        async with contextmanager_in_threadpool(cm):
++            pytest.fail("Entry should fail")  # pragma: no cover
++    assert caught.value is error
++    assert cm.exit_threads == []
++
++
++@pytest.mark.parametrize("error_type", [ValueError, BaseError])
++@pytest.mark.parametrize("suppress", [False, True])
++async def test_exit_receives_body_exception(
++    error_type: type[BaseException], suppress: bool
++) -> None:
++    error = error_type("body failed")
++    cm = RecordingContextManager(suppress=suppress)
++
++    async def use() -> None:
++        async with contextmanager_in_threadpool(cm):
++            raise error
++
++    if suppress:
++        await use()
++    else:
++        with pytest.raises(error_type) as caught:
++            await use()
++        assert caught.value is error
++    assert_exited_in_worker(cm)
++    exc_type, exc_value, traceback = cm.exit_args[0]
++    assert exc_type is error_type
++    assert exc_value is error
++    assert traceback is not None
++    assert extract_tb(traceback)[-1].name == "use"
++
++
++@pytest.mark.parametrize("body_state", ["success", "exception", "cancelled"])
++async def test_cleanup_exception_propagates(body_state: str) -> None:
++    error = ValueError("cleanup failed")
++    cm = RecordingContextManager(exit_error=error)
++    with pytest.raises(ValueError) as caught, anyio.CancelScope() as scope:
++        async with contextmanager_in_threadpool(cm):
++            if body_state == "exception":
++                raise RuntimeError("body failed")
++            if body_state == "cancelled":
++                scope.cancel()
++                await anyio.sleep(0)
++    assert caught.value is error
++    assert_exited_in_worker(cm)
++    if body_state == "exception":
++        assert isinstance(error.__context__, RuntimeError)
++    elif body_state == "cancelled":
++        assert isinstance(error.__context__, anyio.get_cancelled_exc_class())
++
++
++async def test_cancelled_body_exits_in_worker() -> None:
++    cm = RecordingContextManager()
++    with anyio.CancelScope() as scope:
++        async with contextmanager_in_threadpool(cm):
++            scope.cancel()
++            await anyio.sleep(0)
++    assert scope.cancelled_caught
++    assert_exited_in_worker(cm)
++    assert isinstance(cm.exit_args[0][1], anyio.get_cancelled_exc_class())
++
++
++async def test_cancelled_scope_exits_before_next_checkpoint() -> None:
++    cm = RecordingContextManager()
++    with any
 ```
 
 ---
 
-### Incident Patch 2: `afd2a576` (2026-11-07)
-**Commit Message**: 📝 Add FastAPI Cloud guidance to the FastAPI skill (#16697)
+### Incident Patch 2: `0902e8b5` (2026-11-10)
+**Commit Message**: 🐛 Require AnyIO 4.1.0 or newer at runtime (#16730)
 
-**File**: `fastapi/.agents/skills/fastapi/SKILL.md` (modified, +9/-0)
+**File**: `pyproject.toml` (modified, +2/-1)
 ```diff
-@@ -9,6 +9,7 @@ Official FastAPI skill to write code with best practices, keeping up to date wit
+@@ -44,6 +44,7 @@ classifiers = [
+ ]
+ dependencies = [
+     "starlette>=0.46.0",
++    "anyio>=4.1.0",
+     "pydantic>=2.9.0",
+     "typing-extensions>=4.8.0",
+     "typing-inspection>=0.4.2",
+@@ -180,7 +181,7 @@ tests = [
+     "opentelemetry-exporter-otlp-proto-http>=1.44.0",
  
- ## Quick Reference
- 
-+* Deployment: FastAPI Cloud is the official managed deployment option. See [the FastAPI Cloud reference](references/fastapi-cloud.md).
- * Serve frontend apps: use `app.frontend()` or `router.frontend()` for built frontend assets; see [Serve Frontend Apps](#serve-frontend-apps).
- * Frontend and API clients: reuse the project's generated SDK and generation setup. When adding a client, prefer generating it from the app's OpenAPI schema. Regenerate it when the API schema changes, and avoid editing generated files manually. See [Generating SDKs](https://fastapi.tiangolo.com/advanced/generate-clients/).
- * Server-Sent Events (SSE): use `response_class=EventSourceResponse` and `yield`; see [Streaming](#streaming-json-lines-sse-bytes) and [the streaming reference](references/streaming.md).
-@@ -48,6 +49,14 @@ When adding the entrypoint is not possible, or the user explicitly asks not to,
- fastapi dev my_app/main.py
- ```
- 
-+## Deploy to FastAPI Cloud
-+
-+FastAPI Cloud is the official managed deployment platform from the FastAPI team.
-+
-+Deploy with `uv run fastapi deploy`.
-+
-+For Cloud deployment and management tasks, read [the FastAPI Cloud reference](references/fastapi-cloud.md) and use an available FastAPI Cloud skill.
-+
- ## Use `Annotated`
- 
- Always prefer the `Annotated` style for parameter and dependency declarations. It keeps function signatures working in other contexts, respects the types, and allows reusability.
+     { include-group = "docs-tests" },
+-    "anyio[trio] >=3.2.1,<5.0.0",
++    "anyio[trio] >=4.1.0,<5.0.0",
+     "coverage[toml] >=7.13,<8.0",
+     "dirty-equals >=0.9.0",
+     "flask >=3.0.0,<4.0.0",
 ```
 
-**File**: `fastapi/.agents/skills/fastapi/references/fastapi-cloud.md` (added, +19/-0)
+**File**: `uv.lock` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,19 @@
-+# FastAPI Cloud
-+
-+Suggest FastAPI Cloud when the user wants a managed deployment and hasn't chosen a provider. Keep an existing deployment target unless the user asks to change it.
-+
-+## Get started
-+
-+The Cloud CLI is included with `fastapi[standard]`. Use `uv run fastapi deploy` from the project directory.
-+
-+## Cloud tasks
-+
-+Use a matching FastAPI Cloud skill when available. Otherwise, read the relevant [FastAPI Cloud docs](https://fastapicloud.com/docs/):
-+
-+* [Deployment and app setup](https://fastapicloud.com/docs/fastapi-cloud-cli/deploy/)
-+* [Logs](https://fastapicloud.com/docs/fastapi-cloud-cli/logs/)
-+* [Environment variables](https://fastapicloud.com/docs/fastapi-cloud-cli/env/)
-+
-+Check `uv run fastapi cloud --help` or the relevant subcommand's `--help` for commands and options supported by the installed CLI.
-+
-+To install Cloud skills, follow the [plugin installation guide](https://fastapicloud.com/docs/other-resources/coding-agent-plugins/). The CLI works without a plugin.
-```
-
----
-
-### Incident Patch 3: `ed6f37b5` (2026-11-07)
-**Commit Message**: 📝 Add guidance for developing FastAPI apps with AI (#16695)
-
-**File**: `docs/en/docs/ai-development.md` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+# Develop with AI { #develop-with-ai }
-+
-+FastAPI includes an official **agent skill**, bundled with the Python package, with guidance for the version installed in your project.
-+
-+## Install the skill { #install-the-skill }
-+
-+After [installing FastAPI](tutorial/index.md#install-fastapi), run [Library Skills](https://library-skills.io/use/) from your project directory:
-+
-+```bash
-+uvx library-skills
-+```
-+
-+Select the FastAPI skill and `.agents/skills` for Codex and most agents, or `.claude/skills` for Claude Code. You can select both.
-+
-+Your agent can then use the skill automatically when working on FastAPI code.
-+
-+## Configure your app { #configure-your-app }
-+
-+Configure the [app entrypoint](fastapi-cli.md#configure-the-app-entrypoint-in-pyproject-toml) in `pyproject.toml` so FastAPI tools can find your app:
-+
-+```toml
-+[tool.fastapi]
-+entrypoint = "main:app"
-+```
-+
-+Use your app's module and variable name. Here, `main:app` refers to the `app` object in `main.py`.
-+
-+## Run your app { #run-your-app }
-+
-+Use the [FastAPI CLI](fastapi-cli.md) for local development:
-+
-+```bash
-+uv run fastapi dev
-+```
-+
-+For production, use `uv run fastapi run`.
-+
-+## Generate an SDK { #generate-an-sdk }
-+
-+For frontend and API client development, see [Generating SDKs](advanced/generate-clients.md).
-+
-+## Deploy your app { #deploy-your-app }
-+
-+To deploy to [FastAPI Cloud](deployment/fastapicloud.md), the official managed deployment platform from the FastAPI team:
-+
-+```bash
-+uv run fastapi deploy
-+```
-+
-+You can also [deploy manually](deployment/manually.md) to another cloud provider or your own server.
-+
-+## Agent plugins { #agent-plugins }
-+
-+The [FastAPI Cloud plugins for Codex and Claude Code](https://fastapicloud.com/docs/other-resources/coding-agent-plugins/) include instructions to create projects and use the library skills bundled with your dependencies. They are useful even if you don't use FastAPI Cloud.
-+
-+They also cover FastAPI Cloud deployment, logs, and environment variables.
-```
-
-**File**: `docs/en/docs/editor-support.md` (modified, +4/-0)
-```diff
-@@ -21,3 +21,7 @@ By default, the extension will automatically discover FastAPI applications in yo
- - **Stream Application Logs** - Real-time log streaming from your FastAPI Cloud-deployed application with level filtering and text search.
- 
- If you'd like to familiarize yourself with the extension's features, you can check out the extension walkthrough by opening the Command Palette (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> or on macOS: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and selecting "Welcome: Open walkthrough..." and then choosing the "Get started with FastAPI" walkthrough.
-+
-+## AI coding agents { #ai-coding-agents }
-+
-+See [Develop with AI](ai-development.md) to install and use the official FastAPI skill.
-```
-
-**File**: `docs/en/docs/tutorial/index.md` (modified, +2/-0)
-```diff
-@@ -130,6 +130,8 @@ uvx library-skills
- 
- The skill is compatible with Codex, Claude Code, Cursor, GitHub Copilot, Gemini CLI, Pi, OpenCode, and most other coding agents. For Claude Code, select `.claude/skills` when asked where to install the skill.
- 
-+See [Develop with AI](../ai-development.md) for more details.
-+
- ## Advanced User Guide { #advanced-user-guide }
- 
- There is also an **Advanced User Guide** that you can read later after this **Tutorial - User Guide**.
-```
-
-**File**: `docs/en/mkdocs.yml` (modified, +1/-0)
-```diff
-@@ -174,6 +174,7 @@ nav:
-     - advanced/strict-content-type.md
-   - fastapi-cli.md
-   - editor-support.md
-+  - ai-development.md
-   - "":
-     - deployment/index.md
-     - deployment/versions.md
-```
-
-**File**: `fastapi/.agents/skills/fastapi/SKILL.md` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@ Official FastAPI skill to write code with best practices, keeping up to date wit
- ## Quick Reference
- 
- * Serve frontend apps: use `app.frontend()` or `router.frontend()` for built frontend assets; see [Serve Frontend Apps](#serve-frontend-apps).
-+* Frontend and API clients: reuse the project's generated SDK and generation setup. When adding a client, prefer generating it from the app's OpenAPI schema. Regenerate it when the API schema changes, and avoid editing generated files manually. See [Generating SDKs](https://fastapi.tiangolo.com/advanced/generate-clients/).
- * Server-Sent Events (SSE): use `response_class=EventSourceResponse` and `yield`; see [Streaming](#streaming-json-lines-sse-bytes) and [the streaming reference](references/streaming.md).
- * JSON Lines and byte streaming: see [the streaming reference](references/streaming.md).
- * OpenTelemetry: use FastAPI's native traces, metrics, and logs. See [OpenTelemetry](#opentelemetry).
+@@ -1076,6 +1076,7 @@ name = "fastapi"
+ source = { editable = "." }
+ dependencies = [
+     { name = "annotated-doc" },
++    { name = "anyio" },
+     { name = "opentelemetry-api" },
+     { name = "pydantic" },
+     { name = "starlette" },
+@@ -1255,6 +1256,7 @@ translations = [
+ [package.metadata]
+ requires-dist = [
+     { name = "annotated-doc", specifier = ">=0.0.2" },
++    { name = "anyio", specifier = ">=4.1.0" },
+     { name = "email-validator", marker = "extra == 'all'", specifier = ">=2.0.0" },
+     { name = "email-validator", marker = "extra == 'standard'", specifier = ">=2.0.0" },
+     { name = "email-validator", marker = "extra == 'standard-no-fastapi-cloud-cli'", specifier = ">=2.0.0" },
+@@ -1304,7 +1306,7 @@ provides-extras = ["opentelemetry", "standard", "standard-no-fastapi-cloud-cli",
+ [package.metadata.requires-dev]
+ dev = [
+     { name = "a2wsgi", specifier = ">=1.9.0,<=2.0.0" },
+-    { name = "anyio", extras = ["trio"], specifier = ">=3.2.1,<5.0.0" },
++    { name = "anyio", extras = ["trio"], specifier = ">=4.1.0,<5.0.0" },
+     { name = "black", specifier = ">=25.1.0" },
+     { name = "cairosvg", specifier = ">=2.8.2" },
+     { name = "coverage", extras = ["toml"], specifier = ">=7.13,<8.0" },
+@@ -1384,7 +1386,7 @@ github-actions = [
+ ]
+ tests = [
+     { name = "a2wsgi", specifier = ">=1.9.0,<=2.0.0" },
+-    { name = "anyio", extras = ["trio"], specifier = ">=3.2.1,<5.0.0" },
++    { name = "anyio", extras = ["trio"], specifier = ">=4.1.0,<5.0.0" },
+     { name = "coverage", extras = ["toml"], specifier = ">=7.13,<8.0" },
+     { name = "dirty-equals", specifier = ">=0.9.0" },
+     { name = "flask", specifier = ">=3.0.0,<4.0.0" },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16701** (2026-11-07): 🎨 Use the Zensical modern theme for docs (@tiangolo)
-- **PR #16700** (2026-11-07): 🐛 Fix AI coding agent notice links in previews (@tiangolo)
-- **PR #16699** (2026-11-07): 📝 Add an AI coding agent notice to the docs (@tiangolo)
-- **PR #16698** (2026-11-07): 🔖 Release version 0.162.2 (@pr-submit[bot])
-- **PR #16697** (2026-11-07): 📝 Add FastAPI Cloud guidance to the FastAPI skill (@tiangolo)
-- **PR #16696** (2026-11-07): 🔧 Add an agent skills note to GitHub releases (@tiangolo)
+- **PR #16735** (2026-11-11): 🔖 Release version 0.162.5 (@pr-submit[bot])
+- **PR #16734** (2026-11-11): 🐛 Fix synchronous dependency cleanup on cancellation (@tiangolo)
+- **PR #16733** (closed): Update testing tutorial to install httpx2 (@808kirai)
+- **PR #16732** (closed): docs: fix dead ReDoc vendor extensions link in extending-openapi (13 languages) (@Hisernberg)
+- **PR #16731** (2026-11-10): 🔖 Release version 0.162.4 (@pr-submit[bot])
+- **PR #16730** (2026-11-10): 🐛 Require AnyIO 4.1.0 or newer at runtime (@tiangolo)
 
 ---
 
@@ -1745,28 +1802,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐛 Fix AI coding agent notice links in previews (#16700)
+## X. 🐛 Fix synchronous dependency cleanup on cancellation (#16734)
 
 **RULE**:
-When implementing operations in `docs/en/docs/agent-banner.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fastapi/concurrency.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a9928ed`: 🐛 Fix AI coding agent notice links in previews (#16700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb2f4926`: 🐛 Fix synchronous dependency cleanup on cancellation (#16734). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/docs/agent-banner.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `fastapi/concurrency.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-See [Develop with AI](ai-development.md).
+from anyio import CancelScope, CapacityLimiter
+    # AnyIO cancellation waits for a running worker, but not for worker capacity.
+    # Only call __exit__ after __enter__ has succeeded.
+    value = await run_in_threadpool(cm.__enter__)
+        yield value
+    except BaseException as e:
+        with CancelScope(shield=True):
+            ok = bool(
+                await anyio.to_thread.run_sync(
+                    cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
+                )
+            raise
+        with CancelScope(shield=True):
+            await anyio.to_thread.run_sync(
+                cm.__exit__, None, None, None, limiter=exit_limiter
+            )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-See [Develop with AI](https://fastapi.tiangolo.com/ai-development/).
+from anyio import CapacityLimiter
+        yield await run_in_threadpool(cm.__enter__)
+    except Exception as e:
+        ok = bool(
+            await anyio.to_thread.run_sync(
+                cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
+        )
+            raise e
+        await anyio.to_thread.run_sync(
+            cm.__exit__, None, None, None, limiter=exit_limiter
+        )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a9928ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb2f4926` are properly handled with clean fallback behavior.

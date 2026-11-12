@@ -9259,3 +9259,8 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `203f88d7` | Multi-dimensional audit evidence | 2026-11-12T23:17:01.232Z |
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `b93f1630` | Multi-dimensional audit evidence | 2026-11-12T23:28:54.711Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `668cec06` | Multi-dimensional audit evidence | 2026-11-12T23:29:00.812Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `d29c8ec6` | Multi-dimensional audit evidence | 2026-11-12T23:41:45.889Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `eaec0e89` | Multi-dimensional audit evidence | 2026-11-12T23:41:55.987Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `401a9202` | Multi-dimensional audit evidence | 2026-11-12T23:41:57.640Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `af417d1d` | Multi-dimensional audit evidence | 2026-11-12T23:42:00.819Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `5add7a45` | Multi-dimensional audit evidence | 2026-11-12T23:42:16.723Z |

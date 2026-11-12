@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T23:29:00.831Z",
+  "last_updated": "2026-11-12T23:42:16.744Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "faca089e506cde77bbe8ab4c73ccc15d6d6b7e39615adc17198cede6d037f660",
-      "verified_at": "2026-11-08T00:56:04.265Z",
+      "content_hash": "f918b3270d2a4fd1b1d54de8a804aefdafdb5e630077f6da628e18448475bb8d",
+      "verified_at": "2026-11-12T23:42:16.743Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:56:04.265Z"
+      "last_updated": "2026-11-12T23:42:16.743Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "3e8b982f011d5e5c04908daa9862539f628938603069f901c3b3ac793f59417d",
-      "verified_at": "2026-11-12T21:31:14.884Z",
+      "content_hash": "1f5048ebe1fa9e9aa0739174175c960e0b20c5de34f423534a94fce46b711828",
+      "verified_at": "2026-11-12T23:42:00.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:31:14.884Z"
+      "last_updated": "2026-11-12T23:42:00.862Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3756,14 +3756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-giancarloerra-socraticode",
-      "content_hash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
-      "verified_at": "2026-11-07T03:14:25.384Z",
+      "content_hash": "223e7a20de68748531919b0859379c9f80d527b088d19e4d16b76fc114e37ee9",
+      "verified_at": "2026-11-12T23:41:57.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:14:25.384Z"
+      "last_updated": "2026-11-12T23:41:57.655Z"
     },
     "jaredpalmer/formik": {
       "repository": "jaredpalmer/formik",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "f8717d261030d46afea040e2c8e04b7d2eec61c0a838ba28560b254539e1dd4c",
-      "verified_at": "2026-11-06T14:40:44.394Z",
+      "content_hash": "420abd1b14347f6db4320df31aeb9d5ad8ed3336244f211d61068a22ab9c3f0e",
+      "verified_at": "2026-11-12T23:41:56.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:40:44.394Z"
+      "last_updated": "2026-11-12T23:41:56.005Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -13371,14 +13371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-confetti",
-      "content_hash": "b6db71fa892210db795e2f927a2376a30295bd236809130da1740d4e8a479645",
-      "verified_at": "2026-11-08T17:35:42.704Z",
+      "content_hash": "39c66e3effd7bd570a6c0069c9189297cdd17b8995ece7dbd29e12833db4dc29",
+      "verified_at": "2026-11-12T23:41:45.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:35:42.704Z"
+      "last_updated": "2026-11-12T23:41:45.904Z"
     },
     "m0ntydad0n/pseo-engine-oss": {
       "repository": "m0ntydad0n/pseo-engine-oss",

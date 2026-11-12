@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T23:29:06.399Z",
+  "updated_at": "2026-11-12T23:42:22.379Z",
   "stats": {
-    "total_discovered": 1827,
-    "approved_pending_harvest": 1685,
+    "total_discovered": 1844,
+    "approved_pending_harvest": 1701,
     "harvested_count": 0,
-    "rejected_count": 142,
+    "rejected_count": 143,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1689,
+      "COMMUNITY_AND_EXPERT": 1706,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -39217,6 +39217,373 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
         "fileName": "ontos-ai-knowhere-learnings.md"
+      }
+    },
+    "SRC-B1D570D7F42D": {
+      "id": "SRC-B1D570D7F42D",
+      "url": "https://github.com/tiangolo/fastapi",
+      "title": "https://github.com/tiangolo/fastapi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-78BD12123658": {
+      "id": "SRC-78BD12123658",
+      "url": "https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md",
+      "title": "https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-4565DE8270BB": {
+      "id": "SRC-4565DE8270BB",
+      "url": "https://fastapi.tiangolo.com/tutorial/response-model",
+      "title": "https://fastapi.tiangolo.com/tutorial/response-model",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.211Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-C889B62860C3": {
+      "id": "SRC-C889B62860C3",
+      "url": "https://fastapi.tiangolo.com/",
+      "title": "https://fastapi.tiangolo.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.221Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-5A252AD22B6B": {
+      "id": "SRC-5A252AD22B6B",
+      "url": "https://codspeed.io/docs/instruments/cpu",
+      "title": "https://codspeed.io/docs/instruments/cpu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-925ADF778E21": {
+      "id": "SRC-925ADF778E21",
+      "url": "https://app.codspeed.io/fastapi/fastapi/branches/codex%2Ffix-sync-dependency-cancellation?q=has%3Asignificant_sys_time",
+      "title": "https://app.codspeed.io/fastapi/fastapi/branches/codex%2Ffix-sync-dependency-cancellation?q=has%3Asignificant_sys_time",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-A65F01C49481": {
+      "id": "SRC-A65F01C49481",
+      "url": "https://app.codspeed.io/fas",
+      "title": "https://app.codspeed.io/fas",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.252Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-3379D5D8458A": {
+      "id": "SRC-3379D5D8458A",
+      "url": "https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fadd-anyio-runtime-dependency?q=has%3Asignificant_sys_time",
+      "title": "https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fadd-anyio-runtime-dependency?q=has%3Asignificant_sys_time",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-FAD728A1C398": {
+      "id": "SRC-FAD728A1C398",
+      "url": "https://app.codspeed.io/fastapi/fastapi/branches/code",
+      "title": "https://app.codspeed.io/fastapi/fastapi/branches/code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-1E3BDB7A7306": {
+      "id": "SRC-1E3BDB7A7306",
+      "url": "https://8d6cb744.fastapitiangolo.pages.dev/",
+      "title": "https://8d6cb744.fastapitiangolo.pages.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-2791936AF178": {
+      "id": "SRC-2791936AF178",
+      "url": "https://github.com/joreilly/Confetti",
+      "title": "https://github.com/joreilly/Confetti",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.301Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-A9ED9AD9EE80": {
+      "id": "SRC-A9ED9AD9EE80",
+      "url": "https://user-images.githubusercontent.com/6302/212739637-b96229ed-2f8a-47b8-bd92-4f195defc4e6.png",
+      "title": "https://user-images.githubusercontent.com/6302/212739637-b96229ed-2f8a-47b8-bd92-4f195defc4e6.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-68E6ADD5B5AA": {
+      "id": "SRC-68E6ADD5B5AA",
+      "url": "https://claude.ai/code/session_017xSuvnrqtgdck2uPu87WP6",
+      "title": "https://claude.ai/code/session_017xSuvnrqtgdck2uPu87WP6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-0759BA60755A": {
+      "id": "SRC-0759BA60755A",
+      "url": "https://github.com/DefGuard/defguard",
+      "title": "https://github.com/DefGuard/defguard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-B71ED42DD39E": {
+      "id": "SRC-B71ED42DD39E",
+      "url": "http://{ip_or_domain/",
+      "title": "http://{ip_or_domain/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T23:42:22.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-CB5CA21A4621": {
+      "id": "SRC-CB5CA21A4621",
+      "url": "https://{rest/",
+      "title": "https://{rest/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-F6C9CDB1EE59": {
+      "id": "SRC-F6C9CDB1EE59",
+      "url": "https://github.com/user-attachments/assets/920fa237-6801-422e-a1db-24aafaa0574a",
+      "title": "https://github.com/user-attachments/assets/920fa237-6801-422e-a1db-24aafaa0574a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:42:22.379Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
       }
     }
   }

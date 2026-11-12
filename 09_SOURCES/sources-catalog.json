@@ -1983,10 +1983,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/tiangolo/fastapi",
-    "sourceVersion": "8f9f47de",
+    "sourceVersion": "5add7a45",
     "license": "MIT",
-    "contentHash": "faca089e506cde77bbe8ab4c73ccc15d6d6b7e39615adc17198cede6d037f660",
-    "lastHarvestedAt": "2026-11-08T00:56:04.256Z",
+    "contentHash": "f918b3270d2a4fd1b1d54de8a804aefdafdb5e630077f6da628e18448475bb8d",
+    "lastHarvestedAt": "2026-11-12T23:42:16.723Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "pallets-flask": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "b20fce7c",
+    "sourceVersion": "af417d1d",
     "license": "NOASSERTION",
-    "contentHash": "3e8b982f011d5e5c04908daa9862539f628938603069f901c3b3ac793f59417d",
-    "lastHarvestedAt": "2026-11-12T21:31:14.853Z",
+    "contentHash": "1f5048ebe1fa9e9aa0739174175c960e0b20c5de34f423534a94fce46b711828",
+    "lastHarvestedAt": "2026-11-12T23:42:00.819Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2413,10 +2413,10 @@
     "repository": "giancarloerra/SocratiCode",
     "platform": "github",
     "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
-    "sourceVersion": "c9a37f4b",
+    "sourceVersion": "401a9202",
     "license": "AGPL-3.0",
-    "contentHash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
-    "lastHarvestedAt": "2026-11-07T03:14:25.377Z",
+    "contentHash": "223e7a20de68748531919b0859379c9f80d527b088d19e4d16b76fc114e37ee9",
+    "lastHarvestedAt": "2026-11-12T23:41:57.640Z",
     "learningId": "learn-github-giancarloerra-socraticode"
   },
   "jaredpalmer-formik": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "e17756e7",
+    "sourceVersion": "eaec0e89",
     "license": "NOASSERTION",
-    "contentHash": "f8717d261030d46afea040e2c8e04b7d2eec61c0a838ba28560b254539e1dd4c",
-    "lastHarvestedAt": "2026-11-06T14:40:44.388Z",
+    "contentHash": "420abd1b14347f6db4320df31aeb9d5ad8ed3336244f211d61068a22ab9c3f0e",
+    "lastHarvestedAt": "2026-11-12T23:41:55.987Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -8883,10 +8883,10 @@
     "repository": "joreilly/Confetti",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/Confetti",
-    "sourceVersion": "32c0714d",
+    "sourceVersion": "d29c8ec6",
     "license": "Apache-2.0",
-    "contentHash": "b6db71fa892210db795e2f927a2376a30295bd236809130da1740d4e8a479645",
-    "lastHarvestedAt": "2026-11-08T17:35:42.689Z",
+    "contentHash": "39c66e3effd7bd570a6c0069c9189297cdd17b8995ece7dbd29e12833db4dc29",
+    "lastHarvestedAt": "2026-11-12T23:41:45.889Z",
     "learningId": "learn-github-joreilly-confetti"
   },
   "m0ntydad0n-pseo-engine-oss": {
