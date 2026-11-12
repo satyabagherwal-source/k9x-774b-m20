@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "cecd9f55",
+    "sourceVersion": "1afb2cc4",
     "license": "Apache-2.0",
-    "contentHash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
-    "lastHarvestedAt": "2026-11-11T19:28:45.041Z",
+    "contentHash": "ba9b9eac7c07a97734bfd4103e6cd333bafdc5e71d2e67bdd5e17f438b5677bf",
+    "lastHarvestedAt": "2026-11-12T12:33:02.203Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "de47e114",
+    "sourceVersion": "0ff3d233",
     "license": "Apache-2.0",
-    "contentHash": "e36b0f0a10cc4867d3a03bbce67ff91e62aeeb247e7f12269096f296ef6c65dd",
-    "lastHarvestedAt": "2026-11-10T04:51:56.944Z",
+    "contentHash": "b900481f95d6bd141c1cd4f7adcceb165b3e01cddef2c4142d3303520a5451c2",
+    "lastHarvestedAt": "2026-11-12T12:33:05.573Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "a579e352",
+    "sourceVersion": "3e1a86e6",
     "license": "MIT",
-    "contentHash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
-    "lastHarvestedAt": "2026-11-07T20:16:27.185Z",
+    "contentHash": "52beee9c918e96e27d718431a04d0cbf1cd96f6a2375d142ce0678ac7ba09021",
+    "lastHarvestedAt": "2026-11-12T12:32:51.840Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {

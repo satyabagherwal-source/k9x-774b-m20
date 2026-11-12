@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T12:20:14.189Z",
+  "last_updated": "2026-11-12T12:33:05.458Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45387,8 +45387,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "de47e114",
-      "content_hash": "e36b0f0a10cc4867d3a03bbce67ff91e62aeeb247e7f12269096f296ef6c65dd",
+      "source_version": "0ff3d233",
+      "content_hash": "b900481f95d6bd141c1cd4f7adcceb165b3e01cddef2c4142d3303520a5451c2",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -45410,6 +45410,11 @@
         {
           "number": null,
           "title": "[automated] fix: bump klauspost/compress to v1.20.2 (CVE-2026-116591) (#55260)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: add PyUDF search, lifecycle and runtime regression coverage (#55386)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45493,7 +45498,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T04:51:56.805Z",
+      "verified_at": "2026-11-12T12:33:05.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48267,8 +48272,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "cecd9f55",
-      "content_hash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
+      "source_version": "1afb2cc4",
+      "content_hash": "ba9b9eac7c07a97734bfd4103e6cd333bafdc5e71d2e67bdd5e17f438b5677bf",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -48290,6 +48295,11 @@
         {
           "number": null,
           "title": "proxy): distinguish credential capture failures in HTTP responses",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (#2302)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48398,7 +48408,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T19:28:44.844Z",
+      "verified_at": "2026-11-12T12:33:02.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83883,14 +83893,19 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "a579e352",
-      "content_hash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
+      "source_version": "3e1a86e6",
+      "content_hash": "52beee9c918e96e27d718431a04d0cbf1cd96f6a2375d142ce0678ac7ba09021",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "html): remove adjacent module tags on the first line (#23823)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "client): fallback to waiting on main thread for server start when trusted types",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -83924,7 +83939,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:16:27.087Z",
+      "verified_at": "2026-11-12T12:32:51.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

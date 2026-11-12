@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T12:20:20.532Z",
+  "updated_at": "2026-11-12T12:33:11.631Z",
   "stats": {
-    "total_discovered": 1295,
-    "approved_pending_harvest": 1175,
+    "total_discovered": 1319,
+    "approved_pending_harvest": 1197,
     "harvested_count": 0,
-    "rejected_count": 120,
+    "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1182,
+      "COMMUNITY_AND_EXPERT": 1206,
       "OFFICIAL_DOCUMENTATION": 59,
       "STANDARDS_AND_SPECIFICATIONS": 51,
       "ENGINEERING_BLOGS": 1,
@@ -27667,6 +27667,520 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
         "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-2B14193563CE": {
+      "id": "SRC-2B14193563CE",
+      "url": "https://github.com/vitejs/vite",
+      "title": "https://github.com/vitejs/vite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-66596BF0ECC3": {
+      "id": "SRC-66596BF0ECC3",
+      "url": "https://github.com/rolldown/rolldown/issues/2745",
+      "title": "https://github.com/rolldown/rolldown/issues/2745",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.426Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-51C3C9E60796": {
+      "id": "SRC-51C3C9E60796",
+      "url": "https://github.com/rolldown/rolldown/blob/62fba31428af244f871f0e119ed43936ee5d01fd/packages/rolldown/src/log/logger.ts",
+      "title": "https://github.com/rolldown/rolldown/blob/62fba31428af244f871f0e119ed43936ee5d01fd/packages/rolldown/src/log/logger.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.434Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-8D20712D0D08": {
+      "id": "SRC-8D20712D0D08",
+      "url": "https://github.com/nodejs/node/issues/43047",
+      "title": "https://github.com/nodejs/node/issues/43047",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-DEA60A199510": {
+      "id": "SRC-DEA60A199510",
+      "url": "https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-76A14A26DEA0": {
+      "id": "SRC-76A14A26DEA0",
+      "url": "https://e18e.dev/docs/replacements/execa",
+      "title": "https://e18e.dev/docs/replacements/execa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-0E6233C7EFFB": {
+      "id": "SRC-0E6233C7EFFB",
+      "url": "https://stackblitz.com/edit/node-vqfvv8dy?file=index.js",
+      "title": "https://stackblitz.com/edit/node-vqfvv8dy?file=index.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-D3C6CFA4F12F": {
+      "id": "SRC-D3C6CFA4F12F",
+      "url": "https://evanw.github.io/source-map-visualization",
+      "title": "https://evanw.github.io/source-map-visualization",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-C7E82E5619D3": {
+      "id": "SRC-C7E82E5619D3",
+      "url": "https://github.com/vitejs/vite/issues/18038",
+      "title": "https://github.com/vitejs/vite/issues/18038",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-1EC8A32F068B": {
+      "id": "SRC-1EC8A32F068B",
+      "url": "https://*.s3/",
+      "title": "https://*.s3/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-A445AE8716DB": {
+      "id": "SRC-A445AE8716DB",
+      "url": "https://eks.*.amazonaws.com/",
+      "title": "https://eks.*.amazonaws.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.522Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-99A9CC043A34": {
+      "id": "SRC-99A9CC043A34",
+      "url": "https://eks.*.amazonaws.com.cn/",
+      "title": "https://eks.*.amazonaws.com.cn/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-AE4934E2CF89": {
+      "id": "SRC-AE4934E2CF89",
+      "url": "https://*.s3.*.amazonaws.com/",
+      "title": "https://*.s3.*.amazonaws.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.536Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-CAAE9789C7B2": {
+      "id": "SRC-CAAE9789C7B2",
+      "url": "https://eks.*.amazonaws.eu/",
+      "title": "https://eks.*.amazonaws.eu/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-60B077DA0AB0": {
+      "id": "SRC-60B077DA0AB0",
+      "url": "https://*.amazonaws.com/",
+      "title": "https://*.amazonaws.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-7225CF28AABF": {
+      "id": "SRC-7225CF28AABF",
+      "url": "https://{service/",
+      "title": "https://{service/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-F211059D2088": {
+      "id": "SRC-F211059D2088",
+      "url": "https://*.s3.*.{domain/",
+      "title": "https://*.s3.*.{domain/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.565Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-AFF05C9C21DD": {
+      "id": "SRC-AFF05C9C21DD",
+      "url": "https://*.s3.{region/",
+      "title": "https://*.s3.{region/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-17E7C139C2DF": {
+      "id": "SRC-17E7C139C2DF",
+      "url": "https://sts.us-east-1.amazonaws.com/",
+      "title": "https://sts.us-east-1.amazonaws.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-8088219F921D": {
+      "id": "SRC-8088219F921D",
+      "url": "https://{/",
+      "title": "https://{/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T12:33:11.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-E093B7C22AF9": {
+      "id": "SRC-E093B7C22AF9",
+      "url": "https://bedrock-runtime.us-east-1.amazonaws.com/",
+      "title": "https://bedrock-runtime.us-east-1.amazonaws.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-B72AB1412749": {
+      "id": "SRC-B72AB1412749",
+      "url": "https://*.s3.*.amazonaws.com.cn/",
+      "title": "https://*.s3.*.amazonaws.com.cn/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.609Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-6DF9999EBAE1": {
+      "id": "SRC-6DF9999EBAE1",
+      "url": "https://github.com/milvus-io/milvus",
+      "title": "https://github.com/milvus-io/milvus",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T12:33:11.621Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-BEC3D30A06CF": {
+      "id": "SRC-BEC3D30A06CF",
+      "url": "http://{cf.param_info.param_host/",
+      "title": "http://{cf.param_info.param_host/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T12:33:11.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
       }
     }
   }

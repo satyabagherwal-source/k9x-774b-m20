@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `cecd9f55`  
+> **Source Version**: `1afb2cc4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:28:27.387Z  
+> **Timestamp**: 2026-11-12T12:32:45.853Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:28:27.377Z  
+> **Harvest Timestamp**: 2026-11-12T12:32:45.838Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4935 stars
+- **Stars / Engagement**: 4939 stars
 
 ---
 
@@ -2992,1446 +2992,518 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cae20547` (2026-10-23)
-**Commit Message**: fix(proxy): distinguish credential capture failures in HTTP responses
+### Incident Patch 1: `1afb2cc4` (2026-11-12)
+**Commit Message**: feat(proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (#2302)
 
-Host credential failures currently look like upstream outages to HTTP
-clients. Return a fixed credential_capture_failed diagnostic across the
-reverse proxy and HTTP/1.1 and HTTP/2 CONNECT interception paths.
+* feat(proxy): accept GovCloud regions and s3 bucket-subdomain upstreams for aws_auth
 
-Keep HTTP 503, fail-closed handling, and existing audit behavior. Do not
-expose helper output or backend details. Preserve bodyless HTTP/2 HEAD
-responses and test that failed requests are not forwarded upstream.
+Derive us-gov-east/west-N signing regions for wildcard upstreams, and accept
+https://*.s3.<region>.amazonaws.com (literal region, explicit aws_auth.region)
+instead of rejecting it with the other wildcard shapes.
 
-All 614 proxy tests, workspace Clippy, and formatting passed. Full CI
-hit two unchanged CLI permission tests that fail under umask 0077 and
-pass under 0022; subsequent CI stages were not reached.
+Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
 
-Closes #2190
+* feat(proxy): extend aws_auth wildcard upstreams to China, api.aws, S3 vhost and two-label services
 
-Co-Authored-By: GPT-6 Astra <[REDACTED_EMAIL]>
-Signed-off-by: Greg Hurrell <[REDACTED_EMAIL]>
+Bind wildcard-region routes to a partition (amazonaws.com, amazonaws.com.cn,
+api.aws) with per-partition region grammars. Accept *.s3.*.{domain} (region
+derived per request), *.s3.{region}.{domain} with an explicit region, and
+one- or two-label service prefixes such as api.ecr. ISO partitions remain
+unsupported.
 
-**File**: `crates/nono-proxy/src/capture.rs` (modified, +113/-0)
+Refs #2301
+
+Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/src/command_policy.rs` (modified, +2/-2)
 ```diff
-@@ -6,6 +6,13 @@
+@@ -7180,8 +7180,8 @@ mod tests {
+         );
+         for (upstream, region) in [
+             ("https://eks.*.amazonaws.com", Some("us-east-1")),
+-            ("https://eks.*.amazonaws.com.cn", None),
+-            ("https://*.s3.*.amazonaws.com", None),
++            ("https://*.s3.*.amazonaws.com", Some("us-east-1")),
++            ("https://eks.*.amazonaws.eu", None),
+         ] {
+             assert!(
+                 !validate_one(&cred(upstream, region)).errors.is_empty(),
+```
+
+**File**: `crates/nono-cli/src/profile/mod.rs` (modified, +2/-2)
+```diff
+@@ -12266,8 +12266,8 @@ mod tests {
  
- use zeroize::Zeroizing;
+         for (upstream, region) in [
+             ("https://eks.*.amazonaws.com", Some("us-east-1")),
+-            ("https://eks.*.amazonaws.com.cn", None),
+-            ("https://*.s3.*.amazonaws.com", None),
++            ("https://*.s3.*.amazonaws.com", Some("us-east-1")),
++            ("https://eks.*.amazonaws.eu", None),
+             ("https://*.amazonaws.com", None),
+         ] {
+             let bad = cred(upstream, region, Some("eks"));
+```
+
+**File**: `crates/nono-proxy/src/aws/endpoints.rs` (modified, +365/-64)
+```diff
+@@ -5,13 +5,16 @@
+ //! - Global:     `{service}.amazonaws.com`
+ //! - FIPS:       `{service}-fips.{region}.amazonaws.com` (`-fips` is stripped)
+ //!
+-//! `api.aws` dual-stack endpoints are not supported; supply explicit
++//! Concrete `api.aws` dual-stack endpoints are not parsed; supply explicit
+ //! `aws_auth.region` and `aws_auth.service` config values for those.
+ //!
+-//! A route upstream may also be `https://{service}.*.amazonaws.com`, where `*`
+-//! is the whole region label. The SigV4 region is then derived per request
+-//! from the intercepted host by [`derive_region`], limited to commercial-partition
+-//! region codes. Every other wildcard shape on an `amazonaws` host is rejected.
++//! A route upstream may also be `https://{service}.*.{domain}` or
++//! `https://*.s3.*.{domain}` (virtual-hosted S3), where the second `*` is the
++//! whole region label and `{domain}` is an AWS partition domain (see
++//! [`AwsPartition`]). The SigV4 region is then derived per request from the
++//! intercepted host by [`derive_region`], limited to that partition's region
++//! codes. `https://*.s3.{region}.{domain}` is accepted with an explicit
++//! `aws_auth.region`. Every other wildcard shape on an AWS host is rejected.
  
-+/// Safe client-facing diagnostic shared by all proxy transports. Never include
-+/// helper output, command arguments, credential references, or backend errors.
-+pub(crate) const CAPTURE_FAILED_BODY: &str = concat!(
-+    r#"{"error":"credential_capture_failed","message":"nono could not obtain host credentials. "#,
-+    r#"Check the host credential helper and proxy logs."}"#,
-+);
-+
- /// Request context for a command-backed credential capture.
- #[derive(Debug, Clone)]
- pub struct CredentialCaptureRequest {
-@@ -89,3 +96,109 @@ pub trait CredentialCaptureBackend: Send + Sync + std::fmt::Debug {
-         request: CredentialCaptureRequest,
-     ) -> std::result::Result<CredentialCaptureResponse, CredentialCaptureError>;
+ use std::collections::HashMap;
+ use std::sync::OnceLock;
+@@ -30,15 +33,79 @@ fn derived_region_re() -> &'static Regex {
+     static RE: OnceLock<Regex> = OnceLock::new();
+     RE.get_or_init(|| {
+         Regex::new(
+-            r"^[a-z]{2}-(?:central|north|south|east|west|northeast|northwest|southeast|southwest)-[1-9][0-9]?$",
++            r"^(?:[a-z]{2}-(?:central|north|south|east|west|northeast|northwest|southeast|southwest)|us-gov-(?:east|west))-[1-9][0-9]?$",
+         )
+         .expect("static regex is valid")
+     })
  }
+ 
+-/// Commercial-partition region grammar for derived regions; `cn-` is excluded.
+-fn is_derived_region(region: &str) -> bool {
+-    !region.starts_with("cn-") && derived_region_re().is_match(region)
++/// `true` for a 1-2 digit region ordinal without a leading zero.
++fn is_region_ordinal(n: &str) -> bool {
++    matches!(n.as_bytes(), [b'1'..=b'9'] | [b'1'..=b'9', b'0'..=b'9'])
++}
 +
-+#[cfg(test)]
-+#[allow(clippy::unwrap_used)]
-+pub(crate) mod tests {
-+    use super::*;
-+    use crate::{config::RouteConfig, credential::CredentialStore, route::RouteStore};
-+    use std::sync::Arc;
++/// `true` when `region` is `{prefix}{direction}-{ordinal}` for one of `directions`.
++fn is_region_of(region: &str, prefix: &str, directions: &[&str]) -> bool {
++    region
++        .strip_prefix(prefix)
++        .and_then(|rest| rest.rsplit_once('-'))
++        .is_some_and(|(dir, n)| directions.contains(&dir) && is_region_ordinal(n))
++}
 +
-+    #[derive(Debug)]
-+    pub(crate) struct FailingCaptureBackend;
++/// AWS partition, identified by its endpoint domain. A wildcard route is bound
++/// to one partition, so a host from another partition never yields a region.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum AwsPartition {
++    /// `amazonaws.com`: commercial and GovCloud (`us-gov-`) regions.
++    Aws,
++    /// `amazonaws.com.cn`: China regions.
++    AwsCn,
++    /// `api.aws`: dual-stack endpoints, same regions as `amazonaws.com`.
++    ApiAws,
++}
 +
-+    impl CredentialCaptureBackend for FailingCaptureBackend {
-+        fn capture(
-+            &self,
-+            _request: CredentialCaptureRequest,
-+        ) -> std::result::Result<CredentialCaptureResponse, CredentialCaptureError> {
-+            Err(CredentialCaptureError::new(
-+                "private-backend-detail".to_string(),
-+                CredentialCaptureMetadata {
-+                    command: Some("/private/helper".to_string()),
-+                    argv: vec!["private-command-argument".to_string()],
-+                    stderr_redacted: Some("private-helper-diagnostic".to_string()),
-+                    exit_status: Some(1),
-+                    ..Default::default()
-+                },
-+            ))
++impl AwsPartition {
++    const ALL: [Self; 3] = [Self::Aws, Self::AwsCn, Self::ApiAws];
++
++    /// Endpoint domain labels, most significant last.
++    fn domain(self) -> &'static [&'static str] {
++        match self {
++            Self::Aws => &["amazonaws", "com"],
++            Self::AwsCn => &["amazonaws", "com", "cn"],
++            Self::ApiAws => &["api", "aws"],
 +        }
 +    }
 +
-+    pub(crate) struct FailureFixture {
-+        pub route_store: Arc<RouteStore>,
-+        pub credential_store: Arc<CredentialStore>,
-+        pub connector: tokio_rustls::TlsConnector,
-+        pub tls_config: Arc<rustls::ClientConfig>,
-+        pub upstream: std::net::TcpListener,
-+    }
-+
-+    impl FailureFixture {
-+        pub async fn new() -> Self {
-+            let upstream = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+            upstream.set_nonblocking(true).unwrap();
-+            let config = rustls::ClientConfig::builder_with_provider(Arc::new(
-+                rustls::crypto::ring::default_provider(),
-+            ))
-+            .with_safe_default_protocol_versions()
-+            .unwrap()
-+            .with_root_certificates(rustls::RootCertStore::empty())
-+            .with_no_client_auth();
-+            let tls_config = Arc::new(config);
-+            let connector = tokio_rustls::TlsConnector::from(Arc::clone(&tls_config));
-+            let route: RouteConfig = serde_json::from_value(serde_json::json!({
-+                "prefix": "capture",
-+                "upstream": format!("https://127.0.0.1:{}", upstream.local_addr().unwrap().port()),
-+                "credential_key": "cmd://private-credential-reference",
-+                "inject_header": "Authorization",
-+                "credential_format": "Bearer {}",
-+                "endpoint_rules": [{"method": "POST", "path": "/mcp"}]
-+            }))
-+            .unwrap();
-+            let routes = [route];
-+            let route_store = Arc::new(RouteStore::load(&routes).await.unwrap());
-+            let credential_store = Arc::new(
-+                CredentialStore::load_with_diagnostics(&routes, &connector, None)
-+                    .await
-+                    .unwrap()
-+                    .store,
-+            );
-+            Self {
-+                route_store,
-+                credential_store,
-+                connector,
-+                tls_config,
-+                upstream,
++    /// Strict region grammar used when a region is derived from a request host.
++    fn is_derived_region(self, region: &str) -> bool {
++        match self {
++            Self::Aws | Self::ApiAws => {
++                !region.starts_with("cn-") && derived_region_re().is_match(region)
 +            }
-+        }
-+
-+        pub fn port(&self) -> u16 {
-+            self.upstream.local_addr().unwrap().port()
-+        }
-+
-+        pub fn assert_no_upstream_connection(&self) {
-+            assert!(matches!(self.upstream.accept(), Err(error)
-+                if error.kind() == std::io::ErrorKind::WouldBlock));
++            Self::AwsCn => is_region_of(region, "cn-", &["north", "northwest"]),
 +        }
 +    }
 +
-+    pub(crate) fn assert_failure_body(body: &[u8]) {
-+        let value: serde_json::Value = serde_json::from_slice(body).unwrap();
++    /// Region grammar for the literal region of `*.s3.{region}.{domain}`.
++    fn is_literal_region(self, region: &str) -> bool {
++        region_re().is_match(region)
++            && match self {
++                // Lenient for new commercial regions, but never another partition's.
++                Self::Aws | Self::ApiAws => !region.starts_with("cn-") && !region.contains("-iso"),
++                _ => self.is_derived_region(region),
++            }
++    }
++}
++
++/// Split `labels` into the leading labels and the AWS partition whose domain
++/// ends them, compared label by label.
++fn split_partition<'a>(labels: &'a [&'a str]) -> Option<(&'a [&'a str], AwsPartition)> {
++    AwsPartition::ALL.into_iter().find_map(|partition| {
++        let domain = partition.domain();
++        let split = labels.len().checked_sub(domain.len())?;
++        let (rest, tail) = labels.split_at(split);
++        (tail == domain).then_some((rest, partition))
++    })
+ }
+ 
+ fn service_label_re() -> &'static Regex {
+@@ -62,6 +129,7 @@ fn service_map() -> &'static HashMap<&'static str, &'static str> {
+             // Core services
+             ("dynamodb", "dynamodb"),
+             ("s3", "s3"),
++            ("api.ecr", "ecr"),
+             ("lambda", "lambda")
+```
+
+**File**: `crates/nono-proxy/src/aws/route.rs` (modified, +9/-9)
+```diff
+@@ -10,7 +10,7 @@ use std::collections::{BTreeMap, HashMap};
+ use aws_credential_types::provider::SharedCredentialsProvider;
+ use tracing::debug;
+ 
+-use super::endpoints::SigningRegion;
++use super::endpoints::{AwsUpstreamPattern, SigningRegion};
+ 
+ /// A fully-resolved AWS SigV4 route entry.
+ pub struct AwsRoute {
+@@ -21,9 +21,9 @@ pub struct AwsRoute {
+     /// SigV4 signing region: fixed, or derived from each request's host.
+     pub region: SigningRegion,
+ 
+-    /// Literal service label of a `{service}.*.amazonaws.com` upstream.
++    /// Wildcard-region shape of the upstream.
+     /// `Some` exactly when `region` is [`SigningRegion::FromRequestHost`].
+-    pub service_label: Option<String>,
++    pub wildcard: Option<AwsUpstreamPattern>,
+ 
+     /// SigV4 service name (e.g., `"bedrock"`).
+     pub service: String,
+@@ -151,7 +151,7 @@ impl std::fmt::Debug for AwsRoute {
+         let mut s = f.debug_struct("AwsRoute");
+         s.field("upstream", &self.upstream)
+             .field("region", &self.region)
+-            .field("service_label", &self.service_label)
++            .field("wildcard", &self.wildcard)
+             .field("service", &self.service);
+         match &self.credentials {
+             AwsRouteCredentials::Single { profile_key, .. } => {
+@@ -278,7 +278,7 @@ impl AwsRouteTable {
+         profile: Option<&str>,
+         upstream: String,
+         region: SigningRegion,
+-        service_label: Option<String>,
++        wildcard: Option<AwsUpstreamPattern>,
+         service: String,
+     ) -> Result<(), String> {
+         let provider = self.provider_for(profile).await?;
+@@ -287,7 +287,7 @@ impl AwsRouteTable {
+             AwsRoute {
+                 upstream,
+                 region,
+-                service_label,
++                wildcard,
+                 service,
+                 credentials: AwsRouteCredentials::Single {
+                     profile_key: profile.map(str::to_owned),
+@@ -316,7 +316,7 @@ impl AwsRouteTable {
+         profiles: &BTreeMap<String, String>,
+         upstream: String,
+         region: SigningRegion,
+-        service_label: Option<String>,
++        wildcard: Option<AwsUpstreamPattern>,
+         service: String,
+     ) -> Result<(), String> {
+         let mut by_key = BTreeMap::new();
+@@ -338,7 +338,7 @@ impl AwsRouteTable {
+             AwsRoute {
+                 upstream,
+                 region,
+-                service_label,
++                wildcard,
+                 service,
+                 credentials: AwsRouteCredentials::ByAccessKeyId(by_key),
+                 secret_registry: self.secret_registry.clone(),
+@@ -430,7 +430,7 @@ mod tests {
+         AwsRoute {
+             upstream: "https://sts.us-east-1.amazonaws.com".to_string(),
+             region: SigningRegion::Fixed("us-east-1".to_string()),
+-            service_label: None,
++            wildcard: None,
+             service: "sts".to_string(),
+             credentials,
+             secret_registry: None,
+```
+
+**File**: `crates/nono-proxy/src/aws/sign.rs` (modified, +3/-3)
+```diff
+@@ -426,7 +426,7 @@ mod tests {
+         super::AwsRoute {
+             upstream: format!("https://{}.{}.amazonaws.com", service, region),
+             region: SigningRegion::Fixed(region.to_string()),
+-            service_label: None,
++            wildcard: None,
+             service: service.to_string(),
+             credentials: super::super::route::AwsRouteCredentials::Single {
+                 profile_key: None,
+@@ -545,7 +545,7 @@ mod tests {
+         let route = super::AwsRoute {
+             upstream: "https://bedrock-runtime.us-east-1.amazonaws.com".to_string(),
+             region: SigningRegion::Fixed("us-east-1".to_string()),
+-            service_label: None,
++            wildcard: None,
+             service: "bedrock".to_string(),
+             credentials: super::super::route::AwsRouteCredentials::Single {
+                 profile_key: None,
+@@ -631,7 +631,7 @@ mod tests {
+         let route = super::AwsRoute {
+             upstream: "https://bedrock-runtime.us-east-1.amazonaws.com".to_string(),
+             region: super::super::endpoints::SigningRegion::Fixed("us-east-1".to_string()),
+-            service_label: None,
++            wildcard: None,
+             service: "bedrock".to_string(),
+             credentials: super::super::route::AwsRouteCredentials::Single {
+                 profile_key: Some("work".to_string()),
+```
+
+**File**: `crates/nono-proxy/src/credential.rs` (modified, +4/-4)
+```diff
+@@ -626,9 +626,9 @@ impl CredentialStore {
+                 ) else {
+                     continue;
+                 };
+-                let service_label =
++                let wildcard =
+                     match crate::aws::endpoints::validate_aws_upstream(&route.upstream, aws_auth) {
+-                        Ok(pattern) => pattern.map(|p| p.service_label),
++                        Ok(pattern) => pattern,
+                         Err(_) => continue,
+                     };
+                 debug!(
+@@ -652,7 +652,7 @@ impl CredentialStore {
+                                 profiles,
+                                 route.upstream.clone(),
+                                 region,
+-                                service_label,
++                                wildcard,
+                                 service,
+                             )
+                             .await
+@@ -664,7 +664,7 @@ impl CredentialStore {
+                                 profile_opt,
+                                 route.upstream.clone(),
+                                 region,
+-                                service_label,
++                                wildcard,
+                                 service,
+                             )
+                             .await
+```
+
+**File**: `crates/nono-proxy/src/route.rs` (modified, +14/-11)
+```diff
+@@ -87,9 +87,9 @@ pub struct LoadedRoute {
+     /// these routes may use `operations` in their endpoint policy.
+     pub aws_auth: bool,
+ 
+-    /// Service label of a `{service}.*.amazonaws.com` `aws_auth` upstream.
++    /// Wildcard-region shape of an `aws_auth` upstream.
+     /// `Some` means the SigV4 region is derived from each request's host.
+-    pub aws_wildcard_service_label: Option<String>,
++    pub aws_wildcard: Option<crate::aws::endpoints::AwsUpstreamPattern>,
+ 
+     /// Audit auth mechanism implied by the managed credential configuration.
+     /// Kept even if credential material failed to load so fail-closed denial
+@@ -445,13 +445,12 @@ impl RouteStore {
+                 || !route.redeem_phantoms.is_empty()
+                 || !endpoint_policy.allows_all_without_l7()
+                 || !upgrade_rules.is_empty();
+-            let aws_wildcard_service_label = match &route.aws_auth {
++            let aws_wildcard = match &route.aws_auth {
+                 Some(aws_auth) => {
+                     crate::aws::endpoints::validate_aws_upstream(&route.upstream, aws_auth)
+                         .map_err(|e| {
+                             ProxyError::Config(format!("route '{}': {e}", normalized_prefix))
+                         })?
+-                        .map(|p| p.service_label)
+                 }
+                 None => None,
+             };
+@@ -484,7 +483,7 @@ impl RouteStore {
+                     requires_managed_credential,
+                     requires_http1,
+                     aws_auth: route.aws_auth.is_some(),
+-                    aws_wildcard_service_label,
++                    aws_wildcard,
+                     managed_auth_mechanism,
+                     managed_injection_mode,
+                     managed_auth,
+@@ -1718,7 +1717,7 @@ mod tests {
+             requires_managed_credential: false,
+             requires_http1: false,
+             aws_auth: false,
+-            aws_wildcard_service_label: None,
++            aws_wildcard: None,
+             managed_auth_mechanism: None,
+             managed_injection_mode: None,
+             managed_auth: None,
+@@ -2064,7 +2063,7 @@ mod tests {
+             requires_managed_credential: true,
+             requires_http1: false,
+             aws_auth: false,
+-            aws_wildcard_service_label: None,
++            aws_wildcard: None,
+             managed_auth_mechanism: Some(NetworkAuditAuthMechanism::PhantomHeader),
+             managed_injection_mode: Some(NetworkAuditInjectionMode::Header),
+             managed_auth: None,
+@@ -2091,7 +2090,7 @@ mod tests {
+             requires_managed_credential: false,
+             requires_http1: false,
+             aws_auth: false,
+-            aws_wildcard_service_label: None,
++            aws_wildcard: None,
+             managed_auth_mechanism: None,
+             managed_injection_mode: None,
+             managed_auth: None,
+@@ -2762,15 +2761,19 @@ h56ZLEEqHfVWFhJWIKRSabtxYPV/VJyMv+lo3L0QwSKsouHs3dtF1zVQ
+             .next()
+             .unwrap()
+             .1;
+-        assert_eq!(route.aws_wildcard_service_label.as_deref(), Some("eks"));
 +        assert_eq!(
-+            value,
-+            serde_json::json!({
-+                "error": "credential_capture_failed",
-+                "message": "nono could not obtain host credentials. Check the host credential helper and proxy logs."
-+            })
++            route.aws_wildcard.as_ref().map(|p| p.service_label()),
++            Some("eks")
 +        );
-+    }
-+
-+    pub(crate) fn assert_http1_failure(response: &str) {
-+        let (headers, body) = response.split_once("\r\n\r\n").unwrap();
-+        assert!(headers.starts_with("HTTP/1.1 503 Service Unavailable\r\n"));
-+        assert!(headers.contains("Content-Type: application/json\r\n"));
-+        assert!(headers.ends_with(&format!("Content-Length: {}", body.len())));
-+        assert!(!headers.to_ascii_lowercase().contains("www-authenticate"));
-
-```
-
-**File**: `crates/nono-proxy/src/reverse.rs` (modified, +69/-1)
-```diff
-@@ -485,7 +485,7 @@ pub async fn handle_reverse_proxy(
-                     0,
-                     &err.to_string(),
-                 );
--                send_error(stream, 503, "Service Unavailable").await?;
-+                send_credential_capture_error(stream).await?;
-                 return Ok(());
-             }
-         }
-@@ -1792,6 +1792,28 @@ where
-     S: tokio::io::AsyncWrite + Unpin,
- {
-     let body = format!("{{\"error\":\"{}\"}}", reason);
-+    send_json_error(stream, status, reason, &body).await
-+}
-+
-+/// Reject a host credential-capture failure without exposing helper diagnostics.
-+/// Keep 503: this is not a challenge for the client's upstream credentials.
-+pub(crate) async fn send_credential_capture_error<S>(stream: &mut S) -> Result<()>
-+where
-+    S: tokio::io::AsyncWrite + Unpin,
-+{
-+    send_json_error(
-+        stream,
-+        503,
-+        "Service Unavailable",
-+        crate::capture::CAPTURE_FAILED_BODY,
-+    )
-+    .await
-+}
-+
-+async fn send_json_error<S>(stream: &mut S, status: u16, reason: &str, body: &str) -> Result<()>
-+where
-+    S: tokio::io::AsyncWrite + Unpin,
-+{
-     let response = format!(
-         "HTTP/1.1 {} {}\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
-         status,
-@@ -2860,6 +2882,52 @@ pub(crate) fn injected_credential_header_names(cred: Option<&LoadedCredential>)
- mod tests {
-     use super::*;
+     }
  
-+    #[tokio::test]
-+    async fn reverse_proxy_reports_credential_capture_failure() {
-+        use crate::capture::tests::{FailingCaptureBackend, FailureFixture, assert_http1_failure};
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+            let fixture = FailureFixture::new().await;
-+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+            let (client, server) = tokio::join!(
-+                TcpStream::connect(listener.local_addr().unwrap()),
-+                listener.accept(),
-+            );
-+            let mut client = client.unwrap();
-+            let (mut server, _) = server.unwrap();
-+            let session_token = Zeroizing::new("session-token".to_string());
-+            let filter = ProxyFilter::allow_all();
-+            let pool = crate::pool::UpstreamPool::new(
-+                Arc::clone(&fixture.tls_config), false,
-+            );
-+            let ctx = ReverseProxyCtx {
-+                route_store: &fixture.route_store,
-+                credential_store: &fixture.credential_store,
-+                session_token: &session_token,
-+                require_auth: true,
-+                filter: &filter,
-+                tls_connector: &fixture.connector,
-+                default_tls_config: &fixture.tls_config,
-+                upstream_pool: &pool,
-+                audit_log: None,
-+                approval_backends: None,
-+                credential_capture_backend: Some(Arc::new(FailingCaptureBackend)),
-+            };
-+            handle_reverse_proxy(
-+                "POST /capture/mcp HTTP/1.1",
-+                &mut server,
-+                b"Host: localhost\r\nAuthorization: Bearer session-token\r\nContent-Length: 0\r\n\r\n",
-+                &ctx,
-+                &[],
-+            ).await.unwrap();
-+            drop(server);
-+            let mut response = String::new();
-+            client.read_to_string(&mut response).await.unwrap();
-+            assert_http1_failure(&response);
-+            fixture.assert_no_upstream_connection();
-+        }).await.unwrap();
-+    }
-+
-     #[test]
-     fn test_endpoint_approval_request_id_is_unique() {
-         let ids: std::collections::HashSet<String> = (0..1000)
+     #[tokio::test]
+     async fn load_rejects_malformed_wildcard_aws_routes() {
+         for (upstream, region) in [
+             ("https://eks.*.amazonaws.com", Some("us-east-1")),
+-            ("https://*.s3.*.amazonaws.com", None),
+-            ("https://eks.*.amazonaws.com.cn", None),
++            ("https://*.s3.*.amazonaws.com", Some("us-east-1")),
++            ("https://*.s3.*.amazonaws.com.cn", Some("cn-north-1")),
++            ("https://eks.*.amazonaws.eu", None),
+             ("https://*.amazonaws.com", None),
+         ] {
+             let err = RouteStore::load(&[wildcard_aws_route(upstream, region)])
 ```
 
-**File**: `crates/nono-proxy/src/tls_intercept/h2_forward.rs` (modified, +118/-2)
+**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +34/-32)
 ```diff
-@@ -327,6 +327,10 @@ async fn handle_h2_stream(
-             send_h2_error(&mut respond, status)?;
-             return Ok(());
-         }
-+        handle::CredentialResolution::CaptureFailed => {
-+            send_h2_credential_capture_error(&mut respond, method == http::Method::HEAD)?;
-+            return Ok(());
-+        }
-         handle::CredentialResolution::Forward { credential } => credential,
-     };
-     let cred = resolved.as_ref().map(|c| c.as_ref());
-@@ -679,6 +683,29 @@ async fn stream_body_to_client(mut recv: RecvStream, send: &mut SendStream<Bytes
-     Ok(())
+@@ -345,7 +345,7 @@ where
+ fn aws_region_denial_reason(route: &str, host: &str) -> String {
+     format!(
+         "AWS route '{route}': host '{host}' is not a canonical \
+-         {{service}}.{{region}}.amazonaws.com commercial-region host on port 443"
++         {{service}}.{{region}} AWS endpoint host on port 443 in the route partition"
+     )
  }
  
-+/// Send the same safe credential-capture diagnostic as the HTTP/1.1 paths.
-+fn send_h2_credential_capture_error(
-+    respond: &mut h2::server::SendResponse<Bytes>,
-+    is_head: bool,
-+) -> Result<()> {
-+    let body = Bytes::from_static(crate::capture::CAPTURE_FAILED_BODY.as_bytes());
-+    let response = Response::builder()
-+        .status(http::StatusCode::SERVICE_UNAVAILABLE)
-+        .header(http::header::CONTENT_TYPE, "application/json")
-+        .header(http::header::CONTENT_LENGTH, body.len())
-+        .body(())
-+        .map_err(|e| ProxyError::HttpParse(format!("h2 error response build: {e}")))?;
-+    let mut stream = respond
-+        .send_response(response, is_head)
-+        .map_err(|e| ProxyError::HttpParse(format!("h2 send error response: {e}")))?;
-+    if !is_head {
-+        stream
-+            .send_data(body, true)
-+            .map_err(|e| ProxyError::HttpParse(format!("h2 send error body: {e}")))?;
-+    }
-+    Ok(())
-+}
-+
- /// Send a simple h2 error response (no body).
- fn send_h2_error(respond: &mut h2::server::SendResponse<Bytes>, status_code: u16) -> Result<()> {
-     let status =
-@@ -967,10 +994,10 @@ mod tests {
-                     );
-                     let headers = request.headers().clone();
- 
-+                    // Record receipt before responding so a send failure cannot hide a request.
-+                    let _ = tx.send((method_path, headers));
-                     let response = http::Response::builder().status(200).body(()).unwrap();
-                     respond.send_response(response, true).unwrap();
--
--                    let _ = tx.send((method_path, headers));
-                 }
-             }
-         });
-@@ -1458,6 +1485,95 @@ mod tests {
-         assert!(result.is_ok(), "test timed out — h2 forwarding hung");
-     }
- 
-+    #[tokio::test]
-+    async fn h2_intercept_reports_credential_capture_failure() {
-+        assert_h2_credential_capture_failure("POST").await;
-+    }
-+
-+    #[tokio::test]
-+    async fn h2_head_reports_credential_capture_failure_without_body() {
-+        assert_h2_credential_capture_failure("HEAD").await;
-+    }
-+
-+    async fn assert_h2_credential_capture_failure(method: &str) {
-+        use crate::capture::tests::{FailingCaptureBackend, assert_failure_body};
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+            let ca = Arc::new(EphemeralCa::generate().unwrap());
-+            let (port, upstream_requests) = spawn_mock_h2_upstream(&ca).await;
-+            let connector = h2_tls_connector_trusting(ca.cert_pem());
-+            let (route_store, credential_store) =
-+                make_cmd_route_stores("localhost", port, &connector).await;
-+            let session_token = Zeroizing::new("session-token".to_string());
-+            let filter = ProxyFilter::allow_all();
-+            let ctx = InterceptCtx {
-+                route_id: Some("cmd-svc"),
-+                host: "localhost",
-+                port,
-+                route_store: Arc::new(route_store),
-+                credential_store: Arc::new(credential_store),
-+                oauth_capture_store: Arc::new(crate::oauth_capture::OAuthCaptureStore::empty()),
-+                session_token: &session_token,
-+                cert_cache: Arc::new(CertCache::new(ca)),
-+                tls_connector: &connector,
-+                tls_connector_h2: &connector,
-+                filter: &filter,
-+                audit_log: None,
-+                upstream_proxy: None,
-+                approval_backends: None,
-+                credential_capture_backend: Some(Arc::new(FailingCaptureBackend)),
-+                nonce_resolver: None,
-+                enable_h2: true,
-+            };
-+            let (client_io, server_io) = tokio::io::duplex(65536);
-+            tokio::join!(
-+                async {
-+                    let _ = forward_h2_connection(server_io, &ctx).await;
-+                },
-+                async {
-+                    let (mut client, connection) = h2::client::handshake(client_io).await.unwrap();
-+                    let driver = tokio::spawn(connection);
-+                    let request = http::Request::builder()
-+                        .method(method)
-+                        .uri(format!("https://localhost:{port}/mcp"))
-+                        .header("authorization", "Bearer session-token")
-+                        .body(())
-+                        .unwrap();
-+     
-```
-
-**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +38/-1)
-```diff
-@@ -874,6 +874,8 @@ pub(crate) enum CredentialResolution<'a> {
-     /// The request must be rejected with this HTTP status; the denial has
-     /// already been audited.
-     Rejected(u16),
-+    /// Host credential capture failed; return a safe diagnostic, not backend output.
-+    CaptureFailed,
-     /// Forward the request, optionally injecting `credential`.
-     Forward {
-         credential: Option<ResolvedCredential<'a>>,
-@@ -997,7 +999,7 @@ pub(crate) async fn resolve_managed_credential<'a>(
-                     port,
-                     &reason,
-                 );
--                return CredentialResolution::Rejected(503);
-+                return CredentialResolution::CaptureFailed;
-             }
-         }
-     }
-@@ -1227,6 +1229,10 @@ where
-             reverse::send_error_generic(tls_stream, status, msg).await?;
-             return Ok(());
-         }
-+        CredentialResolution::CaptureFailed => {
-+            reverse::send_credential_capture_error(tls_stream).await?;
-+            return Ok(());
-+        }
-         CredentialResolution::Forward { credential } => credential,
-     };
-     let cred = resolved.as_ref().map(|c| c.as_ref());
-@@ -4642,6 +4648,37 @@ mod tests {
-         assert!(matches!(selection, RouteSelection::Rejected(403)));
-     }
- 
-+    #[tokio::test]
-+    async fn http1_intercept_reports_credential_capture_failure() {
-+        use crate::capture::tests::{FailingCaptureBackend, FailureFixture, assert_http1_failure};
-+        use tokio::io::AsyncReadExt;
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+            let fixture = FailureFixture::new().await;
-+            let session_token = Zeroizing::new("session-token".to_string());
-+            let filter = ProxyFilter::allow_all();
-+            let mut ctx = test_intercept_ctx(&session_token, &fixture.connector, &filter);
-+            ctx.host = "127.0.0.1";
-+            ctx.port = fixture.port();
-+            ctx.route_id = Some("capture");
-+            ctx.route_store = Arc::clone(&fixture.route_store);
-+            ctx.credential_store = Arc::clone(&fixture.credential_store);
-+            ctx.credential_capture_backend = Some(Arc::new(FailingCaptureBackend));
-+
-+            let (mut client, mut server) = tokio::io::duplex(4096);
-+            client.write_all(format!(
-+                "POST /mcp HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nAuthorization: Bearer session-token\r\nContent-Length: 0\r\n\r\n",
-+                fixture.port(),
-+            ).as_bytes()).await.unwrap();
-+            handle_inner_request(&mut server, &ctx).await.unwrap();
-+            drop(server);
-+            let mut response = String::new();
-+            client.read_to_string(&mut response).await.unwrap();
-+            assert_http1_failure(&response);
-+            fixture.assert_no_upstream_connection();
-+        }).await.unwrap();
-+    }
-+
-     fn test_intercept_ctx<'a>(
-         session_token: &'a Zeroizing<String>,
-         connector: &'a tokio_rustls::TlsConnector,
-```
-
----
-
-### Incident Patch 2: `80c36938` (2026-11-11)
-**Commit Message**: Merge pull request #2191 from wincent/fix/credential-capture-diagnostics
-
-fix(proxy): distinguish credential capture failures in HTTP responses
-
-**File**: `crates/nono-proxy/src/capture.rs` (modified, +140/-0)
-```diff
-@@ -6,6 +6,13 @@
- 
- use zeroize::Zeroizing;
- 
-+/// Safe client-facing diagnostic shared by all proxy transports. Never include
-+/// helper output, command arguments, credential references, or backend errors.
-+pub(crate) const CAPTURE_FAILED_BODY: &str = concat!(
-+    r#"{"error":"credential_capture_failed","message":"nono could not obtain host credentials. "#,
-+    r#"Check the host credential helper and proxy logs."}"#,
-+);
-+
- /// Request context for a command-backed credential capture.
- #[derive(Debug, Clone)]
- pub struct CredentialCaptureRequest {
-@@ -89,3 +96,136 @@ pub trait CredentialCaptureBackend: Send + Sync + std::fmt::Debug {
-         request: CredentialCaptureRequest,
-     ) -> std::result::Result<CredentialCaptureResponse, CredentialCaptureError>;
- }
-+
-+#[cfg(test)]
-+#[allow(clippy::unwrap_used)]
-+pub(crate) mod tests {
-+    use super::*;
-+    use crate::{config::RouteConfig, credential::CredentialStore, route::RouteStore};
-+    use std::sync::Arc;
-+
-+    #[derive(Debug)]
-+    pub(crate) struct FailingCaptureBackend;
-+
-+    impl CredentialCaptureBackend for FailingCaptureBackend {
-+        fn capture(
-+            &self,
-+            _request: CredentialCaptureRequest,
-+        ) -> std::result::Result<CredentialCaptureResponse, CredentialCaptureError> {
-+            Err(CredentialCaptureError::new(
-+                "private-backend-detail".to_string(),
-+                CredentialCaptureMetadata {
-+                    command: Some("/private/helper".to_string()),
-+                    argv: vec!["private-command-argument".to_string()],
-+                    stderr_redacted: Some("private-helper-diagnostic".to_string()),
-+                    exit_status: Some(1),
-+                    ..Default::default()
-+                },
-+            ))
-+        }
-+    }
-+
-+    #[derive(Clone, Copy)]
-+    pub(crate) enum FailureKind {
-+        Capture,
-+        Unavailable,
-+    }
-+
-+    impl FailureKind {
-+        pub fn expected_body(self) -> &'static str {
-+            match self {
-+                Self::Capture => {
-+                    r#"{"error":"credential_capture_failed","message":"nono could not obtain host credentials. Check the host credential helper and proxy logs."}"#
-+                }
-+                Self::Unavailable => {
-+                    r#"{"error":"credential_unavailable","message":"nono could not load the managed credential. Check the host credential configuration and proxy logs."}"#
-+                }
-+            }
-+        }
-+
-+        pub fn assert_body(self, body: &[u8]) {
-+            let value: serde_json::Value = serde_json::from_slice(body).unwrap();
-+            let expected: serde_json::Value = serde_json::from_str(self.expected_body()).unwrap();
-+            assert_eq!(value, expected);
-+        }
-+    }
-+
-+    pub(crate) struct FailureFixture {
-+        pub route_store: Arc<RouteStore>,
-+        pub credential_store: Arc<CredentialStore>,
-+        pub connector: tokio_rustls::TlsConnector,
-+        pub tls_config: Arc<rustls::ClientConfig>,
-+        pub upstream: std::net::TcpListener,
-+    }
-+
-+    impl FailureFixture {
-+        pub async fn new(failure: FailureKind) -> Self {
-+            let upstream = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+            upstream.set_nonblocking(true).unwrap();
-+            let config = rustls::ClientConfig::builder_with_provider(Arc::new(
-+                rustls::crypto::ring::default_provider(),
-+            ))
-+            .with_safe_default_protocol_versions()
-+            .unwrap()
-+            .with_root_certificates(rustls::RootCertStore::empty())
-+            .with_no_client_auth();
-+            let tls_config = Arc::new(config);
-+            let connector = tokio_rustls::TlsConnector::from(Arc::clone(&tls_config));
-+            let route: RouteConfig = serde_json::from_value(serde_json::json!({
-+                "prefix": "capture",
-+                "upstream": format!("https://127.0.0.1:{}", upstream.local_addr().unwrap().port()),
-+                "credential_key": "cmd://private-credential-reference",
-+                "inject_header": "Authorization",
-+                "credential_format": "Bearer {}",
-+                "endpoint_rules": [
-+                    {"method": "POST", "path": "/mcp"},
-+                    {"method": "HEAD", "path": "/mcp"}
-+                ]
-+            }))
-+            .unwrap();
-+            let routes = [route];
-+            let route_store = Arc::new(RouteStore::load(&routes).await.unwrap());
-+            let credential_store = Arc::new(match failure {
-+                FailureKind::Capture => {
-+                    CredentialStore::load_with_diagnostics(&routes, &connector, None)
-+                        .await
-+                        .unwrap()
-+                        .store
-+                }
-+                FailureKind::Unavailable => CredentialStore::empty(),
-+            });
-+            Self {
-+                route_store,
-+                credential_store,
-+                c
-```
-
-**File**: `crates/nono-proxy/src/credential.rs` (modified, +7/-0)
-```diff
-@@ -22,6 +22,13 @@ use tokio_rustls::TlsConnector;
- use tracing::{debug, warn};
- use zeroize::Zeroizing;
- 
-+/// Safe client-facing diagnostic shared by all proxy transports. Never include
-+/// credential references, route details, or backend errors.
-+pub(crate) const CREDENTIAL_UNAVAILABLE_BODY: &str = concat!(
-+    r#"{"error":"credential_unavailable","message":"nono could not load the managed credential. "#,
-+    r#"Check the host credential configuration and proxy logs."}"#,
-+);
-+
- /// A loaded credential ready for injection.
- ///
- /// Contains only credential-specific fields (injection mode, header name/value,
-```
-
-**File**: `crates/nono-proxy/src/reverse.rs` (modified, +116/-3)
-```diff
-@@ -250,7 +250,7 @@ pub async fn handle_reverse_proxy(
-             0,
-             &reason,
-         );
--        send_error(stream, 503, "Service Unavailable").await?;
-+        send_credential_unavailable_error(stream, method == "HEAD").await?;
-         return Ok(());
-     }
- 
-@@ -485,7 +485,7 @@ pub async fn handle_reverse_proxy(
-                     0,
-                     &err.to_string(),
-                 );
--                send_error(stream, 503, "Service Unavailable").await?;
-+                send_credential_capture_error(stream, method == "HEAD").await?;
-                 return Ok(());
-             }
-         }
-@@ -1792,12 +1792,59 @@ where
-     S: tokio::io::AsyncWrite + Unpin,
- {
-     let body = format!("{{\"error\":\"{}\"}}", reason);
-+    send_json_error(stream, status, reason, &body, false).await
-+}
-+
-+/// Reject a host credential-capture failure without exposing helper diagnostics.
-+/// Keep 503: this is not a challenge for the client's upstream credentials.
-+pub(crate) async fn send_credential_capture_error<S>(stream: &mut S, is_head: bool) -> Result<()>
-+where
-+    S: tokio::io::AsyncWrite + Unpin,
-+{
-+    send_json_error(
-+        stream,
-+        503,
-+        "Service Unavailable",
-+        crate::capture::CAPTURE_FAILED_BODY,
-+        is_head,
-+    )
-+    .await
-+}
-+
-+/// Reject a missing managed credential without exposing credential diagnostics.
-+pub(crate) async fn send_credential_unavailable_error<S>(
-+    stream: &mut S,
-+    is_head: bool,
-+) -> Result<()>
-+where
-+    S: tokio::io::AsyncWrite + Unpin,
-+{
-+    send_json_error(
-+        stream,
-+        503,
-+        "Service Unavailable",
-+        crate::credential::CREDENTIAL_UNAVAILABLE_BODY,
-+        is_head,
-+    )
-+    .await
-+}
-+
-+async fn send_json_error<S>(
-+    stream: &mut S,
-+    status: u16,
-+    reason: &str,
-+    body: &str,
-+    is_head: bool,
-+) -> Result<()>
-+where
-+    S: tokio::io::AsyncWrite + Unpin,
-+{
-     let response = format!(
-         "HTTP/1.1 {} {}\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
-         status,
-         reason,
-         body.len(),
--        body
-+        if is_head { "" } else { body }
+@@ -592,34 +592,36 @@ pub(crate) async fn select_intercept_route<'a>(
+                 // refusal rejects the request below.
+                 // AWS wildcard-region routes show the derived region; a host
+                 // that yields none is denied before prompting.
+-                let aws_region = match &route.aws_wildcard_service_label {
+-                    Some(label) => match crate::aws::endpoints::derive_region(host, port, label) {
+-                        Some(region) => Some(region),
+-                        None => {
+-                            let concrete_upstream = format!(
+-                                "https://{}",
+-                                reverse::format_host_header(UpstreamScheme::Https, host, port)
+-                            );
+-                            let deny_reason = aws_region_denial_reason(prefix, host);
+-                            warn!("tls_intercept: {}", deny_reason);
+-                            audit::log_denied(
+-                                audit_log,
+-                                audit::ProxyMode::ConnectIntercept,
+-                                &audit::EventContext {
+-                                    denial_category: Some(
+-                                        nono::undo::NetworkAuditDenialCategory::HostDenied,
+-                                    ),
+-                                    route_id: Some(prefix),
+-                                    upstream: Some(&concrete_upstream),
+-                                    ..audit::EventContext::default()
+-                                },
+-                                host,
+-                                port,
+-                                &deny_reason,
+-                            );
+-                            return RouteSelection::Rejected(403);
++                let aws_region = match &route.aws_wildcard {
++                    Some(pattern) => {
++                        match crate::aws::endpoints::derive_region(host, port, pattern) {
++                            Some(region) => Some(region),
++                            None => {
++                                let concrete_upstream = format!(
++                                    "https://{}",
++                                    reverse::format_host_header(UpstreamScheme::Https, host, port)
++                                );
++                                let deny_reason = aws_region_denial_reason(prefix, host);
++                                warn!("tls_intercept: {}", deny_reason);
++                                audit::log_denied(
++                                    audit_log,
++                                    audit::ProxyMode::ConnectIntercept,
++                                    &audit::EventContext {
++                                        denial_category: Some(
++                                            nono::undo::NetworkAuditDenialCategory::HostDenied,
++                                        ),
++                                        route_id: Some(prefix),
++                                        upstream: Some(&concrete_upstream),
++                                        ..audit::EventContext::default()
++                                    },
++                                    host,
++                                    port,
++                                    &deny_reason,
++                                );
++                                return RouteSelection::Rejected(403);
++                            }
+                         }
+-                    },
++                    }
+                     None => None,
+                 };
+                 let approval = crate::endpoint_approval::PendingApproval {
+@@ -1842,10 +1844,10 @@ where
+         "https://{}",
+         reverse::format_host_header(UpstreamScheme::Https, ctx.host, ctx.port)
      );
-     stream.write_all(response.as_bytes()).await?;
-     stream.flush().await?;
-@@ -2859,6 +2906,72 @@ pub(crate) fn injected_credential_header_names(cred: Option<&LoadedCredential>)
- #[allow(clippy::unwrap_used)]
- mod tests {
-     use super::*;
-+    use crate::capture::tests::FailureKind;
-+
-+    #[tokio::test]
-+    async fn reverse_proxy_reports_credential_capture_failure() {
-+        assert_reverse_credential_failure("POST", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn reverse_proxy_head_reports_credential_capture_failure_without_body() {
-+        assert_reverse_credential_failure("HEAD", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn reverse_proxy_reports_credential_unavailable() {
-+        assert_reverse_credential_failure("POST", FailureKind::Unavailable).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn reverse_proxy_head_reports_credential_unavailable_without_body() {
-+        assert_reverse_credential_failure("HEAD", FailureKind::Unavailable).await;
-+    }
-+
-+    async fn assert_reverse_credential_failure(method: &str, failure: FailureKind) {
-+        use crate::capture::tests::{FailingCaptureBackend, FailureFixture, assert_http1_failure};
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+            let fixture = FailureFixture::new(failure).await;
-+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+            let (client, server) = tokio::join!(
-+                TcpStream::connect(listener.local_addr().unwrap()),
-+                listener.accept(),
-+            );
-+            let mut client = client.unwrap();
-+            let (mut server, _) = server.unwrap();
-+            let session_token = Zeroizing::new("session-token".to_string());
-+            let filter = ProxyFilter::allow_all();
-+            let pool = crate::pool::UpstreamPool::new(
-+                Arc::clone(&fixture.tls_config), false,
-+            );
-+            let ctx = ReverseProxyCtx {
-+                route_store: &fixture.route_store,
-+                credential_store: &fixture.credential_store,
-+                session_token: &session_token,
-+                require_auth: true,
-+                filter: &filter,
-+                tls_connector: &fixture.connector,
-+                default_tls_config: &fixture.tls_config,
-+                upstream_pool: &pool,
-+                audit_log: None,
-+                approval_backends: None,
-+                credential_capture_backend: Some(Arc::new(FailingCaptureBackend)),
-+            };
-+            handle_reverse_proxy(
-+                &format!("{method} /capture/mcp HTTP/1.1"),
-+                &mut server,
-+                b"Host: localhost\r\nAuthorization: Bearer session-token\r\nContent-Length: 0\r\n\r\n",
-+                &ctx,
-+ 
-```
+-    let (region, region_source) = match (&aws.region, aws.service_label.as_deref()) {
++    let (region, region_source) = match (&aws.region, aws.wildcard.as_ref()) {
+         (SigningRegion::Fixed(r), _) => (r.clone(), "route"),
+-        (SigningRegion::FromRequestHost, Some(label)) => {
+-            match crate::aws::endpoints::derive_region(ctx.host, ctx.port, label) {
++        (SigningRegion::FromRequestHost, Some(pattern)) => {
++            match crate::aws::endpoints::derive_region(ctx.host, ctx.port, pattern) {
+                 Some(r) => (r, "request_host"),
+                 None => {
+                     let reason = aws_region_denial_reason(service.unwrap_or("unknown"), ctx.host);
+@@ -5776,7 +5778,7 @@ mod tests {
+ 
+         // `zz-fake-9` matches the route pattern but is not a valid region label.
 
-**File**: `crates/nono-proxy/src/tls_intercept/h2_forward.rs` (modified, +146/-2)
-```diff
-@@ -327,6 +327,22 @@ async fn handle_h2_stream(
-             send_h2_error(&mut respond, status)?;
-             return Ok(());
-         }
-+        handle::CredentialResolution::CaptureFailed => {
-+            send_h2_credential_error(
-+                &mut respond,
-+                crate::capture::CAPTURE_FAILED_BODY,
-+                method == http::Method::HEAD,
-+            )?;
-+            return Ok(());
-+        }
-+        handle::CredentialResolution::Unavailable => {
-+            send_h2_credential_error(
-+                &mut respond,
-+                crate::credential::CREDENTIAL_UNAVAILABLE_BODY,
-+                method == http::Method::HEAD,
-+            )?;
-+            return Ok(());
-+        }
-         handle::CredentialResolution::Forward { credential } => credential,
-     };
-     let cred = resolved.as_ref().map(|c| c.as_ref());
-@@ -679,6 +695,30 @@ async fn stream_body_to_client(mut recv: RecvStream, send: &mut SendStream<Bytes
-     Ok(())
- }
- 
-+/// Send the same safe credential diagnostic as the HTTP/1.1 paths.
-+fn send_h2_credential_error(
-+    respond: &mut h2::server::SendResponse<Bytes>,
-+    body: &'static str,
-+    is_head: bool,
-+) -> Result<()> {
-+    let body = Bytes::from_static(body.as_bytes());
-+    let response = Response::builder()
-+        .status(http::StatusCode::SERVICE_UNAVAILABLE)
-+        .header(http::header::CONTENT_TYPE, "application/json")
-+        .header(http::header::CONTENT_LENGTH, body.len())
-+        .body(())
-+        .map_err(|e| ProxyError::HttpParse(format!("h2 error response build: {e}")))?;
-+    let mut stream = respond
-+        .send_response(response, is_head)
-+        .map_err(|e| ProxyError::HttpParse(format!("h2 send error response: {e}")))?;
-+    if !is_head {
-+        stream
-+            .send_data(body, true)
-+            .map_err(|e| ProxyError::HttpParse(format!("h2 send error body: {e}")))?;
-+    }
-+    Ok(())
-+}
-+
- /// Send a simple h2 error response (no body).
- fn send_h2_error(respond: &mut h2::server::SendResponse<Bytes>, status_code: u16) -> Result<()> {
-     let status =
-@@ -697,6 +737,7 @@ fn send_h2_error(respond: &mut h2::server::SendResponse<Bytes>, status_code: u16
- #[allow(clippy::unwrap_used)]
- mod tests {
-     use super::*;
-+    use crate::capture::tests::FailureKind;
-     use crate::config::{EndpointRule, InjectMode, RouteConfig};
-     use crate::credential::{CredentialStore, LoadedCredential};
-     use crate::filter::ProxyFilter;
-@@ -967,10 +1008,10 @@ mod tests {
-                     );
-                     let headers = request.headers().clone();
- 
-+                    // Record receipt before responding so a send failure cannot hide a request.
-+                    let _ = tx.send((method_path, headers));
-                     let response = http::Response::builder().status(200).body(()).unwrap();
-                     respond.send_response(response, true).unwrap();
--
--                    let _ = tx.send((method_path, headers));
-                 }
-             }
-         });
-@@ -1458,6 +1499,109 @@ mod tests {
-         assert!(result.is_ok(), "test timed out — h2 forwarding hung");
-     }
- 
-+    #[tokio::test]
-+    async fn h2_intercept_reports_credential_capture_failure() {
-+        assert_h2_credential_failure("POST", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn h2_head_reports_credential_capture_failure_without_body() {
-+        assert_h2_credential_failure("HEAD", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn h2_intercept_reports_credential_unavailable() {
-+        assert_h2_credential_failure("POST", FailureKind::Unavailable).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn h2_head_reports_credential_unavailable_without_body() {
-+        assert_h2_credential_failure("HEAD", FailureKind::Unavailable).await;
-+    }
-+
-+    async fn assert_h2_credential_failure(method: &str, failure: FailureKind) {
-+        use crate::capture::tests::FailingCaptureBackend;
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+            let ca = Arc::new(EphemeralCa::generate().unwrap());
-+            let (port, upstream_requests) = spawn_mock_h2_upstream(&ca).await;
-+            let connector = h2_tls_connector_trusting(ca.cert_pem());
-+            let (route_store, credential_store) =
-+                make_cmd_route_stores("localhost", port, &connector).await;
-+            let credential_store = match failure {
-+                FailureKind::Capture => credential_store,
-+                FailureKind::Unavailable => CredentialStore::empty(),
-+            };
-+            let session_token = Zeroizing::new("session-token".to_string());
-+            let filter = ProxyFilter::allow_all();
-+            let ctx = InterceptCtx {
-+                route_id: Some("cmd-svc"),
-+                host: "localhost",
-+                port,
-+                route_store: Arc::new(route_store),
-+                credential_store: Arc::new(credential_store),
-+                oauth_capture_
-```
-
-**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +65/-2)
-```diff
-@@ -874,6 +874,10 @@ pub(crate) enum CredentialResolution<'a> {
-     /// The request must be rejected with this HTTP status; the denial has
-     /// already been audited.
-     Rejected(u16),
-+    /// Host credential capture failed; return a safe diagnostic, not backend output.
-+    CaptureFailed,
-+    /// The route requires a managed credential, but none is available.
-+    Unavailable,
-     /// Forward the request, optionally injecting `credential`.
-     Forward {
-         credential: Option<ResolvedCredential<'a>>,
-@@ -942,7 +946,7 @@ pub(crate) async fn resolve_managed_credential<'a>(
-             port,
-             &reason,
-         );
--        return CredentialResolution::Rejected(503);
-+        return CredentialResolution::Unavailable;
-     }
- 
-     // AWS SigV4 signing is not yet implemented. Return 501 so the caller knows
-@@ -997,7 +1001,7 @@ pub(crate) async fn resolve_managed_credential<'a>(
-                     port,
-                     &reason,
-                 );
--                return CredentialResolution::Rejected(503);
-+                return CredentialResolution::CaptureFailed;
-             }
-         }
-     }
-@@ -1227,6 +1231,14 @@ where
-             reverse::send_error_generic(tls_stream, status, msg).await?;
-             return Ok(());
-         }
-+        CredentialResolution::CaptureFailed => {
-+            reverse::send_credential_capture_error(tls_stream, req.method == "HEAD").await?;
-+            return Ok(());
-+        }
-+        CredentialResolution::Unavailable => {
-+            reverse::send_credential_unavailable_error(tls_stream, req.method == "HEAD").await?;
-+            return Ok(());
-+        }
-         CredentialResolution::Forward { credential } => credential,
-     };
-     let cred = resolved.as_ref().map(|c| c.as_ref());
-@@ -2419,6 +2431,7 @@ fn parse_request_line(line: &str) -> Result<(String, String, String)> {
- #[allow(clippy::unwrap_used)]
- mod tests {
-     use super::*;
-+    use crate::capture::tests::FailureKind;
- 
-     #[test]
-     fn handshake_validity_errors_suggest_clocks_and_expiry() {
-@@ -4642,6 +4655,56 @@ mod tests {
-         assert!(matches!(selection, RouteSelection::Rejected(403)));
-     }
- 
-+    #[tokio::test]
-+    async fn http1_intercept_reports_credential_capture_failure() {
-+        assert_http1_credential_failure("POST", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn http1_head_reports_credential_capture_failure_without_body() {
-+        assert_http1_credential_failure("HEAD", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn http1_intercept_reports_credential_unavailable() {
-+        assert_http1_credential_failure("POST", FailureKind::Unavailable).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn http1_intercept_head_reports_credential_unavailable_without_body() {
-+        assert_http1_credential_failure("HEAD", FailureKind::Unavailable).await;
-+    }
-+
-+    async fn assert_http1_credential_failure(method: &str, failure: FailureKind) {
-+        use crate::capture::tests::{FailingCaptureBackend, FailureFixture, assert_http1_failure};
-+        use tokio::io::AsyncReadExt;
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+            let fixture = FailureFixture::new(failure).await;
-+            let session_token = Zeroizing::new("session-token".to_string());
-+            let filter = ProxyFilter::allow_all();
-+            let mut ctx = test_intercept_ctx(&session_token, &fixture.connector, &filter);
-+            ctx.host = "127.0.0.1";
-+            ctx.port = fixture.port();
-+            ctx.route_id = Some("capture");
-+            ctx.route_store = Arc::clone(&fixture.route_store);
-+            ctx.credential_store = Arc::clone(&fixture.credential_store);
-+            ctx.credential_capture_backend = Some(Arc::new(FailingCaptureBackend));
-+
-+            let (mut client, mut server) = tokio::io::duplex(4096);
-+            client.write_all(format!(
-+                "{method} /mcp HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nAuthorization: Bearer session-token\r\nContent-Length: 0\r\n\r\n",
-+                fixture.port(),
-+            ).as_bytes()).await.unwrap();
-+            handle_inner_request(&mut server, &ctx).await.unwrap();
-+            drop(server);
-+            let mut response = String::new();
-+            client.read_to_string(&mut response).await.unwrap();
-+            assert_http1_failure(&response, method == "HEAD", failure);
-+            fixture.assert_no_upstream_connection();
-+        }).await.unwrap();
-+    }
-+
-     fn test_intercept_ctx<'a>(
-         session_token: &'a Zeroizing<String>,
-         connector: &'a tokio_rustls::TlsConnector,
-```
-
-**File**: `docs/cli/features/credential-injection.mdx` (modified, +18/-0)
-```diff
-@@ -939,6 +939,24 @@ INFO  l7 proxy response target="bedrock-runtime.us-east-1.amazonaws.com" method=
- 
- A `403` on the signed request usually means the resolved credentials lack permission for the target model or service, or the region scope does not match the endpoint.
- 
-+## Proxy Credential Errors
-+
-+If host credential capture fails, the proxy returns HTTP `503 Service Unavailable` with `Content-Type: application/json` and this fixed body:
-+
-+```json
-+{"error":"credential_capture_failed","message":"nono could not obtain host credentials. Check the host credential helper and proxy logs."}
-+```
-+
-+If a route requires a managed credential but none is loaded or its capture backend is unavailable, the proxy returns the same status and content type with this fixed body:
-+
-+```json
-+{"error":"credential_unavailable","message":"nono could not load the managed credential. Check the host credential configuration and proxy logs."}
-+```
-+
-+Both responses apply to reverse proxy requests and HTTP/1.1 and HTTP/2 CONNECT interception. HEAD responses include the same headers, including `Content-Length`, but no body. The failed request is never forwarded upstream.
-+
-+These errors identify a host credential problem, not an upstream service outage or a request for the client to supply upstream credentials. Check the host credential configuration, helper, and proxy log for details; the responses deliberately exclude helper output, command arguments, credential references, and backend errors. The proxy does not initiate login or change client retry behavior.
-+
- ## Session Token Authentication
- 
- Reverse proxy requests are authenticated using the session token. The proxy generates a unique 256-bit token per session and passes it to the child via the `NONO_PROXY_TOKEN` environment variable.
-```
-
----
-
-### Incident Patch 3: `caade0ae` (2026-11-11)
-**Commit Message**: fix(proxy): explain unavailable managed credentials to clients
-
-Distinguish missing managed credentials from upstream outages with a
-fixed credential_unavailable JSON response. Preserve HTTP 503, existing
-credential gates, audit behavior, and fail-closed request handling.
-
-Share response helpers across both credential failure modes. Cover POST
-and bodyless HEAD responses on reverse proxy, HTTP/1.1 interception, and
-HTTP/2 interception, checking framing and no upstream forwarding.
-Document the sibling error contract alongside capture failures.
-
-Verification on macOS: all 44 focused credential tests pass. make ci
-passes Clippy, formatting, workspace tests, and doc tests, then stops
-because cargo-audit is not installed. make lint-docs and diff checks
-pass separately. Read-only agent review found no actionable regressions.
-Linux validation was not run.
-
-Refs: #2190, #2191 (review request 3).
-
-Co-Authored-By: GPT-6 Astra <[REDACTED_EMAIL]>
-Signed-off-by: Greg Hurrell <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-proxy/src/capture.rs` (modified, +41/-21)
-```diff
-@@ -125,6 +125,31 @@ pub(crate) mod tests {
-         }
-     }
- 
-+    #[derive(Clone, Copy)]
-+    pub(crate) enum FailureKind {
-+        Capture,
-+        Unavailable,
-+    }
-+
-+    impl FailureKind {
-+        pub fn expected_body(self) -> &'static str {
-+            match self {
-+                Self::Capture => {
-+                    r#"{"error":"credential_capture_failed","message":"nono could not obtain host credentials. Check the host credential helper and proxy logs."}"#
-+                }
-+                Self::Unavailable => {
-+                    r#"{"error":"credential_unavailable","message":"nono could not load the managed credential. Check the host credential configuration and proxy logs."}"#
-+                }
-+            }
-+        }
-+
-+        pub fn assert_body(self, body: &[u8]) {
-+            let value: serde_json::Value = serde_json::from_slice(body).unwrap();
-+            let expected: serde_json::Value = serde_json::from_str(self.expected_body()).unwrap();
-+            assert_eq!(value, expected);
-+        }
-+    }
-+
-     pub(crate) struct FailureFixture {
-         pub route_store: Arc<RouteStore>,
-         pub credential_store: Arc<CredentialStore>,
-@@ -134,7 +159,7 @@ pub(crate) mod tests {
-     }
- 
-     impl FailureFixture {
--        pub async fn new() -> Self {
-+        pub async fn new(failure: FailureKind) -> Self {
-             let upstream = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-             upstream.set_nonblocking(true).unwrap();
-             let config = rustls::ClientConfig::builder_with_provider(Arc::new(
-@@ -160,12 +185,15 @@ pub(crate) mod tests {
-             .unwrap();
-             let routes = [route];
-             let route_store = Arc::new(RouteStore::load(&routes).await.unwrap());
--            let credential_store = Arc::new(
--                CredentialStore::load_with_diagnostics(&routes, &connector, None)
--                    .await
--                    .unwrap()
--                    .store,
--            );
-+            let credential_store = Arc::new(match failure {
-+                FailureKind::Capture => {
-+                    CredentialStore::load_with_diagnostics(&routes, &connector, None)
-+                        .await
-+                        .unwrap()
-+                        .store
-+                }
-+                FailureKind::Unavailable => CredentialStore::empty(),
-+            });
-             Self {
-                 route_store,
-                 credential_store,
-@@ -185,27 +213,19 @@ pub(crate) mod tests {
-         }
-     }
- 
--    pub(crate) fn assert_failure_body(body: &[u8]) {
--        let value: serde_json::Value = serde_json::from_slice(body).unwrap();
--        assert_eq!(
--            value,
--            serde_json::json!({
--                "error": "credential_capture_failed",
--                "message": "nono could not obtain host credentials. Check the host credential helper and proxy logs."
--            })
--        );
--    }
--
--    pub(crate) fn assert_http1_failure(response: &str, is_head: bool) {
-+    pub(crate) fn assert_http1_failure(response: &str, is_head: bool, failure: FailureKind) {
-         let (headers, body) = response.split_once("\r\n\r\n").unwrap();
-         assert!(headers.starts_with("HTTP/1.1 503 Service Unavailable\r\n"));
-         assert!(headers.contains("Content-Type: application/json\r\n"));
--        assert!(headers.ends_with(&format!("Content-Length: {}", CAPTURE_FAILED_BODY.len())));
-+        assert!(headers.ends_with(&format!(
-+            "Content-Length: {}",
-+            failure.expected_body().len()
-+        )));
-         assert!(!headers.to_ascii_lowercase().contains("www-authenticate"));
-         if is_head {
-             assert!(body.is_empty());
-         } else {
--            assert_failure_body(body.as_bytes());
-+            failure.assert_body(body.as_bytes());
-         }
-     }
- }
-```
-
-**File**: `crates/nono-proxy/src/credential.rs` (modified, +7/-0)
-```diff
-@@ -22,6 +22,13 @@ use tokio_rustls::TlsConnector;
- use tracing::{debug, warn};
- use zeroize::Zeroizing;
- 
-+/// Safe client-facing diagnostic shared by all proxy transports. Never include
-+/// credential references, route details, or backend errors.
-+pub(crate) const CREDENTIAL_UNAVAILABLE_BODY: &str = concat!(
-+    r#"{"error":"credential_unavailable","message":"nono could not load the managed credential. "#,
-+    r#"Check the host credential configuration and proxy logs."}"#,
-+);
-+
- /// A loaded credential ready for injection.
- ///
- /// Contains only credential-specific fields (injection mode, header name/value,
-```
-
-**File**: `crates/nono-proxy/src/reverse.rs` (modified, +35/-6)
-```diff
-@@ -250,7 +250,7 @@ pub async fn handle_reverse_proxy(
-             0,
-             &reason,
-         );
--        send_error(stream, 503, "Service Unavailable").await?;
-+        send_credential_unavailable_error(stream, method == "HEAD").await?;
-         return Ok(());
-     }
- 
-@@ -1811,6 +1811,24 @@ where
-     .await
- }
- 
-+/// Reject a missing managed credential without exposing credential diagnostics.
-+pub(crate) async fn send_credential_unavailable_error<S>(
-+    stream: &mut S,
-+    is_head: bool,
-+) -> Result<()>
-+where
-+    S: tokio::io::AsyncWrite + Unpin,
-+{
-+    send_json_error(
-+        stream,
-+        503,
-+        "Service Unavailable",
-+        crate::credential::CREDENTIAL_UNAVAILABLE_BODY,
-+        is_head,
-+    )
-+    .await
-+}
-+
- async fn send_json_error<S>(
-     stream: &mut S,
-     status: u16,
-@@ -2888,22 +2906,33 @@ pub(crate) fn injected_credential_header_names(cred: Option<&LoadedCredential>)
- #[allow(clippy::unwrap_used)]
- mod tests {
-     use super::*;
-+    use crate::capture::tests::FailureKind;
- 
-     #[tokio::test]
-     async fn reverse_proxy_reports_credential_capture_failure() {
--        assert_reverse_credential_capture_failure("POST").await;
-+        assert_reverse_credential_failure("POST", FailureKind::Capture).await;
-     }
- 
-     #[tokio::test]
-     async fn reverse_proxy_head_reports_credential_capture_failure_without_body() {
--        assert_reverse_credential_capture_failure("HEAD").await;
-+        assert_reverse_credential_failure("HEAD", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn reverse_proxy_reports_credential_unavailable() {
-+        assert_reverse_credential_failure("POST", FailureKind::Unavailable).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn reverse_proxy_head_reports_credential_unavailable_without_body() {
-+        assert_reverse_credential_failure("HEAD", FailureKind::Unavailable).await;
-     }
- 
--    async fn assert_reverse_credential_capture_failure(method: &str) {
-+    async fn assert_reverse_credential_failure(method: &str, failure: FailureKind) {
-         use crate::capture::tests::{FailingCaptureBackend, FailureFixture, assert_http1_failure};
- 
-         tokio::time::timeout(std::time::Duration::from_secs(5), async {
--            let fixture = FailureFixture::new().await;
-+            let fixture = FailureFixture::new(failure).await;
-             let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-             let (client, server) = tokio::join!(
-                 TcpStream::connect(listener.local_addr().unwrap()),
-@@ -2939,7 +2968,7 @@ mod tests {
-             drop(server);
-             let mut response = String::new();
-             client.read_to_string(&mut response).await.unwrap();
--            assert_http1_failure(&response, method == "HEAD");
-+            assert_http1_failure(&response, method == "HEAD", failure);
-             fixture.assert_no_upstream_connection();
-         }).await.unwrap();
-     }
-```
-
-**File**: `crates/nono-proxy/src/tls_intercept/h2_forward.rs` (modified, +38/-10)
-```diff
-@@ -328,7 +328,19 @@ async fn handle_h2_stream(
-             return Ok(());
-         }
-         handle::CredentialResolution::CaptureFailed => {
--            send_h2_credential_capture_error(&mut respond, method == http::Method::HEAD)?;
-+            send_h2_credential_error(
-+                &mut respond,
-+                crate::capture::CAPTURE_FAILED_BODY,
-+                method == http::Method::HEAD,
-+            )?;
-+            return Ok(());
-+        }
-+        handle::CredentialResolution::Unavailable => {
-+            send_h2_credential_error(
-+                &mut respond,
-+                crate::credential::CREDENTIAL_UNAVAILABLE_BODY,
-+                method == http::Method::HEAD,
-+            )?;
-             return Ok(());
-         }
-         handle::CredentialResolution::Forward { credential } => credential,
-@@ -683,12 +695,13 @@ async fn stream_body_to_client(mut recv: RecvStream, send: &mut SendStream<Bytes
-     Ok(())
- }
- 
--/// Send the same safe credential-capture diagnostic as the HTTP/1.1 paths.
--fn send_h2_credential_capture_error(
-+/// Send the same safe credential diagnostic as the HTTP/1.1 paths.
-+fn send_h2_credential_error(
-     respond: &mut h2::server::SendResponse<Bytes>,
-+    body: &'static str,
-     is_head: bool,
- ) -> Result<()> {
--    let body = Bytes::from_static(crate::capture::CAPTURE_FAILED_BODY.as_bytes());
-+    let body = Bytes::from_static(body.as_bytes());
-     let response = Response::builder()
-         .status(http::StatusCode::SERVICE_UNAVAILABLE)
-         .header(http::header::CONTENT_TYPE, "application/json")
-@@ -724,6 +737,7 @@ fn send_h2_error(respond: &mut h2::server::SendResponse<Bytes>, status_code: u16
- #[allow(clippy::unwrap_used)]
- mod tests {
-     use super::*;
-+    use crate::capture::tests::FailureKind;
-     use crate::config::{EndpointRule, InjectMode, RouteConfig};
-     use crate::credential::{CredentialStore, LoadedCredential};
-     use crate::filter::ProxyFilter;
-@@ -1487,23 +1501,37 @@ mod tests {
- 
-     #[tokio::test]
-     async fn h2_intercept_reports_credential_capture_failure() {
--        assert_h2_credential_capture_failure("POST").await;
-+        assert_h2_credential_failure("POST", FailureKind::Capture).await;
-     }
- 
-     #[tokio::test]
-     async fn h2_head_reports_credential_capture_failure_without_body() {
--        assert_h2_credential_capture_failure("HEAD").await;
-+        assert_h2_credential_failure("HEAD", FailureKind::Capture).await;
-     }
- 
--    async fn assert_h2_credential_capture_failure(method: &str) {
--        use crate::capture::tests::{FailingCaptureBackend, assert_failure_body};
-+    #[tokio::test]
-+    async fn h2_intercept_reports_credential_unavailable() {
-+        assert_h2_credential_failure("POST", FailureKind::Unavailable).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn h2_head_reports_credential_unavailable_without_body() {
-+        assert_h2_credential_failure("HEAD", FailureKind::Unavailable).await;
-+    }
-+
-+    async fn assert_h2_credential_failure(method: &str, failure: FailureKind) {
-+        use crate::capture::tests::FailingCaptureBackend;
- 
-         tokio::time::timeout(std::time::Duration::from_secs(5), async {
-             let ca = Arc::new(EphemeralCa::generate().unwrap());
-             let (port, upstream_requests) = spawn_mock_h2_upstream(&ca).await;
-             let connector = h2_tls_connector_trusting(ca.cert_pem());
-             let (route_store, credential_store) =
-                 make_cmd_route_stores("localhost", port, &connector).await;
-+            let credential_store = match failure {
-+                FailureKind::Capture => credential_store,
-+                FailureKind::Unavailable => CredentialStore::empty(),
-+            };
-             let session_token = Zeroizing::new("session-token".to_string());
-             let filter = ProxyFilter::allow_all();
-             let ctx = InterceptCtx {
-@@ -1554,12 +1582,12 @@ mod tests {
-                     while let Some(chunk) = body.data().await {
-                         bytes.extend_from_slice(&chunk.unwrap());
-                     }
--                    assert_eq!(content_length, crate::capture::CAPTURE_FAILED_BODY.len());
-+                    assert_eq!(content_length, failure.expected_body().len());
-                     if method == "HEAD" {
-                         assert!(bytes.is_empty());
-                     } else {
-                         assert_eq!(content_length, bytes.len());
--                        assert_failure_body(&bytes);
-+                        failure.assert_body(&bytes);
-                     }
-                     drop(client);
-                     driver.abort();
-```
-
-**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +23/-6)
-```diff
-@@ -876,6 +876,8 @@ pub(crate) enum CredentialResolution<'a> {
-     Rejected(u16),
-     /// Host credential capture failed; return a safe diagnostic, not backend output.
-     CaptureFailed,
-+    /// The route requires a managed credential, but none is available.
-+    Unavailable,
-     /// Forward the request, optionally injecting `credential`.
-     Forward {
-         credential: Option<ResolvedCredential<'a>>,
-@@ -944,7 +946,7 @@ pub(crate) async fn resolve_managed_credential<'a>(
-             port,
-             &reason,
-         );
--        return CredentialResolution::Rejected(503);
-+        return CredentialResolution::Unavailable;
-     }
- 
-     // AWS SigV4 signing is not yet implemented. Return 501 so the caller knows
-@@ -1233,6 +1235,10 @@ where
-             reverse::send_credential_capture_error(tls_stream, req.method == "HEAD").await?;
-             return Ok(());
-         }
-+        CredentialResolution::Unavailable => {
-+            reverse::send_credential_unavailable_error(tls_stream, req.method == "HEAD").await?;
-+            return Ok(());
-+        }
-         CredentialResolution::Forward { credential } => credential,
-     };
-     let cred = resolved.as_ref().map(|c| c.as_ref());
-@@ -2425,6 +2431,7 @@ fn parse_request_line(line: &str) -> Result<(String, String, String)> {
- #[allow(clippy::unwrap_used)]
- mod tests {
-     use super::*;
-+    use crate::capture::tests::FailureKind;
- 
-     #[test]
-     fn handshake_validity_errors_suggest_clocks_and_expiry() {
-@@ -4650,20 +4657,30 @@ mod tests {
- 
-     #[tokio::test]
-     async fn http1_intercept_reports_credential_capture_failure() {
--        assert_http1_credential_capture_failure("POST").await;
-+        assert_http1_credential_failure("POST", FailureKind::Capture).await;
-     }
- 
-     #[tokio::test]
-     async fn http1_head_reports_credential_capture_failure_without_body() {
--        assert_http1_credential_capture_failure("HEAD").await;
-+        assert_http1_credential_failure("HEAD", FailureKind::Capture).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn http1_intercept_reports_credential_unavailable() {
-+        assert_http1_credential_failure("POST", FailureKind::Unavailable).await;
-+    }
-+
-+    #[tokio::test]
-+    async fn http1_intercept_head_reports_credential_unavailable_without_body() {
-+        assert_http1_credential_failure("HEAD", FailureKind::Unavailable).await;
-     }
- 
--    async fn assert_http1_credential_capture_failure(method: &str) {
-+    async fn assert_http1_credential_failure(method: &str, failure: FailureKind) {
-         use crate::capture::tests::{FailingCaptureBackend, FailureFixture, assert_http1_failure};
-         use tokio::io::AsyncReadExt;
- 
-         tokio::time::timeout(std::time::Duration::from_secs(5), async {
--            let fixture = FailureFixture::new().await;
-+            let fixture = FailureFixture::new(failure).await;
-             let session_token = Zeroizing::new("session-token".to_string());
-             let filter = ProxyFilter::allow_all();
-             let mut ctx = test_intercept_ctx(&session_token, &fixture.connector, &filter);
-@@ -4683,7 +4700,7 @@ mod tests {
-             drop(server);
-             let mut response = String::new();
-             client.read_to_string(&mut response).await.unwrap();
--            assert_http1_failure(&response, method == "HEAD");
-+            assert_http1_failure(&response, method == "HEAD", failure);
-             fixture.assert_no_upstream_connection();
-         }).await.unwrap();
-     }
-```
-
-**File**: `docs/cli/features/credential-injection.mdx` (modified, +8/-2)
-```diff
-@@ -947,9 +947,15 @@ If host credential capture fails, the proxy returns HTTP `503 Service Unavailabl
- {"error":"credential_capture_failed","message":"nono could not obtain host credentials. Check the host credential helper and proxy logs."}
- ```
- 
--This response applies to reverse proxy requests and HTTP/1.1 and HTTP/2 CONNECT interception. HEAD responses include the same headers, including `Content-Length`, but no body. The failed request is never forwarded upstream.
-+If a route requires a managed credential but none is loaded or its capture backend is unavailable, the proxy returns the same status and content type with this fixed body:
- 
--The error identifies a host credential-capture failure, not an upstream service outage or a request for the client to supply upstream credentials. Check the host credential helper and proxy log for details; the response deliberately excludes helper output, command arguments, credential references, and backend errors. The proxy does not initiate login or change client retry behavior.
-+```json
-+{"error":"credential_unavailable","message":"nono could not load the managed credential. Check the host credential configuration and proxy logs."}
-+```
-+
-+Both responses apply to reverse proxy requests and HTTP/1.1 and HTTP/2 CONNECT interception. HEAD responses include the same headers, including `Content-Length`, but no body. The failed request is never forwarded upstream.
-+
-+These errors identify a host credential problem, not an upstream service outage or a request for the client to supply upstream credentials. Check the host credential configuration, helper, and proxy log for details; the responses deliberately exclude helper output, command arguments, credential references, and backend errors. The proxy does not initiate login or change client retry behavior.
- 
- ## Session Token Authentication
- 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2302** (2026-11-12): feat(proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (@panga)
 - **PR #2297** (2026-11-11): feat(cli)!: unify platform commands and automatic enrollment (@SequeI)
 - **PR #2295** (2026-11-11): fix(proxy): normalize trailing slash in endpoint rule paths (@rnestler)
 - **PR #2294** (2026-11-10): fix(deps): upgrade aws-config and remove crypto-bigint audit exception (@SequeI)
 - **PR #2293** (2026-11-10): feat(cli): add session terminal recording (NEP-0010) (@lukehinds)
 - **PR #2289** (2026-11-09): chore(deps): bump ureq from 3.5.0 to 3.5.1 in the routine-rust group (@dependabot[bot])
-- **PR #2288** (2026-11-09): chore(deps): bump the routine-actions group with 5 updates (@dependabot[bot])
 
 ---
 
@@ -4451,56 +3523,30 @@ Signed-off-by: Greg Hurrell <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy): distinguish credential capture failures in HTTP responses
+## X. proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (#2302)
 
 **RULE**:
-When implementing operations in `crates/nono-proxy/src/capture.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/command_policy.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cae20547`: proxy): distinguish credential capture failures in HTTP responses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1afb2cc4`: proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (#2302). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-proxy/src/capture.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/command_policy.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Safe client-facing diagnostic shared by all proxy transports. Never include
-/// helper output, command arguments, credential references, or backend errors.
-pub(crate) const CAPTURE_FAILED_BODY: &str = concat!(
-    r#"{"error":"credential_capture_failed","message":"nono could not obtain host credentials. "#,
-    r#"Check the host credential helper and proxy logs."}"#,
-);
-
-
-#[cfg(test)]
-#[allow(clippy::unwrap_used)]
-pub(crate) mod tests {
-    use super::*;
-    use crate::{config::RouteConfig, credential::CredentialStore, route::RouteStore};
-    use std::sync::Arc;
-
-    #[derive(Debug)]
-    pub(crate) struct FailingCaptureBackend;
-
-    impl CredentialCaptureBackend for FailingCaptureBackend {
-        fn capture(
-            &self,
-            _request: CredentialCaptureRequest,
-        ) -> std::result::Result<CredentialCaptureResponse, CredentialCaptureError> {
-            Err(CredentialCaptureError::new(
-                "private-backend-detail".to_string(),
-                CredentialCaptureMetadata {
-                    command: Some("/private/helper".to_string()),
-                    argv: vec!["private-command-argument".to_string()],
-                    stderr_redacted: Some("
+            ("https://*.s3.*.amazonaws.com", Some("us-east-1")),
+            ("https://eks.*.amazonaws.eu", None),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            ("https://eks.*.amazonaws.com.cn", None),
+            ("https://*.s3.*.amazonaws.com", None),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cae20547` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1afb2cc4` are properly handled with clean fallback behavior.

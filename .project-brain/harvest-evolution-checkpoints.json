@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T12:20:20.536Z",
+  "last_updated": "2026-11-12T12:33:11.637Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T11:51:15.265Z",
@@ -543,7 +543,7 @@
       "staged_for_review": 1
     },
     "nolabs-ai-nono-learnings.md": {
-      "processed_at": "2026-11-11T19:28:51.294Z",
+      "processed_at": "2026-11-12T12:33:11.494Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1101,9 +1101,19 @@
       "processed_at": "2026-11-12T12:20:20.443Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "vitejs-vite-learnings.md": {
+      "processed_at": "2026-11-12T12:33:11.409Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "milvus-io-milvus-learnings.md": {
+      "processed_at": "2026-11-12T12:33:11.617Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 294,
+  "total_dossiers_evaluated": 297,
   "total_canonical_promoted": 36,
-  "total_staged_for_review": 258
+  "total_staged_for_review": 260
 }

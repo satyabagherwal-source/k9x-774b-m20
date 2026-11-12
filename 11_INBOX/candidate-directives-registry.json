@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T12:20:20.442Z",
+  "last_updated": "2026-11-12T12:33:11.493Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6851,6 +6851,24 @@
       "source_repo": "gocd-gocd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FFFBA7-build-deps-ui-dev-bump-rspec-rails-14731.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-573FB0",
+      "directive_title": "client): fallback to waiting on main thread for server start when trusted types",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vitejs-vite",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-573FB0-client-fallback-to-waiting-on-main-threa.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-32F9A6",
+      "directive_title": "proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (#2302)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nolabs-ai-nono",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-32F9A6-proxy-accept-aws-govcloud-regions-and-s3.md",
       "staged_date": "2026-11-12"
     }
   ]

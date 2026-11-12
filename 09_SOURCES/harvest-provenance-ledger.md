@@ -9170,3 +9170,6 @@ Every entry in this ledger must capture:
 | `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `baeabbfe` | Multi-dimensional audit evidence | 2026-11-12T12:15:17.343Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `791e654b` | Multi-dimensional audit evidence | 2026-11-12T12:20:07.935Z |
 | `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `99714d4e` | Multi-dimensional audit evidence | 2026-11-12T12:20:14.321Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `3e1a86e6` | Multi-dimensional audit evidence | 2026-11-12T12:32:51.840Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `1afb2cc4` | Multi-dimensional audit evidence | 2026-11-12T12:33:02.203Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `0ff3d233` | Multi-dimensional audit evidence | 2026-11-12T12:33:05.573Z |
