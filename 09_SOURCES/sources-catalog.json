@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "2a25eecd",
+    "sourceVersion": "e00d4622",
     "license": "NOASSERTION",
-    "contentHash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
-    "lastHarvestedAt": "2026-11-06T15:20:46.988Z",
+    "contentHash": "76f6fe6fa387325c55ea2c867206b68d2cd8d253cf29e083e209cf75b2304261",
+    "lastHarvestedAt": "2026-11-12T03:56:23.368Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "0e554abd",
+    "sourceVersion": "9f7bb87b",
     "license": "AGPL-3.0",
-    "contentHash": "7e9adbf97599ebdef0576a3b0d86e0859d74a128d1416b0192045ad626f6f349",
-    "lastHarvestedAt": "2026-11-08T04:10:01.142Z",
+    "contentHash": "72ca180511be4fe2bf6ba6081bf2fd8c85a41631e90c35a829271cccbabc6fe9",
+    "lastHarvestedAt": "2026-11-12T03:56:24.167Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {

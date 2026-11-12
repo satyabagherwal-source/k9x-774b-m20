@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:49:14.467Z",
+  "last_updated": "2026-11-12T03:56:31.420Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6046,6 +6046,33 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C4C7F9-draft-nuc-106-intersect-and-except-reaso.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D5EB60",
+      "directive_title": "macos): finish the audit wave 5 data items: find and Run All off the main thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tableproapp-tablepro",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D5EB60-macos-finish-the-audit-wave-5-data-items.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F764D5",
+      "directive_title": "workflow): honor runtime commit source for builds (#5053)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "koderover-zadig",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F764D5-workflow-honor-runtime-commit-source-for.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0AF7AC",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0AF7AC-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-12"
     }
   ]

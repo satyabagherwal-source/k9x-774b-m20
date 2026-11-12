@@ -9065,3 +9065,5 @@
 | `CYCLE-20261112-DDTP` | `2026-11-12T03:48:49.597Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`41bdfc7f...`) |
 | `CYCLE-20261112-DFK1` | `2026-11-12T03:48:51.841Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d500403e...`) |
 | `CYCLE-20261112-DSZO` | `2026-11-12T03:49:09.252Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0422ac87...`) |
+| `CYCLE-20261112-N3YB` | `2026-11-12T03:56:23.363Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`76f6fe6f...`) |
+| `CYCLE-20261112-N4KJ` | `2026-11-12T03:56:24.163Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`72ca1805...`) |

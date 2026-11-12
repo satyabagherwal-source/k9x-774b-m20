@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T03:49:14.495Z",
+  "updated_at": "2026-11-12T03:56:31.416Z",
   "stats": {
-    "total_discovered": 706,
-    "approved_pending_harvest": 648,
+    "total_discovered": 716,
+    "approved_pending_harvest": 654,
     "harvested_count": 0,
-    "rejected_count": 58,
+    "rejected_count": 62,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 664,
+      "COMMUNITY_AND_EXPERT": 674,
       "OFFICIAL_DOCUMENTATION": 22,
       "STANDARDS_AND_SPECIFICATIONS": 18,
       "ENGINEERING_BLOGS": 1,
@@ -15143,6 +15143,198 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
         "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-AF647C3831B2": {
+      "id": "SRC-AF647C3831B2",
+      "url": "https://github.com/TableProApp/TablePro",
+      "title": "https://github.com/TableProApp/TablePro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:56:31.372Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-546CADC1A4A0": {
+      "id": "SRC-546CADC1A4A0",
+      "url": "https://github.com/facebook/zstd",
+      "title": "https://github.com/facebook/zstd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:56:31.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-AD95015037ED": {
+      "id": "SRC-AD95015037ED",
+      "url": "http://fossil-scm.org/",
+      "title": "http://fossil-scm.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:56:31.380Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-E35DA960B323": {
+      "id": "SRC-E35DA960B323",
+      "url": "http://localhost/",
+      "title": "http://localhost/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:56:31.384Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-3DD6F2EDD6E7": {
+      "id": "SRC-3DD6F2EDD6E7",
+      "url": "http://127.0.0.1/(port",
+      "title": "http://127.0.0.1/(port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:56:31.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-C0C46FDB2EA1": {
+      "id": "SRC-C0C46FDB2EA1",
+      "url": "http://localhost/?token=abc",
+      "title": "http://localhost/?token=abc",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T03:56:31.393Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-A568CF9FF62D": {
+      "id": "SRC-A568CF9FF62D",
+      "url": "https://github.com/koderover/zadig",
+      "title": "https://github.com/koderover/zadig",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:56:31.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-4D57DF15CC47": {
+      "id": "SRC-4D57DF15CC47",
+      "url": "https://github.com/user-attachments/assets/58122a11-edc5-4043-835e-09bb044cc336",
+      "title": "https://github.com/user-attachments/assets/58122a11-edc5-4043-835e-09bb044cc336",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:56:31.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-8BA0C9058259": {
+      "id": "SRC-8BA0C9058259",
+      "url": "https://reviewable.io/review_button.svg",
+      "title": "https://reviewable.io/review_button.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:56:31.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-C532D922C82F": {
+      "id": "SRC-C532D922C82F",
+      "url": "https://reviewable.io/reviews/koderover/zadig/4816",
+      "title": "https://reviewable.io/reviews/koderover/zadig/4816",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T03:56:31.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
       }
     }
   }

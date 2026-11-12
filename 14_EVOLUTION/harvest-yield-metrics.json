@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:49:09.269Z",
-  "total_cycles_completed": 8902,
-  "total_learnings_persisted": 8902,
-  "total_rules_promoted": 8751,
+  "last_updated": "2026-11-12T03:56:24.175Z",
+  "total_cycles_completed": 8904,
+  "total_learnings_persisted": 8904,
+  "total_rules_promoted": 8753,
   "history": [
-    {
-      "timestamp": "2026-11-10T04:59:26.611Z",
-      "repository": "pyannote/speaker-diarization-3.1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T05:06:35.857Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T05:14:16.558Z",
       "repository": "bahdotsh/wrkflw",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T03:49:09.269Z",
       "repository": "PeerDB-io/peerdb",
       "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:56:23.395Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T03:56:24.175Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

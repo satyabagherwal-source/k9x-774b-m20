@@ -9074,3 +9074,5 @@ Every entry in this ledger must capture:
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `5dd643fb` | Multi-dimensional audit evidence | 2026-11-12T03:48:49.602Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `cc21315a` | Multi-dimensional audit evidence | 2026-11-12T03:48:51.844Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `ca8ac478` | Multi-dimensional audit evidence | 2026-11-12T03:49:09.255Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `e00d4622` | Multi-dimensional audit evidence | 2026-11-12T03:56:23.368Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `9f7bb87b` | Multi-dimensional audit evidence | 2026-11-12T03:56:24.167Z |

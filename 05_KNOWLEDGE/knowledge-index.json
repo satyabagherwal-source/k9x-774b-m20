@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T03:49:09.143Z",
+  "last_updated": "2026-11-12T03:56:24.015Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39344,14 +39344,19 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "2a25eecd",
-      "content_hash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
+      "source_version": "e00d4622",
+      "content_hash": "76f6fe6fa387325c55ea2c867206b68d2cd8d253cf29e083e209cf75b2304261",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "preserve runtime environment selection in restart jobs (#5058)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "workflow): honor runtime commit source for builds (#5053)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39410,7 +39415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:20:46.858Z",
+      "verified_at": "2026-11-12T03:56:23.169Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61382,14 +61387,19 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "0e554abd",
-      "content_hash": "7e9adbf97599ebdef0576a3b0d86e0859d74a128d1416b0192045ad626f6f349",
+      "source_version": "9f7bb87b",
+      "content_hash": "72ca180511be4fe2bf6ba6081bf2fd8c85a41631e90c35a829271cccbabc6fe9",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "macos): finish the audit wave 5 data items: find and Run All off the main thread",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61428,7 +61438,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:10:01.042Z",
+      "verified_at": "2026-11-12T03:56:23.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
