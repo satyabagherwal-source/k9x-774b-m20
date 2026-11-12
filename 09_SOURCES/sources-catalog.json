@@ -11605,8 +11605,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/idol",
     "sourceVersion": "hf-speridlabs-idol",
     "license": "Open-Source",
-    "contentHash": "dcfa8042ff4f483b1191fb6dba2249fdd3203a621a1509604c7723a969c9b1d3",
-    "lastHarvestedAt": "2026-11-08T00:34:28.797Z",
+    "contentHash": "47b0e840297d6b526e7ac5b170a8ba007304b0f315923bc59307f34944834350",
+    "lastHarvestedAt": "2026-11-12T23:08:44.142Z",
     "learningId": "learn-huggingface-speridlabs-idol"
   },
   "krishhgg-insomnia": {

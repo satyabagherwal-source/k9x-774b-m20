@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T22:48:56.451Z",
+  "last_updated": "2026-11-12T23:08:56.632Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7490,6 +7490,24 @@
       "source_repo": "openziti-zrok",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ACBFCC-merge-pull-request-1287-from-aaeekaayyyy.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-04B8A9",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-04B8A9-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-00C26F",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00C26F-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-12"
     }
   ]

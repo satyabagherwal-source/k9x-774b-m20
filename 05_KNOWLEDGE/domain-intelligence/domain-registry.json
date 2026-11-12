@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T21:20:02.565Z",
-  "total_records": 77,
+  "last_updated": "2026-11-12T23:08:56.542Z",
+  "total_records": 78,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 38,
+      "total": 39,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -63,7 +63,8 @@
         "DOM-D-2297B13C",
         "DOM-D-3DABAA62",
         "DOM-D-34E068C1",
-        "DOM-D-B36C340C"
+        "DOM-D-B36C340C",
+        "DOM-D-CDB84B7D"
       ]
     },
     "E": {
@@ -3134,6 +3135,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T21:20:02.563Z"
+    },
+    "DOM-D-CDB84B7D": {
+      "record_id": "DOM-D-CDB84B7D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): speridlabs/idol",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/speridlabs/idol](https://huggingface.co/speridlabs/idol))  \n> **Source Version**: `hf-speridlab`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "a3042da6d6c32e541e38b9a19fc10152416f141851c72b5477d7fd53554b1a52",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-speridlabs-idol/hf-speridlabs-idol-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T23:08:46.796Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-speridlabs-idol)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-speridlabs-idol"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T23:08:56.540Z"
     }
   }
 }

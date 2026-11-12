@@ -9253,3 +9253,5 @@ Every entry in this ledger must capture:
 | `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `0993c86f` | Multi-dimensional audit evidence | 2026-11-12T22:48:37.399Z |
 | `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `f2c7dcf6` | Multi-dimensional audit evidence | 2026-11-12T22:48:47.524Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `e02e0d7e` | Multi-dimensional audit evidence | 2026-11-12T22:48:49.947Z |
+| `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-12T23:08:44.142Z |
+| `learn-dom-d-cdb84b7d` | `project://hf-speridlabs-idol` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | 2026-11-12T23:08:56.567Z |

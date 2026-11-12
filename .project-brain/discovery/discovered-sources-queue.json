@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T22:48:56.496Z",
+  "updated_at": "2026-11-12T23:08:56.583Z",
   "stats": {
-    "total_discovered": 1818,
-    "approved_pending_harvest": 1676,
+    "total_discovered": 1819,
+    "approved_pending_harvest": 1677,
     "harvested_count": 0,
     "rejected_count": 142,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1680,
+      "COMMUNITY_AND_EXPERT": 1681,
       "OFFICIAL_DOCUMENTATION": 67,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -39019,6 +39019,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
         "fileName": "openziti-zrok-learnings.md"
+      }
+    },
+    "SRC-50A561C320A6": {
+      "id": "SRC-50A561C320A6",
+      "url": "https://huggingface.co/speridlabs/idol",
+      "title": "https://huggingface.co/speridlabs/idol",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:08:56.583Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
+        "fileName": "hf-speridlabs-idol-learnings.md"
       }
     }
   }

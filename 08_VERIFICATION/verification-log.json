@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-ILYW",
-    "timestamp": "2026-11-09T13:21:44.888Z",
-    "repository": "transact-rs/sqlx",
-    "learningId": "learn-github-transact-rs-sqlx",
-    "contentHash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-IROH",
     "timestamp": "2026-11-09T13:21:52.289Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7492,6 +7477,21 @@
     "contentHash": "00d9c6304f1d0fef825fc7e525f5decbd3893b1249dfa67fd9b58b0ab283b028",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-T1BE",
+    "timestamp": "2026-11-12T23:08:44.138Z",
+    "repository": "speridlabs/idol",
+    "learningId": "learn-huggingface-speridlabs-idol",
+    "contentHash": "47b0e840297d6b526e7ac5b170a8ba007304b0f315923bc59307f34944834350",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T22:48:56.042Z",
-    "lastVerified": "2026-11-12T22:48:56.042Z",
+    "lastChecked": "2026-11-12T23:08:46.683Z",
+    "lastVerified": "2026-11-12T23:08:46.683Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -97,12 +97,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "stakater-reloader": {
-    "name": "stakater/Reloader",
+    "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T12:03:23.875Z",
-    "lastVerified": "2026-11-11T12:03:23.875Z",
+    "lastChecked": "2026-11-12T23:07:45.982Z",
+    "lastVerified": "2026-11-12T23:07:45.982Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-stakater-reloader",
@@ -111,7 +111,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e0d1aa05"
   },
   "gravitl-netmaker": {
     "name": "gravitl/netmaker",
@@ -365,8 +366,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T22:21:00.808Z",
-    "lastVerified": "2026-11-12T22:21:00.808Z",
+    "lastChecked": "2026-11-12T23:07:53.441Z",
+    "lastVerified": "2026-11-12T23:07:53.441Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -541,8 +542,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T12:14:54.730Z",
-    "lastVerified": "2026-11-12T12:14:54.730Z",
+    "lastChecked": "2026-11-12T23:07:48.460Z",
+    "lastVerified": "2026-11-12T23:07:48.460Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2796,12 +2797,12 @@
     "revisionIdentifier": "bbb1e5bd"
   },
   "caviraoss-longmemory": {
-    "name": "CaviraOSS/LongMemory",
+    "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T10:43:23.765Z",
-    "lastVerified": "2026-11-11T10:43:23.765Z",
+    "lastChecked": "2026-11-12T23:07:50.945Z",
+    "lastVerified": "2026-11-12T23:07:50.945Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-caviraoss-longmemory",
@@ -2810,7 +2811,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "aec98ced"
   },
   "ratatui-ratatui": {
     "name": "ratatui",
@@ -7994,9 +7996,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-10T02:59:21.813Z",
+    "lastChecked": "2026-11-12T23:07:38.464Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-10T02:59:21.813Z"
+    "lastVerified": "2026-11-12T23:07:38.464Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -10890,9 +10892,9 @@
   "icerockdev-moko-mvvm": {
     "name": "moko-mvvm",
     "officialUrl": "https://github.com/icerockdev/moko-mvvm",
-    "lastChecked": "2026-11-08T17:05:58.173Z",
+    "lastChecked": "2026-11-12T23:07:43.476Z",
     "revisionIdentifier": "ad0f844e",
-    "lastVerified": "2026-11-08T17:05:58.173Z"
+    "lastVerified": "2026-11-12T23:07:43.476Z"
   },
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",
@@ -12909,13 +12911,13 @@
     "officialUrl": "https://huggingface.co/speridlabs/idol",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T00:34:17.487Z",
-    "lastVerified": "2026-11-08T00:34:17.487Z",
+    "lastChecked": "2026-11-12T23:07:40.994Z",
+    "lastVerified": "2026-11-12T23:07:40.994Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-idol",
-    "contentHash": "dcfa8042ff4f483b1191fb6dba2249fdd3203a621a1509604c7723a969c9b1d3",
-    "promotedRulesCount": 3,
+    "contentHash": "47b0e840297d6b526e7ac5b170a8ba007304b0f315923bc59307f34944834350",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

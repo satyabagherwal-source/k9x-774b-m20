@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T22:48:49.798Z",
+  "last_updated": "2026-11-12T23:08:44.005Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -170041,7 +170041,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/idol",
       "source_version": "hf-speridlabs-idol",
-      "content_hash": "dcfa8042ff4f483b1191fb6dba2249fdd3203a621a1509604c7723a969c9b1d3",
+      "content_hash": "47b0e840297d6b526e7ac5b170a8ba007304b0f315923bc59307f34944834350",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "promoted_rules": [
@@ -170086,7 +170086,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:34:28.680Z",
+      "verified_at": "2026-11-12T23:08:43.977Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T22:48:49.977Z",
+  "last_updated": "2026-11-12T23:08:44.152Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17451,14 +17451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-idol",
-      "content_hash": "dcfa8042ff4f483b1191fb6dba2249fdd3203a621a1509604c7723a969c9b1d3",
-      "verified_at": "2026-11-08T00:34:28.817Z",
+      "content_hash": "47b0e840297d6b526e7ac5b170a8ba007304b0f315923bc59307f34944834350",
+      "verified_at": "2026-11-12T23:08:44.151Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:34:28.817Z"
+      "last_updated": "2026-11-12T23:08:44.151Z"
     },
     "meta/docusaurus": {
       "repository": "meta/docusaurus",
