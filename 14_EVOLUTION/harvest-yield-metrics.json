@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:42:01.760Z",
-  "total_cycles_completed": 9038,
-  "total_learnings_persisted": 9038,
-  "total_rules_promoted": 8876,
+  "last_updated": "2026-11-12T21:49:32.695Z",
+  "total_cycles_completed": 9042,
+  "total_learnings_persisted": 9042,
+  "total_rules_promoted": 8880,
   "history": [
-    {
-      "timestamp": "2026-11-11T18:35:55.495Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:54:54.357Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:54:57.375Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T18:55:10.698Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T18:59:45.551Z",
       "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T21:42:01.760Z",
       "repository": "SynaLinks/synalinks-skills",
       "learningId": "learn-github-synalinks-synalinks-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:49:16.212Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:49:19.866Z",
+      "repository": "yshrsmz/BuildKonfig",
+      "learningId": "learn-github-yshrsmz-buildkonfig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:49:31.028Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T21:49:32.695Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

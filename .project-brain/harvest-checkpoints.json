@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T21:42:01.764Z",
+  "last_updated": "2026-11-12T21:49:32.699Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "becc569f94f68ef55d7b1edff479fec550dc7262fa5a343558925c5fbc56cd7e",
-      "verified_at": "2026-11-12T21:10:39.327Z",
+      "content_hash": "d74fb9f2111ff7918c159c7884245dc4a8c39d464a57dadfb327b6d959b71664",
+      "verified_at": "2026-11-12T21:49:32.699Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:10:39.327Z"
+      "last_updated": "2026-11-12T21:49:32.699Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "395e962cacc5ca78f4e439c6559907388025a52ea4de9661c880b459477fe6df",
-      "verified_at": "2026-11-10T01:19:18.366Z",
+      "content_hash": "65b550e47a164dcf0b4c44acd7451a77b8e66bab5e9c43d457aac1847ef64962",
+      "verified_at": "2026-11-12T21:49:16.215Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:19:18.366Z"
+      "last_updated": "2026-11-12T21:49:16.215Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "f7ba6704927ce71894fb077e3437601df0354adaa3efc3c3226ac57901f57f99",
-      "verified_at": "2026-11-11T09:40:00.425Z",
+      "content_hash": "ca61faadccdee55028c0c57fb2bee9907aa396e9f7f12bd0b5c1b4c3b1001f7b",
+      "verified_at": "2026-11-12T21:49:31.031Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:40:00.425Z"
+      "last_updated": "2026-11-12T21:49:31.031Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -13101,14 +13101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yshrsmz-buildkonfig",
-      "content_hash": "8cbf7c151b75f56fe856e9478fab1bfd309d64f5e77140d4fe72b74009c91f42",
-      "verified_at": "2026-11-08T16:01:17.441Z",
+      "content_hash": "f256fb687c7f7d8c3be3cf5d2318715ddff0a540fe0536a22326469e7f8829c4",
+      "verified_at": "2026-11-12T21:49:19.870Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:01:17.441Z"
+      "last_updated": "2026-11-12T21:49:19.870Z"
     },
     "aliarifsoydas/sitemap-checker": {
       "repository": "aliarifsoydas/sitemap-checker",

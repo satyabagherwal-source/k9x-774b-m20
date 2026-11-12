@@ -9230,3 +9230,7 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `11c82084` | Multi-dimensional audit evidence | 2026-11-12T21:41:56.905Z |
 | `learn-github-zilliztech-claude-context` | `https://github.com/zilliztech/claude-context` | `64a87f9b` | Multi-dimensional audit evidence | 2026-11-12T21:42:00.839Z |
 | `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `2b5d7ed8` | Multi-dimensional audit evidence | 2026-11-12T21:42:01.753Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `f4e85fee` | Multi-dimensional audit evidence | 2026-11-12T21:49:16.194Z |
+| `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `f044a582` | Multi-dimensional audit evidence | 2026-11-12T21:49:19.858Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `6d24446a` | Multi-dimensional audit evidence | 2026-11-12T21:49:31.009Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bc20ed9c` | Multi-dimensional audit evidence | 2026-11-12T21:49:32.690Z |

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T21:42:07.927Z",
+  "updated_at": "2026-11-12T21:49:40.233Z",
   "stats": {
-    "total_discovered": 1614,
-    "approved_pending_harvest": 1482,
+    "total_discovered": 1630,
+    "approved_pending_harvest": 1495,
     "harvested_count": 0,
-    "rejected_count": 132,
+    "rejected_count": 135,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1480,
-      "OFFICIAL_DOCUMENTATION": 64,
+      "COMMUNITY_AND_EXPERT": 1495,
+      "OFFICIAL_DOCUMENTATION": 65,
       "STANDARDS_AND_SPECIFICATIONS": 66,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 3
@@ -34601,6 +34601,337 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
         "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-72392E24BEBB": {
+      "id": "SRC-72392E24BEBB",
+      "url": "https://github.com/medialab/xan",
+      "title": "https://github.com/medialab/xan",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md",
+        "fileName": "medialab-xan-learnings.md"
+      }
+    },
+    "SRC-8196EB805671": {
+      "id": "SRC-8196EB805671",
+      "url": "https://github.com/ratatui/ratatui/pull/1065",
+      "title": "https://github.com/ratatui/ratatui/pull/1065",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md",
+        "fileName": "medialab-xan-learnings.md"
+      }
+    },
+    "SRC-1759AFDBCAA4": {
+      "id": "SRC-1759AFDBCAA4",
+      "url": "https://github.com/ratatui/ratatui/issues/1045",
+      "title": "https://github.com/ratatui/ratatui/issues/1045",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.126Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md",
+        "fileName": "medialab-xan-learnings.md"
+      }
+    },
+    "SRC-891718C810BB": {
+      "id": "SRC-891718C810BB",
+      "url": "http://lemonde.fr/",
+      "title": "http://lemonde.fr/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:49:40.133Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md",
+        "fileName": "medialab-xan-learnings.md"
+      }
+    },
+    "SRC-A11870507BE6": {
+      "id": "SRC-A11870507BE6",
+      "url": "http://lefigaro.fr/",
+      "title": "http://lefigaro.fr/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:49:40.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md",
+        "fileName": "medialab-xan-learnings.md"
+      }
+    },
+    "SRC-98D7727A1940": {
+      "id": "SRC-98D7727A1940",
+      "url": "http://lefigaro.fr/about.html",
+      "title": "http://lefigaro.fr/about.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:49:40.147Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md",
+        "fileName": "medialab-xan-learnings.md"
+      }
+    },
+    "SRC-D12F2ED4514D": {
+      "id": "SRC-D12F2ED4514D",
+      "url": "https://github.com/yshrsmz/BuildKonfig",
+      "title": "https://github.com/yshrsmz/BuildKonfig",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
+        "fileName": "yshrsmz-buildkonfig-learnings.md"
+      }
+    },
+    "SRC-5B67C73A9C06": {
+      "id": "SRC-5B67C73A9C06",
+      "url": "https://docs.gradle.org/9.5.1/userguide/validation_problems.html",
+      "title": "https://docs.gradle.org/9.5.1/userguide/validation_problems.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
+        "fileName": "yshrsmz-buildkonfig-learnings.md"
+      }
+    },
+    "SRC-7ABB20A472A2": {
+      "id": "SRC-7ABB20A472A2",
+      "url": "https://api.example.com/",
+      "title": "https://api.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.173Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
+        "fileName": "yshrsmz-buildkonfig-learnings.md"
+      }
+    },
+    "SRC-7243E729721B": {
+      "id": "SRC-7243E729721B",
+      "url": "https://github.com/lancedb/lancedb",
+      "title": "https://github.com/lancedb/lancedb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.184Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-318FD68D9ECB": {
+      "id": "SRC-318FD68D9ECB",
+      "url": "https://github.com/lancedb/lancedb/issues/3310",
+      "title": "https://github.com/lancedb/lancedb/issues/3310",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-1666F18DF592": {
+      "id": "SRC-1666F18DF592",
+      "url": "https://github.com/lancedb/lancedb/actions/runs/43274052568/job/131377627811",
+      "title": "https://github.com/lancedb/lancedb/actions/runs/43274052568/job/131377627811",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-B9633336C40E": {
+      "id": "SRC-B9633336C40E",
+      "url": "https://github.com/lancedb/lancedb/actions/runs/43229196192/job/131220088196",
+      "title": "https://github.com/lancedb/lancedb/actions/runs/43229196192/job/131220088196",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.208Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-88FC40EC3DEC": {
+      "id": "SRC-88FC40EC3DEC",
+      "url": "https://github.com/lancedb/lancedb/actions/runs/43230840086/job/131225407007",
+      "title": "https://github.com/lancedb/lancedb/actions/runs/43230840086/job/131225407007",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-F9E19C535EE8": {
+      "id": "SRC-F9E19C535EE8",
+      "url": "https://github.com/lancedb/lancedb/actions/runs/43236975778/job/131247077833",
+      "title": "https://github.com/lancedb/lancedb/actions/runs/43236975778/job/131247077833",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-FB7CAA4012C3": {
+      "id": "SRC-FB7CAA4012C3",
+      "url": "https://github.com/lancedb/lancedb/actions/runs/43",
+      "title": "https://github.com/lancedb/lancedb/actions/runs/43",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:49:40.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
       }
     }
   }

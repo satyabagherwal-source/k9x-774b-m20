@@ -9221,3 +9221,7 @@
 | `CYCLE-20261112-PFDX` | `2026-11-12T21:41:56.901Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`84248f57...`) |
 | `CYCLE-20261112-PIF6` | `2026-11-12T21:42:00.834Z` | `zilliztech/claude-context` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`86dd3d53...`) |
 | `CYCLE-20261112-PJ4L` | `2026-11-12T21:42:01.749Z` | `SynaLinks/synalinks-skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e720feff...`) |
+| `CYCLE-20261112-YUCF` | `2026-11-12T21:49:16.191Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`65b550e4...`) |
+| `CYCLE-20261112-YX65` | `2026-11-12T21:49:19.853Z` | `yshrsmz/BuildKonfig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f256fb68...`) |
+| `CYCLE-20261112-Z5RY` | `2026-11-12T21:49:31.006Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ca61faad...`) |
+| `CYCLE-20261112-Z72M` | `2026-11-12T21:49:32.686Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d74fb9f2...`) |

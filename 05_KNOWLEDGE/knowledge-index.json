@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T21:42:01.644Z",
+  "last_updated": "2026-11-12T21:49:32.537Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40760,8 +40760,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "34e8b808",
-      "content_hash": "f7ba6704927ce71894fb077e3437601df0354adaa3efc3c3226ac57901f57f99",
+      "source_version": "6d24446a",
+      "content_hash": "ca61faadccdee55028c0c57fb2bee9907aa396e9f7f12bd0b5c1b4c3b1001f7b",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -40783,6 +40783,11 @@
         {
           "number": null,
           "title": "preserve function freshness across input-preserving writes (#4948)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: use two Cargo jobs for unlocked builds (#4996)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40871,7 +40876,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:40:00.270Z",
+      "verified_at": "2026-11-12T21:49:30.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43686,8 +43691,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "6849efff",
-      "content_hash": "395e962cacc5ca78f4e439c6559907388025a52ea4de9661c880b459477fe6df",
+      "source_version": "f4e85fee",
+      "content_hash": "65b550e47a164dcf0b4c44acd7451a77b8e66bab5e9c43d457aac1847ef64962",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -43704,6 +43709,11 @@
         {
           "number": null,
           "title": "Fixing xan bivar coordinate system",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Fixing xan scrape --url-column",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43747,7 +43757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:19:18.204Z",
+      "verified_at": "2026-11-12T21:49:16.035Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48749,8 +48759,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "51f3b789",
-      "content_hash": "becc569f94f68ef55d7b1edff479fec550dc7262fa5a343558925c5fbc56cd7e",
+      "source_version": "bc20ed9c",
+      "content_hash": "d74fb9f2111ff7918c159c7884245dc4a8c39d464a57dadfb327b6d959b71664",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48927,6 +48937,11 @@
         {
           "number": null,
           "title": "Draft NUC 106 Intersect and Except Reasoning Selections",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update world-model tagline",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49220,7 +49235,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T21:10:39.055Z",
+      "verified_at": "2026-11-12T21:49:32.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68372,14 +68387,19 @@
       "slug": "yshrsmz-buildkonfig",
       "platform": "github",
       "source_url": "https://github.com/yshrsmz/BuildKonfig",
-      "source_version": "61e46413",
-      "content_hash": "8cbf7c151b75f56fe856e9478fab1bfd309d64f5e77140d4fe72b74009c91f42",
+      "source_version": "f044a582",
+      "content_hash": "f256fb687c7f7d8c3be3cf5d2318715ddff0a540fe0536a22326469e7f8829c4",
       "dossier_path": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): update dependency com.android.tools.build:gradle to v9.5.0 (#380)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update dependency com.google.devtools.ksp:symbol-processing-gradle-plugin",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -68423,7 +68443,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:01:17.294Z",
+      "verified_at": "2026-11-12T21:49:19.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

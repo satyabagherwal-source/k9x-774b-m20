@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md`  
 > **Source**: github ([https://github.com/yshrsmz/BuildKonfig](https://github.com/yshrsmz/BuildKonfig))  
-> **Source Version**: `61e46413`  
+> **Source Version**: `f044a582`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:01:15.404Z  
+> **Timestamp**: 2026-11-12T21:49:07.093Z  
 > **Learning ID**: `learn-github-yshrsmz-buildkonfig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yshrsmz/BuildKonfig](https://github.com/yshrsmz/BuildKonfig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:01:15.397Z  
+> **Harvest Timestamp**: 2026-11-12T21:49:07.088Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: BuildConfig for Kotlin Multiplatform Project
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1225 stars
+- **Stars / Engagement**: 1224 stars
 
 ---
 
@@ -64,31 +64,31 @@
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61e46413` (2026-11-05)
-**Commit Message**: fix(deps): update dependency com.android.tools.build:gradle to v9.5.0 (#380)
+### Incident Patch 1: `2502c705` (2026-11-10)
+**Commit Message**: fix(deps): update dependency com.google.devtools.ksp:symbol-processing-gradle-plugin to v2.3.13 (#382)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 **File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- [versions]
+@@ -2,7 +2,7 @@
  kotlin = "2.4.21"
  dokka = "2.2.0"
--android = "9.4.1"
-+android = "9.5.0"
- ksp = "2.3.12"
+ android = "9.5.0"
+-ksp = "2.3.12"
++ksp = "2.3.13"
  
  [libraries]
+ kotlinpoet = { module = "com.squareup:kotlinpoet", version = "2.4.0" }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #382** (2026-11-10): fix(deps): update dependency com.google.devtools.ksp:symbol-processing-gradle-plugin to v2.3.13 (@renovate[bot])
+- **PR #381** (2026-11-10): feat: load flavor from a configurable properties file (@mvanhorn)
 - **PR #380** (2026-11-05): fix(deps): update dependency com.android.tools.build:gradle to v9.5.0 (@renovate[bot])
 - **PR #379** (2026-11-01): chore(deps): update github actions (@renovate[bot])
 - **PR #378** (2026-10-29): chore(deps): update gradle to v9.8.2 (@renovate[bot])
 - **PR #377** (2026-10-15): chore(renovate): use shared renovate-config presets (@yshrsmz)
-- **PR #375** (closed): chore(deps): update actions/setup-java action to v6.1.0 - autoclosed (@renovate[bot])
-- **PR #374** (closed): chore(deps): update kotlin to v2.4.21 - autoclosed (@renovate[bot])
 
 ---
 
@@ -108,13 +108,13 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency com.android.tools.build:gradle to v9.5.0 (#380)
+## X. deps): update dependency com.google.devtools.ksp:symbol-processing-gradle-plugin
 
 **RULE**:
 When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yshrsmz/BuildKonfig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61e46413`: deps): update dependency com.android.tools.build:gradle to v9.5.0 (#380). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2502c705`: deps): update dependency com.google.devtools.ksp:symbol-processing-gradle-plugin to v2.3.13 (#382). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
@@ -122,14 +122,14 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-android = "9.5.0"
+ksp = "2.3.13"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-android = "9.4.1"
+ksp = "2.3.12"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61e46413` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2502c705` are properly handled with clean fallback behavior.

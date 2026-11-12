@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:42:07.931Z",
+  "last_updated": "2026-11-12T21:49:40.237Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T14:31:57.678Z",
@@ -1256,9 +1256,24 @@
       "processed_at": "2026-11-12T21:42:07.758Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "medialab-xan-learnings.md": {
+      "processed_at": "2026-11-12T21:49:40.101Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "yshrsmz-buildkonfig-learnings.md": {
+      "processed_at": "2026-11-12T21:49:40.156Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "lancedb-lancedb-learnings.md": {
+      "processed_at": "2026-11-12T21:49:40.180Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 351,
+  "total_dossiers_evaluated": 354,
   "total_canonical_promoted": 44,
-  "total_staged_for_review": 306
+  "total_staged_for_review": 309
 }

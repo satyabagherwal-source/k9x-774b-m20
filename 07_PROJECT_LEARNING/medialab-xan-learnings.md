@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `6849efff`  
+> **Source Version**: `f4e85fee`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:19:17.141Z  
+> **Timestamp**: 2026-11-12T21:49:04.419Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:19:16.718Z  
+> **Harvest Timestamp**: 2026-11-12T21:49:04.171Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4554 stars
+- **Stars / Engagement**: 4552 stars
 
 ---
 
@@ -1968,355 +1968,130 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20f37ec5` (2026-11-09)
-**Commit Message**: Fixing xan bivar coordinate system
+### Incident Patch 1: `196e5190` (2026-11-12)
+**Commit Message**: Fixing xan scrape --url-column
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -48,6 +48,7 @@
+@@ -55,6 +55,7 @@ The **laminated** update.
+ * Fixing case-sensitive `xan search -R/--replace & --replacement-column` with multiple patterns.
+ * Fixing parallel `xan search -R/--replace & --replacement-column`.
  * Fixing `xan scrape` not streaming input when using `--paths` & `--docs`.
++* Fixing `xan scrape --url-column`.
  * Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
  * Fixing `xan explode --evaluate --drop-empty` semantics.
-+* Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
- 
- *Performance*
- 
+ * Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
 ```
 
-**File**: `src/cmd/matrix.rs` (modified, +75/-58)
+**File**: `src/cmd/scrape.rs` (modified, +10/-10)
 ```diff
-@@ -9,14 +9,14 @@ use crate::moonblade::agg::CovarianceWelford;
- use crate::select::SelectedColumns;
- use crate::utils;
- 
--struct LabeledMatrix<L, T> {
--    columns: Vec<L>,
--    rows: Vec<L>,
-+struct LabeledMatrix<T> {
-+    columns: ByteRecord,
-+    rows: ByteRecord,
-     data: Vec<T>,
+@@ -113,21 +113,21 @@ enum ScraperTarget<'a> {
  }
  
--impl<L, T: Default> LabeledMatrix<L, T> {
--    fn new(columns: Vec<L>, rows: Vec<L>) -> Self {
-+impl<T: Default> LabeledMatrix<T> {
-+    fn new(columns: ByteRecord, rows: ByteRecord) -> Self {
-         let len = columns.len() * rows.len();
- 
-         let mut data = Vec::with_capacity(len);
-@@ -33,7 +33,7 @@ impl<L, T: Default> LabeledMatrix<L, T> {
-     }
- }
- 
--impl<L, T> LabeledMatrix<L, T> {
-+impl<T> LabeledMatrix<T> {
-     #[inline(always)]
-     fn columns(&self) -> usize {
-         self.columns.len()
-@@ -52,23 +52,23 @@ impl<L, T> LabeledMatrix<L, T> {
-         y * self.columns() + x
-     }
- 
--    fn x_labels(&self) -> impl Iterator<Item = &L> {
-+    fn x_labels(&self) -> impl Iterator<Item = &[u8]> {
-         self.columns.iter()
-     }
- 
--    fn labeled_rows(&self) -> impl Iterator<Item = (&L, &[T])> {
-+    fn labeled_rows(&self) -> impl Iterator<Item = (&[u8], &[T])> {
-         self.rows.iter().zip(self.data.chunks_exact(self.columns()))
-     }
- }
- 
--impl<L, T> LabeledMatrix<L, Option<T>> {
-+impl<T> LabeledMatrix<Option<T>> {
-     fn set(&mut self, x: usize, y: usize, v: T) {
-         let i = self.flat_index(x, y);
-         self.data[i] = Some(v);
-     }
- }
- 
--impl<L, T> Index<(usize, usize)> for LabeledMatrix<L, T> {
-+impl<T> Index<(usize, usize)> for LabeledMatrix<T> {
-     type Output = T;
- 
-     #[inline(always)]
-@@ -77,7 +77,7 @@ impl<L, T> Index<(usize, usize)> for LabeledMatrix<L, T> {
-     }
- }
- 
--impl<L, T> IndexMut<(usize, usize)> for LabeledMatrix<L, T> {
-+impl<T> IndexMut<(usize, usize)> for LabeledMatrix<T> {
-     #[inline(always)]
-     fn index_mut(&mut self, (x, y): (usize, usize)) -> &mut Self::Output {
-         let i = self.flat_index(x, y);
-@@ -120,16 +120,13 @@ impl Axes {
-     }
- }
- 
--impl From<Axes> for LabeledMatrix<Vec<u8>, Option<f64>> {
-+impl From<Axes> for LabeledMatrix<Option<f64>> {
-     fn from(value: Axes) -> Self {
-         match value {
--            Axes::Heterogeneous { x, y } => {
--                Self::new(x.into_iter().collect(), y.into_iter().collect())
-+            Axes::Heterogeneous { x, y } => Self::new(x.iter().collect(), y.iter().collect()),
-+            Axes::Homogeneous(labels) => {
-+                Self::new(labels.iter().collect(), labels.iter().collect())
+ impl ScraperTarget<'_> {
+-    fn decode<'b>(&self, bytes: &'b [u8]) -> Cow<'b, str> {
+-        match self {
+-            Self::HtmlCell(_) => Cow::Borrowed(from_utf8(bytes).expect("could not decode")),
++    fn decode<'b>(&self, bytes: &'b [u8]) -> CliResult<Cow<'b, str>> {
++        Ok(match self {
++            Self::HtmlCell(_) => Cow::Borrowed(from_utf8(bytes)?),
+             Self::HtmlFile { encoding, .. } => {
+                 if let Some(encoding_ref) = encoding {
+                     Cow::Owned(
+                         encoding_ref
+                             .decode(bytes, DecoderTrap::Replace)
+-                            .expect("could not decode"),
++                            .map_err(|err| err.to_string())?,
+                     )
+                 } else {
+-                    Cow::Borrowed(from_utf8(bytes).expect("could not decode"))
++                    Cow::Borrowed(from_utf8(bytes)?)
+                 }
              }
--            Axes::Homogeneous(labels) => Self::new(
--                labels.iter().cloned().collect(),
--                labels.into_iter().collect(),
--            ),
-         }
+-        }
++        })
      }
  }
-@@ -511,64 +508,84 @@ impl Args {
-         let cell_width: f64 = (max_x - min_x) / (nb_cols as f64);
-         let cell_height: f64 = (max_y - min_y) / (nb_rows as f64);
  
--        let mut x_labels = Vec::with_capacity(nb_cols);
-+        let mut x_labels = ByteRecord::new();
-         let mut x_lower_bound = min_x;
-         for _ in 0..(nb_cols - 1) {
--            x_labels.push(format!(
--                ">= {} < {}",
--                utils::format_number(x_lower_bound),
--                utils::format_number(x_lower_bound + cell_width)
--            ));
-+            x_labels.push_field(
-+                format!(
-+                    ">= {} < {}",
-+                    utils::format_number(x_lower_bound),
-+                    utils::format_number(x_lower_bound + cell_width)
-+                )
-+                .as_bytes(),
-+            );
-             x_lower_bound += cell_width;
-         }
--        x_labels.push(format!(
--            ">= {} <= {}",
--            utils::format_number(x_lower_bound),
--            utils::format_number(max_x)
--        ));
-+        x_labels.push_field(
-+            format!(
-+                ">= {} <= {}",
-+                utils::format_number(x_lower_bound),
-+                utils::format_number(max_x)
-+            )
-+            .as_bytes(),
-+        );
+@@ -398,7 +398,7 @@ impl Scraper {
  
--        let mut y_labels = Vec::with_capacity(nb_rows);
-+        let mut y_labels = ByteRecord::new();
-         let mut y_lower_bound = min_y;
-         for _ in 0..(nb_cols - 1) {
--            y_labels.push(format!(
--                ">= {} < {}",
--                utils::format_number(y_lower_bound),
--                utils::format_number(y_lower_bound + cell_height)
--            ));
-+            y_labels.push_field(
-+                format!(
-+                    ">= {} < {}",
-+                    utils::format_number(y_lower_bound),
-+                    utils::format_number(y_lower_bound + cell_height)
-+                )
-+                .as_bytes(),
-+            );
-             y_lower_bound += cell_height;
+     fn scrape_head(&self, target: &ScraperTarget) -> CliResult<Vec<DynamicValue>> {
+         let bytes = target.prebuffer_up_to_head()?;
+-        let html = Html::parse_document(&target.decode(&bytes));
++        let html = Html::parse_document(&target.decode(&bytes)?);
+ 
+         Ok(html
+             .select(&HEAD_SELECTOR)
+@@ -440,8 +440,10 @@ impl Scraper {
+                 &caps[3]
+             };
+ 
++            let url = target.decode(url)?;
++
+             if let Some(base_url) = &context.url {
+-                if let Ok(joined_url) = base_url.join(&target.decode(&bytes)) {
++                if let Ok(joined_url) = base_url.join(&url) {
+                     // TODO: canonicalize
+                     urls.push(DynamicValue::from(joined_url.to_string()));
+                 }
+@@ -534,8 +536,6 @@ impl Scraper {
+             DynamicValue::from(html_escape::decode_html_entities(string).trim())
          }
--        y_labels.push(format!(
--            ">= {} <= {}",
--            utils::format_number(y_lower_bound),
--            utils::format_number(max_y)
--        ));
-+        y_labels.push_field(
-+            format!(
-+          
+ 
+-        // dbg!(&json_ld);
+-
+         if let Some(data) = json_ld {
+             macro_rules! extract_raw {
+                 ($index: expr, $key: expr) => {
 ```
 
-**File**: `tests/test_matrix.rs` (modified, +330/-29)
+**File**: `tests/test_scrape.rs` (modified, +38/-0)
 ```diff
-@@ -191,19 +191,150 @@ fn matrix_bivar() {
- 
-     let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
- 
--    #[rustfmt::skip]
-     let expected = vec![
--        ["", ">= -277,263 < -237,831", ">= -237,831 < -198,399", ">= -198,399 < -158,966", ">= -158,966 < -119,534", ">= -119,534 < -80,102", ">= -80,102 < -40,670", ">= -40,670 < -1,237.9", ">= -1,237.9 < 38,194", ">= 38,194 < 77,626", ">= 77,626 <= 117,058"],
--            [">= -279,303 < -235,756", "", "", "", "", "", "1", "1", "", "", ""],
--            [">= -235,756 < -192,208", "", "", "", "", "", "", "", "", "", ""],
--            [">= -192,208 < -148,661", "", "", "", "", "", "", "", "1", "", ""],
--            [">= -148,661 < -105,113", "", "", "", "", "", "", "", "", "", ""],
--            [">= -105,113 < -61,566", "", "", "", "", "", "", "", "", "", ""],
--            [">= -61,566 < -18,018", "", "", "", "", "", "", "2", "", "", ""],
--            [">= -18,018 < 25,528", "", "", "", "", "", "", "", "", "", ""],
--            [">= 25,528 < 69,076", "1", "", "", "", "", "", "", "", "1", "1"],
--            [">= 69,076 < 112,623", "", "", "", "", "1", "", "", "1", "", ""],
--            [">= 112,623 <= 156,171", "1", "", "", "", "", "", "", "", "", ""],
-+        [
-+            "",
-+            ">= -277,263 < -237,831",
-+            ">= -237,831 < -198,399",
-+            ">= -198,399 < -158,966",
-+            ">= -158,966 < -119,534",
-+            ">= -119,534 < -80,102",
-+            ">= -80,102 < -40,670",
-+            ">= -40,670 < -1,237.9",
-+            ">= -1,237.9 < 38,194",
-+            ">= 38,194 < 77,626",
-+            ">= 77,626 <= 117,058",
-+        ],
-+        [
-+            ">= 112,623 <= 156,171",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "1",
-+            "",
-+            "",
-+        ],
-+        [
-+            ">= 69,076 < 112,623",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "1",
-+            "",
-+            "",
-+        ],
-+        [
-+            ">= 25,528 < 69,076",
-+            "",
-+            "",
-+            "1",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "1",
-+            "",
-+        ],
-+        [
-+            ">= -18,018 < 25,528",
-+            "1",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "2",
-+            "",
-+            "",
-+            "",
-+            "",
-+        ],
-+        [
-+            ">= -61,566 < -18,018",
-+            "1",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+        ],
-+        [
-+            ">= -105,113 < -61,566",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "1",
-+            "",
-+        ],
-+        [
-+            ">= -148,661 < -105,113",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+        ],
-+        [
-+            ">= -192,208 < -148,661",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+        ],
-+        [
-+            ">= -235,756 < -192,208",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+        ],
-+        [
-+            ">= -279,303 < -235,756",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "",
-+            "1",
-+            "",
-+            "1",
-+        ],
-     ];
+@@ -39,6 +39,44 @@ fn scrape() {
      assert_eq!(got, expected);
  }
-@@ -237,19 +368,150 @@ fn matrix_bivar_weight() {
  
-     let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
- 
--    #[rustfmt::skip]
-     let expected = vec![
--        ["", ">= -277,263 < -237,831", ">= -237,831 < -198,399", ">= -198,399 < -158,966", ">= -158,966 < -119,534", ">= -119,534 < -80,102", ">= -80,102 < -40,670", ">= -40,670 < -1,237.9", ">= -1,237.9 < 38,194", ">= 38,194 < 77,626", ">= 77,626 <= 117,058"],
--        [">= -279,303 < -235,756", "", "", "", "", "", "10.616205472750881", "7.486790584554081", "", "", ""],
--        [">= -235,756 < -192,208", "", "", "", "", "", "", "", "", "", ""],
--        [">= -192,208 < -148,661", "", "", "", "", "", "", "", "8.834227893525213", "", ""],
--        [">= -148,661 < -105,113", "", "", "", "", "", "", "", "", "", ""],
--        [">= -105,113 < -61,566", "", "", "", "", "", "", "", "", "", ""],
--        [">= -61,566 < -18,018", "", "", "", "", "", "", "6.480093564961779", "", "", ""],
--        [">= -18,018 < 25,528", "", "", "", "
++#[test]
++fn scrape_urls() {
++    let wrk = Workdir::new("scrape_urls");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["html", "url"],
++            svec!["<a href=\"http://lemonde.fr\">One</a>", "http://lemonde.fr"],
++            svec!["<a href=\"about.html\">Two</a>", "http://lefigaro.fr"],
++        ],
++    );
++    let mut cmd = wrk.command("scrape");
++    cmd.arg("urls")
++        .args(["-s", "!"])
++        .args(["--doc-column", "html"])
++        .args(["--docs", "data.csv"]);
++
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    let expected = vec![["url"], ["http://lemonde.fr"], ["about.html"]];
++    assert_eq!(got, expected);
++
++    // --url-column
++    let mut cmd = wrk.command("scrape");
++    cmd.arg("urls")
++        .args(["-s", "!"])
++        .args(["--url-column", "url"])
++        .args(["--doc-column", "html"])
++        .args(["--docs", "data.csv"]);
++
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    let expected = vec![
++        ["url"],
++        ["http://lemonde.fr/"],
++        ["http://lefigaro.fr/about.html"],
++    ];
++    assert_eq!(got, expected);
++}
++
+ #[test]
+ fn scrape_xml() {
+     let wrk = Workdir::new("scrape_xml");
 ```
 
 #### Recent Merged Pull Requests:
@@ -2345,13 +2120,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixing xan bivar coordinate system
+## X. Fixing xan scrape --url-column
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20f37ec5`: Fixing xan bivar coordinate system. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `196e5190`: Fixing xan scrape --url-column. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2359,7 +2134,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-* Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
+* Fixing `xan scrape --url-column`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2369,4 +2144,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20f37ec5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `196e5190` are properly handled with clean fallback behavior.
