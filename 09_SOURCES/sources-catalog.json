@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "41d49a9e",
+    "sourceVersion": "201a62bc",
     "license": "NOASSERTION",
-    "contentHash": "3186e47c62c7a4785af26c5f924752925907221f9156f4fa8fd9782f58a6fc8b",
-    "lastHarvestedAt": "2026-11-12T06:56:24.518Z",
+    "contentHash": "b294ca60d16c4ee225e74c8ba611fa806b5174a8caa4ecae6f94482c98720975",
+    "lastHarvestedAt": "2026-11-12T14:24:06.943Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "2101aafb",
+    "sourceVersion": "898ea993",
     "license": "GPL-3.0",
-    "contentHash": "cb15331ff6fc96aeb3f3f3cf9acd21a9b1110d5021d35521d73babd8ad6e1a5d",
-    "lastHarvestedAt": "2026-11-08T13:59:55.708Z",
+    "contentHash": "b411170aa1ffe065cd850988006c401b273780813a8de921297bef81a72d76a6",
+    "lastHarvestedAt": "2026-11-12T14:24:02.670Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "dbeba0d5",
+    "sourceVersion": "a2e03dbc",
     "license": "MIT",
-    "contentHash": "8be8e5531f1c80ddd8be2040d5dd635c20731de0257aea68194ccadb7e6d7879",
-    "lastHarvestedAt": "2026-11-07T21:18:17.073Z",
+    "contentHash": "52ddbaf2b4633ce4902cd23e0d9edb08e097e99888bfcabeb977dcc8601a1a4c",
+    "lastHarvestedAt": "2026-11-12T14:23:56.962Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

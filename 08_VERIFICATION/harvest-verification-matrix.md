@@ -9179,3 +9179,6 @@
 | `CYCLE-20261112-VQKV` | `2026-11-12T13:50:57.871Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`69f11793...`) |
 | `CYCLE-20261112-IEHM` | `2026-11-12T14:08:35.290Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ebd533e9...`) |
 | `CYCLE-20261112-IMJ4` | `2026-11-12T14:08:45.712Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d31d133...`) |
+| `CYCLE-20261112-25NH` | `2026-11-12T14:23:56.957Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`52ddbaf2...`) |
+| `CYCLE-20261112-2A20` | `2026-11-12T14:24:02.664Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b411170a...`) |
+| `CYCLE-20261112-2DCQ` | `2026-11-12T14:24:06.938Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b294ca60...`) |

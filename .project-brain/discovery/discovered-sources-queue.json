@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T14:08:51.256Z",
+  "updated_at": "2026-11-12T14:24:13.218Z",
   "stats": {
-    "total_discovered": 1378,
-    "approved_pending_harvest": 1256,
+    "total_discovered": 1392,
+    "approved_pending_harvest": 1270,
     "harvested_count": 0,
     "rejected_count": 122,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1263,
+      "COMMUNITY_AND_EXPERT": 1277,
       "OFFICIAL_DOCUMENTATION": 60,
       "STANDARDS_AND_SPECIFICATIONS": 52,
       "ENGINEERING_BLOGS": 1,
@@ -29479,6 +29479,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
         "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-4E6143A1ABCD": {
+      "id": "SRC-4E6143A1ABCD",
+      "url": "https://github.com/preactjs/preact",
+      "title": "https://github.com/preactjs/preact",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-0E8BE0C95DA3": {
+      "id": "SRC-0E8BE0C95DA3",
+      "url": "https://github.com/facebook/react/blob/main/packages/use-sync-external-store/src/useSyncExternalStoreShimClient.js",
+      "title": "https://github.com/facebook/react/blob/main/packages/use-sync-external-store/src/useSyncExternalStoreShimClient.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-22693690D50F": {
+      "id": "SRC-22693690D50F",
+      "url": "https://github.com/preactjs/preact/issues/1941",
+      "title": "https://github.com/preactjs/preact/issues/1941",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.113Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-7A945952E6EB": {
+      "id": "SRC-7A945952E6EB",
+      "url": "https://github.com/michael-klein/funcy.js/blob/f6be73468e6ec46b0ff5aa3cc4c9baf72a29025a/src/hooks/core_hooks.mjs",
+      "title": "https://github.com/michael-klein/funcy.js/blob/f6be73468e6ec46b0ff5aa3cc4c9baf72a29025a/src/hooks/core_hooks.mjs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-5FF47A2F3B30": {
+      "id": "SRC-5FF47A2F3B30",
+      "url": "https://github.com/michael-klein/funcy.js/blob/650beaa58c43c33a74820a3c98b3c7079cf2e333/src/renderer.mjs",
+      "title": "https://github.com/michael-klein/funcy.js/blob/650beaa58c43c33a74820a3c98b3c7079cf2e333/src/renderer.mjs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.133Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-2CD79373A277": {
+      "id": "SRC-2CD79373A277",
+      "url": "https://codesandbox.io/s/mnox05qp8",
+      "title": "https://codesandbox.io/s/mnox05qp8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-0144CDC90FBD": {
+      "id": "SRC-0144CDC90FBD",
+      "url": "https://github.com/preactjs/preact/issues/3794",
+      "title": "https://github.com/preactjs/preact/issues/3794",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-FB81DB2E63BE": {
+      "id": "SRC-FB81DB2E63BE",
+      "url": "https://github.com/preactjs/preact/issues/5118",
+      "title": "https://github.com/preactjs/preact/issues/5118",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-51AA3D5E974C": {
+      "id": "SRC-51AA3D5E974C",
+      "url": "https://git.sr.ht/~vpzom/fragment-gone-issue",
+      "title": "https://git.sr.ht/~vpzom/fragment-gone-issue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-D5FB18A68E66": {
+      "id": "SRC-D5FB18A68E66",
+      "url": "https://codesandbox.io/p/sandbox/usememo-behavior-preact-w3rlrv",
+      "title": "https://codesandbox.io/p/sandbox/usememo-behavior-preact-w3rlrv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-BCF6438A392E": {
+      "id": "SRC-BCF6438A392E",
+      "url": "https://github.com/rainbow-me/rainbow",
+      "title": "https://github.com/rainbow-me/rainbow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.191Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+        "fileName": "rainbow-me-rainbow-learnings.md"
+      }
+    },
+    "SRC-2CA6CB7990F4": {
+      "id": "SRC-2CA6CB7990F4",
+      "url": "https://linear.app/rainbow/issue/APP-4188/typeerror-cannot-convert-undefined-value-to-object",
+      "title": "https://linear.app/rainbow/issue/APP-4188/typeerror-cannot-convert-undefined-value-to-object",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+        "fileName": "rainbow-me-rainbow-learnings.md"
+      }
+    },
+    "SRC-62E6051FB1D6": {
+      "id": "SRC-62E6051FB1D6",
+      "url": "https://github.com/rainbow-me/PanModal",
+      "title": "https://github.com/rainbow-me/PanModal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+        "fileName": "rainbow-me-rainbow-learnings.md"
+      }
+    },
+    "SRC-B381ED86CCCB": {
+      "id": "SRC-B381ED86CCCB",
+      "url": "https://github.com/rainbow-me/PanModal%60",
+      "title": "https://github.com/rainbow-me/PanModal%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T14:24:13.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+        "fileName": "rainbow-me-rainbow-learnings.md"
       }
     }
   }

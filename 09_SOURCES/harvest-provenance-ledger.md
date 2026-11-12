@@ -9188,3 +9188,6 @@ Every entry in this ledger must capture:
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `036dde8e` | Multi-dimensional audit evidence | 2026-11-12T13:50:57.875Z |
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `9b528b5e` | Multi-dimensional audit evidence | 2026-11-12T14:08:35.295Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `36357612` | Multi-dimensional audit evidence | 2026-11-12T14:08:45.716Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `a2e03dbc` | Multi-dimensional audit evidence | 2026-11-12T14:23:56.962Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `898ea993` | Multi-dimensional audit evidence | 2026-11-12T14:24:02.670Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `201a62bc` | Multi-dimensional audit evidence | 2026-11-12T14:24:06.943Z |
